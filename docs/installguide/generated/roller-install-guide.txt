@@ -174,15 +174,16 @@ For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC driv
 For MySQL 5.X users, we recommend that you use the J/Connector 3.1.X JDBC drivers instead of the newer 3.1.X series, you'll also need to change the Hibernate configuration file to use the MySQL5 dialect (see Section 8.3 for details on that).
 
 STEP 3.3: Install JavaMail and Activation jars
-If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. Currently, we ship these jars with Roller, but you will need to  move them from the Roller WEB-INF/lib directory and into the Tomcat common/lib directory, or your server's equivalent location.
+If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. You can find them here: http://java.sun.com/products/javamail/. Add them to Tomcat common/lib directory, or your server's equivalent location.
 UNIX example
-	% mv $ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib
-	% mv $ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib	
+	% cp mail.jar $CATALINA_HOME/common/lib
+	% cp activation.jar $CATALINA_HOME/common/lib	
 Windows example
-	c> move %ROLLER%\WEB-INF\lib\mail.jar %CATALINA_HOME%\common\lib
-	C> move %ROLLER%\WEB-INF\lib\activation.jar %CATALINA_HOME%\common\lib
+	c> copy mail.jar %CATALINA_HOME%\common\lib
+	C> copy activation.jar %CATALINA_HOME%\common\lib
 NOTES
 To enable the Roller's e-mail notification features, you'll also need to setup a mail session resource in your application server configuration file (see the next section) and you'll need to configure e-mail notification in the Roller UI.
+The Roller Support project at Java.Net offers some bundles that might make this part of the installation easier. It includes both mail.jar and activation.jar. Visit http://roller.dev.java.net for more information.
 STEP 4: Create Roller tables in your database
 Create a new database within your MySQL installation, create a user with all privileges within that database and run the Roller database creation script to create tables within that new database. Roller includes database creation scripts for a variety of database, but MySQL is the most widely used and best supported option. You can find the database creation scripts in the Roller webapp directory $ROLLER/WEB-INF/dbscripts/<dbname>. Here's the list of scripts currently in Roller:
 WEB-INF/dbscripts/mysql/creatdb.sql	
@@ -467,7 +468,7 @@ For example, on UNIX you can use cp -r to copy the whole directory:
    % cp -r /somewhere/safe/roller-old/roller/resources .
 NOTE: If you have any new themes under roller/themes, make sure to copy those as well. 
 
-3.3 Review configuration properties
+3.2 Review configuration properties
 Review properties as described in STEP #8 of the installation guide.
 WARNING: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
 
