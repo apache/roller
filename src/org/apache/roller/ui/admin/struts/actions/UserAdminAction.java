@@ -232,7 +232,7 @@ public final class UserAdminAction extends UserBaseAction {
                             
                         } catch (RollerException e) {
                             msgs.add(ActionErrors.GLOBAL_ERROR,
-                                    new ActionMessage(e.getMessage()));
+                                 new ActionError("error.untranslated", e.getRootCauseMessage())); 
                             saveErrors(request, msgs);
                         }
                     } else {
