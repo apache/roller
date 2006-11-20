@@ -201,7 +201,7 @@ public class HibernatePersistenceStrategy {
      */
     public Session getSession() {
         
-        log.debug("Opening Hibernate Session");
+        log.debug("Obtaining Hibernate Session");
         
         // get Hibernate Session and make sure we are in a transaction
         // this will join existing Session/Transaction if they exist
@@ -217,11 +217,11 @@ public class HibernatePersistenceStrategy {
         Session session = getSession();
         try {
             // first lets flush the current state to the db
-            log.info("Flushing Hibernate Session");
+            log.debug("Flushing Hibernate Session");
             session.flush();
             
             // then commit the current transaction to finish it
-            log.info("Committing Hibernate Transaction");
+            log.debug("Committing Hibernate Transaction");
             session.getTransaction().commit();
             
         } catch(Throwable t) {
