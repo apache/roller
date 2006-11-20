@@ -11,8 +11,8 @@ update website set isactive=$BOOLEAN_TRUE, datecreated=datecreated;
 
 -- Roller 2.3 schema changes
 
-alter table weblogentry add column summary $TEXT_SQL_TYPE default null;
-alter table weblogentry add column content_type varchar(48) default null;
-alter table weblogentry add column content_src varchar(255) default null;
+#addColumnNull("weblogentry" "summary" $TEXT_SQL_TYPE)
+#addColumnNull("weblogentry" "content_type" "varchar(48)")
+#addColumnNull("weblogentry" "content_src" "varchar(255)")
 
 
