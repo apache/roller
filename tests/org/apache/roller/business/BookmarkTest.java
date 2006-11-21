@@ -229,6 +229,24 @@ public class BookmarkTest extends TestCase {
     }
     
     
+    /**
+     * Test WeblogCategoryData.equals() method.
+     */
+    public void testFolderEquality() throws Exception {
+        
+        BookmarkManager bmgr = getRoller().getBookmarkManager();
+        
+        FolderData root = bmgr.getRootFolder(testWeblog);
+        
+        FolderData testFolder = new FolderData(null, "root", "root", testWeblog);
+        assertTrue(root.equals(testFolder));
+        
+        testFolder = new FolderData(root, "root", "root", testWeblog);
+        testFolder.setId(root.getId());
+        assertFalse(root.equals(testFolder));
+    }
+    
+    
     /** 
      * Test bookmark folder paths. 
      */

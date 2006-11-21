@@ -102,74 +102,41 @@ public class FolderData extends PersistentObject
     
     
     public String toString() {
+        
         StringBuffer str = new StringBuffer("{");
-        str.append(
-                "bookmarks=" + bookmarks + " "
-                + "id=" + id + " "
-                + "name=" + name + " "
-                + "description=" + description);
-        str.append('}');
-        return (str.toString());
+        str.append("id=").append(id);
+        str.append(",");
+        str.append("path=").append(path);
+        str.append(",");
+        str.append("desc=").append(description);
+        str.append("}");
+        
+        return str.toString();
     }
     
-    public boolean equals(Object pOther) {
-        if (pOther instanceof FolderData) {
-            FolderData lTest = (FolderData) pOther;
-            boolean lEquals = true;
+    
+    public boolean equals(Object other) {
+        
+        if (other == null) return false;
+        
+        if (other instanceof FolderData) {
             
-//            if (this.bookmarks == null)
-//            {
-//                lEquals = lEquals && (lTest.bookmarks == null);
-//            }
-//            else
-//            {
-//                lEquals = lEquals && this.bookmarks.equals(lTest.bookmarks);
-//            }
-            
-            if (this.id == null) {
-                lEquals = lEquals && (lTest.getId() == null);
-            } else {
-                lEquals = lEquals && this.id.equals(lTest.getId());
-            }
-            
-            if (this.name == null) {
-                lEquals = lEquals && (lTest.getName() == null);
-            } else {
-                lEquals = lEquals && this.name.equals(lTest.getName());
-            }
-            
-            if (this.description == null) {
-                lEquals = lEquals && (lTest.getDescription() == null);
-            } else {
-                lEquals = lEquals &&
-                        this.description.equals(lTest.getDescription());
-            }
-            
-            if (this.website == null) {
-                lEquals = lEquals && (lTest.getWebsite() == null);
-            } else {
-                lEquals = lEquals && this.website.equals(lTest.getWebsite());
-            }
-            
-            return lEquals;
-        } else {
-            return false;
+            // NOTE: currently we are implementing equals only using the path
+            //   of the folder.  technically the business key should be for
+            //   both the weblog & path, but we don't expect to be comparing
+            //   folders from 2 different weblogs so this should be fine
+            FolderData that = (FolderData) other;
+            return this.path.equals(that.getPath());
         }
+        
+        return false;
     }
+    
     
     public int hashCode() {
-        int result = 17;
-        
-        result = (37 * result) +
-                ((this.id != null) ? this.id.hashCode() : 0);
-        result = (37 * result) +
-                ((this.name != null) ? this.name.hashCode() : 0);
-        result = (37 * result) +
-                ((this.description != null) ? this.description.hashCode() : 0);
-        result = (37 * result) +
-                ((this.website != null) ? this.website.hashCode() : 0);
-        
-        return result;
+        // NOTE: just like equals() it's possibly better if this is the combo
+        //   of both the path hashCode and the weblog hashCode
+        return this.path.hashCode();
     }
     
     
