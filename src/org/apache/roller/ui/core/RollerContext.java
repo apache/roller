@@ -76,7 +76,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     public static final String ROLLER_CONTEXT = "roller.context";
     
     private static ServletContext mContext = null;
-    private static Authenticator mAuthenticator = null;
     private final SynchronizedInt mSessionCount = new SynchronizedInt(0);
     
     
@@ -403,29 +402,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         mLogger.debug("sessions=" + mSessionCount
                     + ":freemem=" + Runtime.getRuntime().freeMemory()
                     + ":totalmem=" + Runtime.getRuntime().totalMemory());
-    }
-    
-    
-    /**
-     * Get authenticator
-     */
-    public Authenticator getAuthenticator() {
-        if (mAuthenticator == null) {
-            try {
-                Class authClass =
-                        Class.forName(RollerConfig.getProperty("authenticator.classname"));
-                mAuthenticator = (Authenticator) authClass.newInstance();
-            } catch (Exception e) {
-                // this isn't an ERROR if no authenticatorClass was specified
-                if (!(e instanceof NullPointerException)) {
-                    mLogger.error("ERROR creating authenticator, using default", e);
-                } else {
-                    mLogger.debug("No authenticator specified, using DefaultAuthenticator");
-                }
-                mAuthenticator = new DefaultAuthenticator();
-            }
-        }
-        return mAuthenticator;
     }
     
     
