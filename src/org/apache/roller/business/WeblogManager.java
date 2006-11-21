@@ -492,5 +492,32 @@ public interface WeblogManager {
      * @throws RollerException If there was a problem with the backend.
      */
     public void resetHitCount(WebsiteData weblog) throws RollerException;
+
     
+    /**
+     * Get site-wide comment count 
+     */
+    public long getCommentCount() throws RollerException;
+
+    
+    /**
+     * Get weblog comment count 
+     */    
+    public long getCommentCount(WebsiteData websiteData) throws RollerException;
+
+    
+    /**
+     * Get site-wide entry count 
+     */    
+    public long getEntryCount() throws RollerException;
+
+    
+    /**
+     * Get weblog entry count 
+     */    
+    public long getEntryCount(WebsiteData websiteData) throws RollerException;
+   
 }
+
+
+

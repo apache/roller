@@ -943,6 +943,41 @@ public class HibernateUserManagerImpl implements UserManager {
             throw new RollerException(msg, pe);
         }
     }
+    
+    
+    /**
+     * Get count of weblogs, active and inactive
+     */    
+    public long getWeblogCount() throws RollerException {
+        long ret = 0;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "select count(distinct w) from WebsiteData w";
+            List result = session.createQuery(query).list();
+            ret = ((Integer)result.get(0)).intValue();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        return ret;
+    }
+
+    
+    /**
+     * Get count of users, enabled only
+     */    
+    public long getUserCount() throws RollerException {
+        long ret = 0;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "select count(distinct u) from UserData u where u.enabled=true";
+            List result = session.createQuery(query).list();
+            ret = ((Integer)result.get(0)).intValue();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        return ret;
+    }
+    
      
     /** Doesn't seem to be any other way to get ignore case w/o QBE */
     class IgnoreCaseEqExpression extends SimpleExpression {

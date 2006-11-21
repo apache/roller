@@ -516,6 +516,58 @@ public class SiteModel implements Model {
             log.error("ERROR: fetching site tags list", e);
         }
         return results;
-    }    
+    }   
+    
+    
+    public long getCommentCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            count = mgr.getCommentCount();            
+        } catch (RollerException e) {
+            log.error("Error getting comment count for site ", e);
+        }
+        return count;
+    }
+    
+    
+    public long getEntryCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            count = mgr.getEntryCount();            
+        } catch (RollerException e) {
+            log.error("Error getting entry count for site", e);
+        }
+        return count;
+    }
+    
+    
+    public long getWeblogCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            UserManager mgr = roller.getUserManager();
+            count = mgr.getWeblogCount();            
+        } catch (RollerException e) {
+            log.error("Error getting weblog count for site", e);
+        }
+        return count;
+    } 
+    
+    
+    public long getUserCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            UserManager mgr = roller.getUserManager();
+            count = mgr.getUserCount();            
+        } catch (RollerException e) {
+            log.error("Error getting user count for site", e);
+        }
+        return count;
+    }
     
 }
