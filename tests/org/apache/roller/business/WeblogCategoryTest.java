@@ -165,6 +165,27 @@ public class WeblogCategoryTest extends TestCase {
     }
     
     
+    /**
+     * Test WeblogCategoryData.equals() method.
+     */
+    public void testWeblogCategoryEquality() throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        
+        WeblogCategoryData testCat = new WeblogCategoryData(testWeblog, null, "root", "root", null);
+        assertTrue(root.equals(testCat));
+        
+        testCat = new WeblogCategoryData(testWeblog, root, "root", "root", null);
+        testCat.setId(root.getId());
+        assertFalse(root.equals(testCat));
+    }
+    
+    
+    /**
+     * Test working with category paths.
+     */
     public void testWeblogCategoryPaths() throws Exception {
         
         WeblogCategoryData root = null;
@@ -206,6 +227,9 @@ public class WeblogCategoryTest extends TestCase {
     }
     
     
+    /**
+     * Test moving one category into another.
+     */
     public void testMoveWeblogCategory() throws Exception {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
@@ -275,6 +299,10 @@ public class WeblogCategoryTest extends TestCase {
         assertEquals(3, entries.size());
     }
     
+    
+    /**
+     * Test moving entries in category to new category.
+     */
     public void testMoveWeblogCategoryContents() throws Exception {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();

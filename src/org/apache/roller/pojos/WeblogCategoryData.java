@@ -83,6 +83,7 @@ public class WeblogCategoryData extends PersistentObject
         }
     }
     
+    
     public WeblogCategoryData(WeblogCategoryData otherData) {
         this.setData(otherData);
     }
@@ -104,55 +105,43 @@ public class WeblogCategoryData extends PersistentObject
     
     
     public String toString() {
+        
         StringBuffer str = new StringBuffer("{");
+        str.append("id=").append(id);
+        str.append(",");
+        str.append("path=").append(path);
+        str.append(",");
+        str.append("desc=").append(description);
+        str.append(",");
+        str.append("image=").append(image);
+        str.append("}");
         
-        str.append(
-                "id="
-                + id
-                + " "
-                + "name="
-                + name
-                + " "
-                + "description="
-                + description
-                + " "
-                + "image="
-                + image);
-        str.append('}');
-        
-        return (str.toString());
+        return str.toString();
     }
     
     
-    public boolean equals(Object pOther) {
-        if (pOther == null) return false;
-        if (pOther instanceof WeblogCategoryData) {
-            WeblogCategoryData lTest = (WeblogCategoryData) pOther;
-            boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
-            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
-            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
-            lEquals = PojoUtil.equals(lEquals, this.getImage(), lTest.getImage());
-            return lEquals;
-        } else {
-            return false;
+    public boolean equals(Object other) {
+        
+        if (other == null) return false;
+        
+        if (other instanceof WeblogCategoryData) {
+            
+            // NOTE: currently we are implementing equals only using the path
+            //   of the category.  technically the business key should be for
+            //   both the weblog & path, but we don't expect to be comparing
+            //   categories from 2 different weblogs so this should be fine
+            WeblogCategoryData that = (WeblogCategoryData) other;
+            return this.path.equals(that.getPath());
         }
+        
+        return false;
     }
     
     
     public int hashCode() {
-        int result = 17;
-        result = 37 * result + ((this.id != null) ? this.id.hashCode() : 0);
-        result =
-                37 * result
-                + ((this.website != null) ? this.website.hashCode() : 0);
-        result = 37 * result + ((this.name != null) ? this.name.hashCode() : 0);
-        result =
-                37 * result
-                + ((this.description != null) ? this.description.hashCode() : 0);
-        result =
-                37 * result + ((this.image != null) ? this.image.hashCode() : 0);
-        return result;
+        // NOTE: just like equals() it's possibly better if this is the combo
+        //   of both the path hashCode and the weblog hashCode
+        return this.path.hashCode();
     }
     
     
