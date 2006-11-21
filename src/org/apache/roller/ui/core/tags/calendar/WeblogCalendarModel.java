@@ -111,6 +111,10 @@ public class WeblogCalendarModel implements CalendarModel {
         cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
         Date endDate = cal.getTime();
         
+        // Fix for ROL-840 Don't include future entries
+        Date now = new Date();
+        if (endDate.after(now)) endDate = now;
+        
         loadWeblogEntries(startDate, endDate, cat);
     }
     
