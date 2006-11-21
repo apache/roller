@@ -53,7 +53,7 @@ public class FolderSaveAction extends Action {
             HttpServletResponse response)
             throws Exception {
         
-        ActionForward forward = mapping.findForward("categories");
+        ActionForward forward = mapping.findForward("Bookmarks");
         FolderFormEx form = (FolderFormEx)actionForm;
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
