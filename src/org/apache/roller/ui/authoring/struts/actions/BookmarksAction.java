@@ -208,8 +208,7 @@ public class BookmarksAction extends DispatchAction
                         if (    !fd.getId().equals(parent.getId())
                              && !parent.descendentOf(fd))
                         {
-                            fd.setParent(parent);
-                            bmgr.saveFolder(fd);
+                            bmgr.moveFolder(fd, parent);
                         }
                         else 
                         {

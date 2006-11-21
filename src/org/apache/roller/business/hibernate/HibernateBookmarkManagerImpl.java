@@ -110,6 +110,59 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
+    public void moveFolder(FolderData srcFolder, FolderData destFolder)
+            throws RollerException {
+        
+        // TODO: this check should be made before calling this method?
+        if (destFolder.descendentOf(srcFolder)) {
+            throw new RollerException(
+                    "ERROR cannot move parent folder into it's own child");
+        }
+        
+        log.debug("Moving folder "+srcFolder.getPath()+" under "+destFolder.getPath());
+        
+        srcFolder.setParent(destFolder);
+        if("/".equals(destFolder.getPath())) {
+            srcFolder.setPath("/"+srcFolder.getName());
+        } else {
+            srcFolder.setPath(destFolder.getPath() + "/" + srcFolder.getName());
+        }
+        saveFolder(srcFolder);
+        
+        // the main work to be done for a category move is to update the 
+        // path attribute of the category and all descendent categories
+        updatePathTree(srcFolder);
+    }
+    
+    
+    // updates the paths of all descendents of the given folder
+    private void updatePathTree(FolderData folder) throws RollerException {
+        
+        log.debug("Updating path tree for folder "+folder.getPath());
+        
+        FolderData childFolder = null;
+        Iterator childFolders = folder.getFolders().iterator();
+        while(childFolders.hasNext()) {
+            childFolder = (FolderData) childFolders.next();
+            
+            log.debug("OLD child folder path was "+childFolder.getPath());
+            
+            // update path and save
+            if("/".equals(folder.getPath())) {
+                childFolder.setPath("/" + childFolder.getName());
+            } else {
+                childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
+            }
+            saveFolder(childFolder);
+            
+            log.debug("NEW child folder path is "+ childFolder.getPath());
+            
+            // then make recursive call to update this folders children
+            updatePathTree(childFolder);
+        }
+    }
+    
+    
     /**
      * Retrieve folder and lazy-load it's sub-folders and bookmarks.
      */

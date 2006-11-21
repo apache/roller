@@ -56,6 +56,15 @@ public interface BookmarkManager {
     
     
     /**
+     * Move a folder under another folder.
+     *
+     * This moves the src folder itself and all children and associated bookmarks.
+     */
+    public void moveFolder(FolderData src, FolderData dest)
+            throws RollerException;
+    
+    
+    /**
      * Lookup a folder by ID.
      *
      * @param id The id of the folder to lookup.
