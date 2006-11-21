@@ -134,18 +134,6 @@ public class RollerRequest
             return; // Atom servlet request needs no init
         }
         
-        // Bind persistence session to authenticated user, if we have one
-        RollerContext rctx = RollerContext.getRollerContext(); 
-        Authenticator auth = rctx.getAuthenticator();
-        String userName = auth.getAuthenticatedUserName(mRequest);
-        if (userName != null)
-        {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            UserData currentUser = userMgr.getUserByUserName(userName);
-            // TODO: possible fix for backend refactoryings
-            //RollerFactory.getRoller().setUser(currentUser);
-        }
-        
         // path info may be null, (e.g. on JSP error page)
         mPathInfo = mRequest.getPathInfo();
         mPathInfo = (mPathInfo!=null) ? mPathInfo : "";            
