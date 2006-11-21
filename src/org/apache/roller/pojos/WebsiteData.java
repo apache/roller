@@ -1127,6 +1127,23 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         return initializedPlugins;
     }
     
+    /** 
+     * Get weblog entry specified by anchor or null if no such entry exists.
+     * @param anchor Weblog entry anchor
+     * @return Weblog entry specified by anchor
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public WeblogEntryData getWeblogEntry(String anchor) {
+        WeblogEntryData entry = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            entry = wmgr.getWeblogEntryByAnchor(this, anchor);
+        } catch (RollerException e) {
+            this.log.error("ERROR: getting entry by anchor");
+        }
+        return entry;
+    }
     
     /**
      * Returns categories under the default category of the weblog.
@@ -1309,13 +1326,15 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
             
         } catch (RollerException e) {
-            log.error("PageModel getTotalHits()", e);
+            log.error("Error getting weblog hit count", e);
         }
         return 0;
     }
     
-    
-    
+    /** No-op method to please XDoclet */
+    public void setTodaysHits(int ignored) {}
+
+        
     /**
      * Get a list of TagStats objects for the most popular tags
      *
@@ -1339,12 +1358,50 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             WeblogManager wmgr = roller.getWeblogManager();
             results = wmgr.getPopularTags(this, startDate, length);
         } catch (Exception e) {
-            log.error("ERROR: fetching weblog tags list", e);
+            log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }
         return results;
     }      
+
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public long getCommentCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            count = mgr.getCommentCount(this);            
+        } catch (RollerException e) {
+            log.error("Error getting comment count for weblog " + this.getName(), e);
+        }
+        return count;
+    }
     
     /** No-op method to please XDoclet */
-    public void setTodaysHits(int ignored) {}
+    public void setCommentCount(int ignored) {}
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public long getEntryCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            count = mgr.getEntryCount(this);            
+        } catch (RollerException e) {
+            log.error("Error getting entry count for weblog " + this.getName(), e);
+        }
+        return count;
+    }
+
+    /** No-op method to please XDoclet */
+    public void setEntryCount(int ignored) {}
+    
 }
+
+
+
+
 

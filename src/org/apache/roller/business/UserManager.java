@@ -361,6 +361,18 @@ public interface UserManager {
      * Get website's pages
      */
     public List getPages(WebsiteData w) throws RollerException;
+   
+    
+    /**
+     * Get count of active weblogs
+     */    
+    public long getWeblogCount() throws RollerException;
+
+    
+    /**
+     * Get count of enabled users
+     */    
+    public long getUserCount() throws RollerException; 
     
     
     /**

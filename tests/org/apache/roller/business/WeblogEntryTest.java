@@ -32,8 +32,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
+import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -867,4 +866,73 @@ public class WeblogEntryTest extends TestCase {
         // TODO: implement entry attribute test
     }
     
+    
+    public void testWeblogStats() throws Exception {
+        
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        
+        UserData user1 = TestUtils.setupUser("statuser1");
+        WebsiteData blog1 = TestUtils.setupWeblog("statblog1", user1);
+        WebsiteData blog2 = TestUtils.setupWeblog("statblog2", user1);
+
+        WebsiteData blog3 = TestUtils.setupWeblog("statblog3", user1);
+        blog3.setEnabled(Boolean. FALSE);
+        umgr.saveWebsite(blog3);
+
+        WeblogEntryData entry1 = TestUtils.setupWeblogEntry("entry1", 
+                testWeblog.getDefaultCategory(), blog1, user1);
+        WeblogEntryData entry2 = TestUtils.setupWeblogEntry("entry2", 
+                testWeblog.getDefaultCategory(), blog1, user1);
+        
+        WeblogEntryData entry3 = TestUtils.setupWeblogEntry("entry3", 
+                testWeblog.getDefaultCategory(), blog2, user1);
+        WeblogEntryData entry4 = TestUtils.setupWeblogEntry("entry4", 
+                testWeblog.getDefaultCategory(), blog2, user1);
+        WeblogEntryData entry5 = TestUtils.setupWeblogEntry("entry5", 
+                testWeblog.getDefaultCategory(), blog2, user1);
+               
+        CommentData comment1 = TestUtils.setupComment("comment1", entry1);
+        CommentData comment2 = TestUtils.setupComment("comment2", entry1);
+        
+        CommentData comment3 = TestUtils.setupComment("comment3", entry3);
+        CommentData comment4 = TestUtils.setupComment("comment4", entry3);
+        CommentData comment5 = TestUtils.setupComment("comment5", entry3);
+
+        try {
+            assertEquals(2L, blog1.getEntryCount());
+            assertEquals(3L, blog2.getEntryCount());
+            assertEquals(5L, wmgr.getEntryCount());
+
+            assertEquals(2L, blog1.getCommentCount());
+            assertEquals(3L, blog2.getCommentCount());
+            assertEquals(5L, wmgr.getCommentCount());
+
+            assertEquals(4L, umgr.getWeblogCount());
+            assertEquals(2L, umgr.getUserCount());
+            
+        } finally {
+            
+            TestUtils.teardownComment(comment1.getId());
+            TestUtils.teardownComment(comment2.getId());
+            TestUtils.teardownComment(comment3.getId());
+            TestUtils.teardownComment(comment4.getId());
+            TestUtils.teardownComment(comment5.getId());
+
+            TestUtils.teardownWeblogEntry(entry1.getId());
+            TestUtils.teardownWeblogEntry(entry2.getId());
+            TestUtils.teardownWeblogEntry(entry3.getId());
+            TestUtils.teardownWeblogEntry(entry4.getId());
+            TestUtils.teardownWeblogEntry(entry5.getId());
+
+            TestUtils.teardownWeblog(blog1.getId());
+            TestUtils.teardownWeblog(blog2.getId());
+            TestUtils.teardownWeblog(blog3.getId());
+
+            TestUtils.teardownUser(user1.getId());            
+        }
+    }
 }
+
+
+

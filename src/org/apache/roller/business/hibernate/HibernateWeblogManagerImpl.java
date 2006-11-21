@@ -1524,4 +1524,71 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
+    /**
+     * Get site-wide comment count 
+     */
+    public long getCommentCount() throws RollerException {
+        long ret = 0;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "select count(distinct c) from CommentData c";
+            List result = session.createQuery(query).list();
+            ret = ((Integer)result.get(0)).intValue();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        return ret;
+    }
+
+    
+    /**
+     * Get weblog comment count 
+     */    
+    public long getCommentCount(WebsiteData website) throws RollerException {
+        long ret = 0;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "select count(distinct c) from CommentData c where c.weblogEntry.website=?";
+            List result = session.createQuery(query).setParameter(0,website).list();
+            ret = ((Integer)result.get(0)).intValue();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        return ret;
+    }
+
+    
+    /**
+     * Get site-wide entry count 
+     */    
+    public long getEntryCount() throws RollerException {
+        long ret = 0;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "select count(distinct e) from WeblogEntryData e where e.status='PUBLISHED'";
+            List result = session.createQuery(query).list();
+            ret = ((Integer)result.get(0)).intValue();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        return ret;
+    }
+
+    
+    /**
+     * Get weblog entry count 
+     */    
+    public long getEntryCount(WebsiteData website) throws RollerException {
+        long ret = 0;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "select count(distinct e) from WeblogEntryData e where e.status='PUBLISHED' and e.website=?";
+            List result = session.createQuery(query).setParameter(0,website).list();
+            ret = ((Integer)result.get(0)).intValue();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        return ret;
+    }
+    
 }
