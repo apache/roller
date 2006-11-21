@@ -938,7 +938,7 @@ ro.buildUser=${user.name}
 	
     &custom-pre-dbtest;
 
-    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="false">
+    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
         <classpath>
             <path refid="tests.run.path"/>
         </classpath>
@@ -948,7 +948,7 @@ ro.buildUser=${user.name}
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
         <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/business/xml" haltonerror="true">
+        <batchtest toDir="${build.reports}/business/xml" haltonerror="${junit.haltonerror}">
             <fileset dir="${build.compile.tests}">
                 
                 <!-- core services.  no reliance on users or weblogs -->
@@ -1115,26 +1115,6 @@ ro.buildUser=${user.name}
             <path refid="tests.run.path"/>
         </classpath>
     </java>
-</target>
-
-<!-- ********************************************************************* -->
-<!-- EXAMPLE targets -->
-<!-- ********************************************************************* -->
-	
-<target name="deploy-tomcat" depends="stage-webapp" >
-    <ant dir="./personal" target="deploy-tomcat" />
-</target>
-<target name="deploy-resin" depends="stage-webapp" >
-    <ant dir="./personal" target="deploy-resin" />
-</target>
-<target name="deploy-isp" depends="stage-webapp" >
-    <ant dir="./personal" target="deploy-isp" />
-</target>
-<target name="clean-isp">
-    <ant dir="./personal" target="clean-isp" />
-</target>
-<target name="official-release" depends="tests,apache-release" > 
-    <ant dir="./personal" target="official-release" />
 </target>
 
 <!-- ********************************************************************* -->
