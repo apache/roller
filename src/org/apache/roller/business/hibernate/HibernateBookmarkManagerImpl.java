@@ -274,6 +274,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             
             Criteria criteria = session.createCriteria(FolderData.class);
+            criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("path", folderPath));
             
             return (FolderData) criteria.uniqueResult();
@@ -300,6 +301,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
                 // query using folder path
                 criteria.createAlias("folder", "fd");
                 criteria.add(Expression.like("fd.path", folder.getPath()+"%"));
+                criteria.add(Expression.eq("fd.website", folder.getWebsite()));
             }
             
             return criteria.list();

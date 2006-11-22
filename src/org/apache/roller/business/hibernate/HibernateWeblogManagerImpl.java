@@ -609,6 +609,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 // query using category path
                 criteria.createAlias("category", "cat");
                 criteria.add(Expression.like("cat.path", cat.getPath()+"%"));
+                criteria.add(Expression.eq("website", cat.getWebsite()));
             }
             
             return criteria.list();
@@ -923,6 +924,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             
             Criteria criteria = session.createCriteria(WeblogCategoryData.class);
             criteria.add(Expression.eq("path", catPath));
+            criteria.add(Expression.eq("website", website));
             
             return (WeblogCategoryData) criteria.uniqueResult();
         }
