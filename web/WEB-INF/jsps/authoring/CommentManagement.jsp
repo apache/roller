@@ -16,6 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.actions.CommentManagementAction" %>
 <%
 CommentManagementAction.CommentManagementPageModel model = 
@@ -37,6 +38,40 @@ function bulkDelete() {
         document.commentQueryForm.method.value = "bulkDelete";
         document.commentQueryForm.submit();
     }
+}
+
+function createRequestObject() {
+    var ro;
+    var browser = navigator.appName;
+    if (browser == "Microsoft Internet Explorer") {
+        ro = new ActiveXObject("Microsoft.XMLHTTP");
+    } else {
+        ro = new XMLHttpRequest();
+    }
+    return ro;
+}
+var http = createRequestObject();
+var init = false;
+var isBusy = false;
+
+function readMoreComment(id) {
+    url = "<%= request.getContextPath() %>" + "/roller-ui/authoring/commentdata?id="; + id;
+    if (isBusy) return;
+    isBusy = true;
+    http.open('get', url);
+    http.onreadystatechange = handleCommentResponse;
+    http.send(null);
+}
+
+function handleCommentResponse() {
+    if (http.readyState == 4) {
+        comment = eval("(" + http.responseText + ")"); 
+        commentDiv = document.getElementById("comment-" + comment.id);
+        commentDiv.textContent = comment.content;
+        linkDiv = document.getElementById("link-" + comment.id);
+        linkDiv.parentNode.removeChild(linkDiv);
+    }
+    isBusy = false;
 }
 -->
 </script>
@@ -370,11 +405,21 @@ function bulkDelete() {
                     <%-- comment content --%>
                     <br />
                     <span class="details">
-                       <pre><str:wordWrap>
-                            <str:truncateNicely upper="3000" appendToEnd="...">
-                                <c:out value="${comment.content}" escapeXml="true" />
-                            </str:truncateNicely>
-                       </str:wordWrap></pre>
+                                                
+                        <c:choose>
+                            <c:when test="${fn:length(comment.content) > 1000}">
+                                <pre><div id="comment-<c:out value="${comment.id}"/>"><str:wordWrap width="72"><str:truncateNicely upper="1000" appendToEnd="..."><c:out value="${comment.content}" escapeXml="true" /></str:truncateNicely></str:wordWrap></div></pre>                                    
+                                <div id="link-<c:out value="${comment.id}"/>">
+                                    <a onclick='readMoreComment("<c:out value="${comment.id}"/>")'>
+                                        <fmt:message key="commentManagement.readmore" />
+                                    </a>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <pre><str:wordWrap><c:out value="${comment.content}" escapeXml="true" /></str:wordWrap></pre>   
+                            </c:otherwise>
+                        </c:choose> 
+                       
                     </span>
                     
                 </td>
