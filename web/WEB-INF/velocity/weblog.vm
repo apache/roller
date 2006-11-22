@@ -45,6 +45,10 @@ These are the documented macros in order defined in this file:
     #showWeblogSearchForm($weblog)
     #showWeblogSearchAgainForm($weblog)
     #showNextPrevSearchControl($pager)
+
+    #_showCommonJavaScript()
+    
+    #showEntryTags($entry)
 *#
 
 
@@ -784,6 +788,19 @@ Include Javascript code needed for expanding folder macros (undocumented).
             }
         }
     }
+    function createXMLHttpRequestObject() {
+        var ro;
+        var browser = navigator.appName;
+        if (browser == "Microsoft Internet Explorer") {
+            ro = new ActiveXObject("Microsoft.XMLHTTP");
+        } else {
+            ro = new XMLHttpRequest();
+        }
+        return ro;
+    }
+    var http = createXMLHttpRequestObject();
+    var init = false;
+    var isBusy = false;
     </script>
     #set($zzz__incudedCommonJavaScript__zzz = true)
 #end
@@ -803,6 +820,32 @@ Include Javascript code needed for expanding folder macros (undocumented).
 #end
 
 
-
+#**
+Show current hit count for blog
+*#
+#macro(showHitCount $weblog)<div id="hitcount-$weblog.handle">$weblog.todaysHits</div>
+    #_showCommonJavascript()
+    <script type="text/javascript">
+    <!--
+    function updateHitCount(weblogHandle) {
+        url = "$url.absoluteSite" + "/roller-services/json/hitcountdata?weblog=" + weblogHandle;
+        if (isBusy) return;
+        isBusy = true;
+        http.open('get', url);
+        http.onreadystatechange = updateHitCountResponse;
+        http.send(null);
+    }
+    function updateHitCountResponse() {
+        if (http.readyState == 4) {
+            hitcount = eval("(" + http.responseText + ")"); 
+            hitCountDiv = document.getElementById("hitcount-" + hitcount.handle);
+            hitCountDiv.textContent = hitcount.count;
+        }
+        isBusy = false;
+    }
+    updateHitCount("$weblog.handle");
+    -->
+    </script>
+#end
 
 
