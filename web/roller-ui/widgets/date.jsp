@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ include file="/taglibs.jsp" %><% {
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %><% {
 String prefix = org.apache.roller.ui.core.tags.DateTag.KEY_PREFIX;
 String formName = request.getAttribute(prefix+"_formName").toString(); 
 String dateField = request.getAttribute(prefix+"_property").toString(); 

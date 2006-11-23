@@ -18,7 +18,7 @@
 
 <%-- Body of the login page, invoked from login.jsp --%>
 
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 <h1><fmt:message key="loginPage.title" /></h1>
 

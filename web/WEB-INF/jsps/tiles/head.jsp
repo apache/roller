@@ -2,7 +2,7 @@
 This default stuff goes in the HTML head element of each page
 You can override it with your own file via WEB-INF/tiles-def.xml
 --%>
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 <link rel="stylesheet" type="text/css" media="all" 
     href='<c:url value="/roller-ui/styles/layout.css"/>'>

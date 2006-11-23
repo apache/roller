@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 <%@ page import="java.io.*,org.apache.roller.util.Utilities" isErrorPage="true" %>
 

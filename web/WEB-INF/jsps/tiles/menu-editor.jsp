@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 <roller:Menu model="editor-menu.xml" view="templates/menu/menu-tabbed.vm" />
 

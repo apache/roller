@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <%
 BasePageModel pageModel = (BasePageModel)request.getAttribute("model");
 String websiteHandle = pageModel.getWebsite().getHandle();
