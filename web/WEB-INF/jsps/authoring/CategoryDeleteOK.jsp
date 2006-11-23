@@ -17,7 +17,7 @@
 -->
 <% 
 try { 
-%><%@ include file="/taglibs.jsp" %>
+%><%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 <script type="text/javascript">
 <!-- 

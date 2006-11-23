@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <!-- spellcheck-entry.jsp -->
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <%@ page import="org.apache.roller.model.RollerSpellCheck,com.swabunga.spell.event.SpellCheckEvent" %>
 <%@ page import="org.apache.commons.lang.StringUtils,java.util.*" %>
 

@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 <%-- Start by parsing our config defs using the jstl xml toolkit --%>
 <%-- Then we'll progress through the config defs and print out the form --%>

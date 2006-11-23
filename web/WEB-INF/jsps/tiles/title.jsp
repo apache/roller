@@ -15,6 +15,6 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <h1><c:out value="${siteTitle}" /></h1>
 <p class="subtitle"><c:out value="${siteDescription}" /></p>

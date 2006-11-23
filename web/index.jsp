@@ -34,7 +34,7 @@ if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
 // otherwise, show the "Here's how to finish your Roller install page"
 
 %><% response.setContentType("text/html; charset=UTF-8"); %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <tiles:insert page="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
    <tiles:put name="banner"       value="/WEB-INF/jsps/tiles/banner.jsp" />
    <tiles:put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />

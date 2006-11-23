@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ include file="/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <%@ page import="org.apache.struts.util.RequestUtils" %>
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.ResourceBundle" %>
