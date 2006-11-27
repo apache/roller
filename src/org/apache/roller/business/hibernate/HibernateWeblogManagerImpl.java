@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,7 +51,6 @@ import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.Utilities;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -62,6 +60,11 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.DerbyDialect;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.SQLServerDialect;
+import org.hibernate.engine.SessionFactoryImplementor;
 
 
 /**
@@ -920,8 +923,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             }
             
             // now just do simple lookup by path
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();            
             Criteria criteria = session.createCriteria(WeblogCategoryData.class);
             criteria.add(Expression.eq("path", catPath));
             criteria.add(Expression.eq("website", website));
@@ -1041,11 +1043,11 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         return map;
     }
     
-    public List getMostCommentedWeblogEntries(
+    public List getMostCommentedWeblogEntries( 
             WebsiteData website, Date startDate, Date endDate, int offset, int length) 
             throws RollerException {
         // TODO: ATLAS getMostCommentedWeblogEntries DONE
-        String msg = "Getting most commented weblog entres";
+        String msg = "Getting most commented weblog entries";
         if (endDate == null) endDate = new Date();
         try {      
             Session session = 
@@ -1053,12 +1055,13 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Query query = null;
             if (website != null) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title from CommentData c ");
+                sb.append("select count(distinct c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("from CommentData c ");
                 sb.append("where c.weblogEntry.website=:website and c.weblogEntry.pubTime < :endDate ");
                 if (startDate != null) {
                     sb.append("and c.weblogEntry.pubTime > :startDate ");
                 }                   
-                sb.append("group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("group by c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title ");
                 sb.append("order by col_0_0_ desc");
                 query = session.createQuery(sb.toString());
                 query.setParameter("website", website);
@@ -1068,17 +1071,19 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 }   
             } else {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
-                sb.append("from CommentData c group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("select count(distinct c),   c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("from CommentData c ");
                 sb.append("where c.weblogEntry.pubTime < :endDate ");
                 if (startDate != null) {
                     sb.append("and c.weblogEntry.pubTime > :startDate ");
                 } 
-                sb.append("order by col_0_0_ desc");
+                sb.append("group by c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("order by col_0_0_ desc ");
                 query = session.createQuery(sb.toString());
+                query.setParameter("endDate", endDate);
                 if (startDate != null) {
                     query.setParameter("startDate", startDate);
-                }   
+                } 
             }
             if (offset != 0) {
                 query.setFirstResult(offset);
@@ -1089,12 +1094,14 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             List results = new ArrayList();
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();
-                results.add(new StatCount(
-                    (String)row[1], 
-                    (String)row[2], 
-                    (String)row[3], 
-                    "statCount.weblogEntryCommentCountType", 
-                    new Long(((Integer)row[0]).intValue()).longValue()));
+                StatCount statCount = new StatCount(
+                    (String)row[1],                             // entry id
+                    (String)row[2],                             // entry anchor
+                    (String)row[3],                             // entry title
+                    "statCount.weblogEntryCommentCountType",    // stat desc
+                    new Long(((Integer)row[0]).intValue()).longValue()); // count
+                
+                results.add(statCount);
             }
             return results;
         } catch (Throwable pe) {

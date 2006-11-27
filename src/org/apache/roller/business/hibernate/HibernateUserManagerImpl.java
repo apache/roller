@@ -915,7 +915,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (startDate != null) {
                 sb.append("and c.weblogEntry.pubTime > :startDate ");
             }  
-            sb.append("group by c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description order by col_0_0_ desc");
+            sb.append("group by c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name order by col_0_0_ desc");
             Query query = session.createQuery(sb.toString());
             query.setParameter("endDate", endDate);
             if (startDate != null) {
@@ -930,12 +930,14 @@ public class HibernateUserManagerImpl implements UserManager {
             List results = new ArrayList();
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();
-                results.add(new StatCount(
-                    (String)row[1], 
-                    (String)row[2], 
-                    (String)row[3], 
-                    "statCount.weblogCommentCountType", 
-                    new Long(((Integer)row[0]).intValue()).longValue()));
+                StatCount statCount = new StatCount(
+                    (String)row[1],                     // website id
+                    (String)row[2],                     // website handle
+                    (String)row[3],                     // website name
+                    "statCount.weblogCommentCountType", // stat type 
+                    new Long(((Integer)row[0]).intValue()).longValue()); // # comments
+                statCount.setWeblogHandle((String)row[2]);
+                results.add(statCount);
             }
             return results;
         } catch (Throwable pe) {
