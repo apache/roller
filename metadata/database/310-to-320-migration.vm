@@ -9,12 +9,20 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 create index ws_parentid_idx on weblogcategory( parentid );
 
 -- add new path column to weblogcategory table
-#addColumnNull("weblogcategory" "path" $TEXT_SQL_TYPE)
-create index ws_path_idx on weblogcategory( path(255) );
+#if($DBTYPE == "MYSQL")
+    #addColumnNull("weblogcategory" "path" $TEXT_SQL_TYPE)
+#else
+    #addColumnNull("weblogcategory" "path" "varchar(1000)")
+#end
+create index ws_path_idx on weblogcategory( path!INDEXSIZE );
 
 -- need to add this index for existing folder.parentid
 create index fo_parentid_idx on folder( parentid );
 
 -- add new path column to folder table
-#addColumnNull("folder" "path" $TEXT_SQL_TYPE)
-create index fo_path_idx on folder( path(255) );
+#if($DBTYPE == "MYSQL")
+    #addColumnNull("folder" "path" $TEXT_SQL_TYPE)
+#else
+    #addColumnNull("folder" "path" "varchar(1000)")
+#end
+create index fo_path_idx on folder( path!INDEXSIZE );

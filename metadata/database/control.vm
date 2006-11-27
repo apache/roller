@@ -60,6 +60,10 @@ Special macro to drop NOT NULL requirement from an 'id' column.
 #end
 #end
 
+#**
+Macro to account for lack of comparable long varchar in MySQL
+**#
+#macro(longtext $size) #if($DBTYPE == "MYSQL") text #else varchar($size) #end #end
 
 #** Loop through templates, generate database scripts **#
 #foreach ($template in $templates) 
@@ -67,7 +71,3 @@ Special macro to drop NOT NULL requirement from an 'id' column.
     #set($out = "${template}.sql")
     $generator.parse($in, $out) 
 #end
-
-
-
-
