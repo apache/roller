@@ -820,32 +820,5 @@ Include Javascript code needed for expanding folder macros (undocumented).
 #end
 
 
-#**
-Show current hit count for blog
-*#
-#macro(showHitCount $weblog)<div id="hitcount-$weblog.handle">$weblog.todaysHits</div>
-    #_showCommonJavascript()
-    <script type="text/javascript">
-    <!--
-    function updateHitCount(weblogHandle) {
-        url = "$url.absoluteSite" + "/roller-services/json/hitcountdata?weblog=" + weblogHandle;
-        if (isBusy) return;
-        isBusy = true;
-        http.open('get', url);
-        http.onreadystatechange = updateHitCountResponse;
-        http.send(null);
-    }
-    function updateHitCountResponse() {
-        if (http.readyState == 4) {
-            hitcount = eval("(" + http.responseText + ")"); 
-            hitCountDiv = document.getElementById("hitcount-" + hitcount.handle);
-            hitCountDiv.textContent = hitcount.count;
-        }
-        isBusy = false;
-    }
-    updateHitCount("$weblog.handle");
-    -->
-    </script>
-#end
 
 
