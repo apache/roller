@@ -51,9 +51,9 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.StatCount;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
+import org.hibernate.dialect.DerbyDialect;
 
 
 /**
@@ -103,7 +103,10 @@ public class HibernateRefererManagerImpl implements RefererManager {
             String reset = "update RefererData set dayHits=0";
             session.createQuery(reset).executeUpdate();
             String delete = null;
-            if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
+            // Some databases can't handle comparing CLOBs, use like as a workaround
+            if (   currentDialect instanceof SQLServerDialect 
+                || currentDialect instanceof OracleDialect 
+                || currentDialect instanceof DerbyDialect) {
                 delete = "delete RefererData where excerpt is null or excerpt like ''";
             } else {
                 delete = "delete RefererData where excerpt is null or excerpt=''";
@@ -162,10 +165,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 //log.debug("including ignore word - "+ignoreWord);
                 or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             }
-            criteria.add(Expression.conjunction()
-            .add(Expression.disjunction().add(Expression.isNull("excerpt")).add(Expression.eq("excerpt", "")))
-            .add(or)
-            );
+            criteria.add(or);
             
             log.debug("removing spam referers - "+criteria.list().size());
             
@@ -200,11 +200,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 String ignoreWord = blacklist[i].trim();
                 or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             }
-            criteria.add(Expression.conjunction()
-            .add(Expression.disjunction().add(Expression.isNull("excerpt")).add(Expression.eq("excerpt", "")))
-            .add(Expression.eq("website",website))
-            .add(or)
-            );
+            criteria.add(Expression.eq("website",website)).add(or);
             
             Iterator referer = criteria.list().iterator();
             while (referer.hasNext()) {
@@ -214,7 +210,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-    }    
+    }   
     
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
@@ -291,16 +287,18 @@ public class HibernateRefererManagerImpl implements RefererManager {
             Iterator rawResults = query.list().iterator();
             for (Iterator it = query.list().iterator(); it.hasNext();) {
                 Object[] row = (Object[])it.next();
-                Integer hits = (Integer)row[0];
-                String websiteId = (String)row[1];
-                String websiteName = (String)row[2];
+                Integer hits =        (Integer)row[0];
+                String websiteId =     (String)row[1];
+                String websiteName =   (String)row[2];
                 String websiteHandle = (String)row[3];
-                result.add(new StatCount(
+                StatCount statCount = new StatCount(
                     websiteId,
                     websiteHandle,
                     websiteName,
                     "statCount.weblogDayHits",
-                    hits.longValue()));              
+                    hits.longValue());
+                statCount.setWeblogHandle(websiteHandle);
+                result.add(statCount);
             }
             return result;
             
