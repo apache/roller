@@ -404,13 +404,14 @@ public class SiteModel implements Model {
             Iterator hitCounts = hotBlogs.iterator();
             while (hitCounts.hasNext()) {
                 HitCountData hitCount = (HitCountData) hitCounts.next();
-                
-                results.add(new StatCount(
+                StatCount statCount = new StatCount(
                     hitCount.getWeblog().getId(),
                     hitCount.getWeblog().getHandle(),
                     hitCount.getWeblog().getName(),
                     "statCount.weblogDayHits",
-                    hitCount.getDailyHits()));              
+                    hitCount.getDailyHits());
+                statCount.setWeblogHandle(hitCount.getWeblog().getHandle());
+                results.add(statCount);              
             }
             
         } catch (Exception e) {

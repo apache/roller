@@ -63,12 +63,15 @@ public class WeblogStatsTest extends TestCase {
         StatCount s1 = (StatCount)list.get(0);
         assertEquals(website1.getId(), s1.getSubjectId());
         assertEquals(3L, s1.getCount());   
+        assertEquals(website1.getHandle(), s1.getSubjectNameShort());
+        assertEquals(website1.getHandle(), s1.getWeblogHandle());
         
         StatCount s2 = (StatCount)list.get(1);
         assertEquals(website2.getId(), s2.getSubjectId());
         assertEquals(1L, s2.getCount());   
     }
-    public void testGetMostCommentedWeblogEntries() throws Exception {        
+    public void testGetMostCommentedWeblogEntries() throws Exception {
+        
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();      
         List list = mgr.getMostCommentedWeblogEntries(null, null, null, 0, -1);
         
@@ -78,7 +81,9 @@ public class WeblogStatsTest extends TestCase {
         StatCount s1 = (StatCount)list.get(0);
         assertEquals(2L, s1.getCount()); 
         assertEquals(entry11.getId(), s1.getSubjectId());
-        
+        assertEquals(entry11.getAnchor(), s1.getSubjectNameShort());
+        assertEquals(entry11.getWebsite().getHandle(), s1.getWeblogHandle());
+               
         StatCount s2 = (StatCount)list.get(1);
         assertEquals(1L, s2.getCount());   
     }
