@@ -198,7 +198,9 @@ in the "base.path" definition.
     <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
     <pathelement location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
-    <pathelement location="${ro.tools}/buildtime/hsqldb.jar"/>
+    <pathelement location="${ro.tools}/buildtime/derby.jar"/>
+    <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
+    <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
 
     <!-- plus normal jars -->
     <path refid="business.path"/>

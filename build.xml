@@ -893,10 +893,10 @@ ro.buildUser=${user.name}
     </copy>
     
     <!-- register Ant tasks that were just built -->
-    <taskdef name="startdb" classname="org.apache.roller.ant.StartHsqldbTask" 
-        classpath="${ro.tools}/buildtime/hsqldb.jar;${build.compile.tests}" />
-    <taskdef name="stopdb" classname="org.apache.roller.ant.StopHsqldbTask" 
-        classpath="${ro.tools}/buildtime/hsqldb.jar;${build.compile.tests}" />
+    <taskdef name="startdb" classname="org.apache.roller.ant.StartDerbyTask" 
+        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
+    <taskdef name="stopdb" classname="org.apache.roller.ant.StopDerbyTask" 
+        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
     
     <!-- 
     Copy web config files to ${build.tests} to make them available for testing.
@@ -1168,22 +1168,23 @@ Use -Dverbose=1 to get verbose output.
 <target name="init-db" description=
     "Initializes built-in database by running drop table and create table">
     &custom-post-dbtest;
-    <sql driver="org.hsqldb.jdbcDriver"
-         url="jdbc:hsqldb:hsql://localhost:3219"
-         userid="sa" password=""
+    <sql driver="org.apache.derby.jdbc.ClientDriver"
+         url="jdbc:derby://localhost:3219/roller;create=true"
+         userid="app" password="app"
          src="${build.webapp}/WEB-INF/dbscripts/droptables.sql" onerror="continue"
-         classpath="${ro.tools}/buildtime/hsqldb.jar" />    
-    <sql driver="org.hsqldb.jdbcDriver"
-         url="jdbc:hsqldb:hsql://localhost:3219"
-         userid="sa" password=""
-         src="${build.webapp}/WEB-INF/dbscripts/hsqldb/createdb.sql"
-         classpath="${ro.tools}/buildtime/hsqldb.jar" />    
+         classpath="${ro.tools}/buildtime/derbyclient.jar" />    
+    <sql driver="org.apache.derby.jdbc.ClientDriver" onerror="continue"
+         url="jdbc:derby://localhost:3219/roller"
+         userid="app" password="app"
+         src="${build.webapp}/WEB-INF/dbscripts/derby/createdb.sql"
+         classpath="${ro.tools}/buildtime/derbyclient.jar" /> 
     &custom-pre-dbtest;
 </target>
 
 <target name="start-db" description="Starts built-in database">  
-    <startdb database="${build.tests}/testdb" port="3219" />
+    <startdb database="${build.tests}/derby-system/roller" port="3219" />
     <!-- 
+    <delete dir="${build.tests}/derby-system/roller" />
     Not sure we need that custom 'startdb' task if this plain old Ant works:
     <java classname="org.hsqldb.Server"  
         fork="yes" spawn="true" classpath="./tools/buildtime/hsqldb.jar">
@@ -1192,12 +1193,13 @@ Use -Dverbose=1 to get verbose output.
         <arg value="-port"/>
         <arg value="3219"/>
     </java>
-    -->
+    -->    
 </target>
         
 <target name="stop-db" description="Drop tables and stops the built-in database">   
     <stopdb port="3219"/>
     <!--
+    <delete dir="${build.tests}/derby-system/roller" />
     This below code does the same thing as 'stopdb' but the 'sql' task throws 
     an exception when HSQLDB disconnects and that causes a build failure, so 
     for now I'm keeping the custom 'startdb' and 'stopdb' Ant tasks.
