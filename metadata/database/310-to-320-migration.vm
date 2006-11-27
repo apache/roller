@@ -14,7 +14,7 @@ create index ws_parentid_idx on weblogcategory( parentid );
 #else
     #addColumnNull("weblogcategory" "path" "varchar(1000)")
 #end
-create index ws_path_idx on weblogcategory( path!INDEXSIZE );
+create index ws_path_idx on weblogcategory( path$!INDEXSIZE );
 
 -- need to add this index for existing folder.parentid
 create index fo_parentid_idx on folder( parentid );
@@ -25,4 +25,4 @@ create index fo_parentid_idx on folder( parentid );
 #else
     #addColumnNull("folder" "path" "varchar(1000)")
 #end
-create index fo_path_idx on folder( path!INDEXSIZE );
+create index fo_path_idx on folder( path$!INDEXSIZE );
