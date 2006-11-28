@@ -44,8 +44,8 @@
         <include name="jdbc2_0-stdext.jar"/>
                 
         <!-- needed for ROME -->
-        <include name="rome-0.9-dev.jar"/>
-        <include name="rome-fetcher-0.9-dev.jar"/>        
+        <include name="rome-0.9.jar"/>
+        <include name="rome-fetcher-0.9.jar"/>        
         <include name="jdom.jar"/> 
         
         <!-- Needed for Velocity -->
