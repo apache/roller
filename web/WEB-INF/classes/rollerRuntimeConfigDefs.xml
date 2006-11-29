@@ -175,11 +175,11 @@
       </property-def>
       <property-def  name="uploads.types.allowed"  key="configForm.allowedExtensions">
          <type>string</type>
-         <default-value>jpg,jpeg,gif,png</default-value>
+         <default-value></default-value>
       </property-def>
       <property-def  name="uploads.types.forbid"  key="configForm.forbiddenExtensions">
          <type>string</type>
-         <default-value></default-value>
+         <default-value>exe</default-value>
       </property-def>
       <property-def  name="uploads.file.maxsize"  key="configForm.maxFileSize">
          <type>string</type>
