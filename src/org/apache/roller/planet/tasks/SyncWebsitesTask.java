@@ -165,15 +165,28 @@ public class SyncWebsitesTask extends RollerTask {
             }
             
             // new subs added, existing subs updated, now delete old subs
+            List deleteSubs = new ArrayList();
             Iterator subs = group.getSubscriptions().iterator();
             while(subs.hasNext()) {
                 PlanetSubscriptionData sub =
                         (PlanetSubscriptionData) subs.next();
                 if (!liveUserFeeds.contains(sub.getFeedURL())) {
-                    log.info("DELETING feed: "+sub.getFeedURL());
-                    planet.deleteSubscription(sub);
-                    group.getSubscriptions().remove(sub);
+                    deleteSubs.add(sub);
                 }
+            }
+            
+            // now go back through deleteSubs and do actual delete
+            // this is required because deleting a sub in the loop above
+            // causes a ConcurrentModificationException because we can't
+            // modify a collection while we iterate over it
+            Iterator deletes = deleteSubs.iterator();
+            while(deletes.hasNext()) {
+                PlanetSubscriptionData sub =
+                        (PlanetSubscriptionData) deletes.next();
+                
+                log.info("DELETING feed: "+sub.getFeedURL());
+                planet.deleteSubscription(sub);
+                group.getSubscriptions().remove(sub);
             }
             
             // all done, lets save
