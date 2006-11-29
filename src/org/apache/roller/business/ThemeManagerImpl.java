@@ -20,7 +20,6 @@ package org.apache.roller.business;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -34,14 +33,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.business.FileIOException;
-import org.apache.roller.business.FileManager;
-import org.apache.roller.business.FilePathException;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.ThemeManager;
-import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogTemplate;
@@ -145,8 +137,7 @@ public class ThemeManagerImpl implements ThemeManager {
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
-            Collection templates = theme.getTemplates();
-            Iterator iter = templates.iterator();
+            Iterator iter = theme.getTemplates().iterator();
             ThemeTemplate theme_template = null;
             while ( iter.hasNext() ) {
                 theme_template = (ThemeTemplate) iter.next();
@@ -189,25 +180,22 @@ public class ThemeManagerImpl implements ThemeManager {
                     userMgr.savePage( template );
                     
                     // we just created and saved the default page for the first
-                    // time then we need to set website.defaultpageid
+                    // time so we need to set website.defaultpageid
                     if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
                         website.setDefaultPageId(template.getId());
-                        
-                        // update this website's theme to custom
-                        website.setEditorTheme(Theme.CUSTOM);
-                        
-                        // save our updated website
-                        userMgr.saveWebsite(website);
                     }
                 }
             }
+            
+            // always update this weblog's theme to custom and then save
+            website.setEditorTheme(Theme.CUSTOM);
+            userMgr.saveWebsite(website);
             
             
             // now lets import all the theme resources
             FileManager fileMgr = RollerFactory.getRoller().getFileManager();
             
-            List resources = theme.getResources();
-            Iterator iterat = resources.iterator();
+            Iterator iterat = theme.getResources().iterator();
             File resourceFile = null;
             while ( iterat.hasNext() ) {
                 resourceFile = (File) iterat.next();
@@ -235,7 +223,7 @@ public class ThemeManagerImpl implements ThemeManager {
             }
             
         } catch (Exception e) {
-            log.error("ERROR in action",e);
+            log.error("ERROR importing theme", e);
             throw new RollerException( e );
         }
     }
