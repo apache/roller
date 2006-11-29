@@ -47,8 +47,8 @@ import org.apache.roller.util.cache.CacheManager;
  * @struts.action path="/roller-ui/authoring/bookmarkSave" name="bookmarkFormEx"
  *    validate="true" input="/roller-ui/authoring/bookmarkEdit.do"
  * @struts.action-forward name="Bookmarks" path="/roller-ui/authoring/bookmarks.do?method=selectFolder"
- * @struts.action-forward name="BookmarkForm" path=".BookmarkForm"
- * 
+ * @struts.action-forward name="BookmarkEdit" path="/roller-ui/authoring/bookmarkEdit.do"
+ *
  * @author Dave Johnson
  */
 public class BookmarkSaveAction extends Action
@@ -82,7 +82,7 @@ public class BookmarkSaveAction extends Action
         ActionErrors errors = validateBookmark(null, form);
         if (errors.size() > 0) {
             saveErrors(request, errors);
-            return mapping.findForward("BookmarkForm");
+            return mapping.findForward("BookmarkEdit");
         }
 
         RollerSession rses = RollerSession.getRollerSession(request);
