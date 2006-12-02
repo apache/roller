@@ -87,7 +87,6 @@ public class WeblogCalendarModel implements CalendarModel {
     
     
     protected void initDay(Date month) {
-        this.day = day;
         calendar = Calendar.getInstance(
                 weblog.getTimeZoneInstance(),
                 weblog.getLocaleInstance());
@@ -192,6 +191,13 @@ public class WeblogCalendarModel implements CalendarModel {
         nextCal.add( Calendar.MONTH, 1 );
         return getFirstDayOfMonth(nextCal).getTime();
     }
+
+    public Date getPrevMonth() {
+        Calendar prevCal = getCalendar();
+        prevCal.setTime( day );
+        prevCal.add( Calendar.MONTH, -1 );
+        return getFirstDayOfMonth(prevCal).getTime();
+    }
     
     protected Calendar getFirstDayOfMonth(Calendar cal) {
         int firstDay = cal.getActualMinimum(Calendar.DAY_OF_MONTH);
@@ -215,7 +221,14 @@ public class WeblogCalendarModel implements CalendarModel {
         // and strip off last two digits to get a month URL
         return nextMonth;
     }
-    
+
+    public Date getInitialMonth() {
+        Calendar cal = getCalendar();
+        // if there is no dateCreated value, default to beginning of epoch.
+        cal.setTime(weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0));
+        return getFirstDayOfMonth(cal).getTime();
+    }
+
     public String computePrevMonthUrl() {
         // Create yyyyMMdd dates for prev month, prev month and today
         Calendar prevCal = getCalendar();

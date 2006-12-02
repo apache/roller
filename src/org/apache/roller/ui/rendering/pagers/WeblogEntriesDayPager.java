@@ -94,6 +94,10 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         prevDay = cal.getTime();
+        Date weblogInitialDate = weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0);
+        if (DateUtil.getEndOfDay(prevDay,cal).before(weblogInitialDate)) {
+            prevDay = null;
+        }
     }
     
     
