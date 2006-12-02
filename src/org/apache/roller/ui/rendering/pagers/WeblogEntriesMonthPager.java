@@ -29,9 +29,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -88,6 +86,11 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         cal.setTime(month);
         cal.add(Calendar.MONTH, -1);
         prevMonth = cal.getTime();
+        Date endOfPrevMonth = DateUtil.getEndOfMonth(prevMonth,cal) ;
+        Date weblogInitialDate = weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0);
+        if (endOfPrevMonth.before(weblogInitialDate)) {
+            prevMonth = null;
+        }
     }
     
     
@@ -97,14 +100,12 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         cal.setTime(date);
         cal.add(Calendar.DATE, 1);
         date = cal.getTime();
-        Date startDate = DateUtil.getStartOfMonth(date, cal);;
-        Date endDate = DateUtil.getEndOfMonth(date, cal);;
+        Date startDate = DateUtil.getStartOfMonth(date, cal);
+        Date endDate = DateUtil.getEndOfMonth(date, cal);
         
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
-                Roller roller = RollerFactory.getRoller();
-                WeblogManager wmgr = roller.getWeblogManager();
                 Map mmap = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                         weblog,
                         startDate,

@@ -32,12 +32,20 @@ public interface CalendarModel {
     public Date getDay();
     
     public Date getNextMonth();
+
+    public Date getPrevMonth();
     
     public String computePrevMonthUrl();
     
     public String computeTodayMonthUrl();
     
     public String computeNextMonthUrl();
+
+    /**
+     * Get the earliest month in which there could possibly be data.  For a weblog this
+     * is the beginning of the month containing the creation date.
+     */
+    public Date getInitialMonth();
     
     /**
      * Create URL for use on edit-weblog page, preserves the request
