@@ -402,6 +402,7 @@ create table roller_hitcounts (
     dailyhits	    integer
 );
 create index rhc_websiteid_idx on roller_hitcounts( websiteid );
+create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
 
 -- Entry attribute: metadata for weblog entries
 create table entryattribute (

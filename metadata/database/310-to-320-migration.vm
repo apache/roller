@@ -26,3 +26,7 @@ create index fo_parentid_idx on folder( parentid );
     #addColumnNull("folder" "path" "varchar(1000)")
 #end
 create index fo_path_idx on folder( path$!INDEXSIZE );
+
+
+-- some various indexes to improve performance
+create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
