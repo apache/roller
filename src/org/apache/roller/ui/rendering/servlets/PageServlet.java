@@ -164,10 +164,10 @@ public class PageServlet extends HttpServlet {
         
         
         // determine the lastModified date for this content
-        long lastModified = 0;
+        long lastModified = System.currentTimeMillis();
         if(isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
-        } else {
+        } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().getTime();
         }
 
