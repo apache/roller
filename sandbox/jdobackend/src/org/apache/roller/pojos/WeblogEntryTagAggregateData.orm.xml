@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.pojos</package>
+    <entity metadata-complete="true" name="WeblogEntryTagAggregateData"
+            class="org.apache.roller.pojos.WeblogEntryTagAggregateData">
+        <table name="weblogentrytagaggregate"/>
+        <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite&amp;StartDate">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 AND w.lastUsed &gt;= ?2</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&amp;StartDate">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL AND w.lastUsed &gt;= ?2</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite&amp;NameStartsWith">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 AND w.name LIKE ?2</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNull&amp;NameStartsWith">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL AND w.name LIKE ?2</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNull">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite&amp;NameStartsWithOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 AND w.name LIKE ?2 ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNull&amp;NameStartsWithOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL AND w.name LIKE ?2 ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNullOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregateData.removeByTotalLessEqual">
+            <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.total &lt;= ?1</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="lastUsed">
+                <column name="lastused" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="total">
+                <column name="total" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="weblog" target-entity="org.apache.roller.pojos.WebsiteData">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

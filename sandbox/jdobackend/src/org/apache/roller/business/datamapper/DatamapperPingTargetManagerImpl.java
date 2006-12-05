@@ -18,19 +18,20 @@
  */
 package org.apache.roller.business.datamapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.pojos.AutoPingData;
+import org.apache.roller.pojos.PingQueueEntryData;
+import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.WebsiteData;
+
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingQueueEntryData;
-import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WebsiteData;
 
 /*
  * DatamapperPingTargetManagerImpl.java
@@ -40,16 +41,31 @@ import org.apache.roller.pojos.WebsiteData;
  */
 public class DatamapperPingTargetManagerImpl implements PingTargetManager {
     
+    /** The logger instance for this class. */
+    private static Log log = LogFactory.getLog(DatamapperPingTargetManagerImpl.class);
+
     private DatamapperPersistenceStrategy strategy;
     
-    /** The logger instance for this class. */
-    private static Log logger = LogFactory
-            .getFactory().getInstance(DatamapperPingTargetManagerImpl.class);
-
-    /** Creates a new instance of DatamapperPropertiesManagerImpl */
-    public DatamapperPingTargetManagerImpl
-            (DatamapperPersistenceStrategy strategy) {
+    public DatamapperPingTargetManagerImpl(DatamapperPersistenceStrategy strategy) {
         this.strategy = strategy;
+    }
+
+    public void removePingTarget(PingTargetData pingTarget)
+            throws RollerException {
+        // remove queued ping entries that refer to this ping target
+        strategy.newRemoveQuery(PingQueueEntryData.class, "PingQueueEntryData.removeByPingTarget")
+            .removeAll(pingTarget);
+        // remove autopings that refer to this ping target
+        strategy.newRemoveQuery(AutoPingData.class, "PingTargetData.removeByPingTarget")
+            .removeAll(pingTarget);
+        // remove ping target
+        strategy.remove(pingTarget);
+    }
+
+    public void removeAllCustomPingTargets()
+            throws RollerException {
+        strategy.newRemoveQuery(PingTargetData.class, "PingTargetData.removeByWebsiteNotNull")
+            .removeAll();
     }
 
     public void savePingTarget(PingTargetData pingTarget)
@@ -57,54 +73,23 @@ public class DatamapperPingTargetManagerImpl implements PingTargetManager {
         strategy.store(pingTarget);
     }
 
-    public void removePingTarget(PingTargetData pingTarget)
-            throws RollerException {
-        // remove queued ping entries that refer to this ping target
-        strategy.newRemoveQuery(PingQueueEntryData.class, "getByPingTarget")
-            .removeAll(pingTarget);
-        // remove autopings that refer to this ping target
-        strategy.newRemoveQuery(AutoPingData.class, "getByPingTarget")
-            .removeAll(pingTarget);
-    }
-
-    public void removeAllCustomPingTargets()
-            throws RollerException {
-        strategy.newRemoveQuery(PingTargetData.class, "getByWebsiteNotNull")
-            .removeAll();
-    }
-
     public PingTargetData getPingTarget(String id)
             throws RollerException {
         return (PingTargetData)strategy.load(PingTargetData.class, id);
-    }
-
-    public List getCommonPingTargets()
-            throws RollerException {
-        return (List)strategy.newQuery(PingTargetData.class,
-                "getByWebsiteNull.orderByName")
-            .execute();
-    }
-
-    public List getCustomPingTargets(WebsiteData website)
-            throws RollerException {
-        return (List)strategy.newQuery(PingTargetData.class,
-                "getByWebsite.orderByName")
-            .execute(website);
     }
 
     public boolean isNameUnique(PingTargetData pingTarget)
             throws RollerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
-        int count = ((Integer)
+        List results = (List)
             strategy.newQuery(PingTargetData.class,
-                    "countByWebsite&&NameEqual&&IdNotEqual")
+                    "PingTargetData.getByWebsite&Name&IdNotEqual")
                 .execute(new Object[]{
                     pingTarget.getWebsite(), 
                     name,
-                    pingTarget.getId()}))
-            .intValue();
-        return (count != 0);
+                    pingTarget.getId()});
+        return (results.size() != 0);
     }
 
     public boolean isUrlWellFormed(PingTargetData pingTarget)
@@ -139,7 +124,20 @@ public class DatamapperPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
-    public void release() {
+    public List getCommonPingTargets()
+            throws RollerException {
+        return (List)strategy.newQuery(PingTargetData.class,
+                "PingTargetData.getByWebsiteNullOrderByName")
+            .execute();
     }
+
+    public List getCustomPingTargets(WebsiteData website)
+            throws RollerException {
+        return (List)strategy.newQuery(PingTargetData.class,
+                "PingTargetData.getByWebsiteOrderByName")
+            .execute(website);
+    }
+
+    public void release() {}
     
 }

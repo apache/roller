@@ -18,12 +18,15 @@
  */
 package org.apache.roller.business.datamapper;
 
-import java.sql.Timestamp;
-import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.PingQueueManager;
+import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingQueueEntryData;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 /*
  * DatamapperPingQueueManagerImpl.java
@@ -33,24 +36,40 @@ import org.apache.roller.pojos.PingQueueEntryData;
  */
 public class DatamapperPingQueueManagerImpl implements PingQueueManager {
 
+    private static Log log = LogFactory.getLog(DatamapperPlanetManagerImpl.class);
+
     /** The strategy for this manager. */
     private DatamapperPersistenceStrategy strategy;
 
     /** Creates a new instance of DatamapperPingQueueManagerImpl */
-    public DatamapperPingQueueManagerImpl
-            (DatamapperPersistenceStrategy strategy) {
+    public DatamapperPingQueueManagerImpl(DatamapperPersistenceStrategy strategy) {
         this.strategy =  strategy;
+    }
+
+    public PingQueueEntryData getQueueEntry(String id) 
+            throws RollerException {
+        return (PingQueueEntryData)strategy.load(PingQueueEntryData.class, id);
+    }
+
+    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+        log.debug("Storing ping queue entry: " + pingQueueEntry);
+        strategy.store(pingQueueEntry);
+    }
+
+    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+        log.debug("Removing ping queue entry: " + pingQueueEntry);
+        strategy.remove(pingQueueEntry);
     }
 
     public void addQueueEntry(AutoPingData autoPing) 
             throws RollerException {
-        // first, determine if an entry already exists
-        Integer count = (Integer)strategy.newQuery(PingQueueEntryData.class,
-                "countGetByPingTarget&&website")
-                .execute(new Object[]
-                    {autoPing.getPingTarget(), autoPing.getWebsite()});
-        if (count.intValue() > 0)
+        log.debug("Creating new ping queue entry for auto ping configuration: " + autoPing);
+        
+        // First check if there is an existing ping queue entry for the same target and website
+        if (isAlreadyQueued(autoPing)) {
+            log.debug("A ping queue entry is already present for this ping target and website: " + autoPing);
             return;
+        }
 
         // create and store a new entry
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -60,28 +79,23 @@ public class DatamapperPingQueueManagerImpl implements PingQueueManager {
         this.saveQueueEntry(pingQueueEntry);
     }
 
-    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) 
-            throws RollerException {
-        strategy.store(pingQueueEntry);
-    }
-
-    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) 
-            throws RollerException {
-        strategy.remove(pingQueueEntry);
-    }
-
-    public PingQueueEntryData getQueueEntry(String id) 
-            throws RollerException {
-        return (PingQueueEntryData)strategy.load(PingQueueEntryData.class, id);
-    }
-
     public List getAllQueueEntries() 
             throws RollerException {
         return (List)strategy.newQuery(PingQueueEntryData.class,
-                "getAll.orderByEntryTime");
+                "PingQueueEntryData.getAllOrderyByEntryTime");
     }
 
-    public void release() {
+    // private helper to determine if an has already been queued for the same website and ping target.
+    private boolean isAlreadyQueued(AutoPingData autoPing) throws RollerException {
+        // first, determine if an entry already exists
+        List results = (List)strategy.newQuery(PingQueueEntryData.class,
+                "PingQueueEntryData.getByPingTarget&website")
+                .execute(new Object[]
+                    {autoPing.getPingTarget(), autoPing.getWebsite()});
+        return results.size() > 0;
     }
+
+    public void release() {}
     
+
 }

@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.datamapper.DatamapperRollerImpl;
-import org.apache.roller.model.Roller;
+import org.apache.roller.business.Roller;
 
 
 /**

@@ -18,18 +18,22 @@
  */
 package org.apache.roller.business.datamapper;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.config.PingConfig;
-import org.apache.roller.model.AutoPingManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /*
  * DatamapperAutoPingManagerImpl.java
@@ -53,19 +57,21 @@ public class DatamapperAutoPingManagerImpl implements AutoPingManager {
         this.strategy = strategy;
     }
 
-    public void saveAutoPing(AutoPingData autoPing) 
-            throws RollerException {
+    public AutoPingData getAutoPing(String id) throws RollerException {
+        return (AutoPingData)strategy.load(AutoPingData.class, id);
+    }
+
+    public void saveAutoPing(AutoPingData autoPing) throws RollerException {
         strategy.store(autoPing);
     }
 
-    public void removeAutoPing(AutoPingData autoPing) 
-            throws RollerException {
+    public void removeAutoPing(AutoPingData autoPing) throws RollerException {
         strategy.remove(autoPing);
     }
 
-    public void removeAutoPing(PingTargetData pingTarget, WebsiteData website) 
+    public void removeAutoPing(PingTargetData pingTarget, WebsiteData website)
             throws RollerException {
-        strategy.newRemoveQuery(AutoPingData.class, "getByPingTarget&Website")
+        strategy.newRemoveQuery(AutoPingData.class, "AutoPingData.removeByPingTarget&Website")
                 .removeAll(new Object[]{pingTarget, website});
     }
 
@@ -79,52 +85,51 @@ public class DatamapperAutoPingManagerImpl implements AutoPingManager {
         strategy.removeAll(AutoPingData.class);
     }
 
-    public AutoPingData getAutoPing(String id) 
+    public void queueApplicableAutoPings(WeblogEntryData changedWeblogEntry)
             throws RollerException {
-        return (AutoPingData)strategy.load(AutoPingData.class, id);
+        if (PingConfig.getSuspendPingProcessing()) {
+            if (logger.isDebugEnabled())
+                logger.debug("Ping processing is suspended.  No auto pings will be queued.");
+            return;
+        }
+
+        PingQueueManager pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
+        List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
+        for (Iterator i = applicableAutopings.iterator(); i.hasNext(); ) {
+            AutoPingData autoPing = (AutoPingData) i.next();
+            pingQueueMgr.addQueueEntry(autoPing);
+        }
     }
 
-    public List getAutoPingsByWebsite(WebsiteData website) 
+    public List getAutoPingsByWebsite(WebsiteData website)
             throws RollerException {
-        return (List)strategy.newQuery(AutoPingData.class, "getByWebsite")
+        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByWebsite")
             .execute(website);
     }
 
     public List getAutoPingsByTarget(PingTargetData pingTarget) 
             throws RollerException {
-        return (List)strategy.newQuery(AutoPingData.class, "getByPingTarget")
+        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByPingTarget")
             .execute(pingTarget);
     }
 
     public List getApplicableAutoPings(WeblogEntryData changedWeblogEntry) 
             throws RollerException {
-        return (List)strategy.newQuery(AutoPingData.class, "getByWebsite")
-            .execute(changedWeblogEntry.getWebsite());
-     }
-
-    public void queueApplicableAutoPings(WeblogEntryData changedWeblogEntry) 
-            throws RollerException {
-        if (PingConfig.getSuspendPingProcessing()) {
-            if (logger.isDebugEnabled()) 
-                logger.debug("Ping processing is suspended.  " +
-                        "No auto pings will be queued.");
-            return;
-        // XXX not implemented
-        }
+        return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
+        //        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByWebsite")
+        //            .execute(changedWeblogEntry.getWebsite());
     }
 
-    public List getCategoryRestrictions(AutoPingData autoPing) 
+    public List getCategoryRestrictions(AutoPingData autoPing)
             throws RollerException {
-        // XXX not implemented
         return Collections.EMPTY_LIST;
     }
 
     public void setCategoryRestrictions
             (AutoPingData autoPing, Collection newCategories) {
-        // XXX not implemented
+        // NOT YET IMPLEMENTED
     }
 
-    public void release() {
-    }
+    public void release() {}
     
 }

@@ -38,11 +38,13 @@ import org.apache.roller.pojos.PersistentObject;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 
 /**
  * JPAPersistenceStrategy is responsible for the lowest-level interaction with
  * the JPA API.
  */
+// TODO handle PersistenceExceptions!
 public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
 
     /**
@@ -77,11 +79,15 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @throws org.apache.roller.RollerException on any error
      */
     public void flush() throws RollerException {
-        EntityManager em = getEntityManager(false);
-        if (isTransactionActive(em)) {
-            em.getTransaction().commit();
+        try {
+            EntityManager em = getEntityManager(false);
+            if (isTransactionActive(em)) {
+                em.getTransaction().commit();
+            }
+            em.close();
+        } catch (PersistenceException pe) {
+            throw new RollerException(pe);
         }
-        em.close();
     }
 
     /**
@@ -150,6 +156,9 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void removeAll(Class clazz) throws RollerException {
         //TODO: Think how this would be implemented
+        //One possible solution is to use bulk delete using nammed queries
+        //The name would be generated using clazz.
+        //We will need to make sure that the named query is defined for each clazz
         DatamapperRemoveQuery rq = newRemoveQuery(clazz, null);
         rq.removeAll();
     }

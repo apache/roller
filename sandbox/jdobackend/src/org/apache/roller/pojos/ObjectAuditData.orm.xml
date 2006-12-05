@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.pojos</package>
+    <entity metadata-complete="true" name="ObjectAuditData"
+            class="org.apache.roller.pojos.ObjectAuditData">
+        <table name="roller_audit_log"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="changeTime">
+                <column name="change_time" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="comment">
+                <column name="comment_text" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="objectClass">
+                <column name="object_class" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="objectId">
+                <column name="object_id" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="userId">
+                <column name="user_id" insertable="true" updatable="true" unique="false"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

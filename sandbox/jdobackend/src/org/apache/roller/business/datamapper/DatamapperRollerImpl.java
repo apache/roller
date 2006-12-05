@@ -17,21 +17,21 @@
  * directory of this distribution.
  */
 package org.apache.roller.business.datamapper;
-    
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.ConfigManager;
+import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.RollerImpl;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.ConfigManager;
-import org.apache.roller.model.PingQueueManager;
-import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.model.PlanetManager;
-import org.apache.roller.model.PropertiesManager;
-import org.apache.roller.model.RefererManager;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingQueueManager;
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.business.referrers.RefererManager;
+import org.apache.roller.planet.business.PlanetManager;
 
 
 /**
@@ -100,9 +100,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getAutopingManager()
+     * @see org.apache.roller.business.Roller#getAutopingManager()
      */
-    public AutoPingManager getAutopingManager() throws RollerException {
+    public AutoPingManager getAutopingManager() {
         if (autoPingManager == null) {
             autoPingManager = new DatamapperAutoPingManagerImpl(strategy);
         }
@@ -111,9 +111,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getBookmarkManager()
+     * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
-    public BookmarkManager getBookmarkManager() throws RollerException {
+    public BookmarkManager getBookmarkManager() {
         if ( bookmarkManager == null ) {
             bookmarkManager = new DatamapperBookmarkManagerImpl(strategy);
         }
@@ -122,9 +122,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getPingTargetManager()
+     * @see org.apache.roller.business.Roller#getPingTargetManager()
      */
-    public PingQueueManager getPingQueueManager() throws RollerException {
+    public PingQueueManager getPingQueueManager() {
         if (pingQueueManager == null) {
             pingQueueManager = new DatamapperPingQueueManagerImpl(strategy);
         }
@@ -133,9 +133,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getPingTargetManager()
+     * @see org.apache.roller.business.Roller#getPingTargetManager()
      */
-    public PingTargetManager getPingTargetManager() throws RollerException {
+    public PingTargetManager getPingTargetManager() {
         if (pingTargetManager == null) {
             pingTargetManager = new DatamapperPingTargetManagerImpl(strategy);
         }
@@ -144,9 +144,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getPlanetManager()
+     * @see org.apache.roller.business.Roller#getPlanetManager()
      */
-    public PlanetManager getPlanetManager() throws RollerException {
+    public PlanetManager getPlanetManager() {
         if ( planetManager == null ) {
             planetManager = new DatamapperPlanetManagerImpl(strategy);
         }
@@ -155,9 +155,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getPropertiesManager()
+     * @see org.apache.roller.business.Roller#getPropertiesManager()
      */
-    public PropertiesManager getPropertiesManager() throws RollerException {
+    public PropertiesManager getPropertiesManager() {
         if (propertiesManager == null) {
             propertiesManager = new DatamapperPropertiesManagerImpl(strategy);
         }
@@ -166,9 +166,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getRefererManager()
+     * @see org.apache.roller.business.Roller#getRefererManager()
      */
-    public RefererManager getRefererManager() throws RollerException {
+    public RefererManager getRefererManager() {
         if ( referrerManager == null ) {
             referrerManager = new DatamapperReferrerManagerImpl(strategy);
         }
@@ -177,9 +177,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getUserManager()
+     * @see org.apache.roller.business.Roller#getUserManager()
      */
-    public UserManager getUserManager() throws RollerException {
+    public UserManager getUserManager() {
         if ( userManager == null ) {
             userManager = new DatamapperUserManagerImpl(strategy);
         }
@@ -188,9 +188,9 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getWeblogManager()
+     * @see org.apache.roller.business.Roller#getWeblogManager()
      */
-    public WeblogManager getWeblogManager() throws RollerException {
+    public WeblogManager getWeblogManager() {
         if ( weblogManager == null ) {
             weblogManager = new DatamapperWeblogManagerImpl(strategy);
         }
@@ -201,12 +201,11 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
     /**
      * This method is deprecated.
      * @return null
-     * @see org.apache.roller.model.Roller#getConfigManager()
+     * @see org.apache.roller.business.Roller#getConfigManager()
      * @deprecated see JIRA issue ROL-1151
-     * @throws org.apache.roller.RollerException on any error
      */
-    public ConfigManager getConfigManager() throws RollerException {
-        throw new RollerException("Deprecated method getConfigManager.");
+    public ConfigManager getConfigManager() {
+        throw new RuntimeException("Deprecated method getConfigManager.");
     }
     
 }
