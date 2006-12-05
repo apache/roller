@@ -163,8 +163,9 @@ public class CalendarTag extends HybridTag {
             day = DateUtil.getNoonOfDay(day, cal);
             cal.set( Calendar.DAY_OF_MONTH, cal.getMinimum(Calendar.DAY_OF_MONTH) );
             
-            // go back to sunday before that: the first sunday in the calendar
-            while ( cal.get( Calendar.DAY_OF_WEEK ) != Calendar.SUNDAY ) {
+            // Go back to first day of week before that (Sunday in US, Monday in France, e.g.)
+            // in the calendar
+            while ( cal.get( Calendar.DAY_OF_WEEK ) != cal.getFirstDayOfWeek() ) {
                 cal.add( Calendar.DATE, -1 );
             }
             
