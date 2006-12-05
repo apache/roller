@@ -22,8 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.datamapper.DatamapperRollerImpl;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.model.Roller;
+import org.apache.roller.business.Roller;
 
 
 /**
@@ -57,5 +56,4 @@ public class JPARollerImpl extends DatamapperRollerImpl {
         logger.debug("Instantiating JPARollerImpl");
         return new JPARollerImpl();
     }
-    
 }

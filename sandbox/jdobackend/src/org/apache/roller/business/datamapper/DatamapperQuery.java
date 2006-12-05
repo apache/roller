@@ -18,8 +18,6 @@
  */
 package org.apache.roller.business.datamapper;
 
-import java.util.List;
-
 /**
  *
  */

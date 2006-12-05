@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.pojos</package>
+    <entity metadata-complete="true" name="RollerConfigData"
+            class="org.apache.roller.pojos.RollerConfigData">
+        <table name="rollerconfig"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="absoluteURL">
+                <column name="absoluteurl" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="rssUseCache">
+                <column name="rssusecache" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="rssCacheTime">
+                <column name="rsscachetime" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="newUserAllowed">
+                <column name="newuserallowed" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="userThemes">
+                <column name="userthemes" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="editorPages">
+                <column name="editorpages" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="enableAggregator">
+                <column name="enableaggregator" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadEnabled">
+                <column name="uploadenabled" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadMaxDirMB">
+                <column name="uploadmaxdirmb" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadMaxFileMB">
+                <column name="uploadmaxfilemb" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadAllow">
+                <column name="uploadallow" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadForbid">
+                <column name="uploadforbid" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadDir">
+                <column name="uploaddir" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="uploadPath">
+                <column name="uploadpath" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="memDebug">
+                <column name="memdebug" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="autoformatComments">
+                <column name="autoformatcomments" insertable="true" updatable="true"
+                        unique="false"/>
+            </basic>
+            <basic name="escapeCommentHtml">
+                <column name="escapecommenthtml" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="emailComments">
+                <column name="emailcomments" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="enableLinkback">
+                <column name="enablelinkback" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="siteDescription">
+                <column name="sitedescription" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="siteName">
+                <column name="sitename" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="emailAddress">
+                <column name="emailaddress" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="indexDir">
+                <column name="indexdir" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="encryptPasswords">
+                <column name="encryptpasswords" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="algorithm">
+                <column name="algorithm" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="databaseVersion">
+                <column name="dbversion" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="refererSpamWords">
+                <column name="refspamwords" insertable="true" updatable="true" unique="false"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

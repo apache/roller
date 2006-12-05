@@ -17,10 +17,10 @@ package org.apache.roller.business.datamapper;
  * directory of this distribution.
  */
 
-import java.util.Collection;
 import org.apache.roller.RollerException;
-
 import org.apache.roller.pojos.PersistentObject;
+
+import java.util.Collection;
 
 /**
  *

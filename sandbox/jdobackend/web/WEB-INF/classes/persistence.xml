@@ -1,0 +1,37 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+	<mapping-file>META-INF/AutoPingData.orm.xml                   </mapping-file>
+	<mapping-file>META-INF/BookmarkData.orm.xml                   </mapping-file>
+	<mapping-file>META-INF/CommentData.orm.xml                    </mapping-file>
+	<mapping-file>META-INF/EntryAttributeData.orm.xml             </mapping-file>
+	<mapping-file>META-INF/FolderData.orm.xml                     </mapping-file>
+	<mapping-file>META-INF/HitCountData.orm.xml                   </mapping-file>
+	<mapping-file>META-INF/ObjectAuditData.orm.xml                </mapping-file>
+	<mapping-file>META-INF/PermissionsData.orm.xml                </mapping-file>
+	<mapping-file>META-INF/PingCategoryRestrictionData.orm.xml    </mapping-file>
+	<mapping-file>META-INF/PingQueueEntryData.orm.xml             </mapping-file>
+	<mapping-file>META-INF/PingTargetData.orm.xml                 </mapping-file>
+	<mapping-file>META-INF/RefererData.orm.xml                    </mapping-file>
+	<mapping-file>META-INF/RoleData.orm.xml                       </mapping-file>
+	<mapping-file>META-INF/RollerConfigData.orm.xml               </mapping-file>
+	<mapping-file>META-INF/RollerPropertyData.orm.xml             </mapping-file>
+	<mapping-file>META-INF/UserData.orm.xml                       </mapping-file>
+	<mapping-file>META-INF/WeblogCategoryData.orm.xml             </mapping-file>
+	<mapping-file>META-INF/WeblogEntryData.orm.xml                </mapping-file>
+	<mapping-file>META-INF/WeblogEntryTagData.orm.xml             </mapping-file>
+	<mapping-file>META-INF/WeblogTemplate.orm.xml                 </mapping-file>
+	<mapping-file>META-INF/WebsiteData.orm.xml                    </mapping-file>
+	<mapping-file>META-INF/PlanetConfigData.orm.xml               </mapping-file>
+	<mapping-file>META-INF/PlanetEntryData.orm.xml		      </mapping-file>
+	<mapping-file>META-INF/PlanetGroupData.orm.xml		      </mapping-file>
+	<mapping-file>META-INF/PlanetSubscriptionData.orm.xml	      </mapping-file>
+        <properties>
+            <property name="toplink.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+            <property name="toplink.jdbc.url" value="jdbc:hsqldb:hsql://localhost:3219"/>
+            <property name="toplink.jdbc.user" value="sa"/>
+            <property name="toplink.jdbc.password" value=""/>
+            <property name="toplink.logging.level" value="FINEST"/>
+        </properties>
+    </persistence-unit>
+</persistence>
