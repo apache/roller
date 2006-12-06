@@ -4,5 +4,24 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
-## remove old id column of group subscription table
+-- remove old id column of group subscription table
 alter table rag_group_subscription drop column id;
+
+-- remove old usercookie table which has been unused since 0.x?
+drop table if exists usercookie;
+
+-- remove old assoc tables which were EOLed in 3.2
+drop table if exists folderassoc;
+drop table if exists weblogcategoryassoc;
+
+-- remove old rollerconfig table which has been deprecated since 1.2
+-- NOTE: since this breaks the pre-1.2 -> 4.0+ direct upgrade path then
+--       maybe we want to attempt to fix that by doing that upgrade via sql?
+drop table if exists rollerconfig;
+
+-- remove bastard columns from various tables
+-- NOTE: these are only here as options, we don't *have* to do them
+--alter table website drop column userid;
+--alter table website drop column weblogdayid;
+--alter table weblogentry drop column publishentry;
+--alter table weblogentry drop column link;
