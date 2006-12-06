@@ -213,6 +213,8 @@ create index we_pubentry_idx on weblogentry(publishentry);
 create index we_userid_idx on weblogentry(userid);
 create index we_status_idx on weblogentry(status);
 create index we_locale_idx on weblogentry(locale);
+create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
+create index we_combo2_idx on weblogentry(websiteid, pubtime, status);
 
 create table roller_weblogentrytag (
     id              varchar(48)   not null primary key,
@@ -267,6 +269,7 @@ create table roller_comment (
 create index co_entryid_idx on roller_comment( entryid );
 create index co_pending_idx on roller_comment( pending );
 create index co_approved_idx on roller_comment( approved );
+create index rc_combo1_idx on roller_comment(approved, spam, posttime);
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
