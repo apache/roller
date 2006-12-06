@@ -48,10 +48,15 @@
                     <type>java</type>
                     <location>build/generated/business</location>
                 </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/src</location>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>stage-webapp</target>
+                    <target>build</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
@@ -66,7 +71,7 @@
                 <action name="rebuild">
                     <target>clean</target>
                     <target>all</target>
-                    <target>stage-webapp</target>
+                    <target>build</target>
                 </action>
                 <action name="debug.single">
                     <target>debug-selected-files</target>
@@ -127,6 +132,10 @@
                         <label>generated/business</label>
                         <location>build/generated/business</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/src</label>
+                        <location>sandbox/scripting/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -147,13 +156,11 @@
                 <package-root>src</package-root>
                 <package-root>sandbox/standalone/src</package-root>
                 <package-root>contrib/plugins/src</package-root>
-                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/lib/jdom.jar:contrib/lib/ecs.jar:contrib/lib/jrcs-diff.jar:contrib/lib/JSPWiki.jar:contrib/lib/jython.jar:contrib/lib/oscache.jar:contrib/lib/radeox.jar:contrib/lib/textile4j-1.20.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar</classpath>
-                <source-level>1.4</source-level>
-            </compilation-unit>
-            <compilation-unit>
                 <package-root>tests</package-root>
-                <unit-tests/>
-                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/lib/jdom.jar:contrib/lib/ecs.jar:contrib/lib/jrcs-diff.jar:contrib/lib/JSPWiki.jar:contrib/lib/jython.jar:contrib/lib/oscache.jar:contrib/lib/radeox.jar:contrib/lib/textile4j-1.20.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar</classpath>
+                <package-root>build/generated/web</package-root>
+                <package-root>build/generated/business</package-root>
+                <package-root>sandbox/scripting/src</package-root>
+                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/lib/jdom.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar:contrib/lib/textile4j-1.20.jar:tools/buildtime/derby.jar:tools/buildtime/ant-1.6.2/ant.jar:tools/buildtime/derbynet.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>
