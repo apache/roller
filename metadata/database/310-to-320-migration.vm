@@ -30,3 +30,6 @@ create index fo_path_idx on folder( path$!INDEXSIZE );
 
 -- some various indexes to improve performance
 create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
+create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
+create index we_combo2_idx on weblogentry(websiteid, pubtime, status);
+create index rc_combo1_idx on roller_comment(approved, spam, posttime);
