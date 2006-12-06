@@ -33,7 +33,6 @@ import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.planet.business.PlanetManager;
 
-
 /**
  * A Datamapper specific implementation of the Roller business layer.
  */
@@ -98,106 +97,137 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
         super.shutdown();
     }
 
-    
     /**
      * @see org.apache.roller.business.Roller#getAutopingManager()
      */
     public AutoPingManager getAutopingManager() {
         if (autoPingManager == null) {
-            autoPingManager = new DatamapperAutoPingManagerImpl(strategy);
+            autoPingManager = createDatamapperAutoPingManager(strategy);
         }
         return autoPingManager;
     }
 
+    protected AutoPingManager createDatamapperAutoPingManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperAutoPingManagerImpl(strategy);
+    }
     
     /**
      * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
     public BookmarkManager getBookmarkManager() {
         if ( bookmarkManager == null ) {
-            bookmarkManager = new DatamapperBookmarkManagerImpl(strategy);
+            bookmarkManager = createDatamapperBookmarkManager(strategy);
         }
         return bookmarkManager;
     }
 
-    
+    protected BookmarkManager createDatamapperBookmarkManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperBookmarkManagerImpl(strategy);
+    }
+
     /**
      * @see org.apache.roller.business.Roller#getPingTargetManager()
      */
     public PingQueueManager getPingQueueManager() {
         if (pingQueueManager == null) {
-            pingQueueManager = new DatamapperPingQueueManagerImpl(strategy);
+            pingQueueManager = createDatamapperPingQueueManager(strategy);
         }
         return pingQueueManager;
     }
 
-    
+    protected PingQueueManager createDatamapperPingQueueManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperPingQueueManagerImpl(strategy);
+    }
+
     /**
      * @see org.apache.roller.business.Roller#getPingTargetManager()
      */
     public PingTargetManager getPingTargetManager() {
         if (pingTargetManager == null) {
-            pingTargetManager = new DatamapperPingTargetManagerImpl(strategy);
+            pingTargetManager = createDatamapperPingTargetManager(strategy);
         }
         return pingTargetManager;
     }
 
-    
+    protected PingTargetManager createDatamapperPingTargetManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperPingTargetManagerImpl(strategy);
+    }
+
     /**
      * @see org.apache.roller.business.Roller#getPlanetManager()
      */
     public PlanetManager getPlanetManager() {
         if ( planetManager == null ) {
-            planetManager = new DatamapperPlanetManagerImpl(strategy);
+            planetManager = createDatamapperPlanetManager(strategy);
         }
         return planetManager;
     }
 
-    
+    protected PlanetManager createDatamapperPlanetManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperPlanetManagerImpl(strategy);
+    }
+
     /**
      * @see org.apache.roller.business.Roller#getPropertiesManager()
      */
     public PropertiesManager getPropertiesManager() {
         if (propertiesManager == null) {
-            propertiesManager = new DatamapperPropertiesManagerImpl(strategy);
+            propertiesManager = createDatamapperPropertiesManager(strategy);
         }
         return propertiesManager;
     }
 
-    
+    protected PropertiesManager createDatamapperPropertiesManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperPropertiesManagerImpl(strategy);
+    }
+
     /**
      * @see org.apache.roller.business.Roller#getRefererManager()
      */
     public RefererManager getRefererManager() {
         if ( referrerManager == null ) {
-            referrerManager = new DatamapperReferrerManagerImpl(strategy);
+            referrerManager = createDatamapperReferrerManager(strategy);
         }
         return referrerManager;
     }
 
-    
+    protected RefererManager createDatamapperReferrerManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperReferrerManagerImpl(strategy);
+    }
+
     /**
      * @see org.apache.roller.business.Roller#getUserManager()
      */
     public UserManager getUserManager() {
         if ( userManager == null ) {
-            userManager = new DatamapperUserManagerImpl(strategy);
+            userManager = createDatamapperUserManager(strategy);
         }
         return userManager;
     }
 
-    
+    protected abstract UserManager createDatamapperUserManager(
+            DatamapperPersistenceStrategy strategy);
+
     /**
      * @see org.apache.roller.business.Roller#getWeblogManager()
      */
     public WeblogManager getWeblogManager() {
         if ( weblogManager == null ) {
-            weblogManager = new DatamapperWeblogManagerImpl(strategy);
+            weblogManager = createDatamapperWeblogManager(strategy);
         }
         return weblogManager;
     }
-    
-    
+
+    protected abstract WeblogManager createDatamapperWeblogManager(
+            DatamapperPersistenceStrategy strategy);
+
     /**
      * This method is deprecated.
      * @return null

@@ -27,7 +27,7 @@ import org.apache.roller.business.datamapper.DatamapperQuery;
 /**
  *
  */
-public class JPAQueryImpl implements DatamapperQuery {
+public abstract class JPAQueryImpl implements DatamapperQuery {
 
     /** */
     protected EntityManager em;
@@ -40,10 +40,13 @@ public class JPAQueryImpl implements DatamapperQuery {
     /**
      * Creates a new instance of JPAQueryImpl
      */
-    public JPAQueryImpl(EntityManager em, Class clazz, String queryName) {
+    public JPAQueryImpl(EntityManager em) {
         this.em = em;
-        q = em.createNamedQuery(queryName);
+        q = createQuery();
     }
+
+    /** Create a Query for this instance*/
+    protected abstract Query createQuery();
 
     public Object execute() {
         return executeQuery();

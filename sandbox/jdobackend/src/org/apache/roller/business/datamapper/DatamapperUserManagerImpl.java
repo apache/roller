@@ -20,6 +20,7 @@ package org.apache.roller.business.datamapper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
@@ -42,15 +43,17 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryTagData;
+import org.apache.roller.pojos.TagStat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Collections;
 
 /*
  * DatamapperUserManagerImpl.java
@@ -58,7 +61,7 @@ import java.util.Collections;
  * Created on May 29, 2006, 3:15 PM
  *
  */
-public class DatamapperUserManagerImpl implements UserManager {
+public abstract class DatamapperUserManagerImpl implements UserManager {
     
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(DatamapperUserManagerImpl.class);    
@@ -102,10 +105,23 @@ public class DatamapperUserManagerImpl implements UserManager {
      * TODO BACKEND: use manager methods instead of queries here
      * TODO DatamapperPort: Use bulk deletes instead of current approach
      */
-    private void removeWebsiteContents(WebsiteData website) throws  RollerException {
+    private void removeWebsiteContents(WebsiteData website) 
+            throws  RollerException {
 
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+
+        // remove tags
+        DatamapperQuery tagQuery = strategy.newQuery(WeblogEntryTagData.class,
+                "WeblogEntryTagData.getByWeblog");
+        for(Iterator iter = ( (List)tagQuery.execute(website) ) .iterator(); iter.hasNext();) {
+            WeblogEntryTagData tagData = (WeblogEntryTagData) iter.next();
+            this.strategy.remove(tagData);
+        }
+
+        // remove site tag aggregates
+        List tags = wmgr.getTags(website, null, null, -1);
+        updateTagAggregates(tags);
 
         // Remove the website's ping queue entries
         List queueEntries = (List)strategy.newQuery(PingQueueEntryData.class,
@@ -116,7 +132,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         }
 
         // Remove the website's auto ping configurations
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = RollerFactory.getRoller()
+            .getAutopingManager();
         List autopings = autoPingMgr.getAutoPingsByWebsite(website);
         it = autopings.iterator();
         while(it.hasNext()) {
@@ -180,6 +197,9 @@ public class DatamapperUserManagerImpl implements UserManager {
 
     }
 
+    protected abstract void updateTagAggregates(List tags) 
+        throws RollerException;
+
     public void saveUser(UserData data) throws RollerException {
         this.strategy.store(data);
     }
@@ -191,11 +211,13 @@ public class DatamapperUserManagerImpl implements UserManager {
         this.userNameToIdMap.remove(user.getUserName());
     }
 
-    public void savePermissions(PermissionsData perms) throws RollerException {
+    public void savePermissions(PermissionsData perms) 
+            throws RollerException {
         this.strategy.store(perms);
     }
 
-    public void removePermissions(PermissionsData perms) throws RollerException {
+    public void removePermissions(PermissionsData perms) 
+            throws RollerException {
         this.strategy.remove(perms);
     }
 
@@ -206,7 +228,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         this.strategy.store(page);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
+        RollerFactory.getRoller().getUserManager()
+            .saveWebsite(page.getWebsite());
     }
 
     public void removePage(WeblogTemplate page) throws RollerException {
@@ -227,7 +250,7 @@ public class DatamapperUserManagerImpl implements UserManager {
         }
 
         if(getUserByUserName(newUser.getUserName()) != null ||
-                getUserByUserName(newUser.getUserName().toLowerCase()) != null) {
+            getUserByUserName(newUser.getUserName().toLowerCase()) != null) {
             throw new RollerException("error.add.user.userNameInUse");
         }
 
@@ -245,7 +268,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         this.addWeblogContents(newWeblog);
     }
 
-    private void addWeblogContents(WebsiteData newWeblog) throws RollerException {
+    private void addWeblogContents(WebsiteData newWeblog) 
+            throws RollerException {
 
         // grant weblog creator ADMIN permissions
         PermissionsData perms = new PermissionsData();
@@ -314,8 +338,10 @@ public class DatamapperUserManagerImpl implements UserManager {
         }
 
         // add any auto enabled ping targets
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller()
+            .getPingTargetManager();
+        AutoPingManager autoPingMgr = RollerFactory.getRoller()
+            .getAutopingManager();
 
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
         PingTargetData pingTarget = null;
@@ -323,7 +349,8 @@ public class DatamapperUserManagerImpl implements UserManager {
             pingTarget = (PingTargetData) pingTargets.next();
 
             if(pingTarget.isAutoEnabled()) {
-                AutoPingData autoPing = new AutoPingData(null, pingTarget, newWeblog);
+                AutoPingData autoPing = new AutoPingData(
+                   null, pingTarget, newWeblog);
                 autoPingMgr.saveAutoPing(autoPing);
             }
         }
@@ -394,7 +421,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         // NOTE: if we ever allow changing handles then this needs updating
         if(this.weblogHandleToIdMap.containsKey(handle)) {
 
-            WebsiteData weblog = this.getWebsite((String) this.weblogHandleToIdMap.get(handle));
+            WebsiteData weblog = this.getWebsite(
+                (String) this.weblogHandleToIdMap.get(handle));
             if(weblog != null) {
                 // only return weblog if enabled status matches
                 if(enabled == null || enabled.equals(weblog.getEnabled())) {
@@ -411,10 +439,12 @@ public class DatamapperUserManagerImpl implements UserManager {
         DatamapperQuery query;
         Object[] params;
         if (enabled != null) {
-            query = strategy.newQuery(WebsiteData.class,"WebsiteData.getByHandle&enabled");
+            query = strategy.newQuery(WebsiteData.class,
+                "WebsiteData.getByHandle&enabled");
             params = new Object[] {handle, enabled};
         } else {
-            query = strategy.newQuery(WebsiteData.class,"WebsiteData.getByHandle");
+            query = strategy.newQuery(WebsiteData.class,
+                "WebsiteData.getByHandle");
             params = new Object[] {handle};
         }
         query.setUnique();
@@ -562,7 +592,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         // NOTE: if we ever allow changing usernames then this needs updating
         if(this.userNameToIdMap.containsKey(userName)) {
 
-            UserData user = this.getUser((String) this.userNameToIdMap.get(userName));
+            UserData user = this.getUser(
+                (String) this.userNameToIdMap.get(userName));
             if(user != null) {
                 // only return the user if the enabled status matches
                 if(enabled == null || enabled.equals(user.getEnabled())) {
@@ -579,10 +610,12 @@ public class DatamapperUserManagerImpl implements UserManager {
         DatamapperQuery query;
         Object[] params;
         if (enabled != null) {
-            query = strategy.newQuery(UserData.class,"UserData.getByUserName&enabled");
+            query = strategy.newQuery(UserData.class,
+                "UserData.getByUserName&enabled");
             params = new Object[] {userName, enabled};
         } else {
-            query = strategy.newQuery(WebsiteData.class,"UserData.getByUserName");
+            query = strategy.newQuery(WebsiteData.class,
+                "UserData.getByUserName");
             params = new Object[] {userName};
         }
         query.setUnique();
@@ -616,21 +649,27 @@ public class DatamapperUserManagerImpl implements UserManager {
         if (weblog != null) {
             if (enabled != null) {
                 if (startDate != null) {
-                    query = strategy.newQuery(UserData.class, "UserData.getByPermissions.website&Enabled&EndDate&StartDate");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByPermissions.website&Enabled&EndDate&StartDate");
                     if (setRange) query.setRange(offset, offset + length);
                     results = (List) query.execute(new Object[] {weblog, enabled, endDate, startDate});
                 } else {
-                    query = strategy.newQuery(UserData.class, "UserData.getByEnabled&Permissions.website");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByEnabled&Permissions.website");
                     if (setRange) query.setRange(offset, offset + length);
-                    results = (List) query.execute(new Object[] {enabled, weblog});
+                    results = (List) query.execute(
+                        new Object[] {enabled, weblog});
                 }
             } else {
                 if (startDate != null) {
-                    query = strategy.newQuery(UserData.class, "UserData.getByPermissions.website&EndDate&StartDate");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByPermissions.website&EndDate&StartDate");
                     if (setRange) query.setRange(offset, offset + length);
-                    results = (List) query.execute(new Object[] {weblog, endDate, startDate});
+                    results = (List) query.execute(
+                        new Object[] {weblog, endDate, startDate});
                 } else {
-                    query = strategy.newQuery(UserData.class, "UserData.getByPermissions.website");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByPermissions.website");
                     if (setRange) query.setRange(offset, offset + length);
                     results = (List) query.execute(weblog);
                 }
@@ -638,21 +677,27 @@ public class DatamapperUserManagerImpl implements UserManager {
         } else {
             if (enabled != null) {
                 if (startDate != null) {
-                    query = strategy.newQuery(UserData.class, "UserData.getByEnabled&EndDate&StartDate");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByEnabled&EndDate&StartDate");
                     if (setRange) query.setRange(offset, offset + length);
-                    results = (List) query.execute(new Object[] {enabled, endDate, startDate});
+                    results = (List) query.execute(
+                        new Object[] {enabled, endDate, startDate});
                 } else {
-                    query = strategy.newQuery(UserData.class, "UserData.getByEnabled");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByEnabled");
                     if (setRange) query.setRange(offset, offset + length);
                     results = (List) query.execute(new Object[] {enabled});
                 }
             } else {
                 if (startDate != null) {
-                    query = strategy.newQuery(UserData.class, "UserData.getByPermissions.website&EndDate&StartDate");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getByPermissions.website&EndDate&StartDate");
                     if (setRange) query.setRange(offset, offset + length);
-                    results = (List) query.execute(new Object[] {endDate, startDate});
+                    results = (List) query.execute(
+                        new Object[] {endDate, startDate});
                 } else {
-                    query = strategy.newQuery(UserData.class, "UserData.getAll");
+                    query = strategy.newQuery(UserData.class, 
+                        "UserData.getAll");
                     if (setRange) query.setRange(offset, offset + length);
                     results = (List) query.execute();
                 }
@@ -666,7 +711,9 @@ public class DatamapperUserManagerImpl implements UserManager {
         return getUsers(Boolean.TRUE, null, null, offset, length);
     }
 
-    public List getUsers(Boolean enabled, Date startDate, Date endDate, int offset, int length) throws RollerException {
+    public List getUsers(Boolean enabled, Date startDate, Date endDate, 
+            int offset, int length) 
+            throws RollerException {
         DatamapperQuery query = null;
         List results = null;
         boolean setRange = offset != 0 || length != -1;
@@ -678,22 +725,29 @@ public class DatamapperUserManagerImpl implements UserManager {
         }
 
         if (enabled != null) {
-              if (startDate != null) {
-                  query = strategy.newQuery(UserData.class, "UserData.getByEnabled&EndDate&StartDateOrderByStartDateDesc");
-                  if (setRange) query.setRange(offset, offset + length);
-                  results = (List) query.execute(new Object[] {enabled, endDate, startDate});                
-              } else {
-                  query = strategy.newQuery(UserData.class, "UserData.getByEnabled&EndDateOrderByStartDateDesc");
-                  if (setRange) query.setRange(offset, offset + length);
-                  results = (List) query.execute(new Object[] {enabled, endDate});                
+            if (startDate != null) {
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEnabled&EndDate&StartDateOrderByStartDateDesc");
+                if (setRange) query.setRange(offset, offset + length);
+                results = (List) query.execute(
+                    new Object[] {enabled, endDate, startDate});                
+            } else {
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEnabled&EndDateOrderByStartDateDesc");
+                if (setRange) query.setRange(offset, offset + length);
+                results = (List) query.execute(
+                    new Object[] {enabled, endDate});                
               }
         } else {
             if (startDate != null) {
-                query = strategy.newQuery(UserData.class, "UserData.getByEndDate&StartDateOrderByStartDateDesc");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEndDate&StartDateOrderByStartDateDesc");
                 if (setRange) query.setRange(offset, offset + length);
-                results = (List) query.execute(new Object[] {endDate, startDate});                
+                results = (List) query.execute(
+                    new Object[] {endDate, startDate});                
             } else {
-                query = strategy.newQuery(UserData.class, "UserData.getByEndDateOrderByStartDateDesc");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEndDateOrderByStartDateDesc");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(endDate);                
             }
@@ -716,17 +770,20 @@ public class DatamapperUserManagerImpl implements UserManager {
 
         if (enabled != null) {
             if (website != null) {
-                query = strategy.newQuery(UserData.class, "UserData.getByEnabled&Permissions.website");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEnabled&Permissions.website");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(new Object[] {enabled, website});                
             } else {
-                query = strategy.newQuery(UserData.class, "UserData.getByEnabled");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEnabled");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(enabled);                
             }
         } else {
             if (website != null) {
-                query = strategy.newQuery(UserData.class, "UserData.getByPermissions.website");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByPermissions.website");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(website);                
             } else {
@@ -750,17 +807,21 @@ public class DatamapperUserManagerImpl implements UserManager {
 
         if (enabled != null) {
             if (startsWith != null) {
-                query = strategy.newQuery(UserData.class, "UserData.getByEnabled&UserNameOrEmailAddressStartsWith");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEnabled&UserNameOrEmailAddressStartsWith");
                 if (setRange) query.setRange(offset, offset + length);
-                results = (List) query.execute(new Object[] {enabled, startsWith});
+                results = (List) query.execute(
+                    new Object[] {enabled, startsWith});
             } else {
-                query = strategy.newQuery(UserData.class, "UserData.getByEnabled");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByEnabled");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(enabled);                
             }
         } else { 
             if (startsWith != null) {
-                query = strategy.newQuery(UserData.class, "UserData.getByUserNameOrEmailAddressStartsWith");
+                query = strategy.newQuery(UserData.class, 
+                    "UserData.getByUserNameOrEmailAddressStartsWith");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(startsWith);
             } else {
@@ -827,8 +888,10 @@ public class DatamapperUserManagerImpl implements UserManager {
                 "WeblogTemplate.getByWebsiteOrderByName").execute(website);
     }
 
-    public PermissionsData getPermissions(String inviteId) throws RollerException {
-        return (PermissionsData)this.strategy.load(PermissionsData.class, inviteId);
+    public PermissionsData getPermissions(String inviteId) 
+            throws RollerException {
+        return (PermissionsData)this.strategy.load(
+            PermissionsData.class, inviteId);
     }
 
     /**
@@ -836,7 +899,8 @@ public class DatamapperUserManagerImpl implements UserManager {
      */
     public PermissionsData getPermissions(
             WebsiteData website, UserData user) throws RollerException {
-        List list = (List) strategy.newQuery(PermissionsData.class, "PermissionsData.getByWebsiteAndUser").
+        List list = (List) strategy.newQuery(PermissionsData.class, 
+            "PermissionsData.getByWebsiteAndUser").
                 execute(new Object[] {website, user} );
         return list.size()!=0 ? (PermissionsData)list.get(0) : null;
     }
@@ -845,33 +909,36 @@ public class DatamapperUserManagerImpl implements UserManager {
      * Get pending permissions for user
      */
     public List getPendingPermissions(UserData user) throws RollerException {
-        return (List) strategy.newQuery(PermissionsData.class, "PermissionsData.getByUserAndPending").
-                execute(new Object[] {user, Boolean.TRUE} );
+        return (List) strategy.newQuery(PermissionsData.class, 
+            "PermissionsData.getByUserAndPending")
+                .execute(new Object[] {user, Boolean.TRUE} );
     }
 
     /**
      * Get pending permissions for website
      */
     public List getPendingPermissions(WebsiteData website) throws RollerException {
-        return (List) strategy.newQuery(PermissionsData.class, "PermissionsData.getByWebsiteAndPending").
-                execute(new Object[] {website, Boolean.TRUE} );
+        return (List) strategy.newQuery(PermissionsData.class, 
+            "PermissionsData.getByWebsiteAndPending")
+            .execute(new Object[] {website, Boolean.TRUE} );
     }
 
     /**
      * Get all permissions of a website (pendings not including)
      */
     public List getAllPermissions(WebsiteData website) throws RollerException {
-        return (List) strategy.newQuery(PermissionsData.class, "PermissionsData.getByWebsiteAndPending").
-                execute(new Object[] {website, Boolean.FALSE} );
-
+        return (List) strategy.newQuery(PermissionsData.class, 
+            "PermissionsData.getByWebsiteAndPending")
+            .execute(new Object[] {website, Boolean.FALSE} );
     }
 
     /**
      * Get all permissions of a user.
      */
     public List getAllPermissions(UserData user) throws RollerException {
-        return (List) strategy.newQuery(PermissionsData.class, "PermissionsData.getByUserAndPending").
-                execute(new Object[] {user, Boolean.FALSE} );
+        return (List) strategy.newQuery(PermissionsData.class, 
+            "PermissionsData.getByUserAndPending")
+            .execute(new Object[] {user, Boolean.FALSE} );
 
     }
 
@@ -881,7 +948,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         // TODO: ATLAS getUserNameLetterMap DONE TESTED
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map results = new TreeMap();
-        DatamapperQuery query = strategy.newQuery(UserData.class, "UserData.getCountByUserNameLike");
+        DatamapperQuery query = strategy.newQuery(UserData.class, 
+            "UserData.getCountByUserNameLike");
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             List row = (List) query.execute(currentChar + "%");
@@ -894,7 +962,8 @@ public class DatamapperUserManagerImpl implements UserManager {
     public List getUsersByLetter(char letter, int offset, int length)
         throws RollerException {
         // TODO: ATLAS getUsersByLetter DONE
-        DatamapperQuery query = strategy.newQuery(UserData.class, "UserData.getByUserNameOrderByUserName");
+        DatamapperQuery query = strategy.newQuery(UserData.class, 
+            "UserData.getByUserNameOrderByUserName");
         query.setRange(offset, offset + length);
         return (List) query.execute(letter + "%");
     }
@@ -902,7 +971,8 @@ public class DatamapperUserManagerImpl implements UserManager {
     public Map getWeblogHandleLetterMap() throws RollerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map results = new TreeMap();
-        DatamapperQuery query = strategy.newQuery(WebsiteData.class, "WebsiteData.getCountByHandleLike");
+        DatamapperQuery query = strategy.newQuery(WebsiteData.class, 
+            "WebsiteData.getCountByHandleLike");
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             List row = (List) query.execute(currentChar + "%");
@@ -915,7 +985,8 @@ public class DatamapperUserManagerImpl implements UserManager {
     public List getWeblogsByLetter(char letter, int offset, int length)
         throws RollerException {
         // TODO: ATLAS getWeblogsByLetter DONE
-        DatamapperQuery query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByHandleOrderByHandle");
+        DatamapperQuery query = strategy.newQuery(WebsiteData.class, 
+            "WebsiteData.getByHandleOrderByHandle");
         if (offset != 0 || length != -1) {
             if (length == -1) {
                 length = Integer.MAX_VALUE - offset;
@@ -925,7 +996,8 @@ public class DatamapperUserManagerImpl implements UserManager {
         return (List) query.execute(letter + "%");
     }
 
-    public List getMostCommentedWebsites(Date startDate, Date endDate, int offset, int length)
+    public List getMostCommentedWebsites(Date startDate, Date endDate, 
+        int offset, int length)
         throws RollerException {
         // TODO: ATLAS getMostCommentedWebsites DONE TESTED
 
@@ -940,11 +1012,14 @@ public class DatamapperUserManagerImpl implements UserManager {
         if (endDate == null) endDate = new Date();
         
         if (startDate != null) {
-            query = strategy.newQuery(CommentData.class, "CommentData.getMostCommentedWebsiteByEndDate&StartDate");
+            query = strategy.newQuery(CommentData.class, 
+                "CommentData.getMostCommentedWebsiteByEndDate&StartDate");
             if (setRange) query.setRange(offset, offset + length);
-            queryResults = (List) query.execute(new Object[] {endDate, startDate});            
+            queryResults = (List) query.execute(
+                new Object[] {endDate, startDate});            
         } else {
-            query = strategy.newQuery(CommentData.class, "CommentData.getMostCommentedWebsiteByEndDate");
+            query = strategy.newQuery(CommentData.class, 
+                "CommentData.getMostCommentedWebsiteByEndDate");
             if (setRange) query.setRange(offset, offset + length);
             queryResults = (List) query.execute(endDate);
         }
@@ -965,7 +1040,8 @@ public class DatamapperUserManagerImpl implements UserManager {
                 "statCount.weblogCommentCountType",
                 new Long(((Integer)row[0]).intValue()).longValue()));
         }
-        // TODO Collections.sort(results, StatCount.getComparator());
+        //TODO Uncomment following once integrated with code
+        //Collections.sort(results, StatCount.getComparator());
         Collections.reverse(results);
         return results;
     }
@@ -975,7 +1051,8 @@ public class DatamapperUserManagerImpl implements UserManager {
      */    
     public long getWeblogCount() throws RollerException {
         long ret = 0;
-        List results = (List) strategy.newQuery(WebsiteData.class, "WebsiteData.getCountAllDistinct").execute();
+        List results = (List) strategy.newQuery(WebsiteData.class, 
+            "WebsiteData.getCountAllDistinct").execute();
 
         ret = ((Integer)results.get(0)).intValue();
         
@@ -988,7 +1065,8 @@ public class DatamapperUserManagerImpl implements UserManager {
      */    
     public long getUserCount() throws RollerException {
         long ret = 0;
-        List results = (List) strategy.newQuery(UserData.class, "UserData.getCountEnabledDistinct").execute(Boolean.TRUE);
+        List results = (List) strategy.newQuery(UserData.class, 
+            "UserData.getCountEnabledDistinct").execute(Boolean.TRUE);
 
         ret =((Integer)results.get(0)).intValue();
 

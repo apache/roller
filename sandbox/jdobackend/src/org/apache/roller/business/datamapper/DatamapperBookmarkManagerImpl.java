@@ -18,11 +18,17 @@
  */
 package org.apache.roller.business.datamapper;
 
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
@@ -30,11 +36,9 @@ import org.apache.roller.util.Utilities;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-
-import java.io.StringReader;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import org.hibernate.Session;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Expression;
 
 /*
  * DatamapperBookmarkManagerImpl.java
@@ -53,7 +57,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             .getFactory().getInstance(DatamapperBookmarkManagerImpl.class);
 
     /** Creates a new instance of DatamapperBookmarkManagerImpl */
-    public DatamapperBookmarkManagerImpl (DatamapperPersistenceStrategy strategy) {
+    public DatamapperBookmarkManagerImpl 
+            (DatamapperPersistenceStrategy strategy) {
         log.debug("Instantiating Datamapper Bookmark Manager");
 
         this.strategy = strategy;
@@ -63,7 +68,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
         
         // update weblog last modified date (date is updated by saveWebsite())
-        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
+        RollerFactory.getRoller().getUserManager().
+            saveWebsite(bookmark.getWebsite());
     }
 
     public BookmarkData getBookmark(String id) throws RollerException {
@@ -74,25 +80,29 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         strategy.remove(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
+        RollerFactory.getRoller().getUserManager().
+            saveWebsite(bookmark.getWebsite());
     }
 
     public void saveFolder(FolderData folder) throws RollerException {
-        if(isDuplicateFolderName(folder)) {
+        
+        if(folder.getId() == null && isDuplicateFolderName(folder)) {
             throw new RollerException("Duplicate folder name");
         }
 
         this.strategy.store(folder);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        RollerFactory.getRoller().getUserManager().
+            saveWebsite(folder.getWebsite());
     }
 
     public void removeFolder(FolderData folder) throws RollerException {
         this.strategy.remove(folder);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        RollerFactory.getRoller().getUserManager().
+            saveWebsite(folder.getWebsite());
     }
     
     public void moveFolder(FolderData srcFolder, FolderData destFolder)
@@ -104,7 +114,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
                     "ERROR cannot move parent folder into it's own child");
         }
         
-        log.debug("Moving folder "+srcFolder.getPath()+" under "+destFolder.getPath());
+        log.debug("Moving folder " + srcFolder.getPath() + " under " +
+            destFolder.getPath());
         
         srcFolder.setParent(destFolder);
         if("/".equals(destFolder.getPath())) {
@@ -135,7 +146,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             if("/".equals(folder.getPath())) {
                 childFolder.setPath("/" + childFolder.getName());
             } else {
-                childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
+                childFolder.setPath(folder.getPath() + "/" + 
+                    childFolder.getName());
             }
             saveFolder(childFolder);
             
@@ -146,12 +158,17 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         }
     }
 
+    
+    /**
+     * Retrieve folder and lazy-load it's sub-folders and bookmarks.
+     */
     public FolderData getFolder(String id) throws RollerException {
         return (FolderData) strategy.load(FolderData.class, id);
     }
 
-    //------------------------------------------------------------ Operations
-    public void importBookmarks(WebsiteData website, String folderName, String opml)
+    
+    public void importBookmarks(
+            WebsiteData website, String folderName, String opml)
             throws RollerException {
         String msg = "importBookmarks";
         try {
@@ -163,7 +180,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             FolderData newFolder = getFolder(website, folderName);
             if (newFolder == null) {
                 newFolder = new FolderData(
-                        getRootFolder(website), folderName, folderName, website);
+                        getRootFolder(website), 
+                        folderName, folderName, website);
                 this.strategy.store(newFolder);
             }
 
@@ -181,7 +199,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
     }
 
     // convenience method used when importing bookmarks
-    // NOTE: this method does not commit any changes, that is done by importBookmarks()
+    // NOTE: this method does not commit any changes; 
+    // that is done by importBookmarks()
     private void importOpmlElement(
             WebsiteData website, Element elem, FolderData parent)
             throws RollerException {
@@ -200,10 +219,13 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
 
         if (elem.getChildren().size()==0) {
             // Leaf element.  Store a bookmark
-            // Currently bookmarks must have at least a name and HTML url to be stored. Previous logic was
-            // trying to skip invalid ones, but was letting ones with an xml url and no html url through
+            // Currently bookmarks must have at least a name and 
+            // HTML url to be stored. Previous logic was
+            // trying to skip invalid ones, but was letting ones 
+            // with an xml url and no html url through
             // which could result in a db exception.
-            // TODO: Consider providing error feedback instead of silently skipping the invalid bookmarks here.
+            // TODO: Consider providing error feedback instead of 
+            // silently skipping the invalid bookmarks here.
             if (null != title && null != url) {
                 BookmarkData bd = new BookmarkData(parent,
                         title,
@@ -235,132 +257,50 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         }
     }
 
-    //----------------------------------------------------------------
-    public void moveFolderContents(FolderData src, FolderData dest)
+
+    public FolderData getFolder(WebsiteData website, String path)
             throws RollerException {
-        if (dest.descendentOf(src)) {
-            throw new RollerException(
-                    "ERROR cannot move parent folder into it's own child");
-        }
 
-        try {
-            // Add to destination folder
-            LinkedList deleteList = new LinkedList();
-            Iterator srcBookmarks = src.getBookmarks().iterator();
-            while (srcBookmarks.hasNext()) {
-                BookmarkData bd = (BookmarkData)srcBookmarks.next();
-                deleteList.add(bd);
-
-                BookmarkData movedBd = new BookmarkData();
-                movedBd.setData(bd);
-                movedBd.setId(null);
-
-                dest.addBookmark(movedBd);
-                this.strategy.store(movedBd);
-            }
-
-            // Remove from source folder
-            Iterator deleteIter = deleteList.iterator();
-            while (deleteIter.hasNext()) {
-                BookmarkData bd = (BookmarkData)deleteIter.next();
-                src.removeBookmark(bd);
-                // TODO: this won't conflict with the bookmark we store above right?
-                this.strategy.remove(bd);
-            }
-
-        } catch (Exception ex) {
-            throw new RollerException(ex);
-        }
-    }
-
-    //----------------------------------------------------------------
-    public void removeFolderContents(FolderData src)
-            throws RollerException {
-        // just go through the folder and remove each bookmark
-        Iterator srcBookmarks = src.getBookmarks().iterator();
-        while (srcBookmarks.hasNext()) {
-            BookmarkData bd = (BookmarkData)srcBookmarks.next();
-            this.strategy.remove(bd);
-        }
-    }
-
-    //---------------------------------------------------------------- Queries
-
-    public FolderData getFolder(WebsiteData website, String folderPath)
-            throws RollerException {
-        return getFolderByPath(website, null, folderPath);
-    }
-
-    public String getPath(FolderData folder)
-            throws RollerException {
-        if (null == folder.getParent()) {
-            return "/";
-        } else {
-            String parentPath = getPath(folder.getParent());
-            parentPath = "/".equals(parentPath) ? "" : parentPath;
-            return parentPath + "/" + folder.getName();
-        }
-    }
-
-    public FolderData getFolderByPath(
-            WebsiteData website, FolderData folder, String path)
-            throws RollerException {
-        final Iterator folders;
-        final String[] pathArray = Utilities.stringToStringArray(path, "/");
-
-        if (folder == null && (null == path || "".equals(path.trim()))) {
-            throw new RollerException("Bad arguments.");
-        }
-
-        if (path.trim().equals("/")) {
+        if (path == null || path.trim().equals("/")) {
             return getRootFolder(website);
-        } else if (folder == null || path.trim().startsWith("/")) {
-            folders = getRootFolder(website).getFolders().iterator();
         } else {
-            folders = folder.getFolders().iterator();
-        }
+            String folderPath = path;
 
-        while (folders.hasNext()) {
-            FolderData possibleMatch = (FolderData)folders.next();
-            if (possibleMatch.getName().equals(pathArray[0])) {
-                if (pathArray.length == 1) {
-                    return possibleMatch;
-                } else {
-                    String[] subpath = new String[pathArray.length - 1];
-                    System.arraycopy(pathArray, 1, subpath, 0, subpath.length);
-
-                    String pathString= Utilities.stringArrayToString(subpath,"/");
-                    return getFolderByPath(website, possibleMatch, pathString);
-                }
+            // all folder paths must begin with a '/'
+            if(!folderPath.startsWith("/")) {
+                folderPath = "/"+folderPath;
             }
+
+            // now just do simple lookup by path
+            DatamapperQuery query = strategy.newQuery(
+                BookmarkData.class, "FolderData.getByWebsite&Path");
+            query.setUnique();
+            return (FolderData) query.execute(
+                new Object[]{website, folderPath});
         }
-
-        // The folder did not match and neither did any subfolders
-        return null;
     }
-
-    //----------------------------------------------- FolderAssoc CRUD
-
-    public void release() {}
-
 
     /**
-     * @see org.apache.roller.business.BookmarkManager#getBookmarks(
+     * @see org.apache.roller.model.BookmarkManager#retrieveBookmarks(
      *      org.apache.roller.pojos.FolderData, boolean)
      */
-    public List getBookmarks(FolderData folder, boolean subfolders) throws RollerException {
+    public List getBookmarks(FolderData folder, boolean subfolders) 
+            throws RollerException {
         DatamapperQuery query = null;
         List results = null;
 
         if(!subfolders) {
             // if no subfolders then this is an equals query
-            query = strategy.newQuery(BookmarkData.class, "BoomarkData.getByFolder");
+            query = strategy.newQuery(
+                BookmarkData.class, "BoomarkData.getByFolder");
             results = (List) query.execute(folder);
         } else {
             // if we are doing subfolders then do a case sensitive
             // query using folder path
-            query = strategy.newQuery(BookmarkData.class, "BoomarkData.getByFolder.pathLike&Folder.website");
-            results = (List) query.execute(new Object[] {folder.getPath(), folder.getWebsite()});
+            query = strategy.newQuery(BookmarkData.class, 
+                "BoomarkData.getByFolder.pathLike&Folder.website");
+            results = (List) query.execute(
+                new Object[] {folder.getPath(), folder.getWebsite()});
         }
             
         return results;
@@ -372,7 +312,8 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             throw new RollerException("website is null");
         
         return (FolderData) strategy.newQuery(FolderData.class, 
-                "FolderData.getByWebsite&ParentNull").setUnique().execute(website);
+                "FolderData.getByWebsite&ParentNull").
+                setUnique().execute(website);
     }
 
     public List getAllFolders(WebsiteData website)
@@ -380,11 +321,16 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         if (website == null)
             throw new RollerException("Website is null");
         
-        return (List) strategy.newQuery(FolderData.class, "FolderData.getByWebsite").execute(website);
+        return (List) strategy.newQuery(FolderData.class, 
+            "FolderData.getByWebsite").execute(website);
     }
 
-    public boolean isDuplicateFolderName(FolderData folder)
-            throws RollerException {
+    
+    /**
+     * make sure the given folder doesn't already exist.
+     */
+    private boolean isDuplicateFolderName(FolderData folder) 
+        throws RollerException {
 
         // ensure that no sibling categories share the same name
         FolderData parent = folder.getParent();
@@ -396,4 +342,6 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
     }
 
 
+    public void release() {}
+    
 }
