@@ -19,9 +19,9 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
@@ -193,14 +193,25 @@ public class URLModel implements Model {
         return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, null, pageNum, true);
     }
     
+    
     public String tag(String tag) {
         return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, Arrays.asList(new String[]{tag}) , -1, true);
     }
-  
-  
+    
+    
     public String tag(String tag, int pageNum) {
         return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, Arrays.asList(new String[]{tag}), pageNum, true);
     }    
+    
+    
+    public String tags(List tags) {
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, tags , -1, true);
+    }
+    
+    
+    public String tags(List tags, int pageNum) {
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, tags, -1, true);
+    }
     
     
     public String collection(String dateString, String catPath) {
@@ -322,12 +333,20 @@ public class URLModel implements Model {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, null, excerpts, true);
         }
         
+        public String rss(List tags, boolean excerpts) {
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, tags, excerpts, true);
+        }
+        
         public String getAtom() {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, false, true);
         }
         
         public String atom(String catPath, boolean excerpts) {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, null, excerpts, true);
+        }
+        
+        public String atom(List tags, boolean excerpts) {
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, tags, excerpts, true);
         }
     }
     

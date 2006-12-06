@@ -181,7 +181,7 @@ public final class URLUtilities {
             pathinfo.append("date/").append(dateString);  
         
         } else if(tags != null && tags.size() > 0) {
-            pathinfo.append("tags/").append(encode(Utilities.stringArrayToString((String[])tags.toArray(), "+")));
+            pathinfo.append("tags/").append(getEncodedTagsString(tags));
         } else {
             if(dateString != null) params.put("date", dateString);
             if(cat != null) params.put("cat", encode(cat));
@@ -228,7 +228,7 @@ public final class URLUtilities {
                 params.put("cat", encode(category));
             }
             if(tags != null && tags.size() > 0) {
-                params.put("tags",encode(Utilities.stringArrayToString((String[])tags.toArray(), "+")));
+                params.put("tags", getEncodedTagsString(tags));
             }
             if(pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
@@ -268,7 +268,7 @@ public final class URLUtilities {
             params.put("cat", encode(category));
         }
         if(tags != null && tags.size() > 0) {
-          params.put("tags",encode(Utilities.stringArrayToString((String[])tags.toArray(), "+")));
+          params.put("tags", getEncodedTagsString(tags));
         }
         if(excerpts) {
             params.put("excerpts", "true");
@@ -546,4 +546,24 @@ public final class URLUtilities {
         return decodedStr;
     }
     
+    
+    public static final String getEncodedTagsString(List tags) {
+        StringBuffer tagsString = new StringBuffer();
+        if(tags != null && tags.size() > 0) {
+            String tag = null;
+            Iterator tagsIT = tags.iterator();
+            
+            // do first tag
+            tag = (String) tagsIT.next();
+            tagsString.append(encode(tag));
+            
+            // do rest of tags, joining them with a '+'
+            while(tagsIT.hasNext()) {
+                tag = (String) tagsIT.next();
+                tagsString.append("+");
+                tagsString.append(encode(tag));
+            }
+        }
+        return tagsString.toString();
+    }
 }
