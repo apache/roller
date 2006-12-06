@@ -77,15 +77,20 @@ public class CommentsPager extends AbstractPager {
             int offset = getPage() * length;
             
             List results = new ArrayList();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();
+            
+            Date startDate = null;
+            if(sinceDays > 0) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DATE, -1 * sinceDays);
+                startDate = cal.getTime();
+            }
+            
             try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 List entries = wmgr.getComments(
-                        null, null, null, startDate, new Date(),
+                        null, null, null, startDate, null,
                         null, Boolean.TRUE, Boolean.FALSE, true, offset, length + 1);
                 
                 // check if there are more results for paging
