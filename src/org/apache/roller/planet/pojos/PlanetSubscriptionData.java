@@ -28,7 +28,7 @@ import org.apache.roller.pojos.*;
 /**
  * @struts.form include-all="true"
  * @ejb:bean name="PlanetSubscriptionData"
- * @hibernate.class lazy="false" table="rag_subscription"
+ * @hibernate.class lazy="true" table="rag_subscription"
  */
 public class PlanetSubscriptionData extends PersistentObject 
     implements Serializable, Comparable
