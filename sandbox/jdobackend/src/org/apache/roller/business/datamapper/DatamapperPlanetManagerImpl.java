@@ -23,21 +23,6 @@ import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
-import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetConfigData;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.rome.DiskFeedInfoCache;
 
 import java.io.File;
 import java.net.URL;
@@ -53,6 +38,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.roller.RollerException;
+
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
+import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.pojos.PlanetEntryData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.util.rome.DiskFeedInfoCache;
+
 
 /**
  * Manages Planet Roller objects and entry aggregations in a database.
@@ -61,7 +64,8 @@ import java.util.TreeSet;
  */
 public class DatamapperPlanetManagerImpl implements PlanetManager {
 
-    private static Log log = LogFactory.getLog(DatamapperPlanetManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperPlanetManagerImpl.class);
 
     /** The strategy for this manager. */
     private DatamapperPersistenceStrategy strategy;
@@ -116,7 +120,8 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     public PlanetConfigData getConfiguration() throws RollerException {
         List results = (List) strategy.newQuery(PlanetConfigData.class, 
                 "PlanetConfigData.getAll"); 
-        PlanetConfigData config = results.size()!=0 ? (PlanetConfigData)results.get(0) : null;
+        PlanetConfigData config = results.size()!=0 ? 
+            (PlanetConfigData)results.get(0) : null;
             
         // We inject the cache dir into the config object here to maintain
         // compatibility with the standaline version of the aggregator.
@@ -131,7 +136,8 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
             throws RollerException {
         List results = (List) strategy.newQuery(PlanetSubscriptionData.class, 
                 "PlanetSubscriptionData.getByFeedURL"); 
-        return results.size()!=0 ? (PlanetSubscriptionData)results.get(0) : null;
+        return results.size()!=0 ? 
+            (PlanetSubscriptionData)results.get(0) : null;
     }
 
     public PlanetSubscriptionData getSubscriptionById(String id)
@@ -155,7 +161,8 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                 "PlanetSubscriptionData.getAll")).size(); 
     }
 
-    public List getTopSubscriptions(int offset, int length) throws RollerException {
+    public List getTopSubscriptions(int offset, int length) 
+            throws RollerException {
         return getTopSubscriptions(null, offset, length);
     }
     
@@ -167,10 +174,12 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         List result = null;
         if (groupHandle != null) {
             result = (List) strategy.newQuery(PlanetSubscriptionData.class,
-                            "PlanetSubscriptionData.getByGroupHandleOrderByInboundBlogsDesc").execute(groupHandle);
+                "PlanetSubscriptionData.getByGroupHandleOrderByInboundBlogsDesc")
+            .execute(groupHandle);
         } else {
             result = (List) strategy.newQuery(PlanetSubscriptionData.class,
-                    "PlanetSubscriptionData.getAllOrderByInboundBlogsDesc").execute();
+                "PlanetSubscriptionData.getAllOrderByInboundBlogsDesc")
+                .execute();
         }
         // TODO handle offset and length
         return result;
@@ -180,7 +189,8 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         List results = (List) strategy.newQuery(PlanetGroupData.class, 
                 "PlanetGroupData.getByHandle").execute(handle); 
         // TODO handle max result == 1
-        PlanetGroupData group = results.size()!=0 ? (PlanetGroupData)results.get(0) : null;
+        PlanetGroupData group = results.size()!=0 ? 
+            (PlanetGroupData)results.get(0) : null;
         return group;
     }
 
@@ -231,7 +241,8 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     }
     
     public List getAggregation(
-            PlanetGroupData group, int offset, int len) throws RollerException {
+            PlanetGroupData group, int offset, int len) 
+            throws RollerException {
         return getAggregation(group, null, null, offset, len);
     }
     
@@ -469,9 +480,11 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                 SyndEntry romeEntry = (SyndEntry) entries.next();
                 PlanetEntryData entry =
                         new PlanetEntryData(feed, romeEntry, sub);
-                log.debug("Entry title=" + entry.getTitle() + " content size=" + entry.getContent().length());
+                log.debug("Entry title=" + entry.getTitle() + 
+                    " content size=" + entry.getContent().length());
                 if (entry.getPubTime() == null) {
-                    log.debug("No published date, assigning fake date for "+feedURL);
+                    log.debug("No published date, assigning fake date for " +
+                        feedURL);
                     entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                 }
                 if (entry.getPermalink() == null) {

@@ -18,15 +18,17 @@
  */
 package org.apache.roller.business.datamapper;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.roller.RollerException;
+
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingQueueEntryData;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 /*
  * DatamapperPingQueueManagerImpl.java
@@ -36,46 +38,54 @@ import java.util.List;
  */
 public class DatamapperPingQueueManagerImpl implements PingQueueManager {
 
-    private static Log log = LogFactory.getLog(DatamapperPlanetManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperPingQueueManagerImpl.class);
 
     /** The strategy for this manager. */
     private DatamapperPersistenceStrategy strategy;
 
     /** Creates a new instance of DatamapperPingQueueManagerImpl */
-    public DatamapperPingQueueManagerImpl(DatamapperPersistenceStrategy strategy) {
+    public DatamapperPingQueueManagerImpl(
+            DatamapperPersistenceStrategy strategy) {
         this.strategy =  strategy;
     }
 
     public PingQueueEntryData getQueueEntry(String id) 
             throws RollerException {
-        return (PingQueueEntryData)strategy.load(PingQueueEntryData.class, id);
+        return (PingQueueEntryData)strategy.load(
+            PingQueueEntryData.class, id);
     }
 
-    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) 
+            throws RollerException {
         log.debug("Storing ping queue entry: " + pingQueueEntry);
         strategy.store(pingQueueEntry);
     }
 
-    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) 
+            throws RollerException {
         log.debug("Removing ping queue entry: " + pingQueueEntry);
         strategy.remove(pingQueueEntry);
     }
 
-    public void addQueueEntry(AutoPingData autoPing) 
-            throws RollerException {
-        log.debug("Creating new ping queue entry for auto ping configuration: " + autoPing);
+    
+    public void addQueueEntry(AutoPingData autoPing) throws RollerException {
+        log.debug("Creating new ping queue entry for auto ping configuration: " 
+            + autoPing);
         
-        // First check if there is an existing ping queue entry for the same target and website
+        // First check if there is an existing ping queue entry 
+        // for the same target and website
         if (isAlreadyQueued(autoPing)) {
-            log.debug("A ping queue entry is already present for this ping target and website: " + autoPing);
+            log.debug("A ping queue entry is already present" +
+                " for this ping target and website: " + autoPing);
             return;
         }
 
-        // create and store a new entry
         Timestamp now = new Timestamp(System.currentTimeMillis());
         PingQueueEntryData pingQueueEntry =
-                new PingQueueEntryData(null, now, 
-                autoPing.getPingTarget(), autoPing.getWebsite(), 0);
+                new PingQueueEntryData(
+                    null, now, autoPing.getPingTarget(), 
+                    autoPing.getWebsite(), 0);
         this.saveQueueEntry(pingQueueEntry);
     }
 
@@ -85,8 +95,10 @@ public class DatamapperPingQueueManagerImpl implements PingQueueManager {
                 "PingQueueEntryData.getAllOrderyByEntryTime");
     }
 
-    // private helper to determine if an has already been queued for the same website and ping target.
-    private boolean isAlreadyQueued(AutoPingData autoPing) throws RollerException {
+    // private helper to determine if an has already been queued 
+    // for the same website and ping target.
+    private boolean isAlreadyQueued(AutoPingData autoPing) 
+        throws RollerException {
         // first, determine if an entry already exists
         List results = (List)strategy.newQuery(PingQueueEntryData.class,
                 "PingQueueEntryData.getByPingTarget&website")

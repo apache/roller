@@ -21,6 +21,16 @@ package org.apache.roller.business.datamapper;
 
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,17 +45,6 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-
-
 /**
  * An extended version of the base PlanetManager implementation.
  *
@@ -53,12 +52,15 @@ import java.util.TreeSet;
  * aggregator in the same application instance and want to fetch feeds from
  * their local Roller blogs in a more efficient manner.
  */
-public class DatamapperRollerPlanetManagerImpl extends DatamapperPlanetManagerImpl {
+public class DatamapperRollerPlanetManagerImpl 
+    extends DatamapperPlanetManagerImpl {
 
-    private static Log log = LogFactory.getLog(org.apache.roller.business.datamapper.DatamapperRollerPlanetManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperRollerPlanetManagerImpl.class);
 
 
-    public DatamapperRollerPlanetManagerImpl(DatamapperPersistenceStrategy strat) {
+    public DatamapperRollerPlanetManagerImpl(
+            DatamapperPersistenceStrategy strat) {
 
         super(strat);
 
@@ -74,9 +76,11 @@ public class DatamapperRollerPlanetManagerImpl extends DatamapperPlanetManagerIm
         String localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
 
         // if this is not a local url then let parent deal with it
-        if (StringUtils.isEmpty(localURL) || !sub.getFeedURL().startsWith(localURL)) {
+        if (StringUtils.isEmpty(localURL) || 
+            !sub.getFeedURL().startsWith(localURL)) {
 
-            log.debug("Feed is remote, letting parent handle it "+sub.getFeedURL());
+            log.debug("Feed is remote, letting parent handle it " +
+                sub.getFeedURL());
 
             return super.getNewEntries(sub, feedFetcher, feedInfoCache);
         }
@@ -91,13 +95,16 @@ public class DatamapperRollerPlanetManagerImpl extends DatamapperPlanetManagerIm
                 Set newEntries = new TreeSet();
 
                 // get corresponding website object
-                UserManager usermgr = RollerFactory.getRoller().getUserManager();
-                WebsiteData website = usermgr.getWebsiteByHandle(sub.getAuthor());
+                UserManager usermgr = RollerFactory.getRoller()
+                    .getUserManager();
+                WebsiteData website = usermgr
+                    .getWebsiteByHandle(sub.getAuthor());
                 if (website == null)
                     return newEntries;
 
                 // figure website last update time
-                WeblogManager blogmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager blogmgr = RollerFactory.getRoller()
+                    .getWeblogManager();
 
                 Date siteUpdated = website.getLastModified();
                 if (siteUpdated == null) { // Site never updated, skip it
@@ -108,7 +115,8 @@ public class DatamapperRollerPlanetManagerImpl extends DatamapperPlanetManagerIm
 
                 // if website last update time > subsciption last update time
                 List entries = new ArrayList();
-                if (sub.getLastUpdated()==null || siteUpdated.after(sub.getLastUpdated())) {
+                if (sub.getLastUpdated()==null || 
+                        siteUpdated.after(sub.getLastUpdated())) {
                     int entryCount = RollerRuntimeConfig.getIntProperty(
                             "site.newsfeeds.defaultEntries");
                     entries = blogmgr.getWeblogEntries(
@@ -137,15 +145,17 @@ public class DatamapperRollerPlanetManagerImpl extends DatamapperPlanetManagerIm
                 }
 
                 // Populate subscription object with new entries
-                PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+                PluginManager ppmgr = RollerFactory.getRoller()
+                    .getPagePluginManager();
                 Map pagePlugins = ppmgr.getWeblogEntryPlugins(website);
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {
                     try {
                         WeblogEntryData rollerEntry =
-                                (WeblogEntryData)entryIter.next();
+                            (WeblogEntryData)entryIter.next();
                         PlanetEntryData entry =
-                                new PlanetEntryData(rollerEntry, sub, pagePlugins);
+                            new PlanetEntryData(rollerEntry, sub, 
+                                pagePlugins);
                         saveEntry(entry);
                         newEntries.add(entry);
                     } catch (Exception e) {

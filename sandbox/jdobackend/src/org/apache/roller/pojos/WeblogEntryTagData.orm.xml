@@ -12,6 +12,9 @@
     <entity metadata-complete="true" name="WeblogEntryTagData"
             class="org.apache.roller.pojos.WeblogEntryTagData">
         <table name="roller_weblogentrytag"/>
+        <named-query name="WeblogEntryTagData.getByWeblog">
+            <query>SELECT w FROM WeblogEntryTagData w WHERE w.weblog= ?1</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

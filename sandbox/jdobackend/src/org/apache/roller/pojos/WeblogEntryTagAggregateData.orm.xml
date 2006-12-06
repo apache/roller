@@ -51,6 +51,9 @@
         <named-query name="WeblogEntryTagAggregateData.removeByTotalLessEqual">
             <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.total &lt;= ?1</query>
         </named-query>
+        <named-query name="WeblogEntryTagAggregateData.updateTotalByName&ampWeblogNull">
+            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total - ?1 WHERE w.name = ?2 AND weblog IS NULL</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

@@ -18,20 +18,23 @@
  */
 package org.apache.roller.business.datamapper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingQueueEntryData;
-import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WebsiteData;
-
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Iterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.roller.RollerException;
+
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.pojos.AutoPingData;
+import org.apache.roller.pojos.PingQueueEntryData;
+import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.WebsiteData;
 
 /*
  * DatamapperPingTargetManagerImpl.java
@@ -42,29 +45,43 @@ import java.util.List;
 public class DatamapperPingTargetManagerImpl implements PingTargetManager {
     
     /** The logger instance for this class. */
-    private static Log log = LogFactory.getLog(DatamapperPingTargetManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperPingTargetManagerImpl.class);
 
     private DatamapperPersistenceStrategy strategy;
     
-    public DatamapperPingTargetManagerImpl(DatamapperPersistenceStrategy strategy) {
+    public DatamapperPingTargetManagerImpl(
+            DatamapperPersistenceStrategy strategy) {
         this.strategy = strategy;
     }
 
-    public void removePingTarget(PingTargetData pingTarget)
+    public void removePingTarget(PingTargetData pingTarget) 
             throws RollerException {
-        // remove queued ping entries that refer to this ping target
-        strategy.newRemoveQuery(PingQueueEntryData.class, "PingQueueEntryData.removeByPingTarget")
-            .removeAll(pingTarget);
-        // remove autopings that refer to this ping target
-        strategy.newRemoveQuery(AutoPingData.class, "PingTargetData.removeByPingTarget")
-            .removeAll(pingTarget);
-        // remove ping target
-        strategy.remove(pingTarget);
+        // remove contents and then target
+        this.removePingTargetContents(pingTarget);
+        this.strategy.remove(pingTarget);
+    }
+
+    /**
+     * Convenience method which removes any queued pings or auto pings that
+     * reference the given ping target.
+     */
+    private void removePingTargetContents(PingTargetData ping) 
+            throws RollerException {
+        // Remove the website's ping queue entries
+        strategy.newRemoveQuery(
+            PingQueueEntryData.class, "PingQueueEntryData.removeByPingTarget")
+            .removeAll(ping);
+        // Remove the website's auto ping configurations
+        strategy.newRemoveQuery(
+            AutoPingData.class, "PingTargetData.removeByPingTarget")
+            .removeAll(ping);
     }
 
     public void removeAllCustomPingTargets()
             throws RollerException {
-        strategy.newRemoveQuery(PingTargetData.class, "PingTargetData.removeByWebsiteNotNull")
+        strategy.newRemoveQuery(
+            PingTargetData.class, "PingTargetData.removeByWebsiteNotNull")
             .removeAll();
     }
 
@@ -78,36 +95,58 @@ public class DatamapperPingTargetManagerImpl implements PingTargetManager {
         return (PingTargetData)strategy.load(PingTargetData.class, id);
     }
 
-    public boolean isNameUnique(PingTargetData pingTarget)
+    public boolean isNameUnique(PingTargetData pingTarget) 
             throws RollerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
-        List results = (List)
-            strategy.newQuery(PingTargetData.class,
-                    "PingTargetData.getByWebsite&Name&IdNotEqual")
-                .execute(new Object[]{
-                    pingTarget.getWebsite(), 
-                    name,
-                    pingTarget.getId()});
-        return (results.size() != 0);
+        
+        String id = pingTarget.getId();
+        
+        // Determine the set of "brother" targets (custom or common) 
+        // among which this name should be unique.
+        List brotherTargets = null;
+        WebsiteData website = pingTarget.getWebsite();
+        if (website == null) {
+            brotherTargets = getCommonPingTargets();
+        } else {
+            brotherTargets = getCustomPingTargets(website);
+        }
+        
+        // Within that set of targets, fail if there is a target 
+        // with the same name and that target doesn't
+        // have the same id.
+        for (Iterator i = brotherTargets.iterator(); i.hasNext();) {
+            PingTargetData brother = (PingTargetData) i.next();
+            // Fail if it has the same name but not the same id.
+            if (brother.getName().equals(name) && 
+                (id == null || !brother.getId().equals(id))) {
+                return false;
+            }
+        }
+        // No conflict found
+        return true;
     }
 
-    public boolean isUrlWellFormed(PingTargetData pingTarget)
+    
+    public boolean isUrlWellFormed(PingTargetData pingTarget) 
             throws RollerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
-            URL parsed = new URL(url);
-            if (!parsed.getProtocol().equals("http"))
-                return false;
-            return (parsed.getHost() != null) && 
-                    (parsed.getHost().trim().length() > 0);
+            URL parsedUrl = new URL(url);
+            // OK.  If we get here, it parses ok.  Now just check 
+            // that the protocol is http and there is a host portion.
+            boolean isHttp = parsedUrl.getProtocol().equals("http");
+            boolean hasHost = (parsedUrl.getHost() != null) && 
+                (parsedUrl.getHost().trim().length() > 0);
+            return isHttp && hasHost;
         } catch (MalformedURLException e) {
             return false;
         }
     }
 
-    public boolean isHostnameKnown(PingTargetData pingTarget)
+    
+    public boolean isHostnameKnown(PingTargetData pingTarget) 
             throws RollerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;

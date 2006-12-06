@@ -18,9 +18,16 @@
  */
 package org.apache.roller.business.datamapper;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.roller.RollerException;
+
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
@@ -32,11 +39,6 @@ import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.pojos.RollerConfigData;
 import org.apache.roller.pojos.RollerPropertyData;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 /*
  * DatamapperPropertiesManagerImpl.java
  *
@@ -46,12 +48,14 @@ import java.util.Map;
 public class DatamapperPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
-    private static Log log = LogFactory.getLog(DatamapperPropertiesManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperPropertiesManagerImpl.class);
 
     private DatamapperPersistenceStrategy strategy;
     
     /** Creates a new instance of DatamapperPropertiesManagerImpl */
-    public DatamapperPropertiesManagerImpl (DatamapperPersistenceStrategy strategy) {
+    public DatamapperPropertiesManagerImpl (
+            DatamapperPersistenceStrategy strategy) {
         log.debug("Instantiating Hibernate Properties Manager");
 
         this.strategy = strategy;
@@ -64,7 +68,8 @@ public class DatamapperPropertiesManagerImpl implements PropertiesManager {
      * Retrieve a single property by name.
      */
     public RollerPropertyData getProperty(String name) throws RollerException {
-        return (RollerPropertyData) strategy.load(RollerPropertyData.class,name);
+        return (RollerPropertyData) strategy
+            .load(RollerPropertyData.class,name);
     }
 
 
@@ -100,8 +105,8 @@ public class DatamapperPropertiesManagerImpl implements PropertiesManager {
     /**
      * Save a single property.
      */
-    public void saveProperty(RollerPropertyData property) throws RollerException {
-
+    public void saveProperty(RollerPropertyData property) 
+            throws RollerException {
         this.strategy.store(property);
     }
 
@@ -162,56 +167,79 @@ public class DatamapperPropertiesManagerImpl implements PropertiesManager {
         }
 
         if (rollerConfig != null) {
-            log.info("Found old roller config ... doing migration to new runtime properties.");
+            log.info("Found old roller config ... " + 
+                "doing migration to new runtime properties.");
             // copy over data
             props.put("site.name",
-                    new RollerPropertyData("site.name", rollerConfig.getSiteName()));
+                new RollerPropertyData("site.name", 
+                    rollerConfig.getSiteName()));
             props.put("site.description",
-                    new RollerPropertyData("site.description", rollerConfig.getSiteDescription()));
+                new RollerPropertyData("site.description", 
+                    rollerConfig.getSiteDescription()));
             props.put("site.adminemail",
-                    new RollerPropertyData("site.adminemail", rollerConfig.getEmailAddress()));
+                new RollerPropertyData("site.adminemail", 
+                    rollerConfig.getEmailAddress()));
             props.put("site.absoluteurl",
-                    new RollerPropertyData("site.absoluteurl", rollerConfig.getAbsoluteURL()));
+                new RollerPropertyData("site.absoluteurl", 
+                    rollerConfig.getAbsoluteURL()));
             props.put("site.linkbacks.enabled",
-                    new RollerPropertyData("site.linkbacks.enabled", rollerConfig.getEnableLinkback().toString()));
+                new RollerPropertyData("site.linkbacks.enabled", 
+                    rollerConfig.getEnableLinkback().toString()));
             props.put("users.registration.enabled",
-                    new RollerPropertyData("users.registration.enabled", rollerConfig.getNewUserAllowed().toString()));
+                new RollerPropertyData("users.registration.enabled", 
+                    rollerConfig.getNewUserAllowed().toString()));
             props.put("users.themes.path",
-                    new RollerPropertyData("users.themes.path", rollerConfig.getUserThemes()));
+                new RollerPropertyData("users.themes.path", 
+                    rollerConfig.getUserThemes()));
             props.put("users.editor.pages",
-                    new RollerPropertyData("users.editor.pages", rollerConfig.getEditorPages()));
+                new RollerPropertyData("users.editor.pages", 
+                    rollerConfig.getEditorPages()));
             props.put("users.comments.enabled",
-                    new RollerPropertyData("users.comments.enabled", "true"));
+                new RollerPropertyData("users.comments.enabled", "true"));
             props.put("users.comments.autoformat",
-                    new RollerPropertyData("users.comments.autoformat", rollerConfig.getAutoformatComments().toString()));
+                new RollerPropertyData("users.comments.autoformat", 
+                    rollerConfig.getAutoformatComments().toString()));
             props.put("users.comments.escapehtml",
-                    new RollerPropertyData("users.comments.escapehtml", rollerConfig.getEscapeCommentHtml().toString()));
+                new RollerPropertyData("users.comments.escapehtml", 
+                    rollerConfig.getEscapeCommentHtml().toString()));
             props.put("users.comments.emailnotify",
-                    new RollerPropertyData("users.comments.emailnotify", rollerConfig.getEmailComments().toString()));
+                new RollerPropertyData("users.comments.emailnotify", 
+                    rollerConfig.getEmailComments().toString()));
             props.put("uploads.enabled",
-                    new RollerPropertyData("uploads.enabled", rollerConfig.getUploadEnabled().toString()));
+                new RollerPropertyData("uploads.enabled", 
+                    rollerConfig.getUploadEnabled().toString()));
             props.put("uploads.types.allowed",
-                    new RollerPropertyData("uploads.types.allowed", rollerConfig.getUploadAllow()));
+                new RollerPropertyData("uploads.types.allowed", 
+                    rollerConfig.getUploadAllow()));
             props.put("uploads.types.forbid",
-                    new RollerPropertyData("uploads.types.forbid", rollerConfig.getUploadForbid()));
+                new RollerPropertyData("uploads.types.forbid", 
+                    rollerConfig.getUploadForbid()));
             props.put("uploads.file.maxsize",
-                    new RollerPropertyData("uploads.file.maxsize", rollerConfig.getUploadMaxFileMB().toString()));
+                new RollerPropertyData("uploads.file.maxsize", 
+                    rollerConfig.getUploadMaxFileMB().toString()));
             props.put("uploads.dir.maxsize",
-                    new RollerPropertyData("uploads.dir.maxsize", rollerConfig.getUploadMaxDirMB().toString()));
+                new RollerPropertyData("uploads.dir.maxsize", 
+                    rollerConfig.getUploadMaxDirMB().toString()));
             /* no longer part of runtime config
             props.put("aggregator.enabled",
-                new RollerPropertyData("aggregator.enabled", rollerConfig.getEnableAggregator().toString()));
+                new RollerPropertyData("aggregator.enabled", 
+                    rollerConfig.getEnableAggregator().toString()));
             props.put("aggregator.cache.enabled",
-                new RollerPropertyData("aggregator.cache.enabled", rollerConfig.getRssUseCache().toString()));
+                new RollerPropertyData("aggregator.cache.enabled", 
+                    rollerConfig.getRssUseCache().toString()));
             props.put("aggregator.cache.timeout",
-                new RollerPropertyData("aggregator.cache.timeout", rollerConfig.getRssCacheTime().toString()));
+                new RollerPropertyData("aggregator.cache.timeout", 
+                    rollerConfig.getRssCacheTime().toString()));
             props.put("debug.memory.enabled",
-                new RollerPropertyData("debug.memory.enabled", rollerConfig.getMemDebug().toString()));
+                new RollerPropertyData("debug.memory.enabled", 
+                    rollerConfig.getMemDebug().toString()));
              */
             props.put("spam.blacklist",
-                    new RollerPropertyData("spam.blacklist", rollerConfig.getRefererSpamWords()));
+                new RollerPropertyData("spam.blacklist", 
+                    rollerConfig.getRefererSpamWords()));
         } else {
-            log.info("Old roller config not found ... default values will be loaded");
+            log.info("Old roller config not found ... " + 
+                "default values will be loaded");
         }
 
         return props;
@@ -258,12 +286,15 @@ public class DatamapperPropertiesManagerImpl implements PropertiesManager {
                     // do we already have this prop?  if not then add it
                     if(!props.containsKey(propDef.getName())) {
                         RollerPropertyData newprop =
-                                new RollerPropertyData(propDef.getName(), propDef.getDefaultValue());
+                            new RollerPropertyData(
+                                propDef.getName(), propDef.getDefaultValue());
 
                         props.put(propDef.getName(), newprop);
 
-                        log.info("Found uninitialized property "+propDef.getName()+
-                                " ... setting value to ["+propDef.getDefaultValue()+"]");
+                        log.info("Found uninitialized property " +
+                            propDef.getName() +
+                            " ... setting value to [" + 
+                            propDef.getDefaultValue() + "]");
                     }
                 }
             }

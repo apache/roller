@@ -18,9 +18,18 @@
  */
 package org.apache.roller.business.datamapper;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Collections;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.roller.RollerException;
+
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
@@ -28,19 +37,12 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.WebsiteDisplayData;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Collections;
 
 /*
  * DatamapperReferrerManagerImpl.java
@@ -50,7 +52,8 @@ import java.util.Collections;
  */
 public class DatamapperReferrerManagerImpl implements RefererManager {
 
-    private static Log log = LogFactory.getLog(DatamapperReferrerManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperReferrerManagerImpl.class);
 
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
@@ -220,13 +223,15 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
             length = Integer.MAX_VALUE - offset;
         }
 
-        DatamapperQuery query = strategy.newQuery(RefererData.class, "RefererData.getHotWeblogsByWebsite.enabled&Website.active&Website.lastModifiedGreater");
+        DatamapperQuery query = strategy.newQuery(RefererData.class, 
+            "RefererData.getHotWeblogsByWebsite.enabled&Website.active&Website.lastModifiedGreater");
         
         if (offset != 0 || length != -1) {
             query.setRange(offset, length);
         }
         
-        List queryResults = (List) query.execute(new Object[] {Boolean.TRUE, Boolean.TRUE, startDate}); 
+        List queryResults = (List) query.execute(
+            new Object[] {Boolean.TRUE, Boolean.TRUE, startDate}); 
         for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
             Object[] row = (Object[])it.next();
             Integer hits = (Integer)row[0];
@@ -240,7 +245,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
                 "statCount.weblogDayHits",
                 hits.longValue()));              
         }
-        // TODO: Collections.sort(results, StatCount.getComparator());
+        //TODO Uncomment following once integrated with code
+        //Collections.sort(results, StatCount.getComparator());
         Collections.reverse(results);
         return results;
     }
@@ -262,13 +268,15 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
             length = Integer.MAX_VALUE - offset;
         }
 
-        DatamapperQuery query = strategy.newQuery(RefererData.class, "RefererData.getDaysPopularWebsitesByWebsite.enabled&Website.active");
+        DatamapperQuery query = strategy.newQuery(RefererData.class, 
+            "RefererData.getDaysPopularWebsitesByWebsite.enabled&Website.active");
         
         if (offset != 0 || length != -1) {
             query.setRange(offset, length);
         }
 
-        List queryResults = (List) query.execute(new Object[] {Boolean.TRUE, Boolean.TRUE}); 
+        List queryResults = (List) query.execute(
+            new Object[] {Boolean.TRUE, Boolean.TRUE}); 
         
         for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
             Object[] row = (Object[])it.next();
@@ -282,12 +290,14 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
                 websiteHandle,
                 hits));              
         }
-        // TODO Collections.sort(results, StatCount.getComparator());
+        //TODO Uncomment following once integrated with code
+        //Collections.sort(results, StatCount.getComparator());
         Collections.reverse(results);
         return results;
     }
 
-    protected int getHits(WebsiteData website, String type) throws RollerException {
+    protected int getHits(WebsiteData website, String type) 
+            throws RollerException {
         int hits = -1;
         if (log.isDebugEnabled()) {
             log.debug("getHits: " + website.getName());
@@ -295,7 +305,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
         
         List results = null;
             
-        DatamapperQuery query = strategy.newQuery(RefererData.class, "RefererData.getHitsByWebsite.enabled&Website.id");
+        DatamapperQuery query = strategy.newQuery(RefererData.class, 
+            "RefererData.getHitsByWebsite.enabled&Website.id");
 
         Object[] resultsArray = (Object[]) results.get(0);
         
@@ -331,7 +342,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
      */
     public List getTodaysReferers(WebsiteData website) throws RollerException {
         return (List) strategy.newQuery(RefererData.class, 
-                "RefererData.getByWebsite&DayHitsGreaterZeroOrderByDayHitsDesc").execute(website);
+                "RefererData.getByWebsite&DayHitsGreaterZeroOrderByDayHitsDesc")
+                .execute(website);
     }
 
     /**
@@ -437,7 +449,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
 
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
-                WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager weblogMgr = RollerFactory.getRoller().
+                    getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             }
         } catch (RollerException re) {
@@ -470,7 +483,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
                         secondTryUrl = "http://www"+referrerUrl.substring(7);
                     }
 
-                    matchRef = getMatchingReferers(weblog, requestUrl, secondTryUrl);
+                    matchRef = getMatchingReferers(weblog, requestUrl, 
+                        secondTryUrl);
                     if ( matchRef.size() == 1 ) {
                         referrerUrl = secondTryUrl;
                     }
@@ -484,7 +498,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
                 ref.setDayHits(new Integer(ref.getDayHits().intValue() + 1));
                 ref.setTotalHits(new Integer(ref.getTotalHits().intValue() + 1));
 
-                log.debug("Incrementing hit count on existing referer: "+referrerUrl);
+                log.debug("Incrementing hit count on existing referer: " +
+                    referrerUrl);
 
                 saveReferer(ref);
 
@@ -516,7 +531,8 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
 
                 // If not a direct or search engine then search for linkback
                 boolean doLinkbackExtraction =
-                        RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
+                    RollerRuntimeConfig.getBooleanProperty(
+                        "site.linkbacks.enabled");
                 if (doLinkbackExtraction
                         && entry != null
                         && !refurl.equals("direct")

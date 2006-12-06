@@ -18,6 +18,17 @@
  */
 package org.apache.roller.business.datamapper;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,17 +50,6 @@ import org.apache.roller.pojos.TagStatComparator;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Collections;
-
 /*
  * DatamapperWeblogManagerImpl.java
  *
@@ -58,7 +58,8 @@ import java.util.Collections;
  */
 public class DatamapperWeblogManagerImpl implements WeblogManager {
 
-    private static Log log = LogFactory.getLog(DatamapperWeblogManagerImpl.class);
+    private static Log log = LogFactory.getLog(
+        DatamapperWeblogManagerImpl.class);
     
     private DatamapperPersistenceStrategy strategy;
 
@@ -89,7 +90,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         this.strategy.store(cat);
     }
 
-    public void moveWeblogCategory(WeblogCategoryData srcCat, WeblogCategoryData destCat)
+    public void moveWeblogCategory(WeblogCategoryData srcCat, 
+        WeblogCategoryData destCat)
             throws RollerException {
         
         // TODO: this check should be made before calling this method?
@@ -98,7 +100,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                     "ERROR cannot move parent category into it's own child");
         }
         
-        log.debug("Moving category "+srcCat.getPath()+" under "+destCat.getPath());
+        log.debug("Moving category "+srcCat.getPath() +
+            " under "+destCat.getPath());
         
         srcCat.setParent(destCat);
         if("/".equals(destCat.getPath())) {
@@ -115,7 +118,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     
     
     // updates the paths of all descendents of the given category
-    private void updatePathTree(WeblogCategoryData cat) throws RollerException {
+    private void updatePathTree(WeblogCategoryData cat) 
+            throws RollerException {
         
         log.debug("Updating path tree for category "+cat.getPath());
         
@@ -155,25 +159,29 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         
         // update website default cats if needed
         if(cat.getWebsite().getBloggerCategory().equals(cat)) {
-            WeblogCategoryData rootCat = this.getRootWeblogCategory(cat.getWebsite());
+            WeblogCategoryData rootCat = this.getRootWeblogCategory(
+                cat.getWebsite());
             cat.getWebsite().setBloggerCategory(rootCat);
             this.strategy.store(cat.getWebsite());
         }
         
         if(cat.getWebsite().getDefaultCategory().equals(cat)) {
-            WeblogCategoryData rootCat = this.getRootWeblogCategory(cat.getWebsite());
+            WeblogCategoryData rootCat = this.getRootWeblogCategory(
+                cat.getWebsite());
             cat.getWebsite().setDefaultCategory(rootCat);
             this.strategy.store(cat.getWebsite());
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
+        RollerFactory.getRoller().getUserManager().saveWebsite(
+                cat.getWebsite());
     }
 
     /**
      * Recategorize all entries with one category to another.
      */
-    public void moveWeblogCategoryContents(WeblogCategoryData srcCat, WeblogCategoryData destCat)
+    public void moveWeblogCategoryContents(WeblogCategoryData srcCat, 
+                WeblogCategoryData destCat)
             throws RollerException {
                 
         // TODO: this check should be made before calling this method?
@@ -198,13 +206,15 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         // Make sure website's default and bloggerapi categories
         // are valid after the move
         
-        if (srcCat.getWebsite().getDefaultCategory().getId().equals(srcCat.getId())
+        if (srcCat.getWebsite().getDefaultCategory().getId()
+                .equals(srcCat.getId())
         || srcCat.getWebsite().getDefaultCategory().descendentOf(srcCat)) {
             srcCat.getWebsite().setDefaultCategory(destCat);
             this.strategy.store(srcCat.getWebsite());
         }
         
-        if (srcCat.getWebsite().getBloggerCategory().getId().equals(srcCat.getId())
+        if (srcCat.getWebsite().getBloggerCategory().getId()
+                .equals(srcCat.getId())
         || srcCat.getWebsite().getBloggerCategory().descendentOf(srcCat)) {
             srcCat.getWebsite().setBloggerCategory(destCat);
             this.strategy.store(srcCat.getWebsite());
@@ -218,7 +228,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         this.strategy.store(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
+        RollerFactory.getRoller().getUserManager()
+            .saveWebsite(comment.getWeblogEntry().getWebsite());
     }
 
     /**
@@ -228,7 +239,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
+        RollerFactory.getRoller().getUserManager()
+            .saveWebsite(comment.getWeblogEntry().getWebsite());
     }
 
     /**
@@ -254,12 +266,14 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            RollerFactory.getRoller().getUserManager().saveWebsite(entry.getWebsite());
+            RollerFactory.getRoller().getUserManager()
+                .saveWebsite(entry.getWebsite());
         }
         
         if(entry.isPublished()) {
             // Queue applicable pings for this update.
-            RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
+            RollerFactory.getRoller().getAutopingManager()
+                .queueApplicableAutoPings(entry);
         }
     }
 
@@ -268,7 +282,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public void removeWeblogEntry(WeblogEntryData entry)
             throws RollerException {
-        List referers = (List) strategy.newQuery(RefererData.class, "RefererData.getByWeblogEntry").execute(entry);
+        List referers = (List) strategy.newQuery(RefererData.class, 
+            "RefererData.getByWeblogEntry").execute(entry);
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
             RefererData referer = (RefererData) iter.next();
             this.strategy.remove(referer);
@@ -305,7 +320,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            RollerFactory.getRoller().getUserManager().saveWebsite(entry.getWebsite());
+            RollerFactory.getRoller().getUserManager()
+                .saveWebsite(entry.getWebsite());
         }
         
         // TODO: remove entry from cache mapping
@@ -319,7 +335,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         WeblogCategoryData category = null;
         
         if (catName != null && !catName.trim().equals("/")) {
-            category = getWeblogCategoryByPath(current.getWebsite(), null, catName);
+            category = getWeblogCategoryByPath(current.getWebsite(), null, 
+                catName);
         }
         
         if (category != null) {
@@ -328,25 +345,37 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                     query = strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeGreater&Category&LocaleLikeOrderByPubTimeAsc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime(), category, locale});
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                            WeblogEntryData.PUBLISHED, 
+                            current.getPubTime(), category, locale});
                 } else {
                     query = strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeLess&Category&LocaleLikeOrderByPubTimeDesc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime(), category, locale});  
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime(), 
+                        category, locale});  
                 }
             } else {
                 if (next) {
                     results = (List) strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeGreater&CategoryOrderByPubTimeAsc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime(), category});
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime(), 
+                        category});
                 
                 } else {
                     results = (List) strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeLess&CategoryOrderByPubTimeDesc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime(), category});                
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime(), 
+                        category});                
                 }
             }
         } else {
@@ -355,25 +384,35 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                     query = strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeGreater&LocaleLikeOrderByPubTimeAsc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime(), locale});
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime(), 
+                        locale});
                 } else {
                     query = strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeLess&LocaleLikeOrderByPubTimeDesc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime(), locale});  
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime(), 
+                        locale});  
                 }
             } else {
                 if (next) {
                     results = (List) strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeGreater&OrderByPubTimeAsc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime()});
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime()});
                 
                 } else {
                     results = (List) strategy.newQuery(WeblogEntryData.class, 
                             "WeblogEntryData.getByWebsite&Status&PubTimeLessOrderByPubTimeDesc");
                     if (maxEntries > -1) query.setRange(0, maxEntries);
-                    results = (List) query.execute(new Object[] {current.getWebsite(), WeblogEntryData.PUBLISHED, current.getPubTime()});                
+                    results = (List) query.execute(
+                        new Object[] {current.getWebsite(), 
+                        WeblogEntryData.PUBLISHED, current.getPubTime()});                
                 }
             }
         }
@@ -390,7 +429,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             throw new RollerException("website is null");
         
         return (WeblogCategoryData) strategy.newQuery(WeblogCategoryData.class, 
-                "WeblogCategoryData.getByWebsite&ParentNull").setUnique().execute(website);
+                "WeblogCategoryData.getByWebsite&ParentNull")
+                        .setUnique().execute(website);
     }
 
     /**
@@ -467,7 +507,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         
         // TODO Impl entryAnchorToIdMap CACHE
         
-        return (WeblogEntryData)strategy.newQuery(WeblogEntryData.class, "getByAnchor")
+        return (WeblogEntryData)strategy.newQuery(WeblogEntryData.class, 
+            "getByAnchor")
             .execute(anchor);
     }
 
@@ -488,19 +529,26 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         List list = null;
         if (website != null) {
             if (cat != null) {
-                  list = (List) strategy.newQuery(WeblogEntryData.class, 
-                          "WeblogEntryData.getByStatus&PubTimeLessEqual&Category&WebsiteOrderByPubTimeDesc").setRange(0, 1)
-                          .execute(new Object[] {WeblogEntryData.PUBLISHED, new Date(), cat, website});
+                list = (List) strategy.newQuery(WeblogEntryData.class, 
+                    "WeblogEntryData.getByStatus&PubTimeLessEqual&Category&WebsiteOrderByPubTimeDesc")
+                    .setRange(0, 1)
+                    .execute(
+                        new Object[] {WeblogEntryData.PUBLISHED, new Date(), 
+                            cat, website});
             } else {
                 list = (List) strategy.newQuery(WeblogEntryData.class, 
-                        "WeblogEntryData.getByStatus&PubTimeLessEqual&WebsiteOrderByPubTimeDesc").setRange(0, 1)
-                        .execute(new Object[] {WeblogEntryData.PUBLISHED, new Date(), website});
+                        "WeblogEntryData.getByStatus&PubTimeLessEqual&WebsiteOrderByPubTimeDesc")
+                    .setRange(0, 1)
+                    .execute(
+                        new Object[] {WeblogEntryData.PUBLISHED, new Date(), 
+                        website});
             }
         } else {
             // cat must also be null
             list = (List) strategy.newQuery(WeblogEntryData.class, 
-                    "WeblogEntryData.getByStatus&PubTimeLessEqualOrderByPubTimeDesc").setRange(0, 1)
-                    .execute(new Object[] {WeblogEntryData.PUBLISHED, new Date()});
+                    "WeblogEntryData.getByStatus&PubTimeLessEqualOrderByPubTimeDesc")
+                .setRange(0, 1)
+                .execute(new Object[] {WeblogEntryData.PUBLISHED, new Date()});
         }
         if (list.size() > 0) {
             return ((WeblogEntryData)list.get(0)).getPubTime();
@@ -522,10 +570,13 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         List results = null;
         
         if (!subcats) {
-            results = (List) strategy.newQuery(WeblogEntryData.class, "WeblogEntryData.getByCategory").execute(cat);
+            results = (List) strategy.newQuery(WeblogEntryData.class, 
+                "WeblogEntryData.getByCategory")
+                .execute(cat);
         } else {
             results = (List) strategy.newQuery(WeblogEntryData.class, 
-                    "WeblogEntryData.getByCategory.pathLike&amp;Website").execute(new Object[] {cat, cat.getPath(), cat.getWebsite()});  
+                "WeblogEntryData.getByCategory.pathLike&amp;Website")
+                .execute(new Object[] {cat, cat.getPath(), cat.getWebsite()});  
         }
         
         return results;
@@ -546,7 +597,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             }
                 
             List results = (List) strategy.newQuery(WeblogEntryData.class, 
-                "WeblogEntryData.getByWeblogEntry&Anchor").execute(new Object[] {entry, name});
+                "WeblogEntryData.getByWeblogEntry&Anchor")
+                .execute(new Object[] {entry, name});
                 
             if (results.size() < 1) {
                 break;
@@ -566,7 +618,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         // ensure that no sibling categories share the same name
         WeblogCategoryData parent = cat.getParent();
         if (null != parent) {
-            return (getWeblogCategoryByPath(cat.getWebsite(), cat.getPath()) != null);
+            return (getWeblogCategoryByPath(
+                cat.getWebsite(), cat.getPath()) != null);
         }
         
         return false;
@@ -577,7 +630,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public boolean isWeblogCategoryInUse(WeblogCategoryData cat)
             throws RollerException {
-        int entryCount = ((List) strategy.newQuery(WeblogEntryData.class, "").execute(cat)).size();
+        int entryCount = ((List) strategy.newQuery(
+            WeblogEntryData.class, "").execute(cat)).size();
             
         if (entryCount > 0) {
             return true;
@@ -700,7 +754,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         if (path.trim().equals("/")) {
             return getRootWeblogCategory(website);
         } else if (category == null || path.trim().startsWith("/")) {
-            cats = getRootWeblogCategory(website).getWeblogCategories().iterator();
+            cats = getRootWeblogCategory(website)
+            .getWeblogCategories().iterator();
         } else {
             cats = category.getWeblogCategories().iterator();
         }
@@ -761,9 +816,10 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      * @throws org.apache.roller.RollerException
      */
     public Map getWeblogEntryObjectMap(WebsiteData website,
-                                       Date startDate, Date endDate, String catName, List tags,
-                                       String status, String locale, int offset,
-                                       int range) throws RollerException {
+            Date startDate, Date endDate, String catName, List tags,
+            String status, String locale, int offset,
+            int range) 
+                throws RollerException {
         return getWeblogEntryMap(
             website,
             startDate,
@@ -883,21 +939,28 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
 
         if (website != null) {
             if (startDate != null) {
-                query = strategy.newQuery(CommentData.class, "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate&StartDate");
+                query = strategy.newQuery(CommentData.class, 
+                    "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate&StartDate");
                 if (setRange) query.setRange(offset, offset + length);
-                queryResults = (List) query.execute(new Object[] {website, endDate, startDate});
+                queryResults = (List) query.execute(
+                    new Object[] {website, endDate, startDate});
             } else {
-                query = strategy.newQuery(CommentData.class, "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate");
+                query = strategy.newQuery(CommentData.class, 
+                    "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate");
                 if (setRange) query.setRange(offset, offset + length);
-                queryResults = (List) query.execute(new Object[] {website, endDate});            
+                queryResults = (List) query.execute(
+                    new Object[] {website, endDate});            
             }
         } else {
             if (startDate != null) {
-                query = strategy.newQuery(CommentData.class, "CommentData.getMostCommentedWeblogEntryByEndDate&StartDate");
+                query = strategy.newQuery(CommentData.class, 
+                    "CommentData.getMostCommentedWeblogEntryByEndDate&StartDate");
                 if (setRange) query.setRange(offset, offset + length);
-                queryResults = (List) query.execute(new Object[] {endDate, startDate});
+                queryResults = (List) query.execute(
+                    new Object[] {endDate, startDate});
             } else {
-                query = strategy.newQuery(CommentData.class, "CommentData.getMostCommentedWeblogEntryByEndDate");
+                query = strategy.newQuery(CommentData.class, 
+                    "CommentData.getMostCommentedWeblogEntryByEndDate");
                 if (setRange) query.setRange(offset, offset + length);
                 queryResults = (List) query.execute(endDate);            
             }
@@ -913,7 +976,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                 "statCount.weblogEntryCommentCountType",
                 new Long(((Integer)row[0]).intValue()).longValue()));
         }
-        // TODO Collections.sort(results, StatCount.getComparator());
+        //TODO Uncomment following once integrated with code
+        //Collections.sort(results, StatCount.getComparator());
         Collections.reverse(results);
         return results;
     }
@@ -1009,21 +1073,26 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         
         if (website != null) {
             if (startDate != null) {
-                query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getPopularTagsByWebsite&StartDate");
+                query = strategy.newQuery(WeblogEntryTagAggregateData.class, 
+                    "WeblogEntryTagAggregateData.getPopularTagsByWebsite&StartDate");
                 if (limit > 0) query.setRange(0, limit);
-                queryResults = (List) query.execute(new Object[] {website, startDate});
+                queryResults = (List) query.execute(
+                    new Object[] {website, startDate});
             } else {
-                query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getPopularTagsByWebsite");
+                query = strategy.newQuery(WeblogEntryTagAggregateData.class, 
+                    "WeblogEntryTagAggregateData.getPopularTagsByWebsite");
                 if (limit > 0) query.setRange(0, limit);
                 queryResults = (List) query.execute(startDate);                
             }
         } else {
             if (startDate != null) {
-                query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&StartDate");
+                query = strategy.newQuery(WeblogEntryTagAggregateData.class, 
+                    "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&StartDate");
                 if (limit > 0) query.setRange(0, limit);
                 queryResults = (List) query.execute(startDate);
             } else {
-                query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull");
+                query = strategy.newQuery(WeblogEntryTagAggregateData.class, 
+                    "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull");
                 if (limit > 0) query.setRange(0, limit);
                 queryResults = (List) query.execute();                
             }
@@ -1069,7 +1138,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      * @see org.apache.roller.business.WeblogManager#getTags(org.apache.roller.pojos.WebsiteData,
      *      java.lang.String, java.lang.String, int)
      */
-    public List getTags(WebsiteData website, String sortBy, String startsWith, int limit) throws RollerException {    
+    public List getTags(WebsiteData website, String sortBy, 
+            String startsWith, int limit) throws RollerException {    
         DatamapperQuery query = null;
         List queryResults = null;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
@@ -1077,21 +1147,27 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         if (website != null) {
             if (startsWith != null) {
                 if (sortByName) {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsite&NameStartsWithOrderByName");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, 
+                        "WeblogEntryTagAggregateData.getTagsByWebsite&NameStartsWithOrderByName");
                     if (limit > 0) query.setRange(0, limit);
-                    queryResults = (List) query.execute(new Object[] {website, startsWith});
+                    queryResults = (List) query.execute(
+                        new Object[] {website, startsWith});
                 } else {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsite&NameStartsWith");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsite&NameStartsWith");
                     if (limit > 0) query.setRange(0, limit);
-                    queryResults = (List) query.execute(new Object[] {website, startsWith});
+                    queryResults = (List) query.execute(
+                        new Object[] {website, startsWith});
                 }
             } else {
                 if (sortByName) {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsiteOrderByName");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsiteOrderByName");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute(startsWith);   
                 } else {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsite");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsite");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute(startsWith);   
                 }
@@ -1099,21 +1175,25 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         } else {
             if (startsWith != null) {
                 if (sortByName) {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsiteNull&NameStartsWithOrderByName");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsiteNull&NameStartsWithOrderByName");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute(startsWith);
                 } else {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsiteNull&NameStartsWith");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsiteNull&NameStartsWith");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute(startsWith);
                 }
             } else {
                 if (sortByName) {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsiteNullOrderByName");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsiteNullOrderByName");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute();
                 } else {
-                    query = strategy.newQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.getTagsByWebsiteNull");
+                    query = strategy.newQuery(WeblogEntryTagAggregateData.class,
+                        "WeblogEntryTagAggregateData.getTagsByWebsiteNull");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute();
                 }
@@ -1159,7 +1239,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         return comboExists; // TODO not implemented
     }
     
-    public void updateTagCount(String name, WebsiteData website, int amount) throws RollerException {
+    public void updateTagCount(String name, WebsiteData website, int amount) 
+            throws RollerException {
         if(amount == 0) {
             throw new RollerException("Tag increment amount cannot be zero.");
         }
@@ -1282,8 +1363,10 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             throw new RollerException("Weblog cannot be NULL.");
         }
 
-        HitCountData hitCount = (HitCountData) strategy.newQuery(HitCountData.class, 
-                "HitCountData.getByWeblog").setUnique().execute(weblog);
+        HitCountData hitCount = (HitCountData) strategy.newQuery(
+                HitCountData.class, 
+                "HitCountData.getByWeblog")
+            .setUnique().execute(weblog);
         
         // create it if it doesn't exist
         if(hitCount == null && amount > 0) {
@@ -1319,7 +1402,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      * Get site-wide comment count 
      */
     public long getCommentCount() throws RollerException {
-        List results = (List) strategy.newQuery(CommentData.class, "CommentData.getCountAllDistinct").execute();
+        List results = (List) strategy.newQuery(CommentData.class, 
+            "CommentData.getCountAllDistinct").execute();
         
         return ((Integer)results.get(0)).intValue();
     }
@@ -1330,7 +1414,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public long getCommentCount(WebsiteData website) throws RollerException {
         List results = (List) strategy.newQuery(CommentData.class, 
-                "CommentData.getCountDistinctByWebsite").execute(website);
+            "CommentData.getCountDistinctByWebsite").execute(website);
         
         return ((Integer)results.get(0)).intValue();
     }
@@ -1341,7 +1425,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public long getEntryCount() throws RollerException {
         List results = (List) strategy.newQuery(WeblogEntryData.class, 
-                "WeblogEntryData.getCountDistinctByStatus").execute("PUBLISHED");
+            "WeblogEntryData.getCountDistinctByStatus")
+            .execute("PUBLISHED");
         
         return ((Integer)results.get(0)).intValue();
     }
@@ -1352,7 +1437,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public long getEntryCount(WebsiteData website) throws RollerException {
         List results = (List) strategy.newQuery(WeblogEntryData.class, 
-                "WeblogEntryData.getCountDistinctByStatus&Website").execute(new Object[] {"PUBLISHED", website});
+            "WeblogEntryData.getCountDistinctByStatus&Website")
+            .execute(new Object[] {"PUBLISHED", website});
         
         return ((Integer)results.get(0)).intValue();
     }

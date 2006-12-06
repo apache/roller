@@ -71,7 +71,8 @@ public class DatamapperAutoPingManagerImpl implements AutoPingManager {
 
     public void removeAutoPing(PingTargetData pingTarget, WebsiteData website)
             throws RollerException {
-        strategy.newRemoveQuery(AutoPingData.class, "AutoPingData.removeByPingTarget&Website")
+        strategy.newRemoveQuery(AutoPingData.class, 
+                "AutoPingData.removeByPingTarget&Website")
                 .removeAll(new Object[]{pingTarget, website});
     }
 
@@ -89,11 +90,13 @@ public class DatamapperAutoPingManagerImpl implements AutoPingManager {
             throws RollerException {
         if (PingConfig.getSuspendPingProcessing()) {
             if (logger.isDebugEnabled())
-                logger.debug("Ping processing is suspended.  No auto pings will be queued.");
+                logger.debug("Ping processing is suspended." +
+                    " No auto pings will be queued.");
             return;
         }
 
-        PingQueueManager pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
+        PingQueueManager pingQueueMgr = RollerFactory.getRoller().
+            getPingQueueManager();
         List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
         for (Iterator i = applicableAutopings.iterator(); i.hasNext(); ) {
             AutoPingData autoPing = (AutoPingData) i.next();
@@ -103,13 +106,15 @@ public class DatamapperAutoPingManagerImpl implements AutoPingManager {
 
     public List getAutoPingsByWebsite(WebsiteData website)
             throws RollerException {
-        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByWebsite")
+        return (List)strategy.newQuery(
+            AutoPingData.class, "AutoPingData.getByWebsite")
             .execute(website);
     }
 
     public List getAutoPingsByTarget(PingTargetData pingTarget) 
             throws RollerException {
-        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByPingTarget")
+        return (List)strategy.newQuery(AutoPingData.class, 
+            "AutoPingData.getByPingTarget")
             .execute(pingTarget);
     }
 

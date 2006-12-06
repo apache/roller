@@ -18,12 +18,6 @@
         <named-query name="PingTargetData.getByWebsiteOrderByName">
             <query>SELECT p FROM PingTargetData p WHERE p.website = ?1 ORDER BY p.name</query>
         </named-query>
-        <named-query name="PingTargetData.getByWebsite&amp;Name&amp;IdNotEqual">
-            <query>SELECT p FROM PingTargetData p WHERE p.website = ?1
-                AND p.name = ?2
-                AND p.id &lt;&gt; ?3
-            </query>
-        </named-query>
         <named-query name="PingTargetData.removeByWebsiteNotNull">
             <query>DELETE FROM PingTargetData p WHERE p.website IS NOT NULL</query>
         </named-query>

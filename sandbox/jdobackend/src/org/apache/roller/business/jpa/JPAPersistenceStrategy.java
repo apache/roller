@@ -231,7 +231,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
     public DatamapperQuery newQuery(Class clazz, String queryName)
             throws RollerException {
         EntityManager em = getEntityManager(false);
-        return new JPAQueryImpl(em, clazz, queryName);
+        return new JPANamedQueryImpl(em, queryName);
     }
 
     /**
@@ -245,6 +245,29 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         return new JPARemoveQueryImpl(em, clazz, queryName);
     }
+
+    /**
+     * Create query used for bulk update operations.
+     * @param queryName the name of the query
+     * @throws org.apache.roller.RollerException on any error
+     */
+    public JPAUpdateQuery newUpdateQuery(String queryName)
+            throws RollerException {
+        EntityManager em = getEntityManager(false);
+        return new JPAUpdateQuery(em, queryName);
+    }
+
+    /**
+     * Create query from queryString
+     * @param queryString the quuery
+     * @throws org.apache.roller.RollerException on any error
+     */
+    public DatamapperQuery newDynamicQuery(String queryString)
+            throws RollerException {
+        EntityManager em = getEntityManager(false);
+        return new JPADynamicQueryImpl(em, queryString);
+    }
+
 
     /**
      * Loads properties from given resourceName using given class loader
