@@ -104,7 +104,7 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, null, 0, false);
+                null, null, null, tags, 0, false);
         
         return new WeblogEntriesListPager(
             pagerUrl, null, null, null,
@@ -152,7 +152,7 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, null, 0, false);
+                null, null, null, tags, 0, false);
        
         return new WeblogEntriesListPager(
             pagerUrl, queryWeblog, user, cat,
