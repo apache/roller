@@ -19,7 +19,7 @@
 <%@ page isErrorPage="true" %>
 <tiles:insert page="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
    <tiles:put name="banner"       value="/WEB-INF/jsps/tiles/banner.jsp" />
-   <tiles:put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+   <tiles:put name="bannerStatus" value="/WEB-INF/jsps/tiles/empty.jsp" />
    <tiles:put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
    <tiles:put name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
    <tiles:put name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
