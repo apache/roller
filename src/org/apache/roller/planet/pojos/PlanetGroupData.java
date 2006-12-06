@@ -28,7 +28,7 @@ import org.apache.roller.pojos.*;
 /**
  * @struts.form include-all="true"
  * @ejb:bean name="PlanetGroupData"
- * @hibernate.class lazy="false" table="rag_group"
+ * @hibernate.class lazy="true" table="rag_group"
  */
 public class PlanetGroupData extends PersistentObject implements Serializable
 {

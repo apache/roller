@@ -50,7 +50,7 @@ import org.apache.roller.business.RollerFactory;
  * it should be replaced by more complete model that can fully represent all 
  * forms of RSS and Atom.
  * 
- * @hibernate.class lazy="false" table="rag_entry"
+ * @hibernate.class lazy="true" table="rag_entry"
  */
 public class PlanetEntryData extends PersistentObject
         implements Serializable, Comparable {

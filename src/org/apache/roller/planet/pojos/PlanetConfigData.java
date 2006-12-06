@@ -22,7 +22,7 @@ import org.apache.roller.pojos.PersistentObject;
 
 /**
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="rag_config"
+ * @hibernate.class lazy="true" table="rag_config"
  * @author Dave Johnson
  */
 public class PlanetConfigData extends PersistentObject implements Serializable
