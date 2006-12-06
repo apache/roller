@@ -166,7 +166,7 @@ public class FeedModel implements Model {
                     null,          // weblog entry
                     null,          // search String
                     null,          // startDate
-                    new Date(),    // endDate
+                    null,          // endDate
                     null,          // pending
                     Boolean.TRUE,  // approved only
                     Boolean.FALSE, // no spam
