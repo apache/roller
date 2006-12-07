@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20061120;9101800">
+	<META NAME="CHANGED" CONTENT="20061207;11581100">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.5in }
@@ -791,14 +791,24 @@ key and the new value you wish to use.
 <P CLASS="western" STYLE="margin-bottom: 0in">Here is a sample
 <FONT FACE="Courier New">roller-custom.properties</FONT> with the few
 properties that should be overridden</P>
-<P CLASS="western" STYLE="margin-bottom: 0in"> 
+<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
-<P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	uploads.dir=/app/roller/roller_data/uploads</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in">
+<FONT SIZE=3><FONT FACE="Courier New">	uploads.dir=/app/roller/roller_data/uploads</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	search.index.dir=/app/roller/roller_data/search-index</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in">    
+<FONT FACE="Courier New"><FONT SIZE=3>passwds.encryption.enabled=true</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	#
 etc, etc, etc ... any other properties you want to override</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><B>NOTE:
+Setting password encryption to true is a very good idea for new
+Roller sites,</B> but if you are upgrading an existing Roller site
+you'll need to come up with a strategy for converting your old
+unencrypted passwords before you turn encryption on.</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
 <H3 CLASS="western" STYLE="page-break-before: always">STEP 8.2:
@@ -1055,7 +1065,7 @@ to somewhere safe, for example:
 <PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3 CLASS="western">
-<A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
+<A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
 UPGRADE STEP 2: Install the new Roller 
 </H3>
 <P CLASS="western">Follow the normal installation instructions to
@@ -1070,7 +1080,7 @@ install Roller, except:
 	the installation, we'll do that later 
 	</P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
 UPGRADE STEP 3: Copy resources and update configs 
 </H3>
 <H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
@@ -1110,7 +1120,7 @@ installation guide.</P>
 	visit the Roller Support project on Java.Net
 	(http://roller.dev.java.net).</B></P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 UPGRADE STEP 4: Upgrade the database 
 </H3>
 <P CLASS="western">Use the appropriate database upgrade script to
@@ -1157,7 +1167,7 @@ UNIX:
 <P CLASS="western">If you're upgrading from an earlier release you'll
 have to run each of the older scripts in order to upgrade your
 database.</P>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
 UPGRADE STEP 5: Startup your app server 
 </H3>
 <P CLASS="western">Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
@@ -1266,6 +1276,17 @@ properties in this file are accessed like this ...</FONT></FONT></P>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#---------------------------------</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Database configuration settings</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Hibernate dialect: You must override this to use a database other
+than MySQL4</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>hibernate.dialect=org.hibernate.dialect.MySQLDialect</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#---------------------------------</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 User management settings</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
@@ -1305,6 +1326,16 @@ The directory in which Roller will upload files</FONT></FONT></P>
 The context path under which resoures will be made available </FONT></FONT>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>uploads.url=/resources</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Themes settings</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+The directory in which Roller will look for themes</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>themes.dir=${webapp.context}</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1412,6 +1443,21 @@ Set of models to be made available for weblog search rendering</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.ConfigModel,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.UtilitiesModel,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.URLModel,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.MessageModel,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.CalendarModel,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.MenuModel</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Set of models to be made available for weblog page *preview*
+rendering</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+NOTE: this *does* have some differences between the pageModels</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>rendering.previewModels=\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.PreviewPageModel,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.ConfigModel,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.UtilitiesModel,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.PreviewURLModel,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.MessageModel,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.CalendarModel,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.model.MenuModel</FONT></FONT></P>
@@ -1570,38 +1616,86 @@ Weblog entry plugins</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.rendering.plugins.BookmarkPlugin</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+The list of configured WeblogEntryEditors available to users</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.weblogEntryEditors=\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.core.plugins.TextEditor,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.core.plugins.XinhaEditor</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+The &quot;id&quot; of the default editor to use.  NOT the class name</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.defaultEditor=editor-text.jsp</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-scheduled tasks, each is comma separated list of classes</FONT></FONT></P>
+Scheduled Background Tasks ... all times are in minutes.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Task properties should follow the given format ...</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+    tasks.&lt;taskname&gt;.&lt;prop&gt;=&lt;value&gt;</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+The *enabled* tasks are defined by
+tasks.enabled=&lt;taskname&gt;[,&lt;taskname&gt;]</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#-----------------------------------</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-Comma separated list of task classnames to be executed once per day</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.daily=org.apache.roller.ui.core.tasks.TurnoverReferersTask\</FONT></FONT></P>
+Tasks which are enabled.  Only tasks listed here will be run.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.enabled=ResetHitCountsTask,TurnoverReferersTask,PingQueueTask</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-Needed to enable nightly fetching of blacklist</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.core.tasks.BlacklistUpdateTask\</FONT></FONT></P>
+Reset hit counts</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.ResetHitCountsTask.class=org.apache.roller.business.runnable.ResetHitCountsTask</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.ResetHitCountsTask.startTime=startOfDay</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.ResetHitCountsTask.interval=1440</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.ResetHitCountsTask.leaseTime=30</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-Daily Planet task: syncs weblog list with Roller, refreshes
-Technorati stats</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.core.tasks.SyncWebsitesTask</FONT></FONT></P>
+Reset referer counts</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TurnoverReferersTask.class=org.apache.roller.business.runnable.TurnoverReferersTask</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TurnoverReferersTask.startTime=startOfDay</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TurnoverReferersTask.interval=1440</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TurnoverReferersTask.leaseTime=30</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-Comma separated list of task classnames to be executed hourly</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.hourly=\</FONT></FONT></P>
+Ping processor, does sending of pings</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.PingQueueTask.class=org.apache.roller.business.pings.PingQueueTask</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.PingQueueTask.startTime=immediate</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.PingQueueTask.interval=5</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.PingQueueTask.leaseTime=30</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-Hourly Planet task: refresh latest entry list from all weblogs in
-list</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#org.apache.roller.ui.core.tasks.RefreshEntriesTask</FONT></FONT></P>
+Sync Roller weblogs with planet</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.SyncWebsitesTask.class=org.apache.roller.planet.tasks.SyncWebsitesTask</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.SyncWebsitesTask.startTime=startOfDay</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.SyncWebsitesTask.interval=1440</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.SyncWebsitesTask.leaseTime=30</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Refresh entries for planet feeds</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.RefreshEntriesTask.class=org.apache.roller.planet.tasks.RefreshEntriesTask</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.RefreshEntriesTask.startTime=startOfHour</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.RefreshEntriesTask.interval=60</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.RefreshEntriesTask.leaseTime=30</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Technorati rankings for planet feeds</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TechnoratiRankingsTask.class=org.apache.roller.planet.tasks.TechnoratiRankingsTask</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TechnoratiRankingsTask.startTime=startOfDay</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TechnoratiRankingsTask.interval=1440</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tasks.TechnoratiRankingsTask.leaseTime=30</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1864,12 +1958,6 @@ Planet Aggregator settings</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 Set to true to enable the Planet aggregator. This will cause:</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-- The main page of Roller will become an aggregated view of all blogs
-in the </FONT></FONT>
-</P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-  Roller database, plus those defined in the Planet group 'external'.</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 - A new menu tab will appear for Roller admin users. This allows
 admins to </FONT></FONT>
 </P>
@@ -1883,6 +1971,18 @@ admins to </FONT></FONT>
      - http://localhost:8080/roller/planetrss</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
      - http://localhost:8080/roller/planetrss?group=external</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+- You'll be able to add the $planet model to the list of page models
+available</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+  to blogs (rendering.pageModels) or to only site-wide blogs
+(rendering.siteModels) </FONT></FONT>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+  (classname org.apache.roller.ui.rendering.model.SiteModel)</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+  </FONT></FONT>
+</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>planet.aggregator.enabled=false</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
@@ -1926,8 +2026,7 @@ Blattman|http://blogs.sun.com/jtb,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 comma-separated list of top-level categories to be created in each
 new weblog</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>newuser.categories=\</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>General,Status,Java,Music,Politics</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>newuser.categories=General,Status,Java,Music,Politics</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1985,14 +2084,55 @@ value.</FONT></FONT></P>
 misc settings</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Characters to be allowed in user names (change at your own risk)</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>username.allowedChars=A-Za-z0-9</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>rememberme.enabled=true</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>debug.memory.enabled=false</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>compression.gzipResponse.enabled=true</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+specifies the max number of tags allowed in URL (
+/feed?tags=foo+bar+baz )</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>tags.queries.maxIntersectionSize=3</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 editor theme to be used (corresponds to directory name under /theme)</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>editor.theme=tan</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Hibernate config resource (a classpath-based path)</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+NO NEED TO OVERRIDE this unless you are customizing Roller</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>hibernate.configResource=/hibernate.cfg.xml</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+JDBC configuration parameters ONLY NEEDED FOR RUNNING STANDALONE
+TASKS</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Don't override these in the roller-custom.properties file you use
+with the </FONT></FONT>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Roller webapp, but for the standalone tasks that you run outside of
+Roller </FONT></FONT>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+(e.g. refresh entries) you'll need to override these properties. Do
+it in a </FONT></FONT>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+separate roller-custom.properties file.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>jdbc.driverClass=</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>jdbc.connectionURL=</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>jdbc.username=</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>jdbc.password=</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#---------------------------------</FONT></FONT></P>
@@ -2062,7 +2202,5 @@ settings for old #showNewseeds macro (not related to Planet stuff)</FONT></FONT>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.enabled=false</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.cache.enabled=</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.cache.timeout=14400</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
-</P>
 </BODY>
 </HTML>
