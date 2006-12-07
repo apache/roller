@@ -68,16 +68,10 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
         this.strategy = strategy;
     }
 
-    /**
-     * Store the referer.
-     */
     public void saveReferer(RefererData referer) throws RollerException {
         strategy.store(referer);
     }
 
-    /**
-     * Remove a single referer.
-     */
     public void removeReferer(RefererData referer) throws RollerException {
         strategy.remove(referer);
     }

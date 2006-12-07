@@ -27,20 +27,17 @@ import javax.persistence.Query;
  */
 public class JPANamedQueryImpl extends JPAQueryImpl {
 
-    String queryName;
-
     /**
      * Creates a new instance of JPANamedQueryImpl
      */
     public JPANamedQueryImpl(EntityManager em, String queryName) {
-        super(em);
-        this.queryName = queryName;
+        super(em, queryName);
     }
 
     /**
      * Create a Query for this instance
      */
-    protected Query createQuery() {
+    protected Query createQuery(String queryName) {
         return em.createNamedQuery(queryName);
     }
 }

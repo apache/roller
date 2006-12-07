@@ -17,20 +17,17 @@
  */
 
 
-package org.apache.roller.business.datamapper;
+package org.apache.roller.business.jpa;
 
 import org.apache.roller.business.jpa.JPAPersistenceStrategy;
-
+import org.apache.roller.business.datamapper.DatamapperWeblogManagerImpl;
 
 /**
  * @author Mitesh Meswani
  */
-public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl{
+public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
 
-    private JPAPersistenceStrategy strategy;
-
-    public JPAWeblogManagerImpl(JPAPersistenceStrategy strat) {
-        super(strat);
-        this.strategy = strat;
+    public JPAWeblogManagerImpl(JPAPersistenceStrategy strategy) {
+        super(strategy);
     }
 }

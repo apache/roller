@@ -45,6 +45,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.TagStat;
+import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,7 +67,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(DatamapperUserManagerImpl.class);    
 
-    private DatamapperPersistenceStrategy strategy;
+    protected DatamapperPersistenceStrategy strategy;
     
 
     // cached mapping of weblogHandles -> weblogIds
@@ -122,6 +123,17 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         // remove site tag aggregates
         List tags = wmgr.getTags(website, null, null, -1);
         updateTagAggregates(tags);
+
+        // delete all weblog tag aggregates
+        strategy.newRemoveQuery(
+                WeblogEntryTagAggregateData.class,
+                "WeblogEntryTagAggregateData.deleteByWeblog").removeAll(website);
+
+        // delete all bad counts
+        strategy.newRemoveQuery(
+                WeblogEntryTagAggregateData.class,
+                "WeblogEntryTagAggregateData.deleteByTotalLEZero").removeAll(website);
+
 
         // Remove the website's ping queue entries
         List queueEntries = (List)strategy.newQuery(PingQueueEntryData.class,
@@ -222,7 +234,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     }
 
     /**
-     * @see org.apache.roller.business.UserManager#savePage(org.apache.roller.pojos.WeblogTemplate)
+     * @see org.apache.roller.model.UserManager#storePage(org.apache.roller.pojos.WeblogTemplate)
      */
     public void savePage(WeblogTemplate page) throws RollerException {
         this.strategy.store(page);
@@ -243,7 +255,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
-        List existingUsers = this.getUsers(0, 1);
+        List existingUsers = this.getUsers(null, Boolean.TRUE, null, null, 0, 1);
         if(existingUsers.size() == 0) {
             // Make first user an admin
             adminUser = true;
@@ -279,7 +291,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         perms.setPermissionMask(PermissionsData.ADMIN);
         this.strategy.store(perms);
 
-        // add default categories
+        // add default category
         WeblogCategoryData rootCat = new WeblogCategoryData(
                 newWeblog, // newWeblog
                 null,      // parent
@@ -290,7 +302,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         String cats = RollerConfig.getProperty("newuser.categories");
         WeblogCategoryData firstCat = rootCat;
-        if (cats != null) {
+        if (cats != null && cats.trim().length() > 0) {
             String[] splitcats = cats.split(",");
             for (int i=0; i<splitcats.length; i++) {
                 WeblogCategoryData c = new WeblogCategoryData(
@@ -303,6 +315,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                 this.strategy.store(c);
             }
         }
+        
         // Use first category as default for Blogger API
         newWeblog.setBloggerCategory(firstCat);
 
@@ -860,7 +873,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     }
 
     /**
-     * @see org.apache.roller.business.UserManager#getPageByName(WebsiteData, java.lang.String)
+     * @see org.apache.roller.model.UserManager#getPageByName(WebsiteData, java.lang.String)
      */
     public WeblogTemplate getPageByName(WebsiteData website, String pagename)
             throws RollerException {
@@ -879,7 +892,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     }
 
     /**
-     * @see org.apache.roller.business.UserManager#getPages(WebsiteData)
+     * @see org.apache.roller.model.UserManager#getPages(WebsiteData)
      */
     public List getPages(WebsiteData website) throws RollerException {
         if (website == null)
@@ -1034,11 +1047,11 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             results.add(new StatCount(
-                (String)row[1],
-                (String)row[2],
-                (String)row[3],
-                "statCount.weblogCommentCountType",
-                new Long(((Integer)row[0]).intValue()).longValue()));
+                    (String)row[1],                     // website id
+                    (String)row[2],                     // website handle
+                    (String)row[3],                     // website name
+                    "statCount.weblogCommentCountType", // stat type 
+                    new Long(((Integer)row[0]).intValue()).longValue())); // # comments
         }
         //TODO Uncomment following once integrated with code
         //Collections.sort(results, StatCount.getComparator());

@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.datamapper.DatamapperRollerImpl;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
-import org.apache.roller.business.datamapper.JPAUserManagerImpl;
+import org.apache.roller.business.jpa.JPAUserManagerImpl;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;

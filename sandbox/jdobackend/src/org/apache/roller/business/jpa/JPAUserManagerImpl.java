@@ -17,11 +17,12 @@
  */
 
 
-package org.apache.roller.business.datamapper;
+package org.apache.roller.business.jpa;
 
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.business.jpa.JPAUpdateQuery;
+import org.apache.roller.business.datamapper.DatamapperUserManagerImpl;
 import org.apache.roller.RollerException;
 
 import java.util.List;
@@ -32,17 +33,14 @@ import java.util.Iterator;
  */
 public class JPAUserManagerImpl extends DatamapperUserManagerImpl {
 
-    private JPAPersistenceStrategy strategy;
-    
-    public JPAUserManagerImpl(JPAPersistenceStrategy strat) {
-        super(strat);
-        this.strategy = strat;
+    public JPAUserManagerImpl(JPAPersistenceStrategy strategy) {
+        super(strategy);
     }
 
     protected void updateTagAggregates(List tags) throws RollerException {
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
                 TagStat stat = (TagStat) iter.next();
-                JPAUpdateQuery query = strategy.newUpdateQuery(
+                JPAUpdateQuery query = ((JPAPersistenceStrategy)strategy).newUpdateQuery(
                     "WeblogEntryTagAggregateData.updateTotalByName&ampWeblogNull");
                 query.updateAll(
                     new Object[] {Integer.valueOf(stat.getCount()), 

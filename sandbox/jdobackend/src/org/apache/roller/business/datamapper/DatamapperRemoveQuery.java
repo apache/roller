@@ -38,9 +38,4 @@ public interface DatamapperRemoveQuery {
      */
     void removeAll(Object[] params);
 
-    /** Set the result to be a single instance (not a List).
-     * @return the instance on which this method is called
-     */
-    DatamapperRemoveQuery setUnique();
-
 }

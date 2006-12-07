@@ -53,9 +53,4 @@ public class JDORemoveQueryImpl implements DatamapperRemoveQuery {
         q.deletePersistentAll(params);
     }
 
-    public DatamapperRemoveQuery setUnique() {
-        q.setUnique(true);
-        return this;
-    }
-
 }
