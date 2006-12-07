@@ -9,50 +9,35 @@ if [ ! "$1" ] ; then
   exit 0;
 fi
 
+
+# -- YOU MUST ENSURE THESE SETTINGS ARE CORRECT ---
+
+# Path to Java JDK
 JAVA_HOME=/usr/local/jdk1.5
-CATALINA_HOME=/home1/r/roller
-ROLLER_HOME=/home1/r/roller/public_html
-ROLLER_CONFIG=${CATALINA_HOME}/conf/roller-custom.properties
 export JAVA_HOME
-export CATALINA_HOME
-export ROLLER_HOME
-export ROLLER_CONFIG
 
-_JDBCJAR=${CATALINA_HOME}/common/lib/mysql-connector-java-3.0.11-stable-bin.jar
+# Directory of Roller context
+WEBAPP_DIR=/usr/local/tomcat/webapps/roller
+export WEBAPP_DIR
 
-_CP=.:\
-${ROLLER_HOME}/WEB-INF/lib/JSPWiki.jar:\
-${ROLLER_HOME}/WEB-INF/lib/antlr.jar:\
-${ROLLER_HOME}/WEB-INF/lib/asm-attrs.jar:\
-${ROLLER_HOME}/WEB-INF/lib/asm.jar:\
-${ROLLER_HOME}/WEB-INF/lib/cglib-2.1.3.jar:\
-${ROLLER_HOME}/WEB-INF/lib/commons-collections.jar:\
-${ROLLER_HOME}/WEB-INF/lib/commons-lang-2.0.jar:\
-${ROLLER_HOME}/WEB-INF/lib/commons-logging.jar:\
-${ROLLER_HOME}/WEB-INF/lib/commons-logging.jar:\
-${ROLLER_HOME}/WEB-INF/lib/dom4j-1.6.1.jar:\
-${ROLLER_HOME}/WEB-INF/lib/ecs.jar:\
-${ROLLER_HOME}/WEB-INF/lib/ehcache-1.1.jar:\
-${ROLLER_HOME}/WEB-INF/lib/hibernate3.jar:\
-${ROLLER_HOME}/WEB-INF/lib/jaxen-full.jar:\
-${ROLLER_HOME}/WEB-INF/lib/jdom.jar:\
-${ROLLER_HOME}/WEB-INF/lib/jrcs-diff.jar:\
-${ROLLER_HOME}/WEB-INF/lib/jta.jar:\
-${ROLLER_HOME}/WEB-INF/lib/jython.jar:\
-${ROLLER_HOME}/WEB-INF/lib/log4j-1.2.11.jar:\
-${ROLLER_HOME}/WEB-INF/lib/lucene-1.4.3.jar:\
-${ROLLER_HOME}/WEB-INF/lib/oscache.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rollerbeans.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rollercontrib.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rollerweb.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rome-0.8.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rome-fetcher-0.8.jar:\
-${ROLLER_HOME}/WEB-INF/lib/saxpath.jar:\
-${ROLLER_HOME}/WEB-INF/lib/textile4j-1.20.jar:\
-${ROLLER_HOME}/WEB-INF/lib/velocity-1.4.jar:\
-${ROLLER_HOME}/WEB-INF/lib/xmlrpc-1.2-b1.jar:\
-${CATALINA_HOME}/server/lib/servlet-api.jar:\
-${_JDBCJAR}
+# Directory of additional jars
+JARS_DIR=/usr/local/tomcat/common/lib
+export JARS_DIR
 
-${JAVA_HOME}/bin/java -Dcatalina.home=${CATALINA_HOME} -Droller.custom.config=${ROLLER_CONFIG} -classpath ${_CP} $1
+# Planet configuration override file specifying JDBC connection parameters
+CONFIG_OVERRIDE=roller-custom.properties
+export CONFIG_OVERRIDE
+
+
+# --- YOU SHOULD NOT NEED TO EDIT BELOW THIS LINE ---
+
+# Hack: setting catalina.base=. allows us to save log in ./logs
+
+${JAVA_HOME}/bin/java \
+    -Dcatalina.base=. \
+    -Droller.custom.config=${CONFIG_OVERRIDE} \
+    -cp ${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar \
+    org.apache.roller.business.runnable.TaskRunner \
+    ${WEBAPP_DIR} ${JARS_DIR} \
+    $1
 
