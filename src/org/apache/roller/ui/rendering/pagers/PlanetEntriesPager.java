@@ -81,10 +81,13 @@ public class PlanetEntriesPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
             
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();
+            Date startDate = null;
+            if(sinceDays > 0) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DATE, -1 * sinceDays);
+                startDate = cal.getTime();
+            }
             
             List results = new ArrayList();
             try {
