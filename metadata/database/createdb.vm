@@ -130,11 +130,11 @@ create table folder (
     description      varchar(255),
     websiteid        varchar(48) not null,
     parentid         varchar(48),
-    path             #longtext(1000) 
+    path             varchar(255) 
 );
 create index fo_websiteid_idx on folder( websiteid );
 create index fo_parentid_idx on folder( parentid );
--- Can't index a CLOB create index fo_path_idx on folder( path$!INDEXSIZE );
+create index fo_path_idx on folder( path );
 
 create table folderassoc (
     id               varchar(48) not null primary key,
@@ -166,11 +166,11 @@ create table weblogcategory (
     websiteid        varchar(48)  not null,
     image            varchar(255),
     parentid         varchar(48),
-    path             #longtext(1000)
+    path             varchar(255)
 );
 create index wc_websiteid_idx on weblogcategory( websiteid );
 create index ws_parentid_idx on weblogcategory( parentid );
--- Can't index a CLOB create index ws_path_idx on weblogcategory( path$!INDEXSIZE );
+create index ws_path_idx on weblogcategory( path );
 
 create table weblogcategoryassoc (
     id               varchar(48) not null primary key,
