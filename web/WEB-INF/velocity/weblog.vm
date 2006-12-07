@@ -68,12 +68,24 @@ Parse and include page template from weblog.
 Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
-    <link rel="alternate" type="application/atom+xml" title="Atom Entries"  href="$url.feed.entries.atom" />
-    <link rel="alternate" type="application/atom+xml" title="Atom Comments" href="$url.feed.comments.atom" />
-    <link rel="alternate" type="application/rss+xml"  title="RSS Entries"   href="$url.feed.entries.rss" />
-    <link rel="alternate" type="application/rss+xml"  title="RSS Comments"  href="$url.feed.comments.rss" />
     #if ($weblog.enableBloggerApi)
        <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$url.rsd"/>
+    #end
+    
+    ## main feed urls are always available
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
+    <link rel="alternate" type="application/rss+xml"  title="Recent Entries (RSS)"   href="$url.feed.entries.rss" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" href="$url.feed.comments.atom" />
+    <link rel="alternate" type="application/rss+xml"  title="Recent Comments (RSS)"  href="$url.feed.comments.rss" />
+
+    #if ($model.tags)
+      <link rel="alternate" type="application/atom+xml" title="Entries tagged $model.tags.toString() (Atom)"  href="$url.feed.entries.atom($model.tags, false)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries tagged $model.tags.toString() (RSS)"   href="$url.feed.entries.rss($model.tags, false)" />
+    #elseif ($model.weblogCategory)
+      <link rel="alternate" type="application/atom+xml" title="Entries for category $model.weblogCategory.name (Atom)"  href="$url.feed.entries.atom($model.weblogCategory.path, false)" />
+      <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.weblogCategory.name (RSS)"   href="$url.feed.entries.rss($model.weblogCategory.path, false)" />
+    #else
+      
     #end
 #end
 
