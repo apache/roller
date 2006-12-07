@@ -61,7 +61,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     private static Log log = LogFactory.getLog(
         DatamapperWeblogManagerImpl.class);
     
-    private DatamapperPersistenceStrategy strategy;
+    protected DatamapperPersistenceStrategy strategy;
 
     /* inline creation of reverse comparator, anonymous inner class */
     private Comparator reverseComparator = new ReverseComparator();

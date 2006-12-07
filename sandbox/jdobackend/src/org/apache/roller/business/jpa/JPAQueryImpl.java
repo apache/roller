@@ -40,13 +40,18 @@ public abstract class JPAQueryImpl implements DatamapperQuery {
     /**
      * Creates a new instance of JPAQueryImpl
      */
-    public JPAQueryImpl(EntityManager em) {
+    protected JPAQueryImpl(EntityManager em, String arg) {
         this.em = em;
-        q = createQuery();
+        q = createQuery(arg);
     }
 
-    /** Create a Query for this instance*/
-    protected abstract Query createQuery();
+    /**
+     * Create a Query for this instance.
+     * @param arg Can be the name of a named query or the actual query string
+     * for a dynamic query.
+     * @return Query object
+     */
+    protected abstract Query createQuery(String arg);
 
     public Object execute() {
         return executeQuery();

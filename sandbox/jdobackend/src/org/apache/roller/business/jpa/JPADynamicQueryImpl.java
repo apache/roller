@@ -27,20 +27,17 @@ import javax.persistence.Query;
  */
 public class JPADynamicQueryImpl extends JPAQueryImpl {
 
-    String queryString;
-
     /**
      * Creates a new instance of JPADynamicQueryImpl
      */
     public JPADynamicQueryImpl(EntityManager em, String queryString) {
-        super(em);
-        this.queryString = queryString;
+        super(em, queryString);
     }
 
     /**
      * Create a Query for this instance
      */
-    protected Query createQuery() {
+    protected Query createQuery(String queryString) {
         return em.createQuery(queryString);
     }
 }

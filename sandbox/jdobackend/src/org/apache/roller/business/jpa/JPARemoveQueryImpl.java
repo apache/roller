@@ -59,12 +59,6 @@ public class JPARemoveQueryImpl implements DatamapperRemoveQuery {
         q.executeUpdate();
     }
 
-    public DatamapperRemoveQuery setUnique() {
-        // TODO - Craig, what does setUnique mean on a RemoveQuery?
-        //q.setUnique(true);
-        return this;
-    }
-
     public DatamapperRemoveQuery setTypes(Object[] types) {
         return this;
     }
