@@ -209,7 +209,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
         {
             return false;
         }
-        if (website != null ? !website.equals(pingQueueEntryData.getWebsite()) : pingQueueEntryData.getWebsite() != null)
+        if (getWebsite() != null ? !getWebsite().equals(pingQueueEntryData.getWebsite()) : pingQueueEntryData.getWebsite() != null)
         {
             return false;
         }
@@ -231,6 +231,6 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @see Object#toString()
      */
     public String toString() {
-        return "PingQueueEntryData{" + "id='" + id + "'" + ", entryTime=" + entryTime + ", pingTarget=" + pingTarget + ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") + ", attempts=" + attempts + "}";
+        return "PingQueueEntryData{" + "id='" + id + "'" + ", entryTime=" + entryTime + ", pingTarget=" + pingTarget + ", website= " + (getWebsite() == null ? "null" : "{id='" + getWebsite().getId() + "'} ") + ", attempts=" + attempts + "}";
     }
 }
