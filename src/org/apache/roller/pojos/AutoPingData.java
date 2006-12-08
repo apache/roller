@@ -168,6 +168,6 @@ public class AutoPingData extends PersistentObject implements Serializable {
      * @see Object#toString()
      */
     public String toString() {
-        return "AutoPingData{" + "id='" + id + "'" + ", pingTarget=" + pingTarget + ", website= " + (getWebsite() == null ? "null" : "{id='" + getWebsite().getId() + "'} ") + "}";
+        return "AutoPingData{" + "id='" + id + "'" + ", pingTarget=" + pingTarget + "}";
     }
 }

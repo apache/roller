@@ -231,6 +231,6 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @see Object#toString()
      */
     public String toString() {
-        return "PingQueueEntryData{" + "id='" + id + "'" + ", entryTime=" + entryTime + ", pingTarget=" + pingTarget + ", website= " + (getWebsite() == null ? "null" : "{id='" + getWebsite().getId() + "'} ") + ", attempts=" + attempts + "}";
+        return "PingQueueEntryData{" + "id='" + id + "'" + ", entryTime=" + entryTime + ", pingTarget=" + pingTarget + ", attempts=" + attempts + "}";
     }
 }

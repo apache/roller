@@ -304,7 +304,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return "PingTargetData{" + "id='" + id + "'" + ", name='" + name + "'" + ", pingUrl='" + pingUrl + "'" + ", website= " + (getWebsite() == null ? "null" : "{id='" + getWebsite().getId() + "'} ") + ", conditionCode=" + conditionCode + ", lastSuccess=" + lastSuccess + "}";
+        return "PingTargetData{" + "id='" + id + "'" + ", name='" + name + "'" + ", pingUrl='" + pingUrl + "'" + ", conditionCode=" + conditionCode + ", lastSuccess=" + lastSuccess + "}";
     }
 
 }
