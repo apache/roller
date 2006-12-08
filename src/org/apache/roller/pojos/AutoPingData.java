@@ -147,7 +147,7 @@ public class AutoPingData extends PersistentObject implements Serializable {
         {
             return false;
         }
-        if (website != null ? !website.equals(autoPingData.getWebsite()) : autoPingData.getWebsite() != null) {
+        if (getWebsite() != null ? !getWebsite().equals(autoPingData.getWebsite()) : autoPingData.getWebsite() != null) {
             return false;
         }
 
@@ -168,6 +168,6 @@ public class AutoPingData extends PersistentObject implements Serializable {
      * @see Object#toString()
      */
     public String toString() {
-        return "AutoPingData{" + "id='" + id + "'" + ", pingTarget=" + pingTarget + ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") + "}";
+        return "AutoPingData{" + "id='" + id + "'" + ", pingTarget=" + pingTarget + ", website= " + (getWebsite() == null ? "null" : "{id='" + getWebsite().getId() + "'} ") + "}";
     }
 }

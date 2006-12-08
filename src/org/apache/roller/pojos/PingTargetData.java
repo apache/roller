@@ -289,7 +289,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
         if (pingUrl != null ? !pingUrl.equals(pingTargetData.getPingUrl()) : pingTargetData.getPingUrl() != null) {
             return false;
         }
-        if (website != null ? !website.equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) {
+        if (getWebsite() != null ? !getWebsite().equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) {
             return false;
         }
 
@@ -304,7 +304,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return "PingTargetData{" + "id='" + id + "'" + ", name='" + name + "'" + ", pingUrl='" + pingUrl + "'" + ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") + ", conditionCode=" + conditionCode + ", lastSuccess=" + lastSuccess + "}";
+        return "PingTargetData{" + "id='" + id + "'" + ", name='" + name + "'" + ", pingUrl='" + pingUrl + "'" + ", website= " + (getWebsite() == null ? "null" : "{id='" + getWebsite().getId() + "'} ") + ", conditionCode=" + conditionCode + ", lastSuccess=" + lastSuccess + "}";
     }
 
 }
