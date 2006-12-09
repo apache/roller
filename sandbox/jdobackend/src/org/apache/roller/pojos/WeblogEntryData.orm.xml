@@ -73,6 +73,11 @@
         <named-query name="WeblogEntryData.getCountDistinctByStatus&amp;Website">
             <query>SELECT COUNT(DISTINCT e) FROM WeblogEntryData e WHERE e.status = ?1 AND e.website = ?2</query>
         </named-query>
+        <named-query name="WeblogEntryData.updateAllowComments&amp;CommentDaysByWebsite">
+            <query>UPDATE WeblogEntryData SET allowComments = ?1, commentDays = ?2, 
+                                              pubTime=pubTime, updateTime=updateTime
+                                          WHERE website = ?3</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
