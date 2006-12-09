@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -16,39 +15,41 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.business.datamapper;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.StatCount;
+import org.apache.roller.pojos.TagStat;
+import org.apache.roller.pojos.TagStatComparator;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.HitCountData;
-import org.apache.roller.pojos.StatCount;
-import org.apache.roller.pojos.WeblogEntryTagAggregateData;
-import org.apache.roller.pojos.TagStat;
-import org.apache.roller.pojos.TagStatComparator;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.Utilities;
 
 /*
  * DatamapperWeblogManagerImpl.java
@@ -56,12 +57,15 @@ import org.apache.roller.util.Utilities;
  * Created on May 31, 2006, 4:08 PM
  *
  */
-public class DatamapperWeblogManagerImpl implements WeblogManager {
+public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
 
-    private static Log log = LogFactory.getLog(
+    protected static Log log = LogFactory.getLog(
         DatamapperWeblogManagerImpl.class);
     
     protected DatamapperPersistenceStrategy strategy;
+
+    // cached mapping of entryAnchors -> entryIds
+    private Hashtable entryAnchorToIdMap = new Hashtable();
 
     /* inline creation of reverse comparator, anonymous inner class */
     private Comparator reverseComparator = new ReverseComparator();
@@ -76,12 +80,12 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Save weblog category.
+     * @inheritDoc
      */
     public void saveWeblogCategory(WeblogCategoryData cat)
             throws RollerException {
-        if(this.isDuplicateWeblogCategoryName(cat)) {
-            throw new RollerException("Duplicate category name");
+        if(cat.getId() == null && this.isDuplicateWeblogCategoryName(cat)) {
+            throw new RollerException("Duplicate category name, cannot save category");
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -90,8 +94,40 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         this.strategy.store(cat);
     }
 
-    public void moveWeblogCategory(WeblogCategoryData srcCat, 
-        WeblogCategoryData destCat)
+    /**
+     * @inheritDoc
+     */
+    public void removeWeblogCategory(WeblogCategoryData cat)
+            throws RollerException {
+        if(cat.retrieveWeblogEntries(true).size() > 0) {
+            throw new RollerException("Cannot remove category with entries");
+        }
+        
+        // remove cat
+        this.strategy.remove(cat);
+        
+        // update website default cats if needed
+        if(cat.getWebsite().getBloggerCategory().equals(cat)) {
+            WeblogCategoryData rootCat = this.getRootWeblogCategory(cat.getWebsite());
+            cat.getWebsite().setBloggerCategory(rootCat);
+            this.strategy.store(cat.getWebsite());
+        }
+        
+        if(cat.getWebsite().getDefaultCategory().equals(cat)) {
+            WeblogCategoryData rootCat = this.getRootWeblogCategory(cat.getWebsite());
+            cat.getWebsite().setDefaultCategory(rootCat);
+            this.strategy.store(cat.getWebsite());
+        }
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(
+                cat.getWebsite());
+    }    
+    
+    /**
+     * @inheritDoc
+     */
+    public void moveWeblogCategory(WeblogCategoryData srcCat, WeblogCategoryData destCat)
             throws RollerException {
         
         // TODO: this check should be made before calling this method?
@@ -146,39 +182,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * Remove weblog category.
-     */
-    public void removeWeblogCategory(WeblogCategoryData cat)
-            throws RollerException {
-        if(cat.retrieveWeblogEntries(true).size() > 0) {
-            throw new RollerException("Cannot remove category with entries");
-        }
-        
-        // remove cat
-        this.strategy.remove(cat);
-        
-        // update website default cats if needed
-        if(cat.getWebsite().getBloggerCategory().equals(cat)) {
-            WeblogCategoryData rootCat = this.getRootWeblogCategory(
-                cat.getWebsite());
-            cat.getWebsite().setBloggerCategory(rootCat);
-            this.strategy.store(cat.getWebsite());
-        }
-        
-        if(cat.getWebsite().getDefaultCategory().equals(cat)) {
-            WeblogCategoryData rootCat = this.getRootWeblogCategory(
-                cat.getWebsite());
-            cat.getWebsite().setDefaultCategory(rootCat);
-            this.strategy.store(cat.getWebsite());
-        }
-        
-        // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(
-                cat.getWebsite());
-    }
-
-    /**
-     * Recategorize all entries with one category to another.
+     * @inheritDoc
      */
     public void moveWeblogCategoryContents(WeblogCategoryData srcCat, 
                 WeblogCategoryData destCat)
@@ -222,7 +226,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Save comment.
+     * @inheritDoc
      */
     public void saveComment(CommentData comment) throws RollerException {
         this.strategy.store(comment);
@@ -233,7 +237,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Remove comment.
+     * @inheritDoc
      */
     public void removeComment(CommentData comment) throws RollerException {
         this.strategy.remove(comment);
@@ -244,10 +248,11 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Save weblog entry.
+     * @inheritDoc
      */
     // TODO: perhaps the createAnchor() and queuePings() items should go outside this method?
     public void saveWeblogEntry(WeblogEntryData entry) throws RollerException {
+        
         if (entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
             entry.setAnchor(this.createAnchor(entry));
         }
@@ -278,7 +283,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Remove weblog entry.
+     * @inheritDoc
      */
     public void removeWeblogEntry(WeblogEntryData entry)
             throws RollerException {
@@ -324,7 +329,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                 .saveWebsite(entry.getWebsite());
         }
         
-        // TODO: remove entry from cache mapping
+        // remove entry from cache mapping
+        this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
 
     public List getNextPrevEntries(WeblogEntryData current, String catName, 
@@ -420,8 +426,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * Get top level categories for a website.
-     * @param website Website.
+     * @inheritDoc
      */
     public WeblogCategoryData getRootWeblogCategory(WebsiteData website)
             throws RollerException {
@@ -434,7 +439,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get WebLogCategory objects for a website.
+     * @inheritDoc
      */
     public List getWeblogCategories(WebsiteData website, boolean includeRoot)
             throws RollerException {
@@ -448,41 +453,35 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get WebLogCategory objects for a website.
+     * @inheritDoc
      */
     public List getWeblogCategories(WebsiteData website)
             throws RollerException {
+        if (website == null)
+            throw new RollerException("website is null");
+
         return (List) strategy.newQuery(WeblogCategoryData.class, 
                 "WeblogCategoryData.getByWebsite").execute(website);
     }
 
     /**
-     * Get WeblogEntries by offset/length as list in reverse chronological order.
-     * The range offset and list arguments enable paging through query results.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param user       User or null to get for all users.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
-     * @param offset     Offset into results for paging
-     * @param range     Max comments to return (or -1 for no limit)
-     * @return List of WeblogEntryData objects in reverse chrono order.
-     * @throws RollerException
+     * @inheritDoc
      */
-    public List getWeblogEntries(WebsiteData website,  UserData user,
-                                 Date startDate, Date endDate,
-                                 String catName, List tags,
-                                 String status, String sortBy, String locale,             
-                                 int offset, int range) throws RollerException {
-        return null; // TODO not implemented
-    }
+    public abstract List getWeblogEntries(
+            WebsiteData website,
+            UserData    user,
+            Date        startDate,
+            Date        endDate,
+            String      catName,
+            List        tags,
+            String      status,
+            String      sortby,
+            String      locale,
+            int         offset,
+            int         length) throws RollerException;
 
     /**
-     * Get specified number of most recent pinned and published Weblog Entries.
-     * @param max Maximum number to return.
-     * @return Collection of WeblogEntryData objects.
+     * @inheritDoc
      */
     public List getWeblogEntriesPinnedToMain(Integer max)
             throws RollerException {
@@ -495,74 +494,47 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get weblog entry by anchor.
+     * @inheritDoc
      */
     public WeblogEntryData getWeblogEntryByAnchor(WebsiteData website,
             String anchor) throws RollerException {
-        if (website == null)
-            throw new RollerException("Website is null");
         
         if (anchor == null)
             throw new RollerException("Anchor is null");
         
-        // TODO Impl entryAnchorToIdMap CACHE
+        // mapping key is combo of weblog + anchor
+        String mappingKey = website.getHandle()+":"+anchor;
         
-        return (WeblogEntryData)strategy.newQuery(WeblogEntryData.class, 
+        // check cache first
+        // NOTE: if we ever allow changing anchors then this needs updating
+        if(this.entryAnchorToIdMap.containsKey(mappingKey)) {
+            
+            WeblogEntryData entry = this.getWeblogEntry((String) this.entryAnchorToIdMap.get(mappingKey));
+            if(entry != null) {
+                log.debug("entryAnchorToIdMap CACHE HIT - "+mappingKey);
+                return entry;
+            } else {
+                // mapping hit with lookup miss?  mapping must be old, remove it
+                this.entryAnchorToIdMap.remove(mappingKey);
+            }
+        }
+
+        // cache failed, do lookup
+        WeblogEntryData entry = (WeblogEntryData)strategy.newQuery(WeblogEntryData.class, 
             "getByAnchor")
             .execute(anchor);
-    }
 
-    /**
-     * Gets returns most recent pubTime, optionally restricted by category.
-     * @param website Handle of website or null for all users
-     * @param catName Category name of posts or null for all categories
-     * @return Date Of last publish time
-     */
-    public Date getWeblogLastPublishTime(WebsiteData website, String catName)
-            throws RollerException {
-        WeblogCategoryData cat = null;
-
-        if (catName != null && website != null) {
-            cat = getWeblogCategoryByPath(website, null, catName);
+        // add mapping to cache
+        if(entry != null) {
+            log.debug("entryAnchorToIdMap CACHE MISS - "+mappingKey);
+            this.entryAnchorToIdMap.put(mappingKey, entry.getId());
         }
     
-        List list = null;
-        if (website != null) {
-            if (cat != null) {
-                list = (List) strategy.newQuery(WeblogEntryData.class, 
-                    "WeblogEntryData.getByStatus&PubTimeLessEqual&Category&WebsiteOrderByPubTimeDesc")
-                    .setRange(0, 1)
-                    .execute(
-                        new Object[] {WeblogEntryData.PUBLISHED, new Date(), 
-                            cat, website});
-            } else {
-                list = (List) strategy.newQuery(WeblogEntryData.class, 
-                        "WeblogEntryData.getByStatus&PubTimeLessEqual&WebsiteOrderByPubTimeDesc")
-                    .setRange(0, 1)
-                    .execute(
-                        new Object[] {WeblogEntryData.PUBLISHED, new Date(), 
-                        website});
-            }
-        } else {
-            // cat must also be null
-            list = (List) strategy.newQuery(WeblogEntryData.class, 
-                    "WeblogEntryData.getByStatus&PubTimeLessEqualOrderByPubTimeDesc")
-                .setRange(0, 1)
-                .execute(new Object[] {WeblogEntryData.PUBLISHED, new Date()});
-        }
-        if (list.size() > 0) {
-            return ((WeblogEntryData)list.get(0)).getPubTime();
-        } else {
-            return null;
-        }
+        return entry;
     }
 
     /**
-     * Get weblog entries with given category or, optionally, any sub-category
-     * of that category.
-     * @param cat Category
-     * @param subcats True if sub-categories are to be fetched
-     * @return List of weblog entries in category
+     * @inheritDoc
      */
     // TODO: this method should be removed and it's functionality moved to getWeblogEntries()
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
@@ -583,7 +555,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Create unique anchor for weblog entry.
+     * @inheritDoc
      */
     public String createAnchor(WeblogEntryData entry) throws RollerException {
         // Check for uniqueness of anchor
@@ -610,7 +582,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Check for duplicate category name.
+     * @inheritDoc
      */
     public boolean isDuplicateWeblogCategoryName(WeblogCategoryData cat)
             throws RollerException {
@@ -626,7 +598,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Check if weblog category is in use.
+     * @inheritDoc
      */
     public boolean isWeblogCategoryInUse(WeblogCategoryData cat)
             throws RollerException {
@@ -637,47 +609,45 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             return true;
         }
             
-        Iterator cats = cat.getWeblogCategories().iterator();
-        while (cats.hasNext()) {
-            WeblogCategoryData childCat = (WeblogCategoryData)cats.next();
-            if (childCat.isInUse()) {
+            Iterator cats = cat.getWeblogCategories().iterator();
+            while (cats.hasNext()) {
+                WeblogCategoryData childCat = (WeblogCategoryData)cats.next();
+                if (childCat.isInUse()) {
+                    return true;
+                }
+            }
+            
+            if (cat.getWebsite().getBloggerCategory().equals(cat)) {
                 return true;
             }
-        }
             
-        if (cat.getWebsite().getBloggerCategory().equals(cat)) {
-            return true;
-        }
-            
-        if (cat.getWebsite().getDefaultCategory().equals(cat)) {
-            return true;
-        }
+            if (cat.getWebsite().getDefaultCategory().equals(cat)) {
+                return true;
+            }
             
         return false;
     }
 
     /**
-     * Generic comments query method.
-     * @param website Website or null for all comments on site
-     * @param entry Entry or null to include all comments
-     * @param startDate Start date or null for no restriction
-     * @param endDate End date or null for no restriction
-     * @param pending Pending flag value or null for no restriction
-     * @param pending Approved flag value or null for no restriction
-     * @param reverseChrono True for results in reverse chrono order
-     * @param spam Spam flag value or null for no restriction
-     * @param offset Offset into results for paging
-     * @param length Max comments to return (or -1 for no limit)
+     * @inheritDoc
      */
-    public List getComments(WebsiteData website, WeblogEntryData entry,
-            String searchString, Date startDate,
-            Date endDate, Boolean pending,
-            Boolean approved, Boolean spam,
-            boolean reverseChrono, int offset,
-            int length) throws RollerException {
-        return null;  // TODO not implemented
-    }
+    public abstract List getComments(
+            WebsiteData     website,
+            WeblogEntryData entry,
+            String          searchString,
+            Date            startDate,
+            Date            endDate,
+            Boolean         pending,
+            Boolean         approved,
+            Boolean         spam,
+            boolean         reverseChrono,
+            int             offset,
+            int             length
+            ) throws RollerException;
 
+    /**
+     * @inheritDoc
+     */
     public int removeMatchingComments(
             WebsiteData     website, 
             WeblogEntryData entry, 
@@ -697,11 +667,10 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             count++;
         }
         return count;
-        // TODO use Bulk Delete
     }
     
     /**
-     * Get category by id.
+     * @inheritDoc
      */
     public WeblogCategoryData getWeblogCategory(String id)
             throws RollerException {
@@ -709,10 +678,10 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                 WeblogCategoryData.class, id);
     }
 
+    //--------------------------------------------- WeblogCategoryData Queries
+    
     /**
-     * Get category specified by website and categoryPath.
-     * @param website Website of WeblogCategory.
-     * @param categoryPath Path of WeblogCategory, relative to category root.
+     * @inheritDoc
      */
     public WeblogCategoryData getWeblogCategoryByPath(WebsiteData website,
             String categoryPath) throws RollerException {
@@ -720,106 +689,56 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get absolute path to category, appropriate for use by
-     * getWeblogCategoryByPath().
-     * @param category WeblogCategoryData.
-     * @return Forward slash separated path string.
+     * @inheritDoc
      */
-    public String getPath(WeblogCategoryData category) throws RollerException {
-        if (null == category.getParent()) {
-            return "/";
-        } else {
-            String parentPath = getPath(category.getParent());
-            parentPath = "/".equals(parentPath) ? "" : parentPath;
-            return parentPath + "/" + category.getName();
-        }
-    }
-
-    /**
-     * Get sub-category by path relative to specified category.
-     * @param category Root of path or null to start at top of category tree.
-     * @param path Path of category to be located.
-     * @param website Website of categories.
-     * @return Category specified by path or null if not found.
-     */
+    // TODO: ditch this method in favor of getWeblogCategoryByPath(weblog, path)
     public WeblogCategoryData getWeblogCategoryByPath(WebsiteData website,
             WeblogCategoryData category, String path) throws RollerException {
-        final Iterator cats;
-        final String[] pathArray = Utilities.stringToStringArray(path, "/");
         
-        if (category == null && (null == path || "".equals(path.trim()))) {
-            throw new RollerException("Bad arguments.");
-        }
-        
-        if (path.trim().equals("/")) {
+        if (path == null || path.trim().equals("/")) {
             return getRootWeblogCategory(website);
-        } else if (category == null || path.trim().startsWith("/")) {
-            cats = getRootWeblogCategory(website)
-            .getWeblogCategories().iterator();
         } else {
-            cats = category.getWeblogCategories().iterator();
-        }
-        
-        while (cats.hasNext()) {
-            WeblogCategoryData possibleMatch = (WeblogCategoryData)cats.next();
-            if (possibleMatch.getName().equals(pathArray[0])) {
-                if (pathArray.length == 1) {
-                    return possibleMatch;
-                } else {
-                    String[] subpath = new String[pathArray.length - 1];
-                    System.arraycopy(pathArray, 1, subpath, 0, subpath.length);
-                    
-                    String pathString= Utilities.stringArrayToString(subpath,"/");
-                    return getWeblogCategoryByPath(website, possibleMatch, pathString);
-                }
+            String catPath = path;
+            
+            // all cat paths must begin with a '/'
+            if(!catPath.startsWith("/")) {
+                catPath = "/"+catPath;
             }
+            
+            // now just do simple lookup by path
+            return (WeblogCategoryData) strategy.newQuery(WeblogCategoryData.class, 
+                    "WeblogCategoryData.getByPath&Website").setUnique().
+                    execute(new Object[] {catPath, website});
         }
-        
-        // The category did not match and neither did any sub-categories
-        return null;
     }
 
     /**
-     * Get comment by id.
+     * @inheritDoc
      */
     public CommentData getComment(String id) throws RollerException {
         return (CommentData) this.strategy.load(CommentData.class, id);
     }
 
     /**
-     * Get weblog entry by id.
+     * @inheritDoc
      */
     public WeblogEntryData getWeblogEntry(String id) throws RollerException {
         return (WeblogEntryData)strategy.load(WeblogEntryData.class, id);
     }
 
     /**
-     * Get time of last update for a weblog specified by username
+     * @inheritDoc
      */
-    public Date getWeblogLastPublishTime(WebsiteData website)
-            throws RollerException {
-        return getWeblogLastPublishTime(website, null);
-    }
-
-    /**
-     * Get Weblog Entries grouped by day. This method returns a Map that
-     * contains Lists, each List contains WeblogEntryData objects, and the Lists
-     * are keyed by Date objects.
-     * @param website Weblog or null to get for all weblogs.
-     * @param startDate Start date or null for no start date.
-     * @param endDate End date or null for no end date.
-     * @param catName Category path or null for all categories.
-     * @param status Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset Offset into results for paging
-     * @param range Max comments to return (or -1 for no limit)
-     * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
-     * @throws org.apache.roller.RollerException
-     */
-    public Map getWeblogEntryObjectMap(WebsiteData website,
-            Date startDate, Date endDate, String catName, List tags,
-            String status, String locale, int offset,
-            int range) 
-                throws RollerException {
+    public Map getWeblogEntryObjectMap(
+            WebsiteData website,
+            Date    startDate,
+            Date    endDate,
+            String  catName,
+            List    tags,            
+            String  status,
+            String  locale,
+            int     offset,
+            int     length) throws RollerException {
         return getWeblogEntryMap(
             website,
             startDate,
@@ -830,27 +749,23 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             false,
             locale,
             offset,
-            range);
+            length);
     }
 
     /**
-     * Get Weblog Entry date strings grouped by day. This method returns a Map
-     * that contains Lists, each List contains YYYYMMDD date strings objects,
-     * and the Lists are keyed by Date objects.
-     * @param website Weblog or null to get for all weblogs.
-     * @param startDate Start date or null for no start date.
-     * @param endDate End date or null for no end date.
-     * @param catName Category path or null for all categories.
-     * @param status Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset Offset into results for paging
-     * @param range Max comments to return (or -1 for no limit)
-     * @return Map of Lists, keyed by Date, and containing date strings.
-     * @throws org.apache.roller.RollerException
+     * @inheritDoc
      */
-    public Map getWeblogEntryStringMap(WebsiteData website,
-            Date startDate, Date endDate, String catName, List tags,
-            String status, String locale, int offset,
-            int range) throws RollerException {
+    public Map getWeblogEntryStringMap(
+            WebsiteData website,
+            Date    startDate,
+            Date    endDate,
+            String  catName,
+            List    tags,            
+            String  status,
+            String  locale,
+            int     offset,
+            int     length
+            ) throws RollerException {
         return getWeblogEntryMap(
             website,
             startDate,
@@ -861,7 +776,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
             true,
             locale,
             offset,
-            range);
+            length);
     }
 
     private Map getWeblogEntryMap(
@@ -916,13 +831,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
     
     /**
-     * Get weblog enties ordered by descending number of comments.
-     * @param website Weblog or null to get for all weblogs.
-     * @param startDate Start date or null for no start date.
-     * @param endDate End date or null for no end date.
-     * @param offset Offset into results for paging
-     * @param length Max comments to return (or -1 for no limit)
-     * @return List of WeblogEntryData objects.
+     * @inheritDoc
      */
     public List getMostCommentedWeblogEntries(WebsiteData website,
             Date startDate, Date endDate, int offset,
@@ -970,12 +879,12 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             results.add(new StatCount(
-                (String)row[1],
-                (String)row[2],
-                (String)row[3],
-                "statCount.weblogEntryCommentCountType",
-                new Long(((Integer)row[0]).intValue()).longValue()));
-        }
+                    (String)row[1],                             // entry id
+                    (String)row[2],                             // entry anchor
+                    (String)row[3],                             // entry title
+                    "statCount.weblogEntryCommentCountType",    // stat desc
+                    new Long(((Integer)row[0]).intValue()).longValue())); // count
+          }
         //TODO Uncomment following once integrated with code
         //Collections.sort(results, StatCount.getComparator());
         Collections.reverse(results);
@@ -983,39 +892,12 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get entries next after current entry.
-     * @param current Current entry.
-     * @param catName Only return entries in this category (if not null).
-     * @param maxEntries Maximum number of entries to return.
-     */
-    public List getNextEntries(WeblogEntryData current, String catName,
-            String locale, int maxEntries) throws RollerException {
-
-        return getNextPrevEntries(current, catName, locale, maxEntries, true);
-    }
-
-    /**
-     * Get entries previous to current entry.
-     * @param current Current entry.
-     * @param catName Only return entries in this category (if not null).
-     * @param maxEntries Maximum number of entries to return.
-     */
-    public List getPreviousEntries(WeblogEntryData current, String catName,
-            String locale, int maxEntries) throws RollerException {
-
-        return getNextPrevEntries(current, catName, locale, maxEntries, false);
-    }
-
-    /**
-     * Get the WeblogEntry following, chronologically, the current entry.
-     * Restrict by the Category, if named.
-     * @param current The "current" WeblogEntryData
-     * @param catName The value of the requested Category Name
+     * @inheritDoc
      */
     public WeblogEntryData getNextEntry(WeblogEntryData current,
             String catName, String locale) throws RollerException {
         WeblogEntryData entry = null;
-        List entryList = getNextEntries(current, catName, locale, 1);
+        List entryList = getNextPrevEntries(current, catName, locale, 1, true);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntryData)entryList.get(0);
         }
@@ -1023,15 +905,12 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get the WeblogEntry prior to, chronologically, the current entry.
-     * Restrict by the Category, if named.
-     * @param current The "current" WeblogEntryData.
-     * @param catName The value of the requested Category Name.
+     * @inheritDoc
      */
     public WeblogEntryData getPreviousEntry(WeblogEntryData current,
             String catName, String locale) throws RollerException {
         WeblogEntryData entry = null;
-        List entryList = getPreviousEntries(current, catName, locale, 1);
+        List entryList = getNextPrevEntries(current, catName, locale, 1, false);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntryData)entryList.get(0);
         }
@@ -1039,32 +918,18 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Release all resources held by manager.
+     * @inheritDoc
      */
     public void release() {}
 
     /**
-     * Apply comment default settings from website to all of website's entries.
+     * @inheritDoc
      */
-    public void applyCommentDefaultsToEntries(WebsiteData website)
-            throws RollerException {
-        if (log.isDebugEnabled()) {
-            log.debug("applyCommentDefaults");
-        }       
-//        String updateString = "update WeblogEntryData set "
-//            +"allowComments=:allowed, commentDays=:days, "
-//            +"pubTime=pubTime, updateTime=updateTime " // ensure timestamps are NOT reset
-//            +"where website=:site";
-//        Query update = session.createQuery(updateString);
-//        update.setParameter("allowed", website.getDefaultAllowComments());
-//        update.setParameter("days", new Integer(website.getDefaultCommentDays()));
-//        update.setParameter("site", website);
-//        update.executeUpdate();            
-        // TODO not implemented
-    }
+    public abstract void applyCommentDefaultsToEntries(WebsiteData website)
+            throws RollerException;
 
-    /* (non-Javadoc)
-     * @see org.apache.roller.business.WeblogManager#getPopularTags(org.apache.roller.pojos.WebsiteData, java.util.Date, int)
+    /**
+     * @inheritDoc
      */
     public List getPopularTags(WebsiteData website, Date startDate, int limit)
             throws RollerException {
@@ -1132,11 +997,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         return results;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.roller.business.WeblogManager#getTags(org.apache.roller.pojos.WebsiteData,
-     *      java.lang.String, java.lang.String, int)
+    /**
+     * @inheritDoc
      */
     public List getTags(WebsiteData website, String sortBy, 
             String startsWith, int limit) throws RollerException {    
@@ -1216,104 +1078,29 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         return results;
     }
 
-    public boolean getTagComboExists(List tags, WebsiteData weblog) {
-        boolean comboExists = false;
-        
-//        StringBuffer queryString = new StringBuffer();
-//        queryString.append("select distinct name ");
-//        queryString.append("from WeblogEntryTagAggregateData ");
-//        queryString.append("where name in ( :tags ) ");
-//            
-//        // are we checking a specific weblog, or site-wide?
-//        if (weblog != null)
-//            queryString.append("and weblog.id = '" + weblog.getId() + "' ");
-//        else
-//            queryString.append("and weblog is null ");
-//            
-//        Query query = session.createQuery(queryString.toString());
-//        query.setParameterList("tags", tags);
-//            
-//        List results = query.list();
-//        comboExists = (results != null && results.size() == tags.size());
-        
-        return comboExists; // TODO not implemented
-    }
+    /**
+     * @inheritDoc
+     */
+    public abstract boolean getTagComboExists(List tags, WebsiteData weblog);
     
-    public void updateTagCount(String name, WebsiteData website, int amount) 
-            throws RollerException {
-        if(amount == 0) {
-            throw new RollerException("Tag increment amount cannot be zero.");
-        }
-        
-        if(website == null) {
-            throw new RollerException("Website cannot be NULL.");
-        }
+    /**
+     * @inheritDoc
+     */
+    public abstract void updateTagCount(String name, WebsiteData website, int amount)
+            throws RollerException; 
 
-//        Junction conjunction = Expression.conjunction();
-//        conjunction.add(Expression.eq("name", name));
-//        conjunction.add(Expression.eq("weblog", website));
-//
-//        // The reason why add order lastUsed desc is to make sure we keep picking the most recent
-//        // one in the case where we have multiple rows (clustered environment)
-//        // eventually that second entry will have a very low total (most likely 1) and
-//        // won't matter
-//        
-//        Criteria criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
-//            .add(conjunction).addOrder(Order.desc("lastUsed")).setMaxResults(1);
-//        
-//        WeblogEntryTagAggregateData weblogTagData = (WeblogEntryTagAggregateData) criteria.uniqueResult();
-//
-//        conjunction = Expression.conjunction();
-//        conjunction.add(Restrictions.eq("name", name));
-//        conjunction.add(Restrictions.isNull("weblog"));
-//        
-//        criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
-//            .add(conjunction).addOrder(Order.desc("lastUsed")).setMaxResults(1);
-//    
-//        WeblogEntryTagAggregateData siteTagData = (WeblogEntryTagAggregateData) criteria.uniqueResult();
-//        
-//        Timestamp lastUsed = new Timestamp((new Date()).getTime());
-//        
-//        // create it only if we are going to need it.
-//        if(weblogTagData == null && amount > 0) {
-//            weblogTagData = new WeblogEntryTagAggregateData(null, website, name, amount);
-//            weblogTagData.setLastUsed(lastUsed);
-//            session.save(weblogTagData);
-//        } else if(weblogTagData != null) {
-//            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and weblog = ?")
-//            .setInteger(0, amount)
-//            .setString(1, weblogTagData.getName())
-//            .setParameter(2, website)
-//            .executeUpdate();
-//        }
-//        
-//        // create it only if we are going to need it.        
-//        if(siteTagData == null && amount > 0) {
-//            siteTagData = new WeblogEntryTagAggregateData(null, null, name, amount);
-//            siteTagData.setLastUsed(lastUsed);
-//            session.save(siteTagData);
-//        } else if(siteTagData != null) {
-//            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and weblog is null")
-//            .setInteger(0, amount)
-//            .setString(1, siteTagData.getName())
-//            .executeUpdate();            
-//        }       
-        
-        // delete all bad counts
-        strategy.newRemoveQuery(WeblogEntryTagAggregateData.class, "WeblogEntryTagAggregateData.removeByTotalLessEqual").removeAll(new Integer(0));
-        // TODO not implemented
-    }
-
-
+    /**
+     * @inheritDoc
+     */
     public HitCountData getHitCount(String id) throws RollerException {
-
-        if(id == null) {
-            throw new RollerException("Id field cannot be NULL.");
-        }
-
-        return (HitCountData) strategy.load(HitCountData.class, id);
+         
+        // do lookup
+       return (HitCountData) strategy.load(HitCountData.class, id);
     }
     
+    /**
+     * @inheritDoc
+     */
     public HitCountData getHitCountByWeblog(WebsiteData weblog) 
         throws RollerException {
         
@@ -1321,7 +1108,9 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
                 "HitCountData.getByWeblog").setUnique().execute(weblog);
     }
     
-    
+    /**
+     * @inheritDoc
+     */
     public List getHotWeblogs(int sinceDays, int offset, int length) 
         throws RollerException {
         
@@ -1342,16 +1131,25 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
     
     
+    /**
+     * @inheritDoc
+     */
     public void saveHitCount(HitCountData hitCount) throws RollerException {
         this.strategy.store(hitCount);
     }
     
     
+    /**
+     * @inheritDoc
+     */
     public void removeHitCount(HitCountData hitCount) throws RollerException {
         this.strategy.remove(hitCount);
     }
     
     
+    /**
+     * @inheritDoc
+     */
     public void incrementHitCount(WebsiteData weblog, int amount)
         throws RollerException {
 
@@ -1360,7 +1158,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         }
         
         if(weblog == null) {
-            throw new RollerException("Weblog cannot be NULL.");
+            throw new RollerException("Website cannot be NULL.");
         }
 
         HitCountData hitCount = (HitCountData) strategy.newQuery(
@@ -1380,15 +1178,14 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    
-    public void resetAllHitCounts() throws RollerException {
+    /**
+     * @inheritDoc
+     */
+    public abstract void resetAllHitCounts() throws RollerException;
         
-//            session.createQuery("update HitCountData set dailyHits = 0").executeUpdate();
-
-        // TODO not implemented
-    }
-    
-    
+    /**
+     * @inheritDoc
+     */
     public void resetHitCount(WebsiteData weblog) throws RollerException {
 
         HitCountData hitCount = (HitCountData) strategy.newQuery(HitCountData.class, 
@@ -1399,7 +1196,7 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
     }
 
     /**
-     * Get site-wide comment count 
+     * @inheritDoc
      */
     public long getCommentCount() throws RollerException {
         List results = (List) strategy.newQuery(CommentData.class, 
@@ -1408,9 +1205,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         return ((Integer)results.get(0)).intValue();
     }
 
-
     /**
-     * Get weblog comment count 
+     * @inheritDoc
      */
     public long getCommentCount(WebsiteData website) throws RollerException {
         List results = (List) strategy.newQuery(CommentData.class, 
@@ -1419,9 +1215,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         return ((Integer)results.get(0)).intValue();
     }
 
-
     /**
-     * Get site-wide entry count 
+     * @inheritDoc
      */
     public long getEntryCount() throws RollerException {
         List results = (List) strategy.newQuery(WeblogEntryData.class, 
@@ -1431,9 +1226,8 @@ public class DatamapperWeblogManagerImpl implements WeblogManager {
         return ((Integer)results.get(0)).intValue();
     }
 
-
     /**
-     * Get weblog entry count 
+     * @inheritDoc
      */
     public long getEntryCount(WebsiteData website) throws RollerException {
         List results = (List) strategy.newQuery(WeblogEntryData.class, 

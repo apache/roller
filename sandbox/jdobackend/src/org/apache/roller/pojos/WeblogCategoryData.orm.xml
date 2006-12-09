@@ -12,6 +12,9 @@
     <entity metadata-complete="true" name="WeblogCategoryData"
             class="org.apache.roller.pojos.WeblogCategoryData">
         <table name="weblogcategory"/>
+        <named-query name="WeblogCategoryData.getByPath&amp;Website">
+                <query>SELECT w FROM WeblogCategoryData w WHERE w.path = ?1 AND w.website = ?2</query>
+        </named-query>
         <named-query name="WeblogCategoryData.getByWebsite">
                 <query>SELECT w FROM WeblogCategoryData w WHERE w.website = ?1</query>
         </named-query>
