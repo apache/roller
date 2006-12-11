@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business.hibernate;
+package org.apache.roller.planet.business.hibernate;
 
 import org.hibernate.FlushMode;
 import org.hibernate.SessionFactory;
