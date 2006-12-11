@@ -27,19 +27,14 @@
     
     <!-- core properties -->
     <property name="ro.build"            value="${basedir}/build" />
-    <property name="ro.dist"             value="${basedir}/dist" />
     <property name="ro.src"              value="${basedir}/src" />
     <property name="ro.tools"            value="${basedir}/../../tools" />
     <property name="ro.test"             value="${basedir}/test" />
     <property name="ro.web"              value="${basedir}/web" />
     
     <!-- build properties -->
-    <property name="build.generated"                value="${ro.build}/generated"/>
-    <property name="build.generated.business"       value="${build.generated}/business"/>
-    <property name="build.generated.web"            value="${build.generated}/web"/>
     <property name="build.compile"                  value="${ro.build}/compile"/>
-    <property name="build.compile.business"         value="${build.compile}/business"/>
-    <property name="build.compile.web"              value="${build.compile}/web"/>
+    <property name="build.compile.classes"          value="${build.compile}/classes"/>
     <property name="build.compile.test"             value="${build.compile}/test"/>
     <property name="build.lib"           value="${ro.build}/lib"/>
     <property name="build.webapp"        value="${ro.build}/webapp"/>
@@ -129,45 +124,68 @@
     </path>
     
     
+    <target name="clean" description="Clean (i.e. remove) build and dist dirs">
+        <delete dir="${ro.build}" />
+        <delete dir="${ro.dist}" />
+    </target>
+    
+    
     <!-- ============================================== -->
     <!-- generate code/files for the business layer -->
-    <target name="gen-business" description="Generate business layer resources">
+    <target name="generate" description="Generate business layer resources">
 
         <taskdef name="hibernatedoclet"
             classname="xdoclet.modules.hibernate.HibernateDocletTask"
             classpathref="xdoclet.path" />
 
         <!-- generate hibernate mapping files -->
-        <hibernatedoclet
-            destdir="${build.compile.business}"
-            mergedir="./metadata/xdoclet"
+        <hibernatedoclet destdir="${build.compile.classes}"
             excludedtags="@version,@author"
             addedtags="@xdoclet-generated at ${TODAY}"
             force="true">
-        
+            
             <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
-        
             <hibernate validatexml="true" version="3.0"/>
-        
+            
         </hibernatedoclet>
     
     </target>
     
     
     <!-- ============================================== -->
-    <!-- build the code and stage the planet webapp -->
-    <target name="stage-webapp" depends="gen-business" description="Build Planet webapp">
+    <!-- build the code and jar it up -->
+    <target name="build" depends="generate">
         
-        <mkdir dir="${build.compile.business}" />
-        <javac debug="on" destdir="${build.compile.business}" source="1.4">
+        <!-- compile planet classes -->
+        <mkdir dir="${build.compile.classes}"/>
+        <javac destdir="${build.compile.classes}"
+               debug="${build.debug}" 
+               source="${build.sourcelevel}"
+               deprecation="${build.deprecation}">
+            
             <src path="${ro.src}" />
+            
             <classpath>
                 <path refid="planet.path"/>
             </classpath>
         </javac>
         
-        <mkdir dir="${build.lib}" />
-        <jar basedir="${build.compile.business}" destfile="${build.lib}/roller-planet.jar" />
+        <!-- Copy resources -->
+        <copy todir="${build.compile.classes}">
+            <fileset dir="${ro.src}" excludes="**/*.java, **/*.html, **/*.png" />
+        </copy>
+        
+        <!-- Jar up the business layer -->
+        <mkdir dir="${build.lib}"/>
+        <jar basedir="${build.compile.classes}"
+             jarfile="${build.lib}/roller-planet.jar"/>
+        
+    </target>
+    
+    
+    <!-- ============================================== -->
+    <!-- stage the full webapp -->
+    <target name="stage-webapp" depends="build" description="Build Planet webapp">
         
         <mkdir dir="${build.webapp}/WEB-INF/lib" />
         <copy todir="${build.webapp}/WEB-INF/lib" flatten="true">
@@ -196,12 +214,6 @@
             <fileset refid="roller-jars" />
         </copy> 
     </target>
-
-    
-    <target name="clean" description="Clean (i.e. remove) build and dist dirs">
-        <delete dir="${ro.build}" />
-        <delete dir="${ro.dist}" />
-    </target>
     
     
     <target name="build-tests" depends="stage-webapp" description="Build unit tests">
@@ -211,9 +223,9 @@
         <!-- compile all test classes -->
         <javac destdir="${build.compile.test}"
             includeantruntime="false"
-            debug="true" 
-            source="1.4"
-            deprecation="true">
+            debug="${build.debug}" 
+            source="${build.sourcelevel}"
+            deprecation="${build.deprectation}">
             
             <src path="${ro.test}" />
             
@@ -224,8 +236,7 @@
                 
         <!-- Copy test resources -->
         <copy todir="${build.compile.test}">
-            <fileset dir="${ro.test}" 
-            excludes="**/*.java, **/*.html, **/*.png" />
+            <fileset dir="${ro.test}" excludes="**/*.java, **/*.html, **/*.png" />
         </copy>
     
         <!-- register Ant tasks that were just built -->
@@ -253,11 +264,11 @@
         </copy>
     
     </target>
-
+    
+    
     <!-- ===================================== -->
-    <!-- test business -->
-	
-    <target name="test-business" depends="build-tests" description="Back-end tests">
+    <!-- test planet functionality -->
+    <target name="test-planet" depends="build-tests" description="Back-end tests">
         
         <mkdir dir="${build.test.reports}/business/xml"/>
         <mkdir dir="${build.test.reports}/business/html"/>
@@ -304,7 +315,7 @@
     
     
     <!-- ********************************************************************* -->
-    <!-- HSQLDB start, init and stop targets -->
+    <!-- Derby start, init and stop targets -->
     <!-- ********************************************************************* -->
     
     <target name="init-db" description=
@@ -322,34 +333,11 @@
     </target>
     
     <target name="start-db" description="Starts built-in database">  
-        <startdb database="${build.test}/derby-system/roller" port="3219" />
-        <!-- 
-    <delete dir="${build.tests}/derby-system/roller" />
-    Not sure we need that custom 'startdb' task if this plain old Ant works:
-    <java classname="org.hsqldb.Server"  
-        fork="yes" spawn="true" classpath="./tools/buildtime/hsqldb.jar">
-        <arg value="-database"/>
-        <arg value="${build.tests}/testdb"/>
-        <arg value="-port"/>
-        <arg value="3219"/>
-    </java>
-        -->    
+        <startdb database="${build.test}/derby-system/roller" port="3219" /> 
     </target>
     
     <target name="stop-db" description="Drop tables and stops the built-in database">   
         <stopdb port="3219"/>
-        <!--
-    <delete dir="${build.tests}/derby-system/roller" />
-    This below code does the same thing as 'stopdb' but the 'sql' task throws 
-    an exception when HSQLDB disconnects and that causes a build failure, so 
-    for now I'm keeping the custom 'startdb' and 'stopdb' Ant tasks.
-    <sql driver="org.hsqldb.jdbcDriver" onerror="continue" 
-         url="jdbc:hsqldb:hsql://localhost:3219"
-         userid="sa" password=""
-         classpath="${ro.tools}/buildtime/hsqldb.jar" >
-         SHUTDOWN
-    </sql>  
-        -->
     </target>
 
 </project>
