@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.roller.business.hibernate.*;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -244,11 +243,11 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     
      public List getFeedEntries(String feedURL, int offset, int length)
         throws RollerException {
+        // TODO: ATLAS getFeedEntries DONE       
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
-            criteria.createAlias("subscription", "sub");
-            criteria.add(Expression.eq("sub.feedURL", feedURL));
+            criteria.add(Expression.eq("subscription.feedURL", feedURL));
             criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
             if (length != -1) criteria.setMaxResults(length);

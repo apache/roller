@@ -89,7 +89,9 @@ public class SubscriptionForm implements LoadableForm {
             if (existingSub != null) {
                 subscription = existingSub;
             }
-            else { 
+            else {
+                // id must be null when saving new objects
+                subscription.setId(null);
                 pmgr.saveSubscription(subscription);
             }
             PlanetGroupData group = pmgr.getGroupById(groupid);

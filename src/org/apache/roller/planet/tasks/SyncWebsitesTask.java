@@ -28,7 +28,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -118,7 +121,7 @@ public class SyncWebsitesTask extends RollerTask {
         }
         
         try {
-            PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             UserManager userManager = RollerFactory.getRoller().getUserManager();
             
             // first, make sure there is an "all" planet group
@@ -191,13 +194,14 @@ public class SyncWebsitesTask extends RollerTask {
             
             // all done, lets save
             planet.saveGroup(group);
-            RollerFactory.getRoller().flush();
+            PlanetFactory.getPlanet().flush();
             
         } catch (RollerException e) {
             log.error("ERROR refreshing entries", e);
         } finally {
             // don't forget to release
             RollerFactory.getRoller().release();
+            PlanetFactory.getPlanet().release();
         }
     }
     

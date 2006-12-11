@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.roller.business;
+package org.apache.roller.planet.business;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -27,11 +27,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.TestUtils;
-import org.apache.roller.config.RollerConfig;
+import org.apache.roller.planet.TestUtils;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -45,15 +44,13 @@ public class PlanetManagerTest extends TestCase {
     
     public static Log log = LogFactory.getLog(PlanetManagerTest.class);
     
-    private Roller roller = null;
-    
     static {
         try {
             // planet config should always exist
             PlanetConfigData config = new PlanetConfigData();
             config.setTitle("test_title");
             config.setAdminEmail("test_admin_email");
-            RollerFactory.getRoller().getPlanetManager().saveConfiguration(config);
+            PlanetFactory.getPlanet().getPlanetManager().saveConfiguration(config);
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -74,7 +71,7 @@ public class PlanetManagerTest extends TestCase {
     
     public void testConfigurationStorage() throws Exception {
         
-        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         {   // retrieve config
             PlanetConfigData config = planet.getConfiguration();
@@ -100,7 +97,7 @@ public class PlanetManagerTest extends TestCase {
     
     public void testGroupStorage() throws Exception {
         
-        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         {   // save group
             PlanetGroupData group = new PlanetGroupData();
@@ -130,7 +127,7 @@ public class PlanetManagerTest extends TestCase {
     
     public void testSubscriptionStorage() throws Exception {
         
-        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         {   // save subscriptions and a group
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
@@ -202,7 +199,7 @@ public class PlanetManagerTest extends TestCase {
     
     public void testSubscriptionEntryStorage() throws Exception {
         
-        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         {   // save subscription
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
@@ -281,7 +278,7 @@ public class PlanetManagerTest extends TestCase {
     
     public void testRefreshEntries() throws Exception {
         
-        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
         
@@ -330,7 +327,7 @@ public class PlanetManagerTest extends TestCase {
     public void _testAggregations() throws Exception {
         
         try {
-            PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             
             String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
             String feed_url2 = "http://blogs.sun.com/main/feed/entries/atom";
@@ -395,7 +392,7 @@ public class PlanetManagerTest extends TestCase {
     public void testSubscriptionCount() throws Exception {
         
         try {
-            PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             
             String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
             String feed_url2 = "http://blogs.sun.com/main/feed/entries/atom";

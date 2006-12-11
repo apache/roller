@@ -25,12 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.wrapper.PlanetEntryDataWrapper;
 
 
 /**
@@ -91,8 +90,7 @@ public class PlanetEntriesPager extends AbstractPager {
             
             List results = new ArrayList();
             try {
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planetManager = roller.getPlanetManager();
+                PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
                 
                 List rawEntries = null;
                 if (feedURL != null) {
@@ -113,7 +111,8 @@ public class PlanetEntriesPager extends AbstractPager {
                 // wrap 'em
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     PlanetEntryData entry = (PlanetEntryData) it.next();
-                    results.add(PlanetEntryDataWrapper.wrap(entry));
+                    // TODO needs pojo wrapping from planet
+                    results.add(entry);
                 }
                 
             } catch (Exception e) {

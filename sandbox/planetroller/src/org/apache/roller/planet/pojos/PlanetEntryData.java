@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
@@ -23,24 +24,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.*;
-import org.apache.roller.util.rome.ContentModule;
-
 import org.apache.roller.util.Utilities;
-import org.apache.commons.lang.StringUtils;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
-import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.roller.RollerException;
-import org.apache.roller.business.PluginManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
+
 
 /**
  * Represents a planet entry, i.e. an entry that was parsed out of an RSS or 
@@ -52,8 +43,8 @@ import org.apache.roller.business.RollerFactory;
  * 
  * @hibernate.class lazy="true" table="rag_entry"
  */
-public class PlanetEntryData extends PersistentObject
-        implements Serializable, Comparable {
+public class PlanetEntryData implements Serializable, Comparable {
+    
     protected String    id;
     protected String    handle;
     protected String    title;
@@ -85,6 +76,7 @@ public class PlanetEntryData extends PersistentObject
     /**
      * Create entry from Rome entry.
      */
+    /*
     public PlanetEntryData(
             WeblogEntryData rollerEntry,
             PlanetSubscriptionData sub,
@@ -92,6 +84,7 @@ public class PlanetEntryData extends PersistentObject
         setSubscription(sub);
         initFromRollerEntry(rollerEntry, pagePlugins);
     }
+    */
     
     /**
      * Init entry from Rome entry
@@ -150,9 +143,11 @@ public class PlanetEntryData extends PersistentObject
         }
     }
     
+    
     /**
      * Init entry from Roller entry
      */
+    /*
     private void initFromRollerEntry(WeblogEntryData rollerEntry, Map pagePlugins)
     throws RollerException {
         Roller roller = RollerFactory.getRoller();
@@ -179,6 +174,7 @@ public class PlanetEntryData extends PersistentObject
         cats.add(rollerEntry.getCategory().getPath());
         setCategoriesString(cats);
     }
+    */
     
     //----------------------------------------------------------- persistent fields
     
@@ -319,7 +315,7 @@ public class PlanetEntryData extends PersistentObject
         if (categoriesString != null) {
             String[] catArray = Utilities.stringToStringArray(categoriesString,",");
             for (int i=0; i<catArray.length; i++) {
-                WeblogCategoryData cat = new WeblogCategoryData();
+                Category cat = new Category();
                 cat.setName(catArray[i]);
                 cat.setPath(catArray[i]);
                 list.add(cat);
@@ -332,11 +328,11 @@ public class PlanetEntryData extends PersistentObject
      * Return first entry in category collection.
      * @roller.wrapPojoMethod type="pojo"
      */
-    public WeblogCategoryData getCategory() {
-        WeblogCategoryData cat = null;
+    public Category getCategory() {
+        Category cat = null;
         List cats = getCategories();
         if (cats.size() > 0) {
-            cat = (WeblogCategoryData)cats.get(0);
+            cat = (Category)cats.get(0);
         }
         return cat;
     }
@@ -357,10 +353,10 @@ public class PlanetEntryData extends PersistentObject
      * @roller.wrapPojoMethod type="pojo"
      * TODO: make planet model entry author name, email, and uri
      */
-    public UserData getCreator() {
-        UserData user = null;
+    public Author getCreator() {
+        Author user = null;
         if (author != null) {
-            user = new UserData();
+            user = new Author();
             user.setFullName(author);
             user.setUserName(author);
         }
@@ -399,8 +395,6 @@ public class PlanetEntryData extends PersistentObject
     public int hashCode() {
         return this.permalink.hashCode();
     }
-    
-    public void setData(PersistentObject vo) {}
 
     /**
      * Read-only synomym for getSubscription()

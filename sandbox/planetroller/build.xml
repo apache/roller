@@ -20,57 +20,77 @@
     <!ENTITY custom-web SYSTEM "custom/custom-web.xmlf">
 ]>
 <project name="planetroller" default="stage-webapp" basedir=".">
+    
     <description>Builds, tests, and runs the project planetroller.</description>   
 
     <property file="./ant.properties" />
     
-    <fileset id="roller-jars" dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">
-        
-        <!-- needed for business layer model and pojos -->
-        <include name="roller-business.jar"/>   
-        
-        <!-- needed for OldUtilities and UtilitiesModel -->
-        <include name="roller-web.jar"/>           
-        
+    <!-- core properties -->
+    <property name="ro.build"            value="${basedir}/build" />
+    <property name="ro.dist"             value="${basedir}/dist" />
+    <property name="ro.src"              value="${basedir}/src" />
+    <property name="ro.tools"            value="${basedir}/../../tools" />
+    <property name="ro.test"             value="${basedir}/test" />
+    <property name="ro.web"              value="${basedir}/web" />
+    
+    <!-- build properties -->
+    <property name="build.generated"                value="${ro.build}/generated"/>
+    <property name="build.generated.business"       value="${build.generated}/business"/>
+    <property name="build.generated.web"            value="${build.generated}/web"/>
+    <property name="build.compile"                  value="${ro.build}/compile"/>
+    <property name="build.compile.business"         value="${build.compile}/business"/>
+    <property name="build.compile.web"              value="${build.compile}/web"/>
+    <property name="build.compile.test"             value="${build.compile}/test"/>
+    <property name="build.lib"           value="${ro.build}/lib"/>
+    <property name="build.webapp"        value="${ro.build}/webapp"/>
+    <property name="build.test"          value="${ro.build}/test"/>
+    <property name="build.test.reports"  value="${build.test}/reports"/>
+    
+    
+    <fileset id="roller-jars" dir="${ro.tools}">
         <!-- needed for Hibernate -->
-        <include name="hibernate3.jar"/>
-        <include name="antlr.jar"/>
-        <include name="asm.jar"/>
-        <include name="asm-attrs.jar"/>
-        <include name="cglib-2.1.3.jar"/>
-        <include name="ehcache-1.1.jar"/>
-        <include name="dom4j-1.6.1.jar"/>       
-        <include name="jta.jar"/>
-        <include name="jdbc2_0-stdext.jar"/>
+        <include name="hibernate-3.1/hibernate3.jar"/>
+        <include name="hibernate-3.1/lib/antlr.jar"/>
+        <include name="hibernate-3.1/lib/asm.jar"/>
+        <include name="hibernate-3.1/lib/asm-attrs.jar"/>
+        <include name="hibernate-3.1/lib/cglib-2.1.3.jar"/>
+        <include name="hibernate-3.1/lib/ehcache-1.1.jar"/>
+        <include name="hibernate-3.1/lib/dom4j-1.6.1.jar"/>
+        <include name="hibernate-3.1/lib/jta.jar"/>
+        <include name="hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
                 
         <!-- needed for ROME -->
-        <include name="rome-0.9.jar"/>
-        <include name="rome-fetcher-0.9.jar"/>        
-        <include name="jdom.jar"/> 
+        <include name="lib/rome-0.9.jar"/>
+        <include name="lib/rome-fetcher-0.9.jar"/>
+        <include name="lib/jdom.jar"/>
         
         <!-- Needed for Velocity -->
-        <include name="velocity-1.4.jar"/>
-        <include name="velocity-dep-1.4.jar"/>   
+        <include name="lib/velocity-1.4.jar"/>
+        <include name="lib/velocity-dep-1.4.jar"/>
         
         <!-- General dependencies -->
-        <include name="commons-lang-2.0.jar"/>   
-        <include name="commons-logging.jar"/>   
-        <include name="commons-fileupload.jar"/>   
-        <include name="commons-validator.jar"/>   
-        <include name="log4j-1.2.11.jar"/>
-        <include name="jaxen-full.jar"/>
-        <include name="saxpath.jar"/>   
-        <include name="activation.jar"/>   
-        <include name="mail.jar"/>   
-        
+        <include name="lib/commons-codec-1.3.jar"/>
+        <include name="struts-1.2.4/lib/antlr.jar"/>
+        <include name="struts-1.2.4/lib/commons-lang-2.0.jar"/>
+        <include name="struts-1.2.4/lib/commons-logging.jar"/>
+        <include name="struts-1.2.4/lib/commons-fileupload.jar"/>
+        <include name="struts-1.2.4/lib/commons-validator.jar"/>
+        <include name="struts-1.2.4/lib/commons-collections.jar"/>
+        <include name="lib/log4j-1.2.11.jar"/>
+        <include name="lib/jaxen-full.jar"/>
+        <include name="lib/saxpath.jar"/>
+        <include name="lib/activation.jar"/>
+        <include name="lib/mail.jar"/>
     </fileset>
     
     <path id="planet.path">
         <fileset refid="roller-jars" />
-        <fileset dir="../../tools/buildtime/tomcat-5.0.28">
+        
+        <fileset dir="${ro.tools}/buildtime/tomcat-5.0.28">
             <include name="servlet-api.jar"/>
-        </fileset>                      
-        <fileset dir="./web/WEB-INF/lib">
+        </fileset>
+        
+        <fileset dir="${ro.web}/WEB-INF/lib">
             <include name="commons-logging-1.0.4.jar"/>
             <include name="commons-lang-2.1.jar"/>  
             <include name="myfaces-api-1.1.4.jar"/>  
@@ -78,28 +98,89 @@
         </fileset>                      
     </path>
     
-    <target name="stage-webapp" description="Build Planet webapp">
+    <path id="xdoclet.path">
+        <path refid="planet.path"/>
+        <fileset dir="${ro.tools}/buildtime" includes="ejb-1.1.jar"/>
+        <fileset dir="${ro.tools}/buildtime/xdoclet-1.2.3/lib" includes="*.jar"/>
+    </path>
+    
+    <path id="test.path">
+        <!-- testing jars -->
+        <fileset dir="${ro.tools}/buildtime/mockrunner-0.35/lib">
+            <include name="*.jar"/>
+        </fileset>
         
-        <mkdir dir="./build/classes" />
-        <javac debug="on" destdir="./build/classes">
-            <src path="./src" />
+        <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
+        <pathelement location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
+        <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+        <pathelement location="${ro.tools}/buildtime/derby.jar"/>
+        <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
+        <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
+        
+        <pathelement location="${ro.tools}/lib/commons-httpclient-2.0.2.jar"/>
+        
+        <!-- plus normal jars -->
+        <path refid="planet.path"/>
+
+        <!-- plus already built roller planet jars -->
+        <fileset dir="${build.lib}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+    
+    
+    <!-- ============================================== -->
+    <!-- generate code/files for the business layer -->
+    <target name="gen-business" description="Generate business layer resources">
+
+        <taskdef name="hibernatedoclet"
+            classname="xdoclet.modules.hibernate.HibernateDocletTask"
+            classpathref="xdoclet.path" />
+
+        <!-- generate hibernate mapping files -->
+        <hibernatedoclet
+            destdir="${build.compile.business}"
+            mergedir="./metadata/xdoclet"
+            excludedtags="@version,@author"
+            addedtags="@xdoclet-generated at ${TODAY}"
+            force="true">
+        
+            <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
+        
+            <hibernate validatexml="true" version="3.0"/>
+        
+        </hibernatedoclet>
+    
+    </target>
+    
+    
+    <!-- ============================================== -->
+    <!-- build the code and stage the planet webapp -->
+    <target name="stage-webapp" depends="gen-business" description="Build Planet webapp">
+        
+        <mkdir dir="${build.compile.business}" />
+        <javac debug="on" destdir="${build.compile.business}" source="1.4">
+            <src path="${ro.src}" />
             <classpath>
                 <path refid="planet.path"/>
             </classpath>
         </javac>
-
-        <mkdir dir="./build/webapp/WEB-INF/lib" />
-        <jar basedir="./build/classes" destfile="./build/webapp/WEB-INF/lib/roller-planet.jar" />
-        <copy todir="./build/webapp/WEB-INF/lib">
+        
+        <mkdir dir="${build.lib}" />
+        <jar basedir="${build.compile.business}" destfile="${build.lib}/roller-planet.jar" />
+        
+        <mkdir dir="${build.webapp}/WEB-INF/lib" />
+        <copy todir="${build.webapp}/WEB-INF/lib" flatten="true">
+            <fileset dir="${build.lib}" />
             <fileset refid="roller-jars" />
         </copy>         
 
-        <copy todir="./build/webapp">
-            <fileset dir="./web" includes="**/**" />
+        <copy todir="${build.webapp}">
+            <fileset dir="${ro.web}" includes="**/**" />
         </copy> 
 
-        <mkdir dir="./build/webapp/WEB-INF/templates" />
-        <copy todir="./build/webapp/WEB-INF/templates">
+        <mkdir dir="${build.webapp}/WEB-INF/templates" />
+        <copy todir="${build.webapp}/WEB-INF/templates">
             <fileset dir="./templates" includes="**/**" />
         </copy> 
         
@@ -118,8 +199,157 @@
 
     
     <target name="clean" description="Clean (i.e. remove) build and dist dirs">
-        <delete dir="./build" />
-        <delete dir="./dist" />
+        <delete dir="${ro.build}" />
+        <delete dir="${ro.dist}" />
     </target>
     
+    
+    <target name="build-tests" depends="stage-webapp" description="Build unit tests">
+    
+        <mkdir dir="${build.compile.test}" />
+    
+        <!-- compile all test classes -->
+        <javac destdir="${build.compile.test}"
+            includeantruntime="false"
+            debug="true" 
+            source="1.4"
+            deprecation="true">
+            
+            <src path="${ro.test}" />
+            
+            <classpath>
+                <path refid="test.path"/>
+            </classpath>
+        </javac>
+                
+        <!-- Copy test resources -->
+        <copy todir="${build.compile.test}">
+            <fileset dir="${ro.test}" 
+            excludes="**/*.java, **/*.html, **/*.png" />
+        </copy>
+    
+        <!-- register Ant tasks that were just built -->
+        <taskdef name="startdb" classname="org.apache.roller.ant.StartDerbyTask" 
+        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.test}" />
+        <taskdef name="stopdb" classname="org.apache.roller.ant.StopDerbyTask" 
+        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.test}" />
+    
+        <!-- 
+        Copy web config files to ${build.tests} to make them available for testing.
+        This includes the WEB-INF directory, minus jsps
+        -->
+        <mkdir dir="${build.test}/WEB-INF" />
+        <copy todir="${build.test}/WEB-INF">
+            <fileset dir="${basedir}/web/WEB-INF">
+                <exclude name="jsps/**" />
+            </fileset>
+        </copy>
+
+        <!-- 
+        Copy custom testing files which will overwrite some config files 
+        -->
+        <copy todir="${build.test}">
+            <fileset dir="${basedir}/testdata" />
+        </copy>
+    
+    </target>
+
+    <!-- ===================================== -->
+    <!-- test business -->
+	
+    <target name="test-business" depends="build-tests" description="Back-end tests">
+        
+        <mkdir dir="${build.test.reports}/business/xml"/>
+        <mkdir dir="${build.test.reports}/business/html"/>
+        
+        <antcall target="start-db" /> 
+        <antcall target="init-db" />
+        
+        <junit fork="true" dir="${build.test}" printsummary="on" showOutput="true">
+            <classpath>
+                <!-- testing jars -->
+                <path refid="test.path"/>
+                
+                <!-- plus our compiled test classes -->
+                <pathelement location="${build.compile.test}"/>
+        
+                <!-- plus our config location, like the webapp would have -->
+                <pathelement location="${build.test}/WEB-INF/classes" />
+            </classpath>
+            
+            <!-- needed to satisfy ref in log4j.properties -->
+            <jvmarg value="-Dcatalina.base=${build.test}"/> 
+            <jvmarg value="-Dro.build=${ro.build}"/>
+            <jvmarg value="-Dplanet.custom.config=${build.test}/planet-custom.properties"/>
+            <jvmarg value="-Dhttp.proxySet=true"/>
+            <jvmarg value="-Dhttp.proxyHost=webcache.sfbay.sun.com"/>
+            <jvmarg value="-Dhttp.proxyPort=8080"/>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.test.reports}/business/xml" haltonerror="${junit.haltonerror}">
+                <fileset dir="${build.compile.test}">
+                    <include name="org/apache/roller/planet/business/PlanetTestSuite.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <junitreport todir="${build.test.reports}/business/xml">
+            <fileset dir="${build.test.reports}/business/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" toDir="${build.test.reports}/business/html"/>
+        </junitreport>
+        
+        <antcall target="stop-db" />
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- HSQLDB start, init and stop targets -->
+    <!-- ********************************************************************* -->
+    
+    <target name="init-db" description=
+            "Initializes built-in database by running drop table and create table">
+        <sql driver="org.apache.derby.jdbc.ClientDriver"
+             url="jdbc:derby://localhost:3219/roller;create=true"
+             userid="app" password="app"
+             src="../../build/webapp/WEB-INF/dbscripts/droptables.sql" onerror="continue"
+             classpath="${ro.tools}/buildtime/derbyclient.jar" />    
+        <sql driver="org.apache.derby.jdbc.ClientDriver" onerror="continue"
+             url="jdbc:derby://localhost:3219/roller"
+             userid="app" password="app"
+             src="../../build/webapp/WEB-INF/dbscripts/derby/createdb.sql"
+             classpath="${ro.tools}/buildtime/derbyclient.jar" /> 
+    </target>
+    
+    <target name="start-db" description="Starts built-in database">  
+        <startdb database="${build.test}/derby-system/roller" port="3219" />
+        <!-- 
+    <delete dir="${build.tests}/derby-system/roller" />
+    Not sure we need that custom 'startdb' task if this plain old Ant works:
+    <java classname="org.hsqldb.Server"  
+        fork="yes" spawn="true" classpath="./tools/buildtime/hsqldb.jar">
+        <arg value="-database"/>
+        <arg value="${build.tests}/testdb"/>
+        <arg value="-port"/>
+        <arg value="3219"/>
+    </java>
+        -->    
+    </target>
+    
+    <target name="stop-db" description="Drop tables and stops the built-in database">   
+        <stopdb port="3219"/>
+        <!--
+    <delete dir="${build.tests}/derby-system/roller" />
+    This below code does the same thing as 'stopdb' but the 'sql' task throws 
+    an exception when HSQLDB disconnects and that causes a build failure, so 
+    for now I'm keeping the custom 'startdb' and 'stopdb' Ant tasks.
+    <sql driver="org.hsqldb.jdbcDriver" onerror="continue" 
+         url="jdbc:hsqldb:hsql://localhost:3219"
+         userid="sa" password=""
+         classpath="${ro.tools}/buildtime/hsqldb.jar" >
+         SHUTDOWN
+    </sql>  
+        -->
+    </target>
+
 </project>

@@ -30,6 +30,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.StaticTemplate;
@@ -77,7 +79,7 @@ public class PlanetFeedServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         PlanetRequest planetRequest = null;
         try {

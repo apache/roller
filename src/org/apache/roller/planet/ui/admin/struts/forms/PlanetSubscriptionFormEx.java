@@ -15,9 +15,9 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.ui.admin.struts.formbeans;
+package org.apache.roller.planet.ui.admin.struts.forms;
 
-import org.apache.roller.planet.ui.authoring.struts.forms.PlanetSubscriptionForm;
+import org.apache.roller.planet.ui.admin.struts.forms.PlanetSubscriptionForm;
 
 /**
  * @struts.form name="planetSubscriptionFormEx"

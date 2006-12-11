@@ -22,15 +22,11 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.business.runnable.RollerTask;
-import org.apache.roller.config.RollerConfig;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.UserManager;
+import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.util.Technorati;
@@ -39,79 +35,20 @@ import org.apache.roller.util.Technorati;
 /**
  * Rank each subscription by populating Technorati inbound blog and link counts.
  */
-public class TechnoratiRankingsTask extends RollerTask {
+public class TechnoratiRankingsTask implements Runnable {
     
     private static Log log = LogFactory.getLog(TechnoratiRankingsTask.class);
-    
-    // a String description of when to start this task
-    private String startTimeDesc = "startOfDay";
-    
-    // interval at which the task is run, default is 5 minutes
-    private int interval = 1440;
-    
-    // lease time given to task lock, default is 30 minutes
-    private int leaseTime = 30;
-    
-    
-    public String getName() {
-        return "TechnoratiRankingsTask";
-    }
-    
-    public Date getStartTime(Date currentTime) {
-        return getAdjustedTime(currentTime, startTimeDesc);
-    }
-    
-    public int getInterval() {
-        return this.interval;
-    }
-    
-    public int getLeaseTime() {
-        return this.leaseTime;
-    }
-    
-    
-    public void init() throws RollerException {
-        
-        // get relevant props
-        Properties props = this.getTaskProperties();
-        
-        // extract start time
-        String startTimeStr = props.getProperty("startTime");
-        if(startTimeStr != null) {
-            this.startTimeDesc = startTimeStr;
-        }
-        
-        // extract interval
-        String intervalStr = props.getProperty("interval");
-        if(intervalStr != null) {
-            try {
-                this.interval = Integer.parseInt(intervalStr);
-            } catch (NumberFormatException ex) {
-                log.warn("Invalid interval: "+intervalStr);
-            }
-        }
-        
-        // extract lease time
-        String leaseTimeStr = props.getProperty("leaseTime");
-        if(leaseTimeStr != null) {
-            try {
-                this.leaseTime = Integer.parseInt(leaseTimeStr);
-            } catch (NumberFormatException ex) {
-                log.warn("Invalid leaseTime: "+leaseTimeStr);
-            }
-        }
-    }
     
     
     /**
      * Loop through all subscriptions get get Technorati rankings for each
      */
-    public void runTask() {
+    public void run() {
         
         int count = 0;
         int errorCount = 0;
         try {
-            PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             PlanetConfigData config = planet.getConfiguration();
             Technorati technorati = null;
             try {
@@ -131,9 +68,8 @@ public class TechnoratiRankingsTask extends RollerTask {
                 return;
             }
             
-            UserManager userManager = RollerFactory.getRoller().getUserManager();
             try {
-                int limit = RollerConfig.getIntProperty(
+                int limit = PlanetConfig.getIntProperty(
                         "planet.aggregator.technorati.limit", 500);
                 int userCount = planet.getSubscriptionCount();
                 int mod = (userCount / limit) + 1;
@@ -186,30 +122,14 @@ public class TechnoratiRankingsTask extends RollerTask {
                 }
                 
                 // all done, flush results to db
-                RollerFactory.getRoller().flush();
+                PlanetFactory.getPlanet().flush();
                 
             } finally {
-                RollerFactory.getRoller().release();
+                PlanetFactory.getPlanet().release();
             }
             
         } catch (Exception e) {
             log.error("ERROR ranking subscriptions", e);
-        }
-    }
-    
-    
-    /** 
-     * Task may be run from the command line 
-     */
-    public static void main(String[] args) {
-        try {
-            TechnoratiRankingsTask task = new TechnoratiRankingsTask();
-            task.init();
-            task.run();
-            System.exit(0);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(-1);
         }
     }
     

@@ -67,10 +67,5 @@
         <mapping resource="org/apache/roller/pojos/EntryAttributeData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogCategoryData.hbm.xml" />
         
-        <mapping resource="org/apache/roller/planet/pojos/PlanetConfigData.hbm.xml" />
-        <mapping resource="org/apache/roller/planet/pojos/PlanetGroupData.hbm.xml" />
-        <mapping resource="org/apache/roller/planet/pojos/PlanetEntryData.hbm.xml" />
-        <mapping resource="org/apache/roller/planet/pojos/PlanetSubscriptionData.hbm.xml" />
-                
     </session-factory>
 </hibernate-configuration>

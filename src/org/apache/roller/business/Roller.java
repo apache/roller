@@ -28,7 +28,6 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.planet.business.PlanetManager;
 
 
 /** 
@@ -113,12 +112,6 @@ public interface Roller {
      * Get IndexManager associated with this Roller instance.
      */
     public IndexManager getIndexManager();
-    
-    
-    /**
-     * Get PlanetManager associated with this Roller instance.
-     */
-    public PlanetManager getPlanetManager();
     
     
     /**

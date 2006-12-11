@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
@@ -23,15 +24,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.apache.roller.pojos.*;
+
 
 /**
  * @struts.form include-all="true"
  * @ejb:bean name="PlanetSubscriptionData"
  * @hibernate.class lazy="true" table="rag_subscription"
  */
-public class PlanetSubscriptionData extends PersistentObject 
-    implements Serializable, Comparable
+public class PlanetSubscriptionData implements Serializable, Comparable
 {
     /** Database ID */
     protected String id;
@@ -195,13 +195,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     
     //-------------------------------------------------------------- implementation
-   
-    /**
-     */
-    public void setData(PersistentObject vo)
-    {
-        // TODO Auto-generated method stub        
-    }
+    
     /**
      */
     public int compareTo(Object o)

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.ui.admin.struts.actions;
+package org.apache.roller.planet.ui.admin.struts.actions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,11 +35,13 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.ui.authoring.struts.forms.PlanetGroupForm;
+import org.apache.roller.planet.ui.admin.struts.forms.PlanetGroupForm;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -71,8 +73,7 @@ public final class PlanetGroupsAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (request.getParameter("groupHandle") != null)
                 {
@@ -140,16 +141,15 @@ public final class PlanetGroupsAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (form.getHandle() != null)
                 {
                     PlanetGroupData group = planet.getGroup(form.getHandle());
                     planet.deleteGroup(group);
-                    roller.flush();
+                    PlanetFactory.getPlanet().flush();
                     // TODO: why release here?
-                    roller.release();
+                    PlanetFactory.getPlanet().release();
                     
                     form.doReset(mapping, request);
                     
@@ -188,8 +188,7 @@ public final class PlanetGroupsAction extends DispatchAction
             if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 ActionErrors errors = validate(planet, form);
                 if (errors.isEmpty())
                 {
@@ -203,8 +202,16 @@ public final class PlanetGroupsAction extends DispatchAction
                         group = planet.getGroupById(form.getId());
                     }                
                     form.copyTo(group, request.getLocale());
+                    
+                    // the form copy is a little dumb and will set the id value
+                    // to empty string if it didn't have a value before, which means
+                    // that this object would not be considered new
+                    if(group.getId() != null && group.getId().trim().equals("")) {
+                        group.setId(null);
+                    }
+                    
                     planet.saveGroup(group);  
-                    roller.flush();
+                    PlanetFactory.getPlanet().flush();
 
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, 
@@ -268,8 +275,7 @@ public final class PlanetGroupsAction extends DispatchAction
         {
             super("planetGroups.pagetitle", request, response, mapping);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            Roller roller = RollerFactory.getRoller();
-            PlanetManager planet = roller.getPlanetManager();            
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();            
             PlanetGroupData externalGroup = planet.getGroup("external");
             if (externalGroup != null) 
             {

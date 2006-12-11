@@ -114,12 +114,9 @@ Key Targets:
         addedtags="@xdoclet-generated at ${TODAY}"
         force="true">
         
-	    <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+	<fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
-        
-        <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Assoc.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
         
         <hibernate validatexml="true" version="3.0"/>
         
@@ -166,8 +163,6 @@ Key Targets:
             <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
             <include name="org/apache/roller/pojos/SiteTagAggregateData.java"/>          	
             <include name="org/apache/roller/pojos/WebsiteData.java"/>
-            <include name="org/apache/roller/planet/pojos/PlanetEntryData.java"/>
-            <include name="org/apache/roller/planet/pojos/PlanetSubscriptionData.java"/>
         </fileset>
 
         <template 
@@ -193,7 +188,6 @@ Key Targets:
     <ejbdoclet destdir="${build.generated}/unused" excludedtags="@version,@author">
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
 
         &custom-gen-web;
      
@@ -224,17 +218,7 @@ Key Targets:
         </fileset>
         <mapper type="glob" from="*DataForm.java" to="*Form.java"/>
     </move>
-
-    <replace dir="${build.generated.web}/org/apache/roller/planet/ui/authoring/struts/forms"
-        token="DataForm" value="Form"/>
-    <move      todir="${build.generated.web}/org/apache/roller/planet/ui/authoring/struts/forms">
-        <fileset dir="${build.generated.web}/org/apache/roller/planet/ui/authoring/struts/forms" >
-            <include name="*DataForm.java"/>
-            <include name="*ConfigForm.java" />
-        </fileset>
-        <mapper type="glob" from="*DataForm.java" to="*Form.java"/>
-    </move>
-
+    
 </target>
 
 
@@ -320,7 +304,7 @@ ro.buildUser=${user.name}
     
     <!-- compile roller business classes -->
     <javac destdir="${build.compile.business}"
-        excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**"
+        excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**"
         debug="${build.debug}" 
         source="${build.sourcelevel}"
         deprecation="${build.deprecation}">
@@ -337,7 +321,7 @@ ro.buildUser=${user.name}
     <!-- Copy resources -->
     <copy todir="${build.compile.business}">
         <fileset dir="${ro.src}" 
-            excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**" />
+            excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" />
         <fileset dir="${build.generated.business}" excludes="**/*.java" />
     </copy>
     
@@ -362,7 +346,7 @@ ro.buildUser=${user.name}
     <javac debug="${build.debug}" 
         source="${build.sourcelevel}"
         destdir="${build.compile.web}"
-        includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/util/rome/**" >
+        includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" >
         
         <src path="${ro.src}"  />
         <src path="${build.generated.web}"/>
@@ -397,7 +381,7 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="gen-business, build-business, gen-web, build-web, copy-webapp" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="gen-business, build-business, build-web, copy-webapp, gen-web" description="Stage webapp, including jars">
 </target>
     
 <target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
@@ -427,6 +411,7 @@ ro.buildUser=${user.name}
         <fileset refid="struts.jars" />
         <fileset refid="spring.jars" /> 
         <fileset refid="jstl.jars" />
+        <fileset refid="planet.jars" />
         
         <!-- include custom jars -->
         &custom-jars;

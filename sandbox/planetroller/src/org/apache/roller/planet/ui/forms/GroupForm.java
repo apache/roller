@@ -82,6 +82,8 @@ public class GroupForm implements LoadableForm {
             dbgroup.setDescription(group.getDescription());
             planet.getPlanetManager().saveGroup(dbgroup);
         } else {
+            // id must be null when saving new objects
+            group.setId(null);
             planet.getPlanetManager().saveGroup(group); 
         }
         planet.flush();

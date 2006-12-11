@@ -15,16 +15,18 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 package org.apache.roller.planet.business.hibernate;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
+
 
 /**
  * A Hibernate specific implementation of the Roller business layer.
@@ -37,10 +39,10 @@ public class HibernatePlanetImpl implements Planet {
     private static HibernatePlanetImpl me = null;
     
     // a persistence utility class
-    private HibernatePersistenceStrategy strategy = null;
+    protected HibernatePersistenceStrategy strategy = null;
     
     // references to the managers we maintain
-    private PlanetManager planetManager = null;
+    protected PlanetManager planetManager = null;
     
         
     /**
@@ -85,7 +87,7 @@ public class HibernatePlanetImpl implements Planet {
     }
     
     
-    public PlanetManager getPlanetManager() throws RollerException {
+    public PlanetManager getPlanetManager() {
         if ( planetManager == null ) {
             planetManager = new HibernatePlanetManagerImpl(strategy);  
         }
