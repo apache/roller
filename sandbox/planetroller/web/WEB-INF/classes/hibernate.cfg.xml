@@ -28,11 +28,11 @@
         <!-- you can override the dialect via planet-custom.properties -->
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         
         <!-- use thread local Session context -->
         <!--<property name="hibernate.current_session_context_class">thread</property>-->
-        <property name="hibernate.current_session_context_class">org.apache.roller.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
+        <property name="hibernate.current_session_context_class">org.apache.roller.planet.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
         <!-- Hibernate L2 Caching -->
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
