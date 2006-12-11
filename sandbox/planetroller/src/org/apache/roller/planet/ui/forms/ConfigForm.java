@@ -67,6 +67,8 @@ public class ConfigForm implements LoadableForm {
             }
             planet.getPlanetManager().saveConfiguration(dbconfig);
         } else {
+            // id must be null when saving new objects
+            planetConfig.setId(null);
             planet.getPlanetManager().saveConfiguration(planetConfig);
         }         
         planet.flush();

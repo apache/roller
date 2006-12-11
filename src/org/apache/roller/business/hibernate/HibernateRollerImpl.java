@@ -29,7 +29,6 @@ import org.apache.roller.business.ConfigManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.Roller;
@@ -57,7 +56,6 @@ public class HibernateRollerImpl extends RollerImpl {
     private BookmarkManager bookmarkManager = null;
     private ConfigManager configManager = null;
     private PropertiesManager propertiesManager = null;
-    private PlanetManager planetManager = null;
     private RefererManager refererManager = null;
     private UserManager userManager = null;
     private WeblogManager weblogManager = null;
@@ -215,17 +213,6 @@ public class HibernateRollerImpl extends RollerImpl {
             pingQueueManager = new HibernatePingQueueManagerImpl(strategy);
         }
         return pingQueueManager;
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.Roller#getPlanetManager()
-     */
-    public PlanetManager getPlanetManager() {
-        if ( planetManager == null ) {
-            planetManager = new HibernateRollerPlanetManagerImpl(strategy);
-        }
-        return planetManager;
     }
     
     

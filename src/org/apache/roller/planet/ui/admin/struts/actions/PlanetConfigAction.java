@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.ui.admin.struts.actions;
+package org.apache.roller.planet.ui.admin.struts.actions;
 
 import java.io.IOException;
 
@@ -34,12 +34,14 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.ui.authoring.struts.forms.PlanetConfigForm;
+import org.apache.roller.planet.ui.admin.struts.forms.PlanetConfigForm;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -73,8 +75,7 @@ public final class PlanetConfigAction extends DispatchAction
                 BasePageModel pageModel = new BasePageModel(
                     "planetConfig.pageTitle", request, response, mapping);
                 request.setAttribute("model",pageModel);                
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetConfigData config = planet.getConfiguration();
                 PlanetConfigForm form = (PlanetConfigForm)actionForm;
                 if (config != null)
@@ -116,8 +117,7 @@ public final class PlanetConfigAction extends DispatchAction
                 BasePageModel pageModel = new BasePageModel(
                     "planetConfig.pageTitle", request, response, mapping);
                 request.setAttribute("model",pageModel);                
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetConfigData config = planet.getConfiguration();
                 if (config == null)
                 {
@@ -128,6 +128,14 @@ public final class PlanetConfigAction extends DispatchAction
                 if (errors.isEmpty())
                 {
                     form.copyTo(config, request.getLocale());
+                    
+                    // the form copy is a little dumb and will set the id value
+                    // to empty string if it didn't have a value before, which means
+                    // that this object would not be considered new
+                    if(config.getId() != null && config.getId().trim().equals("")) {
+                        config.setId(null);
+                    }
+                    
                     planet.saveConfiguration(config);
                     if (planet.getGroup("external") == null) 
                     {
@@ -136,7 +144,7 @@ public final class PlanetConfigAction extends DispatchAction
                         group.setTitle("external");
                         planet.saveGroup(group);
                     }
-                    roller.flush();
+                    PlanetFactory.getPlanet().flush();
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, new ActionMessage("planetConfig.success.saved"));
                     saveMessages(request, messages);
@@ -175,7 +183,6 @@ public final class PlanetConfigAction extends DispatchAction
                 request.setAttribute("model",pageModel);                
                 Roller roller = RollerFactory.getRoller();
                 RefreshEntriesTask task = new RefreshEntriesTask();
-                task.init();
                 roller.getThreadManager().executeInBackground(task);
                 
                 ActionMessages messages = new ActionMessages();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.ui.admin.struts.actions;
+package org.apache.roller.planet.ui.admin.struts.actions;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ui.admin.struts.formbeans.PlanetSubscriptionFormEx;
+import org.apache.roller.planet.ui.admin.struts.forms.PlanetSubscriptionFormEx;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -37,6 +37,8 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
@@ -70,8 +72,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 if (request.getParameter("feedUrl") != null) {
                     String feedUrl = request.getParameter("feedUrl");
@@ -108,8 +109,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 
                 form.doReset(mapping, request);
@@ -141,8 +141,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         try {
             //RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
-                Roller roller = RollerFactory.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
+                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 if (form.getId() != null) {
                     PlanetSubscriptionData sub =
@@ -156,9 +155,9 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     
                     targetGroup.getSubscriptions().remove(sub);
                     planet.deleteSubscription(sub);
-                    roller.flush();
+                    PlanetFactory.getPlanet().flush();
                     // TODO: why release here?
-                    roller.release();
+                    PlanetFactory.getPlanet().release();
                     
                     form.doReset(mapping, request);
                     
@@ -189,8 +188,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
             HttpServletResponse response) throws IOException, ServletException {
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
-            Roller roller = RollerFactory.getRoller();
-            PlanetManager planet = roller.getPlanetManager();
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
             
             String groupHandle = request.getParameter("groupHandle");
@@ -219,6 +217,14 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                             // No, add new subscription
                             sub = new PlanetSubscriptionData(); 
                             form.copyTo(sub, request.getLocale());
+                            
+                            // the form copy is a little dumb and will set the id value
+                            // to empty string if it didn't have a value before, which means
+                            // that this object would not be considered new
+                            if(sub.getId() != null && sub.getId().trim().equals("")) {
+                                sub.setId(null);
+                            }
+
                             planet.saveSubscription(sub);
                         }                        
                         targetGroup.getSubscriptions().add(sub);
@@ -231,7 +237,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     }                    
                     form.setGroupHandle(groupHandle);
                     planet.saveGroup(targetGroup);
-                    roller.flush();
+                    PlanetFactory.getPlanet().flush();
                     
                     messages.add(null,
                             new ActionMessage("planetSubscription.success.saved"));

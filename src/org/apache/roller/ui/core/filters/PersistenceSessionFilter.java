@@ -29,8 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.config.RollerConfig;
+import org.apache.roller.planet.business.PlanetFactory;
 
 
 /**
@@ -60,6 +61,11 @@ public class PersistenceSessionFilter implements Filter {
         } finally {
             log.debug("Releasing Roller Session");
             RollerFactory.getRoller().release();
+            
+            // if planet is enabled then release planet backend as well
+            if(RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                PlanetFactory.getPlanet().release();
+            }
         }
         
         log.debug("Exiting "+request.getRequestURI());

@@ -21,25 +21,27 @@
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-    
-        <!-- you can override with JDBC connection via planet-custom.properties -->
+        
+        <!-- You can override this via the jdbc.XXX properties in roller-custom.properties -->
         <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
                         
-        <!-- you can override the dialect via planet-custom.properties -->
+        <!-- You can override this via the hibernate.dialect property in roller-custom.properties -->
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-        
+                       
         <property name="show_sql">true</property>
-        
-        <!-- use thread local Session context -->
+
+        <!-- use custom thread local Session context -->
         <!--<property name="hibernate.current_session_context_class">thread</property>-->
         <property name="hibernate.current_session_context_class">org.apache.roller.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
         <!-- Hibernate L2 Caching -->
+        <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
         <property name="hibernate.generate_statistics">true</property>
         <property name="hibernate.cache.use_structured_entries">true</property>
         
-        <!-- Map Planet POJO classes -->
+        
+        <!-- Map Planet pojo classes -->
         <mapping resource="org/apache/roller/planet/pojos/PlanetConfigData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetGroupData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetEntryData.hbm.xml" />

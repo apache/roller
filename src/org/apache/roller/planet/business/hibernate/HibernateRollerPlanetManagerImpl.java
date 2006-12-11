@@ -16,14 +16,13 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business.hibernate;
+package org.apache.roller.planet.business.hibernate;
 
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -144,8 +144,25 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                     try {
                         WeblogEntryData rollerEntry =
                                 (WeblogEntryData)entryIter.next();
-                        PlanetEntryData entry =
-                                new PlanetEntryData(rollerEntry, sub, pagePlugins);
+                        
+                        PlanetEntryData entry = new PlanetEntryData();
+                        entry.setSubscription(sub);
+                        
+                        String content = "";
+                        if (!StringUtils.isEmpty(rollerEntry.getText())) {
+                            content = rollerEntry.getText();
+                        } else {
+                            content = rollerEntry.getSummary();
+                        }
+                        content = ppmgr.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
+                        
+                        entry.setAuthor(rollerEntry.getCreator().getFullName());
+                        entry.setTitle(rollerEntry.getTitle());
+                        entry.setPubTime(rollerEntry.getPubTime());
+                        entry.setText(content);
+                        entry.setPermalink(rollerEntry.getPermalink());
+                        entry.setCategoriesString(rollerEntry.getCategory().getPath());
+        
                         saveEntry(entry);
                         newEntries.add(entry);
                     } catch (Exception e) {

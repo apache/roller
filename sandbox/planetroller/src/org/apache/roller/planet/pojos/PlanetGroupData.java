@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
@@ -22,7 +23,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import org.apache.roller.pojos.*;
 
 
 /**
@@ -30,7 +30,7 @@ import org.apache.roller.pojos.*;
  * @ejb:bean name="PlanetGroupData"
  * @hibernate.class lazy="true" table="rag_group"
  */
-public class PlanetGroupData extends PersistentObject implements Serializable
+public class PlanetGroupData implements Serializable
 {
     transient private String[] catArray = null;
 
@@ -192,10 +192,4 @@ public class PlanetGroupData extends PersistentObject implements Serializable
     {
     }
     
-    //---------------------------------------------------------- implementation
-
-    public void setData(PersistentObject vo)
-    {
-        // TODO Auto-generated method stub    
-    }
 }

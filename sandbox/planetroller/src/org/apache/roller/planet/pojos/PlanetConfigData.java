@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
-import org.apache.roller.pojos.*;
 
-import org.apache.roller.pojos.PersistentObject;
 
 /**
  * @struts.form include-all="true"
  * @hibernate.class lazy="true" table="rag_config"
  * @author Dave Johnson
  */
-public class PlanetConfigData extends PersistentObject implements Serializable
+public class PlanetConfigData implements Serializable
 {
     /** Database ID */
     protected String id;
@@ -238,10 +237,5 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     {
         cacheDir = dir;
     }
-
-    //-------------------------------------------------------------- implementation
-    public void setData(PersistentObject vo)
-    {
-        // TODO Auto-generated method stub
-    }
+    
 }

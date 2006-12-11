@@ -27,6 +27,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.ui.rendering.util.PlanetRequest;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheManager;
@@ -158,7 +161,7 @@ public class PlanetCache {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             
-            lastModified = RollerFactory.getRoller().getPlanetManager().getLastUpdated();
+            lastModified = PlanetFactory.getPlanet().getPlanetManager().getLastUpdated();
             
             if (lastModified == null) {
                 lastModified = new Date();

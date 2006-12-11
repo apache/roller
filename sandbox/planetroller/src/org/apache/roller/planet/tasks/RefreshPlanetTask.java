@@ -18,23 +18,12 @@
 
 package org.apache.roller.planet.tasks;
 
-import java.io.File;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.ui.rendering.model.UtilitiesModel;
-import org.apache.roller.ui.rendering.velocity.deprecated.OldUtilities;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.texen.Generator;
 
 
 /**
@@ -45,7 +34,7 @@ import org.apache.velocity.texen.Generator;
  * </pre>
  */
 public class RefreshPlanetTask implements Runnable {
-    private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
+    private static Log log = LogFactory.getLog(RefreshPlanetTask.class);
     
     public void run() {
         try {            

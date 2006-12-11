@@ -24,9 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.RollerTask;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.config.RollerConfig;
+import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.config.PlanetConfig;
 
 
 /**
@@ -98,14 +97,13 @@ public class RefreshEntriesTask extends RollerTask {
     
     public void runTask() {
         try {
-            Roller roller = RollerFactory.getRoller();
-            roller.getPlanetManager().refreshEntries(
-                RollerConfig.getProperty("planet.aggregator.cache.dir"));
-            roller.flush();
+            PlanetFactory.getPlanet().getPlanetManager().refreshEntries(
+                PlanetConfig.getProperty("planet.aggregator.cache.dir"));
+            PlanetFactory.getPlanet().flush();
         } catch (RollerException e) {
             log.error("ERROR refreshing entries", e);
         } finally {
-            RollerFactory.getRoller().release();
+            PlanetFactory.getPlanet().release();
         }
     }
     

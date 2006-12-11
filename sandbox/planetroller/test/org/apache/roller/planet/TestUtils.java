@@ -16,38 +16,33 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.planet.business;
+package org.apache.roller.planet;
 
-import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 
 
-/** 
- * The main entry point interface of the Roller business tier.
+/**
+ * Utility class for unit test classes.
  */
-public interface Planet {
-           
+public final class TestUtils {
+    
+    
     /**
-     * Get PlanetManager associated with this Roller instance.
+     * Convenience method that simulates the end of a typical session.
+     *
+     * Normally this would be triggered by the end of the response in the webapp
+     * but for unit tests we need to do this explicitly.
+     *
+     * @param flush true if you want to flush changes to db before releasing
      */
-    public PlanetManager getPlanetManager();
+    public static void endSession(boolean flush) throws Exception {
         
-    /**
-     * Flush object states.
-     */
-    public void flush() throws RollerException;
-    
-    
-    /**
-     * Release all resources associated with Roller session.
-     */
-    public void release();
-    
-    
-    /**
-     * Release all resources necessary for this instance of Roller.
-     */
-    public void shutdown();
+        if(flush) {
+            PlanetFactory.getPlanet().flush();
+        }
+        
+        PlanetFactory.getPlanet().release();
+    }
     
 }
-

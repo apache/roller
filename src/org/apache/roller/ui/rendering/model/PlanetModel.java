@@ -25,13 +25,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.planet.pojos.wrapper.PlanetSubscriptionDataWrapper;
 import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
@@ -165,12 +164,12 @@ public class PlanetModel implements Model {
     public List getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
         List list = new ArrayList();
         try {
-            Roller roller = RollerFactory.getRoller();
-            PlanetManager planetManager = roller.getPlanetManager();
+            PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
             List subs = planetManager.getTopSubscriptions(groupHandle, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {
                 PlanetSubscriptionData sub = (PlanetSubscriptionData) it.next();
-                list.add(PlanetSubscriptionDataWrapper.wrap(sub)); 
+                // TODO needs pojo wrapping from planet
+                list.add(sub); 
             }
         } catch (Exception e) {
             log.error("ERROR: get ranked blogs", e);
