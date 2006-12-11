@@ -34,35 +34,45 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
  * to be duck-type compatible with old PlanetTool templates.
  */
 public class StaticPlanetModel {
-    private static Log logger =
-            LogFactory.getFactory().getInstance(StaticPlanetModel.class);
+    private static Log logger = LogFactory.getFactory().getInstance(StaticPlanetModel.class);
     PlanetManager planetManager = null;
+    
     
     public StaticPlanetModel() throws RollerException {
         Planet planet = PlanetFactory.getPlanet();
         planetManager = planet.getPlanetManager();
     }
         
-    public PlanetSubscriptionData getSubscription(
-            String feedUrl) throws Exception {
-        return planetManager.getSubscription(feedUrl); 
-    }
     
     public PlanetConfigData getConfiguration() throws RollerException {
         return planetManager.getConfiguration();
     }
-    
-    public List getGroupHandles() throws RollerException {
-        return planetManager.getGroupHandles();
+       
+       
+    public PlanetSubscriptionData getSubscription(String feedUrl) throws Exception {
+        return planetManager.getSubscription(feedUrl); 
     }
+    
+    
+    public List getFeedEntries(String feedUrl, int maxEntries) throws Exception {
+        try {
+            return planetManager.getFeedEntries(feedUrl, 0, maxEntries);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+       
     
     public List getGroups() throws RollerException {
         return planetManager.getGroups();
     }
     
+    
     public PlanetGroupData getGroup(String handle) throws RollerException {
         return planetManager.getGroup(handle);
     }
+    
     
     public List getAggregation(
             PlanetGroupData group, int maxEntries) throws RollerException {
@@ -73,6 +83,7 @@ public class StaticPlanetModel {
     public Iterator getAllSubscriptions() throws RollerException {
         return planetManager.getAllSubscriptions();
     }
+    
     
     public int getSubscriptionCount() throws RollerException {
         return planetManager.getSubscriptionCount();
