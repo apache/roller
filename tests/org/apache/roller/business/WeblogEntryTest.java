@@ -188,7 +188,7 @@ public class WeblogEntryTest extends TestCase {
         
         // get all entries for weblog
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         assertEquals(entry3, entries.get(0));
@@ -201,39 +201,39 @@ public class WeblogEntryTest extends TestCase {
         
         // get all published entries only 
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, WeblogEntryData.PUBLISHED, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, WeblogEntryData.PUBLISHED, null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(2, entries.size());
         
         // get all entries in date range
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get all entries, limited to maxSize
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, 0, 2);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, 0, 2);
         assertNotNull(entries);
         assertEquals(2, entries.size());
         
         // get all entries in category
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         
         // get all entries, limited by offset/range
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, 1, 1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, 1, 1);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get all entries, limited by locale
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, "en_US", 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, "en_US", 0, -1);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry1, entries.get(0));
@@ -488,7 +488,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         List results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testtag" }), null, null, null, 0,
+                Arrays.asList(new String[] { "testtag" }), null, null, null, null, 0,
                 -1);
         assertEquals(1, results.size());
         WeblogEntryData testEntry = (WeblogEntryData) results.iterator().next();
@@ -512,7 +512,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         List results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testtag" }), null, null, null, 0,
+                Arrays.asList(new String[] { "testtag" }), null, null, null, null, 0,
                 -1);
         assertEquals(1, results.size());
         WeblogEntryData testEntry = (WeblogEntryData) results.iterator().next();
@@ -523,7 +523,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testtag" }), null, null, null, 0,
+                Arrays.asList(new String[] { "testtag" }), null, null, null, null, 0,
                 -1);
         assertEquals(0, results.size());
 

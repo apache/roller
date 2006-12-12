@@ -184,13 +184,13 @@ public class CalendarTag extends HybridTag {
             pw.print("<tr>");
             pw.print("<td colspan=\"7\" align=\"center\" "+
                     "class=\"hCalendarMonthYearRow"+mClassSuffix+"\">");
-            if (model.getPrevMonth().compareTo(model.getInitialMonth()) >= 0) {
+            if (model.getPrevMonth() != null) {
                 pw.print("<a href=\"" + model.computePrevMonthUrl()
                         + "\" title=\"" + resources.getMessage(mLocale, "calendar.prev")
                         + "\" class=\"hCalendarNavBar\">&laquo;</a> ");
             }
             pw.print( formatTitle.format(day) );
-            if (todayCal.getTime().compareTo(model.getNextMonth()) >= 0) {
+            if (model.getNextMonth() != null) {
                 pw.print(" <a href=\"" + model.computeNextMonthUrl()
                 + "\" title=\"" + resources.getMessage(mLocale, "calendar.next")
                 + "\" class=\"hCalendarNavBar\">&raquo;</a>");

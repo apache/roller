@@ -485,6 +485,7 @@ public class OldWeblogPageModel {
                     null,                        // tags
                     WeblogEntryData.PUBLISHED,   // status
                     null,                        // sortby (null for pubTime)
+                    null,
                     mLocale, 0, mWebsite.getEntryDisplayCount());    
             
             // wrap pojos

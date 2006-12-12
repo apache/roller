@@ -409,7 +409,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                         null,              // tags
                         null,              // status
                         "updateTime",      // sortby
-                        null,                     0, numposts);
+                        null,
+                        null,
+                        0, numposts);
                 
                 Iterator iter = entries.iterator();
                 while (iter.hasNext()) {

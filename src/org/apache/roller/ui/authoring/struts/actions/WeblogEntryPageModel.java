@@ -143,7 +143,9 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // tags
                 WeblogEntryData.PUBLISHED, // status
                 null,              // sortby (null for pubTime)
-null,                 0, 20);   
+                null, 
+                null,
+                0, 20);   
     }
 
     /**
@@ -165,7 +167,9 @@ null,                 0, 20);
                 null,              // tags
                 WeblogEntryData.DRAFT, // status
                 "updateTime",      // sortby 
-null,                 0, 20);  // maxEntries
+                null, 
+                null,
+                0, 20);  // maxEntries
     }
     
     /**
@@ -187,7 +191,9 @@ null,                 0, 20);  // maxEntries
                 null,              // tags
                 WeblogEntryData.PENDING, // status
                 "updateTime",      // sortby
-null,                 0, 20);  
+                null, 
+                null,                 
+                0, 20);  
     }
  
     public List getHoursList()

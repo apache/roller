@@ -290,6 +290,7 @@ public class RollerAtomHandler implements AtomHandler {
                         null,              // tags
                         null,              // status
                         "updateTime",      // sortby
+                        null,
                         null,              // locale
                         start,             // offset (for range paging)
                         max + 1);          // maxEntries
