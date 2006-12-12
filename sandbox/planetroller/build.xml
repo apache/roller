@@ -195,8 +195,9 @@
 
         <copy todir="${build.webapp}">
             <fileset dir="${ro.web}" includes="**/**" />
-        </copy> 
-
+        </copy>         
+        <chmod perm="+x" dir="${build.webapp}/WEB-INF/scripts" includes="*.sh" />
+        
         <mkdir dir="${build.webapp}/WEB-INF/templates" />
         <copy todir="${build.webapp}/WEB-INF/templates">
             <fileset dir="./templates" includes="**/**" />

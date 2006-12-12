@@ -247,7 +247,8 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
-            criteria.add(Expression.eq("subscription.feedURL", feedURL));
+            criteria.createAlias("subscription", "sub");
+            criteria.add(Expression.eq("sub.feedURL", feedURL));
             criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
             if (length != -1) criteria.setMaxResults(length);

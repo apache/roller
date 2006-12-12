@@ -24,11 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.util.OldUtilities;
+import org.apache.roller.util.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.texen.Generator;
@@ -79,9 +80,9 @@ public class GeneratePlanetTask implements Runnable {
             // Build context with current date 
             VelocityContext context = new VelocityContext();
             context.put("date", new Date());
-            // TODO fix
-            //context.put("utils", new UtilitiesModel());
-            //context.put("utilities", new OldUtilities());
+            // TODO fix: Use one utilities model and not one of the below
+            context.put("utils", new UtilitiesModel());
+            context.put("utilities", new OldUtilities());
             context.put("planet", new StaticPlanetModel());
             
             // Ensure that output directories exists, one for each group

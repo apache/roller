@@ -19,7 +19,7 @@ export CONFIG_OVERRIDE=planet-custom.properties
 java \
     -Dcatalina.base=. \
     -Dplanet.custom.config=${CONFIG_OVERRIDE} \
-    -cp ${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar \
-    org.apache.roller.business.runnable.TaskRunner \
+    -cp ${WEBAPP_DIR}/WEB-INF/lib/roller-planet.jar \
+    org.apache.roller.util.TaskRunner \
     ${WEBAPP_DIR} ${JARS_DIR} \
     org.apache.roller.planet.tasks.GeneratePlanetTask
