@@ -120,6 +120,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                             null,                        // tags
                             WeblogEntryData.PUBLISHED,   // status
                             null,                        // sortby (null means pubTime)
+                            null,
                             null,                        // locale
                             0,                           // offset
                             entryCount);                 

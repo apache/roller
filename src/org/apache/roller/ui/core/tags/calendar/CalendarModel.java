@@ -45,7 +45,7 @@ public interface CalendarModel {
      * Get the earliest month in which there could possibly be data.  For a weblog this
      * is the beginning of the month containing the creation date.
      */
-    public Date getInitialMonth();
+    //public Date getInitialMonth();
     
     /**
      * Create URL for use on edit-weblog page, preserves the request

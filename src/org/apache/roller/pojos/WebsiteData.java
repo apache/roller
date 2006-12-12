@@ -1227,6 +1227,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                     null, 
                     WeblogEntryData.PUBLISHED, 
                     "pubTime",  // sortby
+                    null,
                     null, 
                     0,
                     length); 

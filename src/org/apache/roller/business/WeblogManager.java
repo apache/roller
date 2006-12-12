@@ -34,6 +34,9 @@ import org.apache.roller.pojos.WebsiteData;
  * Interface to weblog entry, category and comment management.
  */
 public interface WeblogManager {
+
+    public static final String DESCENDING = "DESCENDING";
+    public static final String ASCENDING = "ASCENDING";
        
     /**
      * Save weblog entry.
@@ -66,6 +69,7 @@ public interface WeblogManager {
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
+     * @param sortOrder  Sort order of ASCENDING or DESCENDING (null for DESCENDING)
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
      * @return List of WeblogEntryData objects in reverse chrono order.
@@ -79,7 +83,8 @@ public interface WeblogManager {
             String      catName,
             List        tags,
             String      status,
-            String      sortBy,
+            String      sortBy, 
+            String      sortOrder,
             String      locale,             
             int         offset,
             int         range)

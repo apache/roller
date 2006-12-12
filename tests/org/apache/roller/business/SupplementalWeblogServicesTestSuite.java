@@ -45,8 +45,6 @@ public class SupplementalWeblogServicesTestSuite {
         suite.addTestSuite(BookmarkTest.class);
         
         suite.addTestSuite(RefererTest.class);
-        
-        suite.addTestSuite(PlanetManagerTest.class);
 
         return suite;
     }

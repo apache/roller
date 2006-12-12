@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,14 +44,15 @@ public class WeblogCalendarModel implements CalendarModel {
     
     private static Log log = LogFactory.getLog(WeblogCalendarModel.class);
     
-    protected Map                 monthMap;
-    protected Date                day;
-    protected String              cat = null;
-    protected String              pageLink = null;
-    protected String              locale = null;
-    protected Calendar            calendar = null;
-    protected WebsiteData         weblog = null;
-    
+    protected Map               monthMap;
+    protected Date              day;
+    protected String            cat = null;
+    protected String            pageLink = null;
+    protected String            locale = null;
+    protected Calendar          calendar = null;
+    protected WebsiteData       weblog = null;
+    protected Date              prevMonth = null; // prev month or null if none
+    protected Date              nextMonth = null; // next month or null if none    
     protected WeblogPageRequest pageRequest = null;
     
     
@@ -58,26 +60,25 @@ public class WeblogCalendarModel implements CalendarModel {
         
         this.pageRequest = pRequest;
         try {
-            this.weblog = pageRequest.getWeblog();
-            
-            pageLink = pageRequest.getWeblogPageName();
-            
-            day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(),
-                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
-            initDay(day);
-            
-            locale = pageRequest.getLocale();
-            
+            this.weblog = pageRequest.getWeblog();            
             if(weblog == null) {
                 throw new RollerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
             }
+            pageLink = pageRequest.getWeblogPageName();            
+            day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(),
+                  weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
+            locale = pageRequest.getLocale();
+            
+            initDay(day);  
+            
             // Category method argument overrides category from URL
             if (catArgument != null) {
                 cat = catArgument;
             } else if (pageRequest.getWeblogCategoryName() != null) {
                 cat = pageRequest.getWeblogCategoryName();
             }
+            
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("ERROR: initializing calendar", e);
@@ -92,23 +93,58 @@ public class WeblogCalendarModel implements CalendarModel {
                 weblog.getLocaleInstance());
         
         Calendar cal = (Calendar)calendar.clone();
+        Date startDate = DateUtil.getStartOfMonth(month);
+        Date endDate = DateUtil.getEndOfMonth(month);
         
-        // Compute first second of month
-        cal.setTime(month);
-        cal.set(Calendar.DAY_OF_MONTH, cal.getMinimum(Calendar.DAY_OF_MONTH));
-        cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE));
-        cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND));
-        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
-        Date startDate = cal.getTime();
+        // Determine previous non-empty month
+        // Get entries before startDate, using category restriction limit 1
+        // Use entry's date as previous month
+        try {
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            List prevEntries = mgr.getWeblogEntries(
+                    weblog,                    // website
+                    null,                      // user
+                    null,                      // startDate
+                    startDate,                 // endDate 
+                    cat,                       // cat
+                    null,                      // tags
+                    WeblogEntryData.PUBLISHED, // status
+                    null,                      // sortby (null means pubTime)
+                    WeblogManager.DESCENDING,  // sortorder, null means DESCENDING
+                    locale,                    // locale
+                    0, 1);                     // offset, range
+            if (prevEntries.size() > 0) {
+                WeblogEntryData prevEntry = (WeblogEntryData)prevEntries.get(0);
+                prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()));
+            }
+        } catch (RollerException e) {
+            log.error("ERROR determining previous non-empty month");
+        }
         
-        // Compute last second of month
-        cal.set(Calendar.DAY_OF_MONTH, cal.getMaximum(Calendar.DAY_OF_MONTH));
-        cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
-        cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
-        cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
-        Date endDate = cal.getTime();
+        // Determine next non-empty month
+        // Get entries after endDate, using category restriction limit 1
+        // Use entry's date as next month
+        try {
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            List nextEntries = mgr.getWeblogEntries(
+                    weblog,                    // website
+                    null,                      // user
+                    endDate,                   // startDate
+                    null,                      // endDate 
+                    cat,                       // cat
+                    null,                      // tags
+                    WeblogEntryData.PUBLISHED, // status
+                    null,                      // sortby (null means pubTime)
+                    WeblogManager.ASCENDING,   // sortorder
+                    locale,                    // locale
+                    0, 1);                     // offset, range
+            if (nextEntries.size() > 0) {
+                WeblogEntryData nextEntry = (WeblogEntryData)nextEntries.get(0);
+                nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()));
+            }
+        } catch (RollerException e) {
+            log.error("ERROR determining next non-empty month");
+        }  
         
         // Fix for ROL-840 Don't include future entries
         Date now = new Date();
@@ -186,59 +222,19 @@ public class WeblogCalendarModel implements CalendarModel {
     }
     
     public Date getNextMonth() {
-        Calendar nextCal = getCalendar();
-        nextCal.setTime( day );
-        nextCal.add( Calendar.MONTH, 1 );
-        return getFirstDayOfMonth(nextCal).getTime();
-    }
-
-    public Date getPrevMonth() {
-        Calendar prevCal = getCalendar();
-        prevCal.setTime( day );
-        prevCal.add( Calendar.MONTH, -1 );
-        return getFirstDayOfMonth(prevCal).getTime();
-    }
-    
-    protected Calendar getFirstDayOfMonth(Calendar cal) {
-        int firstDay = cal.getActualMinimum(Calendar.DAY_OF_MONTH);
-        cal.set(Calendar.DAY_OF_MONTH, firstDay);
-        return cal;
-    }
-    
-    protected Calendar getLastDayOfMonth(Calendar cal) {
-        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        cal.set(Calendar.DAY_OF_MONTH, lastDay);
-        return cal;
-    }
-    
-    public String computeNextMonthUrl() {
-        // Create yyyyMMdd dates for next month, prev month and today
-        Calendar nextCal = getCalendar();
-        nextCal.setTime( day );
-        nextCal.add( Calendar.MONTH, 1 );
-        String nextMonth = computeUrl(nextCal.getTime(), true, true);
-        
-        // and strip off last two digits to get a month URL
         return nextMonth;
     }
 
-    public Date getInitialMonth() {
-        Calendar cal = getCalendar();
-        // if there is no dateCreated value, default to beginning of epoch.
-        cal.setTime(weblog.getDateCreated() != null ? weblog.getDateCreated() : new Date(0));
-        return getFirstDayOfMonth(cal).getTime();
+    public Date getPrevMonth() {
+        return prevMonth;
+    }
+       
+    public String computeNextMonthUrl() {
+        return computeUrl(nextMonth, true, true);
     }
 
     public String computePrevMonthUrl() {
-        // Create yyyyMMdd dates for prev month, prev month and today
-        Calendar prevCal = getCalendar();
-        prevCal.setTime(day);
-        prevCal.add(Calendar.MONTH, -1);
-        //getLastDayOfMonth( prevCal );
-        String prevMonth = computeUrl(prevCal.getTime(), true, true);
-        
-        // and strip off last two digits to get a month URL
-        return prevMonth;
+        return computeUrl(prevMonth, true, true);
     }
     
     public String computeTodayMonthUrl() {

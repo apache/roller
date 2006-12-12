@@ -25,6 +25,7 @@ import junit.textui.TestRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.UserData;
@@ -116,7 +117,7 @@ public class PlanetManagerLocalTest extends TestCase {
     
     public void testRefreshEntries() {
         try {      
-            PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
+            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();

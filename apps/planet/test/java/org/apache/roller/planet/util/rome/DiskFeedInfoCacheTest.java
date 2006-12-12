@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.roller.util.rome;
+package org.apache.roller.planet.util.rome;
 
 import java.io.File;
 import java.net.URL;

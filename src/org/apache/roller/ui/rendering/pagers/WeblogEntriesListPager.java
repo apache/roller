@@ -115,6 +115,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                         queryTags,
                         WeblogEntryData.PUBLISHED,
                         "pubTime",
+                        null,
                         locale,
                         offset,
                         length + 1);

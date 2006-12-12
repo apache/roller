@@ -431,6 +431,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             List        tags,
             String      status,
             String      sortby,
+            String      sortOrder,
             String      locale,
             int         offset,
             int         length) throws RollerException {
@@ -496,12 +497,20 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 params.add(locale + '%');
             }
             
+
             if (sortby != null && sortby.equals("updateTime")) {
-                queryString.append("order by updateTime desc ");
+                queryString.append("order by updateTime ");
             } else {
-                queryString.append("order by pubTime desc ");
+                queryString.append("order by pubTime ");
             }
             
+            if (sortOrder != null && sortOrder.equals(ASCENDING)) {
+                queryString.append("asc ");
+            } else {
+                queryString.append("desc ");
+            }
+
+                
             Query query = session.createQuery(queryString.toString());
             
             // set params
@@ -1015,7 +1024,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             tags,
             status,
             null,
-            locale,             
+null,             locale,             
             offset,
             length);
         
