@@ -31,7 +31,6 @@ import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.referrers.RefererManager;
-import org.apache.roller.planet.business.PlanetManager;
 
 /**
  * A Datamapper specific implementation of the Roller business layer.
@@ -51,7 +50,6 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
     // references to the managers we maintain
     private BookmarkManager bookmarkManager = null;
     private PropertiesManager propertiesManager = null;
-    private PlanetManager planetManager = null;
     private RefererManager referrerManager = null;
     private UserManager userManager = null;
     private WeblogManager weblogManager = null;
@@ -158,21 +156,6 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
     }
 
     /**
-     * @see org.apache.roller.business.Roller#getPlanetManager()
-     */
-    public PlanetManager getPlanetManager() {
-        if ( planetManager == null ) {
-            planetManager = createDatamapperPlanetManager(strategy);
-        }
-        return planetManager;
-    }
-
-    protected PlanetManager createDatamapperPlanetManager(
-            DatamapperPersistenceStrategy strategy) {
-        return new DatamapperPlanetManagerImpl(strategy);
-    }
-
-    /**
      * @see org.apache.roller.business.Roller#getPropertiesManager()
      */
     public PropertiesManager getPropertiesManager() {
@@ -192,15 +175,13 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
      */
     public RefererManager getRefererManager() {
         if ( referrerManager == null ) {
-            referrerManager = createDatamapperReferrerManager(strategy);
+            referrerManager = createDatamapperRefererManagerImpl(strategy);
         }
         return referrerManager;
     }
 
-    protected RefererManager createDatamapperReferrerManager(
-            DatamapperPersistenceStrategy strategy) {
-        return new DatamapperReferrerManagerImpl(strategy);
-    }
+    protected abstract RefererManager createDatamapperRefererManagerImpl(
+            DatamapperPersistenceStrategy strategy);
 
     /**
      * @see org.apache.roller.business.Roller#getUserManager()

@@ -153,9 +153,10 @@ public class DatamapperRollerPlanetManagerImpl
                     try {
                         WeblogEntryData rollerEntry =
                             (WeblogEntryData)entryIter.next();
-                        PlanetEntryData entry =
-                            new PlanetEntryData(rollerEntry, sub, 
-                                pagePlugins);
+                        PlanetEntryData entry = null;
+//TODO: DatamapperPort Need to sync up code with trunk                        
+//                            new PlanetEntryData(rollerEntry, sub,
+//                                pagePlugins);
                         saveEntry(entry);
                         newEntries.add(entry);
                     } catch (Exception e) {

@@ -27,6 +27,7 @@ import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.roller.RollerException;
 
@@ -45,24 +46,23 @@ import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
 
 /*
- * DatamapperReferrerManagerImpl.java
+ * DatamapperRefererManagerImpl.java
  *
  * Created on May 31, 2006, 4:06 PM
  *
  */
-public class DatamapperReferrerManagerImpl implements RefererManager {
+public abstract class DatamapperRefererManagerImpl implements RefererManager {
 
     private static Log log = LogFactory.getLog(
-        DatamapperReferrerManagerImpl.class);
+        DatamapperRefererManagerImpl.class);
 
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
     /** The strategy for this manager. */
-    private DatamapperPersistenceStrategy strategy;
+    protected DatamapperPersistenceStrategy strategy;
 
-    /** Creates a new instance of DatamapperReferrerManagerImpl */
-    public DatamapperReferrerManagerImpl
-            (DatamapperPersistenceStrategy strategy) {
+    /** Creates a new instance of DatamapperRefererManagerImpl */
+    public DatamapperRefererManagerImpl(DatamapperPersistenceStrategy strategy) {
         log.debug("Instantiating Datamapper Referer Manager");
 
         this.strategy = strategy;
@@ -80,70 +80,50 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
      * Clear referrer dayhits and remove referrers without excerpts.
      */
     public void clearReferrers() throws RollerException {
-        // TODO not implemented
+        clearDayHits();
 
-//        Dialect currentDialect = ((SessionFactoryImplementor)session.getSessionFactory()).getDialect();
-//        String reset = "update RefererData set dayHits=0";
-//        session.createQuery(reset).executeUpdate();
-//        String delete = null;
-//        if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
-//            delete = "delete RefererData where excerpt is null or excerpt like ''";
-//        } else {
-//            delete = "delete RefererData where excerpt is null or excerpt=''";
-//        }
-//        session.createQuery(delete).executeUpdate();
+        //TODO: Datamapper port: The original code used two different expressions
+        // to find empty exerpt
+        // (1) excerpt like '' for mssql, oracle and derby
+        // (2) excerpt = '' for all other
+        // I could verify that (1) works for mssql, oralce, derby, and mysql
+        strategy.newRemoveQuery(RefererData.class,
+                "RefererData.deleteByNullOrEmptyExcerpt").removeAll();
     }
+
+    abstract protected  void clearDayHits() throws RollerException;
 
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
     public void clearReferrers(WebsiteData website) throws RollerException {
-        // TODO not implemented
+        clearDayHitsByWebsite(website);
 
-//        Dialect currentDialect = ((SessionFactoryImplementor)session.getSessionFactory()).getDialect();
-//        String reset = "update RefererData set dayHits=0 where website=:site";
-//        session.createQuery(reset)
-//        .setParameter("site",website).executeUpdate();
-//        String delete = null;
-//        if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
-//            delete = "delete RefererData where website=:site and (excerpt is null or excerpt like '')";
-//        } else {
-//            delete = "delete RefererData where website=:site and (excerpt is null or excerpt='')";
-//        }
-//        session.createQuery(delete)
-//        .setParameter("site",website).executeUpdate();
+        //TODO: Datamapper port: Same comments as for method clearReferrers() apply for the expression
+        strategy.newRemoveQuery(RefererData.class,
+                "RefererData.deleteByNullOrEmptyExcerpt&website").removeAll(website);
+
     }
+
+    abstract protected  void clearDayHitsByWebsite(WebsiteData website) throws RollerException;
 
     /**
      * Apply ignoreWord/spam filters to all referers in system.
      */
     public void applyRefererFilters() throws RollerException {
-        // TODO not implemented
-
-//        Criteria criteria = session.createCriteria(RefererData.class);
-//            
-//        String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
-//            
-//        String[] blacklist = StringUtils.split(
-//                StringUtils.deleteWhitespace(spamwords),",");
-//        Junction or = Expression.disjunction();
-//        for (int i=0; i<blacklist.length; i++) {
-//            String ignoreWord = blacklist[i].trim();
-//            //log.debug("including ignore word - "+ignoreWord);
-//            or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
-//        }
-//        criteria.add(Expression.conjunction()
-//        .add(Expression.disjunction().add(Expression.isNull("excerpt")).add(Expression.eq("excerpt", "")))
-//        .add(or)
-//        );
-//            
-//        log.debug("removing spam referers - "+criteria.list().size());
-//            
-//        Iterator referer = criteria.list().iterator();
-//        while (referer.hasNext()) {
-//            this.strategy.remove((RefererData) referer.next());
-//        }
+        String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
+        String[] blacklist = StringUtils.split(
+                StringUtils.deleteWhitespace(spamwords),",");
+        if (blacklist.length == 0) return;
+        List referers = getBlackListedReferer(blacklist);
+        for (Iterator iterator = referers.iterator(); iterator.hasNext();) {
+            RefererData referer= (RefererData) iterator.next();
+            this.strategy.remove(referer);
+        }
     }
+
+    protected abstract List getBlackListedReferer(String[] blacklist) throws
+            RollerException;
 
     /**
      * Apply ignoreWord/spam filters to all referers in website.
@@ -155,28 +135,18 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
         if (null == website) throw new RollerException("website is null");
         if (null == website.getBlacklist()) return;
         
-//        Criteria criteria = session.createCriteria(RefererData.class);
-//            
-//        String[] blacklist = StringUtils.split(
-//                StringUtils.deleteWhitespace(website.getBlacklist()),",");
-//        if (blacklist.length == 0) return;
-//            
-//        Junction or = Expression.disjunction();
-//        for (int i=0; i<blacklist.length; i++) {
-//            String ignoreWord = blacklist[i].trim();
-//            or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
-//        }
-//        criteria.add(Expression.conjunction()
-//        .add(Expression.disjunction().add(Expression.isNull("excerpt")).add(Expression.eq("excerpt", "")))
-//        .add(Expression.eq("website",website))
-//        .add(or)
-//        );
-//            
-//        Iterator referer = criteria.list().iterator();
-//        while (referer.hasNext()) {
-//            this.strategy.remove((RefererData) referer.next());
-//        }        
+        String[] blacklist = StringUtils.split(
+                StringUtils.deleteWhitespace(website.getBlacklist()),",");
+        if (blacklist.length == 0) return;
+        List referers = getBlackListedReferer(website, blacklist);
+        for (Iterator iterator = referers.iterator(); iterator.hasNext();) {
+            RefererData referer= (RefererData) iterator.next();
+            this.strategy.remove(referer);
+        }
     }
+
+    protected abstract List getBlackListedReferer(WebsiteData website,
+            String[] blacklist) throws RollerException;
 
     protected List getExistingReferers(WebsiteData website, String dateString,
             String permalink) throws RollerException {

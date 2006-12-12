@@ -374,8 +374,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             else
                 results = (List) strategy.newQuery(
                     WeblogEntryTagAggregateData.class, 
-                    "WeblogEntryTagAggregateData
-                    .getNameByNameIn&WebsiteNull")
+                    "WeblogEntryTagAggregateData.getNameByNameIn&WebsiteNull")
                     .execute(tags);
         } catch (RollerException re) {
             throw new RuntimeException(re);
