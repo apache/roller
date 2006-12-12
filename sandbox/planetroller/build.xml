@@ -134,10 +134,22 @@
         <delete dir="${ro.dist}" />
     </target>
     
-    
+    <!-- get jars from Roller Planet project which are required for this app -->
+    <target name="get-planet-jars">
+        <!-- first call the "dist" target to make sure the libs are built -->
+        <ant antfile="../../apps/planet/build.xml" inheritAll="false" target="dist" />
+        
+        <!-- now just copy them to our build.lib directory for inclusion -->
+        <mkdir dir="${build.lib}"/>
+        <copy todir="${build.lib}">
+            <fileset dir="../../apps/planet/dist/lib" 
+                     includes="roller-planet-business.jar" />
+        </copy>
+    </target>
+
     <!-- ============================================== -->
     <!-- build the code and jar it up -->
-    <target name="build" >
+    <target name="build" depends="get-planet-jars" >
         
         <!-- compile planet classes -->
         <mkdir dir="${build.compile.classes}"/>
@@ -150,6 +162,7 @@
             
             <classpath>
                 <path refid="planet.path"/>
+                <fileset dir="${build.lib}" includes="*.jar" />
             </classpath>
         </javac>
         
@@ -161,7 +174,7 @@
         <!-- Jar up the business layer -->
         <mkdir dir="${build.lib}"/>
         <jar basedir="${build.compile.classes}"
-             jarfile="${build.lib}/planet-web.jar"/>
+             jarfile="${build.lib}/roller-planet-web.jar"/>
         
     </target>
     
