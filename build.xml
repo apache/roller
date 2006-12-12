@@ -285,8 +285,22 @@ Key Targets:
 <!-- ********************************************************************* -->
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
+
+<!-- get jars from Roller Planet project which are required for Weblogger app -->
+<target name="get-planet-jars">
+    <!-- first call the "dist" target to make sure the libs are built -->
+    <ant antfile="apps/planet/build.xml" inheritAll="false" target="dist" />
     
-<target name="build-business">
+    <!-- now just copy them to our build.lib directory for inclusion -->
+    <mkdir dir="${build.lib}"/>
+    <copy todir="${build.lib}">
+        <fileset dir="apps/planet/dist/lib" 
+                 includes="roller-planet-business.jar" />
+    </copy>
+</target>
+
+
+<target name="build-business" depends="get-planet-jars">
     
     <mkdir dir="${build.generated.business}"/>
     <mkdir dir="${build.compile.business}"/>
@@ -314,6 +328,7 @@ ro.buildUser=${user.name}
         
         <classpath>
             <path refid="business.path"/>
+            <fileset dir="${build.lib}" includes="*.jar" />
             &custom-jars;
         </classpath>
     </javac>
@@ -353,7 +368,7 @@ ro.buildUser=${user.name}
         &custom-src-web;
         <classpath>
             <path refid="presentation.path"/>
-            <path location="${build.compile.business}"/>
+            <fileset dir="${build.lib}" includes="*.jar" />
             &custom-jars;
         </classpath>
     </javac>
@@ -411,7 +426,6 @@ ro.buildUser=${user.name}
         <fileset refid="struts.jars" />
         <fileset refid="spring.jars" /> 
         <fileset refid="jstl.jars" />
-        <fileset refid="planet.jars" />
         
         <!-- include custom jars -->
         &custom-jars;

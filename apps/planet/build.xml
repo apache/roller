@@ -18,12 +18,13 @@
 -->
 <project name="Roller Planet" default="build" basedir=".">
     
-    <description>Builds, tests, and runs the project Roller Planet.</description>   
+    <description>Builds, tests, and runs the project Roller Planet.</description>
 
     <property file="build.properties" />
     
     <!-- core properties -->
     <property name="build"            value="${basedir}/build" />
+    <property name="dist"             value="${basedir}/dist" />
     <property name="src"              value="${basedir}/src/java" />
     <property name="tools"            value="${basedir}/../../tools" />
     <property name="test"             value="${basedir}/test/java" />
@@ -31,7 +32,7 @@
     
     <!-- build properties -->
     <property name="build.compile"                  value="${build}/compile"/>
-    <property name="build.compile.classes"          value="${build.compile}/classes"/>
+    <property name="build.compile.business"         value="${build.compile}/business"/>
     <property name="build.compile.test"             value="${build.compile}/test"/>
     <property name="build.lib"           value="${build}/lib"/>
     <property name="build.webapp"        value="${build}/webapp"/>
@@ -78,19 +79,6 @@
     
     <path id="planet.path">
         <fileset refid="roller-jars" />
-        
-        <!--
-        <fileset dir="${tools}/buildtime/tomcat-5.0.28">
-            <include name="servlet-api.jar"/>
-        </fileset>
-        
-        <fileset dir="${web}/WEB-INF/lib">
-            <include name="commons-logging-1.0.4.jar"/>
-            <include name="commons-lang-2.1.jar"/>  
-            <include name="myfaces-api-1.1.4.jar"/>  
-            <include name="tomahawk-1.1.3.jar"/>  
-        </fileset>  
-        -->
     </path>
     
     <path id="xdoclet.path">
@@ -111,16 +99,13 @@
         <pathelement location="${tools}/buildtime/derby.jar"/>
         <pathelement location="${tools}/buildtime/derbyclient.jar"/>
         <pathelement location="${tools}/buildtime/derbynet.jar"/>
-        
         <pathelement location="${tools}/lib/commons-httpclient-2.0.2.jar"/>
         
         <!-- plus normal jars -->
         <path refid="planet.path"/>
 
         <!-- plus already built roller planet jars -->
-        <fileset dir="${build.lib}">
-            <include name="*.jar" />
-        </fileset>
+        <fileset dir="${build.lib}" includes="*.jar" />
     </path>
     
     
@@ -128,19 +113,20 @@
     <!-- clean out any contents from last build -->
     <target name="clean" description="Clean (i.e. remove) build and dist dirs">
         <delete dir="${build}" />
+        <delete dir="${dist}" />
     </target>
     
     
     <!-- ============================================== -->
     <!-- generate code/files for the business layer -->
-    <target name="generate" description="Generate business layer resources">
+    <target name="gen-business" description="Generate business layer resources">
 
         <taskdef name="hibernatedoclet"
             classname="xdoclet.modules.hibernate.HibernateDocletTask"
             classpathref="xdoclet.path" />
 
         <!-- generate hibernate mapping files -->
-        <hibernatedoclet destdir="${build.compile.classes}"
+        <hibernatedoclet destdir="${build.compile.business}"
             excludedtags="@version,@author"
             addedtags="@xdoclet-generated at ${TODAY}"
             force="true">
@@ -154,12 +140,16 @@
     
     
     <!-- ============================================== -->
-    <!-- build the code and jar it up -->
-    <target name="build" depends="generate">
+    <!-- build all code -->
+    <target name="build" depends="build-business" >
+    </target>
+    
+    <!-- build the business layer code and jar it up -->
+    <target name="build-business" depends="gen-business">
         
         <!-- compile planet classes -->
-        <mkdir dir="${build.compile.classes}"/>
-        <javac destdir="${build.compile.classes}"
+        <mkdir dir="${build.compile.business}"/>
+        <javac destdir="${build.compile.business}"
                debug="${build.debug}" 
                source="${build.sourcelevel}"
                deprecation="${build.deprecation}">
@@ -172,52 +162,35 @@
         </javac>
         
         <!-- Copy resources -->
-        <copy todir="${build.compile.classes}">
+        <copy todir="${build.compile.business}">
             <fileset dir="${src}" excludes="**/*.java, **/*.html, **/*.png" />
         </copy>
         
         <!-- Jar up the business layer -->
         <mkdir dir="${build.lib}"/>
-        <jar basedir="${build.compile.classes}"
-             jarfile="${build.lib}/roller-planet.jar"/>
+        <jar basedir="${build.compile.business}"
+             jarfile="${build.lib}/roller-planet-business.jar"/>
         
     </target>
     
     
     <!-- ============================================== -->
-    <!-- stage the full webapp -->
-    <target name="stage-webapp" depends="build" description="Build Planet webapp">
+    <!-- create distributable components -->
+    <target name="dist" depends="build-business" description="Create Roller Planet distributables">
         
-        <!-- copy in libraries -->
-        <mkdir dir="${build.webapp}/WEB-INF/lib" />
-        <copy todir="${build.webapp}/WEB-INF/lib" flatten="true">
+        <!-- distributable libraries -->
+        <mkdir dir="${dist}/lib" />
+        <copy todir="${dist}/lib" >
             <fileset dir="${build.lib}" />
-            <fileset refid="roller-jars" />
-        </copy>         
-        
-        <!-- copy in all web resources -->
-        <copy todir="${build.webapp}">
-            <fileset dir="${web}" includes="**/**" />
         </copy>
         
-        <!-- make sure permissions are proper on scripts -->
-        <!--
-        <chmod perm="+x" dir="${build.webapp}/WEB-INF/scripts" includes="*.sh" />
-        -->
-        
-        <!-- copy in template files -->
-        <!--
-        <mkdir dir="${build.webapp}/WEB-INF/templates" />
-        <copy todir="${build.webapp}/WEB-INF/templates">
-            <fileset dir="./templates" includes="**/**" />
-        </copy> 
-        -->
+        <!-- TODO: distributable webapp -->
     </target>
     
     
     <!-- ============================================== -->
-    <!-- build code use for unit testing -->
-    <target name="build-tests" depends="stage-webapp" description="Build unit tests">
+    <!-- build code used for unit testing -->
+    <target name="build-tests" depends="build" description="Build unit tests">
     
         <!-- compile all test classes -->
         <mkdir dir="${build.compile.test}" />
@@ -245,32 +218,20 @@
         <taskdef name="stopdb" classname="org.apache.roller.ant.StopDerbyTask" 
         classpath="${tools}/buildtime/derby.jar;${tools}/buildtime/derbynet.jar;${build.compile.test}" />
     
-        <!-- 
-        Copy web config files to ${build.tests} to make them available for testing.
-        This includes the WEB-INF directory, minus jsps
-        -->
-        <!--
-        <mkdir dir="${build.test}/WEB-INF" />
-        <copy todir="${build.test}/WEB-INF">
-            <fileset dir="${basedir}/web/WEB-INF">
-                <exclude name="jsps/**" />
-            </fileset>
-        </copy>
-        -->
-        
-        <!-- 
-        Copy custom testing files which will overwrite some config files 
-        -->
-        <copy todir="${build.test}">
-            <fileset dir="${basedir}/testdata" />
-        </copy>
+    </target>
     
+    
+    <target name="test" depends="build-tests" description="All tests">
+        <!-- business layer tests -->
+        <antcall target="test-business" />
+        
+        <!-- TODO: web layer tests -->
     </target>
     
     
     <!-- ===================================== -->
-    <!-- test planet functionality -->
-    <target name="test-planet" depends="build-tests" description="Back-end tests">
+    <!-- test planet business layer functionality -->
+    <target name="test-business" depends="build-tests" description="Back-end tests">
         
         <mkdir dir="${build.test.reports}/business/xml"/>
         <mkdir dir="${build.test.reports}/business/html"/>
@@ -278,7 +239,7 @@
         <antcall target="start-db" /> 
         <antcall target="init-db" />
         
-        <junit fork="true" dir="${build.test}" printsummary="on" showOutput="true">
+        <junit dir="${build.test}" fork="${junit.fork}" printsummary="on" showOutput="true">
             <classpath>
                 <!-- testing jars -->
                 <path refid="test.path"/>
@@ -286,14 +247,13 @@
                 <!-- plus our compiled test classes -->
                 <pathelement location="${build.compile.test}"/>
         
-                <!-- plus our config location, like the webapp would have -->
-                <pathelement location="${build.test}" />
+                <!-- testdata.  the equivalent of /WEB-INF/classes in a webapp -->
+                <pathelement location="${basedir}/testdata" />
             </classpath>
             
             <!-- needed to satisfy ref in log4j.properties -->
             <jvmarg value="-Dcatalina.base=${build.test}"/> 
             <jvmarg value="-Dbuild=${build}"/>
-            <jvmarg value="-Dplanet.custom.config=${build.test}/planet-custom.properties"/>
             <jvmarg value="-Dhttp.proxySet=true"/>
             <jvmarg value="-Dhttp.proxyHost=webcache.sfbay.sun.com"/>
             <jvmarg value="-Dhttp.proxyPort=8080"/>
