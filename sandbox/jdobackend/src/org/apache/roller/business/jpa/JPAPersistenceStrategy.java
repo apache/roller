@@ -33,7 +33,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
-import org.apache.roller.pojos.PersistentObject;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
@@ -108,7 +107,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    public PersistentObject store(PersistentObject obj) throws RollerException {
+    public Object store(Object obj) throws RollerException {
         EntityManager em = getEntityManager(true);
         em.persist(obj);
         return obj;
@@ -131,7 +130,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @param po the persistent object to remove
      * @throws org.apache.roller.RollerException on any error
      */
-    public void remove(PersistentObject po) throws RollerException {
+    public void remove(Object po) throws RollerException {
         EntityManager em = getEntityManager(true);
         em.remove(po);
     }
@@ -170,10 +169,10 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object retrieved
      * @throws RollerException on any error retrieving object
      */
-    public PersistentObject load(Class clazz, String id)
+    public Object load(Class clazz, String id)
             throws RollerException {
         EntityManager em = getEntityManager(false);
-        return (PersistentObject) em.find(clazz, id);
+        return em.find(clazz, id);
     }
 
     /**

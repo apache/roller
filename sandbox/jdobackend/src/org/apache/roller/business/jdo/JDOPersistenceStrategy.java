@@ -30,8 +30,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
-import org.apache.roller.pojos.PersistentObject;
-import org.apache.roller.pojos.UserData;
 
 /**
  * JDOPersistenceStrategy is responsible for the lowest-level interaction
@@ -95,7 +93,7 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    public PersistentObject store(PersistentObject obj) 
+    public Object store(Object obj) 
             throws RollerException {
         PersistenceManager pm = getPersistenceManager(true);
         pm.makePersistent(obj);
@@ -120,7 +118,7 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @param po the persistent object to remove
      * @throws org.apache.roller.RollerException on any error
      */
-    public void remove(PersistentObject po) 
+    public void remove(Object po) 
             throws RollerException {
         PersistenceManager pm = getPersistenceManager(true);
         pm.deletePersistent(po);
@@ -155,10 +153,10 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object retrieved
      * @throws RollerException on any error retrieving object
      */
-    public PersistentObject load(Class clazz, String id) 
+    public Object load(Class clazz, String id) 
             throws RollerException {
         PersistenceManager pm = getPersistenceManager(false);
-        return (PersistentObject)pm.getObjectById(clazz, id);
+        return pm.getObjectById(clazz, id);
     }
 
     /**

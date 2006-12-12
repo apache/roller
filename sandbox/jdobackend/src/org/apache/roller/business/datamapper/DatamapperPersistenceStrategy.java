@@ -47,7 +47,7 @@ public interface DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    PersistentObject store(PersistentObject obj) 
+    Object store(Object obj) 
             throws RollerException;
 
     /**
@@ -66,7 +66,7 @@ public interface DatamapperPersistenceStrategy {
      * @param po the persistent object to remove
      * @throws org.apache.roller.RollerException on any error
      */
-    public void remove(PersistentObject po) 
+    public void remove(Object po)
             throws RollerException;
 
     /**
@@ -94,7 +94,7 @@ public interface DatamapperPersistenceStrategy {
      * @return the object retrieved
      * @throws RollerException on any error retrieving object
      */
-    public PersistentObject load(Class clazz, String id) 
+    public Object load(Class clazz, String id)
             throws RollerException;
 
     /**

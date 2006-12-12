@@ -43,17 +43,11 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.RollerException;
 
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
-import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.rome.DiskFeedInfoCache;
 
 

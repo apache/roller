@@ -51,15 +51,27 @@
             </query>
         </named-query>
         <named-query name="RefererData.getDaysPopularWebsitesByWebsite.enabled&amp;Website.active">
-            <query>SELECT SUM(DISTICT r.dayHits), r.website.id, r.website.name, r.website.handle
+            <query>SELECT SUM(DISTINCT r.dayHits), r.website.id, r.website.name, r.website.handle
                 FROM RefererData r WHERE r.website.enabled = ?1 AND r.website.active = ?2
                 GROUP BY r.website.id, r.website.name, r.website.handle
             </query>
         </named-query>
         <named-query name="RefererData.getHitsByWebsite.enabled&amp;Website.id">
-            <query>SELECT SUM(DISTICT r.dayHits), SUM(DISTINCT r.totalHits)
+            <query>SELECT SUM(DISTINCT r.dayHits), SUM(DISTINCT r.totalHits)
                 FROM RefererData r WHERE r.website.enabled = ?1 AND r.website.id = ?2
             </query>
+        </named-query>
+        <named-query name="RefererData.clearDayHits">
+            <query>UPDATE RefererData r SET r.dayHits=0</query>
+        </named-query>
+        <named-query name="RefererData.clearDayHitsByWebsite">
+            <query>UPDATE RefererData r SET r.dayHits=0 where r.website = ?1</query>
+        </named-query>
+        <named-query name="RefererData.deleteByNullOrEmptyExcerpt">
+            <query>DELETE FROM RefererData r WHERE r.excerpt IS NULL OR r.excerpt LIKE ''</query>
+        </named-query>
+        <named-query name="RefererData.deleteByNullOrEmptyExcerpt&amp;website">
+            <query>DELETE FROM RefererData r WHERE r.website = ?1 AND (r.excerpt IS NULL OR r.excerpt LIKE '')</query>
         </named-query>
         <attributes>
             <id name="id">

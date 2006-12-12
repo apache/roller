@@ -26,6 +26,7 @@ import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.referrers.RefererManager;
 
 /**
  * Implements Roller, the entry point interface for the Roller business tier
@@ -55,6 +56,10 @@ public class JDORollerImpl extends DatamapperRollerImpl {
 
     protected WeblogManager createDatamapperWeblogManager(
             DatamapperPersistenceStrategy strategy) {
+        return null;
+    }
+
+    protected RefererManager createDatamapperRefererManagerImpl(DatamapperPersistenceStrategy strategy) {
         return null;
     }
 
