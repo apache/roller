@@ -36,7 +36,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.planet.ui.utils.LoadableForm;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.planet.util.Utilities;
 
 /**
  * UI bean for editing group data, designed for request scope.

@@ -81,6 +81,11 @@
     <path id="planet.path">
         <fileset refid="roller-jars" />
         
+        <!-- the planet business layer code -->
+        <fileset dir="../../apps/planet/build/lib">
+            <include name="roller-planet.jar"/>
+        </fileset>
+        
         <fileset dir="${ro.tools}/buildtime/tomcat-5.0.28">
             <include name="servlet-api.jar"/>
         </fileset>
@@ -131,30 +136,8 @@
     
     
     <!-- ============================================== -->
-    <!-- generate code/files for the business layer -->
-    <target name="generate" description="Generate business layer resources">
-
-        <taskdef name="hibernatedoclet"
-            classname="xdoclet.modules.hibernate.HibernateDocletTask"
-            classpathref="xdoclet.path" />
-
-        <!-- generate hibernate mapping files -->
-        <hibernatedoclet destdir="${build.compile.classes}"
-            excludedtags="@version,@author"
-            addedtags="@xdoclet-generated at ${TODAY}"
-            force="true">
-            
-            <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
-            <hibernate validatexml="true" version="3.0"/>
-            
-        </hibernatedoclet>
-    
-    </target>
-    
-    
-    <!-- ============================================== -->
     <!-- build the code and jar it up -->
-    <target name="build" depends="generate">
+    <target name="build" >
         
         <!-- compile planet classes -->
         <mkdir dir="${build.compile.classes}"/>
@@ -178,7 +161,7 @@
         <!-- Jar up the business layer -->
         <mkdir dir="${build.lib}"/>
         <jar basedir="${build.compile.classes}"
-             jarfile="${build.lib}/roller-planet.jar"/>
+             jarfile="${build.lib}/planet-web.jar"/>
         
     </target>
     
@@ -191,6 +174,12 @@
         <copy todir="${build.webapp}/WEB-INF/lib" flatten="true">
             <fileset dir="${build.lib}" />
             <fileset refid="roller-jars" />
+            
+            <!-- the planet business layer code -->
+            <fileset dir="../../apps/planet/build/lib">
+                <include name="roller-planet.jar"/>
+            </fileset>
+        
         </copy>         
 
         <copy todir="${build.webapp}">
@@ -211,134 +200,9 @@
     <!-- Copy files locally for convenience in IDE -->
     <target name="copy-jars-for-ide">
         <mkdir dir="./lib" />
-        <copy todir="./lib">
+        <copy todir="./lib" flatten="true">
             <fileset refid="roller-jars" />
         </copy> 
-    </target>
-    
-    
-    <target name="build-tests" depends="stage-webapp" description="Build unit tests">
-    
-        <mkdir dir="${build.compile.test}" />
-    
-        <!-- compile all test classes -->
-        <javac destdir="${build.compile.test}"
-            includeantruntime="false"
-            debug="${build.debug}" 
-            source="${build.sourcelevel}"
-            deprecation="${build.deprectation}">
-            
-            <src path="${ro.test}" />
-            
-            <classpath>
-                <path refid="test.path"/>
-            </classpath>
-        </javac>
-                
-        <!-- Copy test resources -->
-        <copy todir="${build.compile.test}">
-            <fileset dir="${ro.test}" excludes="**/*.java, **/*.html, **/*.png" />
-        </copy>
-    
-        <!-- register Ant tasks that were just built -->
-        <taskdef name="startdb" classname="org.apache.roller.ant.StartDerbyTask" 
-        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.test}" />
-        <taskdef name="stopdb" classname="org.apache.roller.ant.StopDerbyTask" 
-        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.test}" />
-    
-        <!-- 
-        Copy web config files to ${build.tests} to make them available for testing.
-        This includes the WEB-INF directory, minus jsps
-        -->
-        <mkdir dir="${build.test}/WEB-INF" />
-        <copy todir="${build.test}/WEB-INF">
-            <fileset dir="${basedir}/web/WEB-INF">
-                <exclude name="jsps/**" />
-            </fileset>
-        </copy>
-
-        <!-- 
-        Copy custom testing files which will overwrite some config files 
-        -->
-        <copy todir="${build.test}">
-            <fileset dir="${basedir}/testdata" />
-        </copy>
-    
-    </target>
-    
-    
-    <!-- ===================================== -->
-    <!-- test planet functionality -->
-    <target name="test-planet" depends="build-tests" description="Back-end tests">
-        
-        <mkdir dir="${build.test.reports}/business/xml"/>
-        <mkdir dir="${build.test.reports}/business/html"/>
-        
-        <antcall target="start-db" /> 
-        <antcall target="init-db" />
-        
-        <junit fork="true" dir="${build.test}" printsummary="on" showOutput="true">
-            <classpath>
-                <!-- testing jars -->
-                <path refid="test.path"/>
-                
-                <!-- plus our compiled test classes -->
-                <pathelement location="${build.compile.test}"/>
-        
-                <!-- plus our config location, like the webapp would have -->
-                <pathelement location="${build.test}/WEB-INF/classes" />
-            </classpath>
-            
-            <!-- needed to satisfy ref in log4j.properties -->
-            <jvmarg value="-Dcatalina.base=${build.test}"/> 
-            <jvmarg value="-Dro.build=${ro.build}"/>
-            <jvmarg value="-Dplanet.custom.config=${build.test}/planet-custom.properties"/>
-            <jvmarg value="-Dhttp.proxySet=true"/>
-            <jvmarg value="-Dhttp.proxyHost=webcache.sfbay.sun.com"/>
-            <jvmarg value="-Dhttp.proxyPort=8080"/>
-            <formatter type="xml"/>
-            <batchtest toDir="${build.test.reports}/business/xml" haltonerror="${junit.haltonerror}">
-                <fileset dir="${build.compile.test}">
-                    <include name="org/apache/roller/planet/business/PlanetTestSuite.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        
-        <junitreport todir="${build.test.reports}/business/xml">
-            <fileset dir="${build.test.reports}/business/xml">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="noframes" toDir="${build.test.reports}/business/html"/>
-        </junitreport>
-        
-        <antcall target="stop-db" />
-    </target>
-    
-    
-    <!-- ********************************************************************* -->
-    <!-- Derby start, init and stop targets -->
-    <!-- ********************************************************************* -->
-    
-    <target name="init-db" description=
-            "Initializes built-in database by running drop table and create table">
-        <sql driver="org.apache.derby.jdbc.ClientDriver"
-             url="jdbc:derby://localhost:3219/roller;create=true"
-             userid="app" password="app"
-             src="../../build/webapp/WEB-INF/dbscripts/droptables.sql" onerror="continue"
-             classpath="${ro.tools}/buildtime/derbyclient.jar" />    
-        <sql driver="org.apache.derby.jdbc.ClientDriver" onerror="continue"
-             url="jdbc:derby://localhost:3219/roller"
-             userid="app" password="app"
-             src="../../build/webapp/WEB-INF/dbscripts/derby/createdb.sql"
-             classpath="${ro.tools}/buildtime/derbyclient.jar" /> 
-    </target>
-    
-    <target name="start-db" description="Starts built-in database">  
-        <startdb database="${build.test}/derby-system/roller" port="3219" /> 
-    </target>
-    
-    <target name="stop-db" description="Drop tables and stops the built-in database">   
-        <stopdb port="3219"/>
     </target>
 
 </project>

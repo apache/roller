@@ -29,7 +29,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.util.Technorati;
+import org.apache.roller.planet.util.Technorati;
 
 
 /**

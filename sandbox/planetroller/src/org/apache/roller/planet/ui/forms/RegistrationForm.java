@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetConfigData;
-import org.apache.roller.util.MailUtil;
+import org.apache.roller.planet.util.MailUtil;
 
 /**
  * Registration for folks who wish to have their blog added to the aggregation.

@@ -40,6 +40,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.util.Technorati;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.planet.pojos.PlanetConfigData;
@@ -47,7 +48,7 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.util.Technorati;
+
 
 
 /////////////////////////////////////////////////////////////////////////////
