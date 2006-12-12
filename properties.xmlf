@@ -142,7 +142,7 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
-<fileset id="planet.jars" dir="sandbox/planetroller/build/webapp/WEB-INF/lib" >
+<fileset id="planet.jars" dir="apps/planet/build/lib" >
     <include name="roller-planet.jar"/>
 </fileset>
 
