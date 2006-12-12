@@ -48,7 +48,7 @@ import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.util.rome.DiskFeedInfoCache;
+import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 
 
 /**
@@ -409,7 +409,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                                 FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
             throws RollerException {
-        
+
         Set newEntries = new TreeSet();
         SyndFeed feed = null;
         URL feedURL = null;
@@ -436,10 +436,10 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         if (lastUpdated!=null && sub.getLastUpdated()!=null) {
             Calendar feedCal = Calendar.getInstance();
             feedCal.setTime(lastUpdated);
-            
+
             Calendar subCal = Calendar.getInstance();
             subCal.setTime(sub.getLastUpdated());
-            
+
             if (!feedCal.after(subCal)) {
                 if (log.isDebugEnabled()) {
                     String msg = MessageFormat.format(
@@ -455,9 +455,9 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
             sub.setLastUpdated(feed.getPublishedDate());
             // saving sub here causes detachment issues, so we save it later
         }
-        
-        // Horrible kludge for Feeds without entry dates: most recent entry is 
-        // given feed's last publish date (or yesterday if none exists) and 
+
+        // Horrible kludge for Feeds without entry dates: most recent entry is
+        // given feed's last publish date (or yesterday if none exists) and
         // earler entries are placed at once day intervals before that.
         Calendar cal = Calendar.getInstance();
         if (sub.getLastUpdated() != null) {
@@ -466,7 +466,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1);
         }
-        
+
         // Populate subscription object with new entries
         Iterator entries = feed.getEntries().iterator();
         while (entries.hasNext()) {
@@ -474,11 +474,9 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                 SyndEntry romeEntry = (SyndEntry) entries.next();
                 PlanetEntryData entry =
                         new PlanetEntryData(feed, romeEntry, sub);
-                log.debug("Entry title=" + entry.getTitle() + 
-                    " content size=" + entry.getContent().length());
+                log.debug("Entry title=" + entry.getTitle() + " content size=" + entry.getContent().length());
                 if (entry.getPubTime() == null) {
-                    log.debug("No published date, assigning fake date for " +
-                        feedURL);
+                    log.debug("No published date, assigning fake date for "+feedURL);
                     entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                 }
                 if (entry.getPermalink() == null) {
