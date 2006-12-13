@@ -49,6 +49,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
     /**
      * @inheritDoc
      */
+
     public List getWeblogEntries(
             WebsiteData website,
             UserData    user,
@@ -58,6 +59,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             List        tags,
             String      status,
             String      sortby,
+            String      sortOrder,
             String      locale,
             int         offset,
             int         length) throws RollerException {
@@ -122,12 +124,19 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         }
             
         if (sortby != null && sortby.equals("updateTime")) {
-            queryString.append("ORDER BY updateTime DESC");
+            queryString.append("ORDER BY updateTime ");
         } else {
-            queryString.append("ORDER BY pubTime DESC");
+            queryString.append("ORDER BY pubTime ");
         }
+
+        if (sortOrder != null && sortOrder.equals(ASCENDING)) {
+            queryString.append("ASC ");
+        } else {
+            queryString.append("DESC ");
+        }
+
             
-        JPADynamicQueryImpl query = (JPADynamicQueryImpl) 
+        JPADynamicQueryImpl query = (JPADynamicQueryImpl)
             ((JPAPersistenceStrategy) strategy)
             .newDynamicQuery(queryString.toString());
             

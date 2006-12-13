@@ -467,22 +467,6 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public abstract List getWeblogEntries(
-            WebsiteData website,
-            UserData    user,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,
-            String      status,
-            String      sortby,
-            String      locale,
-            int         offset,
-            int         length) throws RollerException;
-
-    /**
-     * @inheritDoc
-     */
     public List getWeblogEntriesPinnedToMain(Integer max)
             throws RollerException {
         DatamapperQuery query = strategy.newQuery(WeblogCategoryData.class, 
@@ -801,6 +785,7 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
             catName,
             tags,
             status,
+            null,
             null,
             locale,          
             offset,
