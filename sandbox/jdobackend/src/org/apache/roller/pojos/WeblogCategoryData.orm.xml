@@ -46,7 +46,7 @@
             <many-to-one name="parent" target-entity="org.apache.roller.pojos.WeblogCategoryData">
                 <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
-            <one-to-many name="weblogCategories" mapped-by="parent" target-entity="org.apache.roller.pojos.WeblogCategoryData">
+            <one-to-many name="weblogCategories" mapped-by="parent" target-entity="org.apache.roller.pojos.WeblogCategoryData" fetch="LAZY">
                 <cascade>
                     <cascade-remove/>
                 </cascade>

@@ -11,7 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="WebsiteData" class="org.apache.roller.pojos.WebsiteData">
         <table name="website"/>
-        <named-query name="WebsiteData.getByHandle&amp;enabled">
+<!--        <named-query name="WebsiteData.getByHandle&amp;enabled">
             <query>SELECT w FROM WebsiteData w WHERE w.handle = ?1 AND w.enabled = ?2</query>
         </named-query>
         <named-query name="WebsiteData.getByHandle">
@@ -24,15 +24,15 @@
             <query>SELECT w FROM WebsiteData w WHERE w.handle = ?1 ORDER BY w.handle</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.enabled = ?3 AND w.active ?4
-                                                 AND w.persmissions.user = ?5
-                                                 AND w.permission.pending = ?6
+            <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                                 AND w.enabled = ?3 AND w.active = ?4
+                                                 AND p.user = ?5
+                                                 AND p.pending = ?6
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
             <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.enabled = ?3 AND w.active ?4
+                                                 AND w.enabled = ?3 AND w.active = ?4
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;EnabledOrderByDateCreatedDesc">
@@ -49,36 +49,36 @@
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+            <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3
-                                                 AND w.persmissions.user = ?4
-                                                 AND w.permission.pending = ?5
+                                                 AND p.user = ?4
+                                                 AND p.pending = ?5
                                                ORDER BY w.dateCreated</query>
         </named-query>
 
         <named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.active ?3
-                                                 AND w.persmissions.user = ?4
-                                                 AND w.permission.pending = ?5
+            <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                                 AND w.active = ?3
+                                                 AND p.user = ?4
+                                                 AND p.pending = ?5
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;ActiveOrderByDateCreatedDesc">
             <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
-                                                 AND w.active ?3
+                                                 AND w.active = ?3
                                                ORDER BY w.dateCreated</query>
         </named-query>
 
         <named-query name="WebsiteData.getByEndDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
-                                                 AND w.enabled = ?2 AND w.active ?3
-                                                 AND w.persmissions.user = ?4
-                                                 AND w.permission.pending = ?5
+            <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1
+                                                 AND w.enabled = ?2 AND w.active = ?3
+                                                 AND p.user = ?4
+                                                 AND p.pending = ?5
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
             <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
-                                                 AND w.enabled = ?2 AND w.active ?3
+                                                 AND w.enabled = ?2 AND w.active = ?3
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
@@ -87,10 +87,10 @@
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+            <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1
                                                  AND w.active ?2
-                                                 AND w.persmissions.user = ?3
-                                                 AND w.permission.pending = ?4
+                                                 AND p.user = ?3
+                                                 AND p.pending = ?4
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;ActiveOrderByDateCreatedDesc">
@@ -99,9 +99,9 @@
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
-                                                 AND w.persmissions.user = ?2
-                                                 AND w.permission.pending = ?3
+            <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1
+                                                 AND p.user = ?2
+                                                 AND p.pending = ?3
                                                ORDER BY w.dateCreated</query>
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
@@ -112,7 +112,7 @@
         <named-query name="WebsiteData.getCountAllDistinct">
             <query>SELECT COUNT(DISTINCT w) FROM WebsiteData w</query>
         </named-query>
-        <attributes>
+-->        <attributes>
             <id name="id">
                 <column name="id"/>
             </id>
@@ -212,6 +212,12 @@
                          target-entity="org.apache.roller.pojos.WeblogCategoryData">
                 <join-column name="defaultcatid" insertable="true" updatable="true"/>
             </many-to-one>
+            <one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.pojos.PermissionsData" fetch="LAZY">
+                <cascade>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
+
         </attributes>
     </entity>
 </entity-mappings>

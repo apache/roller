@@ -38,7 +38,8 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
-            <one-to-many name="bookmarks" mapped-by="folder" target-entity="org.apache.roller.pojos.BookmarkData" order-by="name">
+            <one-to-many name="bookmarks" mapped-by="folder" target-entity="org.apache.roller.pojos.BookmarkData" fetch="LAZY">
+                <order-by>name</order-by>
                 <cascade>
                     <cascade-remove/>  <!--cascade="all-delete-orphan" -->
                 </cascade>

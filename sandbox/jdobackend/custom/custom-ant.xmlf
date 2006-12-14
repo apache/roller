@@ -1,0 +1,359 @@
+
+<!-- Additional Ant tasks to include in build script -->
+
+
+<!-- ====================================================================== -->
+<!-- Example Netbeans debugging targets -->
+<!-- ====================================================================== -->
+
+<!-- Netbeans debug single class 
+--> 
+<target name="debug-selected-files" if="netbeans.home" depends="build-tests" 
+   description="Debug a Single File">
+   <fail unless="classname">Must set property 'classname'</fail>
+   <antcall target="start-db" />
+   <antcall target="init-db" />
+   <nbjpdastart name="${classname}" addressproperty="jpda.address" transport="dt_socket">
+      <classpath>
+        <path refid="tests.run.path"/>
+      </classpath>
+   </nbjpdastart>
+   <java classname="${classname}" fork="true" dir="${build.tests}">
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xnoagent"/>
+      <jvmarg value="-Djava.compiler=none"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+      <jvmarg value="-Dcatalina.base=${build.tests}"/> 
+      <jvmarg value="-Dro.build=${ro.build}"/>
+      <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+      <classpath>
+          <path refid="tests.run.path"/>
+      </classpath>
+   </java>
+   <antcall target="stop-db" />
+</target>
+
+<!-- Netbeans debug single test class
+-->
+<target name="test-selected-files" if="netbeans.home" depends="build-tests" 
+   description="Test/debug a Single File">
+   <fail unless="classname">Must set property 'classname'</fail>
+   <antcall target="start-db" />
+   <antcall target="init-db" />   
+   <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
+      <classpath>
+        <path refid="tests.run.path"/>
+      </classpath>
+   </nbjpdastart>
+   <java classname="junit.textui.TestRunner" fork="true" dir="${build.tests}">
+      <arg value="${classname}" />
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xnoagent"/>
+      <jvmarg value="-Djava.compiler=none"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+      <jvmarg value="-Dcatalina.base=${build.tests}"/> 
+      <jvmarg value="-Dro.build=${ro.build}"/>
+      <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+      <classpath>
+          <path refid="tests.run.path"/>
+      </classpath>
+   </java>
+   <antcall target="stop-db" />
+</target>
+
+<!--
+<target name="debug" depends="compile, deploy" if="netbeans.home" description="Debug Project">
+    <nbjpdaconnect name="${app.name}" host="${jpda.host}" address="${jpda.address}" transport="dt_socket">
+        <classpath refid="${run.classpath}"/>
+        <sourcepath refid="${debug.sourcepath}"/>
+    </nbjpdaconnect>
+    <nbbrowse url="${client.url}"/>
+</target>
+-->
+
+
+<!-- ====================================================================== -->
+<!-- Glassfish deployment example -->
+<!-- ====================================================================== -->
+
+<!-- up to date as of Nov. 17, 2006 -->
+
+<!-- Glassfish targets assume you're runnign with "asant" -->
+
+<target name="deploy-glassfish" depends="stage-webapp">
+    <jar basedir="${build.webapp}" destfile="roller.war" includes="**/**" />
+    <sun-appserv-deploy 
+        file="roller.war" 
+        passwordfile="${asant.passwordfile}" 
+        asinstalldir="${glassfish.home}" /> 
+</target>
+
+<target name="undeploy-glassfish">
+    <sun-appserv-undeploy 
+        file="roller.war" 
+        passwordfile="${asant.passwordfile}" 
+        asinstalldir="${glassfish.home}" /> 
+</target>
+
+<target name="redeploy-glassfish" depends="build">
+    <jar basedir="${build.webapp}" destfile="roller.war" includes="**/**" update="yes" />
+    <sun-appserv-update file="roller.war" /> 
+</target>
+
+
+<!-- ====================================================================== -->
+<!-- Other examples -->
+<!-- ====================================================================== -->
+
+<!-- generate JDO mappings 
+<target name="gen-jdomappings" description="XDoclet Generate JDO mappings">
+    <taskdef name="jdodoclet"
+        classname="xdoclet.modules.jdo.JdoDocletTask"
+        classpathref="xdoclet.path" />
+    <jdodoclet
+        destdir="${build.compile_beans}"
+        mergedir="./metadata/xdoclet"
+        excludedtags="@version,@author"
+        addedtags="@xdoclet-generated at ${TODAY}"
+        force="true">
+	    <fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
+        <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
+        <fileset dir="./src" includes="org/roller/pojos/*Assoc.java" />
+        <fileset dir="./src" includes="org/roller/business/*Data.java" />
+        &custom-gen-beans;
+        <jdometadata jdoSpec="2.0" />
+    </jdodoclet>
+</target>
+-->
+
+<!-- Extend the init-hsqldb target to include custom tables
+<target name="init-hsqldb-ex" depends="init-hsqldb" >
+    <sql driver="org.hsqldb.jdbcDriver"
+         url="jdbc:hsqldb:hsql://localhost:3219"
+         userid="sa" password=""  onerror="continue"
+         src="./build/roller/WEB-INF/dbscripts/hsql/droptables-planet.sql"
+         classpath="${ro.tools}/buildtime/hsqldb.jar" />    
+    <sql driver="org.hsqldb.jdbcDriver"
+         url="jdbc:hsqldb:hsql://localhost:3219"
+         userid="sa" password=""
+         src="./build/roller/WEB-INF/dbscripts/hsql/createdb-planet.sql"
+         classpath="${ro.tools}/buildtime/hsqldb.jar" />    
+</target>
+-->
+
+<!--
+<target name="deploy" depends="compile" description="Deploy application to servlet container">
+    <deploy url="${manager.url}"
+        username="${manager.username}"
+        password="${manager.password}"
+        path="${app.path}"
+        localWar="file://${build.home}"/>
+</target>
+-->
+
+<!-- ====================================================================== -->
+<!-- Tomcat deployment example -->
+<!-- ====================================================================== -->
+
+<!-- out of date -->
+
+<target name="deploy-tomcat">
+
+	<!-- Fixup the web.xml so that it is ready for deployment -->
+	<replace file="${staging}/WEB-INF/web.xml" 
+			token="&lt;!-- TOMCAT_RESOURCE_REF --&gt;">
+		<replacevalue><![CDATA[
+    <resource-ref>
+	<res-ref-name>jdbc/rollerdb</res-ref-name>
+	<res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+    </resource-ref>
+		]]></replacevalue>
+	</replace>
+	<fixcrlf srcdir="${staging}/WEB-INF" eol="lf" includes="**/*.xml" />
+
+	<!-- ask Tomcat manager to UN-DEPLOY Roller
+	<get src="http://localhost:${catalina.port}/manager/remove?path=/${webapp.name}"
+	    dest="remove-out.txt"
+		username="${catalina.username}" password="${catalina.password}" />
+	<loadfile property="remove-out" srcFile="remove-out.txt"/>
+	<echo>${remove-out}</echo> -->
+
+	<!-- copy Roller files to Tomcat directory -->
+	<mkdir dir="${catalina.home}/webapps/${webapp.name}"/>
+	<copy todir="${catalina.home}/webapps/${webapp.name}">
+		<fileset dir="${staging}" includes="**/**"/> 
+	</copy>
+	
+	<!-- ask Tomcat manager to RE-DEPLOY Roller
+	<get src="http://localhost:${catalina.port}/manager/install?path=/${webapp.name}&amp;war=file://${catalina.home}/webapps/${webapp.name}" 
+	    dest="install-out.txt"
+		username="${catalina.username}" password="${catalina.password}" />
+	<loadfile property="install-out" srcFile="install-out.txt"/>
+	<echo>${install-out}</echo>  -->
+
+</target>
+
+
+<!-- ====================================================================== -->
+<!-- Resin deployment example -->
+<!-- ====================================================================== -->
+
+<!-- out of date -->
+
+<target name="deploy-resin">
+
+	<property name="webapps" value="${resin.home}/webapps"/>
+
+	<replace file="${staging}/WEB-INF/web.xml" 
+			token="&lt;!-- RESIN_LOGGER --&gt;">
+		<replacevalue><![CDATA[
+	<access-log href="WEB-INF/logs/access.log" />
+	<stdout-log href="WEB-INF/logs/stdout.log" />
+	<stderr-log href="WEB-INF/logs/error.log" />
+	<resource-ref>
+		<res-ref-name>jdbc/rollerdb</res-ref-name>
+		<res-type>javax.sql.ConnectionPoolDataSource</res-type>
+		<init-param driver-name="org.gjt.mm.mysql.jdbc2.optional.MysqlConnectionPoolDataSource"/> 
+		<init-param serverName="localhost"/> 
+		<init-param user="${resin.username}"/> 
+		<init-param password="${resin.password}"/> 
+		<init-param port="3306"/> 
+		<init-param databaseName="roller" /> 
+	</resource-ref>
+		]]></replacevalue>
+	</replace>
+
+	<replace file="${staging}/WEB-INF/web.xml" 
+		token="&lt;!-- RESIN_AUTHENTICATOR --&gt;">
+	<replacevalue><![CDATA[
+	<authenticator>
+	<class-name>com.caucho.http.security.XmlAuthenticator</class-name>
+	<init-param user="${resin.username}:${resin.password}:editor" />
+	</authenticator>
+	]]></replacevalue>
+	</replace>
+
+	<fixcrlf srcdir="${staging}/WEB-INF" eol="lf" includes="**/*.xml" />
+
+	<copy todir="${staging}">
+		<fileset dir="../docs" includes="**/*.html"/> 
+		<fileset dir="../docs" includes="**/*.gif"/> 
+		<fileset dir="../docs" includes="**/*.jpg"/> 
+	</copy>
+
+	<copy todir="${staging}/WEB-INF" overwrite="yes" >
+		<fileset dir="./resin" includes="velocity.properties"/> 
+		<fileset dir="./resin" includes="database.xml"/> 
+	</copy>
+
+	<mkdir dir="${webapps}/roller"/>
+	<copy todir="${webapps}/roller">
+		<fileset dir="${staging}" includes="**/**"/> 
+	</copy>
+
+</target>
+
+
+<!-- ********************************************************************* -->
+<!-- Remote ISP via FTP deployment -->
+<!-- ********************************************************************* -->
+
+<!-- out of date -->
+
+<target name="deploy-isp">
+
+	<replace file="${staging}/WEB-INF/web.xml" 
+        token="&lt;!-- TOMCAT_RESOURCE_REF --&gt;">
+    <replacevalue><![CDATA[
+    <resource-ref>
+	<res-ref-name>jdbc/rollerdb</res-ref-name>
+	<res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+    </resource-ref>
+		]]></replacevalue>
+	</replace>
+
+	<fixcrlf srcdir="${staging}/WEB-INF" eol="lf" includes="**/*.xml" />
+
+    <ftp server="${ftp.host}"
+		remotedir="/public_html"
+		userid="${ftp.username}"
+		password="${ftp.password}"
+        ignoreNoncriticalErrors="yes"
+		depends="yes"
+		verbose="yes">
+		<fileset dir="${staging}">
+
+            <!-- copy everything 
+			<include name="**"/>
+            -->
+
+            <!-- copy only code changes -->            
+			<exclude name="**/web.xml"/>
+			<exclude name="**/roller-config.xml"/>
+			<exclude name="**/oscache.propertiesl"/>
+			<exclude name="**/log4j.properties"/>			
+			<include name="**/*.xml"/>
+			<include name="**/*.vm"/>
+			<include name="**/*.tld"/>
+			<include name="**/*.css"/>
+			<include name="**/*.html"/>
+			<include name="**/*.htm"/>
+			<include name="**/*.jsp"/>
+			<include name="**/*.gif"/>
+			<include name="**/*.png"/>
+			<include name="**/WEB-INF/lib/rollerweb.jar"/>
+			<include name="**/WEB-INF/lib/rollerbeans.jar"/>
+			
+			<exclude name="**/newuser.jsp"/>
+
+		</fileset>
+	</ftp>
+</target>
+
+<!-- ********************************************************************* -->
+<!-- Added for DataMapper work Need not checkin -->
+<!-- ********************************************************************* -->
+
+<target name="gen-jpa-mapping" description="Generate JPA mapping files from hiberatem mappings">
+	<xslt basedir="${build.compile.business}/org/apache/roller/pojos" includes="*.hbm.xml" 
+		destdir="${build.compile.business}/org/apache/roller/pojos/jpa" style="sandbox/jdobackend/HibernateToJPA.xsl">
+  		<xmlcatalog>
+			<dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+			    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
+		</xmlcatalog>
+		<mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
+	</xslt>
+	
+	<xslt basedir="${build.compile.business}/org/apache/roller/planet/pojos/" includes="*.hbm.xml" 
+		destdir="${build.compile.business}/org/apache/roller/planet/pojos/jpa" style="sandbox/jdobackend/HibernateToJPA.xsl">
+  		<xmlcatalog>
+			<dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+			    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
+		</xmlcatalog>
+		<mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
+	</xslt>
+	
+</target>
+
+    <!-- enhance persistent classes for use with JDO -->
+<target name="jdo-enhance">
+	<java classname="org.jpox.enhancer.JPOXEnhancer" fork="true">
+	<classpath>
+	    <path location="${basedir}/sandbox/jdobackend/lib/jpox-enhancer-1.1.0.jar"/>
+	    <path location="${basedir}/sandbox/jdobackend/lib/jpox-1.1.0.jar"/>
+	    <path location="${basedir}/sandbox/jdobackend/lib/bcel-5.1.jar"/>
+	    <path location="${basedir}/sandbox/jdobackend/lib/jdo2-api-2.0.jar"/>
+	    <path location="${ro.tools}/lib/log4j-1.2.11.jar"/>
+	    <fileset refid="commons.jars" />
+	    <path location="${ro.tools}/lib/rome-0.8.jar"/>            
+	    <path location="${build.compile.business}"/>
+	</classpath>
+	<arg value="-v"/>
+	<arg file="${build.compile.business}/package.jdo"/>
+	</java>
+</target>
+
+<target name="debug-ant">
+</target>
