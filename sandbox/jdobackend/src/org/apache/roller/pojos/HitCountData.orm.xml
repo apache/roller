@@ -16,12 +16,12 @@
         </named-query>
         <named-query name="HitCountData.getByWeblogEnabledTrueAndActiveTrue&amp;DailyHitsGreaterZero&amp;WeblogLastModifiedGreaterOrderByDailyHitsDesc">
             <query>SELECT h FROM HitCountData h WHERE h.weblog.enabled = true AND h.weblog.active = true
-                                                  AND h.weblog.lastModified > ?1 AND h.dailyhits > 0
-                                                ORDER BY h.dailyhits DESC
+                                                  AND h.weblog.lastModified > ?1 AND h.dailyHits > 0
+                                                ORDER BY h.dailyHits DESC
             </query>
-            <named-query name="HitCountData.updateDailyHitCountZero">
-                <query>UPDATE HitCountData h SET h.dailyHits = 0</query>
-            </named-query>
+        </named-query>
+        <named-query name="HitCountData.updateDailyHitCountZero">
+            <query>UPDATE HitCountData h SET h.dailyHits = 0</query>
         </named-query>
         <attributes>
             <id name="id">

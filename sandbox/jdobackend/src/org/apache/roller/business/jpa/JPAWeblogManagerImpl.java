@@ -124,9 +124,9 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         }
             
         if (sortby != null && sortby.equals("updateTime")) {
-            queryString.append("ORDER BY updateTime ");
+            queryString.append("ORDER BY e.updateTime ");
         } else {
-            queryString.append("ORDER BY pubTime ");
+            queryString.append("ORDER BY e.pubTime ");
         }
 
         if (sortOrder != null && sortOrder.equals(ASCENDING)) {

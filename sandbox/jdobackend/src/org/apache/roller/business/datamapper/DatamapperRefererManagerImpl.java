@@ -340,10 +340,10 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
     public List getReferersToEntry(String entryid) throws RollerException {
         if (null == entryid)
             throw new RollerException("entryid is null");
-        
+        //TODO: DataMapperPort: Change calling code to pass WebLogEntryData instead of id
         return (List) strategy.newQuery(RefererData.class, 
-                "RefererData.getByEntryId&TitleNotNull&ExcerptNotNullOrderByTotalHitsDesc").
-                execute(entryid);
+                "RefererData.getByWeblogEntry&TitleNotNull&ExcerptNotNullOrderByTotalHitsDesc").
+                execute(strategy.load(WeblogEntryData.class,entryid));
     }
 
     /**
