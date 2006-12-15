@@ -15,6 +15,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="changeTime">
                 <column name="change_time" insertable="true" updatable="true" unique="false"/>

@@ -20,6 +20,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
@@ -33,7 +34,7 @@
             <many-to-one name="parent" target-entity="org.apache.roller.pojos.FolderData">
                 <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
-            <one-to-many name="folders" mapped-by="parent" target-entity="org.apache.roller.pojos.FolderData">
+            <one-to-many name="folders" mapped-by="parent" target-entity="org.apache.roller.pojos.FolderData"  fetch="LAZY">
                 <cascade>
                     <cascade-remove/>
                 </cascade>

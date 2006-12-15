@@ -81,6 +81,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="title">
                 <column name="title" insertable="true" updatable="true" unique="false"/>
@@ -139,6 +140,16 @@
             <many-to-one name="creator" target-entity="org.apache.roller.pojos.UserData">
                 <join-column name="userid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
+            <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.pojos.EntryAttributeData" fetch="LAZY">
+                <cascade>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
+            <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryTagData" fetch="LAZY">
+                <cascade>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
             <transient name="permaLink"/>
             <transient name="permaLink"/>
             <transient name="commentsLink"/>

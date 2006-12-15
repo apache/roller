@@ -12,6 +12,7 @@
     <entity metadata-complete="true" name="AutoPingData"
             class="org.apache.roller.pojos.AutoPingData">
         <table name="autoping"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="ROLLER_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="AutoPingData.getByPingTarget">
             <query>SELECT a FROM AutoPingData a WHERE a.pingTarget = ?1</query>
         </named-query>
@@ -31,6 +32,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>
