@@ -18,10 +18,12 @@
         <attributes>
             <id name="name">
                 <column name="name"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="value">
                 <column name="value" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <transient name="id"/>
         </attributes>
     </entity>
 </entity-mappings>

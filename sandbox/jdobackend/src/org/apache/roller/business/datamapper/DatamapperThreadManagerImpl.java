@@ -165,14 +165,12 @@ public class DatamapperThreadManagerImpl extends ThreadManagerImpl {
         return locked;
     }
 
-
     private TaskLockData getTaskLockByName(String name) throws RollerException {
-
         // do lookup
-            return (TaskLockData) strategy.newQuery(TaskLockData.class,
-                    "TaskLockData.getByName").setUnique().execute(name);
+        return (TaskLockData) strategy.newQuery(
+                TaskLockData.class, "TaskLockData.getByName").setUnique()
+                .execute(name);
     }
-
 
     private void saveTaskLock(TaskLockData data) throws RollerException {
         this.strategy.store(data);

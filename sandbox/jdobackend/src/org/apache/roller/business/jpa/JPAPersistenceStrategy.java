@@ -69,8 +69,12 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
     public JPAPersistenceStrategy() throws RollerException {
         Properties emfProps = loadPropertiesFromResourceName(
                 "JPAEMF.properties", getContextClassLoader());
-        this.emf =
+        try {
+            this.emf =
                 Persistence.createEntityManagerFactory("RollerPU", emfProps);
+        } catch (PersistenceException pe) {
+            throw new RollerException(pe);
+        }
     }
 
     /**
@@ -83,7 +87,6 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
             if (isTransactionActive(em)) {
                 em.getTransaction().commit();
             }
-            em.close();
         } catch (PersistenceException pe) {
             throw new RollerException(pe);
         }

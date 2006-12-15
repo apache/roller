@@ -16,7 +16,8 @@
 	<mapping-file>org/apache/roller/pojos/RoleData.orm.xml                       </mapping-file>
 	<mapping-file>org/apache/roller/pojos/RollerConfigData.orm.xml               </mapping-file>
 	<mapping-file>org/apache/roller/pojos/RollerPropertyData.orm.xml             </mapping-file>
-	<mapping-file>org/apache/roller/pojos/UserData.orm.xml                       </mapping-file>
+    <mapping-file>org/apache/roller/pojos/TaskLockData.orm.xml                   </mapping-file>
+    <mapping-file>org/apache/roller/pojos/UserData.orm.xml                       </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WeblogCategoryData.orm.xml             </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WeblogEntryData.orm.xml                </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WeblogEntryTagData.orm.xml             </mapping-file>

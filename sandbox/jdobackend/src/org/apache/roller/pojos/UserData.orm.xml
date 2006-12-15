@@ -81,6 +81,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="enabled">
                 <column name="isenabled" insertable="true" updatable="true" unique="false"/>
@@ -108,6 +109,11 @@
                 <column name="timeZone" insertable="true" updatable="true" unique="false"/>
             </basic>
             <one-to-many name="permissions" mapped-by="user" target-entity="org.apache.roller.pojos.PermissionsData" fetch="LAZY">
+                <cascade>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
+            <one-to-many name="roles" mapped-by="user" target-entity="org.apache.roller.pojos.RoleData" fetch="LAZY">
                 <cascade>
                     <cascade-remove/>
                 </cascade>

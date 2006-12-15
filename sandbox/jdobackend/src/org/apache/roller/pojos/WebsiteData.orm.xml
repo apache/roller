@@ -11,7 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="WebsiteData" class="org.apache.roller.pojos.WebsiteData">
         <table name="website"/>
-<!--        <named-query name="WebsiteData.getByHandle&amp;enabled">
+        <named-query name="WebsiteData.getByHandle&amp;enabled">
             <query>SELECT w FROM WebsiteData w WHERE w.handle = ?1 AND w.enabled = ?2</query>
         </named-query>
         <named-query name="WebsiteData.getByHandle">
@@ -88,7 +88,7 @@
         </named-query>
         <named-query name="WebsiteData.getByEndDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
             <query>SELECT w FROM WebsiteData w JOIN w.permissions p WHERE w.dateCreated &lt; ?1
-                                                 AND w.active ?2
+                                                 AND w.active = ?2
                                                  AND p.user = ?3
                                                  AND p.pending = ?4
                                                ORDER BY w.dateCreated</query>
@@ -112,9 +112,10 @@
         <named-query name="WebsiteData.getCountAllDistinct">
             <query>SELECT COUNT(DISTINCT w) FROM WebsiteData w</query>
         </named-query>
--->        <attributes>
+        <attributes>
             <id name="id">
                 <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="handle">
                 <column name="handle" insertable="true" updatable="true" unique="true"/>

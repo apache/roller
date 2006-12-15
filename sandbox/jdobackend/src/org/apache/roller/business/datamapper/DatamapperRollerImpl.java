@@ -27,6 +27,7 @@ import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.RollerImpl;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
@@ -56,6 +57,7 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
     private PingQueueManager pingQueueManager = null;
     private AutoPingManager autoPingManager = null;
     private PingTargetManager pingTargetManager = null;
+    private ThreadManager threadManager = null;
 
     
     protected DatamapperRollerImpl() throws RollerException {
@@ -208,6 +210,21 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     protected abstract WeblogManager createDatamapperWeblogManager(
             DatamapperPersistenceStrategy strategy);
+
+    /**
+     * @see org.apache.roller.model.Roller#getThreadManager()
+     */
+    public ThreadManager getThreadManager() {
+        if (threadManager == null) {
+            threadManager = createDatamapperThreadManager(strategy);
+        }
+        return threadManager;
+    }
+
+    protected ThreadManager createDatamapperThreadManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperThreadManagerImpl(strategy);
+    }
 
     /**
      * This method is deprecated.

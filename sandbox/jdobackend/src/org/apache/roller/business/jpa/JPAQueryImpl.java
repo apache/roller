@@ -21,6 +21,7 @@ package org.apache.roller.business.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.NoResultException;
 
 import org.apache.roller.business.datamapper.DatamapperQuery;
 
@@ -91,8 +92,18 @@ public abstract class JPAQueryImpl implements DatamapperQuery {
      * value of singleResult.
      */
     private Object executeQuery() {
-        return singleResult ? q.getSingleResult() : q.getResultList();
+        Object result = null;
+        if (singleResult) {
+            try {
+                result = q.getSingleResult();
+            } catch (NoResultException e) {
+                // Roller code expects a null for this condition
+                result = null;
+            }
+        } else {
+            result = q.getResultList();
+        }
+        return result;
     }
-
 
 }
