@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20061207;11581100">
+	<META NAME="CHANGED" CONTENT="20061216;10495300">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.5in }
@@ -364,16 +364,16 @@ library, which you must download separately from Roller.
 <P CLASS="western">Copy the following files from Hibernate into the
 Roller WEB-INF/lib directory:</P>
 <UL>
-	<LI><P CLASS="western">hibernate3.jar</P>
-	<LI><P CLASS="western">asm-attrs.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">hibernate3.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">asm-attrs.jar</P>
 </UL>
 <UL>
-	<LI><P CLASS="western">asm.jar</P>
-	<LI><P CLASS="western">cglib-2.1.3.jar</P>
-	<LI><P CLASS="western">dom4j.1.6.1.jar</P>
-	<LI><P CLASS="western">ehcache-1.1.jar</P>
-	<LI><P CLASS="western">jdbc2_0-stdext.jar</P>
-	<LI><P CLASS="western">jta.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">asm.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">cglib-2.1.3.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">dom4j.1.6.1.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">ehcache-1.1.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">jdbc2_0-stdext.jar</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in">jta.jar</P>
 </UL>
 <P CLASS="western">The Roller Support project at Java.Net offers some
 bundles that might make this part of the installation easier. Visit
@@ -403,6 +403,12 @@ copy mysql-connector.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
 	instead of the newer 3.1.X series, you'll also need to change the
 	Hibernate configuration file to use the MySQL5 dialect (see Section
 	8.3 for details on that).</P>
+</UL>
+<UL>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in"><A NAME="st"></A>For
+	Oracle users, we recommend that you use the 10g (<A HREF="http://10.1.0.2/" TARGET="_blank" ONCLICK="return top.js.OpenExtLink(window,event,this)">10.1.0.2</A>
+	or higher) drivers which should<BR>be packaged as ojdbc14.jar --
+	even if operating on Oracle 9 server.</P>
 </UL>
 <P CLASS="western"><BR><BR>
 </P>
@@ -1065,7 +1071,7 @@ to somewhere safe, for example:
 <PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3 CLASS="western">
-<A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
+<A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
 UPGRADE STEP 2: Install the new Roller 
 </H3>
 <P CLASS="western">Follow the normal installation instructions to
@@ -1080,7 +1086,7 @@ install Roller, except:
 	the installation, we'll do that later 
 	</P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
 UPGRADE STEP 3: Copy resources and update configs 
 </H3>
 <H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
@@ -1120,7 +1126,7 @@ installation guide.</P>
 	visit the Roller Support project on Java.Net
 	(http://roller.dev.java.net).</B></P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 UPGRADE STEP 4: Upgrade the database 
 </H3>
 <P CLASS="western">Use the appropriate database upgrade script to
@@ -1167,7 +1173,7 @@ UNIX:
 <P CLASS="western">If you're upgrading from an earlier release you'll
 have to run each of the older scripts in order to upgrade your
 database.</P>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
 UPGRADE STEP 5: Startup your app server 
 </H3>
 <P CLASS="western">Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
