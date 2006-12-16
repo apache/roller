@@ -7,7 +7,7 @@ Installation Guide
 
 Apache Roller
  (incubating) 
-Version 3.1
+Version 3.2
 
 
 
@@ -162,6 +162,7 @@ dom4j.1.6.1.jar
 ehcache-1.1.jar
 jdbc2_0-stdext.jar
 jta.jar
+
 The Roller Support project at Java.Net offers some bundles that might make this part of the installation easier. Visit http://roller.dev.java.net for more information.
 STEP 3.2: Install JDBC driver jar(s)
 Download the JDBC driver jar for your database and put it in the classpath of your application server. For example, assuming Tomcat and MySQL, you'd download the J/Connector JDBC driver from mysql.com and you'd place it in the Tomcat common/lib directory.
@@ -172,6 +173,8 @@ Windows example
 NOTES
 For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. If you must use J/Connector/J 3.1.X then please read Installation FAQ page item #13 on the Roller wiki.
 For MySQL 5.X users, we recommend that you use the J/Connector 3.1.X JDBC drivers instead of the newer 3.1.X series, you'll also need to change the Hibernate configuration file to use the MySQL5 dialect (see Section 8.3 for details on that).
+For Oracle users, we recommend that you use the 10g (10.1.0.2 or higher) drivers which should
+be packaged as ojdbc14.jar -- even if operating on Oracle 9 server.
 
 STEP 3.3: Install JavaMail and Activation jars
 If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. Currently, we ship these jars with Roller, but you will need to  move them from the Roller WEB-INF/lib directory and into the Tomcat common/lib directory, or your server's equivalent location.
@@ -355,13 +358,15 @@ There are three ways you can alter the default configuration for Roller.
 What properties you should set
 We are going to assume you have defined a roller-custom.properties file and placed it in your classpath somewhere. To override any of the default Roller properties you simply add a line with the proper key and the new value you wish to use. 
 
-Here is a sample roller-custom.properties with the few properties that should be overridden
+Here is a sample roller-custom.properties with the few properties that should be overridden.
  
 	uploads.dir=/app/roller/roller_data/uploads
 	search.index.dir=/app/roller/roller_data/search-index
+     passwds.encryption.enabled=true
 
 	# etc, etc, etc ... any other properties you want to override
 
+NOTE: Setting password encryption to true is a very good idea for new Roller sites, but if you are upgrading an existing Roller site you'll need to come up with a strategy for converting your old unencrypted passwords before you turn encryption on.
 STEP 8.2: Change keys in the WEB-INF/security.xml file
 Starting with version 2.1, Roller uses the Acegi security infrastructure. Several of the security features rely on keys that are intended to be site-specific. These keys are used to compute HMAC (hash-based message authentication code) values for Remember Me cookies. Knowledge of these keys could allow an attacker to forge invalid cookies, and thereby gain unauthorized access to your Roller installation (at the application level). 
 Roller ships with default values, and these should assumed to be widely known. You should change your keys to be secret values specific to your own site. 
@@ -539,6 +544,12 @@ This file defines the default start-up properties for Roller. See step 8 for ins
 #    RollerConfig.getProperty("propname");
 
 #---------------------------------
+# Database configuration settings
+
+# Hibernate dialect: You must override this to use a database other than MySQL4
+hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+#---------------------------------
 # User management settings
 
 # True to enable group blogging. False to prevent users from creating more 
@@ -560,6 +571,12 @@ uploads.dir=${user.home}/roller_data/uploads
 
 # The context path under which resoures will be made available 
 uploads.url=/resources
+
+#----------------------------------
+# Themes settings
+
+# The directory in which Roller will look for themes
+themes.dir=${webapp.context}
 
 #----------------------------------
 # Search index settings
@@ -599,7 +616,7 @@ rendering.userRequestMappers=
 # each represents a url at the application root, i.e. /<elem>/*
 rendering.weblogMapper.rollerProtectedUrls=\
 roller-ui,images,theme,themes,CommentAuthenticatorServlet,\
-index.jsp,favicon.ico,robots.txt,taglibs.jsp,\
+index.jsp,favicon.ico,robots.txt,\
 page,flavor,rss,atom,language,search,comments,rsd,resource,xmlrpc,planetrss
 
 # Set of user defined protected urls.  These are added to the set above.
@@ -629,6 +646,17 @@ org.apache.roller.ui.rendering.model.SearchResultsModel,\
 org.apache.roller.ui.rendering.model.ConfigModel,\
 org.apache.roller.ui.rendering.model.UtilitiesModel,\
 org.apache.roller.ui.rendering.model.URLModel,\
+org.apache.roller.ui.rendering.model.MessageModel,\
+org.apache.roller.ui.rendering.model.CalendarModel,\
+org.apache.roller.ui.rendering.model.MenuModel
+
+# Set of models to be made available for weblog page *preview* rendering
+# NOTE: this *does* have some differences between the pageModels
+rendering.previewModels=\
+org.apache.roller.ui.rendering.model.PreviewPageModel,\
+org.apache.roller.ui.rendering.model.ConfigModel,\
+org.apache.roller.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.ui.rendering.model.PreviewURLModel,\
 org.apache.roller.ui.rendering.model.MessageModel,\
 org.apache.roller.ui.rendering.model.CalendarModel,\
 org.apache.roller.ui.rendering.model.MenuModel
@@ -725,24 +753,62 @@ org.apache.roller.ui.rendering.plugins.ConvertLineBreaksPlugin \
 #,org.apache.roller.ui.rendering.plugins.AcronymsPlugin \
 #,org.apache.roller.ui.rendering.plugins.BookmarkPlugin
 
+# The list of configured WeblogEntryEditors available to users
+plugins.weblogEntryEditors=\
+org.apache.roller.ui.core.plugins.TextEditor,\
+org.apache.roller.ui.core.plugins.XinhaEditor
+
+# The "id" of the default editor to use.  NOT the class name
+plugins.defaultEditor=editor-text.jsp
 
 #----------------------------------
-# scheduled tasks, each is comma separated list of classes
+# Scheduled Background Tasks ... all times are in minutes.
+#
+# Task properties should follow the given format ...
+#     tasks.<taskname>.<prop>=<value>
+#
+# The *enabled* tasks are defined by tasks.enabled=<taskname>[,<taskname>]
+#-----------------------------------
 
-# Comma separated list of task classnames to be executed once per day
-tasks.daily=org.apache.roller.ui.core.tasks.TurnoverReferersTask\
+# Tasks which are enabled.  Only tasks listed here will be run.
+tasks.enabled=ResetHitCountsTask,TurnoverReferersTask,PingQueueTask
 
-# Needed to enable nightly fetching of blacklist
-#,org.apache.roller.ui.core.tasks.BlacklistUpdateTask\
+# Reset hit counts
+tasks.ResetHitCountsTask.class=org.apache.roller.business.runnable.ResetHitCountsTask
+tasks.ResetHitCountsTask.startTime=startOfDay
+tasks.ResetHitCountsTask.interval=1440
+tasks.ResetHitCountsTask.leaseTime=30
 
-# Daily Planet task: syncs weblog list with Roller, refreshes Technorati stats
-#,org.apache.roller.ui.core.tasks.SyncWebsitesTask
+# Reset referer counts
+tasks.TurnoverReferersTask.class=org.apache.roller.business.runnable.TurnoverReferersTask
+tasks.TurnoverReferersTask.startTime=startOfDay
+tasks.TurnoverReferersTask.interval=1440
+tasks.TurnoverReferersTask.leaseTime=30
 
-# Comma separated list of task classnames to be executed hourly
-tasks.hourly=\
+# Ping processor, does sending of pings
+tasks.PingQueueTask.class=org.apache.roller.business.pings.PingQueueTask
+tasks.PingQueueTask.startTime=immediate
+tasks.PingQueueTask.interval=5
+tasks.PingQueueTask.leaseTime=30
 
-# Hourly Planet task: refresh latest entry list from all weblogs in list
-#org.apache.roller.ui.core.tasks.RefreshEntriesTask
+# Sync Roller weblogs with planet
+tasks.SyncWebsitesTask.class=org.apache.roller.planet.tasks.SyncWebsitesTask
+tasks.SyncWebsitesTask.startTime=startOfDay
+tasks.SyncWebsitesTask.interval=1440
+tasks.SyncWebsitesTask.leaseTime=30
+
+# Refresh entries for planet feeds
+tasks.RefreshEntriesTask.class=org.apache.roller.planet.tasks.RefreshEntriesTask
+tasks.RefreshEntriesTask.startTime=startOfHour
+tasks.RefreshEntriesTask.interval=60
+tasks.RefreshEntriesTask.leaseTime=30
+
+# Technorati rankings for planet feeds
+tasks.TechnoratiRankingsTask.class=org.apache.roller.planet.tasks.TechnoratiRankingsTask
+tasks.TechnoratiRankingsTask.startTime=startOfDay
+tasks.TechnoratiRankingsTask.interval=1440
+tasks.TechnoratiRankingsTask.leaseTime=30
+
 
 #----------------------------------
 # Persistence settings
@@ -752,9 +818,6 @@ persistence.filemanager.classname=org.apache.roller.business.FileManagerImpl
 
 #----------------------------------
 # comment, referrer and trackback settings
-
-# comment authenticator settings (experimental)
-authenticator.classname=org.apache.roller.ui.core.DefaultAuthenticator
 
 comment.authenticator.classname=org.apache.roller.ui.rendering.util.MathCommentAuthenticator
 comment.notification.separateOwnerMessage=false
@@ -863,14 +926,16 @@ pings.logOnly=false
 # Planet Aggregator settings
 
 # Set to true to enable the Planet aggregator. This will cause:
-# - The main page of Roller will become an aggregated view of all blogs in the 
-#   Roller database, plus those defined in the Planet group 'external'.
 # - A new menu tab will appear for Roller admin users. This allows admins to 
 #   add/remove newsfeed subscriptions in the 'external' group.
 # - Users can then subscribe to several newsfeeds:
 #      - http://localhost:8080/roller/rss
 #      - http://localhost:8080/roller/planetrss
 #      - http://localhost:8080/roller/planetrss?group=external
+# - You'll be able to add the $planet model to the list of page models available
+#   to blogs (rendering.pageModels) or to only site-wide blogs (rendering.siteModels) 
+#   (classname org.apache.roller.ui.rendering.model.SiteModel)
+#   
 planet.aggregator.enabled=false
 
 # Planet cache must exist and must be writable by Roller process
@@ -927,16 +992,6 @@ users.sso.passwords.defaultValue=<unknown>
 users.sso.autoProvision.enabled=false
 users.sso.autoProvision.className=org.apache.roller.ui.core.security.BasicUserAutoProvision
 
-#----------------------------------
-# misc settings
-
-rememberme.enabled=true
-debug.memory.enabled=false
-compression.gzipResponse.enabled=true
-
-# editor theme to be used (corresponds to directory name under /theme)
-editor.theme=tan
-
 #---------------------------------
 # settings for various plugins
 
@@ -951,6 +1006,38 @@ plugins.topictag.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
 
 # Set to true to allow only default topic tag site (and avoid costly bookmark queries)
 plugins.topictag.ignoreBookmarks=true
+
+#----------------------------------
+# misc settings
+
+# Some folks consider remember-me type functionality to be a security
+rememberme.enabled=true
+
+# You might want to disable GZIP if your app server already supports it
+compression.gzipResponse.enabled=true
+
+# specifies the max number of tags allowed in URL ( /feed?tags=foo+bar+baz )
+tags.queries.maxIntersectionSize=3
+
+# Characters to be allowed in user names (change at your own risk)
+username.allowedChars=A-Za-z0-9
+
+# editor theme to be used (corresponds to directory name under /theme)
+editor.theme=tan
+
+# Hibernate config resource (a classpath-based path)
+# NO NEED TO OVERRIDE this unless you are customizing Roller
+hibernate.configResource=/hibernate.cfg.xml
+
+# JDBC configuration parameters for standalone tasks
+# Don't override these in the roller-custom.properties file you use with the 
+# Roller webapp, but for the standalone tasks that you run outside of Roller 
+# (e.g. refresh entries) you'll need to override these properties. Do it in a 
+# separate roller-custom.properties file.
+jdbc.driverClass=
+jdbc.connectionURL=
+jdbc.username=
+jdbc.password=
 
 #---------------------------------
 # Experimental settings
@@ -972,4 +1059,3 @@ webservices.adminprotocol.enabled=false
 aggregator.enabled=false
 aggregator.cache.enabled=
 aggregator.cache.timeout=14400
-
