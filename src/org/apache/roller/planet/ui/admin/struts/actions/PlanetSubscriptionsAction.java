@@ -229,7 +229,6 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                             planet.saveSubscription(sub);
                         }                        
                         targetGroup.getSubscriptions().add(sub);
-                        sub.getGroups().add(targetGroup);
                         
                     } else {
                         // User editing an existing subscription within a group
