@@ -907,11 +907,6 @@ ro.buildUser=${user.name}
 	    <exclude name="jsps/**" />
         </fileset>
     </copy>
-    
-    <copy todir="${build.tests}/WEB-INF/classes">
-        <fileset dir="${basedir}/metadata/database/hibernate/" 
-            includes="hibernate.cfg.xml" />
-    </copy>
 
     <!-- 
     Copy custom testing files which will overwrite some config files 
