@@ -52,6 +52,7 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
+            <transient name="inUse"/> 
         </attributes>
     </entity>
 </entity-mappings>
