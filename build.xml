@@ -643,7 +643,7 @@ ro.buildUser=${user.name}
          longfile="gnu"
          compression="gzip">
         
-        <tarfileset dir="${build.dist.binary}" prefix="apache-roller-${ro.version}" />
+        <tarfileset dir="${build.dist.binary}" prefix="${ro.name}-${ro.version}" />
     </tar>
     
 </target>
@@ -654,13 +654,13 @@ ro.buildUser=${user.name}
     <mkdir dir="${ro.dist}" />
     
     <!-- Tar and GZip the apache sources release -->
-    <tar destfile="${ro.dist}/apache-roller-${ro.version}.tar.gz"
+    <tar destfile="${ro.dist}/${ro.name}-${ro.version}.tar.gz"
          longfile="gnu"
          compression="gzip">
         
         <!-- don't include unshippables in apache release -->
         <tarfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
+                    prefix="${ro.name}-${ro.version}">
             <exclude name="webapp/roller/WEB-INF/lib/mail.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/activation.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
@@ -674,10 +674,10 @@ ro.buildUser=${user.name}
         </tarfileset>
     </tar>
     
-    <zip destfile="${ro.dist}/apache-roller-${ro.version}.zip">        
+    <zip destfile="${ro.dist}/${ro.name}-${ro.version}.zip">        
         <!-- don't include unshippables in apache release -->
         <zipfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
+                    prefix="${ro.name}-${ro.version}">
             <exclude name="webapp/roller/WEB-INF/lib/mail.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/activation.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
@@ -698,7 +698,7 @@ ro.buildUser=${user.name}
         
         <!-- only include unshippables -->
         <tarfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
+                    prefix="${ro.name}-${ro.version}">
             <exclude name="webapp/roller/WEB-INF/lib/mail.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/activation.jar" />
             <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
@@ -714,7 +714,7 @@ ro.buildUser=${user.name}
     
     <zip destfile="${ro.dist}/required-jars-roller-${ro.version}.zip" >
         <zipfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
+                    prefix="${ro.name}-${ro.version}">
             <exclude name="webapp/roller/WEB-INF/lib/mail.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/activation.jar" />
             <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
@@ -786,7 +786,7 @@ ro.buildUser=${user.name}
          longfile="gnu"
          compression="gzip">
         
-        <tarfileset dir="${build.dist.sources}" prefix="apache-roller-src-${ro.version}" />
+        <tarfileset dir="${build.dist.sources}" prefix="${ro.name}-src-${ro.version}" />
     </tar>
 
 </target>
@@ -797,13 +797,13 @@ ro.buildUser=${user.name}
     <mkdir dir="${ro.dist}" />
     
     <!-- Tar and GZip the apache binary release -->
-    <tar destfile="${ro.dist}/apache-roller-src-${ro.version}.tar.gz"
+    <tar destfile="${ro.dist}/${ro.name}-src-${ro.version}.tar.gz"
          longfile="gnu"
          compression="gzip">
         
         <!-- don't include unshippables in apache release -->
         <tarfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
+                    prefix="${ro.name}-src-${ro.version}">
             <exclude name="**/hibernate-3.1/**" />
             <exclude name="**/activation.jar" />
             <exclude name="**/mail.jar" />
@@ -811,11 +811,11 @@ ro.buildUser=${user.name}
         </tarfileset>
     </tar>
     
-    <zip destfile="${ro.dist}/apache-roller-src-${ro.version}.zip">
+    <zip destfile="${ro.dist}/${ro.name}-src-${ro.version}.zip">
         
         <!-- don't include unshippables in apache release -->
         <zipfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
+                    prefix="${ro.name}-src-${ro.version}">
             <exclude name="**/hibernate-3.1/**" />
             <exclude name="**/activation.jar" />
             <exclude name="**/mail.jar" />
@@ -830,7 +830,7 @@ ro.buildUser=${user.name}
         
         <!-- only include unshippables -->
         <tarfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
+                    prefix="${ro.name}-src-${ro.version}">
             <include name="**/hibernate-3.1/**" />
             <include name="**/activation.jar" />
             <include name="**/mail.jar" />
@@ -842,7 +842,7 @@ ro.buildUser=${user.name}
         
         <!-- only include unshippables -->
         <zipfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
+                    prefix="${ro.name}-src-${ro.version}">
             <include name="**/hibernate-3.1/**" />
             <include name="**/activation.jar" />
             <include name="**/mail.jar" />
