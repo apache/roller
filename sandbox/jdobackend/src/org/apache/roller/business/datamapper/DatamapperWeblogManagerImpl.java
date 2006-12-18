@@ -998,25 +998,25 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
                         "WeblogEntryTagAggregateData.getTagsByWebsite&NameStartsWithOrderByName");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute(
-                        new Object[] {website, startsWith});
+                        new Object[] {website, startsWith + '%'});
                 } else {
                     query = strategy.newQuery(WeblogEntryTagAggregateData.class,
                         "WeblogEntryTagAggregateData.getTagsByWebsite&NameStartsWith");
                     if (limit > 0) query.setRange(0, limit);
                     queryResults = (List) query.execute(
-                        new Object[] {website, startsWith});
+                        new Object[] {website, startsWith + '%'});
                 }
             } else {
                 if (sortByName) {
                     query = strategy.newQuery(WeblogEntryTagAggregateData.class,
                         "WeblogEntryTagAggregateData.getTagsByWebsiteOrderByName");
                     if (limit > 0) query.setRange(0, limit);
-                    queryResults = (List) query.execute(startsWith);   
+                    queryResults = (List) query.execute(startsWith + '%');
                 } else {
                     query = strategy.newQuery(WeblogEntryTagAggregateData.class,
                         "WeblogEntryTagAggregateData.getTagsByWebsite");
                     if (limit > 0) query.setRange(0, limit);
-                    queryResults = (List) query.execute(startsWith);   
+                    queryResults = (List) query.execute(startsWith + '%');
                 }
             }
         } else {
@@ -1025,12 +1025,12 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
                     query = strategy.newQuery(WeblogEntryTagAggregateData.class,
                         "WeblogEntryTagAggregateData.getTagsByWebsiteNull&NameStartsWithOrderByName");
                     if (limit > 0) query.setRange(0, limit);
-                    queryResults = (List) query.execute(startsWith);
+                    queryResults = (List) query.execute(startsWith + '%');
                 } else {
                     query = strategy.newQuery(WeblogEntryTagAggregateData.class,
                         "WeblogEntryTagAggregateData.getTagsByWebsiteNull&NameStartsWith");
                     if (limit > 0) query.setRange(0, limit);
-                    queryResults = (List) query.execute(startsWith);
+                    queryResults = (List) query.execute(startsWith + '%');
                 }
             } else {
                 if (sortByName) {

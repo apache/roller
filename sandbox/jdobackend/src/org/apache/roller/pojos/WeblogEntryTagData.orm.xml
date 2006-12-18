@@ -25,7 +25,6 @@
             </basic>
             <basic name="time">
                 <column name="time" insertable="true" updatable="true" unique="false"/>
-                <temporal>TIMESTAMP</temporal>
             </basic>
             <many-to-one name="weblog" target-entity="org.apache.roller.pojos.WebsiteData">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>

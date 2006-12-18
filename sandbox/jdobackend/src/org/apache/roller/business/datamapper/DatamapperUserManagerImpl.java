@@ -624,7 +624,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         Object[] params;
         if (enabled != null) {
             query = strategy.newQuery(UserData.class,
-                "UserData.getByUserName&enabled");
+                    "UserData.getByUserName&Enabled");
             params = new Object[] {userName, enabled};
         } else {
             query = strategy.newQuery(WebsiteData.class,
@@ -824,7 +824,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                     "UserData.getByEnabled&UserNameOrEmailAddressStartsWith");
                 if (setRange) query.setRange(offset, offset + length);
                 results = (List) query.execute(
-                    new Object[] {enabled, startsWith});
+                    new Object[] {enabled, startsWith + '%'});
             } else {
                 query = strategy.newQuery(UserData.class, 
                     "UserData.getByEnabled");
@@ -836,7 +836,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                 query = strategy.newQuery(UserData.class, 
                     "UserData.getByUserNameOrEmailAddressStartsWith");
                 if (setRange) query.setRange(offset, offset + length);
-                results = (List) query.execute(startsWith);
+                results = (List) query.execute(startsWith +  '%');
             } else {
                 query = strategy.newQuery(UserData.class, "UserData.getAll");
                 if (setRange) query.setRange(offset, offset + length);

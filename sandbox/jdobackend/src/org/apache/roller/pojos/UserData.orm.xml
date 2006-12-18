@@ -110,12 +110,12 @@
             </basic>
             <one-to-many name="permissions" mapped-by="user" target-entity="org.apache.roller.pojos.PermissionsData" fetch="LAZY">
                 <cascade>
-                    <cascade-remove/>
+                    <cascade-all/>
                 </cascade>
             </one-to-many>
             <one-to-many name="roles" mapped-by="user" target-entity="org.apache.roller.pojos.RoleData" fetch="LAZY">
                 <cascade>
-                    <cascade-remove/>
+                    <cascade-all/>
                 </cascade>
             </one-to-many>
         </attributes>
