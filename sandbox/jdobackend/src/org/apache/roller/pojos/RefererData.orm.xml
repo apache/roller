@@ -114,6 +114,8 @@
             <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryData">
                 <join-column name="entryid" insertable="true" updatable="true"/>
             </many-to-one>
+            <transient name="displayUrl"/>
+            <transient name="url"/>
         </attributes>
     </entity>
 </entity-mappings>

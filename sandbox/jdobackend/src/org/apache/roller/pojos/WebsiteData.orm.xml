@@ -104,11 +104,6 @@
                                                  AND p.pending = ?3
                                                ORDER BY w.dateCreated</query>
         </named-query>
-        <named-query name="WebsiteData.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
-            <query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
-                                                 AND w.enabled = ?2
-                                               ORDER BY w.dateCreated</query>
-        </named-query>
         <named-query name="WebsiteData.getCountAllDistinct">
             <query>SELECT COUNT(DISTINCT w) FROM WebsiteData w</query>
         </named-query>
@@ -218,7 +213,14 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
-
+            <transient name="absoluteURL"/>
+            <transient name="adminUserCount"/>
+            <transient name="commentCount"/>
+            <transient name="commentModerationRequired"/>
+            <transient name="todaysHits"/>
+            <transient name="todaysReferrers"/>
+            <transient name="uRL"/>
+            <transient name="userCount"/>
         </attributes>
     </entity>
 </entity-mappings>

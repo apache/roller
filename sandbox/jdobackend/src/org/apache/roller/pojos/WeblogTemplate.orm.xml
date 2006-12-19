@@ -12,10 +12,10 @@
     <entity metadata-complete="true" name="WeblogTemplate"
             class="org.apache.roller.pojos.WeblogTemplate">
         <table name="webpage"/>
-        <named-query name="WeblogEntryData.getByWebsite">
+        <named-query name="WeblogTemplate.getByWebsite">
             <query>SELECT w FROM WeblogTemplate w Where w.website = ?1</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsiteOrderByName">
+        <named-query name="WeblogTemplate.getByWebsiteOrderByName">
             <query>SELECT w FROM WeblogTemplate w Where w.website = ?1 ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogTemplate.getByWebsite&amp;Link">
@@ -61,6 +61,7 @@
             <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
+            <transient name="required"/>
         </attributes>
     </entity>
 </entity-mappings>
