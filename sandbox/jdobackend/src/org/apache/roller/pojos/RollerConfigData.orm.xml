@@ -99,6 +99,7 @@
             <basic name="refererSpamWords">
                 <column name="refspamwords" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <transient name="adminUsers"/>
         </attributes>
     </entity>
 </entity-mappings>

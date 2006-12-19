@@ -25,6 +25,9 @@
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <basic name="path">
+                <column name="path" insertable="true" updatable="true" unique="false"/>
+            </basic>
             <basic name="description">
                 <column name="description" insertable="true" updatable="true" unique="false"/>
             </basic>

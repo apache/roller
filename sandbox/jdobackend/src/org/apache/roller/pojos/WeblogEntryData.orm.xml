@@ -150,10 +150,21 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
-            <transient name="permaLink"/>
-            <transient name="permaLink"/>
+            <transient name="categories"/>
+            <transient name="commentCount"/>
             <transient name="commentsLink"/>
+            <transient name="commentsStillAllowed"/>
+            <transient name="displayContent"/>
             <transient name="displayTitle"/>
+            <transient name="draft"/>
+            <transient name="pending"/>
+            <transient name="permaLink"/>
+            <transient name="permalink"/>
+            <transient name="published"/>
+            <transient name="rss09xDescription"/>
+            <transient name="tagsAsString"/>
+            <transient name="transformedText"/>
+            <transient name="transformedSummary"/>
         </attributes>
     </entity>
 </entity-mappings>

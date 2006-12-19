@@ -92,6 +92,7 @@
             <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryData">
                 <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
+            <transient name="timestamp"/>
         </attributes>
     </entity>
 </entity-mappings>
