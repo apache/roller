@@ -216,7 +216,7 @@ Show comments form for weblog entry.
     #end
 
     <form method="post" action="$url.entry($entry.anchor)" focus="name" 
-        name="form" onsubmit="fixURL(this); return validateComments(this)">    
+        name="commentForm" onsubmit="fixURL(this); return validateComments(this)">    
         <input type="hidden" name="method" value="post" />
 
         <ul>
