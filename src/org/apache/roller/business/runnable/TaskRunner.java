@@ -21,10 +21,7 @@ import java.io.File;
 import org.apache.roller.util.StandaloneWebappClassLoader;
 
 /**
- * Sets up classpath for Roller and runs a task. 
- * Expects these JVM parameters:
- * webapp.dir must specify Roller webapp directory
- * jars.dir must specify additional jars directory (e.g. Tomcat commons/lib)
+ * Sets up classpath for running a Roller task outside of the Roller webapp. 
  */
 public class TaskRunner {   
     
