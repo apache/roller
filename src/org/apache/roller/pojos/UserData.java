@@ -404,7 +404,7 @@ public class UserData
     
     
     /**
-     * @hibernate.set lazy="true" inverse="true" cascade="all-delete-orphan"
+     * @hibernate.set lazy="true" inverse="true" cascade="all"
      * @hibernate.collection-key column="userid"
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.RoleData"
      */
@@ -433,31 +433,6 @@ public class UserData
         }
         return false;
     }
-    
-    
-    /**
-     * Revokes specified role from user.
-     */
-    public void revokeRole(String roleName) throws RollerException {
-        RoleData removeme = null;
-        Iterator iter = roles.iterator();
-        while (iter.hasNext()) {
-            RoleData role = (RoleData) iter.next();
-            if (role.getRole().equals(roleName)) {
-                removeme = role;
-            }
-        }
-        
-        /* 
-         * NOTE: we do this outside the loop above because we are not allowed
-         * to modify the contents of the Set while we are iterating over it.
-         * doing so causes a ConcurrentModificationException
-         */
-        if(removeme != null) {
-            roles.remove(removeme);
-        }
-    }
-    
     
     /**
      * Grant to user role specified by role name.

@@ -194,8 +194,21 @@ public interface WeblogManager {
      * @return Collection of WeblogEntryData objects.
      */
     public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException;
-    
-    
+
+    /**
+     * Remove attribute with given name from given WeblogEntryData
+     * @param name Name of attribute to be removed
+     */
+    public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
+            throws RollerException;
+
+    /**
+     * Remove tag with given name from given WeblogEntryData
+     * @param name Name of tag to be removed
+     */
+    public void removeWeblogEntryTag(String name, WeblogEntryData entry)
+            throws RollerException;
+
     /**
      * Save weblog category.
      */

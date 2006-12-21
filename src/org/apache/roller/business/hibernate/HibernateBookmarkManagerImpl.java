@@ -81,10 +81,13 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     
     public void removeBookmark(BookmarkData bookmark) throws RollerException {
+        //Remove the bookmark from its parent folder
+        bookmark.getFolder().getBookmarks().remove(bookmark);
+        //Now remove it from database
         this.strategy.remove(bookmark);
-        
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
+        RollerFactory.getRoller().getUserManager()
+                .saveWebsite(bookmark.getWebsite());
     }
     
     

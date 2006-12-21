@@ -415,8 +415,8 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
-        entry.removeTag("testtag");
-        entry.removeTag("testtag2");
+        mgr.removeWeblogEntryTag("testtag", entry);
+        mgr.removeWeblogEntryTag("testtag2", entry);
         mgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
 

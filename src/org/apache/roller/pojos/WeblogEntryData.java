@@ -353,7 +353,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.EntryAttributeData"
      * @ejb:persistent-field
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan"
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
      * @hibernate.collection-key column="entryid" type="String"
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.EntryAttributeData"
      */
@@ -404,12 +404,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             att.setValue(value);
         }
     }
-    public void removeEntryAttribute(String name) throws RollerException {
-        EntryAttributeData att = (EntryAttributeData)attMap.get(name);
-        if (att != null) {
-            attMap.remove(att);
-            attSet.remove(att);
-        }
+    public void onRemoveEntryAttribute(EntryAttributeData att) throws RollerException {
+        attMap.remove(att);
     }
     //-------------------------------------------------------------------------
     
@@ -609,7 +605,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      *
      * @ejb:persistent-field
      * 
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan" 
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all" 
      * @hibernate.collection-key column="entryid" 
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogEntryTagData"
      */
@@ -654,16 +650,10 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         addedTags.add(name);
     }
 
-    public void removeTag(String name) throws RollerException {
-        for (Iterator it = tagSet.iterator(); it.hasNext();) {
-            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
-            if (tag.getName().equals(name)) {
-                removedTags.add(name);
-                it.remove();
-            }
-        }
+    public void onRemoveTag(String name) throws RollerException {
+        removedTags.add(name);
     }
-    
+
     public Set getAddedTags() {
         return addedTags;
     }
@@ -696,9 +686,10 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
                 newTags.remove(tag.getName());
             }
         }
-        
+
+        WeblogManager weblogManager = RollerFactory.getRoller().getWeblogManager();
         for (Iterator it = removeTags.iterator(); it.hasNext();) {
-            removeTag((String) it.next());
+            weblogManager.removeWeblogEntryTag((String) it.next(), this);
         }
         
         for (Iterator it = newTags.iterator(); it.hasNext();) {

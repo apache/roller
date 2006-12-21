@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Collection;
+
 import org.apache.roller.pojos.StatCount;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -58,6 +60,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.RoleData;
 import org.hibernate.Query;
 
 
@@ -962,6 +965,20 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         return ret;
     }
+
+    public void revokeRole(String roleName, UserData user) throws RollerException {
+        RoleData removeme = null;
+        Collection roles = user.getRoles();
+        Iterator iter = roles.iterator();
+        while (iter.hasNext()) {
+            RoleData role = (RoleData) iter.next();
+            if (role.getRole().equals(roleName)) {
+                iter.remove();
+                this.strategy.remove(role);
+            }
+        }
+    }
+
 
     
     /**
