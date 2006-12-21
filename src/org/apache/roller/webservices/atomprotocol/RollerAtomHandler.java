@@ -775,15 +775,7 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length > 1 && pathInfo[1].equals("resource")) return true;
         return false;
     }
-    
-    /**
-     * True if URL is a category URI.
-     */
-    public boolean isCategoryURI(String[] pathInfo) {
-        if (pathInfo.length > 1 && pathInfo[1].equals("category")) return true;
-        return false;
-    }
-    
+        
     /**
      * True if URL is a collection URI of any sort.
      */
