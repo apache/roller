@@ -441,6 +441,7 @@ public class UserData
         if (!hasRole(roleName)) {
             RoleData role = new RoleData(null, this, roleName);
             roles.add(role);
+            role.setUser(this);
         }
     }
     
