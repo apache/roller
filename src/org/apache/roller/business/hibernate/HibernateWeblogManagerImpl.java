@@ -50,6 +50,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.EntryAttributeData;
 import org.apache.roller.util.DateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -60,12 +61,6 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.DerbyDialect;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.OracleDialect;
-import org.hibernate.dialect.SQLServerDialect;
-import org.hibernate.engine.SessionFactoryImplementor;
-
 
 /**
  * Hibernate implementation of the WeblogManager.
@@ -323,6 +318,36 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
         
+    public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
+             throws RollerException {
+        for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
+            EntryAttributeData entryAttribute = (EntryAttributeData) it.next();
+            if (entryAttribute.getName().equals(name)) {
+                //Call back the entity to adjust its internal state
+                entry.onRemoveEntryAttribute(entryAttribute);
+                //Remove it from the collection
+                it.remove();
+                //Remove it from database
+                this.strategy.remove(entryAttribute);
+            }
+        }
+    }
+
+    public void removeWeblogEntryTag(String name, WeblogEntryData entry)
+            throws RollerException {
+        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
+            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            if (tag.getName().equals(name)) {
+                //Call back the entity to adjust its internal state
+                entry.onRemoveTag(name);
+                //Remove it from the collection
+                it.remove();
+                //Remove it from database
+                this.strategy.remove(tag);
+            }
+        }
+    }
+
     public List getNextPrevEntries(WeblogEntryData current, String catName, 
                                    String locale, int maxEntries, boolean next)
             throws RollerException {

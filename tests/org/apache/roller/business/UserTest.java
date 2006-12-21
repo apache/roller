@@ -186,7 +186,7 @@ public class UserTest extends TestCase {
         assertTrue(user.hasRole("admin"));
         
         // remove role
-        user.revokeRole("admin");
+        mgr.revokeRole("admin",user);
         mgr.saveUser(user);
         TestUtils.endSession(true);
         

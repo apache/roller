@@ -513,10 +513,11 @@ public final class WeblogEntryFormAction extends DispatchAction {
         }
         if (!valid || empty) {
             mLogger.debug("Removing MediaCast attributes");
+            WeblogManager weblogManager = RollerFactory.getRoller().getWeblogManager();
             try {
-                entry.removeEntryAttribute("att_mediacast_url");
-                entry.removeEntryAttribute("att_mediacast_type");
-                entry.removeEntryAttribute("att_mediacast_length");
+                weblogManager.removeWeblogEntryAttribute("att_mediacast_url", entry);
+                weblogManager.removeWeblogEntryAttribute("att_mediacast_type", entry);
+                weblogManager.removeWeblogEntryAttribute("att_mediacast_length", entry);
             } catch (RollerException e) {
                 mLogger.error("ERROR removing invalid MediaCast attributes");
             }

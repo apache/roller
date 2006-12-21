@@ -274,7 +274,7 @@ public class FolderData extends PersistentObject
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"
      *
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan"
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
      * @hibernate.collection-key column="folderid"
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.BookmarkData"
      */
@@ -295,15 +295,6 @@ public class FolderData extends PersistentObject
         bookmark.setFolder(this);
         getBookmarks().add(bookmark);
     }
-    
-    
-    /** 
-     * Remove a boomkark from folder.
-     */
-    public void removeBookmark(BookmarkData bookmark) {
-        getBookmarks().remove(bookmark);
-    }
-    
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"

@@ -27,7 +27,6 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 
-
 /**
  * Manages users, weblogs, permissions, and weblog pages.
  */
@@ -326,6 +325,14 @@ public interface UserManager {
         throws RollerException;
     
     
+    /**
+     * Revoke role of user
+     * @param roleName Name of the role to be revoked
+     * @param user    User for whom the role is to be revoked
+     */
+    public void revokeRole(String roleName, UserData user)
+        throws RollerException;
+
     /**
      * Store page.
      */

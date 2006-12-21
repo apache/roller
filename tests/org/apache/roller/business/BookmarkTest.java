@@ -328,7 +328,7 @@ public class BookmarkTest extends TestCase {
         bookmarkb = (BookmarkData)testFolder.getBookmarks().iterator().next();
         
         // Remove one bookmark
-        testFolder.removeBookmark(bookmarka);
+        bmgr.removeBookmark(bookmarka);
         bmgr.saveFolder(testFolder);
         TestUtils.endSession(true);
         
