@@ -101,7 +101,7 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
 
         //TODO: Datamapper port: Same comments as for method clearReferrers() apply for the expression
         strategy.newRemoveQuery(RefererData.class,
-                "RefererData.deleteByNullOrEmptyExcerpt&website").removeAll(website);
+                "RefererData.deleteByNullOrEmptyExcerpt&Website").removeAll(website);
 
     }
 
@@ -352,7 +352,7 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
     protected List getReferersToWebsite(WebsiteData website, String refererUrl)
             throws RollerException {
         return (List) strategy.newQuery(RefererData.class, 
-                "RefererData.getByWebsite&RefererURL").
+                "RefererData.getByWebsite&RefererUrl").
                 execute(new Object[] {website, refererUrl});
     }
 

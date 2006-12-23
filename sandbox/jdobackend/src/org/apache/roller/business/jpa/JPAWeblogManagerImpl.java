@@ -79,50 +79,50 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
 
         if (website != null) {
-            params.add(++size, website.getId());
-            queryString.append("website.id = ?").append(size);                
+            params.add(size++, website.getId());
+            queryString.append("e.website.id = ?").append(size);
         } else {
-            params.add(++size, Boolean.TRUE);                
-            queryString.append("website.enabled = ?").append(size);                
+            params.add(size++, Boolean.TRUE);
+            queryString.append("e.website.enabled = ?").append(size);
         }
-            
+
         if (user != null) {
-            params.add(++size, user.getId());
-            queryString.append(" AND creator.id = ?").append(size);
+            params.add(size++, user.getId());
+            queryString.append(" AND e.creator.id = ?").append(size);
         }
 
         if (startDate != null) {
-            params.add(++size, startDate);
-            queryString.append(" AND pubTime >= ?").append(size);
+            params.add(size++, startDate);
+            queryString.append(" AND e.pubTime >= ?").append(size);
         }
-            
+
         if (endDate != null) {
-            params.add(++size, endDate);                
-            queryString.append(" AND pubTime <= ?").append(size);
+            params.add(size++, endDate);
+            queryString.append(" AND e.pubTime <= ?").append(size);
         }
-            
+
         if (cat != null && website != null) {
-            params.add(++size, cat.getId());                
-            queryString.append(" AND category.id = ?").append(size);
+            params.add(size++, cat.getId());
+            queryString.append(" AND e.category.id = ?").append(size);
         }
-            
+
         if (tags != null && tags.size() > 0) {
           for(int i = 0; i < tags.size(); i++) {
-              params.add(++size, tags.get(i));
-              queryString.append(" AND tags.name = ?").append(size);
+              params.add(size++, tags.get(i));
+              queryString.append(" AND e.tags.name = ?").append(size);
           }
         }
-            
+
         if (status != null) {
-            params.add(++size, status);
-            queryString.append(" AND status = ?").append(size);
+            params.add(size++, status);
+            queryString.append(" AND e.status = ?").append(size);
         }
-            
+
         if (locale != null) {
-            params.add(++size, locale + '%');
-            queryString.append(" AND locale like ?").append(size);
+            params.add(size++, locale + '%');
+            queryString.append(" AND e.locale like ?").append(size);
         }
-            
+
         if (sortby != null && sortby.equals("updateTime")) {
             queryString.append("ORDER BY e.updateTime ");
         } else {
@@ -172,41 +172,41 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         queryString.append("SELECT c FROM CommentData c WHERE ");
 
         if (entry != null) {
-            params.add(++size, entry);
+            params.add(size++, entry);
             queryString.append("c.weblogEntry = ?").append(size);
         } else if (website != null) {
-            params.add(++size, website);
+            params.add(size++, website);
             queryString.append("c.weblogEntry.website = ?").append(size);
         }
             
         if (searchString != null) {
-            params.add(++size, "%" + searchString + "%");
+            params.add(size++, "%" + searchString + "%");
             queryString.append(" AND (url LIKE ?").append(size).
                         append(" OR content LIKE ?").append(size).append(")");
         }
             
         if (startDate != null) {
-            params.add(++size, startDate);
+            params.add(size++, startDate);
             queryString.append("c.postTime >= ?").append(size);
         }
             
         if (endDate != null) {
-            params.add(++size, endDate);
+            params.add(size++, endDate);
             queryString.append("c.postTime =< ?").append(size);
         }
             
         if (pending != null) {
-            params.add(++size, pending);
+            params.add(size++, pending);
             queryString.append("c.pending = ?").append(size);
         }
             
         if (approved != null) {
-            params.add(++size, approved);
+            params.add(size++, approved);
             queryString.append("c.approved = ?").append(size);
         }
             
         if (spam != null) {
-            params.add(++size, spam);
+            params.add(size++, spam);
             queryString.append("c.spam = ?").append(size);
         }
             
@@ -353,7 +353,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
 
         // TODO: Non-standard JPA bulk update, using parameter values in set clause
         ((JPAPersistenceStrategy) strategy).newUpdateQuery(
-            "WeblogEntryData.updateAllowComments&amp;CommentDaysByWebsite")
+            "WeblogEntryData.updateAllowComments&CommentDaysByWebsite")
             .updateAll(new Object[] {
                 website.getDefaultAllowComments(),
                 new Integer(website.getDefaultCommentDays()),
@@ -413,7 +413,6 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             (WeblogEntryTagAggregateData)
             strategy.newQuery(WeblogEntryTagAggregateData.class,
                 "WeblogEntryTagAggregateData.getByName&WebsiteOrderByLastUsedDesc")
-            .setRange(0,1)
             .setUnique()
             .execute(new Object[] {name, website});
 
@@ -423,7 +422,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
                 "WeblogEntryTagAggregateData.getByName&WebsiteNullOrderByLastUsedDesc")
             .setRange(0,1)
             .setUnique()
-            .execute(new Object[] {name, website});
+            .execute(name);
 
         Timestamp lastUsed = new Timestamp((new Date()).getTime());
 

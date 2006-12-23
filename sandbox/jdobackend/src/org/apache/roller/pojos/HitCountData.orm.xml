@@ -14,7 +14,7 @@
         <named-query name="HitCountData.getByWeblog">
             <query>SELECT h FROM HitCountData h WHERE h.weblog = ?1</query>
         </named-query>
-        <named-query name="HitCountData.getByWeblogEnabledTrueAndActiveTrue&amp;DailyHitsGreaterZero&amp;WeblogLastModifiedGreaterOrderByDailyHitsDesc">
+        <named-query name="HitCountData.getByWeblogEnabledTrueAndActiveTrue&amp;DailyHitsGreaterThenZero&amp;WeblogLastModifiedGreaterOrderByDailyHitsDesc">
             <query>SELECT h FROM HitCountData h WHERE h.weblog.enabled = true AND h.weblog.active = true
                                                   AND h.weblog.lastModified > ?1 AND h.dailyHits > 0
                                                 ORDER BY h.dailyHits DESC

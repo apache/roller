@@ -77,11 +77,13 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
     }
 
     public void removeBookmark(BookmarkData bookmark) throws RollerException {
-        strategy.remove(bookmark);
-        
+        //Now remove it from database
+        this.strategy.remove(bookmark);
+        //Remove the bookmark from its parent folder
+        bookmark.getFolder().getBookmarks().remove(bookmark);
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().
-            saveWebsite(bookmark.getWebsite());
+        RollerFactory.getRoller().getUserManager()
+                .saveWebsite(bookmark.getWebsite());
     }
 
     public void saveFolder(FolderData folder) throws RollerException {

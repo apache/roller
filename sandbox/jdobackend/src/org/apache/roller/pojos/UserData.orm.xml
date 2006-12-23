@@ -17,9 +17,6 @@
         <named-query name="UserData.getByEnabled">
             <query>SELECT u FROM UserData u WHERE u.enabled = ?1</query>
         </named-query>
-        <named-query name="UserData.getByEnabled&amp;EndDate">
-            <query>SELECT u FROM UserData u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2</query>
-        </named-query>
         <named-query name="UserData.getByEnabled&amp;EndDateOrderByStartDateDesc">
             <query>SELECT u FROM UserData u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 ORDER BY u.dateCreated DESC</query>
         </named-query>
@@ -34,9 +31,6 @@
         </named-query>
         <named-query name="UserData.getByEnabled&amp;UserNameOrEmailAddressStartsWith">
             <query>SELECT u FROM UserData u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?2)</query>
-        </named-query>
-        <named-query name="UserData.getByEndDate">
-            <query>SELECT u FROM UserData u WHERE u.dateCreated &lt; ?1</query>
         </named-query>
         <named-query name="UserData.getByEndDateOrderByStartDateDesc">
             <query>SELECT u FROM UserData u WHERE u.dateCreated &lt; ?1 ORDER BY u.dateCreated DESC</query>
@@ -65,9 +59,6 @@
             <query>SELECT u FROM UserData u JOIN u.permissions p WHERE p.website = ?1 
                                               AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3
             </query>
-        </named-query>
-        <named-query name="UserData.getByEndDate&amp;StartDate">
-            <query>SELECT u FROM UserData u WHERE u.dateCreated &lt; ?1 AND u.dateCreated &gt; ?2</query>
         </named-query>
         <named-query name="UserData.getByEndDate&amp;StartDateOrderByStartDateDesc">
             <query>SELECT u FROM UserData u WHERE u.dateCreated &lt; ?1 AND u.dateCreated &gt; ?2 ORDER BY u.dateCreated DESC</query>

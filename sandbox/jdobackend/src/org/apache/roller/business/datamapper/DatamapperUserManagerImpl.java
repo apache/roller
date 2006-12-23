@@ -44,8 +44,8 @@ import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryTagData;
-import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
+import org.apache.roller.pojos.RoleData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Collection;
 
 /*
  * DatamapperUserManagerImpl.java
@@ -132,7 +133,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         // delete all bad counts
         strategy.newRemoveQuery(
                 WeblogEntryTagAggregateData.class,
-                "WeblogEntryTagAggregateData.deleteByTotalLEZero").removeAll(website);
+                "WeblogEntryTagAggregateData.deleteByTotalLEZero").removeAll();
 
 
         // Remove the website's ping queue entries
@@ -162,7 +163,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         // remove entries
         List entries = (List)strategy.newQuery(PingQueueEntryData.class,
-                "WeblogEntryData.getByWebsite").execute();
+                "WeblogEntryData.getByWebsite").execute(website);
 
         for (Iterator iter = entries.iterator(); iter.hasNext();) {
             WeblogEntryData entry = (WeblogEntryData) iter.next();
@@ -172,7 +173,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         // remove associated referers
         List referers = (List)strategy.newQuery(RefererData.class,
-                "RefererData.getByWebsite").execute();
+                "RefererData.getByWebsite").execute(website);
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
             RefererData referer = (RefererData) iter.next();
             this.strategy.remove(referer);
@@ -180,7 +181,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         // remove associated pages
         List pages = (List)strategy.newQuery(WeblogTemplate.class,
-                "WeblogTemplate.getByWebsite").execute();
+                "WeblogTemplate.getByWebsite").execute(website);
 
         for (Iterator iter = pages.iterator(); iter.hasNext();) {
             WeblogTemplate page = (WeblogTemplate) iter.next();
@@ -207,6 +208,9 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             this.strategy.remove(rootCat);
         }
 
+        // flush the changes before returning. This is required as there is a
+        // circular dependency between WeblogCategoryData and WebsiteData
+        this.strategy.flush();
     }
 
     protected abstract void updateTagAggregates(List tags) 
@@ -413,6 +417,18 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         this.strategy.remove(target);
     }
 
+    public void revokeRole(String roleName, UserData user) throws RollerException {
+        Collection roles = user.getRoles();
+        Iterator iter = roles.iterator();
+        while (iter.hasNext()) {
+            RoleData role = (RoleData) iter.next();
+            if (role.getRole().equals(roleName)) {
+                this.strategy.remove(role);
+                iter.remove();
+            }
+        }
+    }
+
     public WebsiteData getWebsite(String id) throws RollerException {
         return (WebsiteData) this.strategy.load(WebsiteData.class, id);
     }
@@ -494,21 +510,21 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
            if (enabled != null) {
                if (active != null) {
                   if (user != null) {
-                      query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&Enabled&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                      query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&Enabled&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                       if (setRange) query.setRange(offset, offset + length);
                       results = (List) query.execute(new Object[] {endDate, startDate, enabled, active, user, Boolean.FALSE});                
                   } else {
-                      query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&Enabled&ActiveOrderByDateCreatedDesc");
+                      query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&Enabled&ActiveOrderByDateCreatedDesc");
                       if (setRange) query.setRange(offset, offset + length);
                       results = (List) query.execute(new Object[] {endDate, startDate, enabled, active});                                      
                   }
                } else {
                    if (user != null) {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&Enabled&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&Enabled&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, startDate, enabled, user, Boolean.FALSE});                
                    } else {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&EnabledOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&EnabledOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, startDate, enabled});                
                    }
@@ -516,21 +532,21 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
            } else {
                if (active != null) {
                    if (user != null) {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, startDate, active, user, Boolean.FALSE});                
                    } else {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&ActiveOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&ActiveOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, startDate, active});                
                    }
                } else {
                    if (user != null) {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDate&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDate&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, startDate, user, Boolean.FALSE});                
                    } else {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&StartDateOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&StartDateOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, startDate});                
                    }
@@ -540,21 +556,21 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             if (enabled != null) {
                 if (active != null) {
                    if (user != null) {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&Enabled&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&Enabled&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, enabled, active, user, Boolean.FALSE});                
                    } else {
-                       query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&Enabled&ActiveOrderByDateCreatedDesc");
+                       query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&Enabled&ActiveOrderByDateCreatedDesc");
                        if (setRange) query.setRange(offset, offset + length);
                        results = (List) query.execute(new Object[] {endDate, enabled, active});                                      
                    }
                 } else {
                     if (user != null) {
-                        query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&Enabled&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                        query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&Enabled&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                         if (setRange) query.setRange(offset, offset + length);
                         results = (List) query.execute(new Object[] {endDate, enabled, user, Boolean.FALSE});                
                     } else {
-                        query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&EnabledOrderByDateCreatedDesc");
+                        query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&EnabledOrderByDateCreatedDesc");
                         if (setRange) query.setRange(offset, offset + length);
                         results = (List) query.execute(new Object[] {endDate, enabled});                
                     }
@@ -562,21 +578,21 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             } else {
                 if (active != null) {
                     if (user != null) {
-                        query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                        query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&Active&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                         if (setRange) query.setRange(offset, offset + length);
                         results = (List) query.execute(new Object[] {endDate, active, user, Boolean.FALSE});                
                     } else {
-                        query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&ActiveOrderByDateCreatedDesc");
+                        query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&ActiveOrderByDateCreatedDesc");
                         if (setRange) query.setRange(offset, offset + length);
                         results = (List) query.execute(new Object[] {endDate, active});                
                     }
                 } else {
                     if (user != null) {
-                        query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDate&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
+                        query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDate&Permissions.user&Permissions.pendingOrderByDateCreatedDesc");
                         if (setRange) query.setRange(offset, offset + length);
                         results = (List) query.execute(new Object[] {endDate, user, Boolean.FALSE});                
                     } else {
-                        query = strategy.newQuery(UserData.class, "WebsiteData.getByEndDateOrderByDateCreatedDesc");
+                        query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByEndDateOrderByDateCreatedDesc");
                         if (setRange) query.setRange(offset, offset + length);
                         results = (List) query.execute(endDate);                
                     }

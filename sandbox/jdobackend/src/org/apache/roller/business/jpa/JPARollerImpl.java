@@ -55,7 +55,7 @@ public class JPARollerImpl extends DatamapperRollerImpl {
 
     protected WeblogManager createDatamapperWeblogManager(
             DatamapperPersistenceStrategy strategy) {
-        return null;
+        return new JPAWeblogManagerImpl((JPAPersistenceStrategy) strategy);
     }
 
     protected RefererManager createDatamapperRefererManagerImpl(DatamapperPersistenceStrategy strategy) {

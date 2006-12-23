@@ -92,7 +92,7 @@ public class DatamapperPingQueueManagerImpl implements PingQueueManager {
     public List getAllQueueEntries() 
             throws RollerException {
         return (List)strategy.newQuery(PingQueueEntryData.class,
-                "PingQueueEntryData.getAllOrderyByEntryTime");
+                "PingQueueEntryData.getAllOrderByEntryTime");
     }
 
     // private helper to determine if an has already been queued 
@@ -101,7 +101,7 @@ public class DatamapperPingQueueManagerImpl implements PingQueueManager {
         throws RollerException {
         // first, determine if an entry already exists
         List results = (List)strategy.newQuery(PingQueueEntryData.class,
-                "PingQueueEntryData.getByPingTarget&website")
+                "PingQueueEntryData.getByPingTarget&Website")
                 .execute(new Object[]
                     {autoPing.getPingTarget(), autoPing.getWebsite()});
         return results.size() > 0;

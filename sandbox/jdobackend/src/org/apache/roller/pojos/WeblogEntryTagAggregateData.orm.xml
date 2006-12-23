@@ -11,64 +11,64 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="WeblogEntryTagAggregateData"
             class="org.apache.roller.pojos.WeblogEntryTagAggregateData">
-        <table name="weblogentrytagaggregate"/>
+        <table name="roller_weblogentrytagagg"/>
         <named-query name="WeblogEntryTagAggregateData.getByName&amp;WebsiteOrderByLastUsedDesc">
-            <query>SELECT w FROM WeblogEntryTagAggregateData w WHERE w.name = ?1 AND w.website = ?2 ORDER BY w.lastUsed DESC</query>
+            <query>SELECT w FROM WeblogEntryTagAggregateData w WHERE w.name = ?1 AND w.weblog = ?2 ORDER BY w.lastUsed DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getByName&amp;WebsiteNullOrderByLastUsedDesc">
-            <query>SELECT w FROM WeblogEntryTagAggregateData w WHERE w.name = ?1 AND w.website IS NULL ORDER BY w.lastUsed DESC</query>
+            <query>SELECT w FROM WeblogEntryTagAggregateData w WHERE w.name = ?1 AND w.weblog IS NULL ORDER BY w.lastUsed DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getNameByNameIn&amp;Website">
-            <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.website = ?2</query>
+            <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog = ?2</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getNameByNameIn&amp;WebsiteNull">
-            <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.website IS NULL</query>
+            <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite&amp;StartDate">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 AND w.lastUsed &gt;= ?2</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.lastUsed &gt;= ?2</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&amp;StartDate">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL AND w.lastUsed &gt;= ?2</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL AND w.lastUsed &gt;= ?2</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite&amp;NameStartsWith">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 AND w.name LIKE ?2</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.name LIKE ?2 GROUP BY w.name, w.total </query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 GROUP BY w.name, w.total</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNull&amp;NameStartsWith">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL AND w.name LIKE ?2</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL AND w.name LIKE ?2 GROUP BY w.name, w.total</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNull">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL GROUP BY w.name, w.total</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite&amp;NameStartsWithOrderByName">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 AND w.name LIKE ?2 ORDER BY w.name</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.name LIKE ?2 GROUP BY w.name, w.total ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteOrderByName">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website = ?1 ORDER BY w.name</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNull&amp;NameStartsWithOrderByName">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL AND w.name LIKE ?2 ORDER BY w.name</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL AND w.name LIKE ?2 GROUP BY w.name, w.total ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsiteNullOrderByName">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.website IS NULL ORDER BY w.name</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;Weblog">
-            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1, lastUsed = current_timestamp()
-                                                      WHERE w.name = ?2 AND weblog = ?3</query>
+            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1, lastUsed = CURRENT_TIMESTAMP
+                                                      WHERE w.name = ?2 AND w.weblog = ?3</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;WeblogNull">
-            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1 WHERE w.name = ?2 AND weblog IS NULL</query>
+            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateTotalByName&amp;WeblogNull">
-            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total - ?1 WHERE w.name = ?2 AND weblog IS NULL</query>
+            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total - ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.removeByTotalLessEqual">
             <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.total &lt;= ?1</query>
@@ -77,7 +77,7 @@
             <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.deleteByTotalLEZero">
-            <query>DELETE FROM WeblogEntryTagAggregateData WHERE w.total &lt;= 0</query>
+            <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.total &lt;= 0</query>
         </named-query>
 
 
@@ -92,7 +92,6 @@
             </basic>
             <basic name="lastUsed">
                 <column name="lastused" insertable="true" updatable="true" unique="false"/>
-                <temporal>TIMESTAMP</temporal>
             </basic>
             <basic name="total">
                 <column name="total" insertable="true" updatable="true" unique="false"/>

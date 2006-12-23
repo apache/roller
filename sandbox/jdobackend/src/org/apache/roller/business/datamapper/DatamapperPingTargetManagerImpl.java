@@ -74,7 +74,7 @@ public class DatamapperPingTargetManagerImpl implements PingTargetManager {
             .removeAll(ping);
         // Remove the website's auto ping configurations
         strategy.newRemoveQuery(
-            AutoPingData.class, "PingTargetData.removeByPingTarget")
+            AutoPingData.class, "AutoPingData.removeByPingTarget")
             .removeAll(ping);
     }
 
