@@ -21,9 +21,6 @@
         <named-query name="WeblogCategoryData.getByWebsite&amp;ParentNull">
                 <query>SELECT w FROM WeblogCategoryData w WHERE w.website = ?1 AND w.parent IS NULL</query>
         </named-query>
-        <named-query name="WeblogCategoryData.getByWebsite&amp;ParentNotNull">
-                <query>SELECT w FROM WeblogCategoryData w WHERE w.website = ?1 AND w.parent IS NOT NULL</query>
-        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

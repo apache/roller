@@ -14,6 +14,9 @@
         <named-query name="FolderData.getByWebsite">
             <query>SELECT f FROM FolderData f WHERE f.website = ?1</query>
         </named-query>
+        <named-query name="FolderData.getByWebsite&amp;Path">
+            <query>SELECT f FROM FolderData f WHERE f.website = ?1 AND f.path = ?2</query>
+        </named-query>
         <named-query name="FolderData.getByWebsite&amp;ParentNull">
             <query>SELECT f FROM FolderData f WHERE f.website = ?1 AND f.parent IS NULL</query>
         </named-query>

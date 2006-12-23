@@ -11,7 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="RefererData" class="org.apache.roller.pojos.RefererData">
         <table name="referer"/>
-        <named-query name="RefererData.getByWeblogEntry&amp;TitleNotNull&amp;EcerptNotNullOrderByTotalHitsDesc">
+        <named-query name="RefererData.getByWeblogEntry&amp;TitleNotNull&amp;ExcerptNotNullOrderByTotalHitsDesc">
             <query>SELECT r FROM RefererData r WHERE r.weblogEntry = ?1 AND r.title IS NOT NULL AND r.excerpt IS NOT NULL
                                                ORDER BY r.totalHits DESC</query>
         </named-query>
@@ -34,10 +34,10 @@
         <named-query name="RefererData.getByWebsite&amp;DateString&amp;RefererPermalink">
             <query>SELECT r FROM RefererData r WHERE r.website = ?1 AND r.dateString = ?2 AND r.refererPermalink = ?3</query>
         </named-query>
-        <named-query name="RefererData.getByWebsite&amp;RefererURL">
+        <named-query name="RefererData.getByWebsite&amp;RefererUrl">
             <query>SELECT r FROM RefererData r WHERE r.website = ?1 AND r.refererUrl = ?2</query>
         </named-query>
-        <named-query name="RefererData.getByWebsite&amp;RequestURL&amp;RefererURL">
+        <named-query name="RefererData.getByWebsite&amp;RequestUrl&amp;RefererUrl">
             <query>SELECT r FROM RefererData r WHERE r.website = ?1 AND r.requestUrl = ?2 AND r.refererUrl = ?3</query>
         </named-query>
         <named-query name="RefererData.getByWebsite&amp;RequestURL&amp;TitleOrExcerpt">
@@ -70,7 +70,7 @@
         <named-query name="RefererData.deleteByNullOrEmptyExcerpt">
             <query>DELETE FROM RefererData r WHERE r.excerpt IS NULL OR r.excerpt LIKE ''</query>
         </named-query>
-        <named-query name="RefererData.deleteByNullOrEmptyExcerpt&amp;website">
+        <named-query name="RefererData.deleteByNullOrEmptyExcerpt&amp;Website">
             <query>DELETE FROM RefererData r WHERE r.website = ?1 AND (r.excerpt IS NULL OR r.excerpt LIKE '')</query>
         </named-query>
         <attributes>

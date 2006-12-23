@@ -16,9 +16,6 @@
         <named-query name="AutoPingData.getByPingTarget">
             <query>SELECT a FROM AutoPingData a WHERE a.pingTarget = ?1</query>
         </named-query>
-        <named-query name="AutoPingData.getByPingTarget&amp;Website">
-            <query>SELECT a FROM AutoPingData a WHERE a.pingTarget = ?1 AND a.website = ?2</query>
-        </named-query>
         <named-query name="AutoPingData.getByWebsite">
             <query>SELECT a FROM AutoPingData a WHERE a.website = ?1</query>
         </named-query>

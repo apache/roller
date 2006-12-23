@@ -83,10 +83,8 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void flush() throws RollerException {
         try {
-            EntityManager em = getEntityManager(false);
-            if (isTransactionActive(em)) {
-                em.getTransaction().commit();
-            }
+            EntityManager em = getEntityManager(true);
+            em.getTransaction().commit();
         } catch (PersistenceException pe) {
             throw new RollerException(pe);
         }
@@ -112,7 +110,12 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public Object store(Object obj) throws RollerException {
         EntityManager em = getEntityManager(true);
-        em.persist(obj);
+        // Roller code calls store even on already managed entity
+        // Till Roller code is fixed, we will need to have following
+        // check
+        if ( !em.contains(obj) ) {
+            em.persist(obj);
+        }
         return obj;
     }
 
@@ -255,7 +258,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public JPAUpdateQuery newUpdateQuery(String queryName)
             throws RollerException {
-        EntityManager em = getEntityManager(false);
+        EntityManager em = getEntityManager(true);
         return new JPAUpdateQuery(em, queryName);
     }
 

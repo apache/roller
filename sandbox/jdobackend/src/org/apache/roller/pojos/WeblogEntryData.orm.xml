@@ -21,47 +21,46 @@
         <named-query name="WeblogEntryData.getByPinnedToMainOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.pinnedToMain = ?1 ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterThen&amp;CategoryOrderByPubTimeAsc">
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;CategoryOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterThen&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
                                                      AND UPPER(w.locale) LIKE '?5%'
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterThenOrderByPubTimeAsc">
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterThen&amp;LocaleLikeOrderByPubTimeAsc">
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;LocaleLikeOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
                                                      AND UPPER(w.locale) LIKE '?4%'
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessEqualOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt;= ?3
-                                                   ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessEqual&amp;CategoryOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt;= ?3 AND w.category = ?4
-                                                   ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessEqual&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt;= ?3 AND w.category = ?4
-                                                     AND UPPER(w.locale) LIKE '?5%'
-                                                   ORDER BY w.pubTime DESC</query>
-        </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessThenOrderByPubTimeDesc">
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessThen&amp;LocaleLikeOrderByPubTimeDesc">
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;CategoryOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3 AND w.category = ?4
+                                                   ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3  AND w.category = ?4
+                                                     AND UPPER(w.locale) LIKE '?4%'
+                                                   ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;LocaleLikeOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
                                                      AND UPPER(w.locale) LIKE '?4%'
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWeblogEntry&amp;Anchor">
+        <named-query name="WeblogEntryData.getByWebsite&amp;AnchorOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryData.getByWebsite&amp;Anchor">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.anchor = ?2</query>
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite">
