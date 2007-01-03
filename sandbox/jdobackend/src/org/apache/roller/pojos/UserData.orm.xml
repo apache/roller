@@ -67,7 +67,10 @@
             <query>SELECT COUNT(u) FROM UserData u WHERE UPPER(u.userName) LIKE ?1</query>
         </named-query>
         <named-query name="UserData.getCountEnabledDistinct">
-            <query>SELECT COUNT(DISTINCT u) FROM UserData u WHERE u.enabled = ?1</query>
+            <!--
+            DISTINCT is not required for this query as no duplicate UserData would be retrieved
+            -->
+            <query>SELECT COUNT(u) FROM UserData u WHERE u.enabled = ?1</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -101,7 +104,7 @@
             </basic>
             <one-to-many name="permissions" mapped-by="user" target-entity="org.apache.roller.pojos.PermissionsData" fetch="LAZY">
                 <cascade>
-                    <cascade-all/>
+                    <cascade-remove/>
                 </cascade>
             </one-to-many>
             <one-to-many name="roles" mapped-by="user" target-entity="org.apache.roller.pojos.RoleData" fetch="LAZY">

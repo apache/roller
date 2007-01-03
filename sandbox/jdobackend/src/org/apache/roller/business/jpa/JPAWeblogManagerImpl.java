@@ -28,7 +28,7 @@ import java.sql.Timestamp;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.roller.business.datamapper.DatamapperWeblogManagerImpl;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -72,7 +72,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         if (catName != null && catName.trim().equals("/")) {
             catName = null;
         }
-                
+
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();
@@ -107,10 +107,22 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         }
 
         if (tags != null && tags.size() > 0) {
-          for(int i = 0; i < tags.size(); i++) {
+            // A JOIN with WeblogEntryTagData in parent quert will cause a DISTINCT in SELECT clause
+            // WeblogEntryData has a clob field and many databases do not link DISTINCT for CLOB fields
+            // Hence as a workaround using corelated EXISTS query.
+            queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTagData t WHERE "
+                    + " t.weblogEntry = e AND t.name IN (");
+            final String PARAM_SEPERATOR = ", ";
+            for(int i = 0; i < tags.size(); i++) {
               params.add(size++, tags.get(i));
-              queryString.append(" AND e.tags.name = ?").append(size);
-          }
+              queryString.append("?").append(size).append(PARAM_SEPERATOR);
+            }
+            // Remove the trailing PARAM_SEPERATOR
+            queryString.delete(queryString.length() - PARAM_SEPERATOR.length(),
+                    queryString.length());
+
+            // Close the brace FOR IN clause and EXIST clause
+            queryString.append(" ) )");
         }
 
         if (status != null) {
@@ -169,47 +181,51 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();
-        queryString.append("SELECT c FROM CommentData c WHERE ");
+        queryString.append("SELECT c FROM CommentData c ");
 
+        StringBuffer whereClause = new StringBuffer();
         if (entry != null) {
             params.add(size++, entry);
-            queryString.append("c.weblogEntry = ?").append(size);
+            whereClause.append("c.weblogEntry = ?").append(size);
         } else if (website != null) {
             params.add(size++, website);
-            queryString.append("c.weblogEntry.website = ?").append(size);
+            whereClause.append("c.weblogEntry.website = ?").append(size);
         }
             
         if (searchString != null) {
             params.add(size++, "%" + searchString + "%");
-            queryString.append(" AND (url LIKE ?").append(size).
-                        append(" OR content LIKE ?").append(size).append(")");
+            whereClause.append(" AND (url LIKE ?").append(size).
+                        append(" OR content LIKE ?)").append(size).append(")");
         }
             
         if (startDate != null) {
             params.add(size++, startDate);
-            queryString.append("c.postTime >= ?").append(size);
+            whereClause.append("c.postTime >= ?").append(size);
         }
             
         if (endDate != null) {
             params.add(size++, endDate);
-            queryString.append("c.postTime =< ?").append(size);
+            whereClause.append("c.postTime =< ?").append(size);
         }
             
         if (pending != null) {
             params.add(size++, pending);
-            queryString.append("c.pending = ?").append(size);
+            whereClause.append("c.pending = ?").append(size);
         }
             
         if (approved != null) {
             params.add(size++, approved);
-            queryString.append("c.approved = ?").append(size);
+            whereClause.append("c.approved = ?").append(size);
         }
             
         if (spam != null) {
             params.add(size++, spam);
-            queryString.append("c.spam = ?").append(size);
+            whereClause.append("c.spam = ?").append(size);
         }
-            
+
+        if(whereClause.length() != 0) {
+            queryString.append(" WHERE ").append(whereClause);
+        }
         if (reverseChrono) {
             queryString.append(" ORDER BY c.postTime DESC");
         } else {
@@ -364,31 +380,46 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
     /**
      * @inheritDoc
      */
-    public boolean getTagComboExists(List tags, WebsiteData weblog) {
+    public boolean getTagComboExists(List tags, WebsiteData weblog) throws RollerException{
 
-        List results = null;
-
-        if(tags == null) {
+        if(tags == null || tags.size() == 0) {
             return false;
         }
         
-        // TODO: Non-standard JPA query, passing List as argument
-        try {
-            // are we checking a specific weblog, or site-wide?
-            if (weblog != null)
-                results = (List) strategy.newQuery(
-                    WeblogEntryTagAggregateData.class, 
-                    "WeblogEntryTagAggregateData.getNameByNameIn&Website")
-                    .execute(new Object[] {tags, weblog});
-            else
-                results = (List) strategy.newQuery(
-                    WeblogEntryTagAggregateData.class, 
-                    "WeblogEntryTagAggregateData.getNameByNameIn&WebsiteNull")
-                    .execute(tags);
-        } catch (RollerException re) {
-            throw new RuntimeException(re);
+        StringBuffer queryString = new StringBuffer();
+        queryString.append("SELECT DISTINCT w.name ");
+        queryString.append("FROM WeblogEntryTagAggregateData w WHERE w.name IN (");
+//?1) AND w.weblog = ?2");
+        //Append tags as parameter markers to avoid potential escaping issues
+        //The IN clause would be of form (?1, ?2, ?3, ..)
+        ArrayList params = new ArrayList(tags.size() + 1);
+        final String PARAM_SEPERATOR = ", ";
+        int i;
+        for (i=0; i < tags.size(); i++) {
+            queryString.append('?').append(i+1).append(PARAM_SEPERATOR);
+            params.add(tags.get(i));
         }
 
+        // Remove the trailing PARAM_SEPERATOR
+        queryString.delete(queryString.length() - PARAM_SEPERATOR.length(),
+                queryString.length());
+        // Close the brace of IN clause
+        queryString.append(')');
+
+        if(weblog != null) {
+            queryString.append(" AND w.weblog = ?").append(i+1);
+            params.add(weblog);
+        } else {
+            queryString.append(" AND w.weblog IS NULL");
+        }
+
+        DatamapperQuery q = ((JPAPersistenceStrategy) strategy).
+                newDynamicQuery(queryString.toString());
+        List results = (List)q.execute(params.toArray());
+
+        //TODO: DatamapperPort: Since we are only interested in knowing whether
+        //results.size() == tags.size(). This query can be optimized to just fetch COUNT
+        //instead of objects as done currently
         return (results != null && results.size() == tags.size());
     }
 
@@ -452,8 +483,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
                 "WeblogEntryTagAggregateData.updateAddToTotalByName&WeblogNull")
                 .updateAll(new Object[] {
                     new Long(amount),
-                    weblogTagData.getName(),
-                    website
+                    weblogTagData.getName()
                     });
         }
 

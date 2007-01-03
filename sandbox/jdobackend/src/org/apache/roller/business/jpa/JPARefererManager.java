@@ -81,7 +81,7 @@ public class JPARefererManager extends DatamapperRefererManagerImpl {
             //TODO: DataMapper port: original code use "like ignore case" as follows
             // or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             // There is no equivalent for it in JPA
-            queryString.append("refererUrl like %").append(ignoreWord.trim()).append('%').
+            queryString.append("r.refererUrl like '%").append(ignoreWord.trim()).append("%'").
                     append(OR);
         }
         // Get rid of last OR

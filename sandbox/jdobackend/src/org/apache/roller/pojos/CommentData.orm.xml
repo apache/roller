@@ -12,43 +12,69 @@
     <entity metadata-complete="true" name="CommentData" class="org.apache.roller.pojos.CommentData">
         <table name="roller_comment"/>
         <named-query name="CommentData.getCountAllDistinct">
-            <query>SELECT COUNT(DISTINCT c) FROM CommentData c</query>
+            <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
+            <query>SELECT COUNT(c) FROM CommentData c</query>
         </named-query>
         <named-query name="CommentData.getCountDistinctByWebsite">
-            <query>SELECT COUNT(DISTINCT c) FROM CommentData c WHERE c.weblogEntry.website = ?1</query>
+            <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
+            <query>SELECT COUNT(c) FROM CommentData c WHERE c.weblogEntry.website = ?1</query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWebsiteByEndDate">
-            <query>SELECT COUNT(DISTINCT c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result 
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
                    FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1
                    GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
             </query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWebsiteByEndDate&amp;StartDate">
-            <query>SELECT COUNT(DISTINCT c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
                    FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2
                 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
             </query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByEndDate">
-            <query>SELECT COUNT(DISTINCT c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
                    FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1
                    GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
             </query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByEndDate&amp;StartDate">
-            <query>SELECT COUNT(DISTINCT c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
                    FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2
                    GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
             </query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByWebsite&amp;EndDate">
-            <query>SELECT COUNT(DISTINCT c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
                    FROM CommentData c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2
                   GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
             </query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByWebsite&amp;EndDate&amp;StartDate">
-            <query>SELECT COUNT(DISTINCT c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
                    FROM CommentData c WHERE c.weblogEntry.website = ?1
                                         AND c.weblogEntry.pubTime &lt; ?2 AND c.weblogEntry.pubTime &gt; ?3
                   GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title

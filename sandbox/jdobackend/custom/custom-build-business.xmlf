@@ -6,10 +6,9 @@
 <javac destdir="${build.compile.business}"
     debug="${build.debug}" 
     source="${build.sourcelevel}"
-    deprecation="${build.deprecation}">
-        
-    <src path="sandbox/jdobackend/src" />
-        
+    deprecation="${build.deprecation}"
+    srcdir="sandbox/jdobackend/src"
+    excludes="**/*PlanetManagerImpl.java">
     <classpath>
         <path refid="business.path"/>
         <fileset dir="${build.lib}" includes="*.jar" />

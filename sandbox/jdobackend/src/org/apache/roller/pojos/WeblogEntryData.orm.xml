@@ -16,7 +16,7 @@
             <query>SELECT w FROM WeblogEntryData w WHERE w.category = ?1</query>
         </named-query>
         <named-query name="WeblogEntryData.getByCategory.pathLike&amp;Website">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.category.path LIKE '?1%' AND w.website = ?2</query>
+            <query>SELECT w FROM WeblogEntryData w WHERE w.category.path LIKE ?1 AND w.website = ?2</query>
         </named-query>
         <named-query name="WeblogEntryData.getByPinnedToMainOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.pinnedToMain = ?1 ORDER BY w.pubTime DESC</query>
@@ -27,7 +27,7 @@
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
-                                                     AND UPPER(w.locale) LIKE '?5%'
+                                                     AND UPPER(w.locale) LIKE ?5
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterOrderByPubTimeAsc">
@@ -36,7 +36,7 @@
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;LocaleLikeOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
-                                                     AND UPPER(w.locale) LIKE '?4%'
+                                                     AND UPPER(w.locale) LIKE ?4
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessOrderByPubTimeDesc">
@@ -49,12 +49,12 @@
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3  AND w.category = ?4
-                                                     AND UPPER(w.locale) LIKE '?4%'
+                                                     AND UPPER(w.locale) LIKE ?5
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;LocaleLikeOrderByPubTimeDesc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
-                                                     AND UPPER(w.locale) LIKE '?4%'
+                                                     AND UPPER(w.locale) LIKE ?4
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;AnchorOrderByPubTimeDesc">
@@ -67,10 +67,12 @@
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1</query>
         </named-query>
         <named-query name="WeblogEntryData.getCountDistinctByStatus">
-            <query>SELECT COUNT(DISTINCT e) FROM WeblogEntryData e WHERE e.status = ?1</query>
+            <!-- DISTINCT is not required for this query -->
+            <query>SELECT COUNT(e) FROM WeblogEntryData e WHERE e.status = ?1</query>
         </named-query>
         <named-query name="WeblogEntryData.getCountDistinctByStatus&amp;Website">
-            <query>SELECT COUNT(DISTINCT e) FROM WeblogEntryData e WHERE e.status = ?1 AND e.website = ?2</query>
+            <!-- DISTINCT is not required for this query -->
+            <query>SELECT COUNT(e) FROM WeblogEntryData e WHERE e.status = ?1 AND e.website = ?2</query>
         </named-query>
         <named-query name="WeblogEntryData.updateAllowComments&amp;CommentDaysByWebsite">
             <query>UPDATE WeblogEntryData SET allowComments = ?1, commentDays = ?2, 
@@ -146,6 +148,7 @@
             </one-to-many>
             <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryTagData" fetch="LAZY">
                 <cascade>
+                    <cascade-persist/> <!-- Added so entry added by addTag() gets persisted -->
                     <cascade-remove/>
                 </cascade>
             </one-to-many>

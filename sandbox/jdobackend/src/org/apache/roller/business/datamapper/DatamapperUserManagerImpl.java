@@ -206,14 +206,14 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
         if (null != rootCat) {
             this.strategy.remove(rootCat);
-        }
+    }
 
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategoryData and WebsiteData
         this.strategy.flush();
     }
 
-    protected abstract void updateTagAggregates(List tags) 
+    protected abstract void updateTagAggregates(List tags)
         throws RollerException;
 
     public void saveUser(UserData data) throws RollerException {
@@ -883,7 +883,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         DatamapperQuery query = strategy.newQuery(
                 WeblogTemplate.class, "WeblogTemplate.getByWebsite&Link");
-        query.setRange(1, 2);  // => query.setFirstResult(1).setMaxResult(1)
+        query.setRange(0, 1);  // => query.setFirstResult(1).setMaxResult(1)
         List list = (List)query.execute(new Object[] {website, pagelink});
         return list.size()!=0 ? (WeblogTemplate)list.get(0) : null;
     }
@@ -902,7 +902,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         DatamapperQuery query = strategy.newQuery(
                 WeblogTemplate.class, "WeblogTemplate.getByWebsite&Name");
-        query.setRange(1, 2);  // => query.setFirstResult(1).setMaxResult(1)
+        query.setRange(0, 1);  // => query.setFirstResult(1).setMaxResult(1)
         List list = (List)query.execute(new Object[] {website, pagename}); 
         return list.size()!=0? (WeblogTemplate)list.get(0) : null;
     }
@@ -982,7 +982,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             List row = (List) query.execute(currentChar + "%");
-            Integer count = (Integer) row.get(0);
+            Long count = (Long) row.get(0);
             results.put(String.valueOf(currentChar), count);
         }
         return results;
@@ -1005,7 +1005,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             List row = (List) query.execute(currentChar + "%");
-            Integer count = (Integer) row.get(0);
+            Long count = (Long) row.get(0);
             results.put(String.valueOf(currentChar), count);
         }
         return results;
@@ -1067,7 +1067,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                     (String)row[2],                     // website handle
                     (String)row[3],                     // website name
                     "statCount.weblogCommentCountType", // stat type 
-                    new Long(((Integer)row[0]).intValue()).longValue())); // # comments
+                    ((Long)row[0]).longValue())); // # comments
         }
         //TODO Uncomment following once integrated with code
         //Collections.sort(results, StatCount.getComparator());
@@ -1083,7 +1083,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         List results = (List) strategy.newQuery(WebsiteData.class, 
             "WebsiteData.getCountAllDistinct").execute();
 
-        ret = ((Integer)results.get(0)).intValue();
+        ret = ((Long)results.get(0)).longValue();
         
         return ret;
     }
@@ -1097,7 +1097,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         List results = (List) strategy.newQuery(UserData.class, 
             "UserData.getCountEnabledDistinct").execute(Boolean.TRUE);
 
-        ret =((Integer)results.get(0)).intValue();
+        ret =((Long)results.get(0)).longValue();
 
         return ret;
     }

@@ -47,7 +47,7 @@ public interface DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    Object store(Object obj) 
+    Object store(PersistentObject obj) 
             throws RollerException;
 
     /**

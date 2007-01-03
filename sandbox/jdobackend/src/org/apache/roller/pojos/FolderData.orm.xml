@@ -48,7 +48,7 @@
             <one-to-many name="bookmarks" mapped-by="folder" target-entity="org.apache.roller.pojos.BookmarkData" fetch="LAZY">
                 <order-by>name</order-by>
                 <cascade>
-                    <cascade-remove/>  <!--cascade="all-delete-orphan" -->
+                    <cascade-all/>
                 </cascade>
             </one-to-many>
         </attributes>

@@ -244,7 +244,7 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
         
         for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
             Object[] row = (Object[])it.next();
-            Integer hits = (Integer)row[0];
+            Long hits = (Long)row[0];
             String websiteId = (String)row[1];
             String websiteName = (String)row[2];
             String websiteHandle = (String)row[3];
@@ -252,7 +252,9 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
                 websiteId,
                 websiteName,
                 websiteHandle,
-                hits));              
+                // TODO: DataMapperport The query is retrieving SUM(DISTINCT r.dayHits) which should be a long
+                // Change WebsiteDisplayData to accept hits as long 
+                Integer.valueOf(hits.intValue())));
         }
         //TODO Uncomment following once integrated with code
         //Collections.sort(results, StatCount.getComparator());
@@ -266,21 +268,23 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
         if (log.isDebugEnabled()) {
             log.debug("getHits: " + website.getName());
         }
-        
-        List results = null;
-            
-        DatamapperQuery query = strategy.newQuery(RefererData.class, 
+        //TODO: DatamapperPort. This original query retrieves both SUM(r.dayHits), SUM(r.totalHits)
+        //The method only comsumes one of them. We can optimize the logic to retrive only the 
+        //requied SUM
+        DatamapperQuery query = strategy.newQuery(RefererData.class,
             "RefererData.getHitsByWebsite.enabled&Website.id");
+
+        List results = (List) query.execute(new Object[] {Boolean.TRUE, website.getId()});
 
         Object[] resultsArray = (Object[]) results.get(0);
         
         if (resultsArray.length > 0 && type.equals(DAYHITS)) {
             if ( resultsArray[0] != null ) {
-                hits = ((Integer) resultsArray[0]).intValue();
+                hits = ((Long) resultsArray[0]).intValue();
             }
         } else if ( resultsArray.length > 0 ) {
             if ( resultsArray[0] != null ) {
-                hits = ((Integer) resultsArray[1]).intValue();
+                hits = ((Long) resultsArray[1]).intValue();
             }
         } else {
             hits = 0;
