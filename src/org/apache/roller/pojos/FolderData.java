@@ -84,6 +84,16 @@ public class FolderData extends PersistentObject
         } else {
             this.path = parent.getPath() + "/" + name;
         }
+
+        this.parentFolder = parent;
+        // Relationships need to be maintained from both sides
+        if(parent != null) {
+            // The following triggers this.hashCode(), which is calculated 
+            // based on this.path
+            // It needs to happen after this.path is initialized
+            parent.childFolders.add(this);
+        }
+
     }
     
     
