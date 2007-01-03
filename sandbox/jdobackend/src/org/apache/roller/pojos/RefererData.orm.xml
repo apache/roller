@@ -45,7 +45,11 @@
                                                 AND (r.title = ?3 OR r.excerpt = ?4)</query>
         </named-query>
         <named-query name="RefererData.getHotWeblogsByWebsite.enabled&amp;Website.active&amp;Website.lastModifiedGreater">
-            <query>SELECT COUNT(DISTINCT r), r.website.id, r.website.name, r.website.handle
+            <!--
+            DISTINCT is not required for this query - RefererData would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(r), r.website.id, r.website.name, r.website.handle
                 FROM RefererData r WHERE r.website.enabled = ?1 AND r.website.active = ?2 AND r.website.lastModified &gt; ?3
                 GROUP BY r.website.id, r.website.name, r.website.handle
             </query>
@@ -57,7 +61,7 @@
             </query>
         </named-query>
         <named-query name="RefererData.getHitsByWebsite.enabled&amp;Website.id">
-            <query>SELECT SUM(DISTINCT r.dayHits), SUM(DISTINCT r.totalHits)
+            <query>SELECT SUM(r.dayHits), SUM(r.totalHits)
                 FROM RefererData r WHERE r.website.enabled = ?1 AND r.website.id = ?2
             </query>
         </named-query>

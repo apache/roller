@@ -128,7 +128,8 @@
                                               ORDER BY w.dateCreated DESC</query>
 		</named-query>
 		<named-query name="WebsiteData.getCountAllDistinct">
-			<query>SELECT COUNT(DISTINCT w) FROM WebsiteData w</query>
+			<!-- DISTINCT is not required here -->
+            <query>SELECT COUNT(w) FROM WebsiteData w</query>
 		</named-query>
 		<named-query name="WebsiteData.getCountByHandleLike">
 			<query>SELECT COUNT(w) FROM WebsiteData w WHERE UPPER(w.handle) like ?1</query>

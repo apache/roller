@@ -10,7 +10,7 @@
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="HitCountData" class="org.apache.roller.pojos.HitCountData">
-        <table name="referer"/>
+        <table name="roller_hitcounts"/>
         <named-query name="HitCountData.getByWeblog">
             <query>SELECT h FROM HitCountData h WHERE h.weblog = ?1</query>
         </named-query>

@@ -16,7 +16,7 @@
             <query>SELECT b FROM BookmarkData b WHERE b.folder = ?1</query>
         </named-query>
         <named-query name="BoomarkData.getByFolder.pathLike&amp;Folder.website">
-            <query>SELECT b FROM BookmarkData b WHERE b.folder.path LIKE '?1%' AND b.folder.website = ?2</query>
+            <query>SELECT b FROM BookmarkData b WHERE b.folder.path LIKE ?1 AND b.folder.website = ?2</query>
         </named-query>
         <attributes>
             <id name="id">

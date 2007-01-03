@@ -101,6 +101,10 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
 
     public void removeFolder(FolderData folder) throws RollerException {
         this.strategy.remove(folder);
+        FolderData parent = folder.getParent();
+        if (parent != null) {
+            parent.getFolders().remove(folder);
+        }
 
         // update weblog last modified date.  date updated by saveWebsite()
         RollerFactory.getRoller().getUserManager().
@@ -302,7 +306,7 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             query = strategy.newQuery(BookmarkData.class, 
                 "BoomarkData.getByFolder.pathLike&Folder.website");
             results = (List) query.execute(
-                new Object[] {folder.getPath(), folder.getWebsite()});
+                new Object[] {folder.getPath() + '%', folder.getWebsite()});
         }
             
         return results;

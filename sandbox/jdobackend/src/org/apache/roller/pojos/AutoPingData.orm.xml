@@ -25,7 +25,9 @@
         <named-query name="AutoPingData.removeByPingTarget&amp;Website">
             <query>DELETE FROM AutoPingData a WHERE a.pingTarget = ?1 AND a.website = ?2</query>
         </named-query>
-
+        <named-query name="AutoPingData.removeAll">
+            <query>DELETE FROM AutoPingData a</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

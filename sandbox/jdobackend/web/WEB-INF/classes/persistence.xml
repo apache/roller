@@ -20,7 +20,8 @@
     <mapping-file>org/apache/roller/pojos/UserData.orm.xml                       </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WeblogCategoryData.orm.xml             </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WeblogEntryData.orm.xml                </mapping-file>
-	<mapping-file>org/apache/roller/pojos/WeblogEntryTagData.orm.xml             </mapping-file>
+    <mapping-file>org/apache/roller/pojos/WeblogEntryTagAggregateData.orm.xml    </mapping-file>
+    <mapping-file>org/apache/roller/pojos/WeblogEntryTagData.orm.xml             </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WeblogTemplate.orm.xml                 </mapping-file>
 	<mapping-file>org/apache/roller/pojos/WebsiteData.orm.xml                    </mapping-file>
 <!--
@@ -29,12 +30,5 @@
 	<mapping-file>org/apache/roller/pojos/PlanetGroupData.orm.xml		         </mapping-file>
 	<mapping-file>org/apache/roller/pojos/PlanetSubscriptionData.orm.xml	     </mapping-file>
 -->	
-        <properties>
-            <property name="toplink.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
-            <property name="toplink.jdbc.url" value="jdbc:derby://localhost:3219/roller"/>
-            <property name="toplink.jdbc.user" value="APP"/>
-            <property name="toplink.jdbc.password" value="APP"/>
-            <property name="toplink.logging.level" value="FINEST"/>
-        </properties>
     </persistence-unit>
 </persistence>

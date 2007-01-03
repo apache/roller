@@ -30,6 +30,7 @@ import java.security.PrivilegedAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.pojos.PersistentObject;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
@@ -108,13 +109,22 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    public Object store(Object obj) throws RollerException {
+    public Object store(PersistentObject obj) throws RollerException {
         EntityManager em = getEntityManager(true);
         // Roller code calls store even on already managed entity
         // Till Roller code is fixed, we will need to have following
-        // check
-        if ( !em.contains(obj) ) {
+        if ( obj.getId() == null || obj.getId().trim().equals("") ) {
+            // Object has never been written to database, so save it.
+            // This makes obj into a persistent instance.
             em.persist(obj);
+        }
+        if ( !em.contains(obj) ) {
+            // Object has been written to database, but instance passed in
+            // is not a persistent instance, so must be loaded into em.
+            PersistentObject vo =
+                    (PersistentObject)load(obj.getClass(),obj.getId());
+            vo.setData(obj);
+            obj = vo;
         }
         return obj;
     }
@@ -160,11 +170,15 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @throws org.apache.roller.RollerException on any error
      */
     public void removeAll(Class clazz) throws RollerException {
-        //TODO: Think how this would be implemented
-        //One possible solution is to use bulk delete using nammed queries
-        //The name would be generated using clazz.
-        //We will need to make sure that the named query is defined for each clazz
-        DatamapperRemoveQuery rq = newRemoveQuery(clazz, null);
+        // The only caller of this method is DatamapperAutoPingManagerImpl@removeAllAutoPings()
+        // Discuss with Craig to remove this method from interface
+
+        //Derive name of entity from class name
+        String fullyQualifiedClassName = clazz.getName();
+        int indexOfLastDot = fullyQualifiedClassName.lastIndexOf('.');
+        String className = fullyQualifiedClassName.substring(indexOfLastDot + 1);
+        String queryName = className + ".removeAll";
+        DatamapperRemoveQuery rq = newRemoveQuery(clazz, queryName);
         rq.removeAll();
     }
 
