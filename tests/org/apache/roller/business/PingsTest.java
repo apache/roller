@@ -314,7 +314,9 @@ public class PingsTest extends TestCase {
         
         // remove a collection
         List autoPings = new ArrayList();
+        autoPing2 = mgr.getAutoPing(autoPing2.getId()); //Get managed version of autoPing2
         autoPings.add(autoPing2);
+        autoPing3 = mgr.getAutoPing(autoPing3.getId()); //Get managed version of autoPing2
         autoPings.add(autoPing3);
         mgr.removeAutoPings(autoPings);
         TestUtils.endSession(true);
