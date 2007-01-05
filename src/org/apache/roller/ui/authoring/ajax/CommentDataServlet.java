@@ -61,7 +61,7 @@ public class CommentDataServlet extends HttpServlet {
             response.flushBuffer();
             response.getWriter().flush();
             response.getWriter().close();
-        } catch (RollerException e) {
+        } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }

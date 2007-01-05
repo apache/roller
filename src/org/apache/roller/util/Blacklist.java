@@ -211,9 +211,9 @@ public class Blacklist {
             
         } catch (Exception e) {
             // Roller keeps a copy in the webapp just in case
-            txtStream = getClass().getResourceAsStream("/"+blacklistFile);           
-            mLogger.warn("Couldn't find downloaded blacklist, " 
-                        + "loading from classpath instead");
+            txtStream = getClass().getResourceAsStream("/blacklist.txt");           
+            mLogger.warn(
+                "Couldn't find downloaded blacklist, loaded blacklist.txt from classpath instead");
         }
         
         if (txtStream != null) {

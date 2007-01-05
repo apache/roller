@@ -19,6 +19,9 @@ create index fo_parentid_idx on folder( parentid );
 #addColumnNull("folder" "path" "varchar(255)")
 create index fo_path_idx on folder( path );
 
+-- add new fields to comment table to support CommentValidators
+#addColumnNull("roller_comment" "referrer" "varchar(255)")
+#addColumnNull("roller_comment" "useragent" "varchar(255)")
 
 -- some various indexes to improve performance
 create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );

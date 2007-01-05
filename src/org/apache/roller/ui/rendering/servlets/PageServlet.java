@@ -55,7 +55,7 @@ import org.apache.roller.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
-import org.apache.roller.util.SpamChecker;
+import org.apache.roller.util.BlacklistChecker;
 
 
 /**
@@ -551,7 +551,7 @@ public class PageServlet extends HttpServlet {
                     
                     if (referrerUrl.matches(requestSite + ".*\\.do.*")) {
                         referrerUrl = null;
-                    } else if(SpamChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
+                    } else if(BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
                         return true;
                     }
                 }
