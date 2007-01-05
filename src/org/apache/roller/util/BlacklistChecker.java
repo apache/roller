@@ -34,10 +34,13 @@ import org.apache.roller.pojos.WebsiteData;
  * @author Lance Lavandowska
  * @author Dave Johnson
  */
-public class SpamChecker { 
-    private static Log mLogger = LogFactory.getLog(SpamChecker.class);
+public class BlacklistChecker { 
+    private static Log mLogger = LogFactory.getLog(BlacklistChecker.class);
     
-    /** Test comment, applying all blacklists, if configured */
+    /** 
+     * Test comment, applying all blacklists, if configured 
+     * @return True if comment matches blacklist term
+     */
     public static boolean checkComment(CommentData comment) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.comments")) {
             return testComment(comment);
@@ -45,7 +48,10 @@ public class SpamChecker {
         return false;
     }
     
-    /** Test trackback comment, applying all blacklists, if configured */
+    /** 
+     * Test trackback comment, applying all blacklists, if configured 
+     * @return True if comment matches blacklist term
+     */
     public static boolean checkTrackback(CommentData comment) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.trackbacks")) {
             return testComment(comment);
@@ -53,7 +59,10 @@ public class SpamChecker {
         return false;
     }
 
-    /** Test referrer URL, applying blacklist and website blacklist only if configured */
+    /** 
+     * Test referrer URL, applying blacklist and website blacklist only if configured 
+     * @return True if comment matches blacklist term
+     */
     public static boolean checkReferrer(WebsiteData website, String referrerURL) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
             List stringRules = new ArrayList();
@@ -69,7 +78,10 @@ public class SpamChecker {
         return false;
     }
 
-    /** Test comment against built in blacklist, site blacklist and website blacklist */
+    /** 
+     * Test comment against built in blacklist, site blacklist and website blacklist 
+     * @return True if comment matches blacklist term
+     */
     private static boolean testComment(CommentData c) {
         boolean ret = false;
         List stringRules = new ArrayList();

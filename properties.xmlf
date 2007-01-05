@@ -93,8 +93,6 @@ in the "base.path" definition.
     <include name="rome-fetcher-0.9.jar"/>
     <include name="velocity-1.4.jar"/>
     <include name="velocity-dep-1.4.jar"/>
-    <include name="mail.jar"/>
-    <include name="activation.jar"/>
     <include name="xmlrpc-1.2-b1.jar"/>
 </fileset>
 
@@ -119,7 +117,7 @@ in the "base.path" definition.
     <include name="jsp-api.jar"/>
 </fileset>
 
-<fileset id="mail.jars" dir="${ro.tools}/lib">
+<fileset id="mail.jars" dir="${ro.tools}/buildtime">
     <include name="activation.jar"/>
     <include name="mail.jar"/>
 </fileset>

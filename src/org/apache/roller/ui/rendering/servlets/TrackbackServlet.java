@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +37,11 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.rendering.util.CommentValidationManager;
+import org.apache.roller.ui.rendering.util.TrackbackLinkbackCommentValidator;
 import org.apache.roller.ui.rendering.util.WeblogTrackbackRequest;
 import org.apache.roller.util.LinkbackExtractor;
-import org.apache.roller.util.SpamChecker;
+import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts.util.RequestUtils;
@@ -56,7 +59,8 @@ public class TrackbackServlet extends HttpServlet {
     
     private static Log logger = LogFactory.getLog(TrackbackServlet.class);
     
-    
+    private CommentValidationManager commentValidationManager = null;
+        
     /**
      * Handle incoming http GET requests.
      *
@@ -67,7 +71,15 @@ public class TrackbackServlet extends HttpServlet {
         
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
-    
+
+    public void init(ServletConfig config) throws ServletException {
+        commentValidationManager = new CommentValidationManager();
+        
+        // use configured comment validators, plus linkback validator if enabled
+        if (RollerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
+            commentValidationManager.addCommentValidator(new TrackbackLinkbackCommentValidator());
+        }
+    }
     
     /**
      * Service incoming POST requests.
@@ -83,8 +95,10 @@ public class TrackbackServlet extends HttpServlet {
         WebsiteData weblog = null;
         WeblogEntryData entry = null;
         
+        RollerMessages messages = new RollerMessages();
+        
         WeblogTrackbackRequest trackbackRequest = null;
-        if(!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
+        if (!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
             // TODO: i18n
             error = "Trackbacks are disabled for this site";
         } else {
@@ -92,14 +106,14 @@ public class TrackbackServlet extends HttpServlet {
             try {
                 trackbackRequest = new WeblogTrackbackRequest(request);
                 
-                if((trackbackRequest.getTitle() == null) ||
+                if ((trackbackRequest.getTitle() == null) ||
                         "".equals(trackbackRequest.getTitle())) {
                     trackbackRequest.setTitle(trackbackRequest.getUrl());
                 }
                 
-                if(trackbackRequest.getExcerpt() == null) {
+                if (trackbackRequest.getExcerpt() == null) {
                     trackbackRequest.setExcerpt("");
-                } else if(trackbackRequest.getExcerpt().length() >= 255) {
+                } else if (trackbackRequest.getExcerpt().length() >= 255) {
                     trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0, 252)+"...");
                 }
                 
@@ -107,7 +121,7 @@ public class TrackbackServlet extends HttpServlet {
                 UserManager uMgr = RollerFactory.getRoller().getUserManager();
                 weblog = uMgr.getWebsiteByHandle(trackbackRequest.getWeblogHandle());
                 
-                if(weblog == null) {
+                if (weblog == null) {
                     throw new RollerException("unable to lookup weblog: "+
                             trackbackRequest.getWeblogHandle());
                 }
@@ -116,7 +130,7 @@ public class TrackbackServlet extends HttpServlet {
                 WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
                 
-                if(entry == null) {
+                if (entry == null) {
                     throw new RollerException("unable to lookup entry: "+
                             trackbackRequest.getWeblogAnchor());
                 }
@@ -128,14 +142,12 @@ public class TrackbackServlet extends HttpServlet {
             }
         }
         
-        if(error != null) {
+        if (error != null) {
             pw.println(this.getErrorResponse(error));
             return;
         }
         
-        try {
-            boolean verified = true;
-            
+        try {            
             // check if trackbacks are allowed for this entry
             // this checks site-wide settings, weblog settings, and entry settings
             if (entry != null && entry.getCommentsStillAllowed() && entry.isPublished()) {
@@ -150,37 +162,24 @@ public class TrackbackServlet extends HttpServlet {
                 comment.setPostTime(new Timestamp(new Date().getTime()));
                 
                 // If comment contains blacklisted text, mark as spam
-                SpamChecker checker = new SpamChecker();
-                if (checker.checkTrackback(comment)) {
-                    comment.setSpam(Boolean.TRUE);
-                    logger.debug("Trackback blacklisted: "+comment.getUrl());
-                    error = "REJECTED: trackback contains spam words";
-                }
-                // Else, if trackback verification is on...
-                else if (RollerRuntimeConfig.getBooleanProperty(
-                        "site.trackbackVerification.enabled")) {
-                    
-                    // ...ensure trackbacker actually links to us
-                    LinkbackExtractor linkback = new LinkbackExtractor(
-                            comment.getUrl(), URLUtilities.getWeblogEntryURL(weblog, null, entry.getAnchor(), true));
-                    if (linkback.getExcerpt() == null) {
-                        comment.setPending(Boolean.TRUE);
-                        comment.setApproved(Boolean.FALSE);
-                        verified = false;
-                        // if we can't verify trackback, then reject it
-                        error = "REJECTED: trackback failed verification";
-                        logger.debug("Trackback failed verification: "+comment.getUrl());
-                    }
-                }
-                
+                int validationScore = commentValidationManager.validateComment(comment, messages);
+                logger.debug("Comment Validation score: " + validationScore);
+                                
                 if (error == null) {
-                    // If comment moderation is on, set comment as pending
-                    if (verified && weblog.getCommentModerationRequired()) {
+                    
+                    if (validationScore == 100 && weblog.getCommentModerationRequired()) {
+                        // Valid comments go into moderation if required
                         comment.setPending(Boolean.TRUE);
                         comment.setApproved(Boolean.FALSE);
-                    } else if (verified) {
+                    } else if (validationScore == 100) {
+                        // else they're approved
                         comment.setPending(Boolean.FALSE);
                         comment.setApproved(Boolean.TRUE);
+                    } else {
+                        // Invalid comments are marked as spam and put into moderation
+                        comment.setSpam(Boolean.TRUE);
+                        comment.setPending(Boolean.TRUE);
+                        comment.setApproved(Boolean.FALSE);
                     }
                     
                     // save, commit, send response
@@ -199,7 +198,7 @@ public class TrackbackServlet extends HttpServlet {
                     if (rootURL == null || rootURL.trim().length()==0) {
                         rootURL = RequestUtils.serverURL(request) + request.getContextPath();
                     }
-                    CommentServlet.sendEmailNotification(comment, rootURL);
+                    CommentServlet.sendEmailNotification(comment, validationScore == 100, messages, rootURL);
                     
                     if(comment.getPending().booleanValue()) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));

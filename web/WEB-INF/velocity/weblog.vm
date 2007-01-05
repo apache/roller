@@ -222,6 +222,7 @@ Show comments form for weblog entry.
 
     <div class="comments-form">
     <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div>
+    <a name="comment-form"></a>
 
 #if( $entry.commentsStillAllowed )
 
@@ -278,7 +279,7 @@ Show comments form for weblog entry.
                <div id="commentAuthenticator"></div>
             </li>
             <li>
-               <input type="button" class="button" name="post" value="&nbsp;$text.get( "macro.weblog.preview" )&nbsp;"
+               <input type="button" class="button" name="post" value="&nbsp;$text.get("macro.weblog.postpreview" )&nbsp;"
                   onclick="this.form.method.value='preview';this.form.submit()" />
                <input type="submit" class="button" name="post" value="&nbsp;$text.get( "macro.weblog.post" )&nbsp;" />
             </li>

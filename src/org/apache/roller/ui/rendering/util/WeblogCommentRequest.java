@@ -137,7 +137,7 @@ public class WeblogCommentRequest extends WeblogRequest {
         }
         
         if(request.getParameter("notify") != null) {
-            this.notify = Boolean.valueOf(request.getParameter("notify")).booleanValue();
+            this.notify = true;
         }
         
         if(log.isDebugEnabled()) {

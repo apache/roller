@@ -51,6 +51,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.rendering.servlets.CommentServlet;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentManagementForm;
+import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.Utilities;
 
 /**
@@ -281,7 +282,9 @@ public final class CommentManagementAction extends DispatchAction {
             CommentData comment = (CommentData)iter.next();
             
             // Send email notifications because a new comment has been approved
-            CommentServlet.sendEmailNotification(comment, rootURL);
+            RollerMessages systemMessages = new RollerMessages();
+            systemMessages.addMessage("commentManagement.sendingApprovalNotification");
+            CommentServlet.sendEmailNotification(comment, true, systemMessages, rootURL);
             
             // Send approval notification to author of approved comment
             CommentServlet.sendEmailApprovalNotification(comment, rootURL);
