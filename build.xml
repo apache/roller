@@ -891,12 +891,6 @@ ro.buildUser=${user.name}
             excludes="**/*.java, **/*.html, **/*.png" />
     </copy>
     
-    <!-- register Ant tasks that were just built -->
-    <taskdef name="startdb" classname="org.apache.roller.ant.StartDerbyTask" 
-        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
-    <taskdef name="stopdb" classname="org.apache.roller.ant.StopDerbyTask" 
-        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
-    
     <!-- 
     Copy web config files to ${build.tests} to make them available for testing.
     This includes the WEB-INF directory, minus jsps
@@ -1176,6 +1170,8 @@ Use -Dverbose=1 to get verbose output.
 </target>
 
 <target name="start-db" description="Starts built-in database">  
+    <taskdef name="startdb" classname="org.apache.roller.ant.StartDerbyTask" 
+        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
     <startdb database="${build.tests}/derby-system/roller" port="3219" />
     <!-- 
     <delete dir="${build.tests}/derby-system/roller" />
@@ -1191,6 +1187,8 @@ Use -Dverbose=1 to get verbose output.
 </target>
         
 <target name="stop-db" description="Drop tables and stops the built-in database">   
+    <taskdef name="stopdb" classname="org.apache.roller.ant.StopDerbyTask" 
+        classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
     <stopdb port="3219"/>
     <!--
     <delete dir="${build.tests}/derby-system/roller" />
