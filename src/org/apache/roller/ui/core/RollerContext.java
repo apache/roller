@@ -69,10 +69,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     private static Log mLogger = LogFactory.getLog(RollerContext.class);
     
-    private String mVersion = null;
-    private String mBuildTime = null;
-    private String mBuildUser = null;
-    
     public static final String ROLLER_CONTEXT = "roller.context";
     
     private static ServletContext mContext = null;
@@ -84,17 +80,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public RollerContext() {
         super();
-        
-        Properties props = new Properties();
-        try {
-            props.load(getClass().getResourceAsStream("/version.properties"));
-        } catch (IOException e) {
-            mLogger.error("version.properties not found", e);
-        }
-        
-        mVersion = props.getProperty("ro.version", "UNKNOWN");
-        mBuildTime = props.getProperty("ro.buildTime", "UNKNOWN");
-        mBuildUser = props.getProperty("ro.buildUser", "UNKNOWN");
     }
     
     
@@ -295,7 +280,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    protected void initializeSecurityFeatures(ServletContext context) {
+    protected void initializeSecurityFeatures(ServletContext context) { 
         
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
@@ -372,7 +357,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             InitialContext ic = new InitialContext();
             DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
             Connection con = ds.getConnection();
-            UpgradeDatabase.upgradeDatabase(con, mVersion);
+            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
             con.close();
         } catch (NamingException e) {
             mLogger.warn("Unable to access DataSource", e);
@@ -413,25 +398,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     public static ServletContext getServletContext() {
         return mContext;
     }
-    
-    
-    /** Roller version */
-    public String getRollerVersion() {
-        return mVersion;
-    }
-    
-    
-    /** Roller build time */
-    public String getRollerBuildTime() {
-        return mBuildTime;
-    }
-    
-    
-    /** Get username that built Roller */
-    public String getRollerBuildUser() {
-        return mBuildUser;
-    }
-    
+        
     /**
      * Get an instance of AutoProvision, if available in roller.properties
      * 

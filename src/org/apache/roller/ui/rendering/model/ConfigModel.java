@@ -18,21 +18,12 @@
 
 package org.apache.roller.ui.rendering.model;
 
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.core.RequestConstants;
-import org.apache.roller.ui.core.RollerContext;
-import org.apache.struts.util.RequestUtils;
-
 
 /**
  * Model which provides access to application config data like site
@@ -110,19 +101,19 @@ public class ConfigModel implements Model {
     
     /** Get Roller version string */
     public String getRollerVersion() {
-        return RollerContext.getRollerContext().getRollerVersion();
+        return RollerFactory.getRoller().getVersion();
     }
     
     
     /** Get timestamp of Roller build */
     public String getRollerBuildTimestamp() {
-        return RollerContext.getRollerContext().getRollerBuildTime();
+        return RollerFactory.getRoller().getBuildTime();
     }
     
     
     /** Get username who created Roller build */
     public String getRollerBuildUser() {
-        return RollerContext.getRollerContext().getRollerBuildUser();
+        return RollerFactory.getRoller().getBuildUser();
     }
     
     

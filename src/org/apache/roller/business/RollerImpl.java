@@ -18,20 +18,15 @@
 
 package org.apache.roller.business;
 
-import java.sql.Connection;
+import java.io.IOException;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.search.IndexManagerImpl;
-import org.apache.roller.business.utils.UpgradeDatabase;
-import org.apache.roller.business.FileManager;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.business.PluginManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.ThemeManager;
 import org.apache.roller.business.runnable.ThreadManager;
 
 
@@ -45,15 +40,28 @@ public abstract class RollerImpl implements Roller {
     
     private static Log mLogger = LogFactory.getLog(RollerImpl.class);
     
-    private FileManager fileManager = null;
-    private IndexManager indexManager = null;
+    private FileManager   fileManager = null;
+    private IndexManager  indexManager = null;
     private ThreadManager threadManager = null;
-    private ThemeManager themeManager = null;
+    private ThemeManager  themeManager = null;
     private PluginManager pluginManager = null;
-    
+            
+    private String version = null;
+    private String buildTime = null;
+    private String buildUser = null;
     
     public RollerImpl() {
-        // nothing to do here yet
+                
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getResourceAsStream("/version.properties"));
+        } catch (IOException e) {
+            mLogger.error("version.properties not found", e);
+        }
+        
+        version = props.getProperty("ro.version", "UNKNOWN");
+        buildTime = props.getProperty("ro.buildTime", "UNKNOWN");
+        buildUser = props.getProperty("ro.buildUser", "UNKNOWN");
     }
     
     
@@ -140,6 +148,23 @@ public abstract class RollerImpl implements Roller {
         } catch(Throwable e) {
             mLogger.error("Error calling Roller.shutdown()", e);
         }
+    }
+    
+    /** Roller version */
+    public String getVersion() {
+        return version;
+    }
+    
+    
+    /** Roller build time */
+    public String getBuildTime() {
+        return buildTime;
+    }
+    
+    
+    /** Get username that built Roller */
+    public String getBuildUser() {
+        return buildUser;
     }
     
 }
