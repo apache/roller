@@ -59,11 +59,6 @@ public class CommentValidatorTest extends TestCase {
         TestUtils.teardownUser(user.getId());
     }
     
-    public void testInitialization() {
-        // by default, we provide 3 comment validators
-        assertEquals(3, mgr.getValidatorCount());
-    }
-    
     public void testExcessSizeCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         CommentData comment = createEmptyComment();
@@ -109,6 +104,20 @@ public class CommentValidatorTest extends TestCase {
         comment.setContent("blah blah 01-suonerie.com blah"); 
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }  
+    
+// To run this test add the Akismet validator to comment.validator.classnames
+// and put your Akismet key in comment.validator.akismet.apikey
+//
+//     public void testAkismetCommentValidator() {
+//        RollerMessages msgs = new RollerMessages();
+//        CommentData comment = createEmptyComment();       
+//        comment.setContent("nice friendly stuff"); 
+//        
+//        assertEquals(100, mgr.validateComment(comment, msgs));
+//
+//        comment.setName("viagra-test-123");
+//        assertTrue(mgr.validateComment(comment, msgs) != 100);
+//    }
     
     private CommentData createEmptyComment() {
         CommentData comment = new CommentData();

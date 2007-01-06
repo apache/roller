@@ -143,5 +143,13 @@ public interface Roller {
      */
     public void shutdown();
     
+    /** Roller version */
+    public String getVersion();    
+    
+    /** Roller build time */
+    public String getBuildTime();
+        
+    /** Get username that built Roller */
+    public String getBuildUser();
 }
 

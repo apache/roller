@@ -18,19 +18,33 @@
 
 package org.apache.roller.ui.rendering.util;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ResourceBundle;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.URLUtilities;
 
 /**
- *
- * @author David M. Johnson
+ * Check against Akismet service.
+ * You can get a personal use key by signing up at wordpress.com.
+ * See Akismet site for API details (http://akismet.com/development/api/)
  */
 public class AkismetCommentValidator implements CommentValidator { 
+    private static Log log = LogFactory.getLog(AkismetCommentValidator.class);    
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+    private String apikey;
     
     /** Creates a new instance of AkismetCommentValidator */
     public AkismetCommentValidator() {
+        apikey = RollerConfig.getProperty("comment.validator.akismet.apikey");
     }
 
     public String getName() {
@@ -38,7 +52,46 @@ public class AkismetCommentValidator implements CommentValidator {
     }
 
     public int validate(CommentData comment, RollerMessages messages) {
-        return 100;
+        StringBuffer sb = new StringBuffer();
+        sb.append("blog=").append(
+            URLUtilities.getWeblogURL(comment.getWeblogEntry().getWebsite(), null, true)).append("&");
+        sb.append("user_ip="        ).append(comment.getRemoteHost()).append("&");
+        sb.append("user_agent="     ).append(comment.getUserAgent()).append("&");
+        sb.append("referrer="       ).append(comment.getReferrer()).append("&");
+        sb.append("permalink="      ).append(comment.getWeblogEntry().getPermalink()).append("&");
+        sb.append("comment_type="   ).append("comment").append("&");
+        sb.append("comment_author=" ).append(comment.getName()).append("&");
+        sb.append("comment_author_email=").append(comment.getEmail()).append("&");
+        sb.append("comment_author_url="  ).append(comment.getUrl()).append("&");
+        sb.append("comment_content="     ).append(comment.getContent());
+
+        try {
+            URL url = new URL("http://" + apikey + ".rest.akismet.com/1.1/comment-check");
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+
+            conn.setRequestProperty("User_Agent", "Roller " + RollerFactory.getRoller().getVersion()); 
+            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8"); 
+            conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
+
+            OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
+            osr.write(sb.toString(), 0, sb.length());
+            osr.flush();
+            osr.close();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+            String response = br.readLine();
+            if ("true".equals(response)) {
+                messages.addError("comment.validator.akismetMessage");
+                return 0;
+            }
+            else return 100;
+        } catch (Exception e) {
+            log.error("ERROR checking comment against Akismet", e);
+        }
+        return 0; // interpret error as spam: better safe than sorry? 
     }
-    
 }
+
+
+

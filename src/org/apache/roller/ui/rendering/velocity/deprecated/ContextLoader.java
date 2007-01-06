@@ -392,9 +392,9 @@ public class ContextLoader {
         ctx.put("page",            TemplateWrapper.wrap(page));
         ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
-        ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
-        ctx.put("rollerBuildTime", rollerCtx.getRollerBuildTime() );
-        ctx.put("rollerBuildUser", rollerCtx.getRollerBuildUser() );
+        ctx.put("rollerVersion",   RollerFactory.getRoller().getVersion() );
+        ctx.put("rollerBuildTime", RollerFactory.getRoller().getBuildTime() );
+        ctx.put("rollerBuildUser", RollerFactory.getRoller().getBuildUser() );
         ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
         
         ctx.put("requestParameters", request.getParameterMap());
