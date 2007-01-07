@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
 Powered by <a href="http://www.rollerweblogger.org">Apache Roller (incubating)</a> 
-<%= RollerContext.getRollerContext().getRollerVersion() %> |
+<%= RollerFactory.getRoller().getVersion() %> |
 
 <a href="http://opensource2.atlassian.com/projects/roller/">
     <fmt:message key="footer.reportIssue" /></a> | 
