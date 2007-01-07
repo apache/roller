@@ -33,8 +33,9 @@ import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 
 /**
- * Check against Akismet service.
- * You can get a personal use key by signing up at wordpress.com.
+ * Check against Akismet service. Expects to a valid Akismet API key in the
+ * Roller startup config property comment.validator.akismet.apikey.
+ * You can get a free personal use key by registering as a user at wordpress.com.
  * See Akismet site for API details (http://akismet.com/development/api/)
  */
 public class AkismetCommentValidator implements CommentValidator { 
