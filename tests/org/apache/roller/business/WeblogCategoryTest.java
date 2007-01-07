@@ -178,7 +178,6 @@ public class WeblogCategoryTest extends TestCase {
         assertTrue(root.equals(testCat));
         
         testCat = new WeblogCategoryData(testWeblog, root, "root", "root", null);
-        testCat.setId(root.getId());
         assertFalse(root.equals(testCat));
     }
     
