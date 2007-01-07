@@ -242,7 +242,6 @@ public class BookmarkTest extends TestCase {
         assertTrue(root.equals(testFolder));
         
         testFolder = new FolderData(root, "root", "root", testWeblog);
-        testFolder.setId(root.getId());
         assertFalse(root.equals(testFolder));
     }
     
