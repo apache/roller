@@ -125,7 +125,7 @@ public class ResetHitCountsTask extends RollerTask {
      */
     public static void main(String[] args) throws Exception {
         try {
-            TurnoverReferersTask task = new TurnoverReferersTask();
+            ResetHitCountsTask task = new ResetHitCountsTask();
             task.init();
             task.run();
             System.exit(0);
