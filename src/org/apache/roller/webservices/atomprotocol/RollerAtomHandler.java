@@ -503,16 +503,10 @@ public class RollerAtomHandler implements AtomHandler {
                         pathInfo[2].substring(0, pathInfo[2].length() - ".media-link".length());
                     String handle = pathInfo[0];
                     WebsiteData website = 
-                        mRoller.getUserManager().getWebsiteByHandle(handle);
-                    
-                    // TODO: this must have broken with 3.0, but i don't know
-                    // how it's supposed to work so i can't really fix it
-                    // it's unlikely this was working properly before because
-                    // it was using an invalid path
-//                    File resource = 
-//                        new File("/resources" + File.separator + fileName);
-//                    return createAtomResourceEntry(website, resource);
-                    return null;
+                        mRoller.getUserManager().getWebsiteByHandle(handle);                    
+                    WeblogResource resource = 
+                        mRoller.getFileManager().getFile(website, fileName);
+                    return createAtomResourceEntry(website, resource);
                 }
             }
             throw new AtomNotFoundException(
