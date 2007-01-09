@@ -115,6 +115,12 @@
             <basic name="remoteHost">
                 <column name="remotehost" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <basic name="referrer">
+                <column name="referrer" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="userAgent">
+                <column name="useragent" insertable="true" updatable="true" unique="false"/>
+            </basic>
             <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryData">
                 <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>

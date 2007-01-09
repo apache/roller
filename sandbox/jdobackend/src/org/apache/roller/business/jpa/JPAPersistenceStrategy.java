@@ -34,6 +34,7 @@ import org.apache.roller.pojos.PersistentObject;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
+import org.apache.roller.business.datamapper.PersistentObjectHelper;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
@@ -113,7 +114,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
         EntityManager em = getEntityManager(true);
         // Roller code calls store even on already managed entity
         // Till Roller code is fixed, we will need to have following
-        if ( obj.getId() == null || obj.getId().trim().equals("") ) {
+        if (!PersistentObjectHelper.isObjectPersistent(obj)) {
             // Object has never been written to database, so save it.
             // This makes obj into a persistent instance.
             em.persist(obj);
