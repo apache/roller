@@ -46,8 +46,8 @@
         <include name="lib/log4j-1.2.11.jar"/>
         <include name="lib/jaxen-full.jar"/>
         <include name="lib/saxpath.jar"/>
-        <include name="lib/activation.jar"/>
-        <include name="lib/mail.jar"/>
+        <include name="buildtime/activation.jar"/>
+        <include name="buildtime/mail.jar"/>
         <include name="struts-1.2.4/lib/antlr.jar"/>
         <include name="struts-1.2.4/lib/commons-lang-2.0.jar"/>
         <include name="struts-1.2.4/lib/commons-logging.jar"/>
