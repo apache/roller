@@ -448,17 +448,7 @@ public class HibernateUserManagerImpl implements UserManager {
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
-            
-            if (enabled != null) {
-                criteria.add(
-                        Expression.conjunction()
-                        .add(new IgnoreCaseEqExpression("handle", handle))
-                        .add(Expression.eq("enabled", enabled)));
-            } else {
-                criteria.add(
-                        Expression.conjunction()
-                        .add(Expression.eq("handle", handle)));
-            }
+            criteria.add(new IgnoreCaseEqExpression("handle", handle));
             
             WebsiteData website = (WebsiteData) criteria.uniqueResult();
             
@@ -468,7 +458,14 @@ public class HibernateUserManagerImpl implements UserManager {
                 this.weblogHandleToIdMap.put(website.getHandle(), website.getId());
             }
             
-            return website;
+            // enforce check against enabled status
+            if(website != null && 
+                    (enabled == null || enabled.equals(website.getEnabled()))) {
+                return website;
+            } else {
+                return null;
+            }
+            
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
