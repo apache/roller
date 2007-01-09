@@ -22,6 +22,7 @@ package org.apache.roller.business.jpa;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.NoResultException;
+import javax.persistence.FlushModeType;
 
 import org.apache.roller.business.datamapper.DatamapperQuery;
 
@@ -93,6 +94,8 @@ public abstract class JPAQueryImpl implements DatamapperQuery {
      */
     private Object executeQuery() {
         Object result = null;
+        //Never flush for queries. Roller code assumes this behavior
+        q.setFlushMode(FlushModeType.COMMIT);
         if (singleResult) {
             try {
                 result = q.getSingleResult();
