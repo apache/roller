@@ -64,6 +64,22 @@ public class CategorySaveAction extends Action
         WeblogCategoryData cd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) {
             cd = wmgr.getWeblogCategory(form.getId());
+            
+            // update changeable properties
+            if(!cd.getName().equals(form.getName())) {
+                cd.setName(form.getName());
+                
+                // path includes name, so update path as well
+                WeblogCategoryData parent = cd.getParent();
+                if("/".equals(parent.getPath())) {
+                    cd.setPath("/"+cd.getName());
+                } else {
+                    cd.setPath(parent.getPath() + "/" + cd.getName());
+                }
+            }
+            cd.setDescription(form.getDescription());
+            cd.setImage(form.getImage());
+            
         } else {
             WeblogCategoryData parentCat = wmgr.getWeblogCategory(form.getParentId());
             cd = new WeblogCategoryData(
