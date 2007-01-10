@@ -1257,9 +1257,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                     null,          // search String
                     null,          // startDate
                     null,          // endDate
-                    null,          // pending
-                    Boolean.TRUE,  // approved only
-                    Boolean.FALSE, // no spam
+                    CommentData.APPROVED, // approved comments only
                     true,          // we want reverse chrono order
                     0,             // offset
                     length);       // length

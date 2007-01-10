@@ -136,9 +136,7 @@ public final class CommentManagementAction extends DispatchAction {
                     queryForm.getSearchString(),
                     queryForm.getStartDate(request.getLocale()),  
                     queryForm.getEndDate(request.getLocale()), 
-                    queryForm.getPending(),
-                    queryForm.getApproved(),
-                    queryForm.getSpam());
+                    queryForm.getStatus());
             }  
             CommentManagementForm queryForm = (CommentManagementForm)actionForm;
         }
@@ -200,9 +198,7 @@ public final class CommentManagementAction extends DispatchAction {
                     // apply spam checkbox 
                     List spamIds = Arrays.asList(queryForm.getSpamComments());
                     if (spamIds.contains(ids[i])) {
-                        comment.setSpam(Boolean.TRUE);
-                    } else {
-                        comment.setSpam(Boolean.FALSE);
+                        comment.setStatus(CommentData.SPAM);
                     }
                     
                     // Only participate in comment review workflow if we're
@@ -211,22 +207,26 @@ public final class CommentManagementAction extends DispatchAction {
                     // interfering with moderation by bloggers.
                     if (rreq.getWebsite() != null) {
                         
-                        // all comments reviewed, so they're no longer pending
-                        if (comment.getPending() != null && comment.getPending().booleanValue()) {
-                            comment.setPending(Boolean.FALSE);
-                            approvedComments.add(comment);
-                        }
-                        
-                        // apply pending checkbox
+                        // set comments as either APPROVED or DISAPPROVED
                         List approvedIds = 
                             Arrays.asList(queryForm.getApprovedComments());
                         if (approvedIds.contains(ids[i])) {
-                            comment.setApproved(Boolean.TRUE);
+                            // if a comment was previously PENDING then this is
+                            // it's first approval, so track it for notification
+                            if(CommentData.PENDING.equals(comment.getStatus())) {
+                                approvedComments.add(comment);
+                            }
                             
-                        } else {
-                            comment.setApproved(Boolean.FALSE);
+                            // update status to APPROVED
+                            comment.setStatus(CommentData.APPROVED);
+                            
+                        } else if (!spamIds.contains(ids[i])) {
+                            // remaining non-spam comments get DISAPPROVED status
+                            comment.setStatus(CommentData.DISAPPROVED);
                         }
                     }
+                    
+                    // save changes to this comment
                     mgr.saveComment(comment);
                     flushList.add(comment);
                 }
@@ -327,9 +327,7 @@ public final class CommentManagementAction extends DispatchAction {
                 queryForm.getSearchString(),
                 queryForm.getStartDate(request.getLocale()), 
                 queryForm.getEndDate(request.getLocale()), 
-                queryForm.getPending(),
-                queryForm.getApproved(),
-                queryForm.getSpam(),
+                queryForm.getStatus(),
                 true, // reverse  chrono order
                 queryForm.getOffset(), 
                 queryForm.getCount() + 1); 
@@ -351,9 +349,7 @@ public final class CommentManagementAction extends DispatchAction {
                     queryForm.getSearchString(),
                     queryForm.getStartDate(request.getLocale()), 
                     queryForm.getEndDate(request.getLocale()), 
-                    queryForm.getPending(),
-                    queryForm.getApproved(),
-                    queryForm.getSpam(),
+                    queryForm.getStatus(),
                     true, 
                     0, -1);                
                 totalMatchingCommentCount = allMatchingComments.size();
@@ -383,7 +379,7 @@ public final class CommentManagementAction extends DispatchAction {
             if (getWebsite() != null) { 
                 for (Iterator iter = comments.iterator(); iter.hasNext();) {
                     CommentData cd = (CommentData)iter.next();
-                    if (cd.getPending().booleanValue()) count++;
+                    if (CommentData.PENDING.equals(cd.getStatus())) count++;
                 }
             }
             return count;

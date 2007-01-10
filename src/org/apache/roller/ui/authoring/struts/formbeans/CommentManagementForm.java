@@ -99,10 +99,10 @@ public class CommentManagementForm
         while (it.hasNext()) {
             CommentData comment = (CommentData)it.next();
             all.add(comment.getId());
-            if (comment.getApproved().booleanValue()) {
+            if (CommentData.APPROVED.equals(comment.getStatus())) {
                 approvedList.add(comment.getId());
             }            
-            if (comment.getSpam().booleanValue()) {
+            if (CommentData.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
@@ -171,6 +171,25 @@ public class CommentManagementForm
         return null;
     }
 
+    public String getStatus() {
+        if (approvedString.equals("ONLY_APPROVED")) {
+            return CommentData.APPROVED;
+        } else if (approvedString.equals("ONLY_DISAPPROVED")) {
+            return CommentData.DISAPPROVED;
+        } else if (approvedString.equals("ONLY_PENDING")) {
+            return CommentData.PENDING;
+        } else if (spamString.equals("ONLY_SPAM")) {
+            return CommentData.SPAM;
+        } else if (spamString.equals("NO_SPAM")) {
+            // all status' except spam
+            // special situation, so this doesn't map to a persisted comment status
+            return "ALL_IGNORE_SPAM";
+        } else {
+            // shows *all* comments, regardless of status
+            return null;
+        }
+    }
+    
     public int getCount() {
         return count;
     }

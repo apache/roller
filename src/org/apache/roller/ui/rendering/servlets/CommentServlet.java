@@ -287,19 +287,17 @@ public class CommentServlet extends HttpServlet {
         if (!preview) {
             // If validation score is not perfect, mark as spam
             if (validationScore != 100) {
-                comment.setSpam(Boolean.TRUE);
+                comment.setStatus(CommentData.SPAM);
                 error = bundle.getString("commentServlet.commentMarkedAsSpam");
                 log.debug("Comment marked as spam");
             }
             
             // If moderation is enabled or comment is spam, put comment into moderation
             if (weblog.getCommentModerationRequired() || validationScore != 100) {
-                comment.setPending(Boolean.TRUE);
-                comment.setApproved(Boolean.FALSE);
+                comment.setStatus(CommentData.PENDING);
                 message = bundle.getString("commentServlet.submittedToModerator");
             } else {
-                comment.setPending(Boolean.FALSE);
-                comment.setApproved(Boolean.TRUE);
+                comment.setStatus(CommentData.APPROVED);
             }
             
             try {               

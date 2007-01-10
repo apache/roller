@@ -19,6 +19,11 @@ drop table if exists weblogcategoryassoc;
 --       maybe we want to attempt to fix that by doing that upgrade via sql?
 drop table if exists rollerconfig;
 
+-- remove old approved, spam, pending columns from comment table
+alter table roller_comment drop column approved;
+alter table roller_comment drop column spam;
+alter table roller_comment drop column pending;
+
 -- remove bastard columns from various tables
 -- NOTE: these are only here as options, we don't *have* to do them
 --alter table website drop column userid;
