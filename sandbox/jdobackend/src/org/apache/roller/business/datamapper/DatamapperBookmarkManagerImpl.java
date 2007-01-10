@@ -65,8 +65,14 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
     }
 
     public void saveBookmark(BookmarkData bookmark) throws RollerException {
+        if(!PersistentObjectHelper.isObjectPersistent(bookmark)) {
+            // This is a new object make sure that relationship is set on managed
+            // copy of other side
+            bookmark.getFolder().getBookmarks().add(bookmark);
+        }
+
         this.strategy.store(bookmark);
-        
+
         // update weblog last modified date (date is updated by saveWebsite())
         RollerFactory.getRoller().getUserManager().
             saveWebsite(bookmark.getWebsite());
@@ -90,6 +96,15 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         
         if(folder.getId() == null && isDuplicateFolderName(folder)) {
             throw new RollerException("Duplicate folder name");
+        }
+
+        if(!PersistentObjectHelper.isObjectPersistent(folder)) {
+            // Newly added object. If it has a parent,
+            // maintain relationship from both sides
+            FolderData parent = folder.getParent();
+            if(parent != null) {
+                parent.getFolders().add(folder);
+            }
         }
 
         this.strategy.store(folder);
@@ -123,7 +138,14 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
         log.debug("Moving folder " + srcFolder.getPath() + " under " +
             destFolder.getPath());
         
+        // Manage relationships
+        FolderData oldParent = srcFolder.getParent();
+        if(oldParent != null) {
+            oldParent.getFolders().add(srcFolder);
+        }
         srcFolder.setParent(destFolder);
+        destFolder.getFolders().add(srcFolder);
+        
         if("/".equals(destFolder.getPath())) {
             srcFolder.setPath("/"+srcFolder.getName());
         } else {

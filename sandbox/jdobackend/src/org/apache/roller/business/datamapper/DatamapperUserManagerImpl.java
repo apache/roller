@@ -46,6 +46,7 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.RoleData;
+import org.apache.roller.pojos.PersistentObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,7 +207,21 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
         if (null != rootCat) {
             this.strategy.remove(rootCat);
-    }
+        }
+
+        //remove permissions
+        //TODO: Datamapper: this is a workaround for toplink bug that requires
+        //to clean up from non owning side for removed objects.
+        for (Iterator iterator = website.getPermissions().iterator(); iterator.hasNext();) {
+            PermissionsData perms = (PermissionsData) iterator.next();
+            //Remove it from database
+            this.strategy.remove(perms);
+            //Remove it from website
+            iterator.remove();
+            //Remove it from corresponding user
+            UserData user = (UserData) getManagedObject(perms.getUser());
+            user.getPermissions().remove(perms);
+        }
 
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategoryData and WebsiteData
@@ -221,6 +236,20 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     }
 
     public void removeUser(UserData user) throws RollerException {
+        //remove permissions
+        //TODO: Datamapper: this is a workaround for toplink bug that requires
+        //to clean up from non owning side for removed objects.
+        for (Iterator iterator = user.getPermissions().iterator(); iterator.hasNext();) {
+                PermissionsData perms = (PermissionsData) iterator.next();
+                //Remove it from database
+                this.strategy.remove(perms);
+                //Remove it from website
+                iterator.remove();
+                //Remove it from corresponding user
+                WebsiteData website = (WebsiteData) getManagedObject(perms.getWebsite());
+                website.getPermissions().remove(perms);
+        }
+
         this.strategy.remove(user);
 
         // remove entry from cache mapping
@@ -229,12 +258,28 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
     public void savePermissions(PermissionsData perms) 
             throws RollerException {
+        if(!PersistentObjectHelper.isObjectPersistent(perms)) {
+            // This is a new object make sure that relationship is set on managed
+            // copy of other side
+            WebsiteData website = (WebsiteData) getManagedObject(perms.getWebsite());
+            website.getPermissions().add(perms);
+
+            UserData user = (UserData) getManagedObject(perms.getUser());
+            user.getPermissions().add(perms);
+        }
         this.strategy.store(perms);
     }
 
     public void removePermissions(PermissionsData perms) 
             throws RollerException {
         this.strategy.remove(perms);
+        // make sure that relationship is set on managed
+        // copy of other side
+        WebsiteData website = (WebsiteData) getManagedObject(perms.getWebsite());
+        website.getPermissions().remove(perms);
+
+        UserData user = (UserData) getManagedObject(perms.getUser());
+        user.getPermissions().remove(perms);
     }
 
     /**
@@ -293,7 +338,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         perms.setWebsite(newWeblog);
         perms.setPending(false);
         perms.setPermissionMask(PermissionsData.ADMIN);
-        this.strategy.store(perms);
+        savePermissions(perms);
 
         // add default category
         WeblogCategoryData rootCat = new WeblogCategoryData(
@@ -319,7 +364,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                 this.strategy.store(c);
             }
         }
-        
+
         // Use first category as default for Blogger API
         newWeblog.setBloggerCategory(firstCat);
 
@@ -387,7 +432,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         perms.setWebsite(website);
         perms.setUser(user);
         perms.setPermissionMask(mask);
-        this.strategy.store(perms);
+        savePermissions(perms);
 
         return perms;
     }
@@ -464,20 +509,9 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             }
         }
 
-        // cache failed, do lookup
-        DatamapperQuery query;
-        Object[] params;
-        if (enabled != null) {
-            query = strategy.newQuery(WebsiteData.class,
-                "WebsiteData.getByHandle&enabled");
-            params = new Object[] {handle, enabled};
-        } else {
-            query = strategy.newQuery(WebsiteData.class,
-                "WebsiteData.getByHandle");
-            params = new Object[] {handle};
-        }
+        DatamapperQuery query = strategy.newQuery(WebsiteData.class, "WebsiteData.getByHandle");
         query.setUnique();
-        WebsiteData website = (WebsiteData) query.execute(params);
+        WebsiteData website = (WebsiteData) query.execute(handle);
 
         // add mapping to cache
         if(website != null) {
@@ -485,7 +519,12 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             this.weblogHandleToIdMap.put(website.getHandle(), website.getId());
         }
 
-        return website;
+        if(website != null &&
+                (enabled == null || enabled.equals(website.getEnabled()))) {
+            return website;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1101,6 +1140,21 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         return ret;
     }
-    
+
+    /**
+     * Returns a manged copy of given persistent object.
+     * @param obj Given persistent object
+     * @return Managed version of obj
+     * @throws RollerException
+     * The method is required to handle case when a newly created object is made
+     * to refer to a object stored in web session. The object stored in web session
+     * should be merged into current persistence context before it is being
+     * referred by any other object.
+     * It should be our goal to not require this method. All the caller of this
+     * method should be modfied to see make sure that the obj passed managed
+     */
+    private PersistentObject getManagedObject(PersistentObject obj) throws RollerException {
+        return (PersistentObject) strategy.load(obj.getClass(), obj.getId());
+    }
     
 }

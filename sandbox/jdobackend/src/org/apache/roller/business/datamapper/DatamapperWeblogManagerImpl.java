@@ -87,6 +87,15 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
         if(cat.getId() == null && this.isDuplicateWeblogCategoryName(cat)) {
             throw new RollerException("Duplicate category name, cannot save category");
         }
+
+        if(!PersistentObjectHelper.isObjectPersistent(cat)) {
+            // Newly added object. If it has a parent,
+            // maintain relationship from both sides
+            WeblogCategoryData parent = cat.getParent();
+            if(parent != null) {
+                parent.getWeblogCategories().add(cat);
+            }
+        }
         
         // update weblog last modified date.  date updated by saveWebsite()
         RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
@@ -143,8 +152,15 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
         
         log.debug("Moving category "+srcCat.getPath() +
             " under "+destCat.getPath());
-        
+
+
+        WeblogCategoryData oldParent = srcCat.getParent();
+        if(oldParent != null) {
+            oldParent.getWeblogCategories().remove(srcCat);
+        }
         srcCat.setParent(destCat);
+        destCat.getWeblogCategories().add(srcCat);
+
         if("/".equals(destCat.getPath())) {
             srcCat.setPath("/"+srcCat.getName());
         } else {
@@ -156,8 +172,8 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
         // path attribute of the category and all descendent categories
         updatePathTree(srcCat);
     }
-    
-    
+
+
     // updates the paths of all descendents of the given category
     private void updatePathTree(WeblogCategoryData cat) 
             throws RollerException {
