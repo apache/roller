@@ -824,6 +824,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.CommentData"
+     *
+     * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
     public List getComments(boolean ignoreSpam, boolean approvedOnly) {
         List list = new ArrayList();
@@ -835,9 +837,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
                     null,  // search String
                     null,  // startDate
                     null,  // endDate
-                    null,  // pending
-                    approvedOnly ? Boolean.TRUE : null, // approved
-                    ignoreSpam ? Boolean.FALSE : null,  // spam
+                    CommentData.APPROVED,  // approved comments only
                     false, // we want chrono order
                     0,    // offset
                     -1);   // no limit

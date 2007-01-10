@@ -233,8 +233,7 @@ public final class TestUtils {
         testComment.setContent("this is a test comment");
         testComment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testComment.setWeblogEntry(entry);
-        testComment.setPending(Boolean.FALSE);
-        testComment.setApproved(Boolean.TRUE);
+        testComment.setStatus(CommentData.APPROVED);
         
         // store testComment
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();

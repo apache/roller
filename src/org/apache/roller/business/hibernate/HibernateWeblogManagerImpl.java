@@ -287,9 +287,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 null,  // search String
                 null,  // startDate
                 null,  // endDate
-                null,  // pending
-                null,  // approved
-                null,  // spam
+                null,  // status
                 true,  // reverse chrono order (not that it matters)
                 0,     // offset
                 -1);   // no limit
@@ -745,9 +743,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             String          searchString,
             Date            startDate,
             Date            endDate,
-            Boolean         pending,
-            Boolean         approved,
-            Boolean         spam,
+            String          status,
             boolean         reverseChrono,
             int             offset,
             int             length
@@ -778,16 +774,14 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 criteria.add(Expression.le("postTime", endDate));
             }
             
-            if (pending != null) {
-                criteria.add(Expression.eq("pending", pending));
-            }
-            
-            if (approved != null) {
-                criteria.add(Expression.eq("approved", approved));
-            }
-            
-            if (spam != null) {
-                criteria.add(Expression.eq("spam", spam));
+            if (status != null) {
+                if("ALL_IGNORE_SPAM".equals(status)) {
+                    // we want all comments, expect spam
+                    // so that means where status != SPAM
+                    criteria.add(Expression.ne("status", "SPAM"));
+                } else {
+                    criteria.add(Expression.eq("status", status));
+                }
             }
             
             if (length != -1) {
@@ -822,14 +816,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             String  searchString, 
             Date    startDate, 
             Date    endDate, 
-            Boolean pending, 
-            Boolean approved, 
-            Boolean spam) throws RollerException {
+            String status) throws RollerException {
 
         try {
             List comments = getComments( 
                 website, entry, searchString, startDate, endDate, 
-                pending, approved, spam, true, 0, -1);
+                status, true, 0, -1);
             int count = 0;
             for (Iterator it = comments.iterator(); it.hasNext();) {
                 CommentData comment = (CommentData) it.next();

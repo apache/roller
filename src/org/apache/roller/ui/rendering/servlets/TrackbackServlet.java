@@ -169,17 +169,13 @@ public class TrackbackServlet extends HttpServlet {
                     
                     if (validationScore == 100 && weblog.getCommentModerationRequired()) {
                         // Valid comments go into moderation if required
-                        comment.setPending(Boolean.TRUE);
-                        comment.setApproved(Boolean.FALSE);
+                        comment.setStatus(CommentData.PENDING);
                     } else if (validationScore == 100) {
                         // else they're approved
-                        comment.setPending(Boolean.FALSE);
-                        comment.setApproved(Boolean.TRUE);
+                        comment.setStatus(CommentData.APPROVED);
                     } else {
-                        // Invalid comments are marked as spam and put into moderation
-                        comment.setSpam(Boolean.TRUE);
-                        comment.setPending(Boolean.TRUE);
-                        comment.setApproved(Boolean.FALSE);
+                        // Invalid comments are marked as spam
+                        comment.setStatus(CommentData.SPAM);
                     }
                     
                     // save, commit, send response
@@ -200,7 +196,7 @@ public class TrackbackServlet extends HttpServlet {
                     }
                     CommentServlet.sendEmailNotification(comment, validationScore == 100, messages, rootURL);
                     
-                    if(comment.getPending().booleanValue()) {
+                    if(CommentData.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));
                     } else {
                         pw.println(this.getSuccessResponse("Trackback accepted"));

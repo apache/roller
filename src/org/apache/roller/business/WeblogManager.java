@@ -298,10 +298,8 @@ public interface WeblogManager {
      * @param entry      Entry or null to include all comments
      * @param startDate  Start date or null for no restriction
      * @param endDate    End date or null for no restriction
-     * @param pending    Pending flag value or null for no restriction
-     * @param approved   Approved flag value or null for no restriction
+     * @param status     The status of the comment, or null for any
      * @param reverseChrono True for results in reverse chrono order
-     * @param spam       Spam flag value or null for no restriction
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
      */
@@ -311,9 +309,7 @@ public interface WeblogManager {
             String          searchString,
             Date            startDate,
             Date            endDate,
-            Boolean         pending,
-            Boolean         approved,
-            Boolean         spam,
+            String          status,
             boolean         reverseChrono,
             int             offset,
             int             length
@@ -325,8 +321,7 @@ public interface WeblogManager {
      * @param entry      Entry or null to include all comments
      * @param startDate  Start date or null for no restriction
      * @param endDate    End date or null for no restriction
-     * @param approved   Pending flag value or null for no restriction
-     * @param pending    Approved flag value or null for no restriction
+     * @param status     Status of comment
      * @return Number of comments deleted
      */
     public int removeMatchingComments(
@@ -335,9 +330,7 @@ public interface WeblogManager {
             String          searchString,
             Date            startDate,
             Date            endDate,
-            Boolean         pending,
-            Boolean         approved,
-            Boolean         spam
+            String          status
             ) throws RollerException;
         
     /**

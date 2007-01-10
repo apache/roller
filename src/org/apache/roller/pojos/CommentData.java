@@ -15,14 +15,16 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.roller.util.PojoUtil;
 
+
 /**
  * Weblogentry Comment bean.
- * @author Lance Lavandowska
  *
  * @ejb:bean name="CommentData"
  * @struts.form include-all="true"
@@ -30,9 +32,14 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="true" table="roller_comment"
  * @hibernate.cache usage="read-write"
  */
-public class CommentData extends org.apache.roller.pojos.PersistentObject
-        implements java.io.Serializable {
+public class CommentData extends PersistentObject implements Serializable {
+    
     public static final long serialVersionUID = -6668122596726478462L;
+    
+    public static final String APPROVED = "APPROVED";
+    public static final String DISAPPROVED = "DISAPPROVED";
+    public static final String SPAM = "SPAM";
+    public static final String PENDING = "PENDING";
     
     private String    id = null;
     
@@ -41,41 +48,29 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
     private String    url = null;
     private String    content = null;
     private Timestamp postTime = null;
-    
-    private Boolean   spam = Boolean.FALSE;
+    private String    status = APPROVED;
     private Boolean   notify = Boolean.FALSE;
-    private Boolean   pending = Boolean.TRUE;
-    private Boolean   approved = Boolean.FALSE;        
     
     private String    remoteHost = null;
     private String    referrer = null;
     private String    userAgent = null;
-         
+    
     private WeblogEntryData weblogEntry = null;
     
     
-    public CommentData() {
-        spam = Boolean.FALSE;
-    }
+    public CommentData() {}
     
-    public CommentData(java.lang.String id, WeblogEntryData entry,
-            java.lang.String name, java.lang.String email,
-            java.lang.String url, java.lang.String content,
-            java.sql.Timestamp postTime,
-            Boolean spam, Boolean notify,
-            Boolean pending, Boolean approved) {
-        this.id = id;
+    public CommentData(WeblogEntryData entry, String name, String email,
+                       String url, String content, Timestamp postTime, 
+                       String status, Boolean notify) {
         this.name = name;
         this.email = email;
         this.url = url;
         this.content = content;
         this.postTime = postTime;
-        this.spam = spam;
         this.notify = notify;
-        this.pending = pending;
-        this.setApproved(approved);
         
-        weblogEntry = entry;
+        this.weblogEntry = entry;
     }
     
     public CommentData(CommentData otherData) {
@@ -93,9 +88,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.id;
     }
     
-    /** 
+    /**
      * Database ID of comment
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setId(java.lang.String id) {
         this.id = id;
@@ -111,9 +106,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return weblogEntry;
     }
     
-    /** 
+    /**
      * Weblog entry assocaited with comment
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setWeblogEntry(WeblogEntryData entry) {
         weblogEntry = entry;
@@ -129,9 +124,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.name;
     }
     
-    /** 
+    /**
      * Name of person who wrote comment.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setName(java.lang.String name) {
         this.name = name;
@@ -147,9 +142,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.email;
     }
     
-    /** 
+    /**
      * Email of person who wrote comment.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setEmail(java.lang.String email) {
         this.email = email;
@@ -165,9 +160,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.url;
     }
     
-    /** 
+    /**
      * URL of person who wrote comment.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setUrl(java.lang.String url) {
         this.url = url;
@@ -183,9 +178,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.content;
     }
     
-    /** 
+    /**
      * Content of comment.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setContent(java.lang.String content) {
         this.content = content;
@@ -201,30 +196,30 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.postTime;
     }
     
-    /** 
+    /**
      * Time that comment was posted.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setPostTime(java.sql.Timestamp postTime) {
         this.postTime = postTime;
     }
     
     /**
-     * Indicates that weblog owner considers this comment to be spam.
+     * Status of the comment, i.e. APPROVED, SPAM, PENDING, etc.
+     *
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.property column="spam" non-null="false" unique="false"
+     * @hibernate.property column="status" non-null="true" unique="false"
      */
-    public Boolean getSpam() {
-        return this.spam;
+    public String getStatus() {
+        return status;
     }
-    
-    /** 
-     * Indicates that weblog owner considers this comment to be spam.
-     * @ejb:persistent-field 
+
+    /**
+     * Status of the comment, i.e. APPROVED, SPAM, PENDING, etc.
      */
-    public void setSpam(Boolean spam) {
-        this.spam = spam;
+    public void setStatus(String status) {
+        this.status = status;
     }
     
     /**
@@ -238,59 +233,15 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.notify;
     }
     
-    /** 
+    /**
      * True if person who wrote comment wishes to be notified of new comments
      * on the same weblog entry.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setNotify(Boolean notify) {
         this.notify = notify;
     }
     
-    /**
-     * True if comment has is pending approval.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="pending" non-null="false" unique="false"
-     */
-    public Boolean getPending() {
-        return this.pending;
-    }
-    
-    /** 
-     * True if comment has is pending approval.
-     * @ejb:persistent-field 
-     */
-    public void setPending(Boolean pending) {
-        this.pending = pending;
-    }
-    
-    /**
-     * Indicates that comment has been approved for display on weblog.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="approved" non-null="false" unique="false"
-     */
-    public Boolean getApproved() {
-        return this.approved;
-    }
-    
-    /**
-     * Indicates that comment has been approved for display on weblog.
-     * @ejb:persistent-field 
-     */
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
-    }
-    
-    /**
-     * Host name or IP of person who wrote comment.
-     * @ejb:persistent-field
-     */
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-        
     /**
      * Host name or IP of person who wrote comment.
      * @roller.wrapPojoMethod type="simple"
@@ -301,8 +252,16 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return this.remoteHost;
     }
     
-    /** 
-     * HTTP referrer from comment post request 
+    /**
+     * Host name or IP of person who wrote comment.
+     * @ejb:persistent-field
+     */
+    public void setRemoteHost(String remoteHost) {
+        this.remoteHost = remoteHost;
+    }
+    
+    /**
+     * HTTP referrer from comment post request
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="referrer" non-null="true" unique="false"
@@ -310,17 +269,17 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
     public String getReferrer() {
         return referrer;
     }
-
-    /** 
-     * HTTP referrer from comment post request 
+    
+    /**
+     * HTTP referrer from comment post request
      * @ejb:persistent-field
      */
     public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
-
+    
     /**
-     * HTTP user-agent from comment post request 
+     * HTTP user-agent from comment post request
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="useragent" non-null="true" unique="false"
@@ -328,9 +287,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
     public String getUserAgent() {
         return userAgent;
     }
-
+    
     /**
-     * HTTP user-agent from comment post request 
+     * HTTP user-agent from comment post request
      * @ejb:persistent-field
      */
     public void setUserAgent(String userAgent) {
@@ -338,7 +297,44 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
     }
     
     /**
+     * Indicates that weblog owner considers this comment to be spam.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public Boolean getSpam() {
+        return new Boolean(SPAM.equals(this.status));
+    }
+    
+    /** No-op to please XDoclet */
+    public void setSpam(Boolean b) {}
+    
+    /**
+     * True if comment has is pending moderator approval.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public Boolean getPending() {
+        return new Boolean(PENDING.equals(this.status));
+    }
+    
+    /** No-op to please XDoclet */
+    public void setPending(Boolean b) {}
+    
+    /**
+     * Indicates that comment has been approved for display on weblog.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public Boolean getApproved() {
+        return new Boolean(APPROVED.equals(this.status));
+    }
+    
+    /** No-op to please XDoclet */
+    public void setApproved(Boolean b) {}
+    
+    /**
      * Timestamp to be used to formulate comment permlink.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getTimestamp() {
@@ -348,29 +344,26 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         return null;
     }
     
-    /** No-op to please XDoclet */      
+    /** No-op to please XDoclet */
     public void setTimestamp(String timeStamp) {}
-
+    
     public String toString() {
+        
         StringBuffer str = new StringBuffer("{");
+        str.append("id=" + id + ", " +
+                "name=" + name + ", " +
+                "email=" + email + ", " +
+                "url=" + url + ", " +
+                "postTime=" + postTime + ", " +
+                "status=" + status);
+        str.append("}");
         
-        str.append("id=" + id + " " +
-                "name=" + name + " " +
-                "email=" + email + " " +
-                "url=" + url + " " +
-                "content=" + content + " " +
-                "postTime=" + postTime + " " +
-                "spam=" + spam +
-                "notify=" + notify +
-                "pending" + pending +
-                "approved" + getApproved() + 
-                "referrer" + getReferrer() + 
-                "userAgent" + getUserAgent());
-        str.append('}');
-        
-        return (str.toString());
+        return str.toString();
     }
     
+    /**
+     * TODO: figure out business key.  entry, status, posttime, name?
+     */
     public boolean equals(Object pOther) {
         if (pOther instanceof CommentData) {
             CommentData lTest = (CommentData) pOther;
@@ -383,10 +376,8 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
             lEquals = PojoUtil.equals(lEquals, this.url, lTest.getUrl());
             lEquals = PojoUtil.equals(lEquals, this.content, lTest.getContent());
             lEquals = PojoUtil.equals(lEquals, this.postTime, lTest.getPostTime());
-            lEquals = PojoUtil.equals(lEquals, this.spam, lTest.getSpam());
+            lEquals = PojoUtil.equals(lEquals, this.status, lTest.getStatus());
             lEquals = PojoUtil.equals(lEquals, this.notify, lTest.getNotify());
-            lEquals = PojoUtil.equals(lEquals, this.pending, lTest.getPending());
-            lEquals = PojoUtil.equals(lEquals, this.getApproved(), lTest.getApproved());
             lEquals = PojoUtil.equals(lEquals, this.getReferrer(), lTest.getApproved());
             lEquals = PojoUtil.equals(lEquals, this.getUserAgent(), lTest.getUserAgent());
             return lEquals;
@@ -395,6 +386,9 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         }
     }
     
+    /**
+     * TODO: figure out business key.  entry, status, posttime, name?
+     */
     public int hashCode() {
         int result = 17;
         result = PojoUtil.addHashCode(result, this.id);
@@ -404,12 +398,10 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         result = PojoUtil.addHashCode(result, this.url);
         result = PojoUtil.addHashCode(result, this.content);
         result = PojoUtil.addHashCode(result, this.postTime);
-        result = PojoUtil.addHashCode(result, this.spam);
+        result = PojoUtil.addHashCode(result, this.status);
         result = PojoUtil.addHashCode(result, this.notify);
-        result = PojoUtil.addHashCode(result, this.pending);
-        result = PojoUtil.addHashCode(result, this.getApproved());               
-        result = PojoUtil.addHashCode(result, this.getReferrer());        
-        result = PojoUtil.addHashCode(result, this.getUserAgent());        
+        result = PojoUtil.addHashCode(result, this.getReferrer());
+        result = PojoUtil.addHashCode(result, this.getUserAgent());
         return result;
     }
     
@@ -426,13 +418,10 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         this.url = otherComment.getUrl();
         this.content = otherComment.getContent();
         this.postTime = otherComment.getPostTime();
-        this.spam = otherComment.getSpam();
         this.notify = otherComment.getNotify();
-        this.pending = otherComment.getPending();
-        this.setApproved(otherComment.getApproved());
+        this.setStatus(otherComment.getStatus());
         this.setReferrer(otherComment.getReferrer());
         this.setUserAgent(otherComment.getUserAgent());
     }
     
 }
-

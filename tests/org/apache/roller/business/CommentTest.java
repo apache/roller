@@ -102,8 +102,7 @@ public class CommentTest extends TestCase {
         comment.setContent("this is a test comment");
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         comment.setWeblogEntry(testEntry);
-        comment.setPending(Boolean.FALSE);
-        comment.setApproved(Boolean.TRUE);
+        comment.setStatus(CommentData.APPROVED);
         
         // create a comment
         mgr.saveComment(comment);
@@ -154,37 +153,36 @@ public class CommentTest extends TestCase {
         
         // get all comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, null, null, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // get all comments for entry
         comments = null;
-        comments = mgr.getComments(null, testEntry, null, null, null, null, null, null, false, 0, -1);
+        comments = mgr.getComments(null, testEntry, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // make some changes
-        comment3.setPending(Boolean.TRUE);
-        comment3.setApproved(Boolean.FALSE);
+        comment3.setStatus(CommentData.PENDING);
         mgr.saveComment(comment3);
         TestUtils.endSession(true);
         
         // get pending comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, Boolean.TRUE, null, null, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, CommentData.PENDING, false, 0, -1);
         assertNotNull(comments);
         assertEquals(1, comments.size());
         
         // get approved comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, Boolean.TRUE, null, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, CommentData.APPROVED, false, 0, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
         // get comments with offset
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, null, null, false, 1, -1);
+        comments = mgr.getComments(null, null, null, null, null, null, false, 1, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         

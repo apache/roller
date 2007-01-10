@@ -85,19 +85,17 @@ public abstract class IndexOperation implements Runnable {
                 StringBuffer commentNameBuf = new StringBuffer();
                 for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
                     CommentData comment = (CommentData) cItr.next();
-                    if (comment.getSpam() == null || !comment.getSpam().booleanValue()) {
-                        if (comment.getContent() != null) {
-                            commentContentBuf.append(comment.getContent());
-                            commentContentBuf.append(",");
-                        }
-                        if (comment.getEmail() != null) {
-                            commentEmailBuf.append(comment.getEmail());
-                            commentEmailBuf.append(",");
-                        }
-                        if (comment.getName() != null) {
-                            commentNameBuf.append(comment.getName());
-                            commentNameBuf.append(",");
-                        }
+                    if (comment.getContent() != null) {
+                        commentContentBuf.append(comment.getContent());
+                        commentContentBuf.append(",");
+                    }
+                    if (comment.getEmail() != null) {
+                        commentEmailBuf.append(comment.getEmail());
+                        commentEmailBuf.append(",");
+                    }
+                    if (comment.getName() != null) {
+                        commentNameBuf.append(comment.getName());
+                        commentNameBuf.append(",");
                     }
                 }
                 commentEmail = commentEmailBuf.toString();

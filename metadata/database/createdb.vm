@@ -266,7 +266,8 @@ create table roller_comment (
     pending    $BOOLEAN_SQL_TYPE_TRUE not null,
     approved   $BOOLEAN_SQL_TYPE_FALSE not null,
     referrer   varchar(255),
-    useragent  varchar(255)
+    useragent  varchar(255),
+    status     varchar(20) not null
 );
 create index co_entryid_idx on roller_comment( entryid );
 create index co_pending_idx on roller_comment( pending );

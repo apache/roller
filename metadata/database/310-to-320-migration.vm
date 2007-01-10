@@ -23,6 +23,13 @@ create index fo_path_idx on folder( path );
 #addColumnNull("roller_comment" "referrer" "varchar(255)")
 #addColumnNull("roller_comment" "useragent" "varchar(255)")
 
+-- add new status field to comment table to simplify queries
+#addColumnNotNull("roller_comment" "status" "varchar(20)" "APPROVED")
+update roller_comment set status = 'APPROVED' where approved=1;
+update roller_comment set status = 'PENDING' where pending=1;
+update roller_comment set status = 'SPAM' where spam=1;
+update roller_comment set status = 'DISAPPROVED' where approved=0 and spam=0 and pending=0;
+
 -- some various indexes to improve performance
 create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
 create index we_combo1_idx on weblogentry(status, pubtime, websiteid);

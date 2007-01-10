@@ -91,7 +91,7 @@ public class CommentsPager extends AbstractPager {
                 WeblogManager wmgr = roller.getWeblogManager();
                 List entries = wmgr.getComments(
                         null, null, null, startDate, null,
-                        null, Boolean.TRUE, Boolean.FALSE, true, offset, length + 1);
+                        CommentData.APPROVED, true, offset, length + 1);
                 
                 // check if there are more results for paging
                 if(entries.size() > length) {

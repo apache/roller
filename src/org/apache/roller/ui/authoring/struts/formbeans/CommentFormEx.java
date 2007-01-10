@@ -113,7 +113,7 @@ public class CommentFormEx extends CommentForm
         throws RollerException
     {
         super.copyTo(dataHolder, locale);
-        if (getSpam() == null) dataHolder.setSpam(Boolean.FALSE);
+        //if (getSpam() == null) dataHolder.setSpam(Boolean.FALSE);
         if (getNotify() == null) dataHolder.setNotify(Boolean.FALSE);
     }
 }
