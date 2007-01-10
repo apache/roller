@@ -71,6 +71,7 @@ public class WeblogCategoryData extends PersistentObject
         this.image = image;
         
         this.website = website;
+        this.parentCategory = parent;
 
         // calculate path
         if(parent == null) {
@@ -80,16 +81,6 @@ public class WeblogCategoryData extends PersistentObject
         } else {
             this.path = parent.getPath() + "/" + name;
         }
-
-        this.parentCategory = parent;
-        // Relationship needs to be maintained from both sides
-        if(parent != null) {
-            // Following triggers this.hashCode(), which is calculated 
-            // based on this.path
-            // It needs to happen after this.path is initialized
-            parent.childCategories.add(this);
-        }
-
     }
     
     
