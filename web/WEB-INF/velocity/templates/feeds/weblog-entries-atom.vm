@@ -21,7 +21,13 @@
     <title type="html">$utils.escapeXML($model.weblog.name)</title>
     <subtitle type="html">$utils.escapeXML($model.weblog.description)</subtitle>
     <id>$url.feed.entries.atom</id>
+    #if($model.tags)
+    <link rel="self" type="application/atom+xml" href="$url.feed.entries.atom($model.tags, $model.excerpts)" />
+    #elseif($model.categoryPath)
     <link rel="self" type="application/atom+xml" href="$url.feed.entries.atom($model.categoryPath, $model.excerpts)" />
+    #else
+    <link rel="self" type="application/atom+xml" href="$url.feed.entries.atom" />
+    #end
     <link rel="alternate" type="text/html" href="$url.home" />
     <updated>$utils.formatIso8601Date($model.weblog.lastModified)</updated>
     <generator uri="http://rollerweblogger.org" version="$config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)">Apache Roller (incubating)</generator>
