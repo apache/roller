@@ -49,7 +49,8 @@ Special macro to drop NOT NULL requirement from an 'id' column.
     alter table $table drop primary key;
     alter table $table modify id varchar(48) null;
 #elseif ($DBTYPE == "POSTGRESQL")
-    alter table $table alter column drop not null;
+    alter table $table drop constraint "${table}_pkey";
+    alter table $table  alter column id drop not null;
 #elseif ($DBTYPE == "HSQLDB")
     alter table $table alter column id varchar(48) null;
 #elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
