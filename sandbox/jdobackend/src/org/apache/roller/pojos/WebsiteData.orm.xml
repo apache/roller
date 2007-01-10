@@ -11,9 +11,6 @@
 	<package>org.apache.roller.pojos</package>
 	<entity metadata-complete="true" name="WebsiteData" class="org.apache.roller.pojos.WebsiteData">
 		<table name="website"/>
-		<named-query name="WebsiteData.getByHandle&amp;enabled">
-			<query>SELECT w FROM WebsiteData w WHERE w.handle = ?1 AND w.enabled = ?2</query>
-		</named-query>
 		<named-query name="WebsiteData.getByHandle">
 			<query>SELECT w FROM WebsiteData w WHERE w.handle = ?1</query>
 		</named-query>
@@ -232,9 +229,6 @@
 				<join-column name="defaultcatid" insertable="true" updatable="true"/>
 			</many-to-one>
 			<one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.pojos.PermissionsData" fetch="LAZY">
-				<cascade>
-					<cascade-remove/>
-				</cascade>
 			</one-to-many>
 			<transient name="absoluteURL"/>
 			<transient name="adminUserCount"/>
