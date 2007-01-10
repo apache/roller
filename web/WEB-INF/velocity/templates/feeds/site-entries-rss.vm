@@ -23,7 +23,13 @@
 <channel>
   <title>$utils.escapeXML($config.siteName)</title>
   <link>$url.absoluteSite</link>
+  #if($model.tags)
+  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.tags, $model.excerpts)" />
+  #elseif($model.categoryPath)
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryPath, $model.excerpts)" />
+  #else
+  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss" />
+  #end
   <description>$utils.escapeXML($config.siteDescription)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
