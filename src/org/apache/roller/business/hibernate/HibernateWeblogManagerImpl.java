@@ -1598,16 +1598,7 @@ null,             locale,
      * Get site-wide entry count 
      */    
     public long getEntryCount() throws RollerException {
-        long ret = 0;
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            String query = "select count(distinct e) from WeblogEntryData e where e.status='PUBLISHED'";
-            List result = session.createQuery(query).list();
-            ret = ((Integer)result.get(0)).intValue();
-        } catch (Exception e) {
-            throw new RollerException(e);
-        }
-        return ret;
+        return getEntryCount(null);
     }
 
     
@@ -1618,8 +1609,18 @@ null,             locale,
         long ret = 0;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            String query = "select count(distinct e) from WeblogEntryData e where e.status='PUBLISHED' and e.website=?";
-            List result = session.createQuery(query).setParameter(0,website).list();
+            Query query = null;
+            if(website == null) {
+                query = session.createQuery("select count(distinct e) "+
+                        "from WeblogEntryData e where e.status=?");
+                query.setParameter(0, WeblogEntryData.PUBLISHED);
+            } else {
+                query = session.createQuery("select count(distinct e) "+
+                        "from WeblogEntryData e where e.status=? and e.website=?");
+                query.setParameter(0, WeblogEntryData.PUBLISHED);
+                query.setParameter(1, website);
+            }
+            List result = query.list();
             ret = ((Integer)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
