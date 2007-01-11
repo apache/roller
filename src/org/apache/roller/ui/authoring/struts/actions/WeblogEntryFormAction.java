@@ -315,7 +315,15 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 if(entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
                     entry.setAnchor(weblogMgr.createAnchor(entry));
                 }
-
+                
+                // if the entry was published to future, set status as SCHEDULED
+                // we only consider an entry future published if it is scheduled
+                // more than 1 minute into the future
+                if ("PUBLISHED".equals(entry.getStatus()) && 
+                        entry.getPubTime().after(new Date(System.currentTimeMillis() + 60000))) {
+                    entry.setStatus(WeblogEntryData.SCHEDULED);
+                }
+                
                 mLogger.debug("Saving entry");
                 weblogMgr.saveWeblogEntry(entry);
                 RollerFactory.getRoller().flush();

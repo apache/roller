@@ -71,6 +71,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     public static final String DRAFT     = "DRAFT";
     public static final String PUBLISHED = "PUBLISHED";
     public static final String PENDING   = "PENDING";
+    public static final String SCHEDULED = "SCHEDULED";
     
     // Simple properies
     private String    id            = null;

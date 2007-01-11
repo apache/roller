@@ -129,7 +129,7 @@ public class FeedModel implements Model {
                     weblog,
                     null, 
                     null, 
-                    new Date(), 
+                    null, 
                     feedRequest.getWeblogCategoryName(), 
                     feedRequest.getTags(), 
                     WeblogEntryData.PUBLISHED, 

@@ -147,6 +147,30 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,
                 0, 20);   
     }
+    
+    /**
+     * Get recent weblog entries using request parameters to determine
+     * username, date, and category name parameters.
+     * @return List of WeblogEntryData objects.
+     * @throws RollerException
+     */
+    public List getRecentScheduledEntries() throws RollerException
+    {
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return RollerFactory.getRoller().getWeblogManager()
+            .getWeblogEntries(
+                getWeblogEntry().getWebsite(), // userName
+                null,
+                null,              // startDate
+                null,              // endDate
+                null,              // catName
+                null,              // tags
+                WeblogEntryData.SCHEDULED, // status
+                null,              // sortby (null for pubTime)
+                null, 
+                null,
+                0, 20);   
+    }
 
     /**
      * Get recent weblog entries using request parameters to determine

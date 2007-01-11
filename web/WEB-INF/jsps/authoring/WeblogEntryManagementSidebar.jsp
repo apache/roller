@@ -109,6 +109,9 @@ WeblogEntryManagementAction.PageModel model =
         <br />
         <html:radio property="status" value="PENDING" >
             <fmt:message key="weblogEntryQuery.label.pendingOnly" /></html:radio>
+        <br />
+        <html:radio property="status" value="SCHEDULED" >
+            <fmt:message key="weblogEntryQuery.label.scheduledOnly" /></html:radio>
         </div>
     </div>
 
