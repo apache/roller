@@ -1041,7 +1041,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             tags,
             status,
             null,
-null,             locale,             
+            null,
+            locale,             
             offset,
             length);
         
@@ -1121,7 +1122,7 @@ null,             locale,
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();
                 StatCount statCount = new StatCount(
-                    (String)row[1],                             // entry id
+                    (String)row[1],                             // website handle
                     (String)row[2],                             // entry anchor
                     (String)row[3],                             // entry title
                     "statCount.weblogEntryCommentCountType",    // stat desc
