@@ -34,6 +34,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.CommentData;
 import org.apache.roller.RollerException;
 
 /**
@@ -171,9 +172,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             String          searchString,
             Date            startDate,
             Date            endDate,
-            Boolean         pending,
-            Boolean         approved,
-            Boolean         spam,
+            String          status,
             boolean         reverseChrono,
             int             offset,
             int             length) throws RollerException {
@@ -194,33 +193,33 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             
         if (searchString != null) {
             params.add(size++, "%" + searchString + "%");
-            whereClause.append(" AND (url LIKE ?").append(size).
-                        append(" OR content LIKE ?)").append(size).append(")");
+            appendConjuctionToWhereclause(whereClause, "(c.url LIKE ?")
+                    .append(size).append(" OR c.content LIKE ?").append(size).append(")");
         }
             
         if (startDate != null) {
             params.add(size++, startDate);
-            whereClause.append("c.postTime >= ?").append(size);
+            appendConjuctionToWhereclause(whereClause, "c.postTime >= ?");
         }
             
         if (endDate != null) {
             params.add(size++, endDate);
-            whereClause.append("c.postTime =< ?").append(size);
+            appendConjuctionToWhereclause(whereClause, "c.postTime <= ?");
         }
-            
-        if (pending != null) {
-            params.add(size++, pending);
-            whereClause.append("c.pending = ?").append(size);
-        }
-            
-        if (approved != null) {
-            params.add(size++, approved);
-            whereClause.append("c.approved = ?").append(size);
-        }
-            
-        if (spam != null) {
-            params.add(size++, spam);
-            whereClause.append("c.spam = ?").append(size);
+
+        if (status != null) {
+            String comparisionOperator;
+            if("ALL_IGNORE_SPAM".equals(status)) {
+                // we want all comments, expect spam
+                // so that means where status != SPAM
+                status = CommentData.SPAM;
+                comparisionOperator = " <> ";
+            } else {
+                comparisionOperator = " = ";
+            }
+            params.add(size++, status);
+            appendConjuctionToWhereclause(whereClause, "c.status ")
+                    .append(comparisionOperator).append('?').append(size);
         }
 
         if(whereClause.length() != 0) {
@@ -252,6 +251,22 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
     }
 
     /**
+     * Appends given expression to given whereClause. If whereClause already
+     * has other conditions, an " AND " is also appended before appending
+     * the expression
+     * @param whereClause The given where Clauuse
+     * @param expression The given expression
+     * @return the whereClause.
+     */
+    private static StringBuffer appendConjuctionToWhereclause(StringBuffer whereClause,
+            String expression) {
+        if(whereClause.length() != 0 && expression.length() != 0) {
+            whereClause.append(" AND ");
+        }
+        return whereClause.append(expression);
+    }
+
+    /**
      * @inheritDoc
      */
     public int removeMatchingComments(
@@ -260,9 +275,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             String  searchString,
             Date    startDate,
             Date    endDate,
-            Boolean pending,
-            Boolean approved,
-            Boolean spam) throws RollerException {
+            String status) throws RollerException {
 
         // TODO dynamic bulk delete query
         /* I'd MUCH rather use a bulk delete, but MySQL says "General error,  
@@ -353,9 +366,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
                 searchString,
                 startDate,
                 endDate,
-                pending,
-                approved,
-                spam);
+                status);
     }
 
     /**
@@ -488,7 +499,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
         }
 
         // delete all bad counts
-        strategy.newRemoveQuery(WeblogEntryTagAggregateData.class, 
+        strategy.newRemoveQuery(WeblogEntryTagAggregateData.class,
             "WeblogEntryTagAggregateData.removeByTotalLessEqual")
             .removeAll(new Integer(0));
     }

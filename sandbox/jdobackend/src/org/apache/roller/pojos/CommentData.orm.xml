@@ -11,13 +11,13 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="CommentData" class="org.apache.roller.pojos.CommentData">
         <table name="roller_comment"/>
-        <named-query name="CommentData.getCountAllDistinct">
+        <named-query name="CommentData.getCountAllDistinctByStatus">
             <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
-            <query>SELECT COUNT(c) FROM CommentData c</query>
+            <query>SELECT COUNT(c) FROM CommentData c where c.status = ?1</query>
         </named-query>
-        <named-query name="CommentData.getCountDistinctByWebsite">
+        <named-query name="CommentData.getCountDistinctByWebsite&amp;Status">
             <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
-            <query>SELECT COUNT(c) FROM CommentData c WHERE c.weblogEntry.website = ?1</query>
+            <query>SELECT COUNT(c) FROM CommentData c WHERE c.weblogEntry.website = ?1 AND c.status = ?2</query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWebsiteByEndDate">
             <!--
@@ -100,17 +100,11 @@
             <basic name="postTime">
                 <column name="posttime" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <basic name="spam">
-                <column name="spam" insertable="true" updatable="true" unique="false"/>
+            <basic name="status">
+                <column name="status" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="notify">
                 <column name="notify" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="pending">
-                <column name="pending" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <basic name="approved">
-                <column name="approved" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="remoteHost">
                 <column name="remotehost" insertable="true" updatable="true" unique="false"/>
