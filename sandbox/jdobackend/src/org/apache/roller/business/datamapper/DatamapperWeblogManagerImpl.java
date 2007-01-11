@@ -322,9 +322,7 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
                 null,  // search String
                 null,  // startDate
                 null,  // endDate
-                null,  // pending
-                null,  // approved
-                null,  // spam
+                null,  // status
                 true,  // reverse chrono order (not that it matters)
                 0,     // offset
                 -1);   // no limit
@@ -674,9 +672,7 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
             String          searchString,
             Date            startDate,
             Date            endDate,
-            Boolean         pending,
-            Boolean         approved,
-            Boolean         spam,
+            String          status,
             boolean         reverseChrono,
             int             offset,
             int             length
@@ -691,12 +687,10 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
             String  searchString, 
             Date    startDate, 
             Date    endDate, 
-            Boolean pending, 
-            Boolean approved, 
-            Boolean spam) throws RollerException {
+            String status) throws RollerException {
         List comments = getComments( 
             website, entry, searchString, startDate, endDate, 
-            pending, approved, spam, true, 0, -1);
+            status, true, 0, -1);
         int count = 0;
         for (Iterator it = comments.iterator(); it.hasNext();) {
             CommentData comment = (CommentData) it.next();
@@ -1240,7 +1234,7 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public long getCommentCount() throws RollerException {
         List results = (List) strategy.newQuery(CommentData.class, 
-            "CommentData.getCountAllDistinct").execute();
+            "CommentData.getCountAllDistinctByStatus").execute(CommentData.APPROVED);
         
         return ((Long)results.get(0)).longValue();
     }
@@ -1250,7 +1244,8 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
      */
     public long getCommentCount(WebsiteData website) throws RollerException {
         List results = (List) strategy.newQuery(CommentData.class, 
-            "CommentData.getCountDistinctByWebsite").execute(website);
+            "CommentData.getCountDistinctByWebsite&Status").
+        execute(new Object[] {website, CommentData.APPROVED});
         
         return ((Long)results.get(0)).longValue();
     }
