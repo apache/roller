@@ -1563,16 +1563,7 @@ null,             locale,
      * Get site-wide comment count 
      */
     public long getCommentCount() throws RollerException {
-        long ret = 0;
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            String query = "select count(distinct c) from CommentData c";
-            List result = session.createQuery(query).list();
-            ret = ((Integer)result.get(0)).intValue();
-        } catch (Exception e) {
-            throw new RollerException(e);
-        }
-        return ret;
+        return getCommentCount(null);
     }
 
     
@@ -1583,8 +1574,18 @@ null,             locale,
         long ret = 0;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            String query = "select count(distinct c) from CommentData c where c.weblogEntry.website=?";
-            List result = session.createQuery(query).setParameter(0,website).list();
+            Query query = null;
+            if(website == null) {
+                query = session.createQuery("select count(distinct c) "+
+                        "from CommentData c where c.status=?");
+                query.setParameter(0, CommentData.APPROVED);
+            } else {
+                query = session.createQuery("select count(distinct c) "+
+                        "from CommentData c where c.status=? and c.weblogEntry.website=?");
+                query.setParameter(0, CommentData.APPROVED);
+                query.setParameter(1, website);
+            }
+            List result = query.list();
             ret = ((Integer)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
