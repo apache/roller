@@ -24,7 +24,7 @@ create index fo_path_idx on folder( path );
 #addColumnNull("roller_comment" "useragent" "varchar(255)")
 
 -- add new status field to comment table to simplify queries
-#addColumnNotNull("roller_comment" "status" "varchar(20)" "APPROVED")
+#addColumnNotNull("roller_comment" "status" "varchar(20)" "'APPROVED'")
 update roller_comment set status = 'APPROVED' where approved=1;
 update roller_comment set status = 'PENDING' where pending=1;
 update roller_comment set status = 'SPAM' where spam=1;
