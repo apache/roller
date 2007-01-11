@@ -76,22 +76,36 @@
                <td valign="top">
 
                    <table cellpadding="0" cellspacing="0">
+                       
                        <tr>
                            <td class="mm_subtable_label"><fmt:message key='yourWebsites.weblog' /></td>
                            <td><a href='<c:out value="${perms.website.URL}" />'>
                                <c:out value="${perms.website.absoluteURL}" />
                            </a></td>                          
                        </tr>
+                       
                        <tr>
                            <td class="mm_subtable_label"><fmt:message key='yourWebsites.permission' /></td>
                            <td><c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
                            <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
                            <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if></td>
                        </tr>
+                       
                        <tr>
                            <td class="mm_subtable_label"><fmt:message key='yourWebsites.description' /></td>   
                            <td><c:out value="${perms.website.description}" escapeXml="false" /></td>
                        </tr>
+
+                       <tr>
+                           <td class="mm_subtable_label"><fmt:message key='yourWebsites.userCount' /></td>   
+                           <td><c:out value="${perms.website.userCount}" /></td>
+                       </tr>
+
+                       <tr>
+                           <td class="mm_subtable_label"><fmt:message key='yourWebsites.todaysHits' /></td>   
+                           <td><c:out value="${perms.website.todaysHits}" /></td>
+                       </tr>
+                       
                    </table>
 
                </td>
@@ -107,25 +121,25 @@
                            <fmt:message key="yourWebsites.newEntry" /></a>
                        <br />
 
+                       <%-- Show Entries link with count, TODO: show N/M where N is draft, M is published --%>
                        <c:url value="/roller-ui/authoring/weblogEntryManagement.do" var="editEntries">
                            <c:param name="method" value="query" />
                            <c:param name="weblog" value="${perms.website.handle}" />
                        </c:url>
                        <img src='<c:url value="/images/table_multiple.png"/>' />
                        <a href='<c:out value="${editEntries}" />'>
-                           <fmt:message key="yourWebsites.editEntries" /></a> 
+                           <fmt:message key="yourWebsites.editEntries" /> (<c:out value="${perms.website.entryCount}" />)</a> 
                        <br />
 
-                       <%-- // I'm not sure this link needs to be here
+                       <%-- Show Comments link with count, TODO: show N/M where N is pending, M is approved --%>
                        <c:url value="/roller-ui/authoring/commentManagement.do" var="manageComments">
                            <c:param name="method" value="query" />
                            <c:param name="weblog" value="${perms.website.handle}" />
                        </c:url>
                        <img src='<c:url value="/images/page_white_edit.png"/>' />
                        <a href='<c:out value="${manageComments}" />'>
-                           <fmt:message key="yourWebsites.manageComments" /></a> 
+                           <fmt:message key="yourWebsites.manageComments" /> (<c:out value="${perms.website.commentCount}" />)</a> 
                        <br />
-                       --%>
                        
                        <c:if test="${perms.permissionMask == 3}">
                            <c:url value="/roller-ui/authoring/website.do" var="manageWeblog">
