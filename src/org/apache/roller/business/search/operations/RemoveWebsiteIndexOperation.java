@@ -25,6 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.roller.RollerException;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.search.IndexUtil;
@@ -61,6 +64,18 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     
     public void doRun() {
         Date start = new Date();
+        
+        // since this operation can be run on a separate thread we must treat
+        // the weblog object passed in as a detached object which is proned to
+        // lazy initialization problems, so requery for the object now
+        try {
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            this.website = uMgr.getWebsite(this.website.getId());
+        } catch (RollerException ex) {
+            mLogger.error("Error getting website object", ex);
+            return;
+        }
+        
         IndexReader reader = beginDeleting();
         try {
             if (reader != null) {

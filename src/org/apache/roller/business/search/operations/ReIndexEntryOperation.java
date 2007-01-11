@@ -25,10 +25,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.roller.RollerException;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 
 /**
@@ -59,6 +61,18 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
     //~ Methods ================================================================
     
     public void doRun() {
+        
+        // since this operation can be run on a separate thread we must treat
+        // the weblog object passed in as a detached object which is proned to
+        // lazy initialization problems, so requery for the object now
+        try {
+            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
+            this.data = wMgr.getWeblogEntry(this.data.getId());
+        } catch (RollerException ex) {
+            mLogger.error("Error getting weblogentry object", ex);
+            return;
+        }
+        
         IndexReader reader = beginDeleting();
         try {
             if (reader != null) {
