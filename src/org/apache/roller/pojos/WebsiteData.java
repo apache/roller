@@ -1236,7 +1236,44 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return recentEntries;
     }
-   
+    
+    /**
+     * Get up to 100 most recent published entries in weblog.
+     * @param cat Category path or null for no category restriction
+     * @param length Max entries to return (1-100)
+     * @return List of weblog entry objects.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryData"
+     */
+    public List getRecentWeblogEntriesByTag(String tag, int length) {  
+        if (tag != null && "nil".equals(tag)) tag = null;
+        if (length > 100) length = 100;
+        List recentEntries = new ArrayList();
+        List tags = new ArrayList();
+        if (tag != null) {
+            tags.add(tag);
+        }
+        if (length < 1) return recentEntries;
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            recentEntries = wmgr.getWeblogEntries(
+                    this, 
+                    null,       // user
+                    null,       // startDate
+                    new Date(), // endDate
+                    null,       // cat or null
+                    tags,       //  
+                    WeblogEntryData.PUBLISHED, 
+                    "pubTime",  // sortby
+                    null,
+                    null, 
+                    0,
+                    length); 
+        } catch (RollerException e) {
+            log.error("ERROR: getting recent entries", e);
+        }
+        return recentEntries;
+    }   
     
     /**
      * Get up to 100 most recent approved and non-spam comments in weblog.
