@@ -118,6 +118,27 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     <br />
 </c:forEach>
 
+<hr size="1" noshade="noshade" />            
+<h3><fmt:message key="weblogEdit.scheduledEntries" /></h3>
+
+<c:if test="${empty model.recentScheduledEntries}">
+   <span><fmt:message key="application.none" /></span>
+</c:if>
+<c:forEach var="post" items="${model.recentScheduledEntries}">
+    <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
+       <roller:linkparam
+           id="<%= RequestConstants.WEBLOGENTRY_ID %>"
+           name="post" property="id" />
+           <roller:linkparam id="method" value="edit" />
+           <img src='<c:url value="/images/table_edit.png"/>' 
+                align="absmiddle" border="0" alt="icon" title="Edit" />
+           <str:truncateNicely lower="50">
+              <c:out value="${post.title}" />
+           </str:truncateNicely>
+    </roller:link></span>
+    <br />
+</c:forEach>
+
 <br />
 <br />
 </div>

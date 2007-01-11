@@ -110,7 +110,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                         queryWeblog,
                         queryUser,
                         startDate,
-                        new Date(),
+                        null,
                         queryCat,
                         queryTags,
                         WeblogEntryData.PUBLISHED,

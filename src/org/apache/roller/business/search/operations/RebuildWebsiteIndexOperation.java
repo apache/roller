@@ -106,7 +106,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         website,                   // website            
                         null,
                         null,                      // startDate
-                        new Date(),                // endDate (don't index 'future' entries)
+                        null,                      // endDate
                         null,                      // catName
                         null,
                         WeblogEntryData.PUBLISHED, // status

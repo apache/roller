@@ -1222,7 +1222,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                     this, 
                     null,       // user
                     null,       // startDate
-                    new Date(), // endDate
+                    null,       // endDate
                     cat,        // cat or null
                     null, 
                     WeblogEntryData.PUBLISHED, 
