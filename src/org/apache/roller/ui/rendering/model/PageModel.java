@@ -176,18 +176,37 @@ public class PageModel implements Model {
     
     
     /**
-     * A map of entries representing this page. The collection is grouped by 
-     * days of entries.  Each value is a list of entry objects keyed by the 
-     * date they were published.
+     * A map of entries representing this page - with entries restricted by category.
+     * The collection is grouped by days of entries.  
+     * Each value is a list of entry objects keyed by the date they were published.
      * @param catArgument Category restriction (null or "nil" for no restriction)
      */
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
+        return getWeblogEntriesPager(catArgument, null);
+    }
+
+    /**
+     * A map of entries representing this page - with entries restricted by tag.
+     * The collection is grouped by days of entries.  
+     * Each value is a list of entry objects keyed by the date they were published.
+     * @param tagArgument tag restriction (null or "nil" for no restriction)
+     */
+    public WeblogEntriesPager getWeblogEntriesPagerByTag(String tagArgument) {
+        return getWeblogEntriesPager(null, tagArgument);
+    }
+    
+    private WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
         
         // category specified by argument wins over request parameter
         String cat = pageRequest.getWeblogCategoryName();
-        if(catArgument != null && !StringUtils.isEmpty(catArgument) &&
-                !"nil".equals(catArgument)) {
+        if (catArgument != null && !StringUtils.isEmpty(catArgument) && !"nil".equals(catArgument)) {
             cat = catArgument;
+        }
+        
+        List tags = pageRequest.getTags();
+        if (tagArgument != null && !StringUtils.isEmpty(tagArgument) && !"nil".equals(tagArgument)) {
+            tags = new ArrayList();
+            tags.add(tagArgument);
         }
         
         String dateString = pageRequest.getWeblogDate();
@@ -201,7 +220,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
-                    pageRequest.getTags(),
+                    tags,
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 8) {
             return new WeblogEntriesDayPager(
@@ -211,7 +230,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
-                    pageRequest.getTags(),
+                    tags,
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 6) {
             return new WeblogEntriesMonthPager(
@@ -221,7 +240,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
-                    pageRequest.getTags(),
+                    tags,
                     pageRequest.getPageNum());
           
         } else {
@@ -232,7 +251,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
-                    pageRequest.getTags(),
+                    tags,
                     pageRequest.getPageNum());
         }
     }
