@@ -85,6 +85,12 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
         
         // try to acquire lease
         try {
+            // calculate lease expiration time
+            // expireTime = startTime + (timeLeased * 60sec/min) - 1 sec
+            // we remove 1 second to adjust for precision differences
+            long leaseExpireTime = taskLock.getTimeAquired().getTime()+
+                    (60000*taskLock.getTimeLeased())-1000;
+            
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             String queryHQL = "update TaskLockData "+
                     "set client=:client, timeacquired=current_timestamp(), timeleased=:timeleased "+
@@ -95,7 +101,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             query.setString("timeleased", ""+task.getLeaseTime());
             query.setString("name", task.getName());
             query.setTimestamp("timeacquired", taskLock.getTimeAquired());
-            query.setTimestamp("leaseends", new Date(taskLock.getTimeAquired().getTime()+(60000*taskLock.getTimeLeased())));
+            query.setTimestamp("leaseends", new Date(leaseExpireTime));
             int result = query.executeUpdate();
             
             // this may not be needed
@@ -136,9 +142,10 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
         // try to release lease, just set lease time to 0
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            String queryHQL = "update TaskLockData set timeLeased=0 "+
+            String queryHQL = "update TaskLockData set timeLeased=:interval "+
                     "where name=:name and client=:client";
             Query query = session.createQuery(queryHQL);
+            query.setString("interval", ""+task.getInterval());
             query.setString("name", task.getName());
             query.setString("client", task.getClientId());
             int result = query.executeUpdate();
