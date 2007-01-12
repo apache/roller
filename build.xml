@@ -1095,7 +1095,7 @@ ro.buildUser=${user.name}
     </target>
 
 <!-- You can specify testClass using -DtestClass=foo -->
-<property name="testClass" value="org.apache.roller.presentation.velocity.plugins.smileys.SmileysTest"/>
+<property name="testClass" value="org.apache.roller.business.TaskLockTest"/>
 <target name="test-one" depends="build-tests">
     <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
         <arg value="${testClass}"/>
@@ -1156,16 +1156,20 @@ Use -Dverbose=1 to get verbose output.
 <target name="init-db" description=
     "Initializes built-in database by running drop table and create table">
     &custom-post-dbtest;
-    <sql driver="org.apache.derby.jdbc.ClientDriver"
-         url="jdbc:derby://localhost:3219/roller;create=true"
-         userid="app" password="app"
-         src="${build.webapp}/WEB-INF/dbscripts/droptables.sql" onerror="continue"
-         classpath="${ro.tools}/buildtime/derbyclient.jar" />    
-    <sql driver="org.apache.derby.jdbc.ClientDriver" onerror="continue"
-         url="jdbc:derby://localhost:3219/roller"
-         userid="app" password="app"
-         src="${build.webapp}/WEB-INF/dbscripts/derby/createdb.sql"
-         classpath="${ro.tools}/buildtime/derbyclient.jar" /> 
+    <sql driver="${test.db.driver}"
+         url="${test.db.url}"
+         userid="${test.db.username}" 
+         password="${test.db.password}"
+         src="${build.webapp}/WEB-INF/dbscripts/droptables.sql" 
+         onerror="continue"
+         classpath="${test.db.cpath}" />    
+    <sql driver="${test.db.driver}"
+         url="${test.db.url}"
+         userid="${test.db.username}" 
+         password="${test.db.password}"
+         src="${build.webapp}/WEB-INF/dbscripts/${test.db.name}/createdb.sql"
+         onerror="continue"
+         classpath="${test.db.cpath}" /> 
     &custom-pre-dbtest;
 </target>
 
