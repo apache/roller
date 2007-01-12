@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.runnable.RollerTask;
+import org.apache.roller.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
@@ -43,7 +43,7 @@ import org.apache.roller.util.URLUtilities;
 /**
  * Ensure that every weblog has a subscription in Planet Roller database.
  */
-public class SyncWebsitesTask extends RollerTask {
+public class SyncWebsitesTask extends RollerTaskWithLeasing {
     
     private static Log log = LogFactory.getLog(SyncWebsitesTask.class);
     

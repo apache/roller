@@ -26,17 +26,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.util.DateUtil;
 
 
 /**
  * An abstract class representing a scheduled task in Roller.
  *
- * This class extends the java.util.TimerTask class and builds in some Roller
- * specifics, such as handling of locks for synchronization in clustered
- * environments.
+ * This class extends the java.util.TimerTask class and adds in some Roller
+ * specifics.
  */
 public abstract class RollerTask extends TimerTask {
     
@@ -102,65 +99,6 @@ public abstract class RollerTask extends TimerTask {
      * @return The time this task should lease its lock for, in minutes.
      */
     public abstract int getLeaseTime();
-    
-    
-    /**
-     * Run the task.
-     */
-    public abstract void runTask() throws RollerException;
-    
-    
-    /**
-     * The run() method as called by our thread manager.
-     *
-     * This method is purposely defined as "final" so that any tasks that are
-     * defined may not override it and remove any of its functionality.  It is
-     * setup to provide some basic functionality to the running of all tasks,
-     * such as lock acquisition and releasing.
-     *
-     * Roller tasks should put their logic in the runTask() method.
-     */
-    public final void run() {
-        
-        ThreadManager mgr = RollerFactory.getRoller().getThreadManager();
-        
-        boolean lockAcquired = false;
-        try {
-            log.debug("Attempting to acquire lock");
-            
-            lockAcquired = mgr.acquireLock(this);
-            
-            // now if we have a lock then run the task
-            if(lockAcquired) {
-                log.debug("Lock acquired, running task");
-                this.runTask();
-            } else {
-                log.debug("Lock NOT acquired, cannot continue");
-                return;
-            }
-            
-        } catch (Exception ex) {
-            log.error("Unexpected exception running task", ex);
-        } finally {
-            
-            if(lockAcquired) {
-                
-                log.debug("Attempting to release lock");
-                
-                boolean lockReleased = mgr.releaseLock(this);
-                
-                if(lockReleased) {
-                    log.debug("Lock released, time to sleep");
-                } else {
-                    log.debug("Lock NOT released, some kind of problem");
-                }
-            }
-            
-            // always release Roller session
-            RollerFactory.getRoller().release();
-        }
-        
-    }
     
     
     /**
