@@ -34,6 +34,10 @@ public class TurnoverReferersTask extends RollerTask {
     
     private static Log log = LogFactory.getLog(TurnoverReferersTask.class);
     
+    // a unique id for this specific task instance
+    // this is meant to be unique for each client in a clustered environment
+    private String clientId = null;
+    
     // a String description of when to start this task
     private String startTimeDesc = "startOfDay";
     
@@ -46,6 +50,10 @@ public class TurnoverReferersTask extends RollerTask {
     
     public String getName() {
         return "TurnoverReferersTask";
+    }
+    
+    public String getClientId() {
+        return clientId;
     }
     
     public Date getStartTime(Date currentTime) {
@@ -65,6 +73,12 @@ public class TurnoverReferersTask extends RollerTask {
         
         // get relevant props
         Properties props = this.getTaskProperties();
+        
+        // extract clientId
+        String client = props.getProperty("clientId");
+        if(client != null) {
+            this.clientId = client;
+        }
         
         // extract start time
         String startTimeStr = props.getProperty("startTime");

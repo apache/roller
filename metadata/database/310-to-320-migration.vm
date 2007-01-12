@@ -33,6 +33,12 @@ update roller_comment set status = 'DISAPPROVED' where approved=0 and spam=0 and
 -- add new status option 'SCHEDULED' for future published entries
 update weblogentry set status = 'SCHEDULED' where pubtime > now();
 
+-- add new client column to roller_tasklock table
+#addColumnNull("roller_tasklock" "client" "varchar(255)")
+
+-- add a uniqueness constraint on roller_tasklock.name
+alter table roller_tasklock add constraint rtl_name_uq unique ( name$!INDEXSIZE );
+
 -- some various indexes to improve performance
 create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
 create index we_combo1_idx on weblogentry(status, pubtime, websiteid);

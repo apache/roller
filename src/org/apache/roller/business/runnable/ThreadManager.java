@@ -75,15 +75,6 @@ public interface ThreadManager {
     
     
     /**
-     * Is a task currently locked?
-     * 
-     * @param task The RollerTask to check the lock state for.
-     * @return boolean True if task is locked, False otherwise.
-     */
-    public boolean isLocked(RollerTask task);
-    
-    
-    /**
      * Shutdown.
      */
     public void shutdown();

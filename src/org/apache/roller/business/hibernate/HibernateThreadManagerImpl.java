@@ -18,7 +18,6 @@
 
 package org.apache.roller.business.hibernate;
 
-import java.util.Calendar;
 import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +28,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.TaskLockData;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 
@@ -57,53 +57,60 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
     /**
      * Try to aquire a lock for a given RollerTask.
-     *
-     * Remember, locks are only given if ...
-     *   1. the task is not currently locked and it's past the next scheduled
-     *      run time for the particular task
-     *   2. the task *is* locked, but its lease has expired
      */
     public boolean acquireLock(RollerTask task) {
         
-        boolean lockAcquired = false;
-        
+        // query for existing lease record first
         TaskLockData taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
             
-            // null here just means hasn't been initialized yet
             if(taskLock == null) {
+                // insert an empty record, then we will actually acquire the
+                // lease below using an update statement 
                 taskLock = new TaskLockData();
                 taskLock.setName(task.getName());
-                taskLock.setLocked(false);
+                taskLock.setTimeAquired(new Date(0));
+                taskLock.setTimeLeased(0);
+                
+                // save it and flush
+                this.saveTaskLock(taskLock);
+                RollerFactory.getRoller().flush();
             }
+            
         } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
+            log.warn("Error getting or inserting TaskLockData", ex);
             return false;
         }
         
-        Date now = new Date();
-        Date nextRun = taskLock.getNextRun(task.getInterval());
-        if( !taskLock.isLocked() && (nextRun == null || now.after(nextRun))) {
+        // try to acquire lease
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            String queryHQL = "update TaskLockData "+
+                    "set client=:client, timeacquired=current_timestamp(), timeleased=:timeleased "+
+                    "where name=:name and timeacquired=:timeacquired "+
+                    "and :leaseends < current_timestamp()";
+            Query query = session.createQuery(queryHQL);
+            query.setString("client", task.getClientId());
+            query.setString("timeleased", ""+task.getLeaseTime());
+            query.setString("name", task.getName());
+            query.setTimestamp("timeacquired", taskLock.getTimeAquired());
+            query.setTimestamp("leaseends", new Date(taskLock.getTimeAquired().getTime()+(60000*taskLock.getTimeLeased())));
+            int result = query.executeUpdate();
             
-            // set appropriate values for TaskLock and save it
-            taskLock.setLocked(true);
-            taskLock.setTimeAquired(now);
-            taskLock.setTimeLeased(task.getLeaseTime());
-            taskLock.setLastRun(now);
+            // this may not be needed
+            RollerFactory.getRoller().flush();
             
-            try {
-                // save it *and* flush
-                this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
-                lockAcquired = true;
-            } catch (RollerException ex) {
-                log.warn("Error saving TaskLockData", ex);
-                lockAcquired = false;
+            if(result == 1) {
+                return true;
             }
+            
+        } catch (Exception e) {
+            log.warn("Error obtaining lease, assuming race condition.", e);
+            return false;
         }
         
-        return lockAcquired;
+        return false;
     }
     
     
@@ -112,61 +119,43 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
      */
     public boolean releaseLock(RollerTask task) {
         
-        boolean lockReleased = false;
-        
+        // query for existing lease record first
         TaskLockData taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
+            
+            if(taskLock == null) {
+                return false;
+            }
+            
         } catch (RollerException ex) {
             log.warn("Error getting TaskLockData", ex);
             return false;
         }
         
-        if(taskLock != null && taskLock.isLocked()) {
-            // set appropriate values for TaskLock and save it
-            Date now = new Date();
-            taskLock.setLocked(false);
-            
-            try {
-                // save it *and* flush
-                this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
-                lockReleased = true;
-            } catch (RollerException ex) {
-                log.warn("Error saving TaskLockData", ex);
-                lockReleased = false;
-            }
-        } else if(taskLock != null && !taskLock.isLocked()) {
-            // if lock is already released then don't fret about it
-            lockReleased = true;
-        }
-        
-        return lockReleased;
-    }
-    
-    
-    /**
-     * Is a task currently locked?
-     */
-    public boolean isLocked(RollerTask task) {
-        
-        // default is "true"!
-        boolean locked = true;
-        
+        // try to release lease, just set lease time to 0
         try {
-            TaskLockData taskLock = this.getTaskLockByName(task.getName());
-            if(taskLock != null) {
-                locked = taskLock.isLocked();
-            } else {
-                // if taskLock is null, but we didn't get an exception then
-                // that means this lock hasn't been initialized yet
-                locked = false;
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            String queryHQL = "update TaskLockData set timeLeased=0 "+
+                    "where name=:name and client=:client";
+            Query query = session.createQuery(queryHQL);
+            query.setString("name", task.getName());
+            query.setString("client", task.getClientId());
+            int result = query.executeUpdate();
+            
+            // this may not be needed
+            RollerFactory.getRoller().flush();
+            
+            if(result == 1) {
+                return true;
             }
-        } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
+            
+        } catch (Exception e) {
+            log.warn("Error releasing lease.", e);
+            return false;
         }
         
-        return locked;
+        return false;
     }
     
     

@@ -398,8 +398,10 @@ create table roller_tasklock (
     islocked        $BOOLEAN_SQL_TYPE_FALSE,
     timeacquired    $TIMESTAMP_SQL_TYPE_NULL,
     timeleased	    integer,
-    lastrun         $TIMESTAMP_SQL_TYPE_NULL
+    lastrun         $TIMESTAMP_SQL_TYPE_NULL,
+    client          varchar(255)
 );
+alter table roller_tasklock add constraint rtl_name_uq unique ( name$!INDEXSIZE );
 create index rtl_taskname_idx on roller_tasklock( name );
 
 create table roller_hitcounts (
