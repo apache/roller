@@ -72,8 +72,6 @@ public class CacheManager {
     // a map of all registered caches
     private static Map caches = new HashMap();
     
-    private static ContinuousWorkerThread futureInvalidationsThread = null;
-    
     
     static {
         // lookup what cache factory we want to use
@@ -126,33 +124,6 @@ public class CacheManager {
                 }
             }
         }
-        
-        // determine future invalidations peering window
-        Integer peerTime = new Integer(5);
-        String peerTimeString = RollerConfig.getProperty("cache.futureInvalidations.peerTime");
-        try {
-            peerTime = new Integer(peerTimeString);
-        } catch(NumberFormatException nfe) {
-            // bad input from config file, default already set
-        }
-        
-        // thread time is always 10 secs less than peer time to make sure
-        // there is a little overlap so we don't miss any entries
-        // this means every XX seconds we peer XX + 10 seconds into the future
-        int threadTime = (peerTime.intValue() * 60 * 1000) - (10 * 1000);
-        
-        // start up future invalidations job, running continuously
-        futureInvalidationsThread = new ContinuousWorkerThread("future invalidations thread", threadTime);
-        Job futureInvalidationsJob = new FuturePostingsInvalidationJob();
-        
-        // inputs
-        Map inputs = new HashMap();
-        inputs.put("peerTime", peerTime);
-        futureInvalidationsJob.input(inputs);
-        
-        // set job and start it
-        futureInvalidationsThread.setJob(futureInvalidationsJob);
-        futureInvalidationsThread.start();
     }
     
     
@@ -402,11 +373,7 @@ public class CacheManager {
      * Place to do any cleanup tasks for cache system.
      */
     public static void shutdown() {
-        
-        // stop our future invalidations thread
-        if(futureInvalidationsThread != null) {
-            futureInvalidationsThread.interrupt();
-        }
+        // no-op
     }
     
 }
