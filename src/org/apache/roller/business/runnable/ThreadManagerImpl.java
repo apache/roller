@@ -24,12 +24,17 @@ import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 import java.util.Date;
 import java.util.Timer;
+import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
 /**
  * Manage Roller's thread use.
+ *
+ * TODO: when Roller starts requiring Java 5 then switch impl to make use of
+ * the java.util.concurrent tools for this class.  in specific we should be
+ * able to use the ScheduledExecutorService class for task scheduling.
  */
 public class ThreadManagerImpl implements ThreadManager {
     
@@ -85,7 +90,8 @@ public class ThreadManagerImpl implements ThreadManager {
                     ") shorter than minimum allowed (" + MIN_RATE_INTERVAL_MINS + ")");
         }
         
-        scheduler.scheduleAtFixedRate(task, startTime, intervalMins * 60 * 1000);
+        //scheduler.scheduleAtFixedRate(task, startTime, intervalMins * 60 * 1000);
+        scheduler.scheduleAtFixedRate(new TaskExecutor(task), startTime, intervalMins * 60 * 1000);
     }
     
     
@@ -113,6 +119,25 @@ public class ThreadManagerImpl implements ThreadManager {
     
     public boolean unregisterLease(RollerTask task) {
         return true;
+    }
+    
+    
+    private class TaskExecutor extends TimerTask {
+        
+        private RollerTask task = null;
+        
+        public TaskExecutor(RollerTask task) {
+            this.task = task;
+        }
+        
+        public void run() {
+            try {
+                log.debug("Executing task"+task.getName());
+                executeInBackground(task);
+            } catch (InterruptedException ex) {
+                log.info("Interrupted - "+task.getName());
+            }
+        }
     }
     
 }
