@@ -107,11 +107,11 @@ public class ThreadManagerImpl implements ThreadManager {
     }
     
     
-    public boolean acquireLock(RollerTask task) {
+    public boolean registerLease(RollerTask task) {
         return true;
     }
     
-    public boolean releaseLock(RollerTask task) {
+    public boolean unregisterLease(RollerTask task) {
         return true;
     }
     
