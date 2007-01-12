@@ -21,7 +21,6 @@ package org.apache.roller.business.runnable;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -35,7 +34,7 @@ import org.apache.roller.util.DateUtil;
  * This class extends the java.util.TimerTask class and adds in some Roller
  * specifics.
  */
-public abstract class RollerTask extends TimerTask {
+public abstract class RollerTask implements Runnable {
     
     private static Log log = LogFactory.getLog(RollerTask.class);
     
