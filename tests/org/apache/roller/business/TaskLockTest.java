@@ -66,23 +66,15 @@ public class TaskLockTest extends TestCase {
         RollerTask task = new TestTask();
         
         // try to acquire a lock
-        boolean lockAcquired = mgr.acquireLock(task);
-        assertTrue(lockAcquired);
+        assertTrue(mgr.acquireLock(task));
         TestUtils.endSession(true);
         
         // make sure task is locked
-        boolean stillLocked = mgr.isLocked(task);
-        assertTrue(stillLocked);
+        assertFalse(mgr.acquireLock(task));
         TestUtils.endSession(true);
         
         // try to release a lock
-        boolean lockReleased = mgr.releaseLock(task);
-        assertTrue(lockReleased);
-        TestUtils.endSession(true);
-        
-        // make sure task is not locked
-        stillLocked = mgr.isLocked(task);
-        assertFalse(stillLocked);
+        assertTrue(mgr.releaseLock(task));
         TestUtils.endSession(true);
     }
     
@@ -90,6 +82,7 @@ public class TaskLockTest extends TestCase {
     class TestTask extends RollerTask {
         
         public String getName() { return "TestTask"; }
+        public String getClientId() { return "TestTaskClientId"; }
         public Date getStartTime(Date current) { return current; }
         public int getLeaseTime() { return 300; }
         public int getInterval() { return 1800; }

@@ -60,6 +60,16 @@ public abstract class RollerTask extends TimerTask {
     
     
     /**
+     * Get the unique id representing a specific instance of a task.  This is
+     * important for tasks being run in a clustered environment so that a 
+     * lease can be associated with a single cluster member.
+     *
+     * @return The unique client identifier for this task instance.
+     */
+    public abstract String getClientId();
+    
+    
+    /**
      * When should this task be started?  The task is given the current time
      * so that it may determine a start time relative to the current time, 
      * such as the end of the day or hour.
@@ -112,36 +122,21 @@ public abstract class RollerTask extends TimerTask {
      */
     public final void run() {
         
-        ThreadManager mgr = null;
-        try {
-            mgr = RollerFactory.getRoller().getThreadManager();
-        } catch (Exception ex) {
-            log.fatal("Unable to obtain ThreadManager", ex);
-            return;
-        }
+        ThreadManager mgr = RollerFactory.getRoller().getThreadManager();
         
         boolean lockAcquired = false;
         try {
+            log.debug("Attempting to acquire lock");
             
-            if(!mgr.isLocked(this)) {
-                
-                log.debug("Attempting to acquire lock");
-                
-                lockAcquired = mgr.acquireLock(this);
-                
-                // now if we have a lock then run the task
-                if(lockAcquired) {
-                    log.debug("Lock acquired, running task");
-                    this.runTask();
-                } else {
-                    log.debug("Lock NOT acquired, cannot continue");
-                    
-                    // when we don't have a lock we can't continue, so bail
-                    return;
-                }
-                
+            lockAcquired = mgr.acquireLock(this);
+            
+            // now if we have a lock then run the task
+            if(lockAcquired) {
+                log.debug("Lock acquired, running task");
+                this.runTask();
             } else {
-                log.debug("Task already locked, nothing to do");
+                log.debug("Lock NOT acquired, cannot continue");
+                return;
             }
             
         } catch (Exception ex) {
@@ -191,6 +186,9 @@ public abstract class RollerTask extends TimerTask {
                         RollerConfig.getProperty(key));
             }
         }
+        
+        // special addition for clientId property that applies to all tasks
+        taskProps.setProperty("clientId", RollerConfig.getProperty("tasks.clientId"));
         
         return taskProps;
     }
