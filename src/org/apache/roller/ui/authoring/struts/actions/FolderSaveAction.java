@@ -61,6 +61,20 @@ public class FolderSaveAction extends Action {
         FolderData fd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) {
             fd = bmgr.getFolder(form.getId());
+            
+            // update changeable properties
+            if(!fd.getName().equals(form.getName())) {
+                fd.setName(form.getName());
+                
+                // path includes name, so update path as well
+                FolderData parent = fd.getParent();
+                if("/".equals(parent.getPath())) {
+                    fd.setPath("/"+fd.getName());
+                } else {
+                    fd.setPath(parent.getPath() + "/" + fd.getName());
+                }
+            }
+            fd.setDescription(form.getDescription());
         } else {
             String parentId = request.getParameter(RequestConstants.PARENT_ID);
             FolderData parent = bmgr.getFolder(parentId);
