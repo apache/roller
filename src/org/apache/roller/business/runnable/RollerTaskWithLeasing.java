@@ -57,7 +57,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
         try {
             log.debug("Attempting to acquire lock");
             
-            lockAcquired = mgr.acquireLock(this);
+            lockAcquired = mgr.registerLease(this);
             
             // now if we have a lock then run the task
             if(lockAcquired) {
@@ -76,7 +76,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
                 
                 log.debug("Attempting to release lock");
                 
-                boolean lockReleased = mgr.releaseLock(this);
+                boolean lockReleased = mgr.unregisterLease(this);
                 
                 if(lockReleased) {
                     log.debug("Lock released, time to sleep");

@@ -66,15 +66,15 @@ public class TaskLockTest extends TestCase {
         RollerTask task = new TestTask();
         
         // try to acquire a lock
-        assertTrue(mgr.acquireLock(task));
+        assertTrue(mgr.registerLease(task));
         TestUtils.endSession(true);
         
         // make sure task is locked
-        assertFalse(mgr.acquireLock(task));
+        assertFalse(mgr.registerLease(task));
         TestUtils.endSession(true);
         
         // try to release a lock
-        assertTrue(mgr.releaseLock(task));
+        assertTrue(mgr.unregisterLease(task));
         TestUtils.endSession(true);
     }
     

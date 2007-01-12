@@ -37,7 +37,7 @@ import org.hibernate.criterion.Expression;
  * Hibernate implementation of the TaskLockManager interface.
  *
  * This implementation extends the base ThreadManagerImpl class and provides
- * locking abilities which are managed through the database.
+ * leasing abilities which are managed through the database.
  */
 public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
@@ -58,7 +58,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     /**
      * Try to aquire a lock for a given RollerTask.
      */
-    public boolean acquireLock(RollerTask task) {
+    public boolean registerLease(RollerTask task) {
         
         // query for existing lease record first
         TaskLockData taskLock = null;
@@ -123,7 +123,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     /**
      * Try to release the lock for a given RollerTask.
      */
-    public boolean releaseLock(RollerTask task) {
+    public boolean unregisterLease(RollerTask task) {
         
         // query for existing lease record first
         TaskLockData taskLock = null;

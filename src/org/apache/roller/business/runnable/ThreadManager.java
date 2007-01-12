@@ -19,7 +19,6 @@
 package org.apache.roller.business.runnable;
 
 import java.util.Date;
-import java.util.TimerTask;
 
 
 /**
@@ -57,21 +56,21 @@ public interface ThreadManager {
     
     
     /**
-     * Try to aquire a lock for a given RollerTask.
+     * Try to register a lease for a given RollerTask.
      *
-     * @param task The RollerTask to aquire the lock for.
-     * @return boolean True if lock was acquired, False otherwise.
+     * @param task The RollerTask to register the lease for.
+     * @return boolean True if lease was registered, False otherwise.
      */
-    public boolean acquireLock(RollerTask task);
+    public boolean registerLease(RollerTask task);
     
     
     /**
-     * Try to release the lock for a given RollerTask.
+     * Try to unregister the lease for a given RollerTask.
      *
-     * @param task The RollerTask to release the lock for.
-     * @return boolean True if lock was released (or was not locked), False otherwise.
+     * @param task The RollerTask to unregister the lease for.
+     * @return boolean True if lease was unregistered (or was not leased), False otherwise.
      */
-    public boolean releaseLock(RollerTask task);
+    public boolean unregisterLease(RollerTask task);
     
     
     /**
