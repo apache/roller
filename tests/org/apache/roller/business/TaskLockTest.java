@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.runnable.RollerTask;
-import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.business.runnable.ThreadManager;
 
 
@@ -79,7 +79,7 @@ public class TaskLockTest extends TestCase {
     }
     
     
-    class TestTask extends RollerTask {
+    class TestTask extends RollerTaskWithLeasing {
         
         public String getName() { return "TestTask"; }
         public String getClientId() { return "TestTaskClientId"; }

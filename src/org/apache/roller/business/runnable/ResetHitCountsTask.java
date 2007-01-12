@@ -30,7 +30,7 @@ import org.apache.roller.business.WeblogManager;
 /**
  * Reset weblog hit counts.
  */
-public class ResetHitCountsTask extends RollerTask {
+public class ResetHitCountsTask extends RollerTaskWithLeasing {
     
     private static Log log = LogFactory.getLog(ResetHitCountsTask.class);
     

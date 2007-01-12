@@ -30,7 +30,7 @@ import org.apache.roller.business.RollerFactory;
 /**
  * Reset referer counts.
  */
-public class TurnoverReferersTask extends RollerTask {
+public class TurnoverReferersTask extends RollerTaskWithLeasing {
     
     private static Log log = LogFactory.getLog(TurnoverReferersTask.class);
     

@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.runnable.RollerTask;
+import org.apache.roller.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
@@ -37,7 +37,7 @@ import org.apache.roller.business.RollerFactory;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingQueueTask extends RollerTask {
+public class PingQueueTask extends RollerTaskWithLeasing {
     
     private static Log log = LogFactory.getLog(PingQueueTask.class);
     

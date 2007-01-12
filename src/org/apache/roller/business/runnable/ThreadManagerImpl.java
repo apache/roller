@@ -115,8 +115,4 @@ public class ThreadManagerImpl implements ThreadManager {
         return true;
     }
     
-    public boolean isLocked(RollerTask task) {
-        return false;
-    }
-    
 }
