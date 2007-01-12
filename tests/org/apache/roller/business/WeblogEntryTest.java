@@ -197,7 +197,7 @@ public class WeblogEntryTest extends TestCase {
         entries = null;
         entries = mgr.getWeblogEntries(testWeblog.getDefaultCategory(), false);
         assertNotNull(entries);
-        assertEquals(3, entries.size());
+        assertEquals(2, entries.size());
         
         // get all published entries only 
         entries = null;

@@ -560,6 +560,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WeblogEntryData.class);
             criteria.add(Expression.eq("pinnedToMain", Boolean.TRUE));
+            criteria.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
             criteria.addOrder(Order.desc("pubTime"));
             if (max != null) {
                 criteria.setMaxResults(max.intValue());
@@ -635,6 +636,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WeblogEntryData.class);
+            criteria.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
             
             if(!subcats) {
                 // if no subcats then this is an equals query
