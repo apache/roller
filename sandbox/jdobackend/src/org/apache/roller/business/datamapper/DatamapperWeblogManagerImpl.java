@@ -489,11 +489,11 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
     public List getWeblogEntriesPinnedToMain(Integer max)
             throws RollerException {
         DatamapperQuery query = strategy.newQuery(WeblogCategoryData.class, 
-                "WeblogEntryData.getByPinnedToMainOrderByPubTimeDesc");
+                "WeblogEntryData.getByPinnedToMain&statusOrderByPubTimeDesc");
         if (max != null) {
             query.setRange(0, max.intValue());
         }
-        return (List) query.execute(Boolean.TRUE);   
+        return (List) query.execute(new Object[] { Boolean.TRUE, WeblogEntryData.PUBLISHED } );
     }
 
     public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
@@ -578,12 +578,12 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
         
         if (!subcats) {
             results = (List) strategy.newQuery(WeblogEntryData.class, 
-                "WeblogEntryData.getByCategory")
-                .execute(cat);
+                "WeblogEntryData.getByStatus&Category")
+                .execute(new Object[] {WeblogEntryData.PUBLISHED, cat});
         } else {
             results = (List) strategy.newQuery(WeblogEntryData.class, 
-                "WeblogEntryData.getByCategory.pathLike&Website")
-                .execute(new Object[] {cat.getPath() + '%', cat.getWebsite()});
+                "WeblogEntryData.getByStatus&Category.pathLike&Website")
+                .execute(new Object[] {WeblogEntryData.PUBLISHED, cat.getPath() + '%', cat.getWebsite()});
         }
         
         return results;

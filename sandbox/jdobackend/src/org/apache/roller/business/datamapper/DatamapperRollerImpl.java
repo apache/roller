@@ -221,10 +221,8 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
         return threadManager;
     }
 
-    protected ThreadManager createDatamapperThreadManager(
-            DatamapperPersistenceStrategy strategy) {
-        return new DatamapperThreadManagerImpl(strategy);
-    }
+    protected abstract ThreadManager createDatamapperThreadManager(
+            DatamapperPersistenceStrategy strategy);
 
     /**
      * This method is deprecated.

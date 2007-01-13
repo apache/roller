@@ -26,6 +26,7 @@ import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.business.referrers.RefererManager;
 
 /**
@@ -58,6 +59,12 @@ public class JDORollerImpl extends DatamapperRollerImpl {
             DatamapperPersistenceStrategy strategy) {
         return null;
     }
+
+    protected ThreadManager createDatamapperThreadManager(
+            DatamapperPersistenceStrategy strategy) {
+        return null;
+    }
+
 
     protected RefererManager createDatamapperRefererManagerImpl(DatamapperPersistenceStrategy strategy) {
         return null;
