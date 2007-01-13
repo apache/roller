@@ -38,6 +38,7 @@ public class TaskLockData extends PersistentObject implements Serializable {
     private Date timeAquired = null;
     private int timeLeased = 0;
     private Date lastRun = null;
+    private String clientId = null;
     
     
     public TaskLockData() {}
@@ -187,6 +188,18 @@ public class TaskLockData extends PersistentObject implements Serializable {
 
     public void setTimeLeased(int timeLeased) {
         this.timeLeased = timeLeased;
+    }
+
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="client" non-null="false" unique="false"
+     */
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
     
 }
