@@ -14,6 +14,14 @@
         <named-query name="TaskLockData.getByName">
             <query>SELECT t FROM TaskLockData t WHERE t.name = ?1</query>
         </named-query>
+        <named-query name="TaskLockData.updateClient&amp;Timeacquired&amp;TimeleasedByName&amp;Timeacquired">
+            <query> UPDATE TaskLockData t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2
+                    WHERE t.name=?3 AND t.timeAquired=?4 AND ?5 &lt; CURRENT_TIMESTAMP
+            </query>
+        </named-query>
+        <named-query name="TaskLockData.updateTimeLeasedByName&amp;Client">
+            <query>UPDATE TaskLockData t SET t.timeLeased=?1 WHERE t.name=?2 AND t.clientId=?3</query>
+        </named-query>
         <attributes>
 			<id name="id">
 				<column name="id"/>
@@ -35,6 +43,9 @@
 			</basic>
 			<basic name="timeLeased">
 				<column name="timeleased" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="clientId">
+                <column name="client" insertable="true" updatable="true" unique="false"/>
             </basic>
 		</attributes>
     </entity>

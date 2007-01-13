@@ -12,14 +12,14 @@
     <entity metadata-complete="true" name="WeblogEntryData"
             class="org.apache.roller.pojos.WeblogEntryData">
         <table name="weblogentry"/>
-        <named-query name="WeblogEntryData.getByCategory">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.category = ?1</query>
+        <named-query name="WeblogEntryData.getByStatus&amp;Category">
+            <query>SELECT w FROM WeblogEntryData w WHERE w.status = ?1 AND w.category = ?2</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByCategory.pathLike&amp;Website">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.category.path LIKE ?1 AND w.website = ?2</query>
+        <named-query name="WeblogEntryData.getByStatus&amp;Category.pathLike&amp;Website">
+            <query>SELECT w FROM WeblogEntryData w WHERE w.status = ?1 AND w.category.path LIKE ?2 AND w.website = ?3</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByPinnedToMainOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.pinnedToMain = ?1 ORDER BY w.pubTime DESC</query>
+        <named-query name="WeblogEntryData.getByPinnedToMain&amp;statusOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntryData w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC</query>
         </named-query>
         <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;CategoryOrderByPubTimeAsc">
             <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4

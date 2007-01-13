@@ -34,12 +34,12 @@ import org.apache.roller.pojos.TaskLockData;
  * This implementation extends the base ThreadManagerImpl class and provides
  * locking abilities which are managed through the database.
  */
-public class DatamapperThreadManagerImpl extends ThreadManagerImpl {
+public abstract class DatamapperThreadManagerImpl extends ThreadManagerImpl {
 
     private static Log log = LogFactory.getLog(
         DatamapperThreadManagerImpl.class);
 
-    private DatamapperPersistenceStrategy strategy;
+    protected DatamapperPersistenceStrategy strategy;
 
 
     public DatamapperThreadManagerImpl(DatamapperPersistenceStrategy strat) {
@@ -53,117 +53,88 @@ public class DatamapperThreadManagerImpl extends ThreadManagerImpl {
 
     /**
      * Try to aquire a lock for a given RollerTask.
-     *
-     * Remember, locks are only given if ...
-     *   1. the task is not currently locked and it's past the next scheduled
-     *      run time for the particular task
-     *   2. the task *is* locked, but its lease has expired
      */
-    public boolean acquireLock(RollerTask task) {
-
-        boolean lockAcquired = false;
-
+    public boolean registerLease(RollerTask task) {
+        // query for existing lease record first
         TaskLockData taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
 
-            // null here just means hasn't been initialized yet
             if(taskLock == null) {
+                // insert an empty record, then we will actually acquire the
+                // lease below using an update statement
                 taskLock = new TaskLockData();
                 taskLock.setName(task.getName());
-                taskLock.setLocked(false);
+                taskLock.setTimeAquired(new Date(0));
+                taskLock.setTimeLeased(0);
+
+                // save it and flush
+                this.saveTaskLock(taskLock);
+                RollerFactory.getRoller().flush();
             }
+
         } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
+            log.warn("Error getting or inserting TaskLockData", ex);
             return false;
         }
 
-        Date now = new Date();
-        Date nextRun = taskLock.getNextRun(task.getInterval());
-        if( !taskLock.isLocked() && (nextRun == null || now.after(nextRun))) {
+        // try to acquire lease
+        try {
+            // calculate lease expiration time
+            // expireTime = startTime + (timeLeased * 60sec/min) - 1 sec
+            // we remove 1 second to adjust for precision differences
+            long leaseExpireTime = taskLock.getTimeAquired().getTime()+
+                    (60000*taskLock.getTimeLeased())-1000;
 
-            // set appropriate values for TaskLock and save it
-            taskLock.setLocked(true);
-            taskLock.setTimeAquired(now);
-            taskLock.setTimeLeased(task.getLeaseTime());
-            taskLock.setLastRun(now);
+            if (acquireLeaseInDatabase(task, taskLock, leaseExpireTime))
+                return true;
 
-            try {
-                // save it *and* flush
-                this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
-                lockAcquired = true;
-            } catch (RollerException ex) {
-                log.warn("Error saving TaskLockData", ex);
-                lockAcquired = false;
-            }
+        } catch (Exception e) {
+            log.warn("Error obtaining lease, assuming race condition.", e);
+            return false;
         }
 
-        return lockAcquired;
+        return false;
     }
 
+    protected abstract boolean acquireLeaseInDatabase(RollerTask task, TaskLockData taskLock,
+            long leaseExpireTime) throws RollerException;
 
     /**
      * Try to release the lock for a given RollerTask.
      */
-    public boolean releaseLock(RollerTask task) {
+    public boolean unregisterLease(RollerTask task) {
 
-        boolean lockReleased = false;
-
+        // query for existing lease record first
         TaskLockData taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
+
+            if(taskLock == null) {
+                return false;
+            }
+
         } catch (RollerException ex) {
             log.warn("Error getting TaskLockData", ex);
             return false;
         }
 
-        if(taskLock != null && taskLock.isLocked()) {
-            // set appropriate values for TaskLock and save it
-            Date now = new Date();
-            taskLock.setLocked(false);
-
-            try {
-                // save it *and* flush
-                this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
-                lockReleased = true;
-            } catch (RollerException ex) {
-                log.warn("Error saving TaskLockData", ex);
-                lockReleased = false;
-            }
-        } else if(taskLock != null && !taskLock.isLocked()) {
-            // if lock is already released then don't fret about it
-            lockReleased = true;
-        }
-
-        return lockReleased;
-    }
-
-
-    /**
-     * Is a task currently locked?
-     */
-    public boolean isLocked(RollerTask task) {
-
-        // default is "true"!
-        boolean locked = true;
-
+        // try to release lease, just set lease time to 0
         try {
-            TaskLockData taskLock = this.getTaskLockByName(task.getName());
-            if(taskLock != null) {
-                locked = taskLock.isLocked();
-            } else {
-                // if taskLock is null, but we didn't get an exception then
-                // that means this lock hasn't been initialized yet
-                locked = false;
-            }
-        } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
+            if (releaseLeaseInDatabase(task))
+                return true;
+
+        } catch (Exception e) {
+            log.warn("Error releasing lease.", e);
+            return false;
         }
 
-        return locked;
+        return false;
+
     }
+
+    protected abstract boolean releaseLeaseInDatabase(RollerTask task)
+            throws RollerException;
 
     private TaskLockData getTaskLockByName(String name) throws RollerException {
         // do lookup
