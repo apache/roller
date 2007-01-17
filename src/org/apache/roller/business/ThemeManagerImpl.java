@@ -239,7 +239,7 @@ public class ThemeManagerImpl implements ThemeManager {
         
         String themespath = RollerConfig.getProperty("themes.dir");
         if(themespath.endsWith(File.separator)) {
-            themespath.substring(0, themespath.length() - 1);
+            themespath = themespath.substring(0, themespath.length() - 1);
         }
         
         // first, get a list of the themes available

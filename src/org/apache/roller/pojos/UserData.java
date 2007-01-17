@@ -85,7 +85,7 @@ public class UserData
         this.dateCreated = (Date)dateCreated.clone();
         this.locale = locale;
         this.timeZone = timeZone;
-        this.enabled = enabled;
+        this.enabled = isEnabled;
     }
     
     public UserData( UserData otherData ) {
