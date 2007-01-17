@@ -757,7 +757,7 @@ public class RollerConfigData
 
     public boolean equals(Object pOther)
     {
-        if (pOther instanceof WebsiteData)
+        if (pOther instanceof RollerConfigData)
         {
             RollerConfigData lTest = (RollerConfigData) pOther;
             boolean lEquals = true;
