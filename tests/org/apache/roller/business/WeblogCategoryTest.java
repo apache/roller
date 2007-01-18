@@ -144,7 +144,7 @@ public class WeblogCategoryTest extends TestCase {
         mgr.removeWeblogCategory(cat);
         TestUtils.endSession(true);
         
-        // make sure category and subcat was removed
+        // make sure folder and subfolder was removed
         cat = null;
         cat = mgr.getWeblogCategory(newCat.getId());
         assertNull(cat);

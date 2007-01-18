@@ -41,7 +41,6 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.WebsiteDisplayData;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -308,53 +307,6 @@ public class HibernateRefererManagerImpl implements RefererManager {
         }
     }
     
-    /**
-     * @deprecated Replaced by getHotWeblogs().
-     */
-    public List getDaysPopularWebsites(int offset, int length) 
-        throws RollerException {
-        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
-        String msg = "Getting popular websites";
-        ArrayList result = new ArrayList();
-        try {      
-            Session session = 
-                ((HibernatePersistenceStrategy)strategy).getSession();            
-            Query query = session.createQuery(
-                "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
-               +"from WebsiteData w, RefererData r "
-               +"where r.website=w and w.enabled=true and w.active=true "
-               +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
-            
-              // +"group by w.name, w.handle, w.id order by s desc");
-              // The above would be *much* better but "HQL parser does not   
-              // resolve alias in ORDER BY clause" (See Hibernate issue HHH-892)
-            
-            if (offset != 0) {
-                query.setFirstResult(offset);
-            }
-            if (length != -1) {
-                query.setMaxResults(length);
-            }
-            Iterator rawResults = query.list().iterator();
-            for (Iterator it = query.list().iterator(); it.hasNext();) {
-                Object[] row = (Object[])it.next();
-                Integer hits = (Integer)row[0];
-                String websiteId = (String)row[1];
-                String websiteName = (String)row[2];
-                String websiteHandle = (String)row[3];
-                result.add(new WebsiteDisplayData(
-                    websiteId,
-                    websiteName,
-                    websiteHandle,
-                    hits));              
-            }
-            return result;
-            
-        } catch (Throwable pe) {
-            log.error(msg, pe);
-            throw new RollerException(msg, pe);
-        }
-    }
         
     /**
      * Use raw SQL because Hibernate can't handle the query.

@@ -36,7 +36,6 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.WebsiteDisplayData;
 import org.apache.roller.util.DateUtil;
 
 
@@ -258,26 +257,5 @@ public class RefererTest extends TestCase {
         assertEquals(0, refs.size());
     }
     
-    public void testGetDaysPopularWebsites() throws Exception {
-        log.info("Test apply referers (weblog)");
-        RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
-        
-        List sites = rmgr.getDaysPopularWebsites(0, 1);
-        assertEquals(1, sites.size());
-        
-        sites = rmgr.getDaysPopularWebsites(1, 1);
-        assertEquals(1, sites.size());
-        
-        sites = rmgr.getDaysPopularWebsites(0, 20);
-        assertEquals(2, sites.size());
-        
-        WebsiteDisplayData site1 = (WebsiteDisplayData)sites.get(0);
-        assertEquals(testWeblog.getHandle(), site1.getWebsiteHandle());
-        assertEquals(count, site1.getHits().intValue());
-        
-        WebsiteDisplayData site2 = (WebsiteDisplayData)sites.get(1);
-        assertEquals(testWeblog2.getHandle(), site2.getWebsiteHandle());
-        assertEquals(count/2, site2.getHits().intValue()); 
-    }
 }
 

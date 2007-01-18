@@ -22,6 +22,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -37,7 +40,7 @@ import org.apache.roller.RollerException;
  * @hibernate.class lazy="true" table="webpage"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogTemplate extends PersistentObject
+public class WeblogTemplate 
         implements Serializable, Template {
     
     public static final long serialVersionUID = -613737191638263428L;
@@ -124,6 +127,8 @@ public class WeblogTemplate extends PersistentObject
     
     /** @ejb:persistent-field */
     public void setId( java.lang.String id ) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -295,83 +300,33 @@ public class WeblogTemplate extends PersistentObject
     }
     
     
+    //------------------------------------------------------- Good citizenship
+
     public String toString() {
-        StringBuffer str = new StringBuffer("{");
-        
-        str.append("id=" + id + " " + "name=" + name + " " + "description="
-                + description + " " + "link=" + link + " " + "template=" + contents
-                + " " + "updateTime=" + lastModified);
-        str.append('}');
-        
-        return(str.toString());
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof WeblogTemplate != true) return false;
+        WeblogTemplate o = (WeblogTemplate)other;
+        return new EqualsBuilder()
+            .append(name, o.getName()) 
+            .append(getWebsite(), o.getWebsite()) 
+            .isEquals();
     }
     
-    
-    public boolean equals( Object pOther ) {
-        if( pOther instanceof WeblogTemplate ) {
-            WeblogTemplate lTest = (WeblogTemplate) pOther;
-            boolean lEquals = true;
-            
-            if( this.id == null ) {
-                lEquals = lEquals && ( lTest.getId() == null );
-            } else {
-                lEquals = lEquals && this.id.equals( lTest.getId() );
-            }
-            if( this.weblog == null ) {
-                lEquals = lEquals && ( lTest.getWebsite() == null );
-            } else {
-                lEquals = lEquals && this.weblog.equals( lTest.getWebsite() );
-            }
-            if( this.name == null ) {
-                lEquals = lEquals && ( lTest.getName() == null );
-            } else {
-                lEquals = lEquals && this.name.equals( lTest.getName() );
-            }
-            if( this.description == null ) {
-                lEquals = lEquals && ( lTest.getDescription() == null );
-            } else {
-                lEquals = lEquals && this.description.equals( lTest.getDescription() );
-            }
-            if( this.link == null ) {
-                lEquals = lEquals && ( lTest.getLink() == null );
-            } else {
-                lEquals = lEquals && this.link.equals( lTest.getLink() );
-            }
-            if( this.contents == null ) {
-                lEquals = lEquals && ( lTest.getContents() == null );
-            } else {
-                lEquals = lEquals && this.contents.equals( lTest.getContents() );
-            }
-            if( this.lastModified == null ) {
-                lEquals = lEquals && ( lTest.getLastModified() == null );
-            } else {
-                lEquals = lEquals && this.lastModified.equals( lTest.getLastModified() );
-            }
-            
-            return lEquals;
-        } else {
-            return false;
-        }
-    }
-    
-    
-    public int hashCode() {
-        int result = 17;
-        result = 37*result + ((this.id != null) ? this.id.hashCode() : 0);
-        result = 37*result + ((this.weblog != null) ? this.weblog.hashCode() : 0);
-        result = 37*result + ((this.name != null) ? this.name.hashCode() : 0);
-        result = 37*result + ((this.description != null) ? this.description.hashCode() : 0);
-        result = 37*result + ((this.link != null) ? this.link.hashCode() : 0);
-        result = 37*result + ((this.contents != null) ? this.contents.hashCode() : 0);
-        result = 37*result + ((this.lastModified != null) ? this.lastModified.hashCode() : 0);
-        return result;
-    }
-    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getName())
+            .append(getWebsite())
+            .toHashCode();
+    }    
     
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData( org.apache.roller.pojos.PersistentObject otherData ) {
+    public void setData( WeblogTemplate otherData ) {
         WeblogTemplate other = (WeblogTemplate)otherData;
         this.weblog =     other.getWebsite();
         this.id =           other.getId();

@@ -16,6 +16,10 @@
 
 package org.apache.roller.pojos; 
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Represents a user's permissions within a website.
  *
@@ -26,7 +30,7 @@ package org.apache.roller.pojos;
  *
  * @author Dave Johnson
  */
-public class PermissionsData extends PersistentObject
+public class PermissionsData
 {
     private String      id = null;
     private WebsiteData website = null;
@@ -61,6 +65,8 @@ public class PermissionsData extends PersistentObject
     /** @ejb:persistent-field */
     public void setId(String id) 
     {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     /** 
@@ -114,11 +120,28 @@ public class PermissionsData extends PersistentObject
     {
         this.pending = pending;
     }
-    /**
-     * Set data from other object (no-op).
-     */
-    public void setData(PersistentObject vo)
-    {
-        // no-op
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof PermissionsData != true) return false;
+        PermissionsData o = (PermissionsData)other;
+        return new EqualsBuilder()
+            .append(user, o.user) 
+            .append(website, o.website) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(user)
+            .append(website)
+            .toHashCode();
+    }
+
 }

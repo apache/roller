@@ -21,6 +21,7 @@ package org.apache.roller.pojos;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -30,7 +31,7 @@ import java.util.Date;
  * @hibernate.class lazy="true" table="roller_tasklock"
  * @hibernate.cache usage="read-write"
  */
-public class TaskLockData extends PersistentObject implements Serializable {
+public class TaskLockData implements Serializable {
     
     private String id = null;
     private String name = null;
@@ -83,8 +84,7 @@ public class TaskLockData extends PersistentObject implements Serializable {
     }
     
     
-    public void setData(PersistentObject otherData) {
-        TaskLockData other = (TaskLockData) otherData;
+    public void setData(TaskLockData other) {
         this.id = other.getId();
         this.name = other.getName();
         this.locked = other.isLocked();
@@ -92,7 +92,13 @@ public class TaskLockData extends PersistentObject implements Serializable {
         this.timeLeased = other.getTimeLeased();
         this.lastRun = other.getLastRun();
     }
-    
+
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
     public boolean equals(Object other) {
         
         if(this == other) return true;
@@ -100,12 +106,12 @@ public class TaskLockData extends PersistentObject implements Serializable {
         
         // our natural key, or business key, is our name
         final TaskLockData that = (TaskLockData) other;
-        return this.name.equals(that.getName());
+        return this.getName().equals(that.getName());
     }
     
     public int hashCode() {
         // our natrual key, or business key, is our name
-        return this.name.hashCode();
+        return this.getName().hashCode();
     }
     
     /**
@@ -117,6 +123,8 @@ public class TaskLockData extends PersistentObject implements Serializable {
     }
 
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 

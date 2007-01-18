@@ -30,7 +30,6 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +77,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.Utilities;
 
@@ -247,19 +247,21 @@ public final class WeblogEntryFormAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("weblogEdit.page");
         ActionMessages uiMessages = new ActionMessages();
-        try {
+        try {            
             WeblogEntryFormEx  form = (WeblogEntryFormEx)actionForm;
             Roller           roller = RollerFactory.getRoller();
             RollerSession      rses = RollerSession.getRollerSession(request);
-            UserManager     userMgr = roller.getUserManager();
+            UserManager     userMgr = roller.getUserManager();            
             WeblogManager weblogMgr = roller.getWeblogManager();
-            UserData           ud  = userMgr.getUser(form.getCreatorId());
-            WebsiteData       site = userMgr.getWebsite(form.getWebsiteId());
-            WeblogEntryData  entry = null;
+            
+            UserData            ud  = userMgr.getUser(form.getCreatorId());
+            WebsiteData        site = userMgr.getWebsite(form.getWebsiteId());
+            
+            WeblogEntryData   entry = null;
             
             if ( rses.isUserAuthorizedToAuthor(site)
-            || (rses.isUserAuthorized(site)
-            && !form.getStatus().equals(WeblogEntryData.PUBLISHED) )) {
+             || (rses.isUserAuthorized(site)
+             && !form.getStatus().equals(WeblogEntryData.PUBLISHED) )) {
                 
                 ActionErrors errors = validateEntry(null, form);
                 if (errors.size() > 0) {
@@ -274,31 +276,26 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 if (form.getId() == null || form.getId().trim().length()==0) {
                     entry = new WeblogEntryData();
                     entry.setCreator(ud);
-                    entry.setWebsite( site );
+                    entry.setWebsite(site);
                 } else {
                     entry = weblogMgr.getWeblogEntry(form.getId());
                 }
                 
                 mLogger.debug("setting update time now");
-                form.setUpdateTime(new Timestamp(new Date().getTime()));
-                
+                form.setUpdateTime(new Timestamp(new Date().getTime()));                
                 if ("PUBLISHED".equals(form.getStatus()) &&
                         "0/0/0".equals(form.getDateString())) {
-                    mLogger.debug("setting pubtime now");
-                    
-                    /* NOTE: the wf.copyTo() method will override this value
-                     * based on data submitted with the form if that data is
-                     * not null.  check the method to verify.
-                     *
-                     * this means that setting the pubtime here only takes
-                     * effect if the entry is being published for the first
-                     * time.
-                     */
+                    mLogger.debug("setting pubtime now");                    
+                    // NOTE: the form .copyTo() method will override this value
+                    // based on data submitted with the form if that data is
+                    // not null.  Check the method to verify. This means that 
+                    // setting the pubtime here only takes effect if the entry 
+                    // is being published for the first time.
                     form.setPubTime(form.getUpdateTime());
                 }
                 
                 mLogger.debug("copying submitted form data to entry object");
-                form.copyTo(entry, request.getLocale(),request.getParameterMap());
+                form.copyTo(entry, request.getLocale(), request.getParameterMap());
                 
                 // Fetch MediaCast content type and length
                 mLogger.debug("Checking MediaCast attributes");
@@ -307,23 +304,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 } else {
                     mLogger.debug("Validated MediaCast attributes");
                 }
-                
-                // Store value object (creates new or updates existing)
-                entry.setUpdateTime(new Timestamp(new Date().getTime()));
-                
-                // make sure we have an anchor value set
-                if(entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
-                    entry.setAnchor(weblogMgr.createAnchor(entry));
-                }
-                
-                // if the entry was published to future, set status as SCHEDULED
-                // we only consider an entry future published if it is scheduled
-                // more than 1 minute into the future
-                if ("PUBLISHED".equals(entry.getStatus()) && 
-                        entry.getPubTime().after(new Date(System.currentTimeMillis() + 60000))) {
-                    entry.setStatus(WeblogEntryData.SCHEDULED);
-                }
-                
+                                
                 mLogger.debug("Saving entry");
                 weblogMgr.saveWeblogEntry(entry);
                 RollerFactory.getRoller().flush();
@@ -519,14 +500,14 @@ public final class WeblogEntryFormAction extends DispatchAction {
             mLogger.debug("No MediaCast specified, but that is OK");
             valid = true;
         }
-        if (!valid || empty) {
+        if (!valid) {
             mLogger.debug("Removing MediaCast attributes");
             WeblogManager weblogManager = RollerFactory.getRoller().getWeblogManager();
             try {
                 weblogManager.removeWeblogEntryAttribute("att_mediacast_url", entry);
                 weblogManager.removeWeblogEntryAttribute("att_mediacast_type", entry);
                 weblogManager.removeWeblogEntryAttribute("att_mediacast_length", entry);
-            } catch (RollerException e) {
+            } catch (Exception e) {
                 mLogger.error("ERROR removing invalid MediaCast attributes");
             }
         }

@@ -19,11 +19,12 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
@@ -43,7 +44,7 @@ import org.apache.roller.business.RollerFactory;
  * @hibernate.class lazy="true" table="folder"
  * @hibernate.cache usage="read-write"
  */
-public class FolderData extends PersistentObject 
+public class FolderData 
         implements Serializable, Comparable {
     
     public static final long serialVersionUID = -6272468884763861944L;
@@ -87,8 +88,7 @@ public class FolderData extends PersistentObject
     }
     
     
-    public void setData(PersistentObject other) {
-        FolderData otherData = (FolderData) other;
+    public void setData(FolderData otherData) {
         
         this.id = otherData.getId();
         this.name = otherData.getName();
@@ -100,45 +100,38 @@ public class FolderData extends PersistentObject
         this.setBookmarks(otherData.getBookmarks());
     }
     
-    
+        
+    //------------------------------------------------------- Good citizenship
+
     public String toString() {
-        
-        StringBuffer str = new StringBuffer("{");
-        str.append("id=").append(id);
-        str.append(",");
-        str.append("path=").append(path);
-        str.append(",");
-        str.append("desc=").append(description);
-        str.append("}");
-        
-        return str.toString();
+        return ToStringBuilder.reflectionToString(this);
     }
-    
     
     public boolean equals(Object other) {
         
         if (other == null) return false;
         
         if (other instanceof FolderData) {
-            
-            // NOTE: currently we are implementing equals only using the path
-            //   of the folder.  technically the business key should be for
-            //   both the weblog & path, but we don't expect to be comparing
-            //   folders from 2 different weblogs so this should be fine
-            FolderData that = (FolderData) other;
-            return this.path.equals(that.getPath());
+            FolderData o = (FolderData) other;
+            return new EqualsBuilder()
+                .append(getPath(), o.getPath()) 
+                .append(getWebsite(), o.getWebsite()) 
+                .isEquals();
         }
         
         return false;
-    }
+    }    
     
     
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
     public int hashCode() {
-        // NOTE: just like equals() it's possibly better if this is the combo
-        //   of both the path hashCode and the weblog hashCode
-        return this.path.hashCode();
+        return new HashCodeBuilder()
+            .append(getPath())
+            .append(getWebsite())
+            .toHashCode();
     }
-    
     
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -147,7 +140,6 @@ public class FolderData extends PersistentObject
         FolderData other = (FolderData)o;
         return getName().compareTo(other.getName());
     }
-    
     
     /**
      * Database surrogate key.
@@ -162,6 +154,8 @@ public class FolderData extends PersistentObject
     }
     
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -256,7 +250,7 @@ public class FolderData extends PersistentObject
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.FolderData"
      *
-     * @hibernate.set lazy="true" inverse="true" cascade="delete"
+     * @hibernate.set lazy="true" inverse="true" cascade="delete" 
      * @hibernate.collection-key column="parentid"
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.FolderData"
      */

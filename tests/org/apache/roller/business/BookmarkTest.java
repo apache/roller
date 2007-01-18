@@ -133,15 +133,25 @@ public class BookmarkTest extends TestCase {
         // check that subfolder was saved and we can navigate to it
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(1, root.getFolders().size());
+        
         folder = (FolderData) root.getFolders().iterator().next();
         assertEquals("folderTest1", folder.getName());
         assertEquals(1, folder.getFolders().size());
+        
         subfolder = (FolderData) folder.getFolders().iterator().next();
         assertEquals("subfolderTest1", subfolder.getName());
         
         // test remove folder, which should cascade to subfolders
         bmgr.removeFolder(folder);
         TestUtils.endSession(true);
+        
+        // make sure category and subcat was removed
+        FolderData folderNull = null;
+        folderNull = bmgr.getFolder(folder.getId());        
+        assertNull(folderNull);
+        
+        folderNull = bmgr.getFolder(subfolder.getId());
+        assertNull(folderNull);
         
         // check that folders were removed
         root = bmgr.getRootFolder(testWeblog);

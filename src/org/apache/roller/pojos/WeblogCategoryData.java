@@ -22,12 +22,13 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.util.PojoUtil;
-
 
 /**
  * Weblog Category.
@@ -38,7 +39,7 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="true" table="weblogcategory"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogCategoryData extends PersistentObject 
+public class WeblogCategoryData 
         implements Serializable {
     
     public static final long serialVersionUID = 1435782148712018954L;
@@ -89,7 +90,7 @@ public class WeblogCategoryData extends PersistentObject
     }
     
     
-    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
+    public void setData(WeblogCategoryData otherData) {
         WeblogCategoryData other = (WeblogCategoryData) otherData;
         
         this.id = other.getId();
@@ -104,44 +105,31 @@ public class WeblogCategoryData extends PersistentObject
     }
     
     
+    //------------------------------------------------------- Good citizenship
+
     public String toString() {
-        
-        StringBuffer str = new StringBuffer("{");
-        str.append("id=").append(id);
-        str.append(",");
-        str.append("path=").append(path);
-        str.append(",");
-        str.append("desc=").append(description);
-        str.append(",");
-        str.append("image=").append(image);
-        str.append("}");
-        
-        return str.toString();
+        return ToStringBuilder.reflectionToString(this);
     }
-    
     
     public boolean equals(Object other) {
         
         if (other == null) return false;
         
         if (other instanceof WeblogCategoryData) {
-            
-            // NOTE: currently we are implementing equals only using the path
-            //   of the category.  technically the business key should be for
-            //   both the weblog & path, but we don't expect to be comparing
-            //   categories from 2 different weblogs so this should be fine
-            WeblogCategoryData that = (WeblogCategoryData) other;
-            return this.path.equals(that.getPath());
-        }
-        
+            WeblogCategoryData o = (WeblogCategoryData)other;
+            return new EqualsBuilder()
+                .append(getPath(), o.getPath()) 
+                .append(getWebsite(), o.getWebsite()) 
+                .isEquals();
+        }        
         return false;
     }
-    
-    
+        
     public int hashCode() {
-        // NOTE: just like equals() it's possibly better if this is the combo
-        //   of both the path hashCode and the weblog hashCode
-        return this.path.hashCode();
+        return new HashCodeBuilder()
+            .append(getPath())
+            .append(getWebsite())
+            .toHashCode();
     }
     
     
@@ -158,6 +146,8 @@ public class WeblogCategoryData extends PersistentObject
     }
     
     public void setId(java.lang.String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     

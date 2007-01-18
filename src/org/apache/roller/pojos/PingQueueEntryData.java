@@ -20,6 +20,9 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
@@ -31,7 +34,7 @@ import java.sql.Timestamp;
  * @hibernate.class lazy="true" table="pingqueueentry"
  * @hibernate.cache usage="read-write"
  */
-public class PingQueueEntryData extends PersistentObject implements Serializable {
+public class PingQueueEntryData implements Serializable {
     private String id = null;
     private Timestamp entryTime = null;
     private PingTargetData pingTarget = null;
@@ -64,11 +67,9 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
     }
 
     /**
-     * @see PersistentObject#setData(PersistentObject)
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject vo) {
-        PingQueueEntryData other = (PingQueueEntryData) vo;
-
+    public void setData(PingQueueEntryData other) {
         id = other.getId();
         entryTime = other.getEntryTime();
         pingTarget = other.getPingTarget();
@@ -94,6 +95,8 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -190,47 +193,26 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
         return ++attempts;
     }
 
-    /**
-     * @see Object#equals(Object o)
-     */
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PingQueueEntryData)) return false;
+    //------------------------------------------------------- Good citizenship
 
-        final PingQueueEntryData pingQueueEntryData = (PingQueueEntryData) o;
-
-        if (attempts != pingQueueEntryData.getAttempts()) return false;
-        if (entryTime != null ? !entryTime.equals(pingQueueEntryData.getEntryTime()) : pingQueueEntryData.getEntryTime() != null)
-        {
-            return false;
-        }
-        if (id != null ? !id.equals(pingQueueEntryData.getId()) : pingQueueEntryData.getId() != null) return false;
-        if (pingTarget != null ? !pingTarget.equals(pingQueueEntryData.getPingTarget()) : pingQueueEntryData.getPingTarget() != null)
-        {
-            return false;
-        }
-        if (getWebsite() != null ? !getWebsite().equals(pingQueueEntryData.getWebsite()) : pingQueueEntryData.getWebsite() != null)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode() {
-        return (id != null ? id.hashCode() : 0);
-    }
-
-    /**
-     * Generate a string form of the object appropriate for logging or debugging.
-     *
-     * @return a string form of the object appropriate for logging or debugging.
-     * @see Object#toString()
-     */
     public String toString() {
-        return "PingQueueEntryData{" + "id='" + id + "'" + ", entryTime=" + entryTime + ", pingTarget=" + pingTarget + ", attempts=" + attempts + "}";
+        return ToStringBuilder.reflectionToString(this);
+    }
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof PingQueueEntryData != true) return false;
+        PingQueueEntryData o = (PingQueueEntryData)other;
+        return new EqualsBuilder()
+            .append(getEntryTime(), o.getEntryTime()) 
+            .append(getWebsite(), o.getWebsite()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getEntryTime())
+            .append(getWebsite())
+            .toHashCode();
     }
 }

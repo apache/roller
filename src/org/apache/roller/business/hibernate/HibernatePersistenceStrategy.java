@@ -30,7 +30,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PersistentObject;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -280,20 +279,20 @@ public class HibernatePersistenceStrategy {
     /**
      * Retrieve object.  We return null if the object is not found.
      */
-    public PersistentObject load(String id, Class clazz) throws RollerException {
+    public Object load(String id, Class clazz) throws RollerException {
         
         if(id == null || clazz == null) {
             throw new RollerException("Cannot load objects when value is null");
         }
         
-        return (PersistentObject) getSession().get(clazz, id);
+        return (Object) getSession().get(clazz, id);
     }
     
     
     /**
      * Store object.
      */
-    public void store(PersistentObject obj) throws HibernateException {
+    public void store(Object obj) throws HibernateException {
         
         if(obj == null) {
             throw new HibernateException("Cannot save null object");
@@ -301,77 +300,20 @@ public class HibernatePersistenceStrategy {
         
         Session session = getSession();
         
-        // TODO BACKEND: this is wacky, we should double check logic here
-        
-        // TODO BACKEND: better to use session.saveOrUpdate() here, if possible
-        if ( obj.getId() == null || obj.getId().trim().equals("") ) {
-            // Object has never been written to database, so save it.
-            // This makes obj into a persistent instance.
-            session.save(obj);
-        }
-        
-        /*
-         * technically we shouldn't have any reason to support the saving
-         * of detached objects, so at some point we should re-evaluate this.
-         *
-         * objects should be re-attached before being saved again. it would
-         * be more appropriate to reject these kinds of saves because they are
-         * not really safe.
-         *
-         * NOTE: this may be coming from the way we use formbeans on the UI.
-         *   we very commonly repopulate all data in a pojo (including id) from
-         *   form data rather than properly loading the object from a Session
-         *   then modifying its properties.
-         */
-        if ( !session.contains(obj) ) {
-            
-            log.debug("storing detached object: "+obj.toString());
-            
-            // Object has been written to database, but instance passed in
-            // is not a persistent instance, so must be loaded into session.
-            PersistentObject vo =
-                    (PersistentObject)session.load(obj.getClass(),obj.getId());
-            vo.setData(obj);
-            obj = vo;
-        }
-        
-    }
-    
-    
-    /**
-     * Remove object.
-     *
-     * TODO BACKEND: force the use of remove(Object) moving forward.
-     */
-    public void remove(String id, Class clazz) throws HibernateException {
-        
-        if(id == null || clazz == null) {
-            throw new HibernateException("Cannot remove object when values are null");
-        }
-        
-        Session session = getSession();
-        
-        PersistentObject obj = (PersistentObject) session.load(clazz,id);
-        session.delete(obj);
+        session.saveOrUpdate(obj);
     }
     
     
     /**
      * Remove object.
      */
-    public void remove(PersistentObject obj) throws HibernateException {
+    public void remove(Object obj) throws HibernateException {
         
         if(obj == null) {
             throw new HibernateException("Cannot remove null object");
         }
         
-        // TODO BACKEND: can hibernate take care of this check for us?
-        //               what happens if object does not use id?
-        // can't remove transient objects
-        if (obj.getId() != null) {
-            
-            getSession().delete(obj);
-        }
+        getSession().delete(obj);
     }
     
 }

@@ -25,10 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.RollerException;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.util.PojoUtil;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Configuration object for Roller.  Reads and writes roller-config.xml.
@@ -42,7 +41,6 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="true" table="rollerconfig"
  */
 public class RollerConfigData
-    extends org.apache.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
     static final long serialVersionUID = -6354583200913127875L;
@@ -212,6 +210,8 @@ public class RollerConfigData
 
     /** @ejb:persistent-field */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -722,86 +722,29 @@ public class RollerConfigData
         this.mRefererSpamWords = child.getRefererSpamWords();
     }
 
-    /** nice output for debugging */
-    public String toString()
-    {
-        StringBuffer buf = new StringBuffer();
-        buf.append("RollerConfig \n");
-        Class clazz = getClass();
-        Field[] fields = clazz.getDeclaredFields();
+	public void setData(RollerConfigData vo) {
+        updateValues(vo);
+	}
 
-        try {
-            AccessibleObject.setAccessible(fields, true);
-            for (int i = 0; i < fields.length; i++) {
-                buf.append(
-                    "\t["
-                        + fields[i].getName()
-                        + "="
-                        + fields[i].get(this)
-                        + "], \n");
-            }
-        } catch (Exception e) {
-            // ignored!
-        }
+    //------------------------------------------------------- Good citizenship
 
-        return buf.toString();
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
-
-	public void setData(PersistentObject vo) {
-		if (vo instanceof RollerConfigData) {
-      		this.id = ((RollerConfigData)vo).id;
-			updateValues((RollerConfigData)vo);
-        }
-	}
-
-    public boolean equals(Object pOther)
-    {
-        if (pOther instanceof RollerConfigData)
-        {
-            RollerConfigData lTest = (RollerConfigData) pOther;
-            boolean lEquals = true;
-
-            lEquals = PojoUtil.equals(lEquals, this.id, lTest.id);
-			lEquals = PojoUtil.equals(lEquals, this.mAbsoluteURL, lTest.getAbsoluteURL());
-			lEquals = PojoUtil.equals(lEquals, this.mRssUseCache, lTest.getRssUseCache());
-			lEquals = PojoUtil.equals(lEquals, this.mRssCacheTime, lTest.getRssCacheTime());
-			lEquals = PojoUtil.equals(lEquals, this.mNewUserAllowed, lTest.getNewUserAllowed());
-			lEquals = PojoUtil.equals(lEquals, this.mAdminUsers, lTest.getAdminUsers());
-			lEquals = PojoUtil.equals(lEquals, this.mUserThemes, lTest.getUserThemes());
-			lEquals = PojoUtil.equals(lEquals, this.mEditorPages, lTest.getEditorPages());
-			lEquals = PojoUtil.equals(lEquals, this.mEnableAggregator, lTest.getEnableAggregator());
-			lEquals = PojoUtil.equals(lEquals, this.mUploadEnabled, lTest.getUploadEnabled());
-			lEquals = PojoUtil.equals(lEquals, this.mUploadMaxDirMB, lTest.getUploadMaxDirMB());
-			lEquals = PojoUtil.equals(lEquals, this.mUploadMaxFileMB, lTest.getUploadMaxFileMB());
-			lEquals = PojoUtil.equals(lEquals, this.mUploadAllow, lTest.getUploadAllow());
-			lEquals = PojoUtil.equals(lEquals, this.mUploadForbid, lTest.getUploadForbid());
-			lEquals = PojoUtil.equals(lEquals, this.mUploadDir, lTest.getUploadDir());
-			lEquals = PojoUtil.equals(lEquals, this.uploadPath, lTest.getUploadPath());
-			lEquals = PojoUtil.equals(lEquals, this.mMemDebug, lTest.getMemDebug());
-			lEquals = PojoUtil.equals(lEquals, this.mAutoformatComments, lTest.getAutoformatComments());
-			lEquals = PojoUtil.equals(lEquals, this.mEscapeCommentHtml, lTest.getEscapeCommentHtml());
-			lEquals = PojoUtil.equals(lEquals, this.mEmailComments, lTest.getEmailComments());
-			lEquals = PojoUtil.equals(lEquals, this.mEnableLinkback, lTest.getEnableLinkback());
-			lEquals = PojoUtil.equals(lEquals, this.mSiteName, lTest.getSiteName());
-			lEquals = PojoUtil.equals(lEquals, this.mSiteDescription, lTest.getSiteDescription());
-			lEquals = PojoUtil.equals(lEquals, this.mEmailAddress, lTest.getEmailAddress());
-			lEquals = PojoUtil.equals(lEquals, this.mIndexDir, lTest.getIndexDir());
-            lEquals = PojoUtil.equals(lEquals, this.mEncryptPasswords, lTest.getEncryptPasswords());
-            lEquals = PojoUtil.equals(lEquals, this.mAlgorithm, lTest.getAlgorithm());
-            lEquals = PojoUtil.equals(lEquals, this.mRefererSpamWords, lTest.getRefererSpamWords());
-
-		 	return lEquals;
-	  	}
-	  	else
-	  	{
-		 	return false;
-      	}
-	}
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof RollerConfigData != true) return false;
+        RollerConfigData o = (RollerConfigData)other;
+        return new EqualsBuilder()
+            .append(getId(), o.getId())  
+            .isEquals();
+    }
     
-    public int hashCode()
-    {
-        return super.hashCode();
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getId())
+            .toHashCode();
     }
 
 }

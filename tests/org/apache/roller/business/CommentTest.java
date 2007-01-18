@@ -164,6 +164,7 @@ public class CommentTest extends TestCase {
         assertEquals(3, comments.size());
         
         // make some changes
+        comment3 = mgr.getComment(comment3.getId());
         comment3.setStatus(CommentData.PENDING);
         mgr.saveComment(comment3);
         TestUtils.endSession(true);

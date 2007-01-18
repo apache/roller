@@ -20,7 +20,9 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import org.apache.roller.util.PojoUtil;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -32,7 +34,7 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="true" table="roller_comment"
  * @hibernate.cache usage="read-write"
  */
-public class CommentData extends PersistentObject implements Serializable {
+public class CommentData implements Serializable {
     
     public static final long serialVersionUID = -6668122596726478462L;
     
@@ -93,6 +95,8 @@ public class CommentData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      */
     public void setId(java.lang.String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -347,69 +351,35 @@ public class CommentData extends PersistentObject implements Serializable {
     /** No-op to please XDoclet */
     public void setTimestamp(String timeStamp) {}
     
+    //------------------------------------------------------- Good citizenship
+
     public String toString() {
-        
-        StringBuffer str = new StringBuffer("{");
-        str.append("id=" + id + ", " +
-                "name=" + name + ", " +
-                "email=" + email + ", " +
-                "url=" + url + ", " +
-                "postTime=" + postTime + ", " +
-                "status=" + status);
-        str.append("}");
-        
-        return str.toString();
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof CommentData != true) return false;
+        CommentData o = (CommentData)other;
+        return new EqualsBuilder()
+            .append(getName(), o.getName()) 
+            .append(getPostTime(), o.getPostTime()) 
+            .append(getWeblogEntry(), o.getWeblogEntry()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getName())
+            .append(getPostTime())
+            .append(getWeblogEntry())
+            .toHashCode();
     }
     
     /**
-     * TODO: figure out business key.  entry, status, posttime, name?
+     * Set bean properties based on other bean.
      */
-    public boolean equals(Object pOther) {
-        if (pOther instanceof CommentData) {
-            CommentData lTest = (CommentData) pOther;
-            boolean lEquals = true;
-            
-            lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
-            lEquals = PojoUtil.equals(lEquals, this.weblogEntry, lTest.getWeblogEntry());
-            lEquals = PojoUtil.equals(lEquals, this.name, lTest.getName());
-            lEquals = PojoUtil.equals(lEquals, this.email, lTest.getEmail());
-            lEquals = PojoUtil.equals(lEquals, this.url, lTest.getUrl());
-            lEquals = PojoUtil.equals(lEquals, this.content, lTest.getContent());
-            lEquals = PojoUtil.equals(lEquals, this.postTime, lTest.getPostTime());
-            lEquals = PojoUtil.equals(lEquals, this.status, lTest.getStatus());
-            lEquals = PojoUtil.equals(lEquals, this.notify, lTest.getNotify());
-            lEquals = PojoUtil.equals(lEquals, this.getReferrer(), lTest.getApproved());
-            lEquals = PojoUtil.equals(lEquals, this.getUserAgent(), lTest.getUserAgent());
-            return lEquals;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * TODO: figure out business key.  entry, status, posttime, name?
-     */
-    public int hashCode() {
-        int result = 17;
-        result = PojoUtil.addHashCode(result, this.id);
-        result = PojoUtil.addHashCode(result, this.weblogEntry);
-        result = PojoUtil.addHashCode(result, this.name);
-        result = PojoUtil.addHashCode(result, this.email);
-        result = PojoUtil.addHashCode(result, this.url);
-        result = PojoUtil.addHashCode(result, this.content);
-        result = PojoUtil.addHashCode(result, this.postTime);
-        result = PojoUtil.addHashCode(result, this.status);
-        result = PojoUtil.addHashCode(result, this.notify);
-        result = PojoUtil.addHashCode(result, this.getReferrer());
-        result = PojoUtil.addHashCode(result, this.getUserAgent());
-        return result;
-    }
-    
-    /**
-     * Setter is needed in RollerImpl.storePersistentObject()
-     */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
-        CommentData otherComment = (CommentData) otherData;
+    public void setData(CommentData otherComment) {
         
         this.id = otherComment.getId();
         this.weblogEntry = otherComment.getWeblogEntry();

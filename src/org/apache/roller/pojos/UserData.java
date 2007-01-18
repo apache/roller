@@ -25,11 +25,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
-import org.apache.roller.util.PojoUtil;
 import org.apache.roller.util.Utilities;
 
 
@@ -43,7 +45,6 @@ import org.apache.roller.util.Utilities;
  * @hibernate.cache usage="read-write"
  */
 public class UserData
-        extends org.apache.roller.pojos.PersistentObject
         implements Serializable {
     public static final UserData SYSTEM_USER = new UserData(
             "n/a","systemuser","n/a","systemuser","n/a",
@@ -93,7 +94,7 @@ public class UserData
     }
     
     /**
-     * @hibernate.bag lazy="true" inverse="true" cascade="delete"
+     * @hibernate.bag lazy="true" inverse="true" cascade="none"
      * @hibernate.collection-key column="user_id"
      * @hibernate.collection-one-to-many
      *    class="org.apache.roller.pojos.PermissionsData"
@@ -132,6 +133,8 @@ public class UserData
     
     /** @ejb:persistent-field */
     public void setId( String id ) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -247,102 +250,7 @@ public class UserData
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
-    
-    //------------------------------------------------------------------- citizenship
-    public String toString() {
-        StringBuffer str = new StringBuffer("{");
         
-        str.append("id=" + id + " ");
-        str.append("userName=" + userName + " ");
-        str.append("password=" + password + " ");
-        str.append("fullName=" + fullName + " ");
-        str.append("emailAddress=" + emailAddress + " ");
-        str.append("dateCreated=" + dateCreated + " ");
-        str.append('}');
-        
-        return(str.toString());
-    }
-    
-    public boolean equals( Object pOther ) {
-        if (pOther instanceof UserData) {
-            UserData lTest = (UserData) pOther;
-            boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
-            lEquals = PojoUtil.equals(lEquals, this.getUserName(), lTest.getUserName());
-            lEquals = PojoUtil.equals(lEquals, this.getPassword(), lTest.getPassword());
-            lEquals = PojoUtil.equals(lEquals, this.getFullName(), lTest.getFullName());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailAddress(), lTest.getEmailAddress());
-            return lEquals;
-        } else {
-            return false;
-        }
-    }
-    
-   /*public boolean equals( Object pOther )
-   {
-      if( pOther instanceof UserData )
-      {
-         UserData lTest = (UserData) pOther;
-         boolean lEquals = true;
-    
-         if( this.id == null )
-         {
-            lEquals = lEquals && ( lTest.id == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.id.equals( lTest.id );
-         }
-         if( this.userName == null )
-         {
-            lEquals = lEquals && ( lTest.userName == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.userName.equals( lTest.userName );
-         }
-         if( this.password == null )
-         {
-            lEquals = lEquals && ( lTest.password == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.password.equals( lTest.password );
-         }
-         if( this.fullName == null )
-         {
-            lEquals = lEquals && ( lTest.fullName == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.fullName.equals( lTest.fullName );
-         }
-         if( this.emailAddress == null )
-         {
-            lEquals = lEquals && ( lTest.emailAddress == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.emailAddress.equals( lTest.emailAddress );
-         }
-    
-                if( this.dateCreated == null )
-                {
-                   lEquals = lEquals && ( lTest.dateCreated == null );
-                }
-                else
-                {
-                   lEquals = lEquals && datesEquivalent(this.dateCreated, lTest.dateCreated);
-                }
-    
-        return lEquals;
-      }
-      else
-      {
-         return false;
-      }
-   }*/
-    
     private boolean datesEquivalent(Date d1, Date d2) {
         boolean equiv = true;
         equiv = equiv && d1.getHours() == d1.getHours();
@@ -354,21 +262,11 @@ public class UserData
         return equiv;
     }
     
-    public int hashCode() {
-        int result = 17;
-        result = 37*result + ((this.id != null) ? this.id.hashCode() : 0);
-        result = 37*result + ((this.userName != null) ? this.userName.hashCode() : 0);
-        result = 37*result + ((this.password != null) ? this.password.hashCode() : 0);
-        result = 37*result + ((this.fullName != null) ? this.fullName.hashCode() : 0);
-        result = 37*result + ((this.emailAddress != null) ? this.emailAddress.hashCode() : 0);
-        result = 37*result + ((this.dateCreated != null) ? this.dateCreated.hashCode() : 0);
-        return result;
-    }
     
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData( org.apache.roller.pojos.PersistentObject otherData ) {
+    public void setData( UserData otherData ) {
         UserData other = (UserData)otherData;
         this.id =       other.getId();
         this.userName = other.getUserName();
@@ -443,6 +341,23 @@ public class UserData
             roles.add(role);
             role.setUser(this);
         }
+    }
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof UserData != true) return false;
+        UserData o = (UserData)other;
+        return new EqualsBuilder().append(getUserName(), o.getUserName()).isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder().append(getUserName()).toHashCode();
     }
     
 }
