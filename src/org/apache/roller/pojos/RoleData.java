@@ -18,6 +18,10 @@
 
 package org.apache.roller.pojos;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 /**
  * Role bean.
@@ -29,7 +33,6 @@ package org.apache.roller.pojos;
  * @hibernate.cache usage="read-write"
  */
 public class RoleData
-   extends org.apache.roller.pojos.PersistentObject
    implements java.io.Serializable
 {
    static final long serialVersionUID = -4254083071697970972L;
@@ -69,6 +72,8 @@ public class RoleData
    /** @ejb:persistent-field */ 
    public void setId( java.lang.String id )
    {
+      // Form bean workaround: empty string is never a valid id
+      if (id != null && id.trim().length() == 0) return; 
       this.id = id;
    }
 
@@ -114,76 +119,36 @@ public class RoleData
       this.role = role;
    }
 
-   public String toString()
+
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof RoleData != true) return false;
+        RoleData o = (RoleData)other;
+        return new EqualsBuilder()
+            .append(getRole(), o.getRole())
+            .append(getUserName(), o.getUserName())
+            .isEquals();
+    }
+    
+    public int hashCode() {
+        return new HashCodeBuilder().append(getUserName()).append(getRole()).toHashCode();
+    }
+
+    /**
+     * Set bean properties based on other bean.
+     */
+   public void setData( RoleData otherData )
    {
-      StringBuffer str = new StringBuffer("{");
-
-      str.append("id=" + id + " " + "userName=" + userName + " " + "user=" + user + " " + "role=" + role);
-      str.append('}');
-
-      return(str.toString());
-   }
-
-   public boolean equals( Object pOther )
-   {
-      if( pOther instanceof RoleData )
-      {
-         RoleData lTest = (RoleData) pOther;
-         boolean lEquals = true;
-
-         if( this.userName == null )
-         {
-            lEquals = lEquals && ( lTest.getUserName() == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.userName.equals( lTest.getUserName() );
-         }
-         if( this.user == null )
-         {
-            lEquals = lEquals && ( lTest.getUser() == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.user.equals( lTest.getUser() );
-         }
-         if( this.role == null )
-         {
-            lEquals = lEquals && ( lTest.getRole() == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.role.equals( lTest.getRole() );
-         }
-
-         return lEquals;
-      }
-      else
-      {
-         return false;
-      }
-   }
-
-   public int hashCode()
-   {
-      int result = 17;
-      result = 37*result + ((this.id != null) ? this.id.hashCode() : 0);
-      result = 37*result + ((this.userName != null) ? this.userName.hashCode() : 0);
-      result = 37*result + ((this.user != null) ? this.user.hashCode() : 0);
-      result = 37*result + ((this.role != null) ? this.role.hashCode() : 0);
-      return result;
-      }
-
-   /**
-	* Setter is needed in RollerImpl.storePersistentObject()
-    */
-   public void setData( org.apache.roller.pojos.PersistentObject otherData )
-   {
-
-      this.id = ((RoleData)otherData).getId();
-      this.userName = ((RoleData)otherData).getUserName();
-      this.user = ((RoleData)otherData).getUser();
-      this.role = ((RoleData)otherData).getRole();
+      this.id = otherData.getId();
+      this.userName = otherData.getUserName();
+      this.user =     otherData.getUser();
+      this.role =     otherData.getRole();
    }
 
 }

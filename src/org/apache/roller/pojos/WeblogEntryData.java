@@ -40,13 +40,14 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.util.DateUtil;
@@ -62,7 +63,7 @@ import org.apache.roller.util.Utilities;
  * @hibernate.class lazy="true" table="weblogentry"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogEntryData extends PersistentObject implements Serializable {
+public class WeblogEntryData implements Serializable {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogEntryData.class);
     
@@ -142,10 +143,9 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     //---------------------------------------------------------- Initializaion
     
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject otherData) {
-        WeblogEntryData other = (WeblogEntryData)otherData;
+    public void setData(WeblogEntryData other) {
         
         this.id = other.getId();
         this.category = other.getCategory();
@@ -165,7 +165,30 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         this.pinnedToMain = other.getPinnedToMain();
     }
     
-    //------------------------------------------------------ Simple properties
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof WeblogEntryData != true) return false;
+        WeblogEntryData o = (WeblogEntryData)other;
+        return new EqualsBuilder()
+            .append(getAnchor(), o.getAnchor()) 
+            .append(getWebsite(), o.getWebsite()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getAnchor())
+            .append(getWebsite())
+            .toHashCode();
+    }
+    
+   //------------------------------------------------------ Simple properties
     
     /**
      * @roller.wrapPojoMethod type="simple"
@@ -178,6 +201,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     
     /** @ejb:persistent-field */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -194,16 +219,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     public void setCategory(WeblogCategoryData category) {
         this.category = category;
     }
-    
-    /**
-     * Set weblog category via weblog category ID.
-     * @param id Weblog category ID.
-     */
-    public void setCategoryId(String id) throws RollerException {
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        setCategory(wmgr.getWeblogCategory(id));
-    }
-    
+       
     /**
      * Return collection of WeblogCategoryData objects of this entry.
      * Added for symetry with PlanetEntryData object.
@@ -930,130 +946,6 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         return Utilities.removeHTML(getTitle());
     }
     
-    //------------------------------------------------------------------------
-    
-    public String toString() {
-        StringBuffer str = new StringBuffer("{");
-        
-        str.append("id=" + id + " " +
-                "category=" + category + " " +
-                "title=" + title + " " +
-                "text=" + text + " " +
-                "anchor=" + anchor + " " +
-                "pubTime=" + pubTime + " " +
-                "updateTime=" + updateTime + " " +
-                "status=" + status + " " +
-                "plugins=" + plugins);
-        str.append('}');
-        
-        return (str.toString());
-    }
-    
-    //------------------------------------------------------------------------
-    
-    public boolean equals(Object pOther) {
-        if (pOther instanceof WeblogEntryData) {
-            WeblogEntryData lTest = (WeblogEntryData) pOther;
-            boolean lEquals = true;
-            
-            if (this.id == null) {
-                lEquals = lEquals && (lTest.getId() == null);
-            } else {
-                lEquals = lEquals && this.id.equals(lTest.getId());
-            }
-            
-            if (this.category == null) {
-                lEquals = lEquals && (lTest.getCategory() == null);
-            } else {
-                lEquals = lEquals && this.category.equals(lTest.getCategory());
-            }
-            
-            if (this.website == null) {
-                lEquals = lEquals && (lTest.getWebsite() == null);
-            } else {
-                lEquals = lEquals && this.website.equals(lTest.getWebsite());
-            }
-            
-            if (this.title == null) {
-                lEquals = lEquals && (lTest.getTitle() == null);
-            } else {
-                lEquals = lEquals && this.title.equals(lTest.getTitle());
-            }
-            
-            if (this.text == null) {
-                lEquals = lEquals && (lTest.getText() == null);
-            } else {
-                lEquals = lEquals && this.text.equals(lTest.getText());
-            }
-            
-            if (this.anchor == null) {
-                lEquals = lEquals && (lTest.getAnchor() == null);
-            } else {
-                lEquals = lEquals && this.anchor.equals(lTest.getAnchor());
-            }
-            
-            if (this.pubTime == null) {
-                lEquals = lEquals && (lTest.getPubTime() == null);
-            } else {
-                lEquals = lEquals && this.pubTime.equals(lTest.getPubTime());
-            }
-            
-            if (this.updateTime == null) {
-                lEquals = lEquals && (lTest.getUpdateTime() == null);
-            } else {
-                lEquals = lEquals &&
-                        this.updateTime.equals(lTest.getUpdateTime());
-            }
-            
-            if (this.status == null) {
-                lEquals = lEquals && (lTest.getStatus() == null);
-            } else {
-                lEquals = lEquals &&
-                        this.status.equals(lTest.getStatus());
-            }
-            
-            if (this.plugins == null) {
-                lEquals = lEquals && (lTest.getPlugins() == null);
-            } else {
-                lEquals = lEquals &&
-                        this.plugins.equals(lTest.getPlugins());
-            }
-            
-            
-            return lEquals;
-        } else {
-            return false;
-        }
-    }
-    
-    //------------------------------------------------------------------------
-    
-    public int hashCode() {
-        int result = 17;
-        result = (37 * result) +
-                ((this.id != null) ? this.id.hashCode() : 0);
-        result = (37 * result) +
-                ((this.category != null) ? this.category.hashCode() : 0);
-        result = (37 * result) +
-                ((this.website != null) ? this.website.hashCode() : 0);
-        result = (37 * result) +
-                ((this.title != null) ? this.title.hashCode() : 0);
-        result = (37 * result) +
-                ((this.text != null) ? this.text.hashCode() : 0);
-        result = (37 * result) +
-                ((this.anchor != null) ? this.anchor.hashCode() : 0);
-        result = (37 * result) +
-                ((this.pubTime != null) ? this.pubTime.hashCode() : 0);
-        result = (37 * result) +
-                ((this.updateTime != null) ? this.updateTime.hashCode() : 0);
-        result = (37 * result) +
-                ((this.status != null) ? this.status.hashCode() : 0);
-        result = (37 * result) +
-                ((this.plugins != null) ? this.plugins.hashCode() : 0);
-        
-        return result;
-    }
-    
     /**
      * Return RSS 09x style description (escaped HTML version of entry text)
      *
@@ -1155,16 +1047,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             return Arrays.asList( StringUtils.split(plugins, ",") );
         }
         return new ArrayList();
-    }
-    
-    /**
-     * Set creator by user id (for use in form's copyTo method)
-     * @param creatorId
-     */
-    public void setCreatorId(String creatorId) throws RollerException {
-        UserManager umgr = RollerFactory.getRoller().getUserManager();
-        setCreator(umgr.getUser(creatorId));
-    }
+    }    
     
     /** Convenience method for checking status */
     public boolean isDraft() {

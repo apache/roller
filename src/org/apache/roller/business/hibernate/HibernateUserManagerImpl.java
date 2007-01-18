@@ -195,14 +195,6 @@ public class HibernateUserManagerImpl implements UserManager {
         FolderData rootFolder = bmgr.getRootFolder(website);
         if (null != rootFolder) {
             this.strategy.remove(rootFolder);
-            
-            // Still cannot get all Bookmarks cleared!
-//            Iterator allFolders = bmgr.getAllFolders(website).iterator();
-//            while (allFolders.hasNext()) {
-//                FolderData aFolder = (FolderData)allFolders.next();
-//                bmgr.removeFolderContents(aFolder);
-//                this.strategy.remove(aFolder);
-//            }
         }
         
         // remove categories

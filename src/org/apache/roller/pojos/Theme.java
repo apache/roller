@@ -164,6 +164,8 @@ public class Theme implements Serializable {
     }
 
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     

@@ -19,6 +19,9 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Ping Category Restriction.  An instance of this class relates an auto ping configuration {@link AutoPingData} to a
@@ -32,7 +35,7 @@ import java.io.Serializable;
  * @hibernate.class lazy="true" table="pingcategory"
  * @hibernate.cache usage="read-write"
  */
-public class PingCategoryRestrictionData extends PersistentObject implements Serializable {
+public class PingCategoryRestrictionData implements Serializable {
     private String id;
     private AutoPingData autoPing;
     private WeblogCategoryData weblogCategory;
@@ -59,10 +62,9 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
     }
 
     /**
-     * Setter needed by RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject vo) {
-        PingCategoryRestrictionData other = (PingCategoryRestrictionData) vo;
+    public void setData(PingCategoryRestrictionData other) {
         id = other.getId();
         autoPing = other.getAutoping();
         weblogCategory = other.getWeblogCategory();
@@ -86,6 +88,8 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @ejb:persistent-field
      */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -131,35 +135,26 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
         this.weblogCategory = weblogCategory;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PingCategoryRestrictionData)) return false;
+    //------------------------------------------------------- Good citizenship
 
-        final PingCategoryRestrictionData pingCategoryRestrictionData = (PingCategoryRestrictionData) o;
-
-        if (id != null ? !id.equals(pingCategoryRestrictionData.getId()) : pingCategoryRestrictionData.getId() != null)
-        {
-            return false;
-        }
-        if (autoPing != null ? !autoPing.equals(pingCategoryRestrictionData.getAutoping()) : pingCategoryRestrictionData.getAutoping() != null)
-        {
-            return false;
-        }
-        if (weblogCategory != null ? !weblogCategory.equals(pingCategoryRestrictionData.getWeblogCategory()) : pingCategoryRestrictionData.getWeblogCategory() != null)
-        {
-            return false;
-        }
-
-        return true;
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode() {
-        return (id != null ? id.hashCode() : 0);
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof PingCategoryRestrictionData != true) return false;
+        PingCategoryRestrictionData o = (PingCategoryRestrictionData)other;
+        return new EqualsBuilder()
+            .append(getWeblogCategory(), o.getWeblogCategory()) 
+            .append(getAutoping(), o.getAutoping()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getWeblogCategory())
+            .append(getAutoping())
+            .toHashCode();
     }
 }

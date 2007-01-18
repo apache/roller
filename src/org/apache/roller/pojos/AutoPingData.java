@@ -19,6 +19,9 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Automatic ping configuration.  An instance of this class relates a website and ping target; it indicates that the specified
@@ -31,7 +34,7 @@ import java.io.Serializable;
  * @hibernate.class lazy="true" table="autoping"
  * @hibernate.cache usage="read-write"
  */
-public class AutoPingData extends PersistentObject implements Serializable {
+public class AutoPingData implements Serializable {
     private String id = null;
     private PingTargetData pingTarget = null;
     private WebsiteData website = null;
@@ -58,11 +61,9 @@ public class AutoPingData extends PersistentObject implements Serializable {
     }
 
     /**
-     * Setter needed by RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject vo) {
-        AutoPingData other = (AutoPingData) vo;
-
+    public void setData(AutoPingData other) {
         id = other.getId();
         website = other.getWebsite();
         pingTarget = other.getPingTarget();
@@ -86,6 +87,8 @@ public class AutoPingData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -133,41 +136,24 @@ public class AutoPingData extends PersistentObject implements Serializable {
         this.pingTarget = pingtarget;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AutoPingData)) return false;
+    //------------------------------------------------------- Good citizenship
 
-        final AutoPingData autoPingData = (AutoPingData) o;
-
-        if (id != null ? !id.equals(autoPingData.getId()) : autoPingData.getId() != null) return false;
-        if (pingTarget != null ? !pingTarget.equals(autoPingData.getPingTarget()) : autoPingData.getPingTarget() != null)
-        {
-            return false;
-        }
-        if (getWebsite() != null ? !getWebsite().equals(autoPingData.getWebsite()) : autoPingData.getWebsite() != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode() {
-        return (id != null ? id.hashCode() : 0);
-    }
-
-    /**
-     * Generate a string form of the object appropriate for logging or debugging.
-     *
-     * @return a string form of the object appropriate for logging or debugging.
-     * @see Object#toString()
-     */
     public String toString() {
-        return "AutoPingData{" + "id='" + id + "'" + ", pingTarget=" + pingTarget + "}";
+        return ToStringBuilder.reflectionToString(this);
+    }
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof AutoPingData != true) return false;
+        AutoPingData o = (AutoPingData)other;
+        return new EqualsBuilder()
+            .append(getId(), o.getId())
+            .append(getPingTarget(), o.getPingTarget()) 
+            .append(getWebsite(), o.getWebsite()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 }

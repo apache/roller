@@ -23,6 +23,10 @@
 
 package org.apache.roller.pojos;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 /**
  * This POJO represents a single property of the roller system.
@@ -34,7 +38,6 @@ package org.apache.roller.pojos;
  * @hibernate.cache usage="read-write"
  */
 public class RollerPropertyData 
-    extends org.apache.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
     
@@ -61,7 +64,7 @@ public class RollerPropertyData
     }
     
     
-    public void setData(PersistentObject object)
+    public void setData(RollerPropertyData object)
     {
         if (object instanceof RollerPropertyData)
         {
@@ -71,12 +74,7 @@ public class RollerPropertyData
         }
     }
     
-    
-    public String toString()
-    {
-        return (this.name + "=" + this.value);
-    }
-    
+        
 
     /**
      * Getter for property name.
@@ -124,14 +122,24 @@ public class RollerPropertyData
         this.value = value;
     }
     
-    
-    public String getId() {
-        // this is only here because it is required by PersistentObject
-        return null;
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return (this.name + "=" + this.value);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof RollerPropertyData != true) return false;
+        RollerPropertyData o = (RollerPropertyData)other;
+        return new EqualsBuilder()
+            .append(getName(), o.getName())  
+            .isEquals();
     }
     
-    
-    public void setId(String id) {
-        // do nothing ... only here because the PersistentObject class requires it
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getName())
+            .toHashCode();
     }
 }

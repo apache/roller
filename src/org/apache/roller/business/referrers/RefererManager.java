@@ -76,18 +76,7 @@ public interface RefererManager {
      */
     public List getReferersToDate(WebsiteData website, String date) 
         throws RollerException;    
-    
-    /**
-     * Get most popular websites based on referer day hits.
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
-     * @return List of WebsiteDisplayData objects.
-     */
-    public List getDaysPopularWebsites(
-            int offset, 
-            int length) 
-        throws RollerException;   
-    
+        
     /**
      * Returns hot weblogs as StatCount objects, in descending order by today's hits.
      * @param sinceDays Restrict to last X days (or -1 for all)

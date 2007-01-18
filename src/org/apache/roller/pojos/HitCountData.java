@@ -19,6 +19,8 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -28,7 +30,7 @@ import java.io.Serializable;
  * @hibernate.class lazy="true" table="roller_hitcounts"
  * @hibernate.cache usage="read-write"
  */
-public class HitCountData extends PersistentObject implements Serializable {
+public class HitCountData implements Serializable {
     
     private String id = null;
     private WebsiteData weblog = null;
@@ -38,12 +40,20 @@ public class HitCountData extends PersistentObject implements Serializable {
     public HitCountData() {}
 
     
-    public void setData(PersistentObject otherData) {
-        HitCountData other = (HitCountData) otherData;
+    public void setData(HitCountData other) {
         this.id = other.getId();
         this.weblog = other.getWeblog();
         this.dailyHits = other.getDailyHits();
     }
+    
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    //------------------------------------------------------------------------
     
     public boolean equals(Object other) {
         
@@ -54,10 +64,11 @@ public class HitCountData extends PersistentObject implements Serializable {
         final HitCountData that = (HitCountData) other;
         return this.getWeblog().equals(that.getWeblog());
     }
-    
-    public int hashCode() {
-        // our natrual key, or business key, is our weblog
-        return this.getWeblog().hashCode();
+       
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getWeblog())
+            .toHashCode();
     }
     
     
@@ -70,6 +81,8 @@ public class HitCountData extends PersistentObject implements Serializable {
     }
 
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     

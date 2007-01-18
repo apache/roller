@@ -21,6 +21,9 @@
 package org.apache.roller.pojos;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -32,7 +35,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @hibernate.class lazy="true" table="referer"
  * @hibernate.cache usage="read-write"
  */
-public class RefererData extends PersistentObject
+public class RefererData
     implements java.io.Serializable
 {
     static final long serialVersionUID = -1817992900602131316L;
@@ -100,6 +103,8 @@ public class RefererData extends PersistentObject
 
     public void setId(java.lang.String id)
     {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -383,213 +388,25 @@ public class RefererData extends PersistentObject
         return getDisplayUrl(50, false);
     }
 
-    //-------------------------------------------------------------------------
-    public String toString()
-    {
-        StringBuffer str = new StringBuffer("{");
-
-        str.append("id=" + id + " " + "website=" + website + " " + 
-                   "dateString=" + 
-                   dateString + " " + "refererUrl=" + refererUrl + " " + 
-                   "refererPermalink=" + refererPermalink + " " + 
-                   "requestUrl=" + requestUrl + " " + "title=" + title + " " + 
-                   "excerpt=" + excerpt + " " + "visible=" + visible + " " + 
-                   "duplicate=" + duplicate + " " + "dayHits=" + dayHits + 
-                   " " + "totalHits=" + totalHits);
-        str.append('}');
-
-        return (str.toString());
-    }
-
-    public boolean equals(Object pOther)
-    {
-        if (pOther instanceof RefererData)
-        {
-            RefererData lTest = (RefererData) pOther;
-            boolean lEquals = true;
-
-            if (this.id == null)
-            {
-                lEquals = lEquals && (lTest.getId() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.id.equals(lTest.getId());
-            }
-
-            if (this.website == null)
-            {
-                lEquals = lEquals && (lTest.getWebsite() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.website.equals(lTest.getWebsite());
-            }
-
-            if (this.weblogEntry == null)
-            {
-                lEquals = lEquals && (lTest.getWeblogEntry() == null);
-            }
-            else
-            {
-                lEquals = lEquals && 
-                          this.weblogEntry.equals(lTest.getWeblogEntry());
-            }
-
-            if (this.dateString == null)
-            {
-                lEquals = lEquals && (lTest.getDateString() == null);
-            }
-            else
-            {
-                lEquals = lEquals && 
-                          this.dateString.equals(lTest.getDateString());
-            }
-
-            if (this.refererUrl == null)
-            {
-                lEquals = lEquals && (lTest.getRefererUrl() == null);
-            }
-            else
-            {
-                lEquals = lEquals && 
-                          this.refererUrl.equals(lTest.getRefererUrl());
-            }
-
-            if (this.refererPermalink == null)
-            {
-                lEquals = lEquals && (lTest.getRefererPermalink() == null);
-            }
-            else
-            {
-                lEquals = lEquals && 
-                          this.refererPermalink.equals(lTest.getRefererPermalink());
-            }
-
-            if (this.requestUrl == null)
-            {
-                lEquals = lEquals && (lTest.getRequestUrl() == null);
-            }
-            else
-            {
-                lEquals = lEquals && 
-                          this.requestUrl.equals(lTest.getRequestUrl());
-            }
-
-            if (this.title == null)
-            {
-                lEquals = lEquals && (lTest.getTitle() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.title.equals(lTest.getTitle());
-            }
-
-            if (this.excerpt == null)
-            {
-                lEquals = lEquals && (lTest.getExcerpt() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.excerpt.equals(lTest.getExcerpt());
-            }
-
-            if (this.visible == null)
-            {
-                lEquals = lEquals && (lTest.getVisible() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.visible.equals(lTest.getVisible());
-            }
-
-            if (this.duplicate == null)
-            {
-                lEquals = lEquals && (lTest.getDuplicate() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.duplicate.equals(lTest.getDuplicate());
-            }
-
-            if (this.dayHits == null)
-            {
-                lEquals = lEquals && (lTest.getDayHits() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.dayHits.equals(lTest.getDayHits());
-            }
-
-            if (this.totalHits == null)
-            {
-                lEquals = lEquals && (lTest.getTotalHits() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.totalHits.equals(lTest.getTotalHits());
-            }
-
-            return lEquals;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public int hashCode()
-    {
-        int result = 17;
-        result = (37 * result) + 
-                 ((this.id != null) ? this.id.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.website != null) ? this.website.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.weblogEntry != null) ? this.weblogEntry.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.dateString != null) ? this.dateString.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.refererUrl != null) ? this.refererUrl.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.refererPermalink != null)
-                  ? this.refererPermalink.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.requestUrl != null) ? this.requestUrl.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.title != null) ? this.title.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.excerpt != null) ? this.excerpt.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.visible != null) ? this.visible.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.duplicate != null) ? this.duplicate.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.dayHits != null) ? this.dayHits.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.totalHits != null) ? this.totalHits.hashCode() : 0);
-
-        return result;
-    }
 
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData)
+    public void setData(RefererData otherData)
     {
-        this.id = ((RefererData) otherData).getId();
-        this.website = ((RefererData) otherData).getWebsite();
-        this.weblogEntry = ((RefererData) otherData).getWeblogEntry();
-        this.dateString = ((RefererData) otherData).getDateString();
-        this.refererUrl = ((RefererData) otherData).getRefererUrl();
-        this.refererPermalink = ((RefererData) otherData).getRefererPermalink();
-        this.requestUrl = ((RefererData) otherData).getRequestUrl();
-        this.title = ((RefererData) otherData).getTitle();
-        this.excerpt = ((RefererData) otherData).getExcerpt();
-        this.visible = ((RefererData) otherData).getVisible();
-        this.duplicate = ((RefererData) otherData).getDuplicate();
-        this.dayHits = ((RefererData) otherData).getDayHits();
-        this.totalHits = ((RefererData) otherData).getTotalHits();
+        this.id =          otherData.getId();
+        this.website =     otherData.getWebsite();
+        this.weblogEntry = otherData.getWeblogEntry();
+        this.dateString =  otherData.getDateString();
+        this.refererUrl =  otherData.getRefererUrl();
+        this.refererPermalink = otherData.getRefererPermalink();
+        this.requestUrl =  otherData.getRequestUrl();
+        this.title =       otherData.getTitle();
+        this.excerpt =     otherData.getExcerpt();
+        this.visible =     otherData.getVisible();
+        this.duplicate =   otherData.getDuplicate();
+        this.dayHits =     otherData.getDayHits();
+        this.totalHits =   otherData.getTotalHits();
     }
 
     /**
@@ -606,6 +423,29 @@ public class RefererData extends PersistentObject
      */
     public void setDisplayUrl(String string)
     {
+    }
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof RefererData != true) return false;
+        RefererData o = (RefererData)other;
+        return new EqualsBuilder()
+            .append(getRefererUrl(), o.getRefererUrl()) 
+            .append(getWeblogEntry(), o.getWeblogEntry()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getRefererUrl())
+            .append(getWeblogEntry())
+            .toHashCode();
     }
 
 }

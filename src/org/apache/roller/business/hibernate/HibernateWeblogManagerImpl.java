@@ -251,8 +251,19 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         for(Iterator it = entry.getRemovedTags().iterator(); it.hasNext();) {
             String name = (String) it.next();
             updateTagCount(name, entry.getWebsite(), -1);
-        }  
+        } 
         
+        // if the entry was published to future, set status as SCHEDULED
+        // we only consider an entry future published if it is scheduled
+        // more than 1 minute into the future
+        if ("PUBLISHED".equals(entry.getStatus()) && 
+                entry.getPubTime().after(new Date(System.currentTimeMillis() + 60000))) {
+            entry.setStatus(WeblogEntryData.SCHEDULED);
+        }
+        
+        // Store value object (creates new or updates existing)
+        entry.setUpdateTime(new Timestamp(new Date().getTime()));
+
         this.strategy.store(entry);        
         
         // update weblog last modified date.  date updated by saveWebsite()

@@ -16,13 +16,17 @@
 * directory of this distribution.
 */
 package org.apache.roller.pojos;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * @author David M Johnson
  * @ejb:bean name="EntryAttribute"
  * @hibernate.class lazy="true" table="entryattribute"
  * @hibernate.cache usage="read-write"
  */
-public class EntryAttributeData extends PersistentObject implements java.lang.Comparable
+public class EntryAttributeData implements java.lang.Comparable
 {
     private String id;
     private WeblogEntryData entry;
@@ -63,18 +67,21 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     /** @ejb:persistent-field */
     public void setId(java.lang.String id)
     {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
+
         this.id = id;
     }
 
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData)
+    public void setData(EntryAttributeData otherData)
     {
         this.id = otherData.getId();
-        this.entry = ((EntryAttributeData) otherData).getEntry();
-        this.name = ((EntryAttributeData) otherData).getName();
-        this.value = ((EntryAttributeData) otherData).getValue();
+        this.entry = otherData.getEntry();
+        this.name = otherData.getName();
+        this.value = otherData.getValue();
     }
 
     /** 
@@ -125,5 +132,28 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     public int compareTo(Object o) {
         EntryAttributeData att = (EntryAttributeData)o;
         return getName().compareTo(att.getName());
+    }
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof EntryAttributeData != true) return false;
+        EntryAttributeData o = (EntryAttributeData)other;
+        return new EqualsBuilder()
+            .append(getName(), o.getName()) 
+            .append(getEntry(), o.getEntry()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getName())
+            .append(getEntry())
+            .toHashCode();
     }
 }

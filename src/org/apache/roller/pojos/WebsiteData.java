@@ -32,10 +32,12 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.util.PojoUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.ThemeNotFoundException;
@@ -59,8 +61,7 @@ import org.apache.roller.business.WeblogManager;
  * @hibernate.class lazy="true"  table="website"
  * @hibernate.cache usage="read-write"
  */
-public class WebsiteData extends org.apache.roller.pojos.PersistentObject
-        implements Serializable {
+public class WebsiteData implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
     
     private static Log log = LogFactory.getLog(WebsiteData.class);
@@ -132,6 +133,27 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public WebsiteData(WebsiteData otherData) {
         this.setData(otherData);
     }
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof WebsiteData != true) return false;
+        WebsiteData o = (WebsiteData)other;
+        return new EqualsBuilder()
+            .append(getHandle(), o.getHandle()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getHandle())
+            .toHashCode();
+    } 
     
     /**
      * @hibernate.bag lazy="true" inverse="true" cascade="delete"
@@ -378,6 +400,8 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /** @ejb:persistent-field */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -735,90 +759,11 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         defaultPlugins = string;
     }
     
-    public String toString() {
-        StringBuffer str = new StringBuffer("{");
-        
-        str.append("id=" + id + " " + "name=" + name + " " + "description=" +
-                description + " " +
-                "defaultPageId=" + defaultPageId + " " +
-                "weblogDayPageId=" + weblogDayPageId + " " +
-                "enableBloggerApi=" + enableBloggerApi + " " +
-                "bloggerCategory=" + bloggerCategory + " " +
-                "defaultCategory=" + defaultCategory + " " +
-                "editorPage=" + editorPage + " " +
-                "blacklist=" + blacklist + " " +
-                "allowComments=" + allowComments + " " +
-                "emailAddress=" + emailAddress + " " +
-                "emailComments=" + emailComments + " " +
-                "emailFromAddress=" + emailFromAddress + " " +
-                "editorTheme=" + editorTheme + " " +
-                "locale=" + locale + " " +
-                "timeZone=" + timeZone + " " +
-                "defaultPlugins=" + defaultPlugins);
-        str.append('}');
-        
-        return (str.toString());
-    }
-    
-    public boolean equals(Object pOther) {
-        if (pOther instanceof WebsiteData) {
-            WebsiteData lTest = (WebsiteData) pOther;
-            boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
-            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
-            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
-            lEquals = PojoUtil.equals(lEquals, this.getCreator(), lTest.getCreator());
-            lEquals = PojoUtil.equals(lEquals, this.getDefaultPageId(), lTest.getDefaultPageId());
-            lEquals = PojoUtil.equals(lEquals, this.getWeblogDayPageId(), lTest.getWeblogDayPageId());
-            lEquals = PojoUtil.equals(lEquals, this.getEnableBloggerApi(), lTest.getEnableBloggerApi());
-            lEquals = PojoUtil.equals(lEquals, this.getBloggerCategory(), lTest.getBloggerCategory());
-            lEquals = PojoUtil.equals(lEquals, this.getDefaultCategory(), lTest.getDefaultCategory());
-            lEquals = PojoUtil.equals(lEquals, this.getEditorPage(), lTest.getEditorPage());
-            lEquals = PojoUtil.equals(lEquals, this.getBlacklist(), lTest.getBlacklist());
-            lEquals = PojoUtil.equals(lEquals, this.getAllowComments(), lTest.getAllowComments());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailComments(), lTest.getEmailComments());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailAddress(), lTest.getEmailAddress());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailFromAddress(), lTest.getEmailFromAddress());
-            lEquals = PojoUtil.equals(lEquals, this.getEditorTheme(), lTest.getEditorTheme());
-            lEquals = PojoUtil.equals(lEquals, this.getLocale(), lTest.getLocale());
-            lEquals = PojoUtil.equals(lEquals, this.getTimeZone(), lTest.getTimeZone());
-            lEquals = PojoUtil.equals(lEquals, this.getDefaultPlugins(), lTest.getDefaultPlugins());
-            return lEquals;
-        } else {
-            return false;
-        }
-    }
-    
-    public int hashCode() {
-        int result = 17;
-        result = PojoUtil.addHashCode(result, this.id);
-        result = PojoUtil.addHashCode(result, this.name);
-        result = PojoUtil.addHashCode(result, this.description);
-        result = PojoUtil.addHashCode(result, this.creator);
-        result = PojoUtil.addHashCode(result, this.defaultPageId);
-        result = PojoUtil.addHashCode(result, this.weblogDayPageId);
-        result = PojoUtil.addHashCode(result, this.enableBloggerApi);
-        //result = PojoUtil.addHashCode(result, this.bloggerCategory);
-        //result = PojoUtil.addHashCode(result, this.defaultCategory);
-        result = PojoUtil.addHashCode(result, this.editorPage);
-        result = PojoUtil.addHashCode(result, this.blacklist);
-        result = PojoUtil.addHashCode(result, this.allowComments);
-        result = PojoUtil.addHashCode(result, this.emailComments);
-        result = PojoUtil.addHashCode(result, this.emailAddress);
-        result = PojoUtil.addHashCode(result, this.emailFromAddress);
-        result = PojoUtil.addHashCode(result, this.editorTheme);
-        result = PojoUtil.addHashCode(result, this.locale);
-        result = PojoUtil.addHashCode(result, this.timeZone);
-        result = PojoUtil.addHashCode(result, this.defaultPlugins);
-        
-        return result;
-    }
     
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
-        WebsiteData other = (WebsiteData)otherData;
+    public void setData(WebsiteData other) {
         
         this.id = other.getId();
         this.name = other.getName();

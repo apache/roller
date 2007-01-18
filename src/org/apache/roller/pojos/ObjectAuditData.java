@@ -17,6 +17,9 @@
 package org.apache.roller.pojos;
 
 import java.util.Date;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Records change that a user has made to an object.
@@ -26,7 +29,7 @@ import java.util.Date;
  *
  * @author Dave Johnson
  */
-public class ObjectAuditData extends PersistentObject
+public class ObjectAuditData
 {
     private String id;          // primary key
     private String userId;      // user that made change
@@ -35,10 +38,6 @@ public class ObjectAuditData extends PersistentObject
     private String comment;     // description of change
     private Date changeTime;    // time that change was made
     
-    public void setData(PersistentObject vo)
-    {
-    }
-
     /**
      * @ejb:persistent-field
      * @hibernate.id column="id"
@@ -51,6 +50,8 @@ public class ObjectAuditData extends PersistentObject
     /** @ejb:persistent-field */
     public void setId(String id)
     {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     /**
@@ -117,5 +118,26 @@ public class ObjectAuditData extends PersistentObject
     public void setUserId(String userId)
     {
         this.userId = userId;
+    }
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof ObjectAuditData != true) return false;
+        ObjectAuditData o = (ObjectAuditData)other;
+        return new EqualsBuilder()
+            .append(getId(), o.getId()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getId())
+            .toHashCode();
     }
 }

@@ -20,6 +20,9 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -33,7 +36,7 @@ import java.sql.Timestamp;
  * @hibernate.class lazy="true" table="pingtarget"
  * @hibernate.cache usage="read-write"
  */
-public class PingTargetData extends PersistentObject implements Serializable {
+public class PingTargetData implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
 
@@ -77,10 +80,9 @@ public class PingTargetData extends PersistentObject implements Serializable {
 
 
     /**
-     * Setter needed by RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject vo) {
-        PingTargetData other = (PingTargetData) vo;
+    public void setData(PingTargetData other) {
 
         id = other.getId();
         name = other.getName();
@@ -112,6 +114,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      */
     public void setId(java.lang.String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -262,49 +266,25 @@ public class PingTargetData extends PersistentObject implements Serializable {
     }
 
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
-        return id.hashCode();
-    }
+    //------------------------------------------------------- Good citizenship
 
-
-    /**
-     * @see java.lang.Object#equals(Object o)
-     */
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PingTargetData)) return false;
-
-        final PingTargetData pingTargetData = (PingTargetData) o;
-
-        if (conditionCode != pingTargetData.getConditionCode()) return false;
-        if (id != null ? !id.equals(pingTargetData.getId()) : pingTargetData.getId() != null) return false;
-        if (lastSuccess != null ? !lastSuccess.equals(pingTargetData.getLastSuccess()) : pingTargetData.getLastSuccess() != null)
-        {
-            return false;
-        }
-        if (name != null ? !name.equals(pingTargetData.getName()) : pingTargetData.getName() != null) return false;
-        if (pingUrl != null ? !pingUrl.equals(pingTargetData.getPingUrl()) : pingTargetData.getPingUrl() != null) {
-            return false;
-        }
-        if (getWebsite() != null ? !getWebsite().equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-    /**
-     * Generate a string form of the object appropriate for logging or debugging.
-     *
-     * @return a string form of the object appropriate for logging or debugging.
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
-        return "PingTargetData{" + "id='" + id + "'" + ", name='" + name + "'" + ", pingUrl='" + pingUrl + "'" + ", conditionCode=" + conditionCode + ", lastSuccess=" + lastSuccess + "}";
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof PingTargetData != true) return false;
+        PingTargetData o = (PingTargetData)other;
+        return new EqualsBuilder()
+            .append(getId(), o.getId()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(id)
+            .toHashCode();
     }
 
 }

@@ -21,8 +21,9 @@
 package org.apache.roller.pojos;
 
 import java.sql.Timestamp;
-
-import org.apache.roller.util.PojoUtil;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -34,7 +35,7 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="true" table="roller_weblogentrytag"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogEntryTagData extends PersistentObject
+public class WeblogEntryTagData
     implements java.io.Serializable
 {
     private static final long serialVersionUID = -2602052289337573384L;
@@ -83,6 +84,8 @@ public class WeblogEntryTagData extends PersistentObject
 
     public void setId(java.lang.String id)
     {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -163,54 +166,33 @@ public class WeblogEntryTagData extends PersistentObject
        this.time = tagTime;
    }    
 
-   public String toString() {
-     StringBuffer str = new StringBuffer("{");
-     
-     str.append("id=" + id + " " +
-             "website=" + website + " " +
-             "weblogEntry=" + weblogEntry + " " +
-             "user=" + user + " " +
-             "name=" + name + " " +
-             "tagTime=" + time);
-     str.append('}');
-     
-     return (str.toString());
- }
- 
-   public boolean equals(Object pOther) {
-       if (pOther instanceof WeblogEntryTagData) {
-           WeblogEntryTagData lTest = (WeblogEntryTagData) pOther;
-           boolean lEquals = true;
-           
-           lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
-           lEquals = PojoUtil.equals(lEquals, this.website, lTest.getWeblog());
-           lEquals = PojoUtil.equals(lEquals, this.weblogEntry, lTest.getWeblogEntry());
-           lEquals = PojoUtil.equals(lEquals, this.user, lTest.getUser());
-           lEquals = PojoUtil.equals(lEquals, this.name, lTest.getName());
-           lEquals = PojoUtil.equals(lEquals, this.time, lTest.getTime());
-           return lEquals;
-       } else {
-           return false;
-       }
-   }
- 
-   public int hashCode() {
-       
-       int result = 17;
-       result = PojoUtil.addHashCode(result, this.id);
-       result = PojoUtil.addHashCode(result, this.website != null ? this.website.getId() : null);
-       result = PojoUtil.addHashCode(result, this.weblogEntry != null ? this.weblogEntry.getId() : null);
-       result = PojoUtil.addHashCode(result, this.user != null ? this.user.getId() : null);
-       result = PojoUtil.addHashCode(result, this.name);
-       result = PojoUtil.addHashCode(result, this.time);
+    //------------------------------------------------------- Good citizenship
 
-       return result;
-   }
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof WeblogEntryTagData != true) return false;
+        WeblogEntryTagData o = (WeblogEntryTagData)other;
+        return new EqualsBuilder()
+            .append(getName(), o.getName()) 
+            .append(getWeblogEntry(), o.getWeblogEntry()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getName())
+            .append(getWeblogEntry())
+            .toHashCode();
+    }
  
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData)
+    public void setData(WeblogEntryTagData otherData)
     {
         WeblogEntryTagData data = (WeblogEntryTagData) otherData;
         this.id = data.getId();

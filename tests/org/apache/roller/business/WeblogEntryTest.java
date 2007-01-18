@@ -35,6 +35,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
@@ -106,7 +107,9 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWebsite(testWeblog);
         testEntry.setCreator(testUser);
-        testEntry.setCategory(testWeblog.getDefaultCategory());
+        
+        WeblogCategoryData cat = mgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+        testEntry.setCategory(cat);
         
         // create a weblog entry
         mgr.saveWeblogEntry(testEntry);
@@ -154,19 +157,28 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntryData entry1 = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
         WeblogEntryData entry2 = TestUtils.setupWeblogEntry("entry2", testWeblog.getDefaultCategory(), testWeblog, testUser);
         WeblogEntryData entry3 = TestUtils.setupWeblogEntry("entry3", testWeblog.getDefaultCategory(), testWeblog, testUser);
+        WeblogEntryData entry4 = TestUtils.setupWeblogEntry("entry4", testWeblog.getDefaultCategory(), testWeblog, testUser);
+        WeblogEntryData entry5 = TestUtils.setupWeblogEntry("entry5", testWeblog.getDefaultCategory(), testWeblog, testUser);
         
         // make a couple changes
         entry1.setLocale("en_US");
+        entry1.setStatus(WeblogEntryData.PUBLISHED);
+        entry1.setPinnedToMain(Boolean.TRUE);
         mgr.saveWeblogEntry(entry1);
+        
         entry2.setLocale("ja_JP");
-        entry2.setPinnedToMain(Boolean.TRUE);
+        entry2.setStatus(WeblogEntryData.PUBLISHED);
         entry2.setUpdateTime(new java.sql.Timestamp(entry2.getUpdateTime().getTime()+8822384));
         entry2.setPubTime(entry2.getUpdateTime());
         mgr.saveWeblogEntry(entry2);
+        
         entry3.setStatus(WeblogEntryData.DRAFT);
         entry3.setUpdateTime(new java.sql.Timestamp(entry3.getUpdateTime().getTime()+348829384));
         entry3.setPubTime(entry3.getUpdateTime());
         mgr.saveWeblogEntry(entry3);
+        
+        entry4.setPubTime(new java.sql.Timestamp(entry1.getPubTime().getTime() - 348829384));
+        entry5.setPubTime(new java.sql.Timestamp(entry1.getPubTime().getTime() - 8822384));
         
         TestUtils.endSession(true);
         
@@ -190,20 +202,20 @@ public class WeblogEntryTest extends TestCase {
         entries = null;
         entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, null, null, null, 0, -1);
         assertNotNull(entries);
-        assertEquals(3, entries.size());
+        assertEquals(5, entries.size());
         assertEquals(entry3, entries.get(0));
         
-        // get all entries in category
+        // get all (non-future) PUBLISHED entries in category 
         entries = null;
         entries = mgr.getWeblogEntries(testWeblog.getDefaultCategory(), false);
         assertNotNull(entries);
-        assertEquals(2, entries.size());
+        assertEquals(3, entries.size());
         
-        // get all published entries only 
+        // get all (non-future) PUBLISHED entries only 
         entries = null;
         entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, WeblogEntryData.PUBLISHED, null, null, null, 0, -1);
         assertNotNull(entries);
-        assertEquals(2, entries.size());
+        assertEquals(3, entries.size());
         
         // get all entries in date range
         entries = null;
@@ -222,7 +234,7 @@ public class WeblogEntryTest extends TestCase {
         entries = null;
         entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, null, null, null, 0, -1);
         assertNotNull(entries);
-        assertEquals(3, entries.size());
+        assertEquals(5, entries.size());
         
         // get all entries, limited by offset/range
         entries = null;
@@ -243,19 +255,19 @@ public class WeblogEntryTest extends TestCase {
         entries = mgr.getWeblogEntriesPinnedToMain(new Integer(5));
         assertNotNull(entries);
         assertEquals(1, entries.size());
-        assertEquals(entry2, entries.get(0));
+        assertEquals(entry1, entries.get(0));
         
         // get next entry
         entry = null;
-        entry = mgr.getNextEntry(entry1, null, null);
+        entry = mgr.getNextEntry(entry4, null, null);
         assertNotNull(entry);
-        assertEquals(entry2, entry);
+        assertEquals(entry5, entry);
         
         // get previous entry
         entry = null;
-        entry = mgr.getPreviousEntry(entry2, null, null);
+        entry = mgr.getPreviousEntry(entry5, null, null);
         assertNotNull(entry);
-        assertEquals(entry1, entry);
+        assertEquals(entry4, entry);
         
         // get object map
         entryMap = null;
