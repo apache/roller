@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import org.apache.roller.RollerException;
 
-import org.apache.roller.pojos.PersistentObject;
 
 /**
  *
@@ -47,7 +46,7 @@ public interface DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    Object store(PersistentObject obj) 
+    Object store(Object obj) 
             throws RollerException;
 
     /**
