@@ -44,13 +44,16 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 /**
- * Persistence independent WeblogManager methods.
+ * Persistence-engine independent WeblogManager methods.
  */
 public abstract class WeblogManagerImpl implements WeblogManager {
     
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogManagerImpl.class);
-    
+    /**
+     * Sends trackback from entry to remote URL.
+     * See Trackback spec for details: http://www.sixapart.com/pronet/docs/trackback_spec
+     */ 
     public RollerMessages sendTrackback(
             WeblogEntryData entry, String trackbackURL) throws RollerException {
         
@@ -128,10 +131,12 @@ public abstract class WeblogManagerImpl implements WeblogManager {
                     try {
                         messages = parseTrackbackResponse(resultBuff.toString(), messages);
                     } catch (Exception e) {
+                        // Cannot parse response, indicates failure
                         messages.addError("weblogEdit.trackbackUnknownError",                            
                            new String[] {Integer.toString(conn.getResponseCode()), conn.getResponseMessage()});
                     }
                 } else {
+                    // No response from target, indicates failure
                     messages.addError("weblogEdit.trackbackUnknownError",                            
                        new String[] {Integer.toString(conn.getResponseCode()), conn.getResponseMessage()});                    
                 }
@@ -146,6 +151,10 @@ public abstract class WeblogManagerImpl implements WeblogManager {
         return messages;
     }
     
+    /**
+     * Parse XML returned from trackback POST, returns error or success message 
+     * in RollerMessages object.
+     */
     private RollerMessages parseTrackbackResponse(
         String response, RollerMessages messages) throws JDOMException, IOException {
         
