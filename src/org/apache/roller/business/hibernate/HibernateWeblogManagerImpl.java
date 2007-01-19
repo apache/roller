@@ -37,7 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.WeblogManagerImpl;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.RefererData;
@@ -65,7 +65,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Hibernate implementation of the WeblogManager.
  */
-public class HibernateWeblogManagerImpl implements WeblogManager {
+public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
     
     static final long serialVersionUID = -3730860865389981439L;
     
