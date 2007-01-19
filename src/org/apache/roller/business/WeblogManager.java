@@ -530,7 +530,12 @@ public interface WeblogManager {
     public long getEntryCount(WebsiteData websiteData) throws RollerException;
    
     /**
-     * Send trackback.
+     * Send trackback from a weblog entry to a remote tracback URL if permitted
+     * by the configuration. If configuration does not allow the trackback or
+     * if some error occurs, errors messages will be returned.
+     * @param entry "Source" weblog entry about web page at trackbackURL
+     * @param trackbackURL "Target" URL to which trackback will be posted.
+     * @return Contains error or success messages.
      */
     public RollerMessages sendTrackback(
             WeblogEntryData entry, String trackbackURL) throws RollerException;
