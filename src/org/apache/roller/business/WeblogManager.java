@@ -28,6 +28,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.util.RollerMessages;
 
 
 /**
@@ -528,6 +529,11 @@ public interface WeblogManager {
      */    
     public long getEntryCount(WebsiteData websiteData) throws RollerException;
    
+    /**
+     * Send trackback.
+     */
+    public RollerMessages sendTrackback(
+            WeblogEntryData entry, String trackbackURL) throws RollerException;
 }
 
 

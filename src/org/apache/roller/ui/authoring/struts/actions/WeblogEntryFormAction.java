@@ -18,24 +18,17 @@
 
 package org.apache.roller.ui.authoring.struts.actions;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.InitialContext;
@@ -44,7 +37,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -58,9 +50,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
@@ -77,9 +67,9 @@ import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.ui.core.RequestConstants;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.RollerMessages.RollerMessage;
 
 
 
@@ -614,6 +604,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             ActionForm actionForm,
             HttpServletRequest request,
             HttpServletResponse response) throws RollerException {
+        
         ActionMessages resultMsg = new ActionMessages();
         ActionForward forward = mapping.findForward("weblogEdit.page");
         ActionErrors errors = new ActionErrors();
@@ -622,8 +613,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
             String entryid = form.getId();
             if ( entryid == null ) {
-                entryid =
-                        request.getParameter(RequestConstants.WEBLOGENTRY_ID);
+                entryid = request.getParameter(RequestConstants.WEBLOGENTRY_ID);
             }
             Roller roller = RollerFactory.getRoller();
             RollerContext rctx= RollerContext.getRollerContext();
@@ -631,125 +621,22 @@ public final class WeblogEntryFormAction extends DispatchAction {
             entry = wmgr.getWeblogEntry(entryid);
             
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {
-                // Run entry through registered PagePlugins
-                PluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.getWeblogEntryPlugins(
-                        entry.getWebsite());
-                
-                String content = "";
-                if (!StringUtils.isEmpty(entry.getText())) {
-                    content = entry.getText();
-                } else {
-                    content = entry.getSummary();
-                }
-                content = ppmgr.applyWeblogEntryPlugins(plugins, entry, content);
-
-                String title = entry.getTitle();
-                String excerpt = StringUtils.left( Utilities.removeHTML(content),255 );
-                
-                String url = entry.getPermalink();
-                String blog_name = entry.getWebsite().getName();
-                
+            if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {                                
                 if (form.getTrackbackUrl() != null) {
-                    // by default let all trackbacks to be sent
-                    boolean allowTrackback = true;
+                                    
+                    RollerMessages messages = wmgr.sendTrackback(entry, form.getTrackbackUrl());
                     
-                    String allowedURLs = RollerConfig.getProperty("trackback.allowedURLs");
-                    if (allowedURLs != null && allowedURLs.trim().length() > 0) {
-                        // in the case that the administrator has enabled trackbacks
-                        // for only specific URLs, set it to false by default
-                        allowTrackback = false;
-                        String[] splitURLs = allowedURLs.split("\\|\\|");
-                        for (int i=0; i<splitURLs.length; i++) {
-                            Matcher m = Pattern.compile(splitURLs[i]).matcher(form.getTrackbackUrl());
-                            if (m.matches()) {
-                                allowTrackback = true;
-                                break;
-                            }
-                        }
+                    for (Iterator mit = messages.getMessages(); mit.hasNext();) {
+                        RollerMessage msg = (RollerMessage) mit.next();
+                        resultMsg.add(null, new ActionMessage(msg.getKey(), msg.getArgs())); 
                     }
-                    
-                    if(!allowTrackback) {
-                        errors.add(ActionErrors.GLOBAL_ERROR,
-                                new ActionError("error.trackbackNotAllowed"));
-                    } else {
-                        try {
-                            // Construct data
-                            
-                            String data = URLEncoder.encode("title", "UTF-8")
-                            +"="+URLEncoder.encode(title, "UTF-8");
-                            
-                            data += ("&" + URLEncoder.encode("excerpt", "UTF-8")
-                            +"="+URLEncoder.encode(excerpt,"UTF-8"));
-                            
-                            data += ("&" + URLEncoder.encode("url", "UTF-8")
-                            +"="+URLEncoder.encode(url,"UTF-8"));
-                            
-                            data += ("&" + URLEncoder.encode("blog_name", "UTF-8")
-                            +"="+URLEncoder.encode(blog_name,"UTF-8"));
-                            
-                            // Send data
-                            URL tburl = new URL(form.getTrackbackUrl());
-                            HttpURLConnection conn = (HttpURLConnection)tburl.openConnection();
-                            conn.setDoOutput(true);
-                            
-                            OutputStreamWriter wr =
-                                    new OutputStreamWriter(conn.getOutputStream());
-                            BufferedReader rd = null;
-                            try {
-                                wr.write(data);
-                                wr.flush();
-                                
-                                // Get the response
-                                boolean inputAvailable = false;
-                                try {
-                                    rd = new BufferedReader(new InputStreamReader(
-                                            conn.getInputStream()));
-                                    inputAvailable = true;
-                                } catch (Throwable e) {
-                                    mLogger.debug(e);
-                                }
-                                
-                                // read repsonse only if there is one
-                                if (inputAvailable) {
-                                    String line;
-                                    StringBuffer resultBuff = new StringBuffer();
-                                    while ((line = rd.readLine()) != null) {
-                                        resultBuff.append(
-                                            StringEscapeUtils.escapeHtml(line));
-                                        resultBuff.append("<br />");
-                                    }
-                                    resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
-                                            new ActionMessage("weblogEdit.trackbackResults",
-                                            resultBuff));
-                                }
-                                
-                                // add response code to messages
-                                if (conn.getResponseCode() > 399) {
-                                    errors.add(ActionErrors.GLOBAL_ERROR,
-                                            new ActionError("weblogEdit.trackbackStatusCodeBad",
-                                            new Integer(conn.getResponseCode())));
-                                } else {
-                                    resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
-                                            new ActionMessage("weblogEdit.trackbackStatusCodeGood",
-                                            new Integer(conn.getResponseCode())));
-                                }
-                            } finally {
-                                if (wr != null) wr.close();
-                                if (rd != null) rd.close();
-                            }
-                        } catch (IOException e) {
-                            errors.add(ActionErrors.GLOBAL_ERROR,
-                                    new ActionError("error.trackback",e));
-                        }
+                    for (Iterator eit = messages.getErrors(); eit.hasNext();) {
+                        RollerMessage err = (RollerMessage) eit.next();
+                        errors.add(null, new ActionMessage(err.getKey(), err.getArgs())); 
                     }
-                } else {
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("error.noTrackbackUrlSpecified"));
+                    form.setTrackbackUrl(null);
                 }
-                
-                form.setTrackbackUrl(null);
+                                                
             } else {
                 forward = mapping.findForward("access-denied");
             }
