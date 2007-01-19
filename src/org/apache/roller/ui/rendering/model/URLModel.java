@@ -333,7 +333,7 @@ public class URLModel implements Model {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, null, excerpts, true);
         }
         
-        public String rss(List tags, boolean excerpts) {
+        public String rssByTags(List tags, boolean excerpts) {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, tags, excerpts, true);
         }
         
@@ -345,7 +345,7 @@ public class URLModel implements Model {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, null, excerpts, true);
         }
         
-        public String atom(List tags, boolean excerpts) {
+        public String atomByTags(List tags, boolean excerpts) {
             return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, tags, excerpts, true);
         }
     }
