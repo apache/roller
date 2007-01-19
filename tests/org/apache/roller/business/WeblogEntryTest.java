@@ -483,6 +483,8 @@ public class WeblogEntryTest extends TestCase {
         // teardown our test data
         TestUtils.teardownWeblogEntry(id1);
         TestUtils.teardownWeblogEntry(id2);
+        TestUtils.endSession(true);
+
         TestUtils.teardownWeblog(wid);
         TestUtils.endSession(true);
     }
