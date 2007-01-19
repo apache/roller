@@ -30,11 +30,9 @@ import java.security.PrivilegedAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PersistentObject;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
-import org.apache.roller.business.datamapper.PersistentObjectHelper;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
@@ -110,22 +108,11 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    public Object store(PersistentObject obj) throws RollerException {
+    public Object store(Object obj) throws RollerException {
         EntityManager em = getEntityManager(true);
-        // Roller code calls store even on already managed entity
-        // Till Roller code is fixed, we will need to have following
-        if (!PersistentObjectHelper.isObjectPersistent(obj)) {
-            // Object has never been written to database, so save it.
-            // This makes obj into a persistent instance.
+        if (!em.contains(obj)) {
+            // If entity is not managed we can assume it is new
             em.persist(obj);
-        }
-        if ( !em.contains(obj) ) {
-            // Object has been written to database, but instance passed in
-            // is not a persistent instance, so must be loaded into em.
-            PersistentObject vo =
-                    (PersistentObject)load(obj.getClass(),obj.getId());
-            vo.setData(obj);
-            obj = vo;
         }
         return obj;
     }

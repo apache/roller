@@ -41,7 +41,6 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.WebsiteDisplayData;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
 
@@ -208,53 +207,6 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
                 websiteName,
                 "statCount.weblogDayHits",
                 hits.longValue()));              
-        }
-        //TODO Uncomment following once integrated with code
-        //Collections.sort(results, StatCount.getComparator());
-        Collections.reverse(results);
-        return results;
-    }
-
-    /**
-     * Get most popular websites based on referer day hits.
-     * @param offset Offset into results (for paging)
-     * @param length Maximum number of results to return (for paging)
-     * @return List of WebsiteDisplayData objects.
-     */
-    public List getDaysPopularWebsites(int offset, int length)
-            throws RollerException {
-
-        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
-        String msg = "Getting popular websites";
-        List results = new ArrayList();
-        
-        if (length == -1) {
-            length = Integer.MAX_VALUE - offset;
-        }
-
-        DatamapperQuery query = strategy.newQuery(RefererData.class, 
-            "RefererData.getDaysPopularWebsitesByWebsite.enabled&Website.active");
-        
-        if (offset != 0 || length != -1) {
-            query.setRange(offset, length);
-        }
-
-        List queryResults = (List) query.execute(
-            new Object[] {Boolean.TRUE, Boolean.TRUE}); 
-        
-        for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
-            Object[] row = (Object[])it.next();
-            Long hits = (Long)row[0];
-            String websiteId = (String)row[1];
-            String websiteName = (String)row[2];
-            String websiteHandle = (String)row[3];
-            results.add(new WebsiteDisplayData(
-                websiteId,
-                websiteName,
-                websiteHandle,
-                // TODO: DataMapperport The query is retrieving SUM(DISTINCT r.dayHits) which should be a long
-                // Change WebsiteDisplayData to accept hits as long 
-                Integer.valueOf(hits.intValue())));
         }
         //TODO Uncomment following once integrated with code
         //Collections.sort(results, StatCount.getComparator());

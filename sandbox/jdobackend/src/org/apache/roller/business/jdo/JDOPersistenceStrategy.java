@@ -27,7 +27,6 @@ import javax.jdo.PersistenceManagerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PersistentObject;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
@@ -94,7 +93,7 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @return the object persisted
      * @throws org.apache.roller.RollerException on any error
      */
-    public Object store(PersistentObject obj) 
+    public Object store(Object obj) 
             throws RollerException {
         PersistenceManager pm = getPersistenceManager(true);
         pm.makePersistent(obj);

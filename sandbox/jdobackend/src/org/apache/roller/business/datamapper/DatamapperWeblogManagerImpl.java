@@ -88,7 +88,7 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
             throw new RollerException("Duplicate category name, cannot save category");
         }
 
-        if(!PersistentObjectHelper.isObjectPersistent(cat)) {
+        if (cat.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(cat)) {
             // Newly added object. If it has a parent,
             // maintain relationship from both sides
             WeblogCategoryData parent = cat.getParent();
@@ -336,6 +336,8 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
             for(Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
                 WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
                 updateTagCount(tag.getName(), entry.getWebsite(), -1);
+                it.remove();
+                this.strategy.remove(tag);
             }
         }
         
@@ -1154,13 +1156,15 @@ public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
         
-        DatamapperQuery query = strategy.newQuery(HitCountData.class, 
+        DatamapperQuery query = strategy.newQuery(HitCountData.class,
                 "HitCountData.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc");
 
         if (length != -1) {
-            query.setRange(offset, length);
+            // Commented out due to https://glassfish.dev.java.net/issues/show_bug.cgi?id=2084
+            // Should uncomment once the issue is fixed
+            //query.setRange(offset, length);
         }
-        
+
         return (List) query.execute(startDate);
     }
     

@@ -46,7 +46,6 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.RoleData;
-import org.apache.roller.pojos.PersistentObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -219,7 +218,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             //Remove it from website
             iterator.remove();
             //Remove it from corresponding user
-            UserData user = (UserData) getManagedObject(perms.getUser());
+            UserData user = perms.getUser(); //(UserData) getManagedObject(perms.getUser());
             user.getPermissions().remove(perms);
         }
 
@@ -246,7 +245,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                 //Remove it from website
                 iterator.remove();
                 //Remove it from corresponding user
-                WebsiteData website = (WebsiteData) getManagedObject(perms.getWebsite());
+                WebsiteData website = perms.getWebsite(); //(WebsiteData) getManagedObject(perms.getWebsite());
                 website.getPermissions().remove(perms);
         }
 
@@ -258,13 +257,13 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
     public void savePermissions(PermissionsData perms) 
             throws RollerException {
-        if(!PersistentObjectHelper.isObjectPersistent(perms)) {
+        if (perms.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(perms)) {
             // This is a new object make sure that relationship is set on managed
             // copy of other side
-            WebsiteData website = (WebsiteData) getManagedObject(perms.getWebsite());
+            WebsiteData website = perms.getWebsite(); //(WebsiteData) getManagedObject(perms.getWebsite());
             website.getPermissions().add(perms);
 
-            UserData user = (UserData) getManagedObject(perms.getUser());
+            UserData user = perms.getUser(); //(UserData) getManagedObject(perms.getUser());
             user.getPermissions().add(perms);
         }
         this.strategy.store(perms);
@@ -275,10 +274,10 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         this.strategy.remove(perms);
         // make sure that relationship is set on managed
         // copy of other side
-        WebsiteData website = (WebsiteData) getManagedObject(perms.getWebsite());
+        WebsiteData website = perms.getWebsite(); //WebsiteData) getManagedObject(perms.getWebsite());
         website.getPermissions().remove(perms);
 
-        UserData user = (UserData) getManagedObject(perms.getUser());
+        UserData user = perms.getUser(); //(UserData) getManagedObject(perms.getUser());
         user.getPermissions().remove(perms);
     }
 
@@ -1139,22 +1138,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         ret =((Long)results.get(0)).longValue();
 
         return ret;
-    }
-
-    /**
-     * Returns a manged copy of given persistent object.
-     * @param obj Given persistent object
-     * @return Managed version of obj
-     * @throws RollerException
-     * The method is required to handle case when a newly created object is made
-     * to refer to a object stored in web session. The object stored in web session
-     * should be merged into current persistence context before it is being
-     * referred by any other object.
-     * It should be our goal to not require this method. All the caller of this
-     * method should be modfied to see make sure that the obj passed managed
-     */
-    private PersistentObject getManagedObject(PersistentObject obj) throws RollerException {
-        return (PersistentObject) strategy.load(obj.getClass(), obj.getId());
     }
     
 }

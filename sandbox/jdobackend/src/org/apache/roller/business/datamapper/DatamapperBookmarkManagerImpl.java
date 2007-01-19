@@ -65,7 +65,7 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
     }
 
     public void saveBookmark(BookmarkData bookmark) throws RollerException {
-        if(!PersistentObjectHelper.isObjectPersistent(bookmark)) {
+        if (bookmark.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(bookmark)) {
             // This is a new object make sure that relationship is set on managed
             // copy of other side
             bookmark.getFolder().getBookmarks().add(bookmark);
@@ -98,12 +98,12 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             throw new RollerException("Duplicate folder name");
         }
 
-        if(!PersistentObjectHelper.isObjectPersistent(folder)) {
+        if (folder.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(folder)) {
             // Newly added object. If it has a parent,
             // maintain relationship from both sides
             FolderData parent = folder.getParent();
             if(parent != null) {
-                parent.getFolders().add(folder);
+                //parent.getFolders().add(folder);
             }
         }
 
