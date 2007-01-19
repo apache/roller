@@ -142,4 +142,20 @@ public class PingQueueTask extends RollerTaskWithLeasing {
         
     }
     
+    
+    /**
+     * Main method so that this task may be run from outside the webapp.
+     */
+    public static void main(String[] args) throws Exception {
+        try {
+            PingQueueTask task = new PingQueueTask();
+            task.init();
+            task.run();
+            System.exit(0);
+        } catch (RollerException ex) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
+    }
+    
 }
