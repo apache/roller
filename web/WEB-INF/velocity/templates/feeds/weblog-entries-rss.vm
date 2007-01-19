@@ -24,7 +24,7 @@
   <title>$utils.escapeXML($utils.removeHTML($model.weblog.name))</title>
   <link>$url.home</link>
   #if($model.tags)
-  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.tags, $model.excerpts)" />
+  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rssByTags($model.tags, $model.excerpts)" />
   #elseif($model.categoryPath)
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryPath, $model.excerpts)" />
   #else
