@@ -422,7 +422,7 @@ public class WeblogEntryData implements Serializable {
         }
     }
     public void onRemoveEntryAttribute(EntryAttributeData att) throws RollerException {
-        attMap.remove(att);
+        attMap.remove(att.getName());
     }
     //-------------------------------------------------------------------------
     

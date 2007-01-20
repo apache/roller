@@ -74,7 +74,7 @@ public class WeblogPageTest extends TestCase {
         testPage.setLink("testTemp");
         testPage.setContents("a test weblog template.");
         testPage.setLastModified(new java.util.Date());
-        testPage.setWebsite(testWeblog);
+        testPage.setWebsite(TestUtils.getManagedWebsite(testWeblog));
         testPage.setTemplateLanguage("velocity");
     }
     

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.TreeMap;
+import java.sql.Timestamp;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
@@ -37,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.WeblogManagerImpl;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.RefererData;
@@ -57,7 +59,7 @@ import org.apache.roller.util.DateUtil;
  * Created on May 31, 2006, 4:08 PM
  *
  */
-public abstract class DatamapperWeblogManagerImpl implements WeblogManager {
+public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
 
     protected static Log log = LogFactory.getLog(
         DatamapperWeblogManagerImpl.class);

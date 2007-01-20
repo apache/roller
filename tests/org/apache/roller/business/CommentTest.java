@@ -101,7 +101,7 @@ public class CommentTest extends TestCase {
         comment.setRemoteHost("foofoo");
         comment.setContent("this is a test comment");
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        comment.setWeblogEntry(testEntry);
+        comment.setWeblogEntry(TestUtils.getManagedWeblogEntry(testEntry));
         comment.setStatus(CommentData.APPROVED);
         
         // create a comment

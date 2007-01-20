@@ -23,7 +23,6 @@
             <basic name="value">
                 <column name="value" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <transient name="id"/>
         </attributes>
     </entity>
 </entity-mappings>

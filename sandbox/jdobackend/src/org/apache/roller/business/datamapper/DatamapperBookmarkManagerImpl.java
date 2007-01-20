@@ -103,7 +103,7 @@ public class DatamapperBookmarkManagerImpl implements BookmarkManager {
             // maintain relationship from both sides
             FolderData parent = folder.getParent();
             if(parent != null) {
-                //parent.getFolders().add(folder);
+                parent.getFolders().add(folder);
             }
         }
 

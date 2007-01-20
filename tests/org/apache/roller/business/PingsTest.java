@@ -122,7 +122,7 @@ public class PingsTest extends TestCase {
         assertEquals(testCommonPing.getPingUrl(), ping.getPingUrl());
         
         // create custom ping
-        testCustomPing.setWebsite(testWeblog);
+        testCustomPing.setWebsite(TestUtils.getManagedWebsite(testWeblog));
         mgr.savePingTarget(testCustomPing);
         String customId = testCustomPing.getId();
         TestUtils.endSession(true);
