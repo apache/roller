@@ -181,8 +181,8 @@ public final class TestUtils {
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setStatus(WeblogEntryData.PUBLISHED);
-        testEntry.setWebsite(weblog);
-        testEntry.setCreator(user);
+        testEntry.setWebsite(getManagedWebsite(weblog));
+        testEntry.setCreator(getManagedUser(user));
         testEntry.setCategory(cat);
         
         // store entry
@@ -232,7 +232,7 @@ public final class TestUtils {
         testComment.setRemoteHost("foofoo");
         testComment.setContent("this is a test comment");
         testComment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testComment.setWeblogEntry(entry);
+        testComment.setWeblogEntry(getManagedWeblogEntry(entry));
         testComment.setStatus(CommentData.APPROVED);
         
         // store testComment
@@ -322,7 +322,7 @@ public final class TestUtils {
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
         
         // store auto ping
-        AutoPingData autoPing = new AutoPingData(null, ping, weblog);
+        AutoPingData autoPing = new AutoPingData(null, ping, getManagedWebsite(weblog) );
         mgr.saveAutoPing(autoPing);
         
         // flush to db
@@ -365,7 +365,7 @@ public final class TestUtils {
         
         // store
         HitCountData testCount = new HitCountData();
-        testCount.setWeblog(weblog);
+        testCount.setWeblog(getManagedWebsite(weblog));
         testCount.setDailyHits(amount);
         mgr.saveHitCount(testCount);
         
@@ -396,6 +396,30 @@ public final class TestUtils {
         
         // flush to db
         RollerFactory.getRoller().flush();
+    }
+    
+    /**
+     * Convenience method that returns managed copy of given user.
+     */
+    public static UserData getManagedUser(UserData user) throws RollerException {
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        return mgr.getUser(user.getId());
+    }
+    
+    /**
+     * Convenience method that returns managed copy of given website.
+     */
+    public static WebsiteData getManagedWebsite(WebsiteData website) throws RollerException {
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        return mgr.getWebsite(website.getId());
+    }
+    
+    /**
+     * Convenience method that returns managed copy of given WeblogEntry.
+     */
+    public static WeblogEntryData getManagedWeblogEntry(WeblogEntryData weblogEntry) throws RollerException {
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        return mgr.getWeblogEntry(weblogEntry.getId());
     }
     
 }

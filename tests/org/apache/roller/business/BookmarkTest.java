@@ -106,7 +106,7 @@ public class BookmarkTest extends TestCase {
         assertEquals(0, root.getBookmarks().size());
         
         // add a folder
-        FolderData folder = new FolderData(root, "TestFolder1", null, testWeblog);
+        FolderData folder = new FolderData(root, "TestFolder1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
         
@@ -126,7 +126,7 @@ public class BookmarkTest extends TestCase {
         assertEquals("folderTest1", folder.getName());
         
         // add a subfolder
-        FolderData subfolder = new FolderData(folder, "subfolderTest1", null, testWeblog);
+        FolderData subfolder = new FolderData(folder, "subfolderTest1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(subfolder);
         TestUtils.endSession(true);
         
@@ -183,7 +183,7 @@ public class BookmarkTest extends TestCase {
         boolean exception = false;
         try {
             // child folder with same name as first
-            FolderData f3 = new FolderData(f1, "f2", null, testWeblog);
+            FolderData f3 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
             bmgr.saveFolder(f3);
             TestUtils.endSession(true);
         } catch (RollerException e) {
@@ -365,11 +365,11 @@ public class BookmarkTest extends TestCase {
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // add some folders
-        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
-        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
-        FolderData f3 = new FolderData(root, "f3", null, testWeblog);
+        FolderData f3 = new FolderData(root, "f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
         
         // add some bookmarks
@@ -449,7 +449,7 @@ public class BookmarkTest extends TestCase {
         f1.addBookmark(b1);
         
         // create folder f2 inside f1
-        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
         
         // create bookmark b2 inside folder f2
@@ -460,7 +460,7 @@ public class BookmarkTest extends TestCase {
         f2.addBookmark(b2);
         
         // create folder f3 inside folder f2
-        FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
+        FolderData f3 = new FolderData(f2, "f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
         
         // crete bookmark b3 inside folder f3
@@ -496,6 +496,8 @@ public class BookmarkTest extends TestCase {
         assertTrue(safe);
         
         // move f1 to dest
+        f1   = bmgr.getFolder( f1.getId());   //Get managed copy
+        dest = bmgr.getFolder( dest.getId()); //Get managed copy
         bmgr.moveFolder(f1, dest);
         TestUtils.endSession(true);
         
@@ -518,7 +520,7 @@ public class BookmarkTest extends TestCase {
         
         InputStream fis = this.getClass().getResourceAsStream("/bookmarks.opml");
         getRoller().getBookmarkManager().importBookmarks(
-                testWeblog, "ZZZ_imports_ZZZ", fileToString(fis));
+                TestUtils.getManagedWebsite(testWeblog), "ZZZ_imports_ZZZ", fileToString(fis));
         TestUtils.endSession(true);
         
         FolderData fd = null;

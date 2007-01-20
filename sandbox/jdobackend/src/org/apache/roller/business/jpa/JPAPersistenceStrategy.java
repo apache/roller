@@ -249,7 +249,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public DatamapperRemoveQuery newRemoveQuery(Class clazz, String queryName)
             throws RollerException {
-        EntityManager em = getEntityManager(false);
+        EntityManager em = getEntityManager(true);
         return new JPARemoveQueryImpl(em, clazz, queryName);
     }
 

@@ -119,6 +119,9 @@
                 <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <transient name="timestamp"/>
+            <transient name="spam"/>
+            <transient name="pending"/>
+            <transient name="approved"/>
         </attributes>
     </entity>
 </entity-mappings>

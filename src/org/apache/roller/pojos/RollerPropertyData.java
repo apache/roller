@@ -75,7 +75,14 @@ public class RollerPropertyData
     }
     
         
-
+    public void setId(String id) {
+        setName(id);
+    }
+    
+    public String getId() {
+        return getName();
+    }
+    
     /**
      * Getter for property name.
      *

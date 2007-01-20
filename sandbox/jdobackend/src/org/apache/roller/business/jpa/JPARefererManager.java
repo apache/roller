@@ -67,7 +67,6 @@ public class JPARefererManager extends DatamapperRefererManagerImpl {
      * Generates a JPQL query of form
      * SELECT r FROM RefererData r WHERE
      *     ( refererUrl like %blacklist[1] ..... OR refererUrl like %blacklist[n])
-     * AND (r.excerpt IS NULL OR r.excerpt LIKE '')
      * @param blacklist
      * @return
      */
@@ -87,7 +86,6 @@ public class JPARefererManager extends DatamapperRefererManagerImpl {
         // Get rid of last OR
         queryString.delete(queryString.length() - OR.length(), queryString.length());
         queryString.append(" ) ");
-        queryString.append(" AND (r.excerpt IS NULL OR r.excerpt LIKE '')");
         return queryString;
     }
 

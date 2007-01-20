@@ -101,7 +101,7 @@ public class WeblogCategoryTest extends TestCase {
         assertEquals(0, root.getWeblogCategories().size());
         
         // add a new category
-        WeblogCategoryData newCat = new WeblogCategoryData(testWeblog, root, "catTestCategory", null, null);
+        WeblogCategoryData newCat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "catTestCategory", null, null);
         mgr.saveWeblogCategory(newCat);
         TestUtils.endSession(true);
         
@@ -127,7 +127,7 @@ public class WeblogCategoryTest extends TestCase {
         assertEquals("testtest", cat.getName());
         
         // add a subcat
-        WeblogCategoryData subcat = new WeblogCategoryData(testWeblog, cat, "subcatTest1", null, null);
+        WeblogCategoryData subcat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), cat, "subcatTest1", null, null);
         mgr.saveWeblogCategory(subcat);
         TestUtils.endSession(true);
         
