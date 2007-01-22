@@ -192,13 +192,13 @@ public class WeblogCategoryTest extends TestCase {
         
         root = mgr.getRootWeblogCategory(testWeblog);
         
-        WeblogCategoryData f1 = new WeblogCategoryData(testWeblog, root, "f1", null, null);
+        WeblogCategoryData f1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "f1", null, null);
         mgr.saveWeblogCategory(f1);
         
-        WeblogCategoryData f2 = new WeblogCategoryData(testWeblog, f1, "f2", null, null);
+        WeblogCategoryData f2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), f1, "f2", null, null);
         mgr.saveWeblogCategory(f2);
         
-        WeblogCategoryData f3 = new WeblogCategoryData(testWeblog, f2, "f3", null, null);
+        WeblogCategoryData f3 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), f2, "f3", null, null);
         mgr.saveWeblogCategory(f3);
         
         TestUtils.endSession(true);
@@ -236,16 +236,16 @@ public class WeblogCategoryTest extends TestCase {
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         // add some categories and entries to test with
-        WeblogCategoryData dest = new WeblogCategoryData(testWeblog, root, "c0", null, null);
+        WeblogCategoryData dest = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c0", null, null);
         mgr.saveWeblogCategory(dest);
         
-        WeblogCategoryData c1 = new WeblogCategoryData(testWeblog, root, "c1", null, null);
+        WeblogCategoryData c1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c1", null, null);
         mgr.saveWeblogCategory(c1);
         
-        WeblogCategoryData c2 = new WeblogCategoryData(testWeblog, c1, "c2", null, null);
+        WeblogCategoryData c2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c1, "c2", null, null);
         mgr.saveWeblogCategory(c2);
         
-        WeblogCategoryData c3 = new WeblogCategoryData(testWeblog, c2, "c3", null, null);
+        WeblogCategoryData c3 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c2, "c3", null, null);
         mgr.saveWeblogCategory(c3);
         
         TestUtils.endSession(true);
@@ -309,16 +309,16 @@ public class WeblogCategoryTest extends TestCase {
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         // add some categories and entries to test with
-        WeblogCategoryData dest = new WeblogCategoryData(testWeblog, root, "c0", null, null);
+        WeblogCategoryData dest = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c0", null, null);
         mgr.saveWeblogCategory(dest);
         
-        WeblogCategoryData c1 = new WeblogCategoryData(testWeblog, root, "c1", null, null);
+        WeblogCategoryData c1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c1", null, null);
         mgr.saveWeblogCategory(c1);
         
-        WeblogCategoryData c2 = new WeblogCategoryData(testWeblog, c1, "c2", null, null);
+        WeblogCategoryData c2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c1, "c2", null, null);
         mgr.saveWeblogCategory(c2);
         
-        WeblogCategoryData c3 = new WeblogCategoryData(testWeblog, c2, "c3", null, null);
+        WeblogCategoryData c3 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c2, "c3", null, null);
         mgr.saveWeblogCategory(c3);
         
         TestUtils.endSession(true);
