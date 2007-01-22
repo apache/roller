@@ -529,7 +529,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         List results = null;
         boolean setRange = offset != 0 || length != -1;
         
-        // TODO: ATLAS getWebsites DONE TESTED
         if (endDate == null) endDate = new Date();
 
         if (length == -1) {
@@ -1004,7 +1003,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     public void release() {}
 
     public Map getUserNameLetterMap() throws RollerException {
-        // TODO: ATLAS getUserNameLetterMap DONE TESTED
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map results = new TreeMap();
         DatamapperQuery query = strategy.newQuery(UserData.class, 
@@ -1020,7 +1018,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
     public List getUsersByLetter(char letter, int offset, int length)
         throws RollerException {
-        // TODO: ATLAS getUsersByLetter DONE
         DatamapperQuery query = strategy.newQuery(UserData.class, 
             "UserData.getByUserNameOrderByUserName");
         query.setRange(offset, offset + length);
@@ -1043,7 +1040,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
     public List getWeblogsByLetter(char letter, int offset, int length)
         throws RollerException {
-        // TODO: ATLAS getWeblogsByLetter DONE
         DatamapperQuery query = strategy.newQuery(WebsiteData.class, 
             "WebsiteData.getByHandleOrderByHandle");
         if (offset != 0 || length != -1) {
@@ -1058,7 +1054,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     public List getMostCommentedWebsites(Date startDate, Date endDate, 
         int offset, int length)
         throws RollerException {
-        // TODO: ATLAS getMostCommentedWebsites DONE TESTED
 
         DatamapperQuery query = null;
         List queryResults = null;

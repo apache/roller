@@ -26,10 +26,9 @@ import org.apache.roller.business.datamapper.DatamapperPlanetManagerImpl;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 
-
-
 /**
- * A Hibernate specific implementation of the Roller business layer.
+ * Implements Planet, the entry point interface for the Roller-Planet business 
+ * tier APIs using the Java Persistence API (JPA).
  */
 public class JPAPlanetImpl extends DatamapperPlanetImpl {   
     
@@ -43,6 +42,8 @@ public class JPAPlanetImpl extends DatamapperPlanetImpl {
     
         
     protected JPAPlanetImpl() throws RollerException {
+        // set strategy used by Datamapper
+        strategy = new JPAPersistenceStrategy();
     }
     
     

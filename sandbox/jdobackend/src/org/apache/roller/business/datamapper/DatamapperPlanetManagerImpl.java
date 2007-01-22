@@ -211,8 +211,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
      * Get entries in a single feed as list of PlanetEntryData objects.
      */
     public List getFeedEntries(
-            String feedUrl, int offset, int len) throws RollerException {
-        // TODO: ATLAS getFeedEntries DONE       
+            String feedUrl, int offset, int len) throws RollerException {      
         List result = (List) strategy.newQuery(PlanetEntryData.class, 
                 "PlanetEntryData.getByFeedURL").execute(feedUrl); 
         // TODO handle offset and length
@@ -250,7 +249,6 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     public List getAggregation(
             PlanetGroupData group, Date startDate, Date endDate,
             int offset, int length) throws RollerException {
-        // TODO: ATLAS getAggregation DONE TESTED
         List result = null;
         if (endDate == null) endDate = new Date();
         try {

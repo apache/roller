@@ -174,7 +174,6 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
     public List getHotWeblogs(int sinceDays, int offset, int length)
             throws RollerException {
         
-        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
         String msg = "Getting hot weblogs";
         List results = new ArrayList();
         Calendar cal = Calendar.getInstance();
