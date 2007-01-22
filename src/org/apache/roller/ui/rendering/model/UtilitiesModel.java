@@ -256,7 +256,7 @@ public class UtilitiesModel implements Model {
     }
     
     public static String escapeJavaScript(String str) {
-        return StringEscapeUtils.escapeXml(str);
+        return StringEscapeUtils.escapeJavaScript(str);
     }
     
     public static String unescapeJavaScript(String str) {
