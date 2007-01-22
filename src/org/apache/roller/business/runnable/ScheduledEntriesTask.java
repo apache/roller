@@ -119,6 +119,8 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
      */
     public void runTask() {
         
+        log.debug("task started");
+        
         try {
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
             IndexManager searchMgr = RollerFactory.getRoller().getIndexManager();
@@ -165,6 +167,8 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             // always release
             RollerFactory.getRoller().release();
         }
+        
+        log.debug("task completed");
         
     }
     
