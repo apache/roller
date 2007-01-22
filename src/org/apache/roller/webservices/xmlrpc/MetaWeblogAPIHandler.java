@@ -252,6 +252,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setUpdateTime(current);
             entry.setWebsite(website);
             entry.setCreator(user);
+            entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
             if (Boolean.valueOf(publish).booleanValue()) {
                 entry.setStatus(WeblogEntryData.PUBLISHED);
             } else {

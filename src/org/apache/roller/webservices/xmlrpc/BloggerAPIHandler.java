@@ -405,6 +405,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setCreator(user);
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
+            entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
             if (Boolean.valueOf(publish).booleanValue()) {
                 entry.setStatus(WeblogEntryData.PUBLISHED);
             } else {
