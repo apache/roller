@@ -168,11 +168,11 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
         
         // first child folder
-        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
         
         TestUtils.endSession(true);
@@ -203,11 +203,11 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
-        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
-        FolderData f3 = new FolderData(root, "f3", null, testWeblog);
+        FolderData f3 = new FolderData(root, "f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
         
         TestUtils.endSession(true);
@@ -248,10 +248,10 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData testFolder = new FolderData(null, "root", "root", testWeblog);
+        FolderData testFolder = new FolderData(null, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertTrue(root.equals(testFolder));
         
-        testFolder = new FolderData(root, "root", "root", testWeblog);
+        testFolder = new FolderData(root, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertFalse(root.equals(testFolder));
     }
     
@@ -265,11 +265,11 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
-        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
-        FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
+        FolderData f3 = new FolderData(f2, "f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
         
         TestUtils.endSession(true);
@@ -293,7 +293,7 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData folder = new FolderData(root, "TestFolder2", null, testWeblog);
+        FolderData folder = new FolderData(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
         
@@ -434,11 +434,11 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData dest = new FolderData(root, "dest", null, testWeblog);
+        FolderData dest = new FolderData(root, "dest", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(dest);
         
         // create source folder f1
-        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
         
         // create bookmark b1 inside source folder f1
