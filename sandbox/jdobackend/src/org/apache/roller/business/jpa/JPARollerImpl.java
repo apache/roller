@@ -31,7 +31,7 @@ import org.apache.roller.business.runnable.ThreadManager;
 
 /**
  * Implements Roller, the entry point interface for the Roller business tier
- * APIs. JDO specific implementation.
+ * APIs using the Java Persistence API (JPA).
  */
 public class JPARollerImpl extends DatamapperRollerImpl {
     
