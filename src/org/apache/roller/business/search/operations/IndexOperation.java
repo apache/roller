@@ -166,7 +166,7 @@ public abstract class IndexOperation implements Runnable {
         try {
             writer = new IndexWriter(manager.getIndexDirectory(), IndexManagerImpl.getAnalyzer(), false);
         } catch (IOException e) {
-            mLogger.error("ERROR creating writer");
+            mLogger.error("ERROR creating writer", e);
         }
 
         return writer;
