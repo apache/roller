@@ -255,6 +255,14 @@ public class UtilitiesModel implements Model {
         return StringEscapeUtils.unescapeXml(str);
     }
     
+    public static String escapeJavaScript(String str) {
+        return StringEscapeUtils.escapeXml(str);
+    }
+    
+    public static String unescapeJavaScript(String str) {
+        return StringEscapeUtils.unescapeJavaScript(str);
+    }
+    
     public static String replace(String src, String target, String rWith) {
         return StringUtils.replace(src, target, rWith);
     }
