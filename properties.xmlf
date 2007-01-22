@@ -140,6 +140,10 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
+<fileset id="roller-planet.jars" dir="${ro.tools}/roller-planet">
+    <include name="*.jar"/>
+</fileset>
+
 <!-- **************************************************************** -->
 <!-- Define path based on above filesets -->
 <!-- **************************************************************** -->
@@ -149,6 +153,7 @@ in the "base.path" definition.
     <fileset refid="base.jars"/>
     <fileset refid="mail.jars"/>
     <fileset refid="commons.jars"/>
+    <fileset refid="roller-planet.jars" />
 </path>
 
 <path id="business.path">
