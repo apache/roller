@@ -86,7 +86,7 @@ public class AtomService {
     public static final Namespace ns =
             Namespace.getNamespace("app","http://purl.org/atom/app#");
     public static final Namespace atomns =
-            Namespace.getNamespace("atom","http://www.w3.org/2005/atom");
+            Namespace.getNamespace("atom","http://www.w3.org/2005/Atom");
 
     private List workspaces = new ArrayList();
     
