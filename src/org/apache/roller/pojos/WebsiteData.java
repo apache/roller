@@ -1205,7 +1205,7 @@ public class WebsiteData implements Serializable {
                     this, 
                     null,       // user
                     null,       // startDate
-                    new Date(), // endDate
+                    null,       // endDate
                     null,       // cat or null
                     tags,       //  
                     WeblogEntryData.PUBLISHED, 
