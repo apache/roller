@@ -167,10 +167,10 @@ public class AtomServlet extends HttpServlet {
                         Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
                         
                         // return alternate link as Location header
-                        Iterator links = savedEntry.getOtherLinks().iterator();
+                        Iterator links = savedEntry.getAlternateLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
-                            if (link.getRel().equals("edit") || link.getRel() == null) {
+                            if (link.getRel().equals("alternate") || link.getRel() == null) {
                                 res.addHeader("Location", link.getHref());
                                 break;
                             }
@@ -187,7 +187,7 @@ public class AtomServlet extends HttpServlet {
                         String title = req.getHeader("Title");
                         String slug = req.getHeader("Slug");
 
-                        // hand input stream of to hander to post file
+                        // hand input stream off to hander to post file
                         Entry resource = handler.postMedia(
                             pathInfo, title, slug, req.getContentType(), req.getInputStream());
                         
@@ -349,7 +349,7 @@ public class AtomServlet extends HttpServlet {
         // count on client to preserve foreign markup as it should.
         Element rollerElement = new Element("atom-draft", 
             "http://rollerweblogger.org/namespaces/app");
-        rollerElement.setText("9");
+        rollerElement.setText("12");
         entryElement.addContent(rollerElement);
         
         XMLOutputter outputter = new XMLOutputter();
