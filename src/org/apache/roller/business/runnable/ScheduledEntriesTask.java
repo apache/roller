@@ -131,7 +131,9 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             
             // get all published entries older than current time
             List scheduledEntries = wMgr.getWeblogEntries(null, null, null, now, null, 
-                    null, null, WeblogEntryData.SCHEDULED, null, null, 0, -1);
+                    null, WeblogEntryData.SCHEDULED, null, null, null, 0, -1);
+            
+            log.debug("promoting "+scheduledEntries.size()+" entries to PUBLISHED state");
             
             WeblogEntryData entry = null;
             Iterator it = scheduledEntries.iterator();
