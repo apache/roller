@@ -438,6 +438,7 @@ public class RefererData
         return new EqualsBuilder()
             .append(getRefererUrl(), o.getRefererUrl()) 
             .append(getWeblogEntry(), o.getWeblogEntry()) 
+            .append(getWebsite(),o.getWebsite())
             .isEquals();
     }
     
@@ -445,6 +446,7 @@ public class RefererData
         return new HashCodeBuilder()
             .append(getRefererUrl())
             .append(getWeblogEntry())
+            .append(getWebsite())
             .toHashCode();
     }
 
