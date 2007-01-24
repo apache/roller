@@ -119,7 +119,7 @@ public class WeblogCategoryData
             WeblogCategoryData o = (WeblogCategoryData)other;
             return new EqualsBuilder()
                 .append(getPath(), o.getPath()) 
-                .append(getWebsite(), o.getWebsite()) 
+                //.append(getWebsite(), o.getWebsite()) 
                 .isEquals();
         }        
         return false;
@@ -128,7 +128,7 @@ public class WeblogCategoryData
     public int hashCode() {
         return new HashCodeBuilder()
             .append(getPath())
-            .append(getWebsite())
+            //.append(getWebsite())
             .toHashCode();
     }
     
