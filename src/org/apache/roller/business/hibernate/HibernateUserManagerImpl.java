@@ -661,10 +661,8 @@ public class HibernateUserManagerImpl implements UserManager {
             Criteria criteria = session.createCriteria(WeblogTemplate.class);
             criteria.add(Expression.eq("website",website));
             criteria.add(Expression.eq("link",pagelink));
-            criteria.setMaxResults(1);
             
-            List list = criteria.list();
-            return list.size()!=0 ? (WeblogTemplate)list.get(0) : null;
+            return (WeblogTemplate) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
@@ -687,10 +685,8 @@ public class HibernateUserManagerImpl implements UserManager {
             Criteria criteria = session.createCriteria(WeblogTemplate.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("name", pagename));
-            criteria.setMaxResults(1);
             
-            List list = criteria.list();
-            return list.size()!=0? (WeblogTemplate)list.get(0) : null;
+            return (WeblogTemplate) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
