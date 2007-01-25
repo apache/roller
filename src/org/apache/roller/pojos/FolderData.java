@@ -19,6 +19,7 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -298,6 +299,25 @@ public class FolderData
     public List retrieveBookmarks(boolean subfolders) throws RollerException {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         return bmgr.getBookmarks(this, subfolders);
+    }
+    
+    
+    /**
+     * Does this folder have a child folder with the specified name?
+     *
+     * @param name The name of the folder to check for.
+     * @return boolean true if child folder exists, false otherwise.
+     */
+    public boolean hasFolder(String name) {
+        Iterator folders = this.getFolders().iterator();
+        FolderData folder = null;
+        while(folders.hasNext()) {
+            folder = (FolderData) folders.next();
+            if(name.equals(folder.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
     
     

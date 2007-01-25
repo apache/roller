@@ -195,6 +195,27 @@ public class BookmarkTest extends TestCase {
     
     
     /**
+     * Test the hasFolder() method on FolderData.
+     */
+    public void testHasFolder() throws Exception {
+        
+        BookmarkManager bmgr = getRoller().getBookmarkManager();
+        
+        FolderData root = bmgr.getRootFolder(testWeblog);
+        
+        // add a test folder
+        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
+        bmgr.saveFolder(f1);
+        
+        TestUtils.endSession(true);
+        
+        // check that root has category c1
+        root = bmgr.getRootFolder(testWeblog);
+        assertTrue(root.hasFolder("f1"));
+    }
+    
+    
+    /**
      * Test all folder lookup methods.
      */
     public void testFolderLookups() throws Exception {
