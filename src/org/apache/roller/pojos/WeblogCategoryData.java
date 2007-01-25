@@ -20,6 +20,7 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -279,6 +280,25 @@ public class WeblogCategoryData
     public List retrieveWeblogEntries(boolean subcats) throws RollerException {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
+    }
+    
+    
+    /**
+     * Does this category have a child category with the specified name?
+     *
+     * @param name The name of the category to check for.
+     * @return boolean true if child category exists, false otherwise.
+     */
+    public boolean hasCategory(String name) {
+        Iterator cats = this.getWeblogCategories().iterator();
+        WeblogCategoryData cat = null;
+        while(cats.hasNext()) {
+            cat = (WeblogCategoryData) cats.next();
+            if(name.equals(cat.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
     
     

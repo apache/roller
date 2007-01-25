@@ -363,4 +363,26 @@ public class WeblogCategoryTest extends TestCase {
         assertEquals(0, c1.retrieveWeblogEntries(false).size());
 
     }
+    
+    
+    /**
+     * Test the hasCategory() method on WeblogCategoryData.
+     */
+    public void testHasCategory() throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        
+        // add some categories to test with
+        WeblogCategoryData c1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c1", null, null);
+        mgr.saveWeblogCategory(c1);
+        
+        TestUtils.endSession(true);
+        
+        // check that root has category c1
+        root = mgr.getWeblogCategory(root.getId());
+        assertTrue(root.hasCategory("c1"));
+    }
+    
 }
