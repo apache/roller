@@ -64,10 +64,21 @@ public class FolderSaveAction extends Action {
             
             // update changeable properties
             if(!fd.getName().equals(form.getName())) {
+                FolderData parent = fd.getParent();
+                
+                // make sure new name is not a duplicate of an existing folder
+                if(parent.hasFolder(form.getName())) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                            new ActionError("folderForm.error.duplicateName", form.getName()));
+                    saveErrors(request, errors);
+                    return mapping.findForward("folderEdit");
+                }
+                
+                // update the folder name
                 fd.setName(form.getName());
                 
                 // path includes name, so update path as well
-                FolderData parent = fd.getParent();
                 if("/".equals(parent.getPath())) {
                     fd.setPath("/"+fd.getName());
                 } else {
@@ -83,6 +94,15 @@ public class FolderSaveAction extends Action {
                     form.getName(),
                     form.getDescription(),
                     parent.getWebsite());
+            
+            // make sure new name is not a duplicate of an existing folder
+            if(parent.hasFolder(form.getName())) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("folderForm.error.duplicateName", form.getName()));
+                saveErrors(request, errors);
+                return mapping.findForward("folderEdit");
+            }
         }
         
         RollerSession rses = RollerSession.getRollerSession(request);
