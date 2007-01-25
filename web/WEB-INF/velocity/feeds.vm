@@ -104,7 +104,7 @@
             #set($content = $utils.autoformat($content))
         #end
         #set($content = $utils.addNofollow($content))
-        <content type="html">${content} $comment.content</content>
+        <content type="html">${content}</content>
     </entry>
     #end
 #end
