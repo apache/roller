@@ -67,10 +67,21 @@ public class CategorySaveAction extends Action
             
             // update changeable properties
             if(!cd.getName().equals(form.getName())) {
+                WeblogCategoryData parent = cd.getParent();
+                
+                // make sure new name is not a duplicate of an existing category
+                if(parent.hasCategory(form.getName())) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                            new ActionError("categoryForm.error.duplicateName", form.getName()));
+                    saveErrors(request, errors);
+                    return mapping.findForward("categoryEdit");
+                }
+                
+                // update the category name
                 cd.setName(form.getName());
                 
                 // path includes name, so update path as well
-                WeblogCategoryData parent = cd.getParent();
                 if("/".equals(parent.getPath())) {
                     cd.setPath("/"+cd.getName());
                 } else {
@@ -88,6 +99,15 @@ public class CategorySaveAction extends Action
                     form.getName(),
                     form.getDescription(),
                     form.getImage());
+            
+            // make sure new cat is not a duplicate of an existing category
+            if(parentCat.hasCategory(form.getName())) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("categoryForm.error.duplicateName", form.getName()));
+                saveErrors(request, errors);
+                return mapping.findForward("categoryEdit");
+            }
         }
         
         RollerSession rses = RollerSession.getRollerSession(request);
