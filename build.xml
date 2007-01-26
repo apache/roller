@@ -909,14 +909,18 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.reports}/business/xml"/>
     <mkdir dir="${build.reports}/business/html"/>
 
-    <antcall target="start-db" /> 
-    <antcall target="init-db" /> 
+    <!-- allow for startup and initialization of test db -->
+    <antcall target="${test.db.startTask}" />
+    <antcall target="${test.db.initTask}" />
 	
     &custom-pre-dbtest;
-
+    
     <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
         <classpath>
             <path refid="tests.run.path"/>
+            
+            <!-- plus the classpath for jars needed to talk to the test db -->
+            <pathelement path="${test.db.cpath}" />
         </classpath>
         
         <!-- needed to satisfy ref in log4j.properties -->
@@ -951,9 +955,9 @@ ro.buildUser=${user.name}
 	
     &custom-post-dbtest;
     
-    <antcall target="stop-db" /> 
-
-    <echo>Suggested: Run "ant consistency-check".</echo>
+    <!-- allow for shutdown of test db -->
+    <antcall target="${test.db.stopTask}" />
+    
 </target>
 
 <!-- ===================================== -->
@@ -963,12 +967,16 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.reports}/presentation/xml"/>
     <mkdir dir="${build.reports}/presentation/html"/>
     
-    <antcall target="start-db" /> 
-    <antcall target="init-db" /> 
+    <!-- allow for startup and initialization of test db -->
+    <antcall target="${test.db.startTask}" />
+    <antcall target="${test.db.initTask}" />
 
     <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="false">
         <classpath>
             <path refid="tests.run.path"/>
+            
+            <!-- plus the classpath for jars needed to talk to the test db -->
+            <pathelement path="${test.db.cpath}" />
         </classpath>
         
         <!-- needed to satisfy ref in log4j.properties -->
@@ -994,7 +1002,8 @@ ro.buildUser=${user.name}
     <report format="noframes" toDir="${build.reports}/presentation/html"/>
     </junitreport>
     
-    <antcall target="stop-db" /> 
+    <!-- allow for shutdown of test db -->
+    <antcall target="${test.db.stopTask}" />
     
 </target>
 
@@ -1212,5 +1221,10 @@ Use -Dverbose=1 to get verbose output.
         </fileset>        
     </jar>
 </target>
+
+    <target name="nothing">
+        <!-- this task does nothing and is here so that 
+             dynamic task definitions have a no-op choice -->
+    </target>
 
 </project>
