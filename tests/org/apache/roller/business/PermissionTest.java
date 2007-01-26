@@ -58,6 +58,9 @@ public class PermissionTest extends TestCase {
      * All tests in this suite require a user and a weblog.
      */
     public void setUp() throws Exception {
+        
+        log.info("BEGIN");
+        
         try {
             testUser = TestUtils.setupUser("permsTestUser");
             testWeblog = TestUtils.setupWeblog("permsTestWeblog", testUser);
@@ -66,9 +69,14 @@ public class PermissionTest extends TestCase {
             log.error(ex);
             throw new Exception("Test setup failed", ex);
         }
+        
+        log.info("END");
     }
     
     public void tearDown() throws Exception {
+        
+        log.info("BEGIN");
+        
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getId());
@@ -77,6 +85,8 @@ public class PermissionTest extends TestCase {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);
         }
+        
+        log.info("END");
     }
     
     
@@ -84,6 +94,8 @@ public class PermissionTest extends TestCase {
      * Test basic persistence operations ... Create, Update, Delete.
      */
     public void testPermissionsCRUD() throws Exception {
+        
+        log.info("BEGIN");
         
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         PermissionsData perm = null;
@@ -124,6 +136,8 @@ public class PermissionTest extends TestCase {
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNotNull(perm);
         assertEquals(PermissionsData.LIMITED, perm.getPermissionMask());
+        
+        log.info("END");
     }
     
     
@@ -131,64 +145,74 @@ public class PermissionTest extends TestCase {
      * Test lookup mechanisms.
      */
     public void testPermissionsLookups() throws Exception {
-
-        // we need a second user for this test
-        UserData user = TestUtils.setupUser("foofoo");
-        TestUtils.endSession(true);
-
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
-        PermissionsData perm = null;
-        List perms = null;
-
-        // get all permissions for a user
-        perms = mgr.getAllPermissions(user);
-        assertEquals(0, perms.size());
-        perms = mgr.getAllPermissions(testUser);
-        assertEquals(1, perms.size());
-
-        // get all permissions for a weblog
-        perms = mgr.getAllPermissions(testWeblog);
-        assertEquals(1, perms.size());
-
-        perm = new PermissionsData();
-        perm.setUser(TestUtils.getManagedUser(user));
-        perm.setWebsite(TestUtils.getManagedWebsite(testWeblog));
-        perm.setPending(true);
-        perm.setPermissionMask(PermissionsData.AUTHOR);
-        mgr.savePermissions(perm);
-        TestUtils.endSession(true);
-
-        // get pending permissions for a user
-        perms = mgr.getPendingPermissions(testUser);
-        assertEquals(0, perms.size());
-        perms = mgr.getPendingPermissions(user);
-        assertEquals(1, perms.size());
-
-        // get pending permissions for a weblog
-        perms = mgr.getPendingPermissions(testWeblog);
-        assertEquals(1, perms.size());
-
-        // get permissions by id
-        String id = perm.getId();
-        perm = null;
-        perm = mgr.getPermissions(id);
-        assertNotNull(perm);
-        assertEquals(id, perm.getId());
-
-        // get permissions for a specific user/weblog
-        perm = null;
-        perm = mgr.getPermissions(testWeblog, testUser);
-        assertNotNull(perm);
-        assertEquals(PermissionsData.ADMIN, perm.getPermissionMask());
-        perm = null;
-        perm = mgr.getPermissions(testWeblog, user);
-        assertNotNull(perm);
-        assertEquals(PermissionsData.AUTHOR, perm.getPermissionMask());
-        assertEquals(true, perm.isPending());
-
-        // cleanup the extra test user
-        TestUtils.teardownUser(user.getId());
-        TestUtils.endSession(true);
+        
+        log.info("BEGIN");
+        
+        try {
+            // we need a second user for this test
+            UserData user = TestUtils.setupUser("testPermissionsLookups");
+            TestUtils.endSession(true);
+            
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            PermissionsData perm = null;
+            List perms = null;
+            
+            // get all permissions for a user
+            perms = mgr.getAllPermissions(TestUtils.getManagedUser(user));
+            assertEquals(0, perms.size());
+            perms = mgr.getAllPermissions(TestUtils.getManagedUser(testUser));
+            assertEquals(1, perms.size());
+            
+            // get all permissions for a weblog
+            perms = mgr.getAllPermissions(TestUtils.getManagedWebsite(testWeblog));
+            assertEquals(1, perms.size());
+            
+            perm = new PermissionsData();
+            perm.setUser(TestUtils.getManagedUser(user));
+            perm.setWebsite(TestUtils.getManagedWebsite(testWeblog));
+            perm.setPending(true);
+            perm.setPermissionMask(PermissionsData.AUTHOR);
+            mgr.savePermissions(perm);
+            TestUtils.endSession(true);
+            
+            // get pending permissions for a user
+            perms = mgr.getPendingPermissions(TestUtils.getManagedUser(testUser));
+            assertEquals(0, perms.size());
+            perms = mgr.getPendingPermissions(TestUtils.getManagedUser(user));
+            assertEquals(1, perms.size());
+            
+            // get pending permissions for a weblog
+            perms = mgr.getPendingPermissions(TestUtils.getManagedWebsite(testWeblog));
+            assertEquals(1, perms.size());
+            
+            // get permissions by id
+            String id = perm.getId();
+            perm = null;
+            perm = mgr.getPermissions(id);
+            assertNotNull(perm);
+            assertEquals(id, perm.getId());
+            
+            // get permissions for a specific user/weblog
+            perm = null;
+            perm = mgr.getPermissions(TestUtils.getManagedWebsite(testWeblog), TestUtils.getManagedUser(testUser));
+            assertNotNull(perm);
+            assertEquals(PermissionsData.ADMIN, perm.getPermissionMask());
+            perm = null;
+            perm = mgr.getPermissions(TestUtils.getManagedWebsite(testWeblog), TestUtils.getManagedUser(user));
+            assertNotNull(perm);
+            assertEquals(PermissionsData.AUTHOR, perm.getPermissionMask());
+            assertEquals(true, perm.isPending());
+            
+            // cleanup
+            TestUtils.teardownPermissions(perm.getId());
+            TestUtils.teardownUser(user.getId());
+            TestUtils.endSession(true);
+        } catch(Throwable t) {
+            log.error("Error running test", t);
+            throw (Exception) t;
+        }
+        
+        log.info("END");
     }
 
 
@@ -196,9 +220,11 @@ public class PermissionTest extends TestCase {
      * Tests weblog invitation process.
      */
     public void testInvitations() throws Exception {
-
+        
+        log.info("BEGIN");
+        
         // we need a second user for this test
-        UserData user = TestUtils.setupUser("foobee");
+        UserData user = TestUtils.setupUser("testInvitations");
         TestUtils.endSession(true);
 
         UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -226,7 +252,7 @@ public class PermissionTest extends TestCase {
 
         // assert that user is member of weblog
         assertFalse(mgr.getPermissions(testWeblog, user).isPending());
-        List weblogs = mgr.getWebsites(user, null, null, null, null, 0, -1);
+        List weblogs = mgr.getWebsites(TestUtils.getManagedUser(user), null, null, null, null, 0, -1);
         assertEquals(1, weblogs.size());
         assertEquals(testWeblog.getId(), ((WebsiteData)weblogs.get(0)).getId());
 
@@ -245,6 +271,8 @@ public class PermissionTest extends TestCase {
         // cleanup the extra test user
         TestUtils.teardownUser(user.getId());
         TestUtils.endSession(true);
+        
+        log.info("END");
     }
+    
 }
-
