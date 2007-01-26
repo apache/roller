@@ -489,13 +489,19 @@ create index rage_sid_idx on rag_entry(subscription_id$!INDEXSIZE);
 -- *****************************************************
 -- Now add the foreign key relationships
 
--- user, role and website
+-- user, role, website, and permissions
 
 alter table website add constraint ws_userid_fk
     foreign key ( userid ) references rolleruser ( id ) $!ADDL_FK_PARAMS ;
 
 alter table userrole add constraint ur_userid_fk
     foreign key ( userid ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
+
+alter table roller_user_permissions add constraint up_userid_fk
+    foreign key ( user_id ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
+
+alter table roller_user_permissions add constraint up_websiteid_fk
+    foreign key ( website_id ) references website( id ) $!ADDL_FK_PARAMS ;
 
 -- page, entry, category, comment
 
