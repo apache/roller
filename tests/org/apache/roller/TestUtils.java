@@ -31,6 +31,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -158,6 +159,23 @@ public final class TestUtils {
         
         // remove the weblog
         mgr.removeWebsite(weblog);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
+    
+    /**
+     * Convenience method for removing a permission.
+     */
+    public static void teardownPermissions(String id) throws Exception {
+        
+        // lookup the permissions
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        PermissionsData perm = mgr.getPermissions(id);
+        
+        // remove the permissions
+        mgr.removePermissions(perm);
         
         // flush to db
         RollerFactory.getRoller().flush();
