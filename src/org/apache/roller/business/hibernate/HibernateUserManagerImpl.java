@@ -167,9 +167,7 @@ public class HibernateUserManagerImpl implements UserManager {
         entryQuery.add(Expression.eq("website", website));
         List entries = entryQuery.list();
         for (Iterator iter = entries.iterator(); iter.hasNext();) {
-            WeblogEntryData entry = (WeblogEntryData) iter.next();
-            
-            this.strategy.remove(entry);
+            wmgr.removeWeblogEntry((WeblogEntryData) iter.next());
         }
         
         // remove associated referers
@@ -187,8 +185,7 @@ public class HibernateUserManagerImpl implements UserManager {
         pageQuery.add(Expression.eq("website", website));
         List pages = pageQuery.list();
         for (Iterator iter = pages.iterator(); iter.hasNext();) {
-            WeblogTemplate page = (WeblogTemplate) iter.next();
-            this.strategy.remove(page);
+            this.removePage((WeblogTemplate) iter.next());
         }
         
         // remove folders (including bookmarks)
@@ -203,6 +200,11 @@ public class HibernateUserManagerImpl implements UserManager {
             this.strategy.remove(rootCat);
         }
         
+        // remove permissions
+        List permissions = this.getAllPermissions(website);
+        for (Iterator iter = permissions.iterator(); iter.hasNext(); ) {
+            this.removePermissions((PermissionsData) iter.next());
+        }
     }
         
     public void saveUser(UserData data) throws RollerException {
@@ -466,23 +468,25 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * Get websites of a user
      */
-    public List getWebsites(
-        UserData user, Boolean enabled, Boolean active, 
-        Date startDate, Date endDate, int offset, int length)  
-        throws RollerException {
-        // TODO: ATLAS getWebsites DONE TESTED
-        if (endDate == null) endDate = new Date();
+    public List getWebsites(UserData user, Boolean enabled, Boolean active, 
+                            Date startDate, Date endDate, int offset, int length)  
+            throws RollerException {
+        
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
+            
             if (user != null) {
                 criteria.createAlias("permissions","permissions");
                 criteria.add(Expression.eq("permissions.user", user));
                 criteria.add(Expression.eq("permissions.pending", Boolean.FALSE));
-            }            criteria.add(Expression.lt("dateCreated", endDate));
+            }
             if (startDate != null) {
                 criteria.add(Expression.gt("dateCreated", startDate));
-            }            
+            }
+            if (endDate != null) {
+                criteria.add(Expression.lt("dateCreated", endDate));
+            }
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
@@ -496,7 +500,9 @@ public class HibernateUserManagerImpl implements UserManager {
                 criteria.setMaxResults(length);
             }
             criteria.addOrder(Order.desc("dateCreated"));
+            
             return criteria.list();
+            
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
