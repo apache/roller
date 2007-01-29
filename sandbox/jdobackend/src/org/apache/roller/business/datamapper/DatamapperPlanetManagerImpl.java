@@ -271,11 +271,11 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                 if (startDate != null) {
                     params = new Object[] {endDate, startDate};
                     query = strategy.newQuery(PlanetEntryData.class,
-                            "PlanetEntryData.getByExternalOrInternalGroup&amp;EndDate&amp;StartDateOrderByPubTimeDesc");
+                            "PlanetEntryData.getByExternalOrInternalGroup&EndDate&StartDateOrderByPubTimeDesc");
                 } else {
                     params = new Object[] {endDate};
                     query = strategy.newQuery(PlanetEntryData.class,
-                            "PlanetEntryData.getByExternalOrInternalGroup&amp;EndDateOrderByPubTimeDesc");
+                            "PlanetEntryData.getByExternalOrInternalGroup&EndDateOrderByPubTimeDesc");
                 }
                 // TODO handle offset and length
             }

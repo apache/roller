@@ -24,13 +24,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Collections;
+import java.util.Comparator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.roller.RollerException;
-
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
@@ -41,6 +41,7 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.StatCountCountComparator;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
 
@@ -57,6 +58,10 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
 
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
+    
+    private static final Comparator statCountCountReverseComparator = 
+            Collections.reverseOrder(StatCountCountComparator.getInstance());
+    
     /** The strategy for this manager. */
     protected DatamapperPersistenceStrategy strategy;
 
@@ -80,14 +85,8 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
      */
     public void clearReferrers() throws RollerException {
         clearDayHits();
-
-        //TODO: Datamapper port: The original code used two different expressions
-        // to find empty exerpt
-        // (1) excerpt like '' for mssql, oracle and derby
-        // (2) excerpt = '' for all other
-        // I could verify that (1) works for mssql, oralce, derby, and mysql
         strategy.newRemoveQuery(RefererData.class,
-                "RefererData.deleteByNullOrEmptyExcerpt").removeAll();
+                "RefererData.removeByNullOrEmptyExcerpt").removeAll();
     }
 
     abstract protected  void clearDayHits() throws RollerException;
@@ -98,9 +97,8 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
     public void clearReferrers(WebsiteData website) throws RollerException {
         clearDayHitsByWebsite(website);
 
-        //TODO: Datamapper port: Same comments as for method clearReferrers() apply for the expression
         strategy.newRemoveQuery(RefererData.class,
-                "RefererData.deleteByNullOrEmptyExcerpt&Website").removeAll(website);
+                "RefererData.removeByNullOrEmptyExcerpt&Website").removeAll(website);
 
     }
 
@@ -129,8 +127,6 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
      */
     public void applyRefererFilters(WebsiteData website)
             throws RollerException {
-        // TODO not implemented
-        
         if (null == website) throw new RollerException("website is null");
         if (null == website.getBlacklist()) return;
         
@@ -207,9 +203,10 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
                 "statCount.weblogDayHits",
                 hits.longValue()));              
         }
-        //TODO Uncomment following once integrated with code
-        //Collections.sort(results, StatCount.getComparator());
-        Collections.reverse(results);
+        // Original query ordered by desc hits.
+        // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
+        Collections.sort(results, statCountCountReverseComparator);
+
         return results;
     }
 
@@ -219,8 +216,8 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
         if (log.isDebugEnabled()) {
             log.debug("getHits: " + website.getName());
         }
-        //TODO: DatamapperPort. This original query retrieves both SUM(r.dayHits), SUM(r.totalHits)
-        //The method only comsumes one of them. We can optimize the logic to retrive only the 
+        //TODO: DatamapperPort. This query retrieves both SUM(r.dayHits), SUM(r.totalHits)
+        //The method only comsumes one of them. We can optimize the logic to retrieve only the 
         //requied SUM
         DatamapperQuery query = strategy.newQuery(RefererData.class,
             "RefererData.getHitsByWebsite.enabled&Website.id");
@@ -296,7 +293,10 @@ public abstract class DatamapperRefererManagerImpl implements RefererManager {
         if (null == entryid)
             throw new RollerException("entryid is null");
         //TODO: DataMapperPort: Change calling code to pass WebLogEntryData instead of id
-        return (List) strategy.newQuery(RefererData.class, 
+        // we should change calling code to pass instance of WeblogEntryData instead
+        // of extracting and passing id. Once that is done, change the code below to
+        // skip the load (Please note that the load below will always find the enty in cache)
+        return (List) strategy.newQuery(RefererData.class,
                 "RefererData.getByWeblogEntry&TitleNotNull&ExcerptNotNullOrderByTotalHitsDesc").
                 execute(strategy.load(WeblogEntryData.class,entryid));
     }

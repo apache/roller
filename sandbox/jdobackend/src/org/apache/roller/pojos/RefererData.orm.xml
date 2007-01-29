@@ -71,10 +71,10 @@
         <named-query name="RefererData.clearDayHitsByWebsite">
             <query>UPDATE RefererData r SET r.dayHits=0 where r.website = ?1</query>
         </named-query>
-        <named-query name="RefererData.deleteByNullOrEmptyExcerpt">
+        <named-query name="RefererData.removeByNullOrEmptyExcerpt">
             <query>DELETE FROM RefererData r WHERE r.excerpt IS NULL OR r.excerpt LIKE ''</query>
         </named-query>
-        <named-query name="RefererData.deleteByNullOrEmptyExcerpt&amp;Website">
+        <named-query name="RefererData.removeByNullOrEmptyExcerpt&amp;Website">
             <query>DELETE FROM RefererData r WHERE r.website = ?1 AND (r.excerpt IS NULL OR r.excerpt LIKE '')</query>
         </named-query>
         <attributes>

@@ -67,19 +67,15 @@
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;WeblogNull">
             <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>
         </named-query>
-        <named-query name="WeblogEntryTagAggregateData.updateTotalByName&amp;WeblogNull">
+        <named-query name="WeblogEntryTagAggregateData.updateMinusFromTotalByName&amp;WeblogNull">
             <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total - ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.removeByTotalLessEqual">
             <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.total &lt;= ?1</query>
         </named-query>
-        <named-query name="WeblogEntryTagAggregateData.deleteByWeblog">
+        <named-query name="WeblogEntryTagAggregateData.removeByWeblog">
             <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1</query>
         </named-query>
-        <named-query name="WeblogEntryTagAggregateData.deleteByTotalLEZero">
-            <query>DELETE FROM WeblogEntryTagAggregateData w WHERE w.total &lt;= 0</query>
-        </named-query>
-
 
 
         <attributes>
