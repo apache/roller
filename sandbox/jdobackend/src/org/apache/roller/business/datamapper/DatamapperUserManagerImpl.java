@@ -29,23 +29,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.PermissionsData;
-import org.apache.roller.pojos.PingQueueEntryData;
-import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.StatCount;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.WeblogEntryTagData;
-import org.apache.roller.pojos.WeblogEntryTagAggregateData;
-import org.apache.roller.pojos.RoleData;
+import org.apache.roller.pojos.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
+import java.util.Comparator;
 
 /*
  * DatamapperUserManagerImpl.java
@@ -68,8 +53,10 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     /** The logger instance for this class. */
     private static Log log = LogFactory.getLog(DatamapperUserManagerImpl.class);    
 
-    protected DatamapperPersistenceStrategy strategy;
-    
+    private static final Comparator statCountCountReverseComparator = 
+            Collections.reverseOrder(StatCountCountComparator.getInstance());
+
+    protected DatamapperPersistenceStrategy strategy;    
 
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
@@ -105,7 +92,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     /**
      * convenience method for removing contents of a weblog.
      * TODO BACKEND: use manager methods instead of queries here
-     * TODO DatamapperPort: Use bulk deletes instead of current approach
      */
     private void removeWebsiteContents(WebsiteData website) 
             throws  RollerException {
@@ -128,12 +114,12 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         // delete all weblog tag aggregates
         strategy.newRemoveQuery(
                 WeblogEntryTagAggregateData.class,
-                "WeblogEntryTagAggregateData.deleteByWeblog").removeAll(website);
+                "WeblogEntryTagAggregateData.removeByWeblog").removeAll(website);
 
         // delete all bad counts
         strategy.newRemoveQuery(
                 WeblogEntryTagAggregateData.class,
-                "WeblogEntryTagAggregateData.deleteByTotalLEZero").removeAll();
+                "WeblogEntryTagAggregateData.removeByTotalLessEqual").removeAll(new Integer(0));
 
 
         // Remove the website's ping queue entries
@@ -200,9 +186,8 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             this.strategy.remove(rootCat);
         }
 
-        //remove permissions
-        //TODO: Datamapper: this is a workaround for toplink bug that requires
-        //to clean up from non owning side for removed objects.
+        // remove permissions
+        // make sure that both sides of the relationship are maintained
         for (Iterator iterator = website.getPermissions().iterator(); iterator.hasNext();) {
             PermissionsData perms = (PermissionsData) iterator.next();
             //Remove it from database
@@ -210,7 +195,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             //Remove it from website
             iterator.remove();
             //Remove it from corresponding user
-            UserData user = perms.getUser(); //(UserData) getManagedObject(perms.getUser());
+            UserData user = perms.getUser();
             user.getPermissions().remove(perms);
         }
 
@@ -228,8 +213,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
     public void removeUser(UserData user) throws RollerException {
         //remove permissions
-        //TODO: Datamapper: this is a workaround for toplink bug that requires
-        //to clean up from non owning side for removed objects.
+        // make sure that both sides of the relationship are maintained
         for (Iterator iterator = user.getPermissions().iterator(); iterator.hasNext();) {
                 PermissionsData perms = (PermissionsData) iterator.next();
                 //Remove it from database
@@ -237,7 +221,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                 //Remove it from website
                 iterator.remove();
                 //Remove it from corresponding user
-                WebsiteData website = perms.getWebsite(); //(WebsiteData) getManagedObject(perms.getWebsite());
+                WebsiteData website = perms.getWebsite();
                 website.getPermissions().remove(perms);
         }
 
@@ -1078,12 +1062,6 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
             queryResults = (List) query.execute(endDate);
         }
 
-        // TODO: DatamapperPort - The original query list column not present in group by clause in select clause
-        // this is not allowed by JPA spec (and many db vendors).
-        // Changed the select clause to match group by clause.
-        // Currently, the only caller of this method is SiteModel.getMostCommentedWeblogs() (apart from a junit test)
-        // check with roller developers what is the expected behavior of this query 
-
         List results = new ArrayList();
         for (Iterator iter = queryResults.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
@@ -1094,9 +1072,10 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
                     "statCount.weblogCommentCountType", // stat type 
                     ((Long)row[0]).longValue())); // # comments
         }
-        //TODO Uncomment following once integrated with code
-        //Collections.sort(results, StatCount.getComparator());
-        Collections.reverse(results);
+        // Original query ordered by desc # comments.
+        // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
+        Collections.sort(results, statCountCountReverseComparator);
+
         return results;
     }
 

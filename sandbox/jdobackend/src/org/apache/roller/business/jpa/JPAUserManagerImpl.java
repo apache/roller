@@ -41,7 +41,7 @@ public class JPAUserManagerImpl extends DatamapperUserManagerImpl {
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
                 TagStat stat = (TagStat) iter.next();
                 JPAUpdateQuery query = ((JPAPersistenceStrategy)strategy).newUpdateQuery(
-                    "WeblogEntryTagAggregateData.updateTotalByName&WeblogNull");
+                    "WeblogEntryTagAggregateData.updateMinusFromTotalByName&WeblogNull");
                 query.updateAll(
                     new Object[] {Integer.valueOf(stat.getCount()), 
                     stat.getName() });

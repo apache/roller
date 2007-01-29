@@ -45,12 +45,14 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
+import org.apache.roller.pojos.TagStatCountComparator;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.EntryAttributeData;
+import org.apache.roller.pojos.StatCountCountComparator;
 import org.apache.roller.util.DateUtil;
 
 /*
@@ -70,9 +72,15 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
     private Hashtable entryAnchorToIdMap = new Hashtable();
 
     /* inline creation of reverse comparator, anonymous inner class */
-    private Comparator reverseComparator = new ReverseComparator();
+    private static final Comparator reverseComparator = new ReverseComparator();
 
-    private Comparator tagStatComparator = new TagStatComparator();
+    private static final Comparator tagStatNameComparator = new TagStatComparator();
+
+    private static final Comparator tagStatCountReverseComparator = 
+            Collections.reverseOrder(TagStatCountComparator.getInstance());
+
+    private static final Comparator statCountCountReverseComparator = 
+            Collections.reverseOrder(StatCountCountComparator.getInstance());
 
     public DatamapperWeblogManagerImpl
             (DatamapperPersistenceStrategy strategy) {
@@ -932,9 +940,10 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
                     "statCount.weblogEntryCommentCountType",    // stat desc
                     ((Long)row[0]).longValue())); // count
           }
-        //TODO Uncomment following once integrated with code
-        //Collections.sort(results, StatCount.getComparator());
-        Collections.reverse(results);
+        // Original query ordered by desc count.
+        // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
+        Collections.sort(results, statCountCountReverseComparator);
+
         return results;
     }
 
@@ -1010,8 +1019,6 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
             }
         }
 
-        // TODO queryString.append("order by sum(total) desc");  ???
-        
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
 
@@ -1039,7 +1046,7 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
         }            
 
         // sort results by name, because query had to sort by total
-        Collections.sort(results, tagStatComparator);
+        Collections.sort(results, tagStatNameComparator);
             
         return results;
     }
@@ -1114,14 +1121,15 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
             Object[] row = (Object[]) iter.next();
             TagStat ce = new TagStat();
             ce.setName((String) row[0]);
-            //TODO: DatamapperPort. The query retrieves SUM(w.total) which is always long
-            //TagStat should be changed to receive count as long
+            // The JPA query retrieves SUM(w.total) always as long
             ce.setCount(((Long) row[1]).intValue());
             results.add(ce);
         }
         
-        if (!sortByName) {
-            Collections.sort(results, tagStatComparator);
+        if (sortByName) {
+            Collections.sort(results, tagStatNameComparator);
+        } else {
+            Collections.sort(results, tagStatCountReverseComparator);
         }
         
         return results;
