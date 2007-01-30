@@ -183,6 +183,54 @@ public final class TestUtils {
  
     
     /**
+     * Convenience method for creating a weblog category.
+     */
+    public static WeblogCategoryData setupWeblogCategory(WebsiteData weblog,
+                                                         String name,
+                                                         WeblogCategoryData parent)
+            throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogCategoryData root = mgr.getRootWeblogCategory(weblog);
+        
+        WeblogCategoryData catParent = root;
+        if(parent != null) {
+            catParent = parent;
+        }
+        WeblogCategoryData testCat = new WeblogCategoryData(weblog, catParent, name, null, null);
+        mgr.saveWeblogCategory(testCat);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
+        // query for object
+        WeblogCategoryData cat = mgr.getWeblogCategory(testCat.getId());
+        
+        if(cat == null)
+            throw new RollerException("error setting up weblog category");
+        
+        return cat;
+    }
+    
+    
+    /**
+     * Convenience method for removing a weblog category.
+     */
+    public static void teardownWeblogCategory(String id) throws Exception {
+        
+        // lookup the cat
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogCategoryData cat = mgr.getWeblogCategory(id);
+        
+        // remove the cat
+        mgr.removeWeblogCategory(cat);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
+    
+    /**
      * Convenience method for creating a weblog entry.
      */
     public static WeblogEntryData setupWeblogEntry(String anchor,
