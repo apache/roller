@@ -31,6 +31,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 
+
 /**
  * Weblog Category.
  *
@@ -40,8 +41,7 @@ import org.apache.roller.business.WeblogManager;
  * @hibernate.class lazy="true" table="weblogcategory"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogCategoryData 
-        implements Serializable {
+public class WeblogCategoryData implements Serializable {
     
     public static final long serialVersionUID = 1435782148712018954L;
     
@@ -280,6 +280,29 @@ public class WeblogCategoryData
     public List retrieveWeblogEntries(boolean subcats) throws RollerException {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
+    }
+    
+    
+    /**
+     * Add a category as a child of this category.
+     */
+    public void addCategory(WeblogCategoryData category) {
+        
+        // make sure category is not null
+        if(category == null || category.getName() == null) {
+            throw new IllegalArgumentException("Category cannot be null and must have a valid name");
+        }
+        
+        // make sure we don't already have a category with that name
+        if(this.hasCategory(category.getName())) {
+            throw new IllegalArgumentException("Duplicate category name '"+category.getName()+"'");
+        }
+        
+        // set ourselves as the parent of the category
+        category.setParent(this);
+        
+        // add it to our list of child categories
+        getWeblogCategories().add(category);
     }
     
     

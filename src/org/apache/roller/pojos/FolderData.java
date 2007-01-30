@@ -45,8 +45,7 @@ import org.apache.roller.business.RollerFactory;
  * @hibernate.class lazy="true" table="folder"
  * @hibernate.cache usage="read-write"
  */
-public class FolderData 
-        implements Serializable, Comparable {
+public class FolderData implements Serializable, Comparable {
     
     public static final long serialVersionUID = -6272468884763861944L;
     
@@ -124,9 +123,6 @@ public class FolderData
     }    
     
     
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
     public int hashCode() {
         return new HashCodeBuilder()
             .append(getPath())
@@ -141,6 +137,7 @@ public class FolderData
         FolderData other = (FolderData)o;
         return getName().compareTo(other.getName());
     }
+    
     
     /**
      * Database surrogate key.
@@ -283,6 +280,29 @@ public class FolderData
     }
     
     
+    /**
+     * Add a folder as a child of this folder.
+     */
+    public void addFolder(FolderData folder) {
+        
+        // make sure folder is not null
+        if(folder == null || folder.getName() == null) {
+            throw new IllegalArgumentException("Folder cannot be null and must have a valid name");
+        }
+        
+        // make sure we don't already have a folder with that name
+        if(this.hasFolder(folder.getName())) {
+            throw new IllegalArgumentException("Duplicate folder name '"+folder.getName()+"'");
+        }
+        
+        // set ourselves as the parent of the folder
+        folder.setParent(this);
+        
+        // add it to our list of child folder
+        getFolders().add(folder);
+    }
+    
+    
     /** 
      * Add a bookmark to this folder.
      */
@@ -290,6 +310,7 @@ public class FolderData
         bookmark.setFolder(this);
         getBookmarks().add(bookmark);
     }
+    
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"
