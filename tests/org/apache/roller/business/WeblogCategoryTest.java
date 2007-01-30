@@ -18,15 +18,13 @@
 
 package org.apache.roller.business;
 
+import java.util.Iterator;
 import java.util.List;
-import junit.framework.Test;
+import java.util.Set;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -43,186 +41,186 @@ public class WeblogCategoryTest extends TestCase {
     
     UserData testUser = null;
     WebsiteData testWeblog = null;
-    
-    
-    public WeblogCategoryTest() {
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(WeblogCategoryTest.class);
-    }
+    WeblogCategoryData cat1 = null;
+    WeblogCategoryData cat2 = null;
+    WeblogCategoryData cat3 = null;
+    WeblogCategoryData testCat = null;
     
     
     /**
      * All tests in this suite require a user and a weblog.
      */
-    public void setUp() throws Exception {
+    public void setUp() {
         
-        log.info("Setup "+this.getClass().getName());
+        log.info("BEGIN");
         
         try {
-            testUser = TestUtils.setupUser("entryTestUser");
-            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
+            testUser = TestUtils.setupUser("categoryTestUser");
+            testWeblog = TestUtils.setupWeblog("categoryTestWeblog", testUser);
+            
+            // setup a category tree to use for testing
+            cat1 = TestUtils.setupWeblogCategory(testWeblog, "catTest-cat1", null);
+            cat2 = TestUtils.setupWeblogCategory(testWeblog, "catTest-cat2", cat1);
+            cat3 = TestUtils.setupWeblogCategory(testWeblog, "catTest-cat3", cat2);
+            
+            // a simple test cat at the root level
+            testCat = TestUtils.setupWeblogCategory(testWeblog, "catTest-testCat", null);
+            
             TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test setup failed", ex);
+        } catch (Throwable t) {
+            log.error(t);
         }
+        
+        log.info("END");
     }
     
-    public void tearDown() throws Exception {
+    public void tearDown() {
         
-        log.info("Teardown "+this.getClass().getName());
+        log.info("BEGIN");
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getId());
             TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
+        } catch (Throwable t) {
+            log.error(t);
         }
+        
+        log.info("END");
     }
     
     
     /**
-     * Test basic persistence operations ... Create, Update, Delete.
+     * Test that we can walk a category tree.
      */
-    public void testWeblogCategoryCRUD() throws Exception {
+    public void testWalkCategoryTree() throws Exception {
+        
+        log.info("BEGIN");
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // start at root
+        WeblogCategoryData root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
+        
+        // walk first level
+        Set cats = root.getWeblogCategories();
+        assertEquals(2, cats.size());
+        assertTrue(cats.contains(testCat));
+        
+        // find cat1
         WeblogCategoryData cat = null;
-        List cats = null;
+        for(Iterator it = cats.iterator(); it.hasNext(); ) {
+            cat = (WeblogCategoryData) it.next();
+            if(cat.getName().equals(cat1.getName())) {
+                break;
+            }
+        }
         
-        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        // walk second level
+        cats = cat.getWeblogCategories();
+        assertEquals(1, cats.size());
+        assertTrue(cats.contains(cat2));
         
-        // make sure we are starting with 0 categories (beneath root)
-        assertEquals(0, root.getWeblogCategories().size());
+        // find cat2
+        cat = (WeblogCategoryData) cats.iterator().next();
         
-        // add a new category
-        WeblogCategoryData newCat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "catTestCategory", null, null);
-        mgr.saveWeblogCategory(newCat);
-        TestUtils.endSession(true);
+        // walk third level
+        cats = cat.getWeblogCategories();
+        assertEquals(1, cats.size());
+        assertTrue(cats.contains(cat3));
         
-        // make sure category was added
-        cat = null;
-        cat = mgr.getWeblogCategory(newCat.getId());
-        assertNotNull(cat);
-        assertEquals(newCat, cat);
+        // find cat3
+        cat = (WeblogCategoryData) cats.iterator().next();
         
-        // make sure category count increased
-        root = mgr.getRootWeblogCategory(testWeblog);
-        assertEquals(1, root.getWeblogCategories().size());
+        // make sure this is the end of the tree
+        cats = cat.getWeblogCategories();
+        assertEquals(0, cats.size());
         
-        // update category
-        cat.setName("testtest");
-        mgr.saveWeblogCategory(cat);
-        TestUtils.endSession(true);
-        
-        // verify category was updated
-        cat = null;
-        cat = mgr.getWeblogCategory(newCat.getId());
-        assertNotNull(cat);
-        assertEquals("testtest", cat.getName());
-        
-        // add a subcat
-        WeblogCategoryData subcat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), cat, "subcatTest1", null, null);
-        mgr.saveWeblogCategory(subcat);
-        TestUtils.endSession(true);
-        
-        // check that subcat was saved and we can navigate to it
-        root = mgr.getRootWeblogCategory(testWeblog);
-        assertEquals(1, root.getWeblogCategories().size());
-        cat = (WeblogCategoryData) root.getWeblogCategories().iterator().next();
-        assertEquals("testtest", cat.getName());
-        assertEquals(1, cat.getWeblogCategories().size());
-        subcat = (WeblogCategoryData) cat.getWeblogCategories().iterator().next();
-        assertEquals("subcatTest1", subcat.getName());
-        
-        // remove category, should cascade to subcat
-        mgr.removeWeblogCategory(cat);
-        TestUtils.endSession(true);
-        
-        // make sure folder and subfolder was removed
-        cat = null;
-        cat = mgr.getWeblogCategory(newCat.getId());
-        assertNull(cat);
-        cat = mgr.getWeblogCategory(subcat.getId());
-        assertNull(cat);
-        
-        // make sure category count decreased
-        root = mgr.getRootWeblogCategory(testWeblog);
-        assertEquals(0, root.getWeblogCategories().size());
+        log.info("END");
     }
     
     
     /**
-     * Test lookup mechanisms ... 
+     * Test the hasCategory() method on WeblogCategoryData.
      */
-    public void testWeblogCategoryLookups() throws Exception {
+    public void testHasCategory() throws Exception {
         
-    }
-    
-    
-    /**
-     * Test WeblogCategoryData.equals() method.
-     */
-    public void testWeblogCategoryEquality() throws Exception {
+        log.info("BEGIN");
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        WeblogCategoryData root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
-        WeblogCategoryData testCat = new WeblogCategoryData(testWeblog, null, "root", "root", null);
-        assertTrue(root.equals(testCat));
+        // check that root has category
+        assertTrue(root.hasCategory(testCat.getName()));
         
-        testCat = new WeblogCategoryData(testWeblog, root, "root", "root", null);
-        assertFalse(root.equals(testCat));
+        log.info("END");
     }
     
     
     /**
-     * Test working with category paths.
+     * Lookup category by id.
      */
-    public void testWeblogCategoryPaths() throws Exception {
+    public void testLookupCategoryById() throws Exception {
         
-        WeblogCategoryData root = null;
+        log.info("BEGIN");
+        
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        root = mgr.getRootWeblogCategory(testWeblog);
+        WeblogCategoryData cat = mgr.getWeblogCategory(testCat.getId());
+        assertNotNull(cat);
+        assertEquals(cat, testCat);
         
-        WeblogCategoryData f1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "f1", null, null);
-        mgr.saveWeblogCategory(f1);
+        log.info("END");
+    }
+    
+    
+    /**
+     * Lookup category by path.
+     */
+    public void testLookupCategoryByPath() throws Exception {
         
-        WeblogCategoryData f2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), f1, "f2", null, null);
-        mgr.saveWeblogCategory(f2);
+        log.info("BEGIN");
         
-        WeblogCategoryData f3 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), f2, "f3", null, null);
-        mgr.saveWeblogCategory(f3);
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        TestUtils.endSession(true);
+        WeblogCategoryData cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1");
+        assertNotNull(cat);
+        assertEquals(cat, cat1);
         
-        // test get by path
-        assertEquals("f1",
-                mgr.getWeblogCategoryByPath(testWeblog, null, "f1").getName());
+        cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1/catTest-cat2/catTest-cat3");
+        assertNotNull(cat);
+        assertEquals(cat, cat3);
         
-        assertEquals("f1",
-                mgr.getWeblogCategoryByPath(testWeblog, null, "/f1").getName());
+        log.info("END");
+    }
+    
+    
+    /**
+     * Lookup all categories for a weblog.
+     */
+    public void testLookupAllCategoriesByWeblog() throws Exception {
         
-        assertEquals("f2",
-                mgr.getWeblogCategoryByPath(testWeblog, null, "/f1/f2").getName());
+        log.info("BEGIN");
         
-        assertEquals("f3",
-                mgr.getWeblogCategoryByPath(testWeblog, null, "/f1/f2/f3").getName());
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        // test path creation
-        f3 = mgr.getWeblogCategoryByPath(testWeblog, null, "/f1/f2/f3");
-        String pathString = f3.getPath();
-        String[] pathArray = Utilities.stringToStringArray(pathString,"/");
-        assertEquals("f1", pathArray[0]);
-        assertEquals("f2", pathArray[1]);
-        assertEquals("f3", pathArray[2]);
+        // default, including root
+        List cats = mgr.getWeblogCategories(testWeblog);
+        assertNotNull(cats);
+        assertEquals(5, cats.size());
+        
+        // including root
+        cats = mgr.getWeblogCategories(testWeblog, true);
+        assertNotNull(cats);
+        assertEquals(5, cats.size());
+        
+        // not including root
+        cats = mgr.getWeblogCategories(testWeblog, false);
+        assertNotNull(cats);
+        assertEquals(4, cats.size());
+        
+        log.info("END");
     }
     
     
@@ -362,27 +360,6 @@ public class WeblogCategoryTest extends TestCase {
         // c1 category should be empty now
         assertEquals(0, c1.retrieveWeblogEntries(false).size());
 
-    }
-    
-    
-    /**
-     * Test the hasCategory() method on WeblogCategoryData.
-     */
-    public void testHasCategory() throws Exception {
-        
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-        
-        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
-        
-        // add some categories to test with
-        WeblogCategoryData c1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c1", null, null);
-        mgr.saveWeblogCategory(c1);
-        
-        TestUtils.endSession(true);
-        
-        // check that root has category c1
-        root = mgr.getWeblogCategory(root.getId());
-        assertTrue(root.hasCategory("c1"));
     }
     
 }

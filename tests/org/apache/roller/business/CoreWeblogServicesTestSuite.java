@@ -35,14 +35,16 @@ public class CoreWeblogServicesTestSuite {
 
         TestSuite suite = new TestSuite();
 	
-        // test entries
-        suite.addTestSuite(WeblogEntryTest.class);
-
         // test categories
+        suite.addTestSuite(WeblogCategoryCRUDTest.class);
+        suite.addTestSuite(WeblogCategoryParentDeletesTest.class);
         suite.addTestSuite(WeblogCategoryTest.class);
-
+        
         // test templates
         suite.addTestSuite(WeblogPageTest.class);
+        
+        // test entries
+        suite.addTestSuite(WeblogEntryTest.class);
         
         // test comments
         suite.addTestSuite(CommentTest.class);
