@@ -2,7 +2,42 @@
 ROLLER CHANGE LOG
 -----------------
 
-Roller 3.0: major release with new URL structure and new template syste
+Roller 3.1: weblog tagging, better theme encapsulation, and other small features
+
+Please refer to the What's New page for an overview of the changes:
+http://rollerweblogger.org/wiki/Wiki.jsp?page=Roller_3.1_WhatsNew
+
+Features
+    * Weblog entry tagging 
+        http://rollerweblogger.org/wiki/Wiki.jsp?page=Proposal_WeblogTags
+    * Theme encapsulation and directories for file uploads 
+        http://rollerweblogger.org/wiki/Wiki.jsp?page=Proposal_ThemeEncapsulation
+    * Hit count tracking is now handled separately from referrer tracking
+    * New entry editor plugin framework
+    * Xinha editor replaces old rte editor
+    * Full page previews of entries that have been saved (replaces old preview)
+    * Task locking/leasing support (for clustered environments)
+        http://rollerweblogger.org/wiki/Wiki.jsp?page=Proposal_ClusteredTasksViaLocking
+    * Reorganization of planet code to make it more modular
+    * Reorganized some of the display elements on the entry edit form
+    * Fixed trailing / issue with various weblog urls
+    * Allow site-wide configurable control over max entries in both pages and feeds
+    * Allow for bulk delete of comments matching a given pattern
+    * Allow for hibernate configuration via roller.properties config
+    * [ROL-1281] - unnecessary session creation on weblog urls
+
+Bug Fixes
+    * [ROL-829] - comment munging escaped HTML content
+    * [ROL-1280] - entry management paging
+    * fix to prevent entries published to future from being viewable via permalinks
+    * fixed bug allowing user to create multiple pages with the same name
+    * fixed bug allowing user to create a 'Weblog' template without setting defaultPageId
+    * fix for in-use category deletion and duplicate named category issues
+    * fix for anchor creation when non-alpha characters are involved
+
+-------------------------------------------------------------------------------
+
+Roller 3.0: major release with new URL structure and new template system
 
 Please refer to the What's New page for an overview of the changes:
 http://rollerweblogger.org/wiki/Wiki.jsp?page=Roller_3.0_WhatsNew
