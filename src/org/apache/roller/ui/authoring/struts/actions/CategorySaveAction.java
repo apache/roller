@@ -108,6 +108,9 @@ public class CategorySaveAction extends Action
                 saveErrors(request, errors);
                 return mapping.findForward("categoryEdit");
             }
+            
+            // add new cat to parent
+            parentCat.addCategory(cd);
         }
         
         RollerSession rses = RollerSession.getRollerSession(request);

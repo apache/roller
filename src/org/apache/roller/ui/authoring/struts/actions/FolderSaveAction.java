@@ -103,6 +103,9 @@ public class FolderSaveAction extends Action {
                 saveErrors(request, errors);
                 return mapping.findForward("folderEdit");
             }
+            
+            // add new folder to parent
+            parent.addFolder(fd);
         }
         
         RollerSession rses = RollerSession.getRollerSession(request);

@@ -90,8 +90,8 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
     
     public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException {
         
-        if(cat.getId() == null && this.isDuplicateWeblogCategoryName(cat)) {
-            throw new RollerException("Duplicate category name, cannot save category");
+        if(cat == null) {
+            throw new IllegalArgumentException("Category is null");
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
