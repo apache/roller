@@ -620,6 +620,7 @@ public class CommentServlet extends HttpServlet {
             
             StringBuffer msg = new StringBuffer();
             msg.append(resources.getString("email.comment.commentApproved"));
+            msg.append("\n\n");
             
             // Build link back to comment
             StringBuffer commentURL = new StringBuffer(rootURL);
