@@ -192,6 +192,16 @@ public class WeblogCategoryTest extends TestCase {
         assertNotNull(cat);
         assertEquals(cat, cat3);
         
+        // test lazy lookup, specifying just a name without slashes
+        cat = mgr.getWeblogCategoryByPath(testWeblog, "catTest-cat1");
+        assertNotNull(cat);
+        assertEquals(cat, cat1);
+        
+        // if no path is specified we should get the root category
+        cat = mgr.getWeblogCategoryByPath(testWeblog, null);
+        assertNotNull(cat);
+        assertEquals(cat.getPath(), "/");
+        
         log.info("END");
     }
     
