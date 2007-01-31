@@ -23,6 +23,7 @@
 
 package org.apache.roller;
 
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
@@ -30,6 +31,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.PingTargetData;
@@ -463,6 +465,55 @@ public final class TestUtils {
         // flush to db
         RollerFactory.getRoller().flush();
     }
+    
+    
+    /**
+     * Convenience method for creating a weblog folder.
+     */
+    public static FolderData setupFolder(WebsiteData weblog,
+                                         String name,
+                                         FolderData parent)
+            throws Exception {
+        
+        BookmarkManager mgr = RollerFactory.getRoller().getBookmarkManager();
+        FolderData root = mgr.getRootFolder(weblog);
+        
+        FolderData folderParent = root;
+        if(parent != null) {
+            folderParent = parent;
+        }
+        FolderData testFolder = new FolderData(folderParent, name, null, weblog);
+        mgr.saveFolder(testFolder);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
+        // query for object
+        FolderData cat = mgr.getFolder(testFolder.getId());
+        
+        if(testFolder == null)
+            throw new RollerException("error setting up weblog folder");
+        
+        return testFolder;
+    }
+    
+    
+    /**
+     * Convenience method for removing a weblog folder.
+     */
+    public static void teardownFolder(String id) throws Exception {
+        
+        // lookup the folder
+        BookmarkManager mgr = RollerFactory.getRoller().getBookmarkManager();
+        FolderData folder = mgr.getFolder(id);
+        
+        // remove the cat
+        mgr.removeFolder(folder);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
     
     /**
      * Convenience method that returns managed copy of given user.

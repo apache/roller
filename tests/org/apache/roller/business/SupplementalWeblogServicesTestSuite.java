@@ -36,14 +36,21 @@ public class SupplementalWeblogServicesTestSuite {
 
         TestSuite suite = new TestSuite();
 	
+        // file uploads
         suite.addTestSuite(FileManagerTest.class);
-
+        
+        // hit counts
         suite.addTestSuite(HitCountTest.class);
-
+        
+        // pings
         suite.addTestSuite(PingsTest.class);
         
+        // folders and bookmarks
+        suite.addTestSuite(FolderCRUDTest.class);
+        suite.addTestSuite(FolderFunctionalityTest.class);
         suite.addTestSuite(BookmarkTest.class);
         
+        // referrers
         suite.addTestSuite(RefererTest.class);
 
         return suite;
