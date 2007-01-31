@@ -48,6 +48,7 @@ public class SupplementalWeblogServicesTestSuite {
         // folders and bookmarks
         suite.addTestSuite(FolderCRUDTest.class);
         suite.addTestSuite(FolderFunctionalityTest.class);
+        suite.addTestSuite(FolderParentDeletesTest.class);
         suite.addTestSuite(BookmarkTest.class);
         
         // referrers
