@@ -37,8 +37,8 @@ public class CoreWeblogServicesTestSuite {
 	
         // test categories
         suite.addTestSuite(WeblogCategoryCRUDTest.class);
+        suite.addTestSuite(WeblogCategoryFunctionalityTest.class);
         suite.addTestSuite(WeblogCategoryParentDeletesTest.class);
-        suite.addTestSuite(WeblogCategoryTest.class);
         
         // test templates
         suite.addTestSuite(WeblogPageTest.class);

@@ -35,9 +35,9 @@ import org.apache.roller.util.Utilities;
 /**
  * Test Weblog Category related business operations.
  */
-public class WeblogCategoryTest extends TestCase {
+public class WeblogCategoryFunctionalityTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(WeblogCategoryTest.class);
+    public static Log log = LogFactory.getLog(WeblogCategoryFunctionalityTest.class);
     
     UserData testUser = null;
     WebsiteData testWeblog = null;
