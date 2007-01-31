@@ -205,13 +205,8 @@ public class WeblogCategoryTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        // default, including root
-        List cats = mgr.getWeblogCategories(testWeblog);
-        assertNotNull(cats);
-        assertEquals(5, cats.size());
-        
         // including root
-        cats = mgr.getWeblogCategories(testWeblog, true);
+        List cats = mgr.getWeblogCategories(testWeblog, true);
         assertNotNull(cats);
         assertEquals(5, cats.size());
         

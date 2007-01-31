@@ -76,7 +76,7 @@ public class CategoryDeleteAction extends Action
                 RollerRequest rreq = RollerRequest.getRollerRequest(request);
                 WeblogCategoryData theCat = wmgr.getWeblogCategory(catid);
                 Iterator allCats = 
-                    wmgr.getWeblogCategories(theCat.getWebsite()).iterator();
+                    wmgr.getWeblogCategories(theCat.getWebsite(), true).iterator();
                 List destCats = new LinkedList();
                 while (allCats.hasNext())
                 {

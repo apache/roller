@@ -249,7 +249,7 @@ public class CategoriesAction extends DispatchAction
 
             // Build collection of all Categories, except for current one, 
             // sorted by path.
-            Iterator iter = wmgr.getWeblogCategories(website).iterator();
+            Iterator iter = wmgr.getWeblogCategories(website, true).iterator();
             while (iter.hasNext())
             {
                 WeblogCategoryData cd = (WeblogCategoryData) iter.next();

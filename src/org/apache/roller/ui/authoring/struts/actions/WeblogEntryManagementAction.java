@@ -195,7 +195,7 @@ public final class WeblogEntryManagementAction extends DispatchAction {
         public List getCategories() throws Exception {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             List categories = RollerFactory.getRoller().getWeblogManager()
-            .getWeblogCategories(rreq.getWebsite());
+            .getWeblogCategories(rreq.getWebsite(), true);
             return categories;
         }
         

@@ -264,12 +264,7 @@ public interface WeblogManager {
      * @return          Category specified by path or null if not found.
      */
     public WeblogCategoryData getWeblogCategoryByPath(WebsiteData wd, 
-            WeblogCategoryData category, String string) throws RollerException;    
-    
-    /** 
-     * Get WebLogCategory objects for a website. 
-     */
-    public List getWeblogCategories(WebsiteData website) throws RollerException;    
+            WeblogCategoryData category, String string) throws RollerException;  
     
     /** 
      * Get WebLogCategory objects for a website. 
