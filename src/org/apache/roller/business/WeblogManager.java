@@ -256,15 +256,6 @@ public interface WeblogManager {
     public WeblogCategoryData getWeblogCategoryByPath(WebsiteData website, 
             String categoryPath) throws RollerException;
     
-    /**
-     * Get sub-category by path relative to specified category.
-     * @param category  Root of path or null to start at top of category tree.
-     * @param path      Path of category to be located.
-     * @param website   Website of categories.
-     * @return          Category specified by path or null if not found.
-     */
-    public WeblogCategoryData getWeblogCategoryByPath(WebsiteData wd, 
-            WeblogCategoryData category, String string) throws RollerException;  
     
     /** 
      * Get WebLogCategory objects for a website. 

@@ -618,7 +618,7 @@ public class OldWeblogPageModel {
                 WeblogCategoryData category = null;
                 if (categoryName != null) {
                     category = mWeblogMgr.getWeblogCategoryByPath(
-                            mWebsite, null, categoryName);
+                            mWebsite, categoryName);
                 } else {
                     category = mWebsite.getDefaultCategory();
                 }
