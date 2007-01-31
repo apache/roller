@@ -418,37 +418,23 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
         }
     }
     
-    // TODO: need unit tests for this function
+    
     public List getWeblogCategories(WebsiteData website, boolean includeRoot)
-    throws RollerException {
+            throws RollerException {
         
-        if (website == null)
+        if (website == null) {
             throw new RollerException("website is null");
-        
-        if (includeRoot) return getWeblogCategories(website);
-        
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryData.class);
-            criteria.add(Expression.eq("website", website));
-            criteria.add(Expression.isNotNull("parent"));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
         }
-    }
-    
-    
-    // TODO: need unit tests for this function
-    public List getWeblogCategories(WebsiteData website) throws RollerException {
-        
-        if (website == null)
-            throw new RollerException("website is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WeblogCategoryData.class);
             criteria.add(Expression.eq("website", website));
+            
+            if(!includeRoot) {
+                criteria.add(Expression.isNotNull("parent"));
+            }
+            
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
