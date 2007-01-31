@@ -146,7 +146,7 @@ public abstract class WeblogManagerImpl implements WeblogManager {
             }
         } catch (IOException e) {
             messages.addError("error.trackback", trackbackURL);
-            mLogger.error("ERROR: sending trackback", e);
+            mLogger.debug("ERROR: sending trackback", e);
         } 
         return messages;
     }
