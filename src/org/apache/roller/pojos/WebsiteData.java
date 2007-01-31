@@ -1116,7 +1116,7 @@ public class WebsiteData implements Serializable {
             WeblogManager wmgr = roller.getWeblogManager();            
             WeblogCategoryData category = null;
             if (categoryPath != null && !categoryPath.equals("nil")) {
-                category = wmgr.getWeblogCategoryByPath(this, null, categoryPath);
+                category = wmgr.getWeblogCategoryByPath(this, categoryPath);
             } else {
                 category = this.getDefaultCategory();
             }
@@ -1137,7 +1137,7 @@ public class WebsiteData implements Serializable {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             if (categoryPath != null && !categoryPath.equals("nil")) {
-                category = wmgr.getWeblogCategoryByPath(this, null, categoryPath);
+                category = wmgr.getWeblogCategoryByPath(this, categoryPath);
             } else {
                 category = this.getDefaultCategory();
             }

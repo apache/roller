@@ -373,7 +373,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
         
         if (catName != null && !catName.trim().equals("/")) {
             WeblogCategoryData category =
-                    getWeblogCategoryByPath(current.getWebsite(), null, catName);
+                    getWeblogCategoryByPath(current.getWebsite(), catName);
             if (category != null) {
                 conjunction.add(Expression.eq("category", category));
             } else {
@@ -927,20 +927,14 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
     
     //--------------------------------------------- WeblogCategoryData Queries
     
-    public WeblogCategoryData getWeblogCategoryByPath(
-            WebsiteData website, String categoryPath) throws RollerException {
-        return getWeblogCategoryByPath(website, null, categoryPath);
-    }
-    
-    // TODO: ditch this method in favor of getWeblogCategoryByPath(weblog, path)
-    public WeblogCategoryData getWeblogCategoryByPath(
-            WebsiteData website, WeblogCategoryData category, String path)
+    public WeblogCategoryData getWeblogCategoryByPath(WebsiteData website, 
+                                                      String categoryPath) 
             throws RollerException {
         
-        if (path == null || path.trim().equals("/")) {
+        if (categoryPath == null || categoryPath.trim().equals("/")) {
             return getRootWeblogCategory(website);
         } else {
-            String catPath = path;
+            String catPath = categoryPath;
             
             // all cat paths must begin with a '/'
             if(!catPath.startsWith("/")) {
@@ -956,6 +950,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
             return (WeblogCategoryData) criteria.uniqueResult();
         }
     }
+    
         
     public CommentData getComment(String id) throws RollerException {
         return (CommentData) this.strategy.load(id, CommentData.class);

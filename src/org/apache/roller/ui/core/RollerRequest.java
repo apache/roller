@@ -608,7 +608,7 @@ public class RollerRequest
                     mWeblogCategory = 
                         RollerFactory.getRoller()
                             .getWeblogManager().getWeblogCategoryByPath(
-                                    getWebsite(), null, id);
+                                    getWebsite(), id);
                 }
                 catch (RollerException e)
                 {
