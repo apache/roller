@@ -60,7 +60,16 @@ public class TrackbackServlet extends HttpServlet {
     private static Log logger = LogFactory.getLog(TrackbackServlet.class);
     
     private CommentValidationManager commentValidationManager = null;
+    
+
+    public void init(ServletConfig config) throws ServletException {
+        commentValidationManager = new CommentValidationManager();
         
+        // add trackback verification validator just for trackbacks
+        commentValidationManager.addCommentValidator(new TrackbackLinkbackCommentValidator());
+    }
+    
+    
     /**
      * Handle incoming http GET requests.
      *
@@ -71,15 +80,7 @@ public class TrackbackServlet extends HttpServlet {
         
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
-
-    public void init(ServletConfig config) throws ServletException {
-        commentValidationManager = new CommentValidationManager();
-        
-        // use configured comment validators, plus linkback validator if enabled
-        if (RollerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
-            commentValidationManager.addCommentValidator(new TrackbackLinkbackCommentValidator());
-        }
-    }
+    
     
     /**
      * Service incoming POST requests.
