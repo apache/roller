@@ -26,17 +26,17 @@ limitations under the License.
 
 <section><title>Welcome!</title>
     <p>
-        Apache Roller (incubating) is a full-featued, multi-user and group-blog 
+        Apache Roller (incubating) is a full-featured, multi-user and group-blog 
         server suitable for blog sites large and small. This is the project's 
         homepage, which provides a brief overview of the software and project as 
         well as links to 
         <a href="http://rollerweblogger.org/project">project news</a>, 
-        <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=DownloadPage">downloads</a>, 
-        <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">user guide</a>, 
-        <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=InstallationGuide">install guide</a>, 
-        <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=RollerMailingLists">mailing-lists</a>,
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Downloads">downloads</a>, 
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">mailing-lists</a>,
         <a href="http://opensource.atlassian.com/projects/roller">bug tracker</a>,
-        <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=RollerWiki">wiki</a> and the 
+        <a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the 
         <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=RollerFaq">FAQ</a>. 
     </p>
 </section>
