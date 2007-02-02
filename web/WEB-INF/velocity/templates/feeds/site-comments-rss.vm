@@ -23,7 +23,7 @@
 <channel>
   <title>$utils.escapeXML($config.siteName) (Comments)</title>
   <link>$url.absoluteSite</link>
-  <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.atom($model.categoryPath, $model.excerpts)" />
+  <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.rss($model.categoryPath, $model.excerpts)" />
   <description>$utils.escapeXML($config.siteDescription)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
