@@ -134,7 +134,15 @@
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
+      <property-def  name="comments.ignoreSpam.enabled"  key="configForm.ignoreSpamComments">
+         <type>boolean</type>
+         <default-value>false</default-value>
+      </property-def>
       <property-def  name="users.trackbacks.enabled"  key="configForm.enableTrackbacks">
+         <type>boolean</type>
+         <default-value>true</default-value>
+      </property-def>
+      <property-def  name="trackbacks.ignoreSpam.enabled"  key="configForm.ignoreSpamTrackbacks">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
