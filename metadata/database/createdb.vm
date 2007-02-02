@@ -207,9 +207,7 @@ create table weblogentry (
 );
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );
-create index we_pubtime_idx on weblogentry( pubtime,publishentry,websiteid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
-create index we_pubentry_idx on weblogentry(publishentry);
 create index we_userid_idx on weblogentry(userid);
 create index we_status_idx on weblogentry(status);
 create index we_locale_idx on weblogentry(locale);
@@ -270,9 +268,7 @@ create table roller_comment (
     status     varchar(20) not null
 );
 create index co_entryid_idx on roller_comment( entryid );
-create index co_pending_idx on roller_comment( pending );
-create index co_approved_idx on roller_comment( approved );
-create index rc_combo1_idx on roller_comment(approved, spam, posttime);
+create index co_status_idx on roller_comment( status );
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
@@ -426,8 +422,8 @@ create table rag_group_subscription (
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
 );
-create index raggs_gid_idx on rag_group_subscription(group_id$!INDEXSIZE); 
-create index raggs_sid_idx on rag_group_subscription(subscription_id$!INDEXSIZE); 
+create index raggs_gid_idx on rag_group_subscription(group_id); 
+create index raggs_sid_idx on rag_group_subscription(subscription_id); 
 
 create table rag_config (
     id               varchar(48) not null primary key,
@@ -483,7 +479,7 @@ create table rag_entry (
     published        $TIMESTAMP_SQL_TYPE not null,
     updated          $TIMESTAMP_SQL_TYPE    
 );
-create index rage_sid_idx on rag_entry(subscription_id$!INDEXSIZE); 
+create index rage_sid_idx on rag_entry(subscription_id); 
 
 
 -- *****************************************************
