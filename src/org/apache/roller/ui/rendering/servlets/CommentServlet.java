@@ -285,45 +285,48 @@ public class CommentServlet extends HttpServlet {
         log.debug("Comment Validation score: " + validationScore);
         
         if (!preview) {
-            // If validation score is not perfect, mark as spam
-            if (validationScore != 100) {
+            
+            if (validationScore == 100 && weblog.getCommentModerationRequired()) {
+                // Valid comments go into moderation if required
+                comment.setStatus(CommentData.PENDING);
+                message = bundle.getString("commentServlet.submittedToModerator");
+            } else if (validationScore == 100) {
+                // else they're approved
+                comment.setStatus(CommentData.APPROVED);
+            } else {
+                // Invalid comments are marked as spam
                 comment.setStatus(CommentData.SPAM);
                 error = bundle.getString("commentServlet.commentMarkedAsSpam");
                 log.debug("Comment marked as spam");
             }
             
-            // If moderation is enabled or comment is spam, put comment into moderation
-            if (weblog.getCommentModerationRequired() || validationScore != 100) {
-                comment.setStatus(CommentData.PENDING);
-                message = bundle.getString("commentServlet.submittedToModerator");
-            } else {
-                comment.setStatus(CommentData.APPROVED);
-            }
-            
             try {               
-                
-                // Send email notifications, but only to subscribers if comment is 100% valid
-                boolean notifySubscribers = (validationScore == 100);
-                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                if (rootURL == null || rootURL.trim().length()==0) {
-                    rootURL = RequestUtils.serverURL(request) + request.getContextPath();
-                }
-                sendEmailNotification(comment, notifySubscribers, messages, rootURL);
-                
-                WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-                mgr.saveComment(comment);
-                RollerFactory.getRoller().flush();
-
-                // only re-index/invalidate the cache if comment isn't moderated
-                if(!weblog.getCommentModerationRequired()) {
-                    reindexEntry(entry);
+                if(!CommentData.SPAM.equals(comment.getStatus()) ||
+                        !RollerRuntimeConfig.getBooleanProperty("comments.ignoreSpam.enabled")) {
                     
-                    // Clear all caches associated with comment
-                    CacheManager.invalidate(comment);
+                    WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+                    mgr.saveComment(comment);
+                    RollerFactory.getRoller().flush();
+                    
+                    // Send email notifications, but only to subscribers if comment is 100% valid
+                    boolean notifySubscribers = (validationScore == 100);
+                    String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
+                    if (rootURL == null || rootURL.trim().length()==0) {
+                        rootURL = RequestUtils.serverURL(request) + request.getContextPath();
+                    }
+                    sendEmailNotification(comment, notifySubscribers, messages, rootURL);
+                    
+                    // only re-index/invalidate the cache if comment isn't moderated
+                    if(!weblog.getCommentModerationRequired()) {
+                        reindexEntry(entry);
+                        
+                        // Clear all caches associated with comment
+                        CacheManager.invalidate(comment);
+                    }
+                    
+                    // comment was successful, clear the comment form
+                    cf = new WeblogEntryCommentForm();
                 }
-                
-                // comment was successful, clear the comment form
-                cf = new WeblogEntryCommentForm();
                 
             } catch (RollerException re) {
                 log.error("Error saving comment", re);

@@ -34,7 +34,7 @@ import org.apache.roller.util.Utilities;
  * Responsible for loading validators and using them to validate comments.
  */
 public class CommentValidationManager {
-    private static Log     log = LogFactory.getLog(CommentServlet.class);
+    private static Log     log = LogFactory.getLog(CommentValidationManager.class);
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     private List           validators = new ArrayList();
     
@@ -89,6 +89,7 @@ public class CommentValidationManager {
         if (validators.size() > 0) {
             for (Iterator it = validators.iterator(); it.hasNext();) {
                 CommentValidator val = (CommentValidator) it.next();
+                log.debug("Invoking comment validator "+val.getName());
                 total += val.validate(comment, messages);
             }
             total = total / validators.size();
