@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -303,7 +302,15 @@ public class WeblogTemplate
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.name);
+        buf.append(", ").append(this.link);
+        buf.append(", ").append(this.decoratorName);
+        buf.append(", ").append(this.templateLanguage);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {

@@ -21,8 +21,6 @@ package org.apache.roller.pojos;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 
 /**
  * Represents locking information about a specific RollerTask.
@@ -96,7 +94,14 @@ public class TaskLockData implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.name);
+        buf.append(", ").append(this.timeAquired);
+        buf.append(", ").append(this.timeLeased);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {

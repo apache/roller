@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
@@ -104,7 +103,12 @@ public class FolderData implements Serializable, Comparable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.path);
+        buf.append("}");
+        return buf.toString();
     }
     
     public boolean equals(Object other) {

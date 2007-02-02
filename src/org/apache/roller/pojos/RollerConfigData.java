@@ -18,8 +18,6 @@
 package org.apache.roller.pojos;
 
 import java.io.File;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +25,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Configuration object for Roller.  Reads and writes roller-config.xml.
@@ -729,7 +726,11 @@ public class RollerConfigData
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {

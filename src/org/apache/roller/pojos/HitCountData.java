@@ -20,8 +20,6 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 
 /**
  * Represents hit count data for a weblog.
@@ -50,7 +48,12 @@ public class HitCountData implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.dailyHits);
+        buf.append("}");
+        return buf.toString();
     }
 
     //------------------------------------------------------------------------

@@ -21,7 +21,7 @@ package org.apache.roller.pojos;
 import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 /**
  * Automatic ping configuration.  An instance of this class relates a website and ping target; it indicates that the specified
@@ -139,7 +139,11 @@ public class AutoPingData implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append("}");
+        return buf.toString();
     }
     
     public boolean equals(Object other) {

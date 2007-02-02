@@ -25,8 +25,6 @@ package org.apache.roller.pojos;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 
 /**
  * This POJO represents a single property of the roller system.
