@@ -22,8 +22,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 
 /**
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
@@ -269,7 +267,15 @@ public class PingTargetData implements Serializable {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.name);
+        buf.append(", ").append(this.pingUrl);
+        buf.append(", ").append(this.lastSuccess);
+        buf.append(", ").append(this.autoEnabled);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {

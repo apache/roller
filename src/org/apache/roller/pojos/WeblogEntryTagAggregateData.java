@@ -23,8 +23,6 @@ package org.apache.roller.pojos;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 
 /**
  * @author Elias Torres
@@ -146,7 +144,14 @@ public class WeblogEntryTagAggregateData
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.name);
+        buf.append(", ").append(this.total);
+        buf.append(", ").append(this.lastUsed);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {

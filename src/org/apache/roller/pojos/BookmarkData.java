@@ -18,7 +18,6 @@
 
 package org.apache.roller.pojos;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.roller.business.BookmarkManager;
 
 import java.io.Serializable;
@@ -281,7 +280,12 @@ public class BookmarkData
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.url);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {

@@ -19,7 +19,6 @@ package org.apache.roller.pojos;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Represents a statistical count.
@@ -103,7 +102,12 @@ public class StatCount {
     //------------------------------------------------------- Good citizenship
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.weblogHandle);
+        buf.append(", ").append(this.count);
+        buf.append("}");
+        return buf.toString();
     }
 
     public boolean equals(Object other) {
