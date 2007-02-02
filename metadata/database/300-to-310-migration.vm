@@ -38,7 +38,7 @@ create table roller_tasklock (
     timeleased	    integer,
     lastrun         $TIMESTAMP_SQL_TYPE_NULL
 );
-create index rtl_taskname_idx on roller_tasklock( name );
+alter table roller_tasklock add constraint rtl_name_uq unique ( name$!INDEXSIZE );
 
 create table roller_hitcounts (
     id              varchar(48) not null primary key,
