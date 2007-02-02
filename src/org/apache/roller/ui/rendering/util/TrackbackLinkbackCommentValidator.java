@@ -27,27 +27,28 @@ import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 
 /**
- * Validates comment if comment's URL links back to the comment's entry, 
+ * Validates comment if comment's URL links back to the comment's entry,
  * intended for use with trackbacks only.
  */
 public class TrackbackLinkbackCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");  
-        
+    
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+    
     public String getName() {
         return bundle.getString("comment.validator.trackbackLinkbackName");
     }
-
+    
     public int validate(CommentData comment, RollerMessages messages) {
         int ret = 0;
         LinkbackExtractor linkback = null;
         try {
             linkback = new LinkbackExtractor(
-                    comment.getUrl(), 
+                    comment.getUrl(),
                     URLUtilities.getWeblogEntryURL(
-                        comment.getWeblogEntry().getWebsite(), 
-                        null, 
-                        comment.getWeblogEntry().getAnchor(), 
-                        true));
+                    comment.getWeblogEntry().getWebsite(),
+                    null,
+                    comment.getWeblogEntry().getAnchor(),
+                    true));
         } catch (MalformedURLException ignored1) {
         } catch (IOException ignored2) {}
         
