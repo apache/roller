@@ -21,10 +21,12 @@ package org.apache.roller.ui.rendering.util;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ResourceBundle;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
+
 
 /**
  * Validates comment if comment's URL links back to the comment's entry,
@@ -39,6 +41,13 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
     }
     
     public int validate(CommentData comment, RollerMessages messages) {
+        
+        // linkback validation can be toggled at runtime, so check if it's enabled
+        // if it's disabled then just return a score of 100
+        if(!RollerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
+            return 100;
+        }
+        
         int ret = 0;
         LinkbackExtractor linkback = null;
         try {
@@ -52,7 +61,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         } catch (MalformedURLException ignored1) {
         } catch (IOException ignored2) {}
         
-        if (linkback == null && linkback.getExcerpt() != null) {
+        if (linkback != null && linkback.getExcerpt() != null) {
             ret = 100;
         } else {
             messages.addError("comment.validator.trackbackLinkbackMessage");
