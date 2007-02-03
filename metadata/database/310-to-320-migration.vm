@@ -36,7 +36,7 @@ update roller_comment set status = 'SPAM', posttime=posttime where spam=1;
 update roller_comment set status = 'DISAPPROVED', posttime=posttime where approved=0 and spam=0 and pending=0;
 
 -- add new status option 'SCHEDULED' for future published entries
-update weblogentry set status = 'SCHEDULED' where pubtime > now();
+update weblogentry set status = 'SCHEDULED', pubtime=pubtime, updatetime=updatetime where pubtime > now();
 
 -- add new client column to roller_tasklock table
 #addColumnNull("roller_tasklock" "client" "varchar(255)")
