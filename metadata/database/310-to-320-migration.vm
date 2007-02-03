@@ -30,10 +30,10 @@ create index fo_path_idx on folder( path );
 create index co_status_idx on roller_comment(status);
 
 -- update existing data to use new status column
-update roller_comment set status = 'APPROVED' where approved=1;
-update roller_comment set status = 'PENDING' where pending=1;
-update roller_comment set status = 'SPAM' where spam=1;
-update roller_comment set status = 'DISAPPROVED' where approved=0 and spam=0 and pending=0;
+update roller_comment set status = 'APPROVED', posttime=posttime where approved=1;
+update roller_comment set status = 'PENDING', posttime=posttime where pending=1;
+update roller_comment set status = 'SPAM', posttime=posttime where spam=1;
+update roller_comment set status = 'DISAPPROVED', posttime=posttime where approved=0 and spam=0 and pending=0;
 
 -- add new status option 'SCHEDULED' for future published entries
 update weblogentry set status = 'SCHEDULED' where pubtime > now();
