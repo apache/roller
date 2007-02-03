@@ -166,11 +166,11 @@ public class AtomServlet extends HttpServlet {
                         // call handler to post it
                         Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
                         
-                        // return alternate link as Location header
-                        Iterator links = savedEntry.getAlternateLinks().iterator();
+                        // return member entry URI as location header
+                        Iterator links = savedEntry.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
-                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                            if (link.getRel().equals("edit") || link.getRel() == null) {
                                 res.addHeader("Location", link.getHref());
                                 break;
                             }
@@ -195,7 +195,7 @@ public class AtomServlet extends HttpServlet {
                         com.sun.syndication.feed.atom.Content content = 
                             (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
 
-                        // return alternate link as Location header
+                        // return member entry URI as location header
                         Iterator links = resource.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();

@@ -67,6 +67,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogResource;
@@ -517,9 +518,7 @@ public class RollerAtomHandler implements AtomHandler {
                 try { Thread.sleep(1000); } catch (Exception ignored) {}
 
                 CacheManager.invalidate(website);
-                if (rollerEntry.isPublished()) {
-                    mRoller.getIndexManager().addEntryReIndexOperation(rollerEntry);
-                }
+                reindexEntry(rollerEntry);
                 return createAtomEntry(rollerEntry);
             }
             throw new AtomNotAuthorizedException(
@@ -588,9 +587,7 @@ public class RollerAtomHandler implements AtomHandler {
                     mRoller.flush();
 
                     CacheManager.invalidate(rollerEntry.getWebsite());
-                    if (rollerEntry.isPublished()) {
-                        mRoller.getIndexManager().addEntryReIndexOperation(rollerEntry);
-                    }
+                    reindexEntry(rollerEntry);
                     return createAtomEntry(rollerEntry);
                 }
                 throw new AtomNotAuthorizedException("ERROR not authorized to update entry");
@@ -618,8 +615,8 @@ public class RollerAtomHandler implements AtomHandler {
                         WeblogManager mgr = mRoller.getWeblogManager();
                         mgr.removeWeblogEntry(rollerEntry);
                         mRoller.flush();
-                        CacheManager.invalidate(rollerEntry.getWebsite());
-                        mRoller.getIndexManager().removeEntryIndexOperation(rollerEntry);
+                        CacheManager.invalidate(rollerEntry.getWebsite());                        
+                        reindexEntry(rollerEntry);
                         return;
                     } 
                 } else if (pathInfo[1].equals("resource")) {
@@ -972,16 +969,22 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private Entry createAtomEntry(WeblogEntryData entry) {
         Entry atomEntry = new Entry();
+        
         Content content = new Content();
         content.setType(Content.HTML);
         content.setValue(entry.getText());
         List contents = new ArrayList();
         contents.add(content);
         
+        Content summary = new Content();
+        summary.setType(Content.HTML);
+        summary.setValue(entry.getSummary());
+        
         String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         atomEntry.setId(        absUrl + entry.getPermaLink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setContents(  contents);
+        atomEntry.setSummary(   summary);
         atomEntry.setPublished( entry.getPubTime());
         atomEntry.setUpdated(   entry.getUpdateTime());
         
@@ -1100,6 +1103,9 @@ public class RollerAtomHandler implements AtomHandler {
             Content content = (Content)entry.getContents().get(0);
             rollerEntry.setText(content.getValue());
         }
+        if (entry.getSummary() != null) {
+            rollerEntry.setSummary(entry.getSummary().getValue());
+        }
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         
@@ -1173,6 +1179,18 @@ public class RollerAtomHandler implements AtomHandler {
             }
         }
         return path;
+    }
+    
+    private void reindexEntry(WeblogEntryData entry) throws RollerException {
+        IndexManager manager = mRoller.getIndexManager();
+        
+        // TODO: figure out what's up here and at WeblogEntryFormAction line 696
+        //manager.removeEntryIndexOperation(entry);
+        
+        // if published, index the entry
+        if (entry.isPublished()) {
+            manager.addEntryReIndexOperation(entry);
+        }
     }
 }
 
