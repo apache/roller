@@ -215,7 +215,6 @@ public class RollerAtomHandler implements AtomHandler {
                     // to site because tags can be considered site-wide
                     AtomService.Categories tags = new AtomService.Categories();
                     tags.setFixed(false);
-                    tags.setScheme(getSiteTagScheme());
                     entryCol.addCategories(tags);
                     
                 } catch (Exception e) {
@@ -1001,12 +1000,11 @@ public class RollerAtomHandler implements AtomHandler {
         atomCat.setTerm(entry.getCategory().getPath().substring(1));
         categories.add(atomCat);
         
-        // Add Atom categories for each Roller tag, using tag scheme
+        // Add Atom categories for each Roller tag with null scheme
         for (Iterator tagit = entry.getTags().iterator(); tagit.hasNext();) {
             WeblogEntryTagData tag = (WeblogEntryTagData) tagit.next();
             Category newcat = new Category();
             newcat.setTerm(tag.getName());
-            newcat.setScheme(getSiteTagScheme());
             categories.add(newcat);
         }        
         atomEntry.setCategories(categories);
@@ -1147,12 +1145,12 @@ public class RollerAtomHandler implements AtomHandler {
         }
         
         // Now process incoming categories that are tags:
-        // Atom categories with site-level scheme are Roller tags
+        // Atom categories with no scheme are considered tags.
         String tags = "";
         if (categories != null && categories.size() > 0) {
             for (int i=0; i<categories.size(); i++) {
                 Category cat = (Category)categories.get(i);            
-                if (cat.getScheme() != null && cat.getScheme().equals(getSiteTagScheme())) {
+                if (cat.getScheme() == null) {
                     tags = tags + " " + cat.getTerm();
                 }                
             }
@@ -1162,10 +1160,6 @@ public class RollerAtomHandler implements AtomHandler {
         
     private String getWeblogCategoryScheme(WebsiteData website) {
         return URLUtilities.getWeblogURL(website, null, true);
-    }
-    
-    private String getSiteTagScheme() {
-        return RollerRuntimeConfig.getAbsoluteContextURL();
     }
     
     private String filePathFromPathInfo(String[] pathInfo) {
