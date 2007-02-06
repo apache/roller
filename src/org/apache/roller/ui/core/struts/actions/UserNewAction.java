@@ -184,8 +184,14 @@ public class UserNewAction extends UserBaseAction {
                 // User registered, so go to welcome page
                 request.setAttribute("contextURL",
                         RollerRuntimeConfig.getAbsoluteContextURL());
+                
+                // Invalidate session, otherwise new user who was originally authenticated 
+                // via LDAP/SSO will remain logged in with a but without a valid Roller role.
+                request.getSession().invalidate();
+                
                 return mapping.findForward("welcome.page");
             }
+                       
         } catch (RollerException e) {
             errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(e.getMessage()));
             saveErrors(request,errors);
