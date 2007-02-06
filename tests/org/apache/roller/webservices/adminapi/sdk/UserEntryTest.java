@@ -40,8 +40,6 @@ public class UserEntryTest extends AappTest {
             UserEntrySet ues2 = new UserEntrySet(d, getEndpointUrl());
             
             assertEquals(ues1, ues2);
-        } catch (MissingElementException mee) {
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             fail(uree.getMessage());
         }
@@ -56,8 +54,6 @@ public class UserEntryTest extends AappTest {
             UserEntrySet ues2 = new UserEntrySet(stream, getEndpointUrl());
             
             assertEquals(ues1, ues2);
-        } catch (MissingElementException mee) {
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             fail(uree.getMessage());
         } catch (IOException ioe) {

@@ -18,27 +18,17 @@
 
 package org.apache.roller.ui.authoring.struts.actions;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.InitialContext;
@@ -58,17 +48,13 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
-import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.IndexManager;
-import org.apache.roller.model.PagePluginManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.business.search.IndexManager;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -79,8 +65,11 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.Utilities;
+import org.apache.commons.lang.StringUtils;
+import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.ui.core.RequestConstants;
+import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.RollerMessages.RollerMessage;
 
 
 
@@ -88,7 +77,7 @@ import org.apache.roller.util.Utilities;
 /**
  * Supports Weblog Entry form actions edit, remove, update, etc.
  *
- * @struts.action name="weblogEntryFormEx" path="/editor/weblog"
+ * @struts.action name="weblogEntryFormEx" path="/roller-ui/authoring/weblog"
  *     scope="request" parameter="method"
  *
  * @struts.action-forward name="weblogEdit.page" path=".WeblogEdit"
@@ -248,19 +237,21 @@ public final class WeblogEntryFormAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("weblogEdit.page");
         ActionMessages uiMessages = new ActionMessages();
-        try {
+        try {            
             WeblogEntryFormEx  form = (WeblogEntryFormEx)actionForm;
             Roller           roller = RollerFactory.getRoller();
             RollerSession      rses = RollerSession.getRollerSession(request);
-            UserManager     userMgr = roller.getUserManager();
+            UserManager     userMgr = roller.getUserManager();            
             WeblogManager weblogMgr = roller.getWeblogManager();
-            UserData           ud  = userMgr.getUser(form.getCreatorId());
-            WebsiteData       site = userMgr.getWebsite(form.getWebsiteId());
-            WeblogEntryData  entry = null;
+            
+            UserData            ud  = userMgr.getUser(form.getCreatorId());
+            WebsiteData        site = userMgr.getWebsite(form.getWebsiteId());
+            
+            WeblogEntryData   entry = null;
             
             if ( rses.isUserAuthorizedToAuthor(site)
-            || (rses.isUserAuthorized(site)
-            && !form.getStatus().equals(WeblogEntryData.PUBLISHED) )) {
+             || (rses.isUserAuthorized(site)
+             && !form.getStatus().equals(WeblogEntryData.PUBLISHED) )) {
                 
                 ActionErrors errors = validateEntry(null, form);
                 if (errors.size() > 0) {
@@ -275,31 +266,26 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 if (form.getId() == null || form.getId().trim().length()==0) {
                     entry = new WeblogEntryData();
                     entry.setCreator(ud);
-                    entry.setWebsite( site );
+                    entry.setWebsite(site);
                 } else {
                     entry = weblogMgr.getWeblogEntry(form.getId());
                 }
                 
                 mLogger.debug("setting update time now");
-                form.setUpdateTime(new Timestamp(new Date().getTime()));
-                
+                form.setUpdateTime(new Timestamp(new Date().getTime()));                
                 if ("PUBLISHED".equals(form.getStatus()) &&
                         "0/0/0".equals(form.getDateString())) {
-                    mLogger.debug("setting pubtime now");
-                    
-                    /* NOTE: the wf.copyTo() method will override this value
-                     * based on data submitted with the form if that data is
-                     * not null.  check the method to verify.
-                     *
-                     * this means that setting the pubtime here only takes
-                     * effect if the entry is being published for the first
-                     * time.
-                     */
+                    mLogger.debug("setting pubtime now");                    
+                    // NOTE: the form .copyTo() method will override this value
+                    // based on data submitted with the form if that data is
+                    // not null.  Check the method to verify. This means that 
+                    // setting the pubtime here only takes effect if the entry 
+                    // is being published for the first time.
                     form.setPubTime(form.getUpdateTime());
                 }
                 
                 mLogger.debug("copying submitted form data to entry object");
-                form.copyTo(entry, request.getLocale(),request.getParameterMap());
+                form.copyTo(entry, request.getLocale(), request.getParameterMap());
                 
                 // Fetch MediaCast content type and length
                 mLogger.debug("Checking MediaCast attributes");
@@ -308,15 +294,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 } else {
                     mLogger.debug("Validated MediaCast attributes");
                 }
-                
-                // Store value object (creates new or updates existing)
-                entry.setUpdateTime(new Timestamp(new Date().getTime()));
-                
-                // make sure we have an anchor value set
-                if(entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
-                    entry.setAnchor(weblogMgr.createAnchor(entry));
-                }
-
+                                
                 mLogger.debug("Saving entry");
                 weblogMgr.saveWeblogEntry(entry);
                 RollerFactory.getRoller().flush();
@@ -325,7 +303,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 form.copyFrom(entry, request.getLocale());
                 
                 request.setAttribute(
-                        RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
+                        RequestConstants.WEBLOGENTRY_ID, entry.getId());
                 
                 // Reindex entry, flush caches, etc.
                 reindexEntry(RollerFactory.getRoller(), entry);
@@ -408,8 +386,8 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 // list of enabled website authors and admins
                 ArrayList reviewers = new ArrayList();
-                List websiteUsers =
-                        umgr.getUsers(entry.getWebsite(), Boolean.TRUE);
+                List websiteUsers = umgr.getUsers(
+                     entry.getWebsite(), Boolean.TRUE, null, null, 0, -1);
                 
                 // build list of reviewers (website users with author permission)
                 Iterator websiteUserIter = websiteUsers.iterator();
@@ -425,13 +403,13 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 // Figure URL to entry edit page
                 RollerContext rc = RollerContext.getRollerContext();
-                String rootURL = rc.getAbsoluteContextUrl(request);
+                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0) {
                     rootURL = RequestUtils.serverURL(request)
                     + request.getContextPath();
                 }
                 String editURL = rootURL
-                        + "/editor/weblog.do?method=edit&entryid=" + entry.getId();
+                        + "/roller-ui/authoring/weblog.do?method=edit&entryId=" + entry.getId();
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                         "ApplicationResources", request.getLocale());
@@ -512,13 +490,14 @@ public final class WeblogEntryFormAction extends DispatchAction {
             mLogger.debug("No MediaCast specified, but that is OK");
             valid = true;
         }
-        if (!valid || empty) {
+        if (!valid) {
             mLogger.debug("Removing MediaCast attributes");
+            WeblogManager weblogManager = RollerFactory.getRoller().getWeblogManager();
             try {
-                entry.removeEntryAttribute("att_mediacast_url");
-                entry.removeEntryAttribute("att_mediacast_type");
-                entry.removeEntryAttribute("att_mediacast_length");
-            } catch (RollerException e) {
+                weblogManager.removeWeblogEntryAttribute("att_mediacast_url", entry);
+                weblogManager.removeWeblogEntryAttribute("att_mediacast_type", entry);
+                weblogManager.removeWeblogEntryAttribute("att_mediacast_length", entry);
+            } catch (Exception e) {
                 mLogger.error("ERROR removing invalid MediaCast attributes");
             }
         }
@@ -625,6 +604,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             ActionForm actionForm,
             HttpServletRequest request,
             HttpServletResponse response) throws RollerException {
+        
         ActionMessages resultMsg = new ActionMessages();
         ActionForward forward = mapping.findForward("weblogEdit.page");
         ActionErrors errors = new ActionErrors();
@@ -633,8 +613,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
             String entryid = form.getId();
             if ( entryid == null ) {
-                entryid =
-                        request.getParameter(RollerRequest.WEBLOGENTRYID_KEY);
+                entryid = request.getParameter(RequestConstants.WEBLOGENTRY_ID);
             }
             Roller roller = RollerFactory.getRoller();
             RollerContext rctx= RollerContext.getRollerContext();
@@ -642,128 +621,22 @@ public final class WeblogEntryFormAction extends DispatchAction {
             entry = wmgr.getWeblogEntry(entryid);
             
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {
-                // Run entry through registered PagePlugins
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
-                        entry.getWebsite(),
-                        RollerContext.getRollerContext().getServletContext(),
-                        RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                        new VelocityContext());
-                
-                String content = "";
-                if (!StringUtils.isEmpty(entry.getText())) {
-                    content = entry.getText();
-                } else {
-                    content = entry.getSummary();
-                }
-                content = ppmgr.applyPagePlugins(entry, plugins, content, true);
-
-                String title = entry.getTitle();
-                String excerpt = StringUtils.left( Utilities.removeHTML(content),255 );
-                
-                String url = rctx.createEntryPermalink(entry, request, true);
-                String blog_name = entry.getWebsite().getName();
-                
+            if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {                                
                 if (form.getTrackbackUrl() != null) {
-                    // by default let all trackbacks to be sent
-                    boolean allowTrackback = true;
+                                    
+                    RollerMessages messages = wmgr.sendTrackback(entry, form.getTrackbackUrl());
                     
-                    String allowedURLs = RollerConfig.getProperty("trackback.allowedURLs");
-                    if (allowedURLs != null && allowedURLs.trim().length() > 0) {
-                        // in the case that the administrator has enabled trackbacks
-                        // for only specific URLs, set it to false by default
-                        allowTrackback = false;
-                        String[] splitURLs = allowedURLs.split("\\|\\|");
-                        for (int i=0; i<splitURLs.length; i++) {
-                            Matcher m = Pattern.compile(splitURLs[i]).matcher(form.getTrackbackUrl());
-                            if (m.matches()) {
-                                allowTrackback = true;
-                                break;
-                            }
-                        }
+                    for (Iterator mit = messages.getMessages(); mit.hasNext();) {
+                        RollerMessage msg = (RollerMessage) mit.next();
+                        resultMsg.add(null, new ActionMessage(msg.getKey(), msg.getArgs())); 
                     }
-                    
-                    if(!allowTrackback) {
-                        errors.add(ActionErrors.GLOBAL_ERROR,
-                                new ActionError("error.trackbackNotAllowed"));
-                    } else {
-                        try {
-                            // Construct data
-                            
-                            String data = URLEncoder.encode("title", "UTF-8")
-                            +"="+URLEncoder.encode(title, "UTF-8");
-                            
-                            data += ("&" + URLEncoder.encode("excerpt", "UTF-8")
-                            +"="+URLEncoder.encode(excerpt,"UTF-8"));
-                            
-                            data += ("&" + URLEncoder.encode("url", "UTF-8")
-                            +"="+URLEncoder.encode(url,"UTF-8"));
-                            
-                            data += ("&" + URLEncoder.encode("blog_name", "UTF-8")
-                            +"="+URLEncoder.encode(blog_name,"UTF-8"));
-                            
-                            // Send data
-                            URL tburl = new URL(form.getTrackbackUrl());
-                            HttpURLConnection conn = (HttpURLConnection)tburl.openConnection();
-                            conn.setDoOutput(true);
-                            
-                            OutputStreamWriter wr =
-                                    new OutputStreamWriter(conn.getOutputStream());
-                            BufferedReader rd = null;
-                            try {
-                                wr.write(data);
-                                wr.flush();
-                                
-                                // Get the response
-                                boolean inputAvailable = false;
-                                try {
-                                    rd = new BufferedReader(new InputStreamReader(
-                                            conn.getInputStream()));
-                                    inputAvailable = true;
-                                } catch (Throwable e) {
-                                    mLogger.debug(e);
-                                }
-                                
-                                // read repsonse only if there is one
-                                if (inputAvailable) {
-                                    String line;
-                                    StringBuffer resultBuff = new StringBuffer();
-                                    while ((line = rd.readLine()) != null) {
-                                        resultBuff.append(
-                                                Utilities.escapeHTML(line, true));
-                                        resultBuff.append("<br />");
-                                    }
-                                    resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
-                                            new ActionMessage("weblogEdit.trackbackResults",
-                                            resultBuff));
-                                }
-                                
-                                // add response code to messages
-                                if (conn.getResponseCode() > 399) {
-                                    errors.add(ActionErrors.GLOBAL_ERROR,
-                                            new ActionError("weblogEdit.trackbackStatusCodeBad",
-                                            new Integer(conn.getResponseCode())));
-                                } else {
-                                    resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
-                                            new ActionMessage("weblogEdit.trackbackStatusCodeGood",
-                                            new Integer(conn.getResponseCode())));
-                                }
-                            } finally {
-                                if (wr != null) wr.close();
-                                if (rd != null) rd.close();
-                            }
-                        } catch (IOException e) {
-                            errors.add(ActionErrors.GLOBAL_ERROR,
-                                    new ActionError("error.trackback",e));
-                        }
+                    for (Iterator eit = messages.getErrors(); eit.hasNext();) {
+                        RollerMessage err = (RollerMessage) eit.next();
+                        errors.add(null, new ActionMessage(err.getKey(), err.getArgs())); 
                     }
-                } else {
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("error.noTrackbackUrlSpecified"));
+                    form.setTrackbackUrl(null);
                 }
-                
-                form.setTrackbackUrl(null);
+                                                
             } else {
                 forward = mapping.findForward("access-denied");
             }

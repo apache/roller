@@ -1,0 +1,46 @@
+
+<!--  Do custom build work for business layer -->
+
+<!-- EXAMPLE: compile jdobackend from sandbox -->
+<echo>Entering custom build for Datamapper.....</echo>
+<javac destdir="${build.compile.business}"
+    debug="${build.debug}" 
+    source="${build.sourcelevel}"
+    deprecation="${build.deprecation}"
+    srcdir="sandbox/jdobackend/src"
+    excludes="**/*PlanetManagerImpl.java">
+    <classpath>
+        <path refid="business.path"/>
+        <fileset dir="${build.lib}" includes="*.jar" />
+        &custom-jars;
+    </classpath>
+
+</javac>
+
+<echo>Copying *orm.xml.....</echo>
+<copy todir="${build.compile.business}/org/apache/roller/pojos">
+     <fileset dir="${basedir}/sandbox/jdobackend/src/org/apache/roller/pojos">
+         <include name = "*.orm.xml"/>
+     </fileset>
+</copy>
+
+<echo>Copying persistence.xml.....</echo>
+<mkdir dir="${build.compile.business}/META-INF"/>
+<copy todir="${build.compile.business}/META-INF" file="${basedir}/sandbox/jdobackend/web/WEB-INF/classes/persistence.xml">
+</copy>
+
+<!-- 
+  copy package.jdo, package.orm, jdo.properties
+  Above files in sandbox/jdobackend/web should get into ${ro.src}
+  Once that happnes, the copy below is not required
+-->  
+<copy todir="${build.compile.business}" verbose="true">
+     <fileset dir="${basedir}/sandbox/jdobackend/web/WEB-INF/classes"
+              includes = "jdo.properties package.jdo package.orm JDOPMF.properties JPAEMF.properties"/>
+</copy>
+
+<!-- enhance the data classes -->
+<!-- <antcall target="jdo-enhance" /> -->
+
+<echo>Leaving custom build for Datamapper.....</echo>
+

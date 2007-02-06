@@ -213,7 +213,7 @@ public class ConsistencyCheck
             ResultSet websiteRs = websiteSt.executeQuery(
                 "select websiteid from weblogentry where id="+entryid);
             websiteRs.first();
-            String websiteid = websiteRs.getString(0);
+            String websiteid = websiteRs.getString(1);
             
             String rootid = getRootCategoryId(con, websiteid);
             Statement st = con.createStatement();

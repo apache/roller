@@ -19,9 +19,7 @@ package org.apache.roller.ui.authoring.struts.formbeans;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.Date;
@@ -37,7 +35,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.EntryAttributeData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
@@ -102,6 +101,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         }
         status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
+        locale = rreq.getWebsite().getLocale();
         
         // we want pubTime and updateTime to be empty for new entries -- AG
         //updateTime = new Timestamp(new Date().getTime());
@@ -150,7 +150,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         
         if (getCategoryId() != null) 
         {
-            entry.setCategoryId(getCategoryId());
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            entry.setCategory(wmgr.getWeblogCategory(getCategoryId()));
         }             
         if (getAllowComments() == null)
         {
@@ -170,7 +171,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         {
             String name = (String)params.next();
             String[] value = (String[])paramMap.get(name);
-            if (name.startsWith("att_") && value.length > 0)
+            if (name.startsWith("att_") && value.length > 0 && value[0].trim().length() > 0)
             {
                 try
                 {
@@ -181,6 +182,10 @@ public class WeblogEntryFormEx extends WeblogEntryForm
                     throw new RollerException("ERROR setting attributes",e);
                 }
             }
+        }
+        
+        if (entry.getId() != null && entry.getId().trim().length() == 0) {
+            entry.setId(null);
         }
     }
     
@@ -203,7 +208,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         {
             pluginsArray = StringUtils.split(entry.getPlugins(), ",");
         }
-        
+                        
         attributes = new HashMap();
         Iterator atts = entry.getEntryAttributes().iterator();
         while (atts.hasNext())
@@ -458,7 +463,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     {
         mWebsiteId = websiteId;
     }
-
+    
     /** Convenience method for checking status */
     public boolean isDraft() 
     {

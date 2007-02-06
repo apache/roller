@@ -1,0 +1,35 @@
+#**
+ * Atom feed links and badges.
+ *#
+
+#**
+ * Show links to category feeds for categories that are immediate children
+ * of the specified category.
+ *#
+#macro( showAtomLinksForCategory $category )
+    <a href="$url.feed.entries.atom">$text.get("macro.rss.all")</a><br />
+    #set( $categories = $model.weblog.getWeblogCategory($category).weblogCategories )
+    #foreach( $cat in $categories )
+        <a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a><br />
+    #end
+#end
+
+#**
+ * Show links to all available Atom feeds for your weblog.
+ *#
+#macro( showAtomLinks )#showAtomLinksForCategory("nil")#end
+
+#**
+ * Show Atom Autodiscovery link for your weblog.
+ *#
+#macro( showAtomAutodiscoveryLink )
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="$url.feed.entries.atom" />
+#end
+
+#**
+ * Show RSS badge with link to your weblog's main RSS feed.
+ *#
+#macro( showAtomBadge )
+    <a href="$url.feed.entries.atom"><img class="atombadge"
+        src="$url.site/images/atombadge.jpeg" alt="XML" /></a>
+#end

@@ -18,25 +18,35 @@
 
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.util.PojoUtil;
+import org.apache.roller.business.referrers.RefererManager;
+import org.apache.roller.business.RollerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.ThemeManager;
-import org.apache.roller.model.UserManager;
-
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.PluginManager;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 
 /**
  * Website has many-to-many association with users. Website has one-to-many and
@@ -47,14 +57,13 @@ import org.apache.roller.model.UserManager;
  *
  * @ejb:bean name="WebsiteData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false"  table="website"
+ * @hibernate.class lazy="true"  table="website"
  * @hibernate.cache usage="read-write"
  */
-public class WebsiteData extends org.apache.roller.pojos.PersistentObject
-        implements java.io.Serializable {
+public class WebsiteData implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
     
-    private static Log mLogger = LogFactory.getLog(WebsiteData.class);
+    private static Log log = LogFactory.getLog(WebsiteData.class);
     
     // Simple properties
     private String  id               = null;
@@ -82,13 +91,18 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     private Boolean moderateComments  = Boolean.FALSE;
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
+    private String  pageModels       = new String();
+    private boolean enableMultiLang = false;
+    private boolean showAllLangs = true;
+    
     
     // Associated objects
-    private UserData creator = null; // TODO: decide if website.user is needed
-    private List     permissions = new ArrayList();
+    private UserData           creator = null; 
+    private List               permissions = new ArrayList();
     private WeblogCategoryData bloggerCategory = null;
     private WeblogCategoryData defaultCategory = null;
     
+    private Map initializedPlugins = null;
     
     public WebsiteData() {    
     }
@@ -118,6 +132,36 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public WebsiteData(WebsiteData otherData) {
         this.setData(otherData);
     }
+    
+    //------------------------------------------------------- Good citizenship
+
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.handle);
+        buf.append(", ").append(this.name);
+        buf.append(", ").append(this.emailAddress);
+        buf.append(", ").append(this.locale);
+        buf.append(", ").append(this.timeZone);
+        buf.append("}");
+        return buf.toString();
+    }
+
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof WebsiteData != true) return false;
+        WebsiteData o = (WebsiteData)other;
+        return new EqualsBuilder()
+            .append(getHandle(), o.getHandle()) 
+            .isEquals();
+    }
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getHandle())
+            .toHashCode();
+    } 
     
     /**
      * @hibernate.bag lazy="true" inverse="true" cascade="delete"
@@ -158,7 +202,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                 
             } catch(ThemeNotFoundException tnfe) {
                 // i sure hope not!
-                mLogger.error(tnfe);
+                log.error(tnfe);
             }
         }
         
@@ -169,7 +213,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         
         if(template != null)
-            mLogger.debug("returning default template id ["+template.getId()+"]");
+            log.debug("returning default template id ["+template.getId()+"]");
         
         return template;
     }
@@ -203,7 +247,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                     
                 } catch(ThemeNotFoundException tnfe) {
                     // i sure hope not!
-                    mLogger.error(tnfe);
+                    log.error(tnfe);
                 }
             }
             
@@ -221,13 +265,14 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /**
      * Lookup a Template for this website by name.
+     * @roller.wrapPojoMethod type="pojo"
      */
     public Template getPageByName(String name) throws RollerException {
         
         if(name == null)
             return null;
         
-        mLogger.debug("looking up template ["+name+"]");
+        log.debug("looking up template ["+name+"]");
         
         Template template = null;
         
@@ -242,7 +287,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                 
             } catch(ThemeNotFoundException tnfe) {
                 // i sure hope not!
-                mLogger.error(tnfe);
+                log.error(tnfe);
             }
             
         }
@@ -254,7 +299,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         
         if(template != null)
-            mLogger.debug("returning template ["+template.getId()+"]");
+            log.debug("returning template ["+template.getId()+"]");
         
         return template;
     }
@@ -262,13 +307,14 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /**
      * Lookup a template for this website by link.
+     * @roller.wrapPojoMethod type="pojo"
      */
     public Template getPageByLink(String link) throws RollerException {
         
         if(link == null)
             return null;
         
-        mLogger.debug("looking up template ["+link+"]");
+        log.debug("looking up template ["+link+"]");
         
         Template template = null;
         
@@ -283,7 +329,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                 
             } catch(ThemeNotFoundException tnfe) {
                 // i sure hope not!
-                mLogger.error(tnfe);
+                log.error(tnfe);
             }
             
         }
@@ -295,7 +341,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         
         if(template != null)
-            mLogger.debug("returning template ["+template.getId()+"]");
+            log.debug("returning template ["+template.getId()+"]");
         
         return template;
     }
@@ -303,10 +349,11 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /**
      * Get a list of all pages that are part of this website.
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.Template"
      */
     public List getPages() {
         
-        Map pages = new HashMap();
+        Map pages = new TreeMap();
         
         // first get the pages from the db
         try {
@@ -319,12 +366,12 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             }
         } catch(Exception e) {
             // db error
-            mLogger.error(e);
+            log.error(e);
         }
         
         
         // now get theme pages if needed and put them in place of db pages
-        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+        if (this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
             try {
                 Template template = null;
                 ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
@@ -339,7 +386,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
                 }
             } catch(Exception e) {
                 // how??
-                mLogger.error(e);
+                log.error(e);
             }
         }
         
@@ -361,6 +408,8 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /** @ejb:persistent-field */
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -478,7 +527,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.many-to-one column="bloggercatid" non-null="false"
+     * @hibernate.many-to-one column="bloggercatid" non-null="false" cascade="none"
      */
     public WeblogCategoryData getBloggerCategory() {
         return bloggerCategory;
@@ -496,7 +545,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      *
      * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
-     * @hibernate.many-to-one column="defaultcatid" non-null="false"
+     * @hibernate.many-to-one column="defaultcatid" non-null="false" cascade="none"
      */
     public WeblogCategoryData getDefaultCategory() {
         return defaultCategory;
@@ -684,6 +733,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /**
      * @ejb:persistent-field
      * @hibernate.property column="datecreated" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public Date getDateCreated() {
         if (dateCreated == null) {
@@ -717,90 +767,11 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         defaultPlugins = string;
     }
     
-    public String toString() {
-        StringBuffer str = new StringBuffer("{");
-        
-        str.append("id=" + id + " " + "name=" + name + " " + "description=" +
-                description + " " +
-                "defaultPageId=" + defaultPageId + " " +
-                "weblogDayPageId=" + weblogDayPageId + " " +
-                "enableBloggerApi=" + enableBloggerApi + " " +
-                "bloggerCategory=" + bloggerCategory + " " +
-                "defaultCategory=" + defaultCategory + " " +
-                "editorPage=" + editorPage + " " +
-                "blacklist=" + blacklist + " " +
-                "allowComments=" + allowComments + " " +
-                "emailAddress=" + emailAddress + " " +
-                "emailComments=" + emailComments + " " +
-                "emailFromAddress=" + emailFromAddress + " " +
-                "editorTheme=" + editorTheme + " " +
-                "locale=" + locale + " " +
-                "timeZone=" + timeZone + " " +
-                "defaultPlugins=" + defaultPlugins);
-        str.append('}');
-        
-        return (str.toString());
-    }
-    
-    public boolean equals(Object pOther) {
-        if (pOther instanceof WebsiteData) {
-            WebsiteData lTest = (WebsiteData) pOther;
-            boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
-            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
-            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
-            lEquals = PojoUtil.equals(lEquals, this.getCreator(), lTest.getCreator());
-            lEquals = PojoUtil.equals(lEquals, this.getDefaultPageId(), lTest.getDefaultPageId());
-            lEquals = PojoUtil.equals(lEquals, this.getWeblogDayPageId(), lTest.getWeblogDayPageId());
-            lEquals = PojoUtil.equals(lEquals, this.getEnableBloggerApi(), lTest.getEnableBloggerApi());
-            lEquals = PojoUtil.equals(lEquals, this.getBloggerCategory(), lTest.getBloggerCategory());
-            lEquals = PojoUtil.equals(lEquals, this.getDefaultCategory(), lTest.getDefaultCategory());
-            lEquals = PojoUtil.equals(lEquals, this.getEditorPage(), lTest.getEditorPage());
-            lEquals = PojoUtil.equals(lEquals, this.getBlacklist(), lTest.getBlacklist());
-            lEquals = PojoUtil.equals(lEquals, this.getAllowComments(), lTest.getAllowComments());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailComments(), lTest.getEmailComments());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailAddress(), lTest.getEmailAddress());
-            lEquals = PojoUtil.equals(lEquals, this.getEmailFromAddress(), lTest.getEmailFromAddress());
-            lEquals = PojoUtil.equals(lEquals, this.getEditorTheme(), lTest.getEditorTheme());
-            lEquals = PojoUtil.equals(lEquals, this.getLocale(), lTest.getLocale());
-            lEquals = PojoUtil.equals(lEquals, this.getTimeZone(), lTest.getTimeZone());
-            lEquals = PojoUtil.equals(lEquals, this.getDefaultPlugins(), lTest.getDefaultPlugins());
-            return lEquals;
-        } else {
-            return false;
-        }
-    }
-    
-    public int hashCode() {
-        int result = 17;
-        result = PojoUtil.addHashCode(result, this.id);
-        result = PojoUtil.addHashCode(result, this.name);
-        result = PojoUtil.addHashCode(result, this.description);
-        result = PojoUtil.addHashCode(result, this.creator);
-        result = PojoUtil.addHashCode(result, this.defaultPageId);
-        result = PojoUtil.addHashCode(result, this.weblogDayPageId);
-        result = PojoUtil.addHashCode(result, this.enableBloggerApi);
-        //result = PojoUtil.addHashCode(result, this.bloggerCategory);
-        //result = PojoUtil.addHashCode(result, this.defaultCategory);
-        result = PojoUtil.addHashCode(result, this.editorPage);
-        result = PojoUtil.addHashCode(result, this.blacklist);
-        result = PojoUtil.addHashCode(result, this.allowComments);
-        result = PojoUtil.addHashCode(result, this.emailComments);
-        result = PojoUtil.addHashCode(result, this.emailAddress);
-        result = PojoUtil.addHashCode(result, this.emailFromAddress);
-        result = PojoUtil.addHashCode(result, this.editorTheme);
-        result = PojoUtil.addHashCode(result, this.locale);
-        result = PojoUtil.addHashCode(result, this.timeZone);
-        result = PojoUtil.addHashCode(result, this.defaultPlugins);
-        
-        return result;
-    }
     
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
-        WebsiteData other = (WebsiteData)otherData;
+    public void setData(WebsiteData other) {
         
         this.id = other.getId();
         this.name = other.getName();
@@ -1002,7 +973,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      *
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.property column="lastmodified" not-null="false"
+     * @hibernate.property column="lastmodified" not-null="true"
      */
     public Date getLastModified() {
         return lastModified;
@@ -1011,6 +982,415 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+  
+    
+    /**
+     * Is multi-language blog support enabled for this weblog?
+     *
+     * If false then urls with various locale restrictions should fail.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="enablemultilang" not-null="true"
+     */
+    public boolean isEnableMultiLang() {
+        return enableMultiLang;
+    }
+
+    public void setEnableMultiLang(boolean enableMultiLang) {
+        this.enableMultiLang = enableMultiLang;
+    }
+    
+    
+    /**
+     * Should the default weblog view show entries from all languages?
+     *
+     * If false then the default weblog view only shows entry from the
+     * default locale chosen for this weblog.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="showalllangs" not-null="true"
+     */
+    public boolean isShowAllLangs() {
+        return showAllLangs;
+    }
+
+    public void setShowAllLangs(boolean showAllLangs) {
+        this.showAllLangs = showAllLangs;
+    }
+    
+    
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getURL() {
+        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
+        String relPath = RollerRuntimeConfig.getRelativeContextURL();
+        return relPath + "/" + getHandle();
+        //return URLUtilities.getWeblogURL(this, null, false);
+    }
+    public void setURL(String url) {
+        // noop
+    }
+    
+    
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getAbsoluteURL() {
+        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
+        String relPath = RollerRuntimeConfig.getAbsoluteContextURL();
+        return relPath + "/" + getHandle();
+        //return URLUtilities.getWeblogURL(this, null, true);
+    }
+    public void setAbsoluteURL(String url) {
+        // noop
+    }
+    
+    
+    /**
+     * Comma-separated list of additional page models to be created when this
+     * weblog is rendered.
+     *
+     * @ejb:persistent-field
+     * @hibernate.property column="pagemodels" not-null="false"
+     */
+    public String getPageModels() {
+        return pageModels;
+    }
+    public void setPageModels(String pageModels) {
+        this.pageModels = pageModels;
+    }
+
+    
+    /**
+     * Get initialized plugins for use during rendering process.
+     */
+    public Map getInitializedPlugins() {
+        if (initializedPlugins == null) {
+            try {
+                Roller roller = RollerFactory.getRoller();
+                PluginManager ppmgr = roller.getPagePluginManager();
+                initializedPlugins = ppmgr.getWeblogEntryPlugins(this); 
+            } catch (Exception e) {
+                this.log.error("ERROR: initializing plugins");
+            }
+        }
+        return initializedPlugins;
+    }
+    
+    /** 
+     * Get weblog entry specified by anchor or null if no such entry exists.
+     * @param anchor Weblog entry anchor
+     * @return Weblog entry specified by anchor
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public WeblogEntryData getWeblogEntry(String anchor) {
+        WeblogEntryData entry = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            entry = wmgr.getWeblogEntryByAnchor(this, anchor);
+        } catch (RollerException e) {
+            this.log.error("ERROR: getting entry by anchor");
+        }
+        return entry;
+    }
+    
+    /**
+     * Returns categories under the default category of the weblog.
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public Set getWeblogCategories() {
+        Set ret = new HashSet();
+//        try {           
+            WeblogCategoryData category = this.getDefaultCategory();
+            ret = category.getWeblogCategories();
+//        } catch (RollerException e) {
+//            log.error("ERROR: fetching categories", e);
+//        }
+        return ret;
+    }
+    
+    
+    /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public Set getWeblogCategories(String categoryPath) {
+        Set ret = new HashSet();
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();            
+            WeblogCategoryData category = null;
+            if (categoryPath != null && !categoryPath.equals("nil")) {
+                category = wmgr.getWeblogCategoryByPath(this, categoryPath);
+            } else {
+                category = this.getDefaultCategory();
+            }
+            ret = category.getWeblogCategories();
+        } catch (RollerException e) {
+            log.error("ERROR: fetching categories for path: " + categoryPath, e);
+        }
+        return ret;
+    }
+
+    
+    /**
+     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public WeblogCategoryData getWeblogCategory(String categoryPath) {
+        WeblogCategoryData category = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            if (categoryPath != null && !categoryPath.equals("nil")) {
+                category = wmgr.getWeblogCategoryByPath(this, categoryPath);
+            } else {
+                category = this.getDefaultCategory();
+            }
+        } catch (RollerException e) {
+            log.error("ERROR: fetching category at path: " + categoryPath, e);
+        }
+        return category;
+    }
+    
+    
+    /**
+     * Get up to 100 most recent published entries in weblog.
+     * @param cat Category path or null for no category restriction
+     * @param length Max entries to return (1-100)
+     * @return List of weblog entry objects.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryData"
+     */
+    public List getRecentWeblogEntries(String cat, int length) {  
+        if (cat != null && "nil".equals(cat)) cat = null;
+        if (length > 100) length = 100;
+        List recentEntries = new ArrayList();
+        if (length < 1) return recentEntries;
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            recentEntries = wmgr.getWeblogEntries(
+                    this, 
+                    null,       // user
+                    null,       // startDate
+                    null,       // endDate
+                    cat,        // cat or null
+                    null, 
+                    WeblogEntryData.PUBLISHED, 
+                    "pubTime",  // sortby
+                    null,
+                    null, 
+                    0,
+                    length); 
+        } catch (RollerException e) {
+            log.error("ERROR: getting recent entries", e);
+        }
+        return recentEntries;
+    }
+    
+    /**
+     * Get up to 100 most recent published entries in weblog.
+     * @param cat Category path or null for no category restriction
+     * @param length Max entries to return (1-100)
+     * @return List of weblog entry objects.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryData"
+     */
+    public List getRecentWeblogEntriesByTag(String tag, int length) {  
+        if (tag != null && "nil".equals(tag)) tag = null;
+        if (length > 100) length = 100;
+        List recentEntries = new ArrayList();
+        List tags = new ArrayList();
+        if (tag != null) {
+            tags.add(tag);
+        }
+        if (length < 1) return recentEntries;
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            recentEntries = wmgr.getWeblogEntries(
+                    this, 
+                    null,       // user
+                    null,       // startDate
+                    null,       // endDate
+                    null,       // cat or null
+                    tags,       //  
+                    WeblogEntryData.PUBLISHED, 
+                    "pubTime",  // sortby
+                    null,
+                    null, 
+                    0,
+                    length); 
+        } catch (RollerException e) {
+            log.error("ERROR: getting recent entries", e);
+        }
+        return recentEntries;
+    }   
+    
+    /**
+     * Get up to 100 most recent approved and non-spam comments in weblog.
+     * @param length Max entries to return (1-100)
+     * @return List of comment objects.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.CommentData"
+     */
+    public List getRecentComments(int length) {   
+        if (length > 100) length = 100;
+        List recentComments = new ArrayList();
+        if (length < 1) return recentComments;
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            recentComments = wmgr.getComments(
+                    this,
+                    null,          // weblog entry
+                    null,          // search String
+                    null,          // startDate
+                    null,          // endDate
+                    CommentData.APPROVED, // approved comments only
+                    true,          // we want reverse chrono order
+                    0,             // offset
+                    length);       // length
+        } catch (RollerException e) {
+            log.error("ERROR: getting recent comments", e);
+        }
+        return recentComments;
+    }
+
+    
+    /**
+     * Get bookmark folder by name.
+     * @param folderName Name or path of bookmark folder to be returned (null for root)
+     * @return Folder object requested.
+     *
+     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.FolderData"
+     */
+    public FolderData getBookmarkFolder(String folderName) {
+        FolderData ret = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            BookmarkManager bmgr = roller.getBookmarkManager();
+            if (folderName == null || folderName.equals("nil") || folderName.trim().equals("/")) {
+                return bmgr.getRootFolder(this);
+            } else {
+                return bmgr.getFolder(this, folderName);
+            }
+        } catch (RollerException re) {
+            log.error("ERROR: fetching folder for weblog", re);
+        }
+        return ret;
+    }
+
+    
+    /** 
+     * Return collection of referrers for current day.
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.RefererData"
+     */
+    public List getTodaysReferrers() {
+        List referers = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            RefererManager rmgr = roller.getRefererManager();
+            return rmgr.getTodaysReferers(this);
+            
+        } catch (RollerException e) {
+            log.error("PageModel getTodaysReferers()", e);
+        }
+        return (referers == null ? Collections.EMPTY_LIST : referers);        
+    }
+    
+    /** No-op method to please XDoclet */
+    public void setTodaysReferrers(List ignored) {}
+    
+    /**
+     * Get number of hits counted today.
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public int getTodaysHits() {
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            HitCountData hitCount = mgr.getHitCountByWeblog(this);
+            
+            return (hitCount != null) ? hitCount.getDailyHits() : 0;
+            
+        } catch (RollerException e) {
+            log.error("Error getting weblog hit count", e);
+        }
+        return 0;
+    }
+    
+    /** No-op method to please XDoclet */
+    public void setTodaysHits(int ignored) {}
+
+        
+    /**
+     * Get a list of TagStats objects for the most popular tags
+     *
+     * @param sinceDays Number of days into past (or -1 for all days)
+     * @param length    Max number of tags to return.
+     * @return          Collection of WeblogEntryTag objects
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public List getPopularTags(int sinceDays, int length) {
+        List results = new ArrayList();
+        Date startDate = null;
+        if(sinceDays > 0) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DATE, -1 * sinceDays);        
+            startDate = cal.getTime();     
+        }        
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getPopularTags(this, startDate, length);
+        } catch (Exception e) {
+            log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
+        }
+        return results;
+    }      
+
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public long getCommentCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            count = mgr.getCommentCount(this);            
+        } catch (RollerException e) {
+            log.error("Error getting comment count for weblog " + this.getName(), e);
+        }
+        return count;
+    }
+    
+    /** No-op method to please XDoclet */
+    public void setCommentCount(int ignored) {}
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public long getEntryCount() {
+        long count = 0;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager mgr = roller.getWeblogManager();
+            count = mgr.getEntryCount(this);            
+        } catch (RollerException e) {
+            log.error("Error getting entry count for weblog " + this.getName(), e);
+        }
+        return count;
+    }
+
+    /** No-op method to please XDoclet */
+    public void setEntryCount(int ignored) {}
     
 }
+
+
+
+
 

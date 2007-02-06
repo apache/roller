@@ -71,9 +71,13 @@ create table webpage (
     name            varchar(255)  not null,
     description     varchar(255),
     link            varchar(255),
-    websiteid       varchar(48)  not null,
+    websiteid       varchar(48) not null,
     template        $TEXT_SQL_TYPE not null,
-    updatetime      $TIMESTAMP_SQL_TYPE     not null
+    updatetime      $TIMESTAMP_SQL_TYPE not null,
+    hidden          $BOOLEAN_SQL_TYPE_FALSE not null,
+    navbar          $BOOLEAN_SQL_TYPE_FALSE not null,
+    templatelang    varchar(20) not null,
+    decorator       varchar(255) default null
 );
 create index wp_name_idx on webpage( name$!INDEXSIZE );
 create index wp_link_idx on webpage( link$!INDEXSIZE );
@@ -102,13 +106,16 @@ create table website (
     defaultplugins    varchar(255),
     isenabled         $BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $BOOLEAN_SQL_TYPE_TRUE not null,
-    datecreated      $TIMESTAMP_SQL_TYPE not null,
+    datecreated          $TIMESTAMP_SQL_TYPE not null,
     blacklist            $TEXT_SQL_TYPE,
     defaultallowcomments $BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays   integer default 7 not null,
     commentmod           $BOOLEAN_SQL_TYPE_FALSE not null,
-    displaycnt        integer default 15 not null,
-    lastmodified       $TIMESTAMP_SQL_TYPE
+    displaycnt           integer default 15 not null,
+    lastmodified         $TIMESTAMP_SQL_TYPE,
+    pagemodels           varchar(255) default null,
+    enablemultilang   $BOOLEAN_SQL_TYPE_FALSE not null,
+    showalllangs      $BOOLEAN_SQL_TYPE_TRUE not null
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
@@ -122,9 +129,12 @@ create table folder (
     name             varchar(255) not null,
     description      varchar(255),
     websiteid        varchar(48) not null,
-    parentid        varchar(48)
+    parentid         varchar(48),
+    path             varchar(255) 
 );
 create index fo_websiteid_idx on folder( websiteid );
+create index fo_parentid_idx on folder( parentid );
+create index fo_path_idx on folder( path );
 
 create table folderassoc (
     id               varchar(48) not null primary key,
@@ -153,11 +163,14 @@ create table weblogcategory (
     id               varchar(48)  not null primary key,
     name             varchar(255) not null,
     description      varchar(255),
-    websiteid        varchar(48)  not null,
-    image            varchar(255)
+    websiteid        varchar(48) not null,
+    image            varchar(255),
+    parentid         varchar(48),
+    path             varchar(255)
 );
 create index wc_websiteid_idx on weblogcategory( websiteid );
--- alter table weblogcategory add unique category_nameparentid_uq (parentid, name(20));
+create index ws_parentid_idx on weblogcategory( parentid );
+create index ws_path_idx on weblogcategory( path );
 
 create table weblogcategoryassoc (
     id               varchar(48) not null primary key,
@@ -190,15 +203,42 @@ create table weblogentry (
     status          varchar(20) not null,
     summary         $TEXT_SQL_TYPE default null, 
     content_type    varchar(48) default null, 
-    content_src     varchar(512) default null
+    content_src     varchar(255) default null
 );
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );
-create index we_pubtime_idx on weblogentry( pubtime,publishentry,websiteid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
-create index we_pubentry_idx on weblogentry(publishentry);
 create index we_userid_idx on weblogentry(userid);
 create index we_status_idx on weblogentry(status);
+create index we_locale_idx on weblogentry(locale);
+create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
+create index we_combo2_idx on weblogentry(websiteid, pubtime, status);
+
+create table roller_weblogentrytag (
+    id              varchar(48)   not null primary key,
+    entryid         varchar(48)   not null,
+    websiteid       varchar(48)   not null,    
+    userid		    varchar(48)   not null,
+    name            varchar(255)  not null,
+    time            $TIMESTAMP_SQL_TYPE 	not null
+);
+
+create index wet_entryid_idx on roller_weblogentrytag( entryid );
+create index wet_websiteid_idx on roller_weblogentrytag( websiteid );
+create index wet_userid_idx on roller_weblogentrytag( userid );
+create index wet_name_idx on roller_weblogentrytag( name );
+
+create table roller_weblogentrytagagg (
+    id              varchar(48)   not null primary key,
+    websiteid       varchar(48) ,    
+    name            varchar(255)  not null,
+    total           integer		  not null,
+    lastused        $TIMESTAMP_SQL_TYPE 	not null
+);
+
+create index weta_websiteid_idx on roller_weblogentrytagagg( websiteid );
+create index weta_name_idx on roller_weblogentrytagagg( name );
+create index weta_lastused_idx on roller_weblogentrytagagg( lastused );
 
 create table newsfeed (
     id              varchar(48) not null primary key,
@@ -211,22 +251,24 @@ create index nf_websiteid_idx on newsfeed( websiteid );
 
 
 create table roller_comment (
-    id      varchar(48) not null primary key,
-    entryid varchar(48) not null,
-    name    varchar(255),
-    email   varchar(255),
-    url     varchar(255),
-    content $TEXT_SQL_TYPE,
-    posttime $TIMESTAMP_SQL_TYPE   not null,
-    spam    $BOOLEAN_SQL_TYPE_FALSE not null,
-    notify  $BOOLEAN_SQL_TYPE_FALSE not null,
+    id         varchar(48) not null primary key,
+    entryid    varchar(48) not null,
+    name       varchar(255),
+    email      varchar(255),
+    url        varchar(255),
+    content    $TEXT_SQL_TYPE,
+    posttime   $TIMESTAMP_SQL_TYPE   not null,
+    spam       $BOOLEAN_SQL_TYPE_FALSE not null,
+    notify     $BOOLEAN_SQL_TYPE_FALSE not null,
     remotehost varchar(128),
-    pending  $BOOLEAN_SQL_TYPE_TRUE not null,
-    approved  $BOOLEAN_SQL_TYPE_FALSE not null
+    pending    $BOOLEAN_SQL_TYPE_TRUE not null,
+    approved   $BOOLEAN_SQL_TYPE_FALSE not null,
+    referrer   varchar(255),
+    useragent  varchar(255),
+    status     varchar(20) not null
 );
 create index co_entryid_idx on roller_comment( entryid );
-create index co_pending_idx on roller_comment( pending );
-create index co_approved_idx on roller_comment( approved );
+create index co_status_idx on roller_comment( status );
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
@@ -346,6 +388,26 @@ create table roller_properties (
     value    $TEXT_SQL_TYPE
 );
 
+create table roller_tasklock (
+    id              varchar(48)   not null primary key,
+    name            varchar(255)  not null,
+    islocked        $BOOLEAN_SQL_TYPE_FALSE,
+    timeacquired    $TIMESTAMP_SQL_TYPE_NULL,
+    timeleased	    integer,
+    lastrun         $TIMESTAMP_SQL_TYPE_NULL,
+    client          varchar(255)
+);
+alter table roller_tasklock add constraint rtl_name_uq unique ( name$!INDEXSIZE );
+create index rtl_taskname_idx on roller_tasklock( name );
+
+create table roller_hitcounts (
+    id              varchar(48) not null primary key,
+    websiteid       varchar(48) not null,
+    dailyhits	    integer
+);
+create index rhc_websiteid_idx on roller_hitcounts( websiteid );
+create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
+
 -- Entry attribute: metadata for weblog entries
 create table entryattribute (
     id       varchar(48) not null primary key,
@@ -357,12 +419,11 @@ create index ea_entryid_idx on entryattribute( entryid );
 alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!INDEXSIZE );
 
 create table rag_group_subscription (
-    id               varchar(48) not null primary key,
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
 );
-create index raggs_gid_idx on rag_group_subscription(group_id$!INDEXSIZE); 
-create index raggs_sid_idx on rag_group_subscription(subscription_id$!INDEXSIZE); 
+create index raggs_gid_idx on rag_group_subscription(group_id); 
+create index raggs_sid_idx on rag_group_subscription(subscription_id); 
 
 create table rag_config (
     id               varchar(48) not null primary key,
@@ -418,19 +479,25 @@ create table rag_entry (
     published        $TIMESTAMP_SQL_TYPE not null,
     updated          $TIMESTAMP_SQL_TYPE    
 );
-create index rage_sid_idx on rag_entry(subscription_id$!INDEXSIZE); 
+create index rage_sid_idx on rag_entry(subscription_id); 
 
 
 -- *****************************************************
 -- Now add the foreign key relationships
 
--- user, role and website
+-- user, role, website, and permissions
 
 alter table website add constraint ws_userid_fk
     foreign key ( userid ) references rolleruser ( id ) $!ADDL_FK_PARAMS ;
 
 alter table userrole add constraint ur_userid_fk
     foreign key ( userid ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
+
+alter table roller_user_permissions add constraint up_userid_fk
+    foreign key ( user_id ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
+
+alter table roller_user_permissions add constraint up_websiteid_fk
+    foreign key ( website_id ) references website( id ) $!ADDL_FK_PARAMS ;
 
 -- page, entry, category, comment
 

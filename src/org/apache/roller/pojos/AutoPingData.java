@@ -19,31 +19,32 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 
 /**
  * Automatic ping configuration.  An instance of this class relates a website and ping target; it indicates that the specified
  * ping target should be pinged when the corresponding website is changed.  Pinging can be restricted to changes to
  * specific categories on the website by instances of the {@link PingCategoryRestrictionData} object.  In the absence of
  * any category restrictions, the ping target is pinged whenever the corresponding website changes.
- * 
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="AutoPingData"
- * @hibernate.class lazy="false" table="autoping"
+ * @hibernate.class lazy="true" table="autoping"
  * @hibernate.cache usage="read-write"
  */
-public class AutoPingData extends PersistentObject implements Serializable
-{
+public class AutoPingData implements Serializable {
     private String id = null;
     private PingTargetData pingTarget = null;
     private WebsiteData website = null;
 
     public static final long serialVersionUID = -9105985454111986435L;
-    
+
     /**
      * Default constructor.  Leaves all fields null.  Required for bean compliance.
      */
-    public AutoPingData()
-    {
+    public AutoPingData() {
     }
 
     /**
@@ -53,20 +54,16 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @param pingtarget ping target that should be pinged
      * @param website    website to which this configuration applies
      */
-    public AutoPingData(String id, PingTargetData pingtarget, WebsiteData website)
-    {
+    public AutoPingData(String id, PingTargetData pingtarget, WebsiteData website) {
         this.id = id;
         this.website = website;
         this.pingTarget = pingtarget;
     }
 
     /**
-     * Setter needed by RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject vo)
-    {
-        AutoPingData other = (AutoPingData)vo;
-        
+    public void setData(AutoPingData other) {
         id = other.getId();
         website = other.getWebsite();
         pingTarget = other.getPingTarget();
@@ -79,8 +76,7 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -90,8 +86,9 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @param id
      * @ejb:persistent-field
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -103,8 +100,7 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public WebsiteData getWebsite()
-    {
+    public WebsiteData getWebsite() {
         return website;
     }
 
@@ -115,8 +111,7 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @param website the website.
      * @ejb:persistent-field
      */
-    public void setWebsite(WebsiteData website)
-    {
+    public void setWebsite(WebsiteData website) {
         this.website = website;
     }
 
@@ -127,8 +122,7 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.many-to-one column="pingtargetid" cascade="none" not-null="false"
      */
-    public PingTargetData getPingTarget()
-    {
+    public PingTargetData getPingTarget() {
         return pingTarget;
     }
 
@@ -138,47 +132,32 @@ public class AutoPingData extends PersistentObject implements Serializable
      * @param pingtarget the target to be pinged.
      * @ejb:persistent-field
      */
-    public void setPingTarget(PingTargetData pingtarget)
-    {
+    public void setPingTarget(PingTargetData pingtarget) {
         this.pingTarget = pingtarget;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (!(o instanceof AutoPingData)) return false;
+    //------------------------------------------------------- Good citizenship
 
-        final AutoPingData autoPingData = (AutoPingData)o;
-
-        if (id != null ? !id.equals(autoPingData.getId()) : autoPingData.getId() != null) return false;
-        if (pingTarget != null ? !pingTarget.equals(autoPingData.getPingTarget()) : autoPingData.getPingTarget() != null) return false;
-        if (website != null ? !website.equals(autoPingData.getWebsite()) : autoPingData.getWebsite() != null) return false;
-
-        return true;
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append("}");
+        return buf.toString();
     }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode()
-    {
-        return (id != null ? id.hashCode() : 0);
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof AutoPingData != true) return false;
+        AutoPingData o = (AutoPingData)other;
+        return new EqualsBuilder()
+            .append(getId(), o.getId())
+            .append(getPingTarget(), o.getPingTarget()) 
+            .append(getWebsite(), o.getWebsite()) 
+            .isEquals();
     }
-
-    /**
-     * Generate a string form of the object appropriate for logging or debugging.
-     * @return a string form of the object appropriate for logging or debugging.
-     * @see java.lang.Object#toString()
-     */
-    public String toString()
-    {
-        return "AutoPingData{" +
-            "id='" + id + "'" +
-            ", pingTarget=" + pingTarget +
-            ", website= " + (website == null ? "null" : "{id='" + website.getId() +"'} ") +
-            "}";
+    
+    public int hashCode() { 
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 }

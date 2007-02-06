@@ -1,0 +1,69 @@
+#** 
+310-to-320-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- add new parentid column to weblogcategory table
+#addColumnNull("weblogcategory" "parentid" "varchar(48)")
+create index ws_parentid_idx on weblogcategory( parentid );
+
+-- add new path column to weblogcategory table
+#addColumnNull("weblogcategory" "path" "varchar(255)")
+create index ws_path_idx on weblogcategory( path );
+
+-- need to add this index for existing folder.parentid
+create index fo_parentid_idx on folder( parentid );
+
+-- add new path column to folder table
+#addColumnNull("folder" "path" "varchar(255)")
+create index fo_path_idx on folder( path );
+
+-- add new fields to comment table to support CommentValidators
+#addColumnNull("roller_comment" "referrer" "varchar(255)")
+#addColumnNull("roller_comment" "useragent" "varchar(255)")
+
+-- add new status field to comment table to simplify queries
+#addColumnNotNull("roller_comment" "status" "varchar(20)" "'APPROVED'")
+
+-- new status column needs an index
+create index co_status_idx on roller_comment(status);
+
+-- update existing data to use new status column
+update roller_comment set status = 'APPROVED', posttime=posttime where approved=1;
+update roller_comment set status = 'PENDING', posttime=posttime where pending=1;
+update roller_comment set status = 'SPAM', posttime=posttime where spam=1;
+update roller_comment set status = 'DISAPPROVED', posttime=posttime where approved=0 and spam=0 and pending=0;
+
+-- add new status option 'SCHEDULED' for future published entries
+update weblogentry set status = 'SCHEDULED', pubtime=pubtime, updatetime=updatetime where pubtime > now();
+
+-- add new client column to roller_tasklock table
+#addColumnNull("roller_tasklock" "client" "varchar(255)")
+
+-- some various indexes to improve performance
+create index rhc_dailyhits_idx on roller_hitcounts( dailyhits );
+create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
+create index we_combo2_idx on weblogentry(websiteid, pubtime, status);
+create index co_combo1_idx on roller_comment(status, posttime);
+
+-- remove old indexes that are no longer of value
+drop index we_pubtime_idx on weblogentry;
+drop index we_pubentry_idx on weblogentry;
+drop index co_pending_idx on roller_comment;
+drop index co_approved_idx on roller_comment;
+
+-- fix wacky indexs which ended up with a size constraint
+drop index rage_sid_idx on rag_entry;
+create index rage_sid_idx on rag_entry(subscription_id);
+drop index raggs_gid_idx on rag_group_subscription;
+create index raggs_gid_idx on rag_group_subscription(group_id);
+drop index raggs_sid_idx on rag_group_subscription;
+create index raggs_sid_idx on rag_group_subscription(subscription_id);
+
+-- some missing foreign key constraints
+alter table roller_user_permissions add constraint up_userid_fk
+    foreign key ( user_id ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
+
+alter table roller_user_permissions add constraint up_websiteid_fk
+    foreign key ( website_id ) references website( id ) $!ADDL_FK_PARAMS ;

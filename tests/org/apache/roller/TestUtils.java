@@ -23,13 +23,17 @@
 
 package org.apache.roller;
 
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -80,8 +84,11 @@ public final class TestUtils {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         mgr.addUser(testUser);
         
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
         // query for the user to make sure we return the persisted object
-        UserData user = mgr.getUserByUsername(username);
+        UserData user = mgr.getUserByUserName(username);
         
         if(user == null)
             throw new RollerException("error inserting new user");
@@ -101,6 +108,9 @@ public final class TestUtils {
         
         // remove the user
         mgr.removeUser(user);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -127,6 +137,9 @@ public final class TestUtils {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         mgr.addWebsite(testWeblog);
         
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
         // query for the new weblog and return it
         WebsiteData weblog = mgr.getWebsiteByHandle(handle);
         
@@ -148,8 +161,76 @@ public final class TestUtils {
         
         // remove the weblog
         mgr.removeWebsite(weblog);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
+    
+    /**
+     * Convenience method for removing a permission.
+     */
+    public static void teardownPermissions(String id) throws Exception {
+        
+        // lookup the permissions
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        PermissionsData perm = mgr.getPermissions(id);
+        
+        // remove the permissions
+        mgr.removePermissions(perm);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
  
+    
+    /**
+     * Convenience method for creating a weblog category.
+     */
+    public static WeblogCategoryData setupWeblogCategory(WebsiteData weblog,
+                                                         String name,
+                                                         WeblogCategoryData parent)
+            throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogCategoryData root = mgr.getRootWeblogCategory(weblog);
+        
+        WeblogCategoryData catParent = root;
+        if(parent != null) {
+            catParent = parent;
+        }
+        WeblogCategoryData testCat = new WeblogCategoryData(weblog, catParent, name, null, null);
+        mgr.saveWeblogCategory(testCat);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
+        // query for object
+        WeblogCategoryData cat = mgr.getWeblogCategory(testCat.getId());
+        
+        if(cat == null)
+            throw new RollerException("error setting up weblog category");
+        
+        return cat;
+    }
+    
+    
+    /**
+     * Convenience method for removing a weblog category.
+     */
+    public static void teardownWeblogCategory(String id) throws Exception {
+        
+        // lookup the cat
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogCategoryData cat = mgr.getWeblogCategory(id);
+        
+        // remove the cat
+        mgr.removeWeblogCategory(cat);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
     
     /**
      * Convenience method for creating a weblog entry.
@@ -168,13 +249,16 @@ public final class TestUtils {
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setStatus(WeblogEntryData.PUBLISHED);
-        testEntry.setWebsite(weblog);
-        testEntry.setCreator(user);
+        testEntry.setWebsite(getManagedWebsite(weblog));
+        testEntry.setCreator(getManagedUser(user));
         testEntry.setCategory(cat);
         
         // store entry
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         mgr.saveWeblogEntry(testEntry);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for object
         WeblogEntryData entry = mgr.getWeblogEntry(testEntry.getId());
@@ -197,6 +281,9 @@ public final class TestUtils {
         
         // remove the entry
         mgr.removeWeblogEntry(entry);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -213,13 +300,15 @@ public final class TestUtils {
         testComment.setRemoteHost("foofoo");
         testComment.setContent("this is a test comment");
         testComment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testComment.setWeblogEntry(entry);
-        testComment.setPending(Boolean.FALSE);
-        testComment.setApproved(Boolean.TRUE);
+        testComment.setWeblogEntry(getManagedWeblogEntry(entry));
+        testComment.setStatus(CommentData.APPROVED);
         
         // store testComment
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         mgr.saveComment(testComment);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for object
         CommentData comment = mgr.getComment(testComment.getId());
@@ -242,6 +331,9 @@ public final class TestUtils {
         
         // remove the comment
         mgr.removeComment(comment);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -258,6 +350,9 @@ public final class TestUtils {
         // store ping
         PingTargetManager pingMgr = RollerFactory.getRoller().getPingTargetManager();
         pingMgr.savePingTarget(testPing);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for it
         PingTargetData ping = pingMgr.getPingTarget(testPing.getId());
@@ -280,6 +375,9 @@ public final class TestUtils {
         
         // remove the ping
         pingMgr.removePingTarget(ping);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -292,8 +390,11 @@ public final class TestUtils {
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
         
         // store auto ping
-        AutoPingData autoPing = new AutoPingData(null, ping, weblog);
+        AutoPingData autoPing = new AutoPingData(null, ping, getManagedWebsite(weblog) );
         mgr.saveAutoPing(autoPing);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for it
         autoPing = mgr.getAutoPing(autoPing.getId());
@@ -316,6 +417,126 @@ public final class TestUtils {
         
         // remove the auto ping
         mgr.removeAutoPing(autoPing);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
+    
+    /**
+     * Convenience method for creating a hit count.
+     */
+    public static HitCountData setupHitCount(WebsiteData weblog, int amount)
+            throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // store
+        HitCountData testCount = new HitCountData();
+        testCount.setWeblog(getManagedWebsite(weblog));
+        testCount.setDailyHits(amount);
+        mgr.saveHitCount(testCount);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
+        // query for it
+        testCount = mgr.getHitCount(testCount.getId());
+        
+        if(testCount == null)
+            throw new RollerException("error setting up hit count");
+        
+        return testCount;
+    }
+    
+    
+    /**
+     * Convenience method for removing a hit count.
+     */
+    public static void teardownHitCount(String id) throws Exception {
+        
+        // query for it
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        HitCountData testCount = mgr.getHitCount(id);
+        
+        // remove
+        mgr.removeHitCount(testCount);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
+    
+    /**
+     * Convenience method for creating a weblog folder.
+     */
+    public static FolderData setupFolder(WebsiteData weblog,
+                                         String name,
+                                         FolderData parent)
+            throws Exception {
+        
+        BookmarkManager mgr = RollerFactory.getRoller().getBookmarkManager();
+        FolderData root = mgr.getRootFolder(weblog);
+        
+        FolderData folderParent = root;
+        if(parent != null) {
+            folderParent = parent;
+        }
+        FolderData testFolder = new FolderData(folderParent, name, null, weblog);
+        mgr.saveFolder(testFolder);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
+        // query for object
+        FolderData cat = mgr.getFolder(testFolder.getId());
+        
+        if(testFolder == null)
+            throw new RollerException("error setting up weblog folder");
+        
+        return testFolder;
+    }
+    
+    
+    /**
+     * Convenience method for removing a weblog folder.
+     */
+    public static void teardownFolder(String id) throws Exception {
+        
+        // lookup the folder
+        BookmarkManager mgr = RollerFactory.getRoller().getBookmarkManager();
+        FolderData folder = mgr.getFolder(id);
+        
+        // remove the cat
+        mgr.removeFolder(folder);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
+    }
+    
+    
+    /**
+     * Convenience method that returns managed copy of given user.
+     */
+    public static UserData getManagedUser(UserData user) throws RollerException {
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        return mgr.getUser(user.getId());
+    }
+    
+    /**
+     * Convenience method that returns managed copy of given website.
+     */
+    public static WebsiteData getManagedWebsite(WebsiteData website) throws RollerException {
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        return mgr.getWebsite(website.getId());
+    }
+    
+    /**
+     * Convenience method that returns managed copy of given WeblogEntry.
+     */
+    public static WeblogEntryData getManagedWeblogEntry(WeblogEntryData weblogEntry) throws RollerException {
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        return mgr.getWeblogEntry(weblogEntry.getId());
     }
     
 }

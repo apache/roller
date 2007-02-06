@@ -42,9 +42,9 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
@@ -52,12 +52,13 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarksForm;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Actions that are initiated from the BookmarksForm.
  *
- * @struts.action name="bookmarksForm" path="/editor/bookmarks" parameter="method"
+ * @struts.action name="bookmarksForm" path="/roller-ui/authoring/bookmarks" parameter="method"
  * @struts.action-forward name="BookmarksForm" path=".BookmarksForm"
  *
  * @author Dave Johnson
@@ -207,8 +208,7 @@ public class BookmarksAction extends DispatchAction
                         if (    !fd.getId().equals(parent.getId())
                              && !parent.descendentOf(fd))
                         {
-                            fd.setParent(parent);
-                            bmgr.saveFolder(fd);
+                            bmgr.moveFolder(fd, parent);
                         }
                         else 
                         {
@@ -260,16 +260,7 @@ public class BookmarksAction extends DispatchAction
         public int compare(Object o1, Object o2) {
             FolderData f1 = (FolderData)o1;
             FolderData f2 = (FolderData)o2;
-            int res = 0;
-            try
-            {
-                res = f1.getPath().compareTo(f2.getPath());
-            }
-            catch (RollerException e)
-            {
-                mLogger.error("ERROR: sorting folders");
-            }
-            return res;
+            return f1.getPath().compareTo(f2.getPath());
         }
     }
     
@@ -295,10 +286,10 @@ public class BookmarksAction extends DispatchAction
 
             // Find folderid wherever it may be
             String folderId = (String)
-                request.getAttribute(RollerRequest.FOLDERID_KEY);
+                request.getAttribute(RequestConstants.FOLDER_ID);
             if (null == folderId)
             {
-                folderId = request.getParameter(RollerRequest.FOLDERID_KEY);
+                folderId = request.getParameter(RequestConstants.FOLDER_ID);
             }
             if (null == folderId)
             {
@@ -329,7 +320,7 @@ public class BookmarksAction extends DispatchAction
                     parent = parent.getParent();
                 }
                 request.setAttribute(
-                    RollerRequest.PARENTID_KEY, folder.getParent().getId());
+                    RequestConstants.PARENT_ID, folder.getParent().getId());
             }
 
             // Build list of all folders, except for current one, sorted by path.

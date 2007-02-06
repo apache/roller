@@ -18,8 +18,8 @@
 package org.apache.roller.webservices.adminapi;
 
 import java.io.IOException;
-import org.apache.roller.webservices.adminapi.sdk.MissingElementException;
 import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
+import org.apache.roller.webservices.adminapi.sdk.UserEntry;
 import org.apache.roller.webservices.adminapi.sdk.UserEntrySet;
 import org.jdom.JDOMException;
 
@@ -27,7 +27,7 @@ import org.jdom.JDOMException;
  *
  * @author jtb
  */
-public class UserHandlerTest extends AappTest {
+public class UserHandlerTest extends HandlerBaseTest {
     public void testHandler() {
         try {
             //create
@@ -52,7 +52,7 @@ public class UserHandlerTest extends AappTest {
             assertEquals(uesUpdate, updateSampleUserEntrySet(getSampleUserEntrySet()));
             
             //delete
-            UserEntrySet uesDelete = deleteSampleUser();
+            UserEntrySet uesDelete = deleteSampleUser(true);
             assertNotNull(uesDelete);
             assertNotNull(uesCreate.getEntries());
             assertEquals(uesCreate.getEntries().length, 1);
@@ -63,18 +63,35 @@ public class UserHandlerTest extends AappTest {
         } catch (JDOMException je) {
             je.printStackTrace();            
             fail(je.getMessage());
-        } catch (MissingElementException mee) {
-            mee.printStackTrace();            
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             uree.printStackTrace();            
             fail(uree.getMessage());
-        } finally {
-            try {
-                delete(getSampleUserEntry().getHref(), getUser(), getPassword());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
+
+    public void testEnabled() {
+        try {
+            UserEntrySet ues = createSampleUser();
+            UserEntry ue = (UserEntry)ues.getEntries()[0];
+            assertEquals(Boolean.TRUE, ue.getEnabled());
+            
+            ues = updateSampleUser();
+            ue = (UserEntry)ues.getEntries()[0];
+            assertEquals(Boolean.FALSE, ue.getEnabled());
+
+            ues = fetchSampleUser();
+            ue = (UserEntry)ues.getEntries()[0];
+            assertEquals(Boolean.FALSE, ue.getEnabled());
+        } catch (IOException ioe) {
+            fail(ioe.getMessage());
+            ioe.printStackTrace();
+        } catch (JDOMException je) {
+            fail(je.getMessage());
+            je.printStackTrace();
+        } catch (UnexpectedRootElementException uree) {
+            fail(uree.getMessage());
+            uree.printStackTrace();
+        }
+    }    
+    
 }

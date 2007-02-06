@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.pojos</package>
+    <entity metadata-complete="true" name="PermissionsData"
+            class="org.apache.roller.pojos.PermissionsData">
+        <table name="roller_user_permissions"/>
+        <named-query name="PermissionsData.getByWebsiteAndUser">
+            <query>SELECT p FROM PermissionsData p WHERE p.website = ?1 AND p.user = ?2</query>
+        </named-query>
+        <named-query name="PermissionsData.getByUserAndPending">
+            <query>SELECT p FROM PermissionsData p WHERE p.user = ?1 AND p.pending = ?2</query>
+        </named-query>
+        <named-query name="PermissionsData.getByWebsiteAndPending">
+            <query>SELECT p FROM PermissionsData p WHERE p.website = ?1 AND p.pending = ?2</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+            </id>
+            <basic name="permissionMask">
+                <column name="permission_mask" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="pending">
+                <column name="pending" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
+                <join-column name="website_id" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+            <many-to-one name="user" target-entity="org.apache.roller.pojos.UserData">
+                <join-column name="user_id" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

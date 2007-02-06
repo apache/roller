@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# -- ENSURE THESE ARE CORRECT ---
+
+# Directory where Groovy JSR-06 release is installed
+export GROOVY_HOME=/Applications/Java/groovy
+
+# Directory of Roller 3.1 context
+export WEBAPP_DIR=~/roller_trunk/build/webapp
+
+# Directory of additional jars
+export JARS_DIR=/Applications/Java/jakarta-tomcat-5.5.9/common/lib
+
+
+# --- SHOULD NOT NEED TO EDIT BELOW THIS LINE ---
+
+export RGPATH=\
+../build/classes:\
+${GROOVY_HOME}/embeddable/groovy-all-1.0-JSR-06.jar:\
+${GROOVY_HOME}/lib/commons-cli-1.0.jar:\
+${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar
+echo ${RGPATH}
+
+# Hack: setting catalina.base=. allows us to save log in ./logs
+
+java \
+-Droller.custom.config=roller-custom.properties \
+-Dcatalina.base=. \
+-cp ${RGPATH} org.apache.roller.util.GroovyRunner $WEBAPP_DIR $JARS_DIR $1
+

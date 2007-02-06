@@ -28,10 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.model.PropertiesManager;
-import org.apache.roller.model.RefererManager;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.PropertiesManager;
+import org.apache.roller.business.referrers.RefererManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.UserData;
@@ -48,6 +48,7 @@ public class RefererTest extends TestCase {
     
     UserData testUser = null;
     WebsiteData testWeblog = null;
+    WebsiteData testWeblog2 = null;
     
     int count = 20;
     String testDay;
@@ -71,7 +72,8 @@ public class RefererTest extends TestCase {
         
         try {
             testUser = TestUtils.setupUser("referTestUser");
-            testWeblog = TestUtils.setupWeblog("referTestWeblog", testUser);
+            testWeblog = TestUtils.setupWeblog("referTestWeblog1", testUser);
+            testWeblog2 = TestUtils.setupWeblog("referTestWeblog2", testUser);
             
             // add "spamtest" to refererSpamWords
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
@@ -90,7 +92,11 @@ public class RefererTest extends TestCase {
                 testDay = DateUtil.format8chars(day);
                 
                 rmgr.processReferrer("http://test"+i, "http://test"+i,
-                        testWeblog.getHandle(), null, testDay);
+                    testWeblog.getHandle(), null, testDay);
+                if (i % 2 == 0) { // half the referrers from weblog 2
+                    rmgr.processReferrer("http://test"+i, "http://test"+i,
+                        testWeblog2.getHandle(), null, testDay);
+                }
             }
             
             TestUtils.endSession(true);
@@ -111,9 +117,11 @@ public class RefererTest extends TestCase {
             pmgr.saveProperty(spamprop);
             
             TestUtils.teardownWeblog(testWeblog.getId());
+            TestUtils.teardownWeblog(testWeblog2.getId());
             TestUtils.teardownUser(testUser.getId());
             
             TestUtils.endSession(true);
+            
         } catch (Exception ex) {
             log.error(ex);
             throw new Exception("Test teardown failed", ex);

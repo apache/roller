@@ -23,6 +23,9 @@ import org.apache.roller.ui.authoring.struts.formbeans.UserFormEx;
 
 import org.apache.struts.action.ActionMapping;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerImpl;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.authoring.struts.forms.UserForm;
 
@@ -109,13 +112,16 @@ public class UserAdminForm extends UserFormEx
             throws RollerException
     {
         super.copyTo(user, locale);
+        
+        if (user.getEnabled() == null) user.setEnabled(Boolean.FALSE);
+        
         if (mUserAdmin.booleanValue()) 
         {
             user.grantRole("admin");
         }
         else
         {
-            user.revokeRole("admin");
+            RollerFactory.getRoller().getUserManager().revokeRole("admin", user);
         }
     }
 

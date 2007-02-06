@@ -27,8 +27,8 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 
 
@@ -76,7 +76,7 @@ public class UserTest extends TestCase {
         testUser.setEnabled(Boolean.TRUE);
         
         // make sure test user does not exist
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // add test user
@@ -125,7 +125,7 @@ public class UserTest extends TestCase {
         TestUtils.endSession(true);
         
         // lookup by username
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
@@ -138,7 +138,7 @@ public class UserTest extends TestCase {
         
         // lookup by UserName (part)
         user = null;
-        List users1 = mgr.getUsersStartingWith(testUser.getUserName().substring(0, 3), 0, 1, Boolean.TRUE);
+        List users1 = mgr.getUsersStartingWith(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users1.size());
         user = (UserData) users1.get(0);
         assertNotNull(user);
@@ -146,7 +146,7 @@ public class UserTest extends TestCase {
         
         // lookup by Email (part)
         user = null;
-        List users2 = mgr.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), 0, 1, Boolean.TRUE);
+        List users2 = mgr.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users2.size());
         user = (UserData) users2.get(0);
         assertNotNull(user);
@@ -155,8 +155,9 @@ public class UserTest extends TestCase {
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
         mgr.saveUser(user);
+        TestUtils.endSession(true);
         user = null;
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // remove test user
@@ -178,20 +179,20 @@ public class UserTest extends TestCase {
         TestUtils.endSession(true);
         
         // verify user has 2 roles, admin & editor
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(2, user.getRoles().size());
         assertTrue(user.hasRole("editor"));
         assertTrue(user.hasRole("admin"));
         
         // remove role
-        user.revokeRole("admin");
+        mgr.revokeRole("admin",user);
         mgr.saveUser(user);
         TestUtils.endSession(true);
         
         // check that role was removed
         user = null;
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(1, user.getRoles().size());
         assertTrue(user.hasRole("editor"));
@@ -204,7 +205,7 @@ public class UserTest extends TestCase {
         
         // check that role was added
         user = null;
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(2, user.getRoles().size());
         assertTrue(user.hasRole("editor"));

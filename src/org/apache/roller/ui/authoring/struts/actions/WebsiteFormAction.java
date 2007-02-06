@@ -1,37 +1,31 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.BooleanUtils;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -42,24 +36,25 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PagePluginManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.PluginManager;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WebsiteFormEx;
+import org.apache.roller.ui.core.RequestConstants;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.core.plugins.UIPluginManager;
 import org.apache.roller.util.Blacklist;
 
 
@@ -67,7 +62,7 @@ import org.apache.roller.util.Blacklist;
 /**
  * Website Settings action.
  *
- * @struts.action name="websiteFormEx" path="/editor/website"
+ * @struts.action name="websiteFormEx" path="/roller-ui/authoring/website"
  * 		scope="session" parameter="method"
  *
  * @struts.action-forward name="editWebsite.page" path=".edit-website"
@@ -117,14 +112,8 @@ public final class WebsiteFormAction extends DispatchAction {
                 List pages = umgr.getPages(website);
                 request.setAttribute("pages",pages);
                 
-                ServletContext ctx = request.getSession().getServletContext();
-                String editorPages =
-                        RollerRuntimeConfig.getProperty("users.editor.pages");
-                
-                List epages = Arrays.asList(StringUtils.split(
-                        StringUtils.deleteWhitespace(editorPages), ","));
-                request.setAttribute("editorPagesList", epages);
-                
+                // set the Editor Page list
+                request.setAttribute("editorPagesList", this.getEditorsList());
                 
                 WebsitePageModel pageModel = new WebsitePageModel(
                         "websiteSettings.title", request, response, mapping, website);
@@ -162,6 +151,15 @@ public final class WebsiteFormAction extends DispatchAction {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if ( rollerSession.isUserAuthorizedToAdmin(wd)) {
                 checkBlacklist(errors, messages, form.getBlacklist());
+                
+                // make sure user didn't enter an invalid entry display count
+                if(errors.isEmpty()) {
+                    int maxEntries = RollerRuntimeConfig.getIntProperty("site.pages.maxEntries");
+                    if(form.getEntryDisplayCount() > maxEntries) {
+                        errors.add(null, new ActionMessage("websiteSettings.error.entryDisplayCount"));
+                    }
+                }
+                
                 if (errors.isEmpty()) {
                     // ensure getEnabled can't be changed
                     form.setEnabled(wd.getEnabled());
@@ -171,40 +169,34 @@ public final class WebsiteFormAction extends DispatchAction {
                     if (wd.getActive() != null && !wd.getActive().booleanValue()) {
                         wd.setAllowComments(Boolean.FALSE);
                         messages.add(null, new ActionMessage(
-                            "websiteSettings.commentsOffForInactiveWeblog"));
+                                "websiteSettings.commentsOffForInactiveWeblog"));
                     }
-                                        
-                    umgr.saveWebsite(wd);  
+                    
+                    umgr.saveWebsite(wd);
                     
                     // ROL-1050: apply comment defaults to existing entries
                     if (form.getApplyCommentDefaults() != null && form.getApplyCommentDefaults().booleanValue()) {
                         wmgr.applyCommentDefaultsToEntries(wd);
                     }
-
+                    
                     RollerFactory.getRoller().getRefererManager().applyRefererFilters(wd);
                     
                     RollerFactory.getRoller().flush();
                     
                     messages.add(null,
-                        new ActionMessage("websiteSettings.savedChanges"));
+                            new ActionMessage("websiteSettings.savedChanges"));
                     
                     request.getSession().setAttribute(
-                        RollerRequest.WEBSITEID_KEY, form.getId());
+                            RequestConstants.WEBLOG_ID, form.getId());
                     
                     // Clear cache entries associated with website
                     CacheManager.invalidate(wd);
-            
+                    
                     actionForm.reset(mapping,request);
                 }
                 
                 // set the Editor Page list
-                ServletContext ctx = request.getSession().getServletContext();
-                String editorPages =
-                        RollerRuntimeConfig.getProperty("users.editor.pages");
-                
-                List epages = Arrays.asList(StringUtils.split(
-                        org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
-                request.setAttribute("editorPagesList", epages);
+                request.setAttribute("editorPagesList", this.getEditorsList());
                 
                 WebsitePageModel pageModel =
                         new WebsitePageModel("websiteSettings.title",
@@ -239,11 +231,11 @@ public final class WebsiteFormAction extends DispatchAction {
             // just for testing/counting, this does not persist rules in any way
             Blacklist.populateSpamRules(blacklist, stringRules, regexRules, null);
             messages.add(null, new ActionMessage(
-                "websiteSettings.acceptedBlacklist",
-                new Integer(stringRules.size()), new Integer(regexRules.size())));
+                    "websiteSettings.acceptedBlacklist",
+                    new Integer(stringRules.size()), new Integer(regexRules.size())));
         } catch (Throwable e) {
             errors.add(null, new ActionMessage(
-                "websiteSettings.error.processingBlacklist", e.getMessage()));
+                    "websiteSettings.error.processingBlacklist", e.getMessage()));
         }
     }
     
@@ -314,6 +306,20 @@ public final class WebsiteFormAction extends DispatchAction {
         return forward;
     }
     
+    private List getEditorsList() {
+        
+        List editorsList = null;
+        
+        UIPluginManager pmgr = RollerContext.getUIPluginManager();
+        editorsList = pmgr.getWeblogEntryEditors();
+        if(editorsList == null) {
+            editorsList = new ArrayList();
+        }
+        
+        return editorsList;
+    }
+    
+    
     public class WebsitePageModel extends BasePageModel {
         private List permissions = new ArrayList();
         private boolean groupBloggingEnabled = false;
@@ -332,11 +338,11 @@ public final class WebsiteFormAction extends DispatchAction {
             UserData user = rollerSession.getAuthenticatedUser();
             permissions = roller.getUserManager().getAllPermissions(website);
             groupBloggingEnabled =
-                RollerConfig.getBooleanProperty("groupblogging.enabled");
-            emailNotificationEnabled = 
-                RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-            moderationRequired =  
-                RollerRuntimeConfig.getBooleanProperty("users.moderation.required");
+                    RollerConfig.getBooleanProperty("groupblogging.enabled");
+            emailNotificationEnabled =
+                    RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+            moderationRequired =
+                    RollerRuntimeConfig.getBooleanProperty("users.moderation.required");
         }
         public boolean isGroupBloggingEnabled() {
             return groupBloggingEnabled;
@@ -348,15 +354,8 @@ public final class WebsiteFormAction extends DispatchAction {
             return moderationRequired;
         }
         public boolean getHasPagePlugins() {
-            boolean ret = false;
-            try {
-                Roller roller = RollerFactory.getRoller();
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                ret = ppmgr.hasPagePlugins();
-            } catch (RollerException e) {
-                mLogger.error(e);
-            }
-            return ret;
+            PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+            return ppmgr.hasPagePlugins();
         }
         
         public List getPagePlugins() {
@@ -364,12 +363,9 @@ public final class WebsiteFormAction extends DispatchAction {
             try {
                 if (getHasPagePlugins()) {
                     Roller roller = RollerFactory.getRoller();
-                    PagePluginManager ppmgr = roller.getPagePluginManager();
-                    Map plugins = ppmgr.createAndInitPagePlugins(
-                            getWebsite(),
-                            RollerContext.getRollerContext().getServletContext(),
-                            RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                            new VelocityContext());
+                    PluginManager ppmgr = roller.getPagePluginManager();
+                    Map plugins = ppmgr.getWeblogEntryPlugins(
+                            getWebsite());
                     Iterator it = plugins.values().iterator();
                     while (it.hasNext()) list.add(it.next());
                 }
@@ -377,6 +373,10 @@ public final class WebsiteFormAction extends DispatchAction {
                 mLogger.error(e);
             }
             return list;
+        }
+        
+        public boolean isGlobalAdminUser() throws RollerException {
+            return getRollerSession().isGlobalAdminUser();
         }
     }
 }

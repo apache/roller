@@ -1,74 +1,63 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.core;
 
+import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Properties;
-import java.util.TimerTask;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
-
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.SecurityConfig;
-import org.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
-import org.acegisecurity.securechannel.ChannelProcessingFilter;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ScheduledTask;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.pings.PingQueueTask;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.runnable.ThreadManager;
+import org.apache.roller.ui.core.plugins.UIPluginManager;
+import org.apache.roller.ui.core.plugins.UIPluginManagerImpl;
+import org.apache.roller.ui.core.security.AutoProvision;
+import org.apache.roller.util.cache.CacheManager;
+import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import org.apache.roller.util.cache.CacheManager;
 
 
 /**
@@ -80,14 +69,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     private static Log mLogger = LogFactory.getLog(RollerContext.class);
     
-    private String mVersion = null;
-    private String mBuildTime = null;
-    private String mBuildUser = null;
-    
     public static final String ROLLER_CONTEXT = "roller.context";
     
     private static ServletContext mContext = null;
-    private static Authenticator mAuthenticator = null;
     private final SynchronizedInt mSessionCount = new SynchronizedInt(0);
     
     
@@ -96,17 +80,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public RollerContext() {
         super();
-        
-        Properties props = new Properties();
-        try {
-            props.load(getClass().getResourceAsStream("/version.properties"));
-        } catch (IOException e) {
-            mLogger.error("version.properties not found", e);
-        }
-        
-        mVersion = props.getProperty("ro.version", "UNKNOWN");
-        mBuildTime = props.getProperty("ro.buildTime", "UNKNOWN");
-        mBuildUser = props.getProperty("ro.buildUser", "UNKNOWN");
     }
     
     
@@ -164,14 +137,15 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         // is set to ${webapp.context}
         RollerConfig.setUploadsDir(ctxPath);
         
-        // set the roller context real path in RollerConfig
-        // NOTE: it seems that a few backend classes do actually need
-        //       to know what the real path to the roller context is,
-        //       so we set this property to give them the info they need.
+        // try setting the themes path to <context>/themes
+        // NOTE: this should go away at some point
+        // we leave it here for now to allow users to keep using
+        // themes in their webapp context, but this is a bad idea
         //
-        //       this is really not a best practice and we should try to
-        //       remove these dependencies on the webapp context if possible
-        RollerConfig.setContextRealPath(mContext.getRealPath("/"));
+        // also, the RollerConfig.setThemesDir() method is smart
+        // enough to disregard this call unless the themes.dir
+        // is set to ${webapp.context}
+        RollerConfig.setThemesDir(mContext.getRealPath("/")+File.separator+"themes");
         
         try {
             // always upgrade database first
@@ -189,11 +163,11 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             initializeSecurityFeatures(mContext);
             
+            setupVelocity();
             roller.getThemeManager();
             setupIndexManager(roller);
             initializePingFeatures(roller);
-            setupPingQueueTask(roller);
-            setupScheduledTasks(mContext, roller);
+            setupTasks();
             
             roller.flush();
             roller.release();
@@ -206,6 +180,39 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
+    private void setupVelocity() throws RollerException {
+        
+        mLogger.info("Initializing Velocity");
+        
+        // initialize the Velocity engine
+        Properties velocityProps = new Properties();
+        
+        try {
+            InputStream instream = mContext.getResourceAsStream("/WEB-INF/velocity.properties");
+            
+            velocityProps.load(instream);
+            
+            // need to dynamically add old macro libraries if they are enabled
+            if(RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
+                String macroLibraries = (String) velocityProps.get("velocimacro.library");
+                String oldLibraries = RollerConfig.getProperty("velocity.oldMacroLibraries");
+                
+                // set the new value
+                velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
+            }
+            
+            mLogger.debug("Velocity props = "+velocityProps);
+            
+            // init velocity
+            RuntimeSingleton.init(velocityProps);
+            
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        
+    }
+    
+    
     private void setupRollerProperties() throws RollerException {
         // init property manager by creating it
         Roller mRoller = RollerFactory.getRoller();
@@ -213,36 +220,41 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    /** Setup daily and hourly tasks specified in web.xml */
-    private void setupScheduledTasks(ServletContext context, Roller roller)
-            throws RollerException, InstantiationException,
-            IllegalAccessException, ClassNotFoundException {
+    private void setupTasks() throws RollerException {
         
-        // setup the hourly tasks
-        String hourlyString = RollerConfig.getProperty("tasks.hourly");
-        if (hourlyString != null && hourlyString.trim().length() > 0) {
-            String[] hourlyTasks = StringUtils.stripAll(
-                    StringUtils.split(hourlyString, ",") );
-            for (int i=0; i<hourlyTasks.length; i++) {
-                mLogger.info("Setting hourly task: "+hourlyTasks[i]);
-                ScheduledTask task =
-                        (ScheduledTask)Class.forName(hourlyTasks[i]).newInstance();
-                task.init(roller, mContext.getRealPath("/"));
-                roller.getThreadManager().scheduleHourlyTimerTask((TimerTask)task);
-            }
-        }
+        ThreadManager tmgr = RollerFactory.getRoller().getThreadManager();
         
-        // setup the daily tasks
-        String dailyString = RollerConfig.getProperty("tasks.daily");
-        if (dailyString != null && dailyString.trim().length() > 0) {
-            String[] dailyTasks = StringUtils.stripAll(
-                    StringUtils.split(dailyString, ",") );
-            for (int j=0; j<dailyTasks.length; j++) {
-                mLogger.info("Setting daily task: "+dailyTasks[j]);
-                ScheduledTask task =
-                        (ScheduledTask)Class.forName(dailyTasks[j]).newInstance();
-                task.init(roller, mContext.getRealPath("/"));
-                roller.getThreadManager().scheduleDailyTimerTask((TimerTask)task);
+        Date now = new Date();
+        
+        // okay, first we look for what tasks have been enabled
+        String tasksStr = RollerConfig.getProperty("tasks.enabled");
+        String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
+        for (int i=0; i < tasks.length; i++) {
+            
+            String taskClassName = RollerConfig.getProperty("tasks."+tasks[i]+".class");
+            if(taskClassName != null) {
+                mLogger.info("Initializing task: "+tasks[i]);
+                
+                try {
+                    Class taskClass = Class.forName(taskClassName);
+                    RollerTask task = (RollerTask) taskClass.newInstance();
+                    task.init();
+                    
+                    Date startTime = task.getStartTime(now);
+                    if(startTime == null || now.after(startTime)) {
+                        startTime = now;
+                    }
+                    
+                    // schedule it
+                    tmgr.scheduleFixedRateTimerTask(task, startTime, task.getInterval());
+                    
+                } catch (ClassCastException ex) {
+                    mLogger.warn("Task does not extend RollerTask class", ex);
+                } catch (RollerException ex) {
+                    mLogger.error("Error scheduling task", ex);
+                } catch (Exception ex) {
+                    mLogger.error("Error instantiating task", ex);
+                }
             }
         }
     }
@@ -253,7 +265,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         
         // Initialize common targets from the configuration
         PingConfig.initializeCommonTargets();
-        // Remove csutom ping targets if they have been disallowed
+        // Initialize ping variants
+        PingConfig.initializePingVariants();
+        // Remove custom ping targets if they have been disallowed
         if (PingConfig.getDisallowCustomTargets()) {
             mLogger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
             roller.getPingTargetManager().removeAllCustomPingTargets();
@@ -266,30 +280,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    // Set up the ping queue processing task
-    private void setupPingQueueTask(Roller roller) throws RollerException {
-        
-        long intervalMins = PingConfig.getQueueProcessingIntervalMins();
-        if (intervalMins == 0) {
-            // Ping queue processing interval of 0 indicates that ping queue processing is disabled on this host.
-            // This provides a crude  way to disable running the ping queue task on some servers if there are
-            // multiple servers in a cluster sharing a db.  Exclusion should really be handled dynamically but isn't.
-            mLogger.warn("Ping queue processing interval is zero; processing from the ping queue will be disabled on this server.");
-            mLogger.warn("Please make sure that ping queue processing is configured to run on one server in the cluster.");
-            return;
-        }
-        
-        // Set up the task
-        PingQueueTask pingQueueTask = new PingQueueTask();
-        pingQueueTask.init(this, intervalMins);
-        
-        // Schedule it at the appropriate interval, delay start for one interval.
-        mLogger.info("Scheduling ping queue task to run at " + intervalMins + " minute intervals.");
-        roller.getThreadManager().scheduleFixedRateTimerTask(pingQueueTask, intervalMins, intervalMins);
-    }
-    
-    
-    protected void initializeSecurityFeatures(ServletContext context) {
+    protected void initializeSecurityFeatures(ServletContext context) { 
         
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
@@ -366,7 +357,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             InitialContext ic = new InitialContext();
             DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
             Connection con = ds.getConnection();
-            UpgradeDatabase.upgradeDatabase(con, mVersion);
+            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
             con.close();
         } catch (NamingException e) {
             mLogger.warn("Unable to access DataSource", e);
@@ -400,105 +391,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     
     /**
-     * Get authenticator
-     */
-    public Authenticator getAuthenticator() {
-        if (mAuthenticator == null) {
-            try {
-                Class authClass =
-                        Class.forName(RollerConfig.getProperty("authenticator.classname"));
-                mAuthenticator = (Authenticator) authClass.newInstance();
-            } catch (Exception e) {
-                // this isn't an ERROR if no authenticatorClass was specified
-                if (!(e instanceof NullPointerException)) {
-                    mLogger.error("ERROR creating authenticator, using default", e);
-                } else {
-                    mLogger.debug("No authenticator specified, using DefaultAuthenticator");
-                }
-                mAuthenticator = new DefaultAuthenticator();
-            }
-        }
-        return mAuthenticator;
-    }
-       
-    /**
-     * Returns the full url for the website of the specified username.
-     */
-    public String getContextUrl(HttpServletRequest request, WebsiteData website) {
-        String url = this.getContextUrl(request);
-        if (website != null) {
-            url = url + "/page/" + website.getHandle();
-        }
-        return url;
-    }
-    
-    
-    /** Get absolute URL of Roller context */
-    public String getContextUrl(HttpServletRequest request) {
-        String url = request.getContextPath();
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        return url;
-    }
-    
-    
-    /** Get absolute URL of Roller context */
-    public String getAbsoluteContextUrl(HttpServletRequest request) {
-        
-        String url = RollerRuntimeConfig.getProperty("site.absoluteurl");
-        
-        if (url == null || url.trim().length() == 0) {
-            try {
-                URL absURL = RequestUtils.absoluteURL(request, "/");
-                url = absURL.toString();
-            } catch (MalformedURLException e) {
-                url = "/";
-                mLogger.error("ERROR: forming absolute URL", e);
-            }
-        }
-        
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        
-        mContext.setAttribute("org.apache.roller.absoluteContextURL", url);
-        return url;
-    }
-    
-    
-    /**
-     * For use by MetaWeblog API.
-     *
-     * @return Context URL or null if not initialized yet.
-     */
-    public String getAbsoluteContextUrl() {
-        return (String) mContext.getAttribute("org.apache.roller.absoluteContextURL");
-    }
-    
-    
-    public String createEntryPermalink(
-            WeblogEntryData entry,
-            HttpServletRequest request,
-            boolean absolute) {
-        String link = null;
-        try {
-            String baseUrl = null;
-            if (absolute) {
-                baseUrl = getAbsoluteContextUrl(request);
-            } else {
-                baseUrl = getContextUrl(request);
-            }
-            link = Utilities.escapeHTML(baseUrl + entry.getPermaLink());
-        } catch (Exception e) {
-            mLogger.error("Unexpected exception", e);
-        }
-        
-        return link;
-    }
-    
-    
-    /**
      * Get the ServletContext.
      *
      * @return ServletContext
@@ -506,23 +398,60 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     public static ServletContext getServletContext() {
         return mContext;
     }
-    
-    
-    /** Roller version */
-    public String getRollerVersion() {
-        return mVersion;
+        
+    /**
+     * Get an instance of AutoProvision, if available in roller.properties
+     * 
+     * @return AutoProvision
+     */
+    public static AutoProvision getAutoProvision() {
+      
+      String clazzName = RollerConfig.getProperty("users.sso.autoProvision.className");
+      
+      if(null == clazzName) {
+        return null;
+      }
+      
+      Class clazz;
+      try {
+        clazz = Class.forName(clazzName);
+      } catch (ClassNotFoundException e) {
+        mLogger.warn("Unable to found specified Auto Provision class.", e);
+        return null;
+      }
+      
+      if(null == clazz) {
+        return null;
+      }
+      
+      Class[] interfaces = clazz.getInterfaces();
+      for (int i = 0; i < interfaces.length; i++) {
+          if (interfaces[i].equals(AutoProvision.class))
+          {
+            try {
+              return (AutoProvision) clazz.newInstance();
+            } catch (InstantiationException e) {
+              mLogger.warn("InstantiationException while creating: " + clazzName, e);
+            } catch (IllegalAccessException e) {
+              mLogger.warn("IllegalAccessException while creating: " + clazzName, e);
+            }
+          }
+      }
+      
+      return null;
+      
     }
+
     
-    
-    /** Roller build time */
-    public String getRollerBuildTime() {
-        return mBuildTime;
-    }
-    
-    
-    /** Get username that built Roller */
-    public String getRollerBuildUser() {
-        return mBuildUser;
+    /**
+     * Access to the plugin manager for the UI layer.
+     *
+     * TODO: we may want something similar to the Roller interface for the
+     *  ui layer if we dont' want methods like this here in RollerContext.
+     */
+    public static UIPluginManager getUIPluginManager() {
+        // TODO: we may want to do this another way
+        return UIPluginManagerImpl.getInstance();
     }
 
 }

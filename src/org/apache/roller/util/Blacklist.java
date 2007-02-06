@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.roller.config.RollerConfig;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Loads MT-Blacklist style blacklist from disk and allows callers to test
@@ -210,9 +211,9 @@ public class Blacklist {
             
         } catch (Exception e) {
             // Roller keeps a copy in the webapp just in case
-            txtStream = getClass().getResourceAsStream("/"+blacklistFile);           
-            mLogger.warn("Couldn't find downloaded blacklist, " 
-                        + "loading from classpath instead");
+            txtStream = getClass().getResourceAsStream("/blacklist.txt");           
+            mLogger.warn(
+                "Couldn't find downloaded blacklist, loaded blacklist.txt from classpath instead");
         }
         
         if (txtStream != null) {

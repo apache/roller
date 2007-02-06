@@ -1,0 +1,32 @@
+
+def createComments(content) {
+    for (i in 0..100) {
+        comment = new org.apache.roller.pojos.CommentData();
+        comment.setWeblogEntry(entry);
+        comment.setName(name);
+        comment.setUrl(url);
+        comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        comment.setContent(content + ":" + i);
+        comment.setNotify(Boolean.FALSE);
+        comment.setPending(Boolean.FALSE);
+        comment.setApproved(Boolean.TRUE);
+        roller.getWeblogManager().saveComment(comment);
+    }
+    roller.flush();
+}
+
+handle =  "adminblog";
+name =    "Dave";
+email =   "dave@example.com";
+url =     "http://example.com";
+anchor =  "test_post";
+email =   "test@example.com";
+content = "Testing 1 2 3 <em>Hello World!</em>";
+ 
+roller = org.apache.roller.model.RollerFactory.getRoller();
+blog = roller.getUserManager().getWebsiteByHandle(handle);
+entry = roller.getWeblogManager().getWeblogEntryByAnchor(blog, anchor);
+
+createComments("test comment");
+
+

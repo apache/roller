@@ -1,26 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * UserEntry.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on January 17, 2006, 12:44 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
-
 package org.apache.roller.webservices.adminapi.sdk;
 
 import java.io.IOException;
@@ -51,6 +45,7 @@ public class UserEntry extends Entry {
         public static final String LOCALE = "locale";
         public static final String TIMEZONE = "timezone";
         public static final String DATE_CREATED = "date-created";
+        public static final String ENABLED = "enabled";
     }
     
     private String name;
@@ -60,34 +55,34 @@ public class UserEntry extends Entry {
     private TimeZone timezone;
     private Date dateCreated;
     private String emailAddress;
+    private Boolean enabled;
     
     /** Construct an empty user entry */
     public UserEntry(String name, String urlPrefix) {
         setName(name);
-        String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + name;                
+        String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + name;
         setHref(href);
     }
     
     /** Construct a user entry from a JDOM element. */
-    public UserEntry(Element e, String urlPrefix) throws MissingElementException {
+    public UserEntry(Element e, String urlPrefix) {
         populate(e, urlPrefix);
     }
     
-    public UserEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException {               
+    public UserEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
         
-        populate(e, urlPrefix);        
+        populate(e, urlPrefix);
     }
     
-    private void populate(Element e, String urlPrefix) throws MissingElementException {
-        // name
+    private void populate(Element e, String urlPrefix) {
+        // name (required)
         Element nameElement = e.getChild(Tags.NAME, NAMESPACE);
-        if (nameElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.NAME);
+        if (nameElement != null) {
+            setName(nameElement.getText());
         }
-        setName(nameElement.getText());
         
         // href
         String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + getName();
@@ -95,47 +90,48 @@ public class UserEntry extends Entry {
         
         // full name
         Element fullNameElement = e.getChild(Tags.FULL_NAME, NAMESPACE);
-        if (fullNameElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.FULL_NAME);
+        if (fullNameElement != null) {
+            setFullName(fullNameElement.getText());
         }
-        setFullName(fullNameElement.getText());
         
         // password
-        // this is optional
         Element passwordElement = e.getChild(Tags.PASSWORD, NAMESPACE);
         if (passwordElement != null) {
-            setPassword(passwordElement.getText());            
+            setPassword(passwordElement.getText());
         }
         
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
-        if (localeElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.LOCALE);
+        if (localeElement != null) {
+            setLocale(localeElement.getText());
         }
-        setLocale(localeElement.getText());
         
         // timezone
         Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
-        if (tzElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.TIMEZONE);
+        if (tzElement != null) {
+            setTimezone(tzElement.getText());
         }
-        setTimezone(tzElement.getText());
         
         // email address
         Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
-        if (emailElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.EMAIL_ADDRESS);
+        if (emailElement != null) {
+            setEmailAddress(emailElement.getText());
         }
-        setEmailAddress(emailElement.getText());
         
         // created (optional)
         Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
         }
+        
+        // enabled
+        Element enabledElement = e.getChild(Tags.ENABLED, Service.NAMESPACE);
+        if (enabledElement != null) {
+            setEnabled(Boolean.valueOf(enabledElement.getText()));
+        }
     }
     
-        
+    
     public String getType() {
         return Types.USER;
     }
@@ -154,7 +150,7 @@ public class UserEntry extends Entry {
         String name = getName();
         if (name != null) {
             Element nameElement = new Element(Tags.NAME, Service.NAMESPACE);
-            Text nameText = new Text(getName());
+            Text nameText = new Text(name);
             nameElement.addContent(nameText);
             userElement.addContent(nameElement);
         }
@@ -163,7 +159,7 @@ public class UserEntry extends Entry {
         String fullName = getFullName();
         if (fullName != null) {
             Element fullNameElement = new Element(Tags.FULL_NAME, NAMESPACE);
-            Text fullNameText = new Text(getFullName());
+            Text fullNameText = new Text(fullName);
             fullNameElement.addContent(fullNameText);
             userElement.addContent(fullNameElement);
         }
@@ -172,14 +168,14 @@ public class UserEntry extends Entry {
         String password = getPassword();
         if (password != null) {
             Element passwordElement = new Element(Tags.PASSWORD, NAMESPACE);
-            Text passwordText = new Text(getPassword());
+            Text passwordText = new Text(password);
             passwordElement.addContent(passwordText);
             userElement.addContent(passwordElement);
         }
         
         // locale
         Locale locale = getLocale();
-        if (locale != null ) {
+        if (locale != null) {
             Element localeElement = new Element(Tags.LOCALE, Service.NAMESPACE);
             Text localeText = new Text(getLocale().toString());
             localeElement.addContent(localeText);
@@ -199,18 +195,27 @@ public class UserEntry extends Entry {
         String emailAddress = getEmailAddress();
         if (emailAddress != null) {
             Element emailAddressElement = new Element(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
-            Text emailAddressText = new Text(String.valueOf(emailAddress));
+            Text emailAddressText = new Text(emailAddress);
             emailAddressElement.addContent(emailAddressText);
             userElement.addContent(emailAddressElement);
         }
         
-        // creation date (optional)
+        // creation date
         Date datedCreated = getDateCreated();
         if (dateCreated != null) {
             Element dateCreatedElement = new Element(Tags.DATE_CREATED, Service.NAMESPACE);
             Text dateCreatedText = new Text(String.valueOf(dateCreated.getTime()));
             dateCreatedElement.addContent(dateCreatedText);
             userElement.addContent(dateCreatedElement);
+        }
+        
+        // enabled
+        Boolean enabled = getEnabled();
+        if (enabled != null) {
+            Element enabledElement = new Element(Tags.ENABLED, NAMESPACE);
+            Text enabledText = new Text(enabled.toString());
+            enabledElement.addContent(enabledText);
+            userElement.addContent(enabledElement);
         }
         
         return doc;
@@ -259,7 +264,7 @@ public class UserEntry extends Entry {
     /** Set the locale string of this user entry. */
     public void setLocale(String localeString) {
         this.locale = new LocaleString(localeString).getLocale();
-    }    
+    }
     
     /** Get the timezone string of this user entry. */
     public TimeZone getTimezone() {
@@ -270,7 +275,7 @@ public class UserEntry extends Entry {
     public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
     }
-
+    
     /** Set the timezone string of this user entry. */
     public void setTimezone(String timezoneString) {
         this.timezone = TimeZone.getTimeZone(timezoneString);
@@ -298,8 +303,8 @@ public class UserEntry extends Entry {
     
     /** Test if a user entry is equal to this user entry. */
     public boolean equals(Object o) {
-        if ( o == null || o.getClass() != this.getClass()) { 
-            return false;        
+        if ( o == null || o.getClass() != this.getClass()) {
+            return false;
         }
         
         UserEntry other = (UserEntry)o;
@@ -319,8 +324,19 @@ public class UserEntry extends Entry {
         if (!areEqual(getTimezone(), other.getTimezone())) {
             return false;
         }
+        if (!areEqual(getEnabled(), other.getEnabled())) {
+            return false;
+        }
         
         return super.equals(o);
+    }
+    
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
     
 }

@@ -32,8 +32,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;
 
@@ -42,16 +42,17 @@ import java.util.Date;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
+import org.apache.roller.business.Roller;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
- * @struts.action name="folderFormEx" path="/editor/importBookmarks"
+ * @struts.action name="folderFormEx" path="/roller-ui/authoring/importBookmarks"
  *  scope="request" input=".import" validate="false"
  *
  * @struts.action-forward name="importBookmarks.page" path=".import"
@@ -59,8 +60,7 @@ import org.apache.roller.util.cache.CacheManager;
  * TODO Should import into folder with same name as imported file
  */
 public final class ImportBookmarksFormAction extends Action {
-    
-    private static final String HANDLE = "opmlupload.website.handle";    
+      
     private static Log mLogger =
             LogFactory.getFactory().getInstance(RollerRequest.class);
     
@@ -178,17 +178,17 @@ public final class ImportBookmarksFormAction extends Action {
     public static WebsiteData getWebsite(HttpServletRequest request) throws RollerException {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData website = rreq.getWebsite();
-        String folderid = request.getParameter(RollerRequest.FOLDERID_KEY);
+        String folderid = request.getParameter(RequestConstants.FOLDER_ID);
         if (website == null && folderid != null) { 
             BookmarkManager bm = RollerFactory.getRoller().getBookmarkManager();
             FolderData folder = bm.getFolder(folderid);     
             website = folder.getWebsite();
         }           
         if (website != null) {
-            request.getSession().setAttribute(HANDLE, website.getHandle());
+            request.getSession().setAttribute(RequestConstants.WEBLOG_SESSION_STASH, website.getHandle());
         } 
         else {
-            String handle = (String)request.getSession().getAttribute(HANDLE);
+            String handle = (String)request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH);
             Roller roller = RollerFactory.getRoller();
             website = roller.getUserManager().getWebsiteByHandle(handle);
         }

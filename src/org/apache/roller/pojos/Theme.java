@@ -1,33 +1,32 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Theme.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on June 27, 2005, 12:55 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.pojos;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -35,8 +34,6 @@ import java.util.Map;
  * The Theme object encapsulates all elements of a single weblog theme.  It
  * is used mostly to contain all the templates for a theme, but does contain
  * other theme related attributes such as name, last modifed date, etc.
- *
- * @author Allen Gilliland
  */
 public class Theme implements Serializable {
     
@@ -55,6 +52,10 @@ public class Theme implements Serializable {
     // the Map contains ... (template name, ThemeTemplate)
     private Map templates;
     
+    // we keep resources in a Map for faster lookups by path
+    // the Map contains ... (resource path, File)
+    private Map resources;
+    
     
     public Theme() {
         this.id = null;
@@ -65,6 +66,7 @@ public class Theme implements Serializable {
         this.lastModified = null;
         this.enabled = false;
         this.templates = new HashMap();
+        this.resources = new HashMap();
     }
 
     
@@ -116,11 +118,54 @@ public class Theme implements Serializable {
     }
     
     
+    /**
+     * Get the collection of all resources associated with this Theme.
+     *
+     * It is assured that the resources are returned sorted by pathname.
+     */
+    public List getResources() {
+        
+        // make sure resources are sorted.
+        List myResources = new ArrayList(this.resources.values());
+        Collections.sort(myResources);
+        
+        return myResources;
+    }
+    
+    
+    /**
+     * Lookup the specified resource by path.
+     * Returns null if the resource cannot be found.
+     */
+    public File getResource(String path) {
+        return (File) this.resources.get(path);
+    }
+    
+    
+    /**
+     * Set the value for a given resource path.
+     */
+    public void setResource(String path, File resource) {
+        this.resources.put(path, resource);
+    }
+    
+    
+    /**
+     * Check if this Theme contains the named resource.
+     * Returns true if the resource exists, false otherwise.
+     */
+    public boolean hasResource(String path) {
+        return this.resources.containsKey(path);
+    }
+    
+    
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     

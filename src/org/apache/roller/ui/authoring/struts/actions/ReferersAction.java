@@ -34,8 +34,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.roller.model.RefererManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.referrers.RefererManager;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
@@ -45,7 +45,7 @@ import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Display today's referers.
- * @struts.action name="refererForm" path="/editor/referers"
+ * @struts.action name="refererForm" path="/roller-ui/authoring/referers"
  *      scope="session" parameter="method"
  * 
  * @struts.action-forward name="referers.page" path=".referers"

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.pojos</package>
+    <entity metadata-complete="true" name=""
+            class="org.apache.roller.planet.pojos.PlanetConfigData">
+        <table name="rag_config"/>
+        <named-query name="PlanetConfigData.getAll">
+            <query>SELECT p FROM PlanetConfigData p</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="groupPage">
+                <column name="group_page" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="mainPage">
+                <column name="main_page" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="proxyHost">
+                <column name="proxy_host" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="proxyPort">
+                <column name="proxy_port" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="siteURL">
+                <column name="site_url" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="adminEmail">
+                <column name="admin_email" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="adminName">
+                <column name="admin_name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="outputDir">
+                <column name="output_dir" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="templateDir">
+                <column name="template_dir" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="description">
+                <column name="description" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="cacheDir">
+                <column name="cache_dir" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="defaultGroup"
+                         target-entity="org.apache.roller.planet.pojos.PlanetGroupData">
+                <join-column name="default_group_id" insertable="true" updatable="true"
+                             nullable="true"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </many-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

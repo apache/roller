@@ -1,28 +1,29 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.pojos;
 
-import org.apache.roller.RollerException;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.BookmarkManager;
 
 import java.io.Serializable;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 
 /**
  * <p>Represents a single URL in a user's favorite web-bookmarks collection.
@@ -34,10 +35,10 @@ import java.io.Serializable;
  * @struts.form include-all="true"
  *    extends="org.apache.struts.validator.ValidatorForm"
  * 
- * @hibernate.class lazy="false" table="bookmark"
+ * @hibernate.class lazy="true" table="bookmark"
  * @hibernate.cache usage="read-write"
  */
-public class BookmarkData extends PersistentObject
+public class BookmarkData
     implements Serializable, Comparable
 {
     static final long serialVersionUID = 2315131256728236003L;
@@ -106,6 +107,8 @@ public class BookmarkData extends PersistentObject
     /** @ejb:persistent-field */
     public void setId(String id)
     {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -276,148 +279,37 @@ public class BookmarkData extends PersistentObject
 
     //------------------------------------------------------- Good citizenship
 
-    public String toString()
-    {
-        StringBuffer str = new StringBuffer("{");
-
-        str.append("id=" + id + " " + "name=" + name + " " + "description=" + 
-                   description + " " + "url=" + url + " " + "weight=" + 
-                   weight + " " + "priority=" + priority + " " + "folderId=" + 
-                   "image=" + image + " " + "feedUrl=" + 
-                   feedUrl);
-        str.append('}');
-
-        return (str.toString());
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.url);
+        buf.append("}");
+        return buf.toString();
     }
 
-    public boolean equals(Object pOther)
-    {
-        if (pOther instanceof BookmarkData)
-        {
-            BookmarkData lTest = (BookmarkData) pOther;
-            boolean lEquals = true;
-
-            if (this.id == null)
-            {
-                lEquals = lEquals && (lTest.getId() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.id.equals(lTest.getId());
-            }
-
-            if (this.name == null)
-            {
-                lEquals = lEquals && (lTest.getName() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.name.equals(lTest.getName());
-            }
-
-            if (this.description == null)
-            {
-                lEquals = lEquals && (lTest.getDescription() == null);
-            }
-            else
-            {
-                lEquals = lEquals && 
-                          this.description.equals(lTest.getDescription());
-            }
-
-            if (this.url == null)
-            {
-                lEquals = lEquals && (lTest.getUrl() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.url.equals(lTest.getUrl());
-            }
-
-            if (this.weight == null)
-            {
-                lEquals = lEquals && (lTest.getWeight() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.weight.equals(lTest.getWeight());
-            }
-
-            if (this.priority == null)
-            {
-                lEquals = lEquals && (lTest.getPriority() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.priority.equals(lTest.getPriority());
-            }
-
-//            if (this.mFolder == null)
-//            {
-//                lEquals = lEquals && (lTest.mFolder == null);
-//            }
-//            else
-//            {
-//                lEquals = lEquals && this.mFolder.equals(lTest.mFolder);
-//            }
-//
-            if (this.image == null)
-            {
-                lEquals = lEquals && (lTest.getImage() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.image.equals(lTest.getImage());
-            }
-
-            if (this.feedUrl == null)
-            {
-                lEquals = lEquals && (lTest.getFeedUrl() == null);
-            }
-            else
-            {
-                lEquals = lEquals && this.feedUrl.equals(lTest.getFeedUrl());
-            }
-
-            return lEquals;
-        }
-        else
-        {
-            return false;
-        }
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof BookmarkData != true) return false;
+        BookmarkData o = (BookmarkData)other;
+        return new EqualsBuilder()
+            .append(getName(), o.getName()) 
+            .append(getFolder(), o.getFolder()) 
+            .isEquals();
     }
-
-    public int hashCode()
-    {
-        int result = 17;
-        result = (37 * result) + 
-                 ((this.id != null) ? this.id.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.name != null) ? this.name.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.description != null) ? this.description.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.url != null) ? this.url.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.weight != null) ? this.weight.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.priority != null) ? this.priority.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.folder != null) ? this.folder.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.image != null) ? this.image.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.feedUrl != null) ? this.feedUrl.hashCode() : 0);
-
-        return result;
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getName())
+            .append(getFolder())
+            .toHashCode();
     }
-
+    
     /**
-     * Setter is needed in RollerImpl.storePersistentObject()
+     * Set bean properties based on other bean.
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData)
+    public void setData(BookmarkData other)
     {
-        BookmarkData other = (BookmarkData)otherData;
         this.id = other.getId();
         this.name = other.getName();
         this.description = other.getDescription();

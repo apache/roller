@@ -1,20 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.rendering.servlets;
 
 import java.io.File;
@@ -22,8 +23,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.util.Date;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -32,120 +31,146 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.business.FileManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.ThemeManager;
+import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
+import org.apache.roller.ui.rendering.util.WeblogResourceRequest;
 
 
 /**
- * Resources servlet.  Acts as a gateway to files uploaded by users.
+ * Serves files uploaded by users as well as static resources in shared themes.
  *
- * Since we keep uploaded resources in a location outside of the webapp
+ * Since we keep resources in a location outside of the webapp
  * context we need a way to serve them up.  This servlet assumes that
  * resources are stored on a filesystem in the "uploads.dir" directory.
  *
- * @author Allen Gilliland
- *
- * @web.servlet name="ResourcesServlet"
- * @web.servlet-mapping url-pattern="/resources/*"
+ * @web.servlet name="ResourcesServlet" load-on-startup="5"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/resources/*"
  */
 public class ResourceServlet extends HttpServlet {
+
+    private static Log log = LogFactory.getLog(ResourceServlet.class);
     
-    private static Log mLogger = LogFactory.getLog(ResourceServlet.class);
-    
-    private String upload_dir = null;
     private ServletContext context = null;
-    
-    
+
+
     public void init(ServletConfig config) throws ServletException {
-        
+
         super.init(config);
+
+        log.info("Initializing ResourceServlet");
         
         this.context = config.getServletContext();
-        
-        try {
-            this.upload_dir = RollerFactory.getRoller().getFileManager().getUploadDir();
-            mLogger.debug("upload dir is ["+this.upload_dir+"]");
-        } catch(Exception e) { mLogger.warn(e); }
-        
     }
-    
-    
-    /** 
+
+
+    /**
      * Handles requests for user uploaded resources.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        WebsiteData weblog = null;
         String context = request.getContextPath();
         String servlet = request.getServletPath();
         String reqURI = request.getRequestURI();
         
-        // URL decoding
-        
-        // Fix for ROL-1065: even though a + should mean space in a URL, folks 
-        // who upload files with plus signs expect them to work without 
-        // escaping. This is essentially what other systems do (e.g. JIRA) to 
-        // enable this.
-        reqURI = reqURI.replaceAll("\\+", "%2B");
-        
-        // now we really decode the URL
-        reqURI = URLDecoder.decode(reqURI, "UTF-8");
-        
-        // calculate the path of the requested resource
-        // we expect ... /<context>/<servlet>/path/to/resource
-        String reqResource = reqURI.substring(servlet.length() + context.length());
-        
-        // now we can formulate the *real* path to the resource on the filesystem
-        String resource_path = this.upload_dir + reqResource;
-        File resource = new File(resource_path);
-        
-        mLogger.debug("Resource requested ["+reqURI+"]");
-        mLogger.debug("Real path is ["+resource.getAbsolutePath()+"]");
-        
-        // do a quick check to make sure the resource exits, otherwise 404
-        if(!resource.exists() || !resource.canRead() || resource.isDirectory()) {
+        WeblogResourceRequest resourceRequest = null;
+        try {
+            // parse the incoming request and extract the relevant data
+            resourceRequest = new WeblogResourceRequest(request);
+
+            weblog = resourceRequest.getWeblog();
+            if(weblog == null) {
+                throw new RollerException("unable to lookup weblog: "+
+                        resourceRequest.getWeblogHandle());
+            }
+
+        } catch(Exception e) {
+            // invalid resource request or weblog doesn't exist
+            log.debug("error creating weblog resource request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
-        // make sure someone isn't trying to sneek outside the uploads dir
-        File uploadDir = new File(this.upload_dir);
-        if(!resource.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+        log.debug("Resource requested ["+resourceRequest.getResourcePath()+"]");
+        
+        long resourceLastMod = 0;
+        InputStream resourceStream = null;
+        
+        // first see if resource comes from weblog's shared theme
+        if(!Theme.CUSTOM.equals(weblog.getEditorTheme())) {
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                Theme weblogTheme = themeMgr.getTheme(weblog.getEditorTheme());
+                File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
+                if(resource != null) {
+                    resourceLastMod = resource.lastModified();
+                    resourceStream = new FileInputStream(resource);
+                }
+            } catch (Exception ex) {
+                // hmmm, some kind of error getting theme.  that's an error.
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
         }
         
-        // does the client already have this file?  if so, then 304
-        Date ifModDate = new Date(request.getDateHeader("If-Modified-Since"));
-        Date lastMod = new Date(resource.lastModified());
-        if(lastMod.compareTo(ifModDate) <= 0) {
-            mLogger.debug("Resource unmodified ... sending 304");
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
+        // if not from theme then see if resource is in weblog's upload dir
+        if(resourceStream == null) {
+            try {
+                FileManager fileMgr = RollerFactory.getRoller().getFileManager();
+                WeblogResource resource = fileMgr.getFile(weblog, 
+                        resourceRequest.getResourcePath());
+                resourceLastMod = resource.getLastModified();
+                resourceStream = resource.getInputStream();
+            } catch (Exception ex) {
+                // still not found? then we don't have it, 404.
+                log.debug("Unable to get resource", ex);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
         }
         
-        // looks like we'll be serving up the file ... lets set some headers
-        // set last-modified date so we can do if-modified-since checks
+        // Respond with 304 Not Modified if it is not modified.
+        if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
+            return;
+        } else {
+            // set last-modified date
+            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
+        }
+        
+
         // set the content type based on whatever is in our web.xml mime defs
-        response.addDateHeader("Last-Modified", (new Date()).getTime());
-        response.setContentType(this.context.getMimeType(resource.getAbsolutePath()));
+        response.setContentType(this.context.getMimeType(resourceRequest.getResourcePath()));
         
-        // ok, lets serve up the file
-        byte[] buf = new byte[8192];
-        int length = 0;
-        OutputStream out = response.getOutputStream();
-        InputStream resource_file = new FileInputStream(resource);
-        while((length = resource_file.read(buf)) > 0)
-            out.write(buf, 0, length);
-        
-        // cleanup
-        out.close();
-        resource_file.close();
+        OutputStream out = null;
+        try {
+            // ok, lets serve up the file
+            byte[] buf = new byte[8192];
+            int length = 0;
+            out = response.getOutputStream();
+            while((length = resourceStream.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
+            
+            // close output stream
+            out.close();
+            
+        } catch (Exception ex) {
+            if(!response.isCommitted()) {
+                response.reset();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } finally {
+            // make sure stream to resource file is closed
+            resourceStream.close();
+        }
+
     }
-    
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
-    }
-    
+
 }

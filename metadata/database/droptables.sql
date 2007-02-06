@@ -14,31 +14,44 @@
 -- copyright in this work, please see the NOTICE file in the top level
 -- directory of this distribution.
 
-drop table pingqueueentry;
-drop table pingcategory;
-drop table autoping;
-drop table pingtarget;
-drop table referer;
-drop table newsfeed;
-drop table weblogcategoryassoc;
-drop table bookmark;
-drop table roller_comment;
-drop table entryattribute;
-drop table weblogentry;
-drop table weblogcategory;
-drop table folder;
-drop table folderassoc;
-drop table webpage;
-drop table website;
-drop table userrole;
-drop table rollerconfig;
-drop table rolleruser; 
-drop table usercookie; 
+-- planet tables
 drop table rag_config;
 drop table rag_group;
 drop table rag_subscription;
 drop table rag_entry;
 drop table rag_group_subscription;
+
+-- non-associated tables
+drop table newsfeed;
+drop table usercookie;
+drop table rollerconfig;
 drop table roller_properties;
 drop table roller_audit_log;
+drop table roller_tasklock;
+
+-- supplemental services tables
+drop table pingqueueentry;
+drop table pingcategory;
+drop table autoping;
+drop table pingtarget;
+drop table referer;
+drop table bookmark;
+drop table folder;
+drop table folderassoc;
+
+-- core services tables
+drop table roller_hitcounts;
+drop table roller_comment;
+drop table roller_weblogentrytag;
+drop table roller_weblogentrytagagg;
+drop table entryattribute;
+drop table weblogentry;
+drop table weblogcategoryassoc;
+drop table weblogcategory;
+drop table webpage;
+
+-- core platform tables
 drop table roller_user_permissions;
+drop table website;
+drop table userrole;
+drop table rolleruser;

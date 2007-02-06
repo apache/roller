@@ -24,8 +24,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.struts.forms.WebsiteForm;
@@ -118,9 +118,8 @@ public class WebsiteFormEx extends WebsiteForm {
                         value, DateUtil.friendlyTimestampFormat());
                 this.setDateCreated(new Timestamp(pubDate.getTime()));
             } catch (java.text.ParseException pe) {
-                // wasn't proper format, try others
-                Date pubDate = DateUtil.parseFromFormats(value);
-                this.setDateCreated( new Timestamp(pubDate.getTime()) );
+                // wasn't properly formatted
+                throw new RuntimeException("improperly formatted date", pe);
             }
         }
     }

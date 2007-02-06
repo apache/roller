@@ -33,11 +33,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.Template;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.UserData;
@@ -93,34 +93,6 @@ public class RollerRequest
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
-    public static final String WEBLOG_KEY             = "weblog";
-    public static final String ANCHOR_KEY             = "entry";
-    public static final String ANCHOR_KEY_OLD         = "anchor";
-    public static final String USERNAME_KEY           = "username";
-
-    public static final String PAGELINK_KEY           = "pagelink";
-    public static final String EXCERPTS_KEY           = "excerpts";
-    public static final String WEBLOGENTRY_COUNT      = "count";
-    public static final String WEBLOGCATEGORYNAME_KEY = "catname";
-    public static final String WEBLOGENTRIES_KEY      = "entries";
-    public static final String WEBLOGDAY_KEY          = "day";
-    
-    public static final String WEBLOGENTRYID_KEY      = "entryid";
-    
-    public static final String WEBLOGCATEGORYID_KEY   = "categoryId";
-    public static final String PINGTARGETID_KEY       = "pingtargetId";
-    public static final String REFERERID_KEY          = "refId";
-    public static final String WEBLOGCOMMENTID_KEY    = "commentId";
-    public static final String WEBSITEID_KEY          = "websiteId";
-    public static final String BOOKMARKID_KEY         = "bookmarkId";
-    public static final String FOLDERID_KEY           = "folderId";
-    public static final String PARENTID_KEY           = "parentId";
-    public static final String NEWSFEEDID_KEY         = "feedId";
-    public static final String PAGEID_KEY             = "pageId";
-    public static final String LOGIN_COOKIE           = "sessionId";
-    
-    public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";
-    
     public static final String ROLLER_REQUEST        = "roller_request";
     
     private SimpleDateFormat m8charDateFormat = DateUtil.get8charDateFormat();
@@ -160,18 +132,6 @@ public class RollerRequest
         if (mRequest.getContextPath().equals("/atom"))
         {
             return; // Atom servlet request needs no init
-        }
-        
-        // Bind persistence session to authenticated user, if we have one
-        RollerContext rctx = RollerContext.getRollerContext(); 
-        Authenticator auth = rctx.getAuthenticator();
-        String userName = auth.getAuthenticatedUserName(mRequest);
-        if (userName != null)
-        {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            UserData currentUser = userMgr.getUserByUsername(userName);
-            // TODO: possible fix for backend refactoryings
-            //RollerFactory.getRoller().setUser(currentUser);
         }
         
         // path info may be null, (e.g. on JSP error page)
@@ -338,15 +298,16 @@ public class RollerRequest
             
             // First, look for user in the request params
             UserManager userMgr = RollerFactory.getRoller().getUserManager();            
-            String userName = mRequest.getParameter(USERNAME_KEY);
+            String userName = mRequest.getParameter(RequestConstants.USERNAME);
             if ( userName == null )
             {
                 // then try remote user
                 userName = mRequest.getRemoteUser(); 
             }
             
-            String handle = mRequest.getParameter(RollerRequest.WEBLOG_KEY);
-            String websiteid = mRequest.getParameter(RollerRequest.WEBSITEID_KEY);
+            String handle = mRequest.getParameter(RequestConstants.WEBLOG);
+            String websiteid = mRequest.getParameter(RequestConstants.WEBLOG_ID);
+            FolderData folder = getFolder();
             if (handle != null && mWebsite == null) 
             {
                 mWebsite = userMgr.getWebsiteByHandle(handle); 
@@ -355,9 +316,13 @@ public class RollerRequest
             {
                 mWebsite = userMgr.getWebsite(websiteid); 
             }
+            else if (folder != null && mWebsite == null )
+            {
+            	mWebsite = folder.getWebsite();
+            }
             
             // Look for page ID in request params
-            String pageId = mRequest.getParameter(RollerRequest.PAGEID_KEY);                    
+            String pageId = mRequest.getParameter(RequestConstants.PAGE_ID);                    
             if ( pageId != null )
             {
                 mPage = userMgr.getPage(pageId);                 
@@ -368,17 +333,18 @@ public class RollerRequest
             }
                                        
             // Look for day in request params 
-            String daystr = mRequest.getParameter(WEBLOGDAY_KEY);
-            if ( daystr != null )
-            {
-                mDate = parseDate(daystr);
-                if ( mDate != null )
-                {
-                    // we have the /username/datestring form of URL
-                    mDateString = daystr;
-                    mIsDaySpecified = true;
-                }               
-            }                  
+// no longer used
+//            String daystr = mRequest.getParameter(RollerConstants.WEBLOGDAY);
+//            if ( daystr != null )
+//            {
+//                mDate = parseDate(daystr);
+//                if ( mDate != null )
+//                {
+//                    // we have the /username/datestring form of URL
+//                    mDateString = daystr;
+//                    mIsDaySpecified = true;
+//                }               
+//            }                  
         }
         catch ( Exception ignored )
         {
@@ -550,32 +516,6 @@ public class RollerRequest
     {
         return mDateString;
     }
-
-    /**
-     * Gets the date specified by the request
-     * @param orToday If no date specified, then use today's date.
-     * @return Date    
-    public String getDateString( boolean orToday )
-    {
-        String ret = null;
-        if ( mDateString != null )
-        {
-            ret = mDateString;
-        }
-        else if ( orToday )
-        {
-            Calendar todayCal = Calendar.getInstance();
-            if (this.getWebsite() != null)
-            {
-            	todayCal = Calendar.getInstance(
-                        this.getWebsite().getTimeZoneInstance(),
-                        this.getWebsite().getLocaleInstance());
-            }
-            todayCal.setTime( new Date() );
-            ret = m8DigitDateFormat.format(todayCal.getTime());            
-        }
-        return ret;
-    }*/
     
     //------------------------------------------------------------------------
     /**
@@ -621,7 +561,7 @@ public class RollerRequest
     {
         if ( mBookmark == null )
         {
-            String id = getFromRequest(BOOKMARKID_KEY);
+            String id = getFromRequest(RequestConstants.BOOKMARK_ID);
             if ( id != null )
             {
                 try
@@ -647,7 +587,7 @@ public class RollerRequest
     {
         if ( mWeblogCategory == null )
         {
-            String id = getFromRequest(WEBLOGCATEGORYID_KEY);
+            String id = getFromRequest(RequestConstants.WEBLOGCATEGORY_ID);
             if ( id != null )
             {
                 try
@@ -661,14 +601,14 @@ public class RollerRequest
                     mLogger.error("Getting weblog category by id from request",e);
                 }
             }
-            else if (StringUtils.isNotEmpty(id = getFromRequest(WEBLOGCATEGORYNAME_KEY)))
+            else if (StringUtils.isNotEmpty(id = getFromRequest(RequestConstants.WEBLOGCATEGORY)))
             {
                 try
                 {
                     mWeblogCategory = 
                         RollerFactory.getRoller()
                             .getWeblogManager().getWeblogCategoryByPath(
-                                    getWebsite(), null, id);
+                                    getWebsite(), id);
                 }
                 catch (RollerException e)
                 {
@@ -689,7 +629,7 @@ public class RollerRequest
         FolderData folder = null;
         //if ( folder == null )
         //{
-            String id = getFromRequest(FOLDERID_KEY);
+            String id = getFromRequest(RequestConstants.FOLDER_ID);
             if ( id != null )
             {
                 try
@@ -715,7 +655,7 @@ public class RollerRequest
     {
         if (mPage == null)
         {
-            String id = getFromRequest(PAGEID_KEY);
+            String id = getFromRequest(RequestConstants.PAGE_ID);
             if ( id != null )
             {
                 try
@@ -794,12 +734,12 @@ public class RollerRequest
         if ( mWeblogEntry == null )
         {        
             // Look for anchor or entry ID that identifies a specific entry 
-            String anchor = mRequest.getParameter(ANCHOR_KEY);
-            if (anchor == null) anchor = mRequest.getParameter(ANCHOR_KEY_OLD);
-            String entryid = mRequest.getParameter(WEBLOGENTRYID_KEY);
+            String anchor = mRequest.getParameter(RequestConstants.ANCHOR);
+            if (anchor == null) anchor = mRequest.getParameter(RequestConstants.ANCHOR);
+            String entryid = mRequest.getParameter(RequestConstants.WEBLOGENTRY_ID);
             if (entryid == null) 
             {
-                entryid = (String)mRequest.getAttribute(WEBLOGENTRYID_KEY);
+                entryid = (String)mRequest.getAttribute(RequestConstants.WEBLOGENTRY_ID);
             }
             try
             {

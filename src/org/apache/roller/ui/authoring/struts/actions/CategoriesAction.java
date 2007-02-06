@@ -30,7 +30,6 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,19 +42,19 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.CategoriesForm;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
  * Actions that are initiated from the CategoriesForm.
  * 
- * @struts.action name="categoriesForm" path="/editor/categories" parameter="method"
+ * @struts.action name="categoriesForm" path="/roller-ui/authoring/categories" parameter="method"
  * @struts.action-forward name="CategoriesForm" path=".CategoriesForm"
  * 
  * @author Dave Johnson
@@ -144,8 +143,7 @@ public class CategoriesAction extends DispatchAction
                         if (    !cd.getId().equals(parent.getId()) 
                              && !parent.descendentOf(cd))
                         {
-                            cd.setParent(parent);
-                            wmgr.saveWeblogCategory(cd);
+                            wmgr.moveWeblogCategory(cd, parent);
                         }
                         else 
                         {
@@ -153,8 +151,8 @@ public class CategoriesAction extends DispatchAction
                                 "categoriesForm.warn.notMoving",cd.getName()));
                         }
                     }
-                }    
-                // TODO: new manager method, moveCategory(cat, newPath)
+                }
+                
                 RollerFactory.getRoller().flush();
                 saveMessages(request, messages);
             }
@@ -209,10 +207,10 @@ public class CategoriesAction extends DispatchAction
 
             // Find catid wherever it may be
             String catId = (String)
-                request.getAttribute(RollerRequest.WEBLOGCATEGORYID_KEY);
+                request.getAttribute(RequestConstants.WEBLOGCATEGORY_ID);
             if (null == catId) 
             {
-                catId = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
+                catId = request.getParameter(RequestConstants.WEBLOGCATEGORY_ID);
             }  
             if (null == catId)
             {
@@ -246,12 +244,12 @@ public class CategoriesAction extends DispatchAction
                 //request.setAttribute("categoryPath", catPath);
 
                 request.setAttribute(
-                    RollerRequest.PARENTID_KEY, cat.getParent().getId());
+                    RequestConstants.PARENT_ID, cat.getParent().getId());
             }
 
             // Build collection of all Categories, except for current one, 
             // sorted by path.
-            Iterator iter = wmgr.getWeblogCategories(website).iterator();
+            Iterator iter = wmgr.getWeblogCategories(website, true).iterator();
             while (iter.hasNext())
             {
                 WeblogCategoryData cd = (WeblogCategoryData) iter.next();

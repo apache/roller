@@ -20,8 +20,11 @@
  */
 package org.apache.roller.ui.authoring.struts.actions;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
@@ -29,21 +32,23 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarkFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.cache.CacheManager;
 
 /**
- * @struts.action path="/editor/bookmarkSave" name="bookmarkFormEx"
- *    validate="true" input="/editor/bookmarkEdit.do"
- * @struts.action-forward name="Bookmarks" path="/editor/bookmarks.do?method=selectFolder"
- * 
+ * @struts.action path="/roller-ui/authoring/bookmarkSave" name="bookmarkFormEx"
+ *    validate="true" input="/roller-ui/authoring/bookmarkEdit.do"
+ * @struts.action-forward name="Bookmarks" path="/roller-ui/authoring/bookmarks.do?method=selectFolder"
+ * @struts.action-forward name="BookmarkEdit" path="/roller-ui/authoring/bookmarkEdit.do"
+ *
  * @author Dave Johnson
  */
 public class BookmarkSaveAction extends Action
@@ -59,7 +64,7 @@ public class BookmarkSaveAction extends Action
         BookmarkFormEx form = (BookmarkFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-
+        
         BookmarkData bd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) 
         {
@@ -69,9 +74,17 @@ public class BookmarkSaveAction extends Action
         {
             bd = new BookmarkData();
             FolderData fd = bmgr.getFolder(
-                request.getParameter(RollerRequest.FOLDERID_KEY));
+                request.getParameter(RequestConstants.FOLDER_ID));
             bd.setFolder(fd);
         }
+
+        // Fix for ROL-1279, check for valid bookmark URLs
+        ActionErrors errors = validateBookmark(null, form);
+        if (errors.size() > 0) {
+            saveErrors(request, errors);
+            return mapping.findForward("BookmarkEdit");
+        }
+
         RollerSession rses = RollerSession.getRollerSession(request);
         if (bd.getFolder().getWebsite().hasUserPermissions(
                 rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
@@ -83,17 +96,39 @@ public class BookmarkSaveAction extends Action
             CacheManager.invalidate(bd);
             
             request.setAttribute(
-                RollerRequest.FOLDERID_KEY, bd.getFolder().getId());
+                RequestConstants.FOLDER_ID, bd.getFolder().getId());
         }
         else 
         {
-            ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("error.permissions.deniedSave"));
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
         }
         return forward;
         
+    }
+    
+    public ActionErrors validateBookmark(ActionErrors errors, BookmarkFormEx form) {
+        if (errors == null) errors = new ActionErrors();
+        if (StringUtils.isNotEmpty(form.getUrl()) && !validURL(form.getUrl())) {
+            errors.add("url", new ActionError("bookmarkForm.error.invalidURL", form.getUrl()));
+        }
+        if (StringUtils.isNotEmpty(form.getFeedUrl()) && !validURL(form.getFeedUrl())) {
+            errors.add("feedUrl", new ActionError("bookmarkForm.error.invalidURL", form.getFeedUrl()));
+        }
+        if (StringUtils.isNotEmpty(form.getImage()) && !validURL(form.getImage())) {
+            errors.add("image", new ActionError("bookmarkForm.error.invalidURL", form.getImage()));
+        }
+        return errors;
+    }
+    
+    public boolean validURL(String url) {
+        boolean valid = false;
+        try {
+            URL test = new URL(url);
+            valid = true;
+        } catch (MalformedURLException intentionallyIgnored) {}
+        return valid;
     }
 
 }

@@ -1,23 +1,25 @@
 LICENSE.txt - Roller licensing terms
-  
-   Roller is licensed under the Apache Licence Version 2.0, see below.
 
-   PLEASE NOTE: Although Roller itself is under the Apache license, Roller 
-   depends on and contains some components that are licensed under the more 
-   restrictive terms of the LGPL licence. See the NOTICE.txt file for a list
-   of third party components included in Roller. These license are used by
-   components used in Roller:
+Roller is licensed under the Apache Licence Version 2.0, see below.
 
-      * LGPL - http://www.opensource.org/licenses/lgpl-license.php
-      * BSD - http://www.opensource.org/licenses/bsd-license.php
-      * JDOM license - listed at end of this file
-      * Jython license - http://www.jython.org/license.html
+PLEASE NOTE: Although Roller itself is under the Apache license, Roller depends 
+on one component that is licensed under the more restrictive terms of the LGPL 
+licence (http://www.opensource.org/licenses/lgpl-license.php): which is the 
+Hibernate persistence library.
+
+Roller also uses the JDOM XML parser library, licensed under the 
+terms of the JDOM license (a BSD-like license listed at end of this file).
+
+And Roller contains some snippets of code from the Blojsom and Pebble
+blog servers, which are both licensed under the terms of the BSD licence 
+(http://www.opensource.org/licenses/bsd-license.php).
 
 
+-------------------------------------------------------------------------------
 
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
+                              Apache License
+                        Version 2.0, January 2004
+                     http://www.apache.org/licenses/
 
    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
@@ -217,13 +219,11 @@ LICENSE.txt - Roller licensing terms
    See the License for the specific language governing permissions and
    limitations under the License.
 
+-------------------------------------------------------------------------------
 
-
-
-
-
- Copyright (C) 2000-2002 Jason Hunter & Brett McLaughlin.
- All rights reserved.
+                      The JDOM License
+      Copyright (C) 2000-2002 Jason Hunter & Brett McLaughlin.
+                     All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions

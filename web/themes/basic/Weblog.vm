@@ -1,40 +1,79 @@
-<div class="entries">
-    <h1>#showWebsiteDescription()</h1>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
+</head>
+<body>
 
-    #showWeblogCategoryChooser()
+<div class="content_wrapper">
+  <div class="content">
+    <h1 class="weblogName">$utils.escapeHTML($model.weblog.name)</h1>
 
-    #displayWeblogEntries()
+        <center>
+        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+        #showWeblogCategoryLinksList($rootCategory false false)
+        </center>
+
+        #set($pager = $model.getWeblogEntriesPager()) 
+        <div class="next-previous">
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
+        </div>
+
+        #showWeblogEntriesPager($pager)
+
+        #if ($model.permalink)
+           #showWeblogEntryComments($entry)
+           #showWeblogEntryCommentForm($entry)
+        #end
+
+  </div>
 </div>
-<div class="rightbar">
+
+<div class="rightbar_wrapper">
+  <div class="rightbar">
     <h2>Calendar</h2>
     <div class="sidebar">
-    #showWeblogCalendar()
+    #showWeblogEntryCalendar($model.weblog "nil")
     </div>
 
-    <h2>RSS Feeds</h2>
+    <h2>Feeds</h2>
     <div class="sidebar">
-    #showRSSBadge()<br>
-    #showRSSLinks()
+    #showAtomFeedsList($model.weblog)
     </div>
 
     <h2>Search</h2>
     <div class="sidebar">
-    #showSearchForm()
+    #showWeblogSearchForm($model.weblog false)
     </div>
 
     <h2>Links</h2>
     <div class="sidebar">
-    #showBlogroll()
+    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+    #showBookmarkLinksList($rootFolder false false) 
     </div>
 
     <h2>Navigation</h2>
     <div class="sidebar">
-    #showCssNavBar()
-    #showEditorMenu()
+    #showPageMenu($model.weblog)
+    #showAuthorMenu(true)
     </div>
 
     <h2>Referers</h2>
     <div class="sidebar">
-    #showReferers(30 20)
+    #set($refs = $model.weblog.getTodaysReferrers())
+    #showReferrersList($refs 30 20)
     </div>
+  </div>
 </div>
+
+</body>
+</html>
+

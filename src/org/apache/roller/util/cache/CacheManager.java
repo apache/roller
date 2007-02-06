@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.util.cache;
 
@@ -30,8 +30,8 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.business.runnable.Job;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
@@ -55,8 +55,6 @@ import org.apache.roller.pojos.WebsiteData;
  * changes in the system we often need to notify all caches that some part of
  * their cached data needs to be invalidated, and the CacheManager makes that
  * process easier.
- *
- * @author Allen Gilliland
  */
 public class CacheManager {
     
@@ -68,10 +66,11 @@ public class CacheManager {
     // a reference to the cache factory in use
     private static CacheFactory cacheFactory = null;
     
-    // a list of all cache handlers who have obtained a cache
+    // a set of all registered cache handlers
     private static Set cacheHandlers = new HashSet();
     
-    private static ContinuousWorkerThread futureInvalidationsThread = null;
+    // a map of all registered caches
+    private static Map caches = new HashMap();
     
     
     static {
@@ -97,6 +96,7 @@ public class CacheManager {
             cacheFactory = (CacheFactory) factoryClass.newInstance();
         } catch(Exception e) {
             log.fatal("Failed to instantiate a cache factory", e);
+            throw new RuntimeException(e);
         }
         
         log.info("Cache Manager Initialized.");
@@ -124,33 +124,6 @@ public class CacheManager {
                 }
             }
         }
-        
-        // determine future invalidations peering window
-        Integer peerTime = new Integer(5);
-        String peerTimeString = RollerConfig.getProperty("cache.futureInvalidations.peerTime");
-        try {
-            peerTime = new Integer(peerTimeString);
-        } catch(NumberFormatException nfe) {
-            // bad input from config file, default already set
-        }
-        
-        // thread time is always 10 secs less than peer time to make sure
-        // there is a little overlap so we don't miss any entries
-        // this means every XX seconds we peer XX + 10 seconds into the future
-        int threadTime = (peerTime.intValue() * 60 * 1000) - (10 * 1000);
-        
-        // start up future invalidations job, running continuously
-        futureInvalidationsThread = new ContinuousWorkerThread("future invalidations thread", threadTime);
-        Job futureInvalidationsJob = new FuturePostingsInvalidationJob();
-        
-        // inputs
-        Map inputs = new HashMap();
-        inputs.put("peerTime", peerTime);
-        futureInvalidationsJob.input(inputs);
-        
-        // set job and start it
-        futureInvalidationsThread.setJob(futureInvalidationsJob);
-        futureInvalidationsThread.start();
     }
     
     
@@ -207,11 +180,15 @@ public class CacheManager {
             cache = cacheFactory.constructCache(properties);
         }
         
-        // register the handler for this new cache
-        if(handler != null) {
-            cacheHandlers.add(handler);
+        if(cache != null) {
+            caches.put(cache.getId(), cache);
+            
+            // register the handler for this new cache
+            if(handler != null) {
+                cacheHandlers.add(handler);
+            }
         }
-        
+
         return cache;
     }
     
@@ -345,57 +322,31 @@ public class CacheManager {
      */
     public static void clear() {
         
-        // loop through all handlers and trigger a clear
-        CacheHandler handler = null;
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            handler = (CacheHandler) handlers.next();
+        // loop through all caches and trigger a clear
+        Cache cache = null;
+        Iterator cachesIT = caches.values().iterator();
+        while(cachesIT.hasNext()) {
+            cache = (Cache) cachesIT.next();
             
-            handler.clear();
+            cache.clear();
         }
     }
     
     
     /**
-     * Flush a single cache handler.
+     * Flush a single cache.
      */
-    public static void clear(String handlerClass) {
+    public static void clear(String cacheId) {
         
-        // loop through all handlers to find the one we want
-        CacheHandler handler = null;
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            handler = (CacheHandler) handlers.next();
-            
-            if(handler.getClass().getName().equals(handlerClass)) {
-                handler.clear();
-            }
+        Cache cache = (Cache) caches.get(cacheId);
+        if(cache != null) {
+            cache.clear();
         }
     }
     
     
     /**
-     * Get the date of the last time the specified weblog was invalidated.
-     *
-     * There is some potential for a performance hit to do this lookup, but
-     * we assume that our WebsiteData objects are cached up the @$$ ;)
-     */
-    public static Date getLastExpiredDate(String weblogHandle) {
-        
-        try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData weblog = userMgr.getWebsiteByHandle(weblogHandle);
-            return weblog.getLastModified();
-        } catch (RollerException ex) {
-            log.error("Error setting last modified date", ex);
-        }
-        
-        return null;
-    }
-    
-    
-    /**
-     * Compile stats from all registered handlers.
+     * Compile stats from all registered caches.
      *
      * This is basically a hacky version of instrumentation which is being
      * thrown in because we don't have a full instrumentation strategy yet.
@@ -406,12 +357,12 @@ public class CacheManager {
         
         Map allStats = new HashMap();
         
-        CacheHandler handler = null;
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            handler = (CacheHandler) handlers.next();
+        Cache cache = null;
+        Iterator cachesIT = caches.values().iterator();
+        while(cachesIT.hasNext()) {
+            cache = (Cache) cachesIT.next();
             
-            allStats.put(handler.getClass().getName(), handler.getStats());
+            allStats.put(cache.getId(), cache.getStats());
         }
         
         return allStats;
@@ -422,11 +373,7 @@ public class CacheManager {
      * Place to do any cleanup tasks for cache system.
      */
     public static void shutdown() {
-        
-        // stop our future invalidations thread
-        if(futureInvalidationsThread != null) {
-            futureInvalidationsThread.interrupt();
-        }
+        // no-op
     }
     
 }

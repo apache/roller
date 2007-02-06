@@ -33,12 +33,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
-import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ThemeManager;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
@@ -52,7 +52,7 @@ import org.apache.roller.util.cache.CacheManager;
  *
  * @author Allen Gilliland
  *
- * @struts.action name="themeEditorForm" path="/editor/themeEditor"
+ * @struts.action name="themeEditorForm" path="/roller-ui/authoring/themeEditor"
  *    scope="session" parameter="method"
  *
  * @struts.action-forward name="editTheme.page" path=".theme-editor"
@@ -369,7 +369,7 @@ public class ThemeEditorAction extends DispatchAction {
                     // only if custom themes are allowed
                     if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
                         try {
-                            themeMgr.saveThemePages(website, usersTheme);
+                            themeMgr.importTheme(website, usersTheme);
                             RollerFactory.getRoller().flush();
                         } catch(RollerException re) {
                             mLogger.error(re);

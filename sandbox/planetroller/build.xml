@@ -17,91 +17,205 @@
   directory of this distribution.
 -->
 <!DOCTYPE project [
-    <!ENTITY properties SYSTEM "properties.xmlf">
+    <!ENTITY custom-web SYSTEM "custom/custom-web.xmlf">
 ]>
-<project name="planet-roller" default="release">
-	
-	<!-- Bring in properties.xml -->
-	&properties;
-	
-	<fileset id="roller-jars" dir="${rollerjars.dir}">
-        <include name="rollerbeans.jar"/>
-        <include name="rome-0.6.jar"/>
-        <include name="velocity-1.4.jar"/>
-        <include name="velocity-dep-1.4.jar"/>
-        <include name="jdom.jar"/>
-        <include name="dom4j-1.4.jar"/>
-        <include name="jaxen-full.jar"/>
-        <include name="commons-logging.jar"/>
-        <include name="commons-lang-2.0.jar"/>
+<project name="planetroller" default="stage-webapp" basedir=".">
+    
+    <description>Builds, tests, and runs the project planetroller.</description>   
+
+    <property file="./ant.properties" />
+    
+    <!-- core properties -->
+    <property name="ro.build"            value="${basedir}/build" />
+    <property name="ro.src"              value="${basedir}/src" />
+    <property name="ro.tools"            value="${basedir}/../../tools" />
+    <property name="ro.test"             value="${basedir}/test" />
+    <property name="ro.web"              value="${basedir}/web" />
+    
+    <!-- build properties -->
+    <property name="build.compile"                  value="${ro.build}/compile"/>
+    <property name="build.compile.classes"          value="${build.compile}/classes"/>
+    <property name="build.compile.test"             value="${build.compile}/test"/>
+    <property name="build.lib"           value="${ro.build}/lib"/>
+    <property name="build.webapp"        value="${ro.build}/webapp"/>
+    <property name="build.test"          value="${ro.build}/test"/>
+    <property name="build.test.reports"  value="${build.test}/reports"/>
+    
+    
+    <fileset id="roller-jars" dir="${ro.tools}">
+        <!-- needed for Hibernate -->
+        <include name="hibernate-3.1/hibernate3.jar"/>
+        <include name="hibernate-3.1/lib/antlr.jar"/>
+        <include name="hibernate-3.1/lib/asm.jar"/>
+        <include name="hibernate-3.1/lib/asm-attrs.jar"/>
+        <include name="hibernate-3.1/lib/cglib-2.1.3.jar"/>
+        <include name="hibernate-3.1/lib/ehcache-1.1.jar"/>
+        <include name="hibernate-3.1/lib/dom4j-1.6.1.jar"/>
+        <include name="hibernate-3.1/lib/jta.jar"/>
+        <include name="hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
+                
+        <!-- needed for ROME -->
+        <include name="lib/rome-0.9.jar"/>
+        <include name="lib/rome-fetcher-0.9.jar"/>
+        <include name="lib/jdom.jar"/>
+        
+        <!-- Needed for Velocity -->
+        <include name="lib/velocity-1.4.jar"/>
+        <include name="lib/velocity-dep-1.4.jar"/>
+        
+        <!-- General dependencies -->
+        <include name="lib/commons-codec-1.3.jar"/>
+        <include name="struts-1.2.4/lib/antlr.jar"/>
+        <include name="struts-1.2.4/lib/commons-lang-2.0.jar"/>
+        <include name="struts-1.2.4/lib/commons-logging.jar"/>
+        <include name="struts-1.2.4/lib/commons-fileupload.jar"/>
+        <include name="struts-1.2.4/lib/commons-validator.jar"/>
+        <include name="struts-1.2.4/lib/commons-collections.jar"/>
+        <include name="lib/log4j-1.2.11.jar"/>
+        <include name="lib/jaxen-full.jar"/>
+        <include name="lib/saxpath.jar"/>
+        <include name="lib/activation.jar"/>
+        <include name="lib/mail.jar"/>
     </fileset>
-    <fileset id="planet-jars" dir="${planetjars.dir}">
-        <include name="commons-httpclient-2.0.2.jar"/>
-        <include name="rome-fetcher-0.6.jar"/>
-    </fileset>
+    
     <path id="planet.path">
-		<fileset refid="roller-jars" />
-		<fileset refid="planet-jars" />
+        <fileset refid="roller-jars" />
+        
+        <!-- the planet business layer code -->
+        <fileset dir="../../apps/planet/build/lib">
+            <include name="roller-planet.jar"/>
+        </fileset>
+        
+        <fileset dir="${ro.tools}/buildtime/tomcat-5.0.28">
+            <include name="servlet-api.jar"/>
+        </fileset>
+        
+        <fileset dir="${ro.web}/WEB-INF/lib">
+            <include name="commons-logging-1.0.4.jar"/>
+            <include name="commons-lang-2.1.jar"/>  
+            <include name="myfaces-api-1.1.4.jar"/>  
+            <include name="tomahawk-1.1.3.jar"/>  
+        </fileset>                      
     </path>
-	
-    <target name="compile">
-	    <mkdir dir="./build/classes" />
-        <javac debug="on" destdir="./build/classes" 
-            excludes="**/hibernate/**,**/presentation/**" >
-            <src path="./src" />
+    
+    <path id="xdoclet.path">
+        <path refid="planet.path"/>
+        <fileset dir="${ro.tools}/buildtime" includes="ejb-1.1.jar"/>
+        <fileset dir="${ro.tools}/buildtime/xdoclet-1.2.3/lib" includes="*.jar"/>
+    </path>
+    
+    <path id="test.path">
+        <!-- testing jars -->
+        <fileset dir="${ro.tools}/buildtime/mockrunner-0.35/lib">
+            <include name="*.jar"/>
+        </fileset>
+        
+        <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
+        <pathelement location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
+        <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+        <pathelement location="${ro.tools}/buildtime/derby.jar"/>
+        <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
+        <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
+        
+        <pathelement location="${ro.tools}/lib/commons-httpclient-2.0.2.jar"/>
+        
+        <!-- plus normal jars -->
+        <path refid="planet.path"/>
+
+        <!-- plus already built roller planet jars -->
+        <fileset dir="${build.lib}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+    
+    
+    <target name="clean" description="Clean (i.e. remove) build and dist dirs">
+        <delete dir="${ro.build}" />
+        <delete dir="${ro.dist}" />
+    </target>
+    
+    <!-- get jars from Roller Planet project which are required for this app -->
+    <target name="get-planet-jars">
+        <!-- first call the "dist" target to make sure the libs are built -->
+        <ant antfile="../../apps/planet/build.xml" inheritAll="false" target="dist" />
+        
+        <!-- now just copy them to our build.lib directory for inclusion -->
+        <mkdir dir="${build.lib}"/>
+        <copy todir="${build.lib}">
+            <fileset dir="../../apps/planet/dist/lib" 
+                     includes="roller-planet-business.jar" />
+        </copy>
+    </target>
+
+    <!-- ============================================== -->
+    <!-- build the code and jar it up -->
+    <target name="build" depends="get-planet-jars" >
+        
+        <!-- compile planet classes -->
+        <mkdir dir="${build.compile.classes}"/>
+        <javac destdir="${build.compile.classes}"
+               debug="${build.debug}" 
+               source="${build.sourcelevel}"
+               deprecation="${build.deprecation}">
+            
+            <src path="${ro.src}" />
+            
             <classpath>
-                <path location="../../build/compile_beans" />
                 <path refid="planet.path"/>
+                <fileset dir="${build.lib}" includes="*.jar" />
             </classpath>
         </javac>
-    	    <copy todir="./build/classes" file="./src/rome.properties" />
-    </target>
-
-    <target name="release" depends="compile">
-	    <mkdir dir="./build/planet-roller/testdata" />
-	    <mkdir dir="./build/planet-roller/templates" />
-	    <mkdir dir="./build/planet-roller/theme" />
-	    <mkdir dir="./build/planet-roller/lib" />
-	    <mkdir dir="./build/planet-roller/src" />
-    	
-    	    <!-- Include jars needed to build and run -->
-    	    <jar basedir="./build/classes" 
-    	    	    destfile="./build/planet-roller/lib/planet-roller-${planet.version}.jar" />
-    	    <copy todir="./build/planet-roller/lib">
-			<fileset refid="roller-jars" />
-			<fileset refid="planet-jars" />
-	    	</copy>
-
-    	    <!-- Include sample theme, template, and config files -->
-	    <copy todir="./build/planet-roller/templates">
-	    		<fileset dir="./templates" includes="*.vm" />
-	    	</copy>
-	    <copy todir="./build/planet-roller/testdata">
-	    		<fileset dir="./testdata" includes="**/dummy.txt" />
-	    	</copy>
-    	    <copy file="./planet-tool.sh" todir="./build/planet-roller" />
-	    <copy failonerror="false" file="./release-setenv.sh" 
-	    	    tofile="./build/planet-roller/setenv.sh" />
-	    <chmod file="./build/planet-roller/setenv.sh" perm="+x" />
-	    <chmod file="./build/planet-roller/planet-tool.sh" perm="+x" />
-	    <copy file="./planet-config.xml" todir="./build/planet-roller" />
-
-    	    <!-- Include source and build files -->
-    	    <copy todir="./build/planet-roller/src" >
-    	        <fileset dir="./src" />
+        
+        <!-- Copy resources -->
+        <copy todir="${build.compile.classes}">
+            <fileset dir="${ro.src}" excludes="**/*.java, **/*.html, **/*.png" />
         </copy>
-	    <copy failonerror="false" file="./release-properties.xmlf" 
-	    	    tofile="./build/planet-roller/properties.xmlf" />
-	    <copy file="./build.xml" todir="./build/planet-roller" />
-
-    	    <!-- Package it up -->
-    	    <tar destfile="./build/planet-roller-${planet.version}.tar" 
-    	    	   basedir="./build" includes="planet-roller/**" />
-    	
+        
+        <!-- Jar up the business layer -->
+        <mkdir dir="${build.lib}"/>
+        <jar basedir="${build.compile.classes}"
+             jarfile="${build.lib}/roller-planet-web.jar"/>
+        
     </target>
-	
-	<target name="clean">
-	    <delete dir="./build" />
-	</target>
+    
+    
+    <!-- ============================================== -->
+    <!-- stage the full webapp -->
+    <target name="stage-webapp" depends="build" description="Build Planet webapp">
+        
+        <mkdir dir="${build.webapp}/WEB-INF/lib" />
+        <copy todir="${build.webapp}/WEB-INF/lib" flatten="true">
+            <fileset dir="${build.lib}" />
+            <fileset refid="roller-jars" />
+            
+            <!-- the planet business layer code -->
+            <fileset dir="../../apps/planet/build/lib">
+                <include name="roller-planet.jar"/>
+            </fileset>
+        
+        </copy>         
+
+        <copy todir="${build.webapp}">
+            <fileset dir="${ro.web}" includes="**/**" />
+        </copy>         
+        <chmod perm="+x" dir="${build.webapp}/WEB-INF/scripts" includes="*.sh" />
+        
+        <mkdir dir="${build.webapp}/WEB-INF/templates" />
+        <copy todir="${build.webapp}/WEB-INF/templates">
+            <fileset dir="./templates" includes="**/**" />
+        </copy> 
+        
+        &custom-web;
+
+    </target>
+    
+   
+    <!-- Copy files locally for convenience in IDE -->
+    <target name="copy-jars-for-ide">
+        <mkdir dir="./lib" />
+        <copy todir="./lib" flatten="true">
+            <fileset refid="roller-jars" />
+        </copy> 
+    </target>
 
 </project>

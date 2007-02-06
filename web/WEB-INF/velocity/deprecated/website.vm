@@ -1,0 +1,137 @@
+#**
+ * Website and page information and display.
+ * @author  Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * Sets content type header for page, must be first line in template.
+**#
+#macro( setContentType $ctype )
+$pageHelper.setContentType($ctype)## comment here kills trailing whitespace
+#end
+
+#**
+ * Set the META tag for ContentType.  We do this in addition to
+ * setting the Response header because the header does not get
+ * cached.  So in order to maintain the ContentType we must present
+ * it inside the rendered page itself.
+**#
+#macro( showContentType $ctype )
+    <meta http-equiv="Content-Type" content="$ctype">
+#end
+
+#**
+ * Display website title.
+ *#
+#macro( showWebsiteTitle )$model.weblog.name#end
+
+#**
+ * Display website description.
+ *#
+#macro( showWebsiteDescription )$model.weblog.description#end
+
+#**
+ * Include a page and evaluate it as a template.
+ * @param pageName Name of page to be included.
+ *#
+#macro( includePage $pageName )
+    ## replaced by roller 3.0 version
+    #includeTemplate($model.weblog $pageName)
+#end
+
+#**
+ * Show name of current page.
+ *#
+#macro( showPageName )$model.weblogPage.name#end
+
+#**
+ * Show current page's description.
+ *#
+#macro( showPageDescription )$model.weblogPage.getDescription()#end
+
+#**
+ * Show current page's update time.
+ *#
+#macro( showPageUpdateTime )$model.weblogPage.lastModified#end
+
+
+#**
+ * Shows weblog category chooser with support for hierarhical categories.
+ * To style completely with CSS, set $divider to "" (empty string).
+ * @param parentCategory Name of top-level category to display.
+ * @param divider        The text to place between each category.
+ *#
+#macro( showWeblogSubcategoryChooser2 $parentCategory $divider )
+    <div class="rWeblogCategoryChooser">
+    #if( $model.weblogCategory )
+        <span class="rUnchosenCategory"><a href="$url.home">$text.get( "macro.weblog.allcategories" )</a></span>
+    #else
+        <span class="rChosenCategory">$text.get( "macro.weblog.allcategories" )</span>
+    #end
+
+    #set( $cats = $model.weblog.getWeblogCategories($parentCategory) )
+    #foreach( $cat in $cats )
+        $divider
+        #if( $model.weblogCategory.path == $cat.path )
+            <span class="rChosenCategory">$cat.name</span>
+        #else
+            <span class="rUnchosenCategory"><a href="$url.category($cat.path)">$cat.name</a></span>
+        #end
+    #end
+    </div>
+#end
+
+
+#**
+ * Shows weblog category chooser using "|" as divider.
+ * @param parentCategory Name of top-level category to display.
+ *#
+#macro( showWeblogSubcategoryChooser $parentCategory )
+    #showWeblogSubcategoryChooser2( $parentCategory "|" )
+#end
+
+
+#**
+ * Shows weblog category chooser for all categories using "|" as divider.
+ *#
+#macro( showWeblogCategoryChooser )#showWeblogSubcategoryChooser2("nil" "|")#end
+
+
+#**
+ * Display weblog calandar for one specific category.
+ * @param big            True to display a BIG calendar, good for an archive page.
+ * @param parentCategory Name of top-level category to display.
+ *#
+#macro( displayWeblogCalendar $big $cat )
+    ## replaced by Roller 3.0 version
+    #if( $big )
+        $calendarModel.showWeblogEntryCalendarBig($weblog, $cat)
+    #else
+        #showWeblogEntryCalendar($model.weblog $cat)
+    #end
+#end
+
+
+#**
+ * Show weblog calandar.
+ *#
+#macro( showWeblogCalendar )
+    ## replaced by Roller 3.0 version
+    #showWeblogEntryCalendar($model.weblog "nil")
+#end
+
+
+#**
+ * Display a BIG weblog calendar, good for an archive page.
+ *#
+#macro( showBigWeblogCalendar )
+    #displayWeblogCalendar( true "nil" )
+#end
+
+
+#**
+ * Show RSD (Really Simple Discovery) link for your weblog.
+ *#
+#macro( showRSDLink )
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$url.rsd"/>
+#end

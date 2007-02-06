@@ -18,8 +18,10 @@
 
 package org.apache.roller.pojos;
 
-import java.sql.Timestamp;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
@@ -28,11 +30,10 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="PingQueueEntryData"
- * @hibernate.class lazy="false" table="pingqueueentry"
+ * @hibernate.class lazy="true" table="pingqueueentry"
  * @hibernate.cache usage="read-write"
  */
-public class PingQueueEntryData extends PersistentObject implements Serializable
-{
+public class PingQueueEntryData implements Serializable {
     private String id = null;
     private Timestamp entryTime = null;
     private PingTargetData pingTarget = null;
@@ -44,8 +45,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
     /**
      * Default constructor.  Leaves all fields at Java-specified default values.
      */
-    public PingQueueEntryData()
-    {
+    public PingQueueEntryData() {
     }
 
     /**
@@ -57,8 +57,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @param website    website originating the ping
      * @param attempts   number of prior ping attempts
      */
-    public PingQueueEntryData(String id, Timestamp entryTime, PingTargetData pingTarget, WebsiteData website, int attempts)
-    {
+    public PingQueueEntryData(String id, Timestamp entryTime, PingTargetData pingTarget, WebsiteData website, int attempts) {
         this.id = id;
         this.entryTime = entryTime;
         this.pingTarget = pingTarget;
@@ -67,12 +66,9 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
     }
 
     /**
-     * @see PersistentObject#setData(PersistentObject)
+     * Set bean properties based on other bean.
      */
-    public void setData(PersistentObject vo)
-    {
-        PingQueueEntryData other = (PingQueueEntryData) vo;
-        
+    public void setData(PingQueueEntryData other) {
         id = other.getId();
         entryTime = other.getEntryTime();
         pingTarget = other.getPingTarget();
@@ -87,8 +83,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -98,8 +93,9 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @param id
      * @ejb:persistent-field
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -110,8 +106,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="entrytime" non-null="true"
      */
-    public Timestamp getEntryTime()
-    {
+    public Timestamp getEntryTime() {
         return entryTime;
     }
 
@@ -121,8 +116,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @param entryTime the time the entry was first added to the queue.
      * @ejb:persistent-field
      */
-    public void setEntryTime(Timestamp entryTime)
-    {
+    public void setEntryTime(Timestamp entryTime) {
         this.entryTime = entryTime;
     }
 
@@ -133,8 +127,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.many-to-one column="pingtargetid" cascade="none" not-null="true"
      */
-    public PingTargetData getPingTarget()
-    {
+    public PingTargetData getPingTarget() {
         return pingTarget;
     }
 
@@ -144,8 +137,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @param pingTarget target to ping.
      * @ejb:persistent-field
      */
-    public void setPingTarget(PingTargetData pingTarget)
-    {
+    public void setPingTarget(PingTargetData pingTarget) {
         this.pingTarget = pingTarget;
     }
 
@@ -156,8 +148,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite()
-    {
+    public WebsiteData getWebsite() {
         return website;
     }
 
@@ -167,8 +158,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @param website the website originating the ping.
      * @ejb:persistent-field
      */
-    public void setWebsite(WebsiteData website)
-    {
+    public void setWebsite(WebsiteData website) {
         this.website = website;
     }
 
@@ -179,8 +169,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="attempts" non-null="true"
      */
-    public int getAttempts()
-    {
+    public int getAttempts() {
         return attempts;
     }
 
@@ -190,8 +179,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      * @param attempts
      * @ejb:persistent-field
      */
-    public void setAttempts(int attempts)
-    {
+    public void setAttempts(int attempts) {
         this.attempts = attempts;
     }
 
@@ -200,51 +188,36 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      *
      * @return the new value.
      */
-    public int incrementAttempts()
-    {
+    public int incrementAttempts() {
         return ++attempts;
     }
 
-    /**
-     * @see Object#equals(Object o)
-     */
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (!(o instanceof PingQueueEntryData)) return false;
+    //------------------------------------------------------- Good citizenship
 
-        final PingQueueEntryData pingQueueEntryData = (PingQueueEntryData) o;
-
-        if (attempts != pingQueueEntryData.getAttempts()) return false;
-        if (entryTime != null ? !entryTime.equals(pingQueueEntryData.getEntryTime()) : pingQueueEntryData.getEntryTime() != null) return false;
-        if (id != null ? !id.equals(pingQueueEntryData.getId()) : pingQueueEntryData.getId() != null) return false;
-        if (pingTarget != null ? !pingTarget.equals(pingQueueEntryData.getPingTarget()) : pingQueueEntryData.getPingTarget() != null) return false;
-        if (website != null ? !website.equals(pingQueueEntryData.getWebsite()) : pingQueueEntryData.getWebsite() != null) return false;
-
-        return true;
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.entryTime);
+        buf.append(", ").append(this.attempts);
+        buf.append("}");
+        return buf.toString();
     }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode()
-    {
-        return (id != null ? id.hashCode() : 0);
+    
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other instanceof PingQueueEntryData != true) return false;
+        PingQueueEntryData o = (PingQueueEntryData)other;
+        return new EqualsBuilder()
+            .append(getEntryTime(), o.getEntryTime()) 
+            .append(getWebsite(), o.getWebsite()) 
+            .isEquals();
     }
-
-    /**
-     * Generate a string form of the object appropriate for logging or debugging.
-     * @return a string form of the object appropriate for logging or debugging.
-     * @see java.lang.Object#toString()
-     */
-    public String toString()
-    {
-        return "PingQueueEntryData{" +
-            "id='" + id + "'" +
-            ", entryTime=" + entryTime +
-            ", pingTarget=" + pingTarget +
-            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") +
-            ", attempts=" + attempts +
-            "}";
+    
+    public int hashCode() { 
+        return new HashCodeBuilder()
+            .append(getEntryTime())
+            .append(getWebsite())
+            .toHashCode();
     }
 }

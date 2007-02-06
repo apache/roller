@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * CommentTest.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 12, 2006, 3:12 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.business;
@@ -29,9 +24,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -106,9 +102,8 @@ public class CommentTest extends TestCase {
         comment.setRemoteHost("foofoo");
         comment.setContent("this is a test comment");
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        comment.setWeblogEntry(testEntry);
-        comment.setPending(Boolean.FALSE);
-        comment.setApproved(Boolean.TRUE);
+        comment.setWeblogEntry(TestUtils.getManagedWeblogEntry(testEntry));
+        comment.setStatus(CommentData.APPROVED);
         
         // create a comment
         mgr.saveComment(comment);
@@ -159,36 +154,37 @@ public class CommentTest extends TestCase {
         
         // get all comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, null, null, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // get all comments for entry
         comments = null;
-        comments = mgr.getComments(null, testEntry, null, null, null, null, null, null, false, 0, -1);
+        comments = mgr.getComments(null, testEntry, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // make some changes
-        comment3.setPending(Boolean.TRUE);
-        comment3.setApproved(Boolean.FALSE);
+        comment3 = mgr.getComment(comment3.getId());
+        comment3.setStatus(CommentData.PENDING);
         mgr.saveComment(comment3);
+        TestUtils.endSession(true);
         
         // get pending comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, Boolean.TRUE, null, null, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, CommentData.PENDING, false, 0, -1);
         assertNotNull(comments);
         assertEquals(1, comments.size());
         
         // get approved comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, Boolean.TRUE, null, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, CommentData.APPROVED, false, 0, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
         // get comments with offset
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, null, null, null, false, 1, -1);
+        comments = mgr.getComments(null, null, null, null, null, null, false, 1, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
@@ -199,6 +195,157 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
     }
     
+    
+    /**
+     * Test that when deleting parent objects of a comment that everything
+     * down the chain is properly deleted as well.  i.e. deleting an entry
+     * should delete all comments on that entry, and deleting a weblog should
+     * delete all comments, etc.
+     */
+    public void testCommentParentDeletes() throws Exception {
+        
+        log.info("BEGIN");
+        
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        
+        // first make sure we can delete an entry with comments
+        UserData user = TestUtils.setupUser("commentParentDeleteUser");
+        WebsiteData weblog = TestUtils.setupWeblog("commentParentDelete", user);
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", weblog.getDefaultCategory(), weblog, user);
+        
+        CommentData comment1 = TestUtils.setupComment("comment1", entry);
+        CommentData comment2 = TestUtils.setupComment("comment2", entry);
+        CommentData comment3 = TestUtils.setupComment("comment3", entry);
+        TestUtils.endSession(true);
+        
+        // now deleting the entry should succeed and delete all comments
+        Exception ex = null;
+        try {
+            wmgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(entry));
+            TestUtils.endSession(true);
+        } catch (RollerException e) {
+            ex = e;
+        }
+        assertNull(ex);
+        
+        // now make sure we can delete a weblog with comments
+        weblog = TestUtils.getManagedWebsite(weblog);
+        entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", weblog.getDefaultCategory(), weblog, user);
+        
+        comment1 = TestUtils.setupComment("comment1", entry);
+        comment2 = TestUtils.setupComment("comment2", entry);
+        comment3 = TestUtils.setupComment("comment3", entry);
+        TestUtils.endSession(true);
+        
+        // now deleting the entry should succeed and delete all comments
+        ex = null;
+        try {
+            umgr.removeWebsite(TestUtils.getManagedWebsite(weblog));
+            TestUtils.endSession(true);
+        } catch (RollerException e) {
+            ex = e;
+        }
+        assertNull(ex);
+        
+        // and delete test user as well
+        umgr.removeUser(user);
+        TestUtils.endSession(true);
+        
+        log.info("END");
+    }
+    
+    
+    /**
+     * Apparently, HSQL has "issues" with LIKE expressions, 
+     * so I'm commenting this out for now. 
+     
+    public void _testBulkCommentDelete() throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        List comments = null;
+        
+        // we need some comments to play with
+        CommentData comment1 = TestUtils.setupComment("deletemeXXX", testEntry);
+        CommentData comment2 = TestUtils.setupComment("XXXdeleteme", testEntry);
+        CommentData comment3 = TestUtils.setupComment("deleteme", testEntry);
+        CommentData comment4 = TestUtils.setupComment("saveme", testEntry);
+        CommentData comment5 = TestUtils.setupComment("saveme", testEntry);
+        CommentData comment6 = TestUtils.setupComment("saveme", testEntry);
+        TestUtils.endSession(true);
+        
+        // get all comments
+        comments = null;
+        comments = mgr.getComments(
+            null, // website
+            null, // entry
+            null, // searchString
+            null, // startDate
+            null, // endDate
+            null, // pending
+            null, // approved
+            null, // spam
+            true, // reverseChrono
+             0,   // offset
+            -1);  // length
+        assertNotNull(comments);
+        assertEquals(6, comments.size());
+        
+        comments = mgr.getComments(
+            null, // website
+            null, // entry
+            "deleteme", // searchString
+            null, // startDate
+            null, // endDate
+            null, // pending
+            null, // approved
+            null, // spam
+            true, // reverseChrono
+             0,   // offset
+            -1);  // length
+        assertNotNull(comments);
+        assertEquals(3, comments.size());
+       
+        int countDeleted = mgr.removeMatchingComments(
+            null,         // website
+            null,         // entry
+            "deleteme",  // searchString
+            null,         // startDate
+            null,         // endDate
+            null,         // pending
+            null,         // approved
+            null);        // spam        
+        assertEquals(3, countDeleted);
+        
+        comments = mgr.getComments(
+            null, // website
+            null, // entry
+            null, // searchString
+            null, // startDate
+            null, // endDate
+            null, // pending
+            null, // approved
+            null, // spam
+            true, // reverseChrono
+             0,   // offset
+            -1);  // length
+        assertNotNull(comments);
+        assertEquals(3, comments.size());
+        
+        // remove test comments
+        countDeleted = mgr.removeMatchingComments(
+            null,         // website
+            null,         // entry
+            "saveme",    // searchString
+            null,         // startDate
+            null,         // endDate
+            null,         // pending
+            null,         // approved
+            null);        // spam        
+        assertEquals(3, countDeleted);
+        TestUtils.endSession(true);
+    }
+    */
     
     /**
      * Test extra CRUD methods ... removeComments(ids), removeCommentsForEntry

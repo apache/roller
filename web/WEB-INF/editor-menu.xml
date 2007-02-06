@@ -30,9 +30,10 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="commentManagement" name="tabbedmenu.admin.commentManagement" 
                                           perms="admin" 
                                           subforwards="commentQuery" />
-        <menu-item forward="categories"   name="tabbedmenu.weblog.categories" />
+        <menu-item forward="categories"   name="tabbedmenu.weblog.categories" 
+                                          subforwards="categoryEdit,categoryDelete" />
         <menu-item forward="bookmarks"    name="tabbedmenu.bookmarks.allFolders" 
-                                          subforwards="importBookmarks" />
+                                          subforwards="importBookmarks,bookmarkEdit,folderEdit" />
         <menu-item forward="uploadFiles"  name="tabbedmenu.website.files" />
         <menu-item forward="referers"     name="tabbedmenu.weblog.referers" />
     </menu>
@@ -43,10 +44,12 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="editTheme"         name="tabbedmenu.website.themes" 
                                                perms="admin" />
         <menu-item forward="editPages"         name="tabbedmenu.website.pages" 
-                                               perms="admin" />
+                                               perms="admin" 
+                                               subforwards="page,removePage" />
         <menu-item forward="memberPermissions" enabledProperty="groupblogging.enabled"
                                                name="tabbedmenu.website.members" 
-                                               perms="admin" />
+                                               perms="admin" 
+                                               subforwards="inviteMember,invitations" />
         <menu-item forward="pingSetup"         name="tabbedmenu.weblog.pingSetup" 
                                                disabledProperty="pings.disablePingUsage" 
                                                perms="admin" />

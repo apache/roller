@@ -29,18 +29,18 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarkFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
- * @struts.action path="/editor/bookmarkEdit" name="bookmarkFormEx" validate="false"
+ * @struts.action path="/roller-ui/authoring/bookmarkEdit" name="bookmarkFormEx" validate="false"
  * @struts.action-forward name="BookmarkForm" path=".BookmarkForm"
  * 
  * @author Dave Johnson
@@ -70,9 +70,10 @@ public class BookmarkEditAction extends Action
                 
             // Pass bookmark's Folder on as attribute.                 
             parentFolder = bd.getFolder();
-
-            request.setAttribute("model", new BasePageModel(
-                "bookmarkForm.edit.title", request, response, mapping));
+            BasePageModel pageModel = new BasePageModel(
+                    "bookmarkForm.edit.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else if (null != request.getParameter("correct"))
         {
@@ -80,10 +81,11 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","correcting"); 
                 
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.getFolder(rreq.getFolder().getId());        
-            
-            request.setAttribute("model", new BasePageModel(
-                "bookmarkForm.correct.title", request, response, mapping));
+            parentFolder = rreq.getFolder();        
+            BasePageModel pageModel = new BasePageModel(
+                    "bookmarkForm.correct.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else
         {
@@ -91,17 +93,18 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","add");
             
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.getFolder(rreq.getFolder().getId()); 
-            
-            request.setAttribute("model", new BasePageModel(
-                "bookmarkForm.add.title", request, response, mapping));
+            parentFolder = rreq.getFolder(); 
+            BasePageModel pageModel = new BasePageModel(
+                    "bookmarkForm.add.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         
         // Build folder path for display on page
         if (null != parentFolder)
         {
             request.setAttribute(
-                RollerRequest.FOLDERID_KEY, parentFolder.getId());
+                RequestConstants.FOLDER_ID, parentFolder.getId());
             
             LinkedList folderPath = new LinkedList();
             folderPath.add(0, parentFolder);

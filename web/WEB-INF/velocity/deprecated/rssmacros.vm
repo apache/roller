@@ -1,0 +1,35 @@
+#**
+ * RSS feed links and badges.
+ *#
+
+#**
+ * Show links to category feeds for categories that are immediate children
+ * of the specified category.
+ *#
+#macro( showRSSLinksForCategory $category )
+    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a><br />
+    #set( $categories = $model.weblog.getWeblogCategory($category).weblogCategories )
+    #foreach( $cat in $categories )
+        <a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a><br />
+    #end
+#end
+
+#**
+ * Show links to all available RSS feeds for your weblog.
+ *#
+#macro( showRSSLinks )#showRSSLinksForCategory("nil")#end
+
+#**
+ * Show RSS Autodiscovery link for your weblog.
+ *#
+#macro( showRSSAutodiscoveryLink )
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="$url.feed.entries.rss" />
+#end
+
+#**
+ * Show RSS badge with link to your weblog's main RSS feed.
+ *#
+#macro( showRSSBadge )
+    <a href="$url.feed.entries.rss"><img class="rssbadge"
+        src="$url.site/images/rssbadge.gif" alt="XML" /></a>
+#end

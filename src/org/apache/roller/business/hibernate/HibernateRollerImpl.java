@@ -1,40 +1,40 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Feb 23, 2003
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.business.hibernate;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerImpl;
-import org.apache.roller.model.BookmarkManager;
-import org.apache.roller.model.ConfigManager;
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingQueueManager;
-import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.model.PlanetManager;
-import org.apache.roller.model.PropertiesManager;
-import org.apache.roller.model.RefererManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.config.RollerConfig;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.ConfigManager;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingQueueManager;
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.business.PropertiesManager;
+import org.apache.roller.business.referrers.RefererManager;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.runnable.ThreadManager;
 
 
 /**
@@ -56,20 +56,35 @@ public class HibernateRollerImpl extends RollerImpl {
     private BookmarkManager bookmarkManager = null;
     private ConfigManager configManager = null;
     private PropertiesManager propertiesManager = null;
-    private PlanetManager planetManager = null;
     private RefererManager refererManager = null;
     private UserManager userManager = null;
     private WeblogManager weblogManager = null;
     private PingQueueManager pingQueueManager = null;
     private AutoPingManager autoPingManager = null;
     private PingTargetManager pingTargetManager = null;
+    private ThreadManager threadManager = null;
     
     
     protected HibernateRollerImpl() throws RollerException {
         try {
-            strategy = new HibernatePersistenceStrategy();
+            if (StringUtils.isNotEmpty(RollerConfig.getProperty("jdbc.driverClass"))) {
+                // create and configure for JDBC access
+                strategy = new HibernatePersistenceStrategy(
+                    RollerConfig.getProperty("hibernate.configResource"),
+                    RollerConfig.getProperty("hibernate.dialect"),
+                    RollerConfig.getProperty("jdbc.driverClass"),
+                    RollerConfig.getProperty("jdbc.connectionURL"),
+                    RollerConfig.getProperty("jdbc.username"),
+                    RollerConfig.getProperty("jdbc.password"));
+            } else {
+                // create an configure via config resource only
+                strategy = new HibernatePersistenceStrategy(
+                    RollerConfig.getProperty("hibernate.configResource"),
+                    RollerConfig.getProperty("hibernate.dialect"));
+            }
         } catch(Throwable t) {
             // if this happens then we are screwed
+            mLogger.fatal("Error initializing Hibernate", t);
             throw new RollerException(t);
         }
     }
@@ -104,6 +119,7 @@ public class HibernateRollerImpl extends RollerImpl {
         if (pingTargetManager != null) pingTargetManager.release();
         if (pingQueueManager != null) pingQueueManager.release();
         if (autoPingManager != null) autoPingManager.release();
+        if( threadManager != null) threadManager.release();
         
         // tell Hibernate to close down
         this.strategy.release();
@@ -126,88 +142,84 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * @see org.apache.roller.model.Roller#getUserManager()
      */
-    public UserManager getUserManager() throws RollerException {
+    public UserManager getUserManager() {
         if ( userManager == null ) {
             userManager = new HibernateUserManagerImpl(strategy);
         }
         return userManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getBookmarkManager()
      */
-    public BookmarkManager getBookmarkManager() throws RollerException {
+    public BookmarkManager getBookmarkManager() {
         if ( bookmarkManager == null ) {
             bookmarkManager = new HibernateBookmarkManagerImpl(strategy);
         }
         return bookmarkManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getWeblogManager()
      */
-    public WeblogManager getWeblogManager() throws RollerException {
+    public WeblogManager getWeblogManager() {
         if ( weblogManager == null ) {
             weblogManager = new HibernateWeblogManagerImpl(strategy);
         }
         return weblogManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getRefererManager()
      */
-    public RefererManager getRefererManager() throws RollerException {
+    public RefererManager getRefererManager() {
         if ( refererManager == null ) {
             refererManager = new HibernateRefererManagerImpl(strategy);
         }
         return refererManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getConfigManager()
      */
-    public ConfigManager getConfigManager() throws RollerException {
+    public ConfigManager getConfigManager() {
         if (configManager == null) {
             configManager = new HibernateConfigManagerImpl(strategy);
         }
         return configManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getPropertiesManager()
      */
-    public PropertiesManager getPropertiesManager() throws RollerException {
+    public PropertiesManager getPropertiesManager() {
         if (propertiesManager == null) {
             propertiesManager = new HibernatePropertiesManagerImpl(strategy);
         }
         return propertiesManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getPingTargetManager()
      */
-    public PingQueueManager getPingQueueManager() throws RollerException {
+    public PingQueueManager getPingQueueManager() {
         if (pingQueueManager == null) {
             pingQueueManager = new HibernatePingQueueManagerImpl(strategy);
         }
         return pingQueueManager;
     }
     
-    /**
-     * @see org.apache.roller.model.Roller#getPlanetManager()
-     */
-    public PlanetManager getPlanetManager() throws RollerException {
-        if ( planetManager == null ) {
-            planetManager = new HibernateRollerPlanetManagerImpl(strategy);
-        }
-        return planetManager;
-    }
-    
     
     /**
      * @see org.apache.roller.model.Roller#getPingTargetManager()
      */
-    public AutoPingManager getAutopingManager() throws RollerException {
+    public AutoPingManager getAutopingManager() {
         if (autoPingManager == null) {
             autoPingManager = new HibernateAutoPingManagerImpl(strategy);
         }
@@ -218,11 +230,22 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * @see org.apache.roller.model.Roller#getPingTargetManager()
      */
-    public PingTargetManager getPingTargetManager() throws RollerException {
+    public PingTargetManager getPingTargetManager() {
         if (pingTargetManager == null) {
             pingTargetManager = new HibernatePingTargetManagerImpl(strategy);
         }
         return pingTargetManager;
+    }
+    
+    
+    /**
+     * @see org.apache.roller.model.Roller#getThreadManager()
+     */
+    public ThreadManager getThreadManager() {
+        if (threadManager == null) {
+            threadManager = new HibernateThreadManagerImpl(strategy);
+        }
+        return threadManager;
     }
     
 }

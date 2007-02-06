@@ -29,18 +29,21 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
+import org.apache.roller.ui.core.RequestConstants;
+import org.apache.roller.RollerException;
+import org.apache.roller.pojos.WebsiteData;
 
 /**
- * @struts.action path="/editor/categorySave" name="weblogCategoryFormEx"
- *    validate="true" input="/editor/categoryEdit.do"
+ * @struts.action path="/roller-ui/authoring/categorySave" name="weblogCategoryFormEx"
+ *    validate="true" input="/roller-ui/authoring/categoryEdit.do"
  * 
  * @author Dave Johnson
  */
@@ -55,33 +58,80 @@ public class CategorySaveAction extends Action
     {
         ActionForward forward = mapping.findForward("categories");
         WeblogCategoryFormEx form = (WeblogCategoryFormEx)actionForm;
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-
+        
         WeblogCategoryData cd = null;
-        if (null != form.getId() && !form.getId().trim().equals("")) 
-        {
+        if (null != form.getId() && !form.getId().trim().equals("")) {
             cd = wmgr.getWeblogCategory(form.getId());
+            
+            // update changeable properties
+            if(!cd.getName().equals(form.getName())) {
+                WeblogCategoryData parent = cd.getParent();
+                
+                // make sure new name is not a duplicate of an existing category
+                if(parent.hasCategory(form.getName())) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                            new ActionError("categoryForm.error.duplicateName", form.getName()));
+                    saveErrors(request, errors);
+                    return mapping.findForward("categoryEdit");
+                }
+                
+                // update the category name
+                cd.setName(form.getName());
+                
+                // path includes name, so update path as well
+                if("/".equals(parent.getPath())) {
+                    cd.setPath("/"+cd.getName());
+                } else {
+                    cd.setPath(parent.getPath() + "/" + cd.getName());
+                }
+            }
+            cd.setDescription(form.getDescription());
+            cd.setImage(form.getImage());
+            
+        } else {
+            WeblogCategoryData parentCat = wmgr.getWeblogCategory(form.getParentId());
+            cd = new WeblogCategoryData(
+                    parentCat.getWebsite(),
+                    parentCat,
+                    form.getName(),
+                    form.getDescription(),
+                    form.getImage());
+            
+            // make sure new cat is not a duplicate of an existing category
+            if(parentCat.hasCategory(form.getName())) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("categoryForm.error.duplicateName", form.getName()));
+                saveErrors(request, errors);
+                return mapping.findForward("categoryEdit");
+            }
+            
+            // add new cat to parent
+            parentCat.addCategory(cd);
         }
-        else 
-        {
-            cd = new WeblogCategoryData();
-            String pid = form.getParentId();
-            WeblogCategoryData parentCat = wmgr.getWeblogCategory(pid);
-            cd.setWebsite(parentCat.getWebsite());
-            cd.setParent(parentCat);
-        }
-
+        
         RollerSession rses = RollerSession.getRollerSession(request);
         if (cd.getWebsite().hasUserPermissions(
             rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
         {
-            form.copyTo(cd, request.getLocale());
-            wmgr.saveWeblogCategory(cd);
-            RollerFactory.getRoller().flush();
+            try {
+                wmgr.saveWeblogCategory(cd);
+                RollerFactory.getRoller().flush();
+                
+                // notify caches of object invalidation
+                CacheManager.invalidate(cd);
+            } catch (RollerException re) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.untranslated", re.getMessage())); 
+                saveErrors(request, errors);
+            }
             
-            // notify caches of object invalidation
-            CacheManager.invalidate(cd);
+            request.setAttribute(
+                RequestConstants.WEBLOGCATEGORY_ID, cd.getParent().getId());
         }
         else
         {
@@ -90,8 +140,7 @@ public class CategorySaveAction extends Action
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
         }
-        request.setAttribute(
-            RollerRequest.WEBLOGCATEGORYID_KEY, cd.getParent().getId());         
+        
         return forward;
     }
 }

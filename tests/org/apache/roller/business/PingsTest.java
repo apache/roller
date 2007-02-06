@@ -31,9 +31,9 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
@@ -122,7 +122,7 @@ public class PingsTest extends TestCase {
         assertEquals(testCommonPing.getPingUrl(), ping.getPingUrl());
         
         // create custom ping
-        testCustomPing.setWebsite(testWeblog);
+        testCustomPing.setWebsite(TestUtils.getManagedWebsite(testWeblog));
         mgr.savePingTarget(testCustomPing);
         String customId = testCustomPing.getId();
         TestUtils.endSession(true);
@@ -314,7 +314,9 @@ public class PingsTest extends TestCase {
         
         // remove a collection
         List autoPings = new ArrayList();
+        autoPing2 = mgr.getAutoPing(autoPing2.getId()); //Get managed version of autoPing2
         autoPings.add(autoPing2);
+        autoPing3 = mgr.getAutoPing(autoPing3.getId()); //Get managed version of autoPing2
         autoPings.add(autoPing3);
         mgr.removeAutoPings(autoPings);
         TestUtils.endSession(true);

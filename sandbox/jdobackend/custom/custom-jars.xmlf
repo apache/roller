@@ -1,0 +1,5 @@
+
+<!-- Custom jars added to Roller's standard set -->
+
+<!-- EXAMPLE: jdobackend libraries -->
+<fileset dir="${basedir}/sandbox/jdobackend/lib" includes="*.jar" />

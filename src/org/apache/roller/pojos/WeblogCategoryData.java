@@ -1,84 +1,96 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.util.PojoUtil;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
+
 
 /**
- * WeblogCategory bean.
- * @author David M Johnson
+ * Weblog Category.
+ *
+ * @struts.form include-all="true"
  *
  * @ejb:bean name="WeblogCategoryData"
- * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="weblogcategory"
+ * @hibernate.class lazy="true" table="weblogcategory"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogCategoryData extends HierarchicalPersistentObject
-{
+public class WeblogCategoryData implements Serializable {
+    
     public static final long serialVersionUID = 1435782148712018954L;
-
+    
+    // attributes
     private String id = null;
     private String name = null;
     private String description = null;
     private String image = null;
+    private String path = null;
     
-    private String cachedPath = null;
-
+    // associations
     private WebsiteData website = null;
-    private List weblogCategories = null;
+    private WeblogCategoryData parentCategory = null;
+    private Set childCategories = new HashSet();
     
-
-    public WeblogCategoryData()
-    {
+    
+    public WeblogCategoryData() {
     }
-
+    
     public WeblogCategoryData(
-        java.lang.String id,
-        WebsiteData website,
-        WeblogCategoryData parent,
-        java.lang.String name,
-        java.lang.String description,
-        java.lang.String image)
-    {
-        this.id = id;
-        this.website = website;
-        this.mNewParent = parent;
+            WebsiteData website,
+            WeblogCategoryData parent,
+            java.lang.String name,
+            java.lang.String description,
+            java.lang.String image) {
+        
         this.name = name;
         this.description = description;
         this.image = image;
-    }
+        
+        this.website = website;
+        this.parentCategory = parent;
 
-    public WeblogCategoryData(WeblogCategoryData otherData)
-    {
+        // calculate path
+        if(parent == null) {
+            this.path = "/";
+        } else if("/".equals(parent.getPath())) {
+            this.path = "/"+name;
+        } else {
+            this.path = parent.getPath() + "/" + name;
+        }
+    }
+    
+    
+    public WeblogCategoryData(WeblogCategoryData otherData) {
         this.setData(otherData);
     }
-
-    /** Setter is needed in RollerImpl.storePersistentObject(). */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData)
-    {
+    
+    
+    public void setData(WeblogCategoryData otherData) {
         WeblogCategoryData other = (WeblogCategoryData) otherData;
         
         this.id = other.getId();
@@ -86,249 +98,180 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         this.name = other.getName();
         this.description = other.getDescription();
         this.image = other.getImage();
+        this.path = other.getPath();
         
-        try {
-            this.mNewParent = other.getParent();
-        } catch(RollerException re) {
-            // why does this throw an exception?
-        }
+        this.parentCategory = other.getParent();
+        this.childCategories = other.getWeblogCategories();
     }
     
     
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAssocClass()
-     */
-    public Class getAssocClass()
-    {
-        return WeblogCategoryAssoc.class;
-    }
+    //------------------------------------------------------- Good citizenship
 
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getObjectPropertyName()
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getObjectPropertyName()
-    {
-        return "category";
-    }
-
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAncestorPropertyName()
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getAncestorPropertyName()
-    {
-        return "ancestorCategory";
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("{");
+        buf.append(this.id);
+        buf.append(", ").append(this.path);
+        buf.append("}");
+        return buf.toString();
     }
     
-    //------------------------------------------------------- Simple properties
-
+    public boolean equals(Object other) {
+        
+        if (other == null) return false;
+        
+        if (other instanceof WeblogCategoryData) {
+            WeblogCategoryData o = (WeblogCategoryData)other;
+            return new EqualsBuilder()
+                .append(getPath(), o.getPath()) 
+                //.append(getWebsite(), o.getWebsite()) 
+                .isEquals();
+        }        
+        return false;
+    }
+        
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(getPath())
+            //.append(getWebsite())
+            .toHashCode();
+    }
+    
+    
     /**
+     * Database surrogate key.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     *
      * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this.id;
     }
-    /** @ejb:persistent-field */
-    public void setId(java.lang.String id)
-    {
+    
+    public void setId(java.lang.String id) {
+        // Form bean workaround: empty string is never a valid id
+        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
-
-    /** 
+    
+    
+    /**
+     * The display name for this category.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     *
      * @hibernate.property column="name" non-null="true" unique="false"
      */
-    public java.lang.String getName()
-    {
+    public java.lang.String getName() {
         return this.name;
     }
-    /** @ejb:persistent-field */
-    public void setName(java.lang.String name)
-    {
+    
+    public void setName(java.lang.String name) {
         this.name = name;
     }
-
-    /** 
-     * Description
-     * 
+    
+    
+    /**
+     * A full description for this category.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     *
      * @hibernate.property column="description" non-null="true" unique="false"
      */
-    public java.lang.String getDescription()
-    {
+    public java.lang.String getDescription() {
         return this.description;
     }
-    /** @ejb:persistent-field */
-    public void setDescription(java.lang.String description)
-    {
+    
+    public void setDescription(java.lang.String description) {
         this.description = description;
     }
-
-    /** 
+    
+    
+    /**
+     * An image icon to represent this category.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     *
      * @hibernate.property column="image" non-null="true" unique="false"
      */
-    public java.lang.String getImage()
-    {
+    public java.lang.String getImage() {
         return this.image;
     }
-    /** @ejb:persistent-field */
-    public void setImage(java.lang.String image)
-    {
+    
+    public void setImage(java.lang.String image) {
         this.image = image;
     }
-
+    
+    
     /**
-     * Get path in category hierarhcy.
+     * The full path to this category in the hierarchy.
      *
      * @roller.wrapPojoMethod type="simple"
+     *
+     * @hibernate.property column="path" non-null="true" unique="false"
      */
-    public String getPath()
-    {
-        if (null == cachedPath)
-        {
-            try
-            {
-                cachedPath = RollerFactory.getRoller().getWeblogManager().getPath(this);
-            }
-            catch (RollerException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-        return cachedPath;
+    public String getPath() {
+        return this.path;
     }
-
-    //------------------------------------------------------------ Associations
-
-    /** 
+    
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
+    
+    /**
+     * Get the weblog which owns this category.
+     *
      * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     *  
+     *
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite()
-    {
+    public WebsiteData getWebsite() {
         return website;
     }
-    /** @ejb:persistent-field */
-    public void setWebsite(WebsiteData website)
-    {
+    
+    public void setWebsite(WebsiteData website) {
         this.website = website;
     }
-
-
-    /** 
-     * Return parent category, or null if category is root of hierarchy.
+    
+    
+    /**
+     * Get parent category, or null if category is root of hierarchy.
      *
      * @roller.wrapPojoMethod type="pojo"
+     *
+     * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
-    public WeblogCategoryData getParent() throws RollerException
-    {
-        if (mNewParent != null)
-        {
-            // Category has new parent, so return that
-            return (WeblogCategoryData)mNewParent;
-        }
-        else if (getParentAssoc() != null)
-        {
-            // Return parent found in database
-            return ((WeblogCategoryAssoc)getParentAssoc()).getAncestorCategory();
-        }
-        else 
-        {
-            return null;
-        }
+    public WeblogCategoryData getParent() {
+        return this.parentCategory;
     }
-
-    /** Set parent category, database will be updated when object is saved. */
-    public void setParent(HierarchicalPersistentObject parent)
-    {
-        mNewParent = parent;
+    
+    public void setParent(WeblogCategoryData parent) {
+        this.parentCategory = parent;
     }
-
+    
+    
     /**
-     * Query to get child categories of this category.
+     * Get child categories of this category.
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
-     */
-    public List getWeblogCategories() throws RollerException
-    {
-        if (weblogCategories == null)
-        {
-            weblogCategories = new LinkedList();
-            List childAssocs = getChildAssocs();
-            Iterator childIter = childAssocs.iterator();
-            while (childIter.hasNext())
-            {
-                WeblogCategoryAssoc assoc =
-                    (WeblogCategoryAssoc) childIter.next();
-                weblogCategories.add(assoc.getCategory());
-            }
-        }
-        return weblogCategories;
-    }
-
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public boolean descendentOf(WeblogCategoryData ancestor) 
-        throws RollerException
-    {
-        return RollerFactory.getRoller().getWeblogManager().isDescendentOf(this, ancestor);
-    }
-    
-    /** 
-     * Determine if category is in use. Returns true if any weblog entries 
-     * use this category or any of it's subcategories.
      *
-     * @roller.wrapPojoMethod type="simple"
+     * @hibernate.set lazy="true" inverse="true" cascade="delete"
+     * @hibernate.collection-key column="parentid"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogCategoryData"
      */
-    public boolean isInUse() 
-    {
-        try
-        {
-            return RollerFactory.getRoller().getWeblogManager().isWeblogCategoryInUse(this);
-        }
-        catch (RollerException e)
-        {
-            throw new RuntimeException(e);
-        }
+    public Set getWeblogCategories() {
+        return this.childCategories;
     }
     
-    /** TODO: fix form generation so this is not needed. */
-    public void setInUse(boolean dummy) {}
-
-    //------------------------------------------------------------------------
-
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#createAssoc(
-     * org.apache.roller.pojos.HierarchicalPersistentObject, 
-     * org.apache.roller.pojos.HierarchicalPersistentObject, java.lang.String)
-     */
-    public Assoc createAssoc(
-        HierarchicalPersistentObject object, 
-        HierarchicalPersistentObject associatedObject, 
-        String relation) throws RollerException
-    {
-        return new WeblogCategoryAssoc(null,
-                (WeblogCategoryData)object,
-                (WeblogCategoryData)associatedObject,
-                relation);
+    private void setWeblogCategories(Set cats) {
+        this.childCategories = cats;
     }
     
     
-    /** 
+    /**
      * Retrieve all weblog entries in this category and, optionally, include
      * weblog entries all sub-categories.
      *
@@ -337,114 +280,86 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
      * @param subcats True if entries from sub-categories are to be returned.
      * @return List of WeblogEntryData objects.
      * @throws RollerException
-     */ 
-    public List retrieveWeblogEntries(boolean subcats) 
-        throws RollerException
-    {
+     */
+    public List retrieveWeblogEntries(boolean subcats) throws RollerException {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
     }
-
-    //-------------------------------------------------------- Good citizenship
-
-    public String toString()
-    {
-        StringBuffer str = new StringBuffer("{");
-
-        str.append(
-            "id="
-                + id
-                + " "
-                + "name="
-                + name
-                + " "
-                + "description="
-                + description
-                + " "
-                + "image="
-                + image);
-        str.append('}');
-
-        return (str.toString());
-    }
-
-    public boolean equals(Object pOther)
-    {
-        if (pOther == null) return false;
-        if (pOther instanceof WeblogCategoryData)
-        {
-            WeblogCategoryData lTest = (WeblogCategoryData) pOther;
-            boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
-            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
-            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
-            lEquals = PojoUtil.equals(lEquals, this.getImage(), lTest.getImage());
-            return lEquals;
+    
+    
+    /**
+     * Add a category as a child of this category.
+     */
+    public void addCategory(WeblogCategoryData category) {
+        
+        // make sure category is not null
+        if(category == null || category.getName() == null) {
+            throw new IllegalArgumentException("Category cannot be null and must have a valid name");
         }
-        else
-        {
+        
+        // make sure we don't already have a category with that name
+        if(this.hasCategory(category.getName())) {
+            throw new IllegalArgumentException("Duplicate category name '"+category.getName()+"'");
+        }
+        
+        // set ourselves as the parent of the category
+        category.setParent(this);
+        
+        // add it to our list of child categories
+        getWeblogCategories().add(category);
+    }
+    
+    
+    /**
+     * Does this category have a child category with the specified name?
+     *
+     * @param name The name of the category to check for.
+     * @return boolean true if child category exists, false otherwise.
+     */
+    public boolean hasCategory(String name) {
+        Iterator cats = this.getWeblogCategories().iterator();
+        WeblogCategoryData cat = null;
+        while(cats.hasNext()) {
+            cat = (WeblogCategoryData) cats.next();
+            if(name.equals(cat.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    /**
+     * Is this category a descendent of the other category?
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public boolean descendentOf(WeblogCategoryData ancestor) {
+        
+        // if this is a root node then we can't be a descendent
+        if(getParent() == null) {
             return false;
+        } else {
+            // if our path starts with our parents path then we are a descendent
+            return this.path.startsWith(ancestor.getPath());
         }
     }
-
-    public int hashCode()
-    {
-        int result = 17;
-        result = 37 * result + ((this.id != null) ? this.id.hashCode() : 0);
-        result =
-            37 * result
-                + ((this.website != null) ? this.website.hashCode() : 0);
-        result = 37 * result + ((this.name != null) ? this.name.hashCode() : 0);
-        result =
-            37 * result
-                + ((this.description != null) ? this.description.hashCode() : 0);
-        result =
-            37 * result + ((this.image != null) ? this.image.hashCode() : 0);
-        return result;
-    }
     
-    /** TODO: fix Struts form generation template so this is not needed. */
-    public void setAssocClassName(String dummy) {};
     
-    /** TODO: fix Struts form generation template so this is not needed. */
-    public void setObjectPropertyName(String dummy) {};
+    /**
+     * Determine if category is in use. Returns true if any weblog entries
+     * use this category or any of it's subcategories.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public boolean isInUse() {
+        try {
+            return RollerFactory.getRoller().getWeblogManager().isWeblogCategoryInUse(this);
+        } catch (RollerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /** TODO: fix form generation so this is not needed. */
+    public void setInUse(boolean dummy) {}
     
-    /** TODO: fix Struts form generation template so this is not needed. */
-    public void setAncestorPropertyName(String dummy) {};
-    
-    /** TODO: fix formbean generation so this is not needed. */
-    public void setPath(String string) {}
-
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getParentAssoc()
-     */
-    public Assoc getParentAssoc() throws RollerException
-    {
-        return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryParentAssoc(this);
-    }
-
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getChildAssocs()
-     */
-    public List getChildAssocs() throws RollerException
-    {
-        return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryChildAssocs(this);
-    }
-
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAllDescendentAssocs()
-     */
-    public List getAllDescendentAssocs() throws RollerException
-    {
-        return RollerFactory.getRoller().getWeblogManager().getAllWeblogCategoryDecscendentAssocs(this);
-    }
-
-    /** 
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAncestorAssocs()
-     */
-    public List getAncestorAssocs() throws RollerException
-    {
-        return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryAncestorAssocs(this);
-    }
-
 }

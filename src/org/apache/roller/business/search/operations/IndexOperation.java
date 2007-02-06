@@ -15,10 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * Created on Jul 16, 2003
- * Authored by: Mindaugas Idzelis  (min@idzelis.com)
- */
+/* Created on Jul 16, 2003 */
 package org.apache.roller.business.search.operations;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.roller.business.IndexManagerImpl;
+import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -40,12 +37,14 @@ import org.apache.roller.util.Utilities;
 import org.apache.roller.config.RollerConfig;
 
 /**
- * @author aim4min
- *         <p/>
- *         This is the base class for all index operation. These operations include:
- *         <p/>
- *         SearchOperation AddWeblogOperation RemoveWeblogOperation
- *         RebuildUserIndexOperation
+ * This is the base class for all index operation. 
+ * These operations include:<br>
+ *    SearchOperation<br>
+ *    AddWeblogOperation<br>
+ *    RemoveWeblogOperation<br>
+ *    RebuildUserIndexOperation
+ *
+ * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public abstract class IndexOperation implements Runnable {
     private static Log mLogger = LogFactory.getFactory().getInstance(IndexOperation.class);
@@ -86,19 +85,17 @@ public abstract class IndexOperation implements Runnable {
                 StringBuffer commentNameBuf = new StringBuffer();
                 for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
                     CommentData comment = (CommentData) cItr.next();
-                    if (comment.getSpam() == null || !comment.getSpam().booleanValue()) {
-                        if (comment.getContent() != null) {
-                            commentContentBuf.append(comment.getContent());
-                            commentContentBuf.append(",");
-                        }
-                        if (comment.getEmail() != null) {
-                            commentEmailBuf.append(comment.getEmail());
-                            commentEmailBuf.append(",");
-                        }
-                        if (comment.getName() != null) {
-                            commentNameBuf.append(comment.getName());
-                            commentNameBuf.append(",");
-                        }
+                    if (comment.getContent() != null) {
+                        commentContentBuf.append(comment.getContent());
+                        commentContentBuf.append(",");
+                    }
+                    if (comment.getEmail() != null) {
+                        commentEmailBuf.append(comment.getEmail());
+                        commentEmailBuf.append(",");
+                    }
+                    if (comment.getName() != null) {
+                        commentNameBuf.append(comment.getName());
+                        commentNameBuf.append(",");
                     }
                 }
                 commentEmail = commentEmailBuf.toString();
@@ -121,8 +118,8 @@ public abstract class IndexOperation implements Runnable {
         doc.add(Field.UnStored(FieldConstants.CONTENT, data.getText()));
 
         // store an abbreviated version of the entry text, but don't index
-        doc.add(Field.UnIndexed(FieldConstants.CONTENT_STORED, Utilities
-                .truncateNicely(Utilities.removeHTML(data.getText()), 240, 260, "...")));
+        doc.add(Field.UnIndexed(FieldConstants.CONTENT_STORED, 
+            Utilities.truncateNicely(Utilities.removeHTML(data.getText()), 240, 260, "...")));
 
         doc.add(Field.Keyword(FieldConstants.UPDATED, data.getUpdateTime()
                 .toString()));
@@ -138,7 +135,9 @@ public abstract class IndexOperation implements Runnable {
 
         // index Category
         WeblogCategoryData categorydata = data.getCategory();
-        Field category = (categorydata == null) ? Field.UnStored(FieldConstants.CATEGORY, "") : Field.Text(FieldConstants.CATEGORY, categorydata.getName());
+        Field category = (categorydata == null) 
+           ? Field.UnStored(FieldConstants.CATEGORY, "") 
+           : Field.Text(FieldConstants.CATEGORY, categorydata.getName());
         doc.add(category);
 
         return doc;
@@ -158,6 +157,7 @@ public abstract class IndexOperation implements Runnable {
             try {
                 reader.close();
             } catch (IOException e) {
+                mLogger.error("ERROR closing reader");
             }
         }
     }
@@ -166,7 +166,7 @@ public abstract class IndexOperation implements Runnable {
         try {
             writer = new IndexWriter(manager.getIndexDirectory(), IndexManagerImpl.getAnalyzer(), false);
         } catch (IOException e) {
-            mLogger.error("ERROR creating writer");
+            mLogger.error("ERROR creating writer", e);
         }
 
         return writer;
