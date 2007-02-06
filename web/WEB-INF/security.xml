@@ -51,14 +51,17 @@
                 /roller-ui/admin/**=admin
                 /rewrite-status*=admin
             </value>
+                <!-- Add this to above list for LDAP/SSO configuration -->
+                <!-- /roller-ui/user.do*=register -->
         </property>
     </bean>
 
     <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
         <property name="providers">
             <list>
-                <ref local="daoAuthenticationProvider"/>
-                <ref local="anonymousAuthenticationProvider"/>
+                <ref local="daoAuthenticationProvider"/> 
+                <!-- Uncomment this for LDAP/SSO configuration <ref local="ldapAuthProvider"/> -->
+                <ref local="anonymousAuthenticationProvider"/>                
                 <!-- rememberMeAuthenticationProvider added programmatically -->
             </list>
         </property>
@@ -67,11 +70,16 @@
     <!-- Log failed authentication attempts to commons-logging -->
     <bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/> 
     
-    <!-- Sample LDAP/RollerDB hybrid security configuration -->
-    <!--
+    <!-- BEGIN: Sample LDAP/RollerDB hybrid security configuration
     
 	<bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
-      <constructor-arg value="ldap://server:389/basedn"/>
+      <constructor-arg value="LDAP_URL"/>
+      <property name="managerDn">
+        <value>cn=LDAP_USERNAME</value>
+      </property>
+      <property name="managerPassword">
+        <value>LDAP_PASSWORD</value>
+      </property>
     </bean>
    
     <bean id="ldapUserSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
@@ -79,7 +87,7 @@
         <value></value>
       </constructor-arg>
       <constructor-arg index="1">
-        <value>mail={0}</value>
+        <value>uid={0}</value>
       </constructor-arg>
       <constructor-arg index="2">
         <ref local="initialDirContextFactory" />
@@ -113,13 +121,13 @@
 	   <property name="defaultRole"><value>register</value></property>        
     </bean>
     -->
-     
-    
+    <!-- END Sample LDAP/RollerDB hybrid security configuration -->
+         
     <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
          <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
          <property name="userCache" ref="userCache"/>
     </bean>
-
+    
     <!-- Read users from database -->
     <bean id="jdbcAuthenticationDao" class="org.acegisecurity.userdetails.jdbc.JdbcDaoImpl">
         <property name="dataSource">
