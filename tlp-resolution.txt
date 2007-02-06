@@ -3,7 +3,9 @@ Establish the Apache Roller project
        WHEREAS, the Board of Directors deems it to be in the best
        interests of the Foundation and consistent with the
        Foundation's purpose to establish a Project Management
-       Committee charged with XXX.
+       Committee charged with the creation and maintenance of 
+       open-source software related to the Roller blog server, 
+       for distribution at no charge to the public.
 
        NOW, THEREFORE, BE IT RESOLVED, that a Project Management
        Committee (PMC), to be known as the "Apache Roller Project",
@@ -11,7 +13,8 @@ Establish the Apache Roller project
        Foundation; and be it further
 
        RESOLVED, that the Apache Roller Project be and hereby is
-       responsible for XXX; and be it further
+       responsible for the creation and maintenance of open-source 
+       software related to the Roller blog server; and be it further
 
        RESOLVED, that the office of "Vice President, Roller" be and
        hereby is created, the person holding such office to serve at
