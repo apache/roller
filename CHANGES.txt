@@ -25,6 +25,7 @@ Features
     * Allow for bulk delete of comments matching a given pattern
     * Allow for hibernate configuration via roller.properties config
     * [ROL-1281] - unnecessary session creation on weblog urls
+    * New comments in security.xml explain LDAP/SSO setup
 
 Bug Fixes
     * [ROL-829] - comment munging escaped HTML content
@@ -34,6 +35,7 @@ Bug Fixes
     * fixed bug allowing user to create a 'Weblog' template without setting defaultPageId
     * fix for in-use category deletion and duplicate named category issues
     * fix for anchor creation when non-alpha characters are involved
+    * Fix to invalidate session after new user registration 
 
 -------------------------------------------------------------------------------
 

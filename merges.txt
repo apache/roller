@@ -1,0 +1,5 @@
+Merges from trunk into this branch:
+
+Feb. 6, 2007: merging in LDAP/SSO related changes
+svn merge -r 504197:504198 https://svn.apache.org/repos/asf/incubator/roller/trunk
+
