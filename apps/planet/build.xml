@@ -71,6 +71,7 @@
 
         <!-- needed for JPA -->
         <include name="jpa/toplink-essentials.jar"/>
+        <include name="jpa/bcel-5.1.jar"/>
                 
         <!-- needed for ROME -->
         <include name="lib/rome-0.9.jar"/>
@@ -141,9 +142,19 @@
             <hibernate validatexml="true" version="3.0"/>
             
         </hibernatedoclet>
+        
+        <xslt basedir="${build.compile.business}/org/apache/roller/planet/pojos/" includes="*.hbm.xml" 
+            destdir="${build.compile.business}/org/apache/roller/planet/pojos" 
+            style="${src}/../../../../metadata/database/HibernateToJPA.xsl">
+            <xmlcatalog>
+                <dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
+            </xmlcatalog>
+            <mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
+	    </xslt>
     
     </target>
-    
+
     
     <!-- ============================================== -->
     <!-- build all code -->
