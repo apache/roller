@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.business.hibernate;
+package org.apache.roller.business.hibernate;
 
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class HibernatePersistenceStrategy {
     
     static final long serialVersionUID = 2561090040518169098L;
     
-    protected static SessionFactory sessionFactory = null;
+    protected SessionFactory sessionFactory = null;
     
     private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     

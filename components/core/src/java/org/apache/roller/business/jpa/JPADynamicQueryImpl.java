@@ -21,23 +21,24 @@ package org.apache.roller.business.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import org.apache.roller.business.jpa.*;
 
 /**
  *
  */
-public class JPANamedQueryImpl extends JPAQueryImpl {
+public class JPADynamicQueryImpl extends JPAQueryImpl {
 
     /**
-     * Creates a new instance of JPANamedQueryImpl
+     * Creates a new instance of JPADynamicQueryImpl
      */
-    public JPANamedQueryImpl(EntityManager em, String queryName) {
-        super(em, queryName);
+    public JPADynamicQueryImpl(EntityManager em, String queryString) {
+        super(em, queryString);
     }
 
     /**
      * Create a Query for this instance
      */
-    protected Query createQuery(String queryName) {
-        return em.createNamedQuery(queryName);
+    protected Query createQuery(String queryString) {
+        return em.createQuery(queryString);
     }
 }

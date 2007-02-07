@@ -21,10 +21,11 @@ package org.apache.roller.business.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.datamapper.DatamapperPlanetImpl;
-import org.apache.roller.business.datamapper.DatamapperPlanetManagerImpl;
+import org.apache.roller.planet.business.datamapper.DatamapperPlanetImpl;
+import org.apache.roller.planet.business.datamapper.DatamapperPlanetManagerImpl;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 
 /**
  * Implements Planet, the entry point interface for the Roller-Planet business 

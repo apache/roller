@@ -54,6 +54,7 @@
 <!-- various libraries used by Roller -->
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
+<property name="tools.jpa"           value="${ro.tools}/jpa" />
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
 <property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
 <property name="tools.xdoclet"       value="${ro.tools}/buildtime/xdoclet-1.2.3" />
@@ -132,11 +133,19 @@ in the "base.path" definition.
     <include name="hibernate3.jar"/>
 </fileset>
 
+<fileset id="jpa.jars" dir="${tools.jpa}/lib">
+    <include name="*.jar"/>
+</fileset>
+
 <fileset id="hibernate.jars" dir="${tools.hibernate}/lib">
     <include name="*.jar"/>
 </fileset>
 
 <fileset id="spring.jars" dir="${tools.spring}">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="roller-core.jars" dir="${ro.tools}/roller-core">
     <include name="*.jar"/>
 </fileset>
 
@@ -153,6 +162,7 @@ in the "base.path" definition.
     <fileset refid="base.jars"/>
     <fileset refid="mail.jars"/>
     <fileset refid="commons.jars"/>
+    <fileset refid="roller-core.jars" />
     <fileset refid="roller-planet.jars" />
 </path>
 

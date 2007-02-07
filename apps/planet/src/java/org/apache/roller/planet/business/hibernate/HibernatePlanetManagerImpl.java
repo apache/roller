@@ -44,6 +44,7 @@ import org.hibernate.criterion.Order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;

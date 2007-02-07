@@ -21,6 +21,7 @@ package org.apache.roller.business.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import org.apache.roller.business.jpa.*;
 
 /**
  * @author Mitesh Meswani

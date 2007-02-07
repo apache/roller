@@ -4,14 +4,7 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!--Do not use Project Properties customizer when editing this file manually.-->
-            <name>roller_trunk</name>
-            <!--
-            <properties>
-                <property name="src.dir">../src</property>
-                <property name="test.dir">${project.dir}/tests</property>
-                <property name="planetroller.test.dir">${project.dir}/sandbox/planetroller/test</property>
-            </properties>
--->
+            <name>roller_4.0</name>
             <folders>
                 <source-folder>
                     <label>web</label>
@@ -24,49 +17,24 @@
                     <location>src</location>
                 </source-folder>
                 <source-folder>
-                    <label>sandbox/standalone/src</label>
+                    <label>components/core/src/java</label>
                     <type>java</type>
-                    <location>sandbox/standalone/src</location>
+                    <location>components/core/src/java</location>
                 </source-folder>
                 <source-folder>
-                    <label>contrib/plugins/src</label>
+                    <label>build/generated/business</label>
                     <type>java</type>
-                    <location>contrib/plugins/src</location>
+                    <location>build/generated/business</location>
+                </source-folder>
+                <source-folder>
+                    <label>build/generated/web</label>
+                    <type>java</type>
+                    <location>build/generated/web</location>
                 </source-folder>
                 <source-folder>
                     <label>tests</label>
                     <type>java</type>
                     <location>tests</location>
-                </source-folder>
-                <source-folder>
-                    <label>generated/web</label>
-                    <type>java</type>
-                    <location>build/generated/web</location>
-                </source-folder>
-                <source-folder>
-                    <label>generated/business</label>
-                    <type>java</type>
-                    <location>build/generated/business</location>
-                </source-folder>
-                <source-folder>
-                    <label>sandbox/scripting/src</label>
-                    <type>java</type>
-                    <location>sandbox/scripting/src</location>
-                </source-folder>
-                <source-folder>
-                    <label>apps/planet/src/java</label>
-                    <type>java</type>
-                    <location>apps/planet/src/java</location>
-                </source-folder>
-                <source-folder>
-                    <label>apps/planet/test/java</label>
-                    <type>java</type>
-                    <location>apps/planet/test/java</location>
-                </source-folder>
-                <source-folder>
-                    <label>sandbox/jdobackend/src</label>
-                    <type>java</type>
-                    <location>sandbox/jdobackend/src</location>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -128,40 +96,20 @@
                         <location>src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>sandbox/standalone/src</label>
-                        <location>sandbox/standalone/src</location>
+                        <label>components/core/src/java</label>
+                        <location>components/core/src/java</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>contrib/plugins/src</label>
-                        <location>contrib/plugins/src</location>
+                        <label>build/generated/business</label>
+                        <location>build/generated/business</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>build/generated/web</label>
+                        <location>build/generated/web</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>tests</label>
                         <location>tests</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>generated/web</label>
-                        <location>build/generated/web</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>generated/business</label>
-                        <location>build/generated/business</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>sandbox/scripting/src</label>
-                        <location>sandbox/scripting/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>apps/planet/src/java</label>
-                        <location>apps/planet/src/java</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>apps/planet/test/java</label>
-                        <location>apps/planet/test/java</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>sandbox/jdobackend/src</label>
-                        <location>sandbox/jdobackend/src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -180,18 +128,13 @@
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
+                <package-root>components/core/src/java</package-root>
                 <package-root>src</package-root>
-                <package-root>sandbox/standalone/src</package-root>
-                <package-root>contrib/plugins/src</package-root>
-                <package-root>tests</package-root>
-                <package-root>build/generated/web</package-root>
                 <package-root>build/generated/business</package-root>
-                <package-root>sandbox/scripting/src</package-root>
-                <package-root>apps/planet/src/java</package-root>
-                <package-root>apps/planet/test/java</package-root>
-                <package-root>sandbox/jdobackend/src</package-root>
-                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:tools/lib/jdom.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar:contrib/lib/textile4j-1.20.jar:tools/buildtime/derby.jar:tools/buildtime/ant-1.6.2/ant.jar:tools/buildtime/derbynet.jar:tools/lib/rome-0.9.jar:tools/lib/rome-fetcher-0.9.jar:tools/buildtime/activation.jar:tools/buildtime/mail.jar:tools/spring-1.2/acegi-security-1.0.1.jar:tools/spring-1.2/spring.jar</classpath>
-                <source-level>1.4</source-level>
+                <package-root>build/generated/web</package-root>
+                <package-root>tests</package-root>
+                <classpath mode="compile">tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-codec-1.3.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/jaxen-full.jar:tools/lib/jdom.jar:tools/lib/log4j-1.2.11.jar:tools/lib/lucene-1.4.3.jar:tools/lib/rome-0.9.jar:tools/lib/rome-fetcher-0.9.jar:tools/lib/saxpath.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/hibernate-3.1/hibernate3.jar:tools/hibernate-3.1/lib/asm-attrs.jar:tools/hibernate-3.1/lib/asm.jar:tools/hibernate-3.1/lib/cglib-2.1.3.jar:tools/hibernate-3.1/lib/dom4j-1.6.1.jar:tools/hibernate-3.1/lib/ehcache-1.1.jar:tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:tools/hibernate-3.1/lib/jta.jar:tools/spring-1.2/acegi-security-1.0.1.jar:tools/spring-1.2/spring.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/jpa/toplink-essentials.jar</classpath>
+                <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
         <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">

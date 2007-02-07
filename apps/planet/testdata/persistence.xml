@@ -1,0 +1,13 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    
+    <persistence-unit name ="PlanetPU" transaction-type = "RESOURCE_LOCAL">
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+
+	<mapping-file>org/apache/roller/pojos/PlanetConfigData.orm.xml               </mapping-file>
+	<mapping-file>org/apache/roller/pojos/PlanetEntryData.orm.xml		         </mapping-file>
+	<mapping-file>org/apache/roller/pojos/PlanetGroupData.orm.xml		         </mapping-file>
+	<mapping-file>org/apache/roller/pojos/PlanetSubscriptionData.orm.xml	     </mapping-file>
+
+    </persistence-unit>
+    
+</persistence>

@@ -37,7 +37,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
-import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;

@@ -23,6 +23,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.datamapper.DatamapperPlanetImpl;
+import org.apache.roller.planet.business.datamapper.DatamapperPlanetManagerImpl;
 
 /**
  * A Datamapper specific implementation of the Roller business layer.

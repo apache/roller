@@ -44,6 +44,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.datamapper.DatamapperPlanetManagerImpl;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;

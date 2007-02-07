@@ -1,0 +1,38 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    
+    <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        <mapping-file>org/apache/roller/pojos/AutoPingData.orm.xml                   </mapping-file>
+        <mapping-file>org/apache/roller/pojos/BookmarkData.orm.xml                   </mapping-file>
+        <mapping-file>org/apache/roller/pojos/CommentData.orm.xml                    </mapping-file>
+        <mapping-file>org/apache/roller/pojos/EntryAttributeData.orm.xml             </mapping-file>
+        <mapping-file>org/apache/roller/pojos/FolderData.orm.xml                     </mapping-file>
+        <mapping-file>org/apache/roller/pojos/HitCountData.orm.xml                   </mapping-file>
+        <mapping-file>org/apache/roller/pojos/ObjectAuditData.orm.xml                </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PermissionsData.orm.xml                </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PingCategoryRestrictionData.orm.xml    </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PingQueueEntryData.orm.xml             </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PingTargetData.orm.xml                 </mapping-file>
+        <mapping-file>org/apache/roller/pojos/RefererData.orm.xml                    </mapping-file>
+        <mapping-file>org/apache/roller/pojos/RoleData.orm.xml                       </mapping-file>
+        <mapping-file>org/apache/roller/pojos/RollerConfigData.orm.xml               </mapping-file>
+        <mapping-file>org/apache/roller/pojos/RollerPropertyData.orm.xml             </mapping-file>
+        <mapping-file>org/apache/roller/pojos/TaskLockData.orm.xml                   </mapping-file>
+        <mapping-file>org/apache/roller/pojos/UserData.orm.xml                       </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogCategoryData.orm.xml             </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogEntryData.orm.xml                </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogEntryTagAggregateData.orm.xml    </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogEntryTagData.orm.xml             </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogTemplate.orm.xml                 </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WebsiteData.orm.xml                    </mapping-file>
+    </persistence-unit>    
+    
+    <persistence-unit name ="PlanetPU" transaction-type = "RESOURCE_LOCAL">
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        <mapping-file>org/apache/roller/pojos/PlanetConfigData.orm.xml               </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PlanetEntryData.orm.xml		         </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PlanetGroupData.orm.xml		         </mapping-file>
+        <mapping-file>org/apache/roller/pojos/PlanetSubscriptionData.orm.xml	     </mapping-file>
+    </persistence-unit>
+    
+</persistence>

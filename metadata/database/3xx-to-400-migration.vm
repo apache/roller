@@ -4,6 +4,13 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+-- id creation needed for JPA backend
+create table roller_id_table (
+    pk              int not null primary key,
+    value           int not null
+);
+insert into roller_id_table (pk, value) values (1, 0);
+
 -- remove old id column of group subscription table
 alter table rag_group_subscription drop column id;
 
