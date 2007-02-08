@@ -28,7 +28,7 @@
             <ide-actions>
                 <action name="build">
                     <script>${ant.script}</script>
-                    <target>build</target>
+                    <target>dist</target>
                 </action>
                 <action name="clean">
                     <script>${ant.script}</script>
@@ -41,7 +41,7 @@
                 <action name="rebuild">
                     <script>${ant.script}</script>
                     <target>clean</target>
-                    <target>build</target>
+                    <target>dist</target>
                 </action>
             </ide-actions>
             <view>
@@ -74,19 +74,19 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/java</package-root>
-                <classpath mode="compile">../../tools/lib/activation.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/mail.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/jdom.jar:../../tools/struts-1.2.4/lib/commons-lang-2.0.jar:../../tools/struts-1.2.4/lib/commons-logging.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/struts-1.2.4/lib/antlr.jar</classpath>
+                <classpath mode="compile">../../tools/lib/log4j-1.2.11.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/commons-collections-3.1.jar:../../tools/lib/commons-digester-1.6.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/activation.jar:../../tools/lib/mail.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/jdom.jar:../../tools/lib/velocity-1.4.jar:../../tools/lib/velocity-dep-1.4.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../tools/struts-2.0.1/lib/antlr-2.7.2.jar:../../tools/struts-2.0.1/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.1/lib/commons-chain-1.1.jar:../../tools/struts-2.0.1/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.1/lib/freemarker-2.3.4.jar:../../tools/struts-2.0.1/lib/ognl-2.6.7.jar:../../tools/struts-2.0.1/lib/oro-2.0.8.jar:../../tools/struts-2.0.1/lib/spring-aop-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-beans-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-context-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-core-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-web-1.2.8.jar:../../tools/struts-2.0.1/lib/struts2-api-2.0.1.jar:../../tools/struts-2.0.1/lib/struts2-core-2.0.1.jar:../../tools/struts-2.0.1/lib/xwork-2.0-beta-1.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>test/java</package-root>
                 <unit-tests/>
+                <classpath mode="compile">../../tools/buildtime/junit-3.8.1.jar:../../tools/struts-1.2.4/lib/commons-lang-2.0.jar:../../tools/struts-1.2.4/lib/commons-logging.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>
         <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">
             <web-module>
                 <doc-root>web</doc-root>
-                <classpath/>
                 <context-path>/planet</context-path>
                 <j2ee-spec-level>1.5</j2ee-spec-level>
             </web-module>

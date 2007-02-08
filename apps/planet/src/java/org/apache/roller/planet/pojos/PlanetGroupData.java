@@ -58,6 +58,8 @@ public class PlanetGroupData implements Serializable
     /** Subscriptions in this group */
     private Set subscriptions = new HashSet();
 
+    private PlanetData planet = null;
+    
     //------------------------------------------------------- persistent fields
 
     /** 
@@ -154,6 +156,17 @@ public class PlanetGroupData implements Serializable
         this.title = title;
     }
 
+    /**
+     * @hibernate.many-to-one column="planet_id" cascade="none" non-null="false"
+     */
+    public PlanetData getPlanet() {
+        return planet;
+    }
+
+    public void setPlanet(PlanetData planet) {
+        this.planet = planet;
+    }
+    
     //--------------------------------------------------------------- app logic
 
     /**

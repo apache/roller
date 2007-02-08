@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
@@ -35,12 +35,6 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 public interface PlanetManager extends Serializable {
     
     //------------------------------------------------------------------ create
-    
-    /**
-     * Save configration
-     */
-    public void saveConfiguration(PlanetConfigData config)
-    throws RollerException;
     
     /**
      * Save new or update existing entry
@@ -58,27 +52,34 @@ public interface PlanetManager extends Serializable {
     public void saveSubscription(PlanetSubscriptionData sub)
     throws RollerException;
     
+    public void savePlanet(PlanetData planet) throws RollerException;
+    
     //---------------------------------------------------------------- retrieve
     
-    /**
-     * Get the one planet config object, config has default group
-     */
-    public PlanetConfigData getConfiguration() throws RollerException;
+    public PlanetData getPlanet(String handle) throws RollerException;
+    public PlanetData getPlanetById(String id) throws RollerException;
+    public List getPlanets() throws RollerException;
     
     /**
      * Get handles for all defined groups
      */
     public List getGroupHandles() throws RollerException;
     
+    public List getGroupHandles(PlanetData planet) throws RollerException;
+    
     /**
      * Get list of group objects
      */
     public List getGroups() throws RollerException;
     
+    public List getGroups(PlanetData planet) throws RollerException;
+    
     /**
      * Get group by handle, group has subscriptions
      */
     public PlanetGroupData getGroup(String handle) throws RollerException;
+    
+    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException;
     
     /**
      * Get group by ID rather than handle.
@@ -157,6 +158,8 @@ public interface PlanetManager extends Serializable {
     public void refreshEntries(String cacheDirPath) throws RollerException;
     
     //------------------------------------------------------------------ delete
+    
+    public void deletePlanet(PlanetData planet) throws RollerException;
     
     /** Delete group and any subscriptions that are orphaned. */
     public void deleteGroup(PlanetGroupData group) throws RollerException;
