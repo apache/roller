@@ -73,6 +73,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
             this.emf =
                 Persistence.createEntityManagerFactory(puName, emfProps);
         } catch (PersistenceException pe) {
+            logger.debug("ERROR: creating entity manager", pe);
             throw new RollerException(pe);
         }
     }

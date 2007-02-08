@@ -1147,32 +1147,6 @@ Use -Dverbose=1 to get verbose output.
     </javac>
 </target>
 
-
-<!-- ********************************************************************* -->
-<!-- Gen JPA mappings  -->
-<!-- ********************************************************************* -->
-
-<target name="gen-jpa-mapping" description="Generate JPA mapping files from hiberatem mappings">
-	<xslt basedir="${build.compile.business}/org/apache/roller/pojos" includes="*.hbm.xml" 
-		destdir="${build.compile.business}/org/apache/roller/pojos/jpa" style="sandbox/jdobackend/HibernateToJPA.xsl">
-  		<xmlcatalog>
-			<dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-			    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
-		</xmlcatalog>
-		<mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
-	</xslt>
-	
-	<xslt basedir="${build.compile.business}/org/apache/roller/planet/pojos/" includes="*.hbm.xml" 
-		destdir="${build.compile.business}/org/apache/roller/planet/pojos/jpa" style="sandbox/jdobackend/HibernateToJPA.xsl">
-  		<xmlcatalog>
-			<dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-			    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
-		</xmlcatalog>
-		<mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
-	</xslt>
-	
-</target>
-
 	    
 <!-- ********************************************************************* -->
 <!-- Derby start, init and stop targets -->
@@ -1232,6 +1206,33 @@ Use -Dverbose=1 to get verbose output.
     </sql>  
     -->
 </target>
+
+<!-- ********************************************************************* -->
+<!-- One shot JPA mapping generation: resulting files must be tweaked  -->
+<!-- ********************************************************************* -->
+
+<!--
+<target name="gen-jpa-mapping" description="Generate JPA mapping files from hiberatem mappings">
+	<xslt basedir="${build.compile.business}/org/apache/roller/pojos" includes="*.hbm.xml" 
+		destdir="${build.compile.business}/org/apache/roller/pojos/jpa" style="sandbox/jdobackend/HibernateToJPA.xsl">
+  		<xmlcatalog>
+			<dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+			    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
+		</xmlcatalog>
+		<mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
+	</xslt>
+	
+	<xslt basedir="${build.compile.business}/org/apache/roller/planet/pojos/" includes="*.hbm.xml" 
+		destdir="${build.compile.business}/org/apache/roller/planet/pojos/jpa" style="sandbox/jdobackend/HibernateToJPA.xsl">
+  		<xmlcatalog>
+			<dtd publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+			    location="sandbox/jdobackend/hibernate-mapping-3.0.dtd"/>
+		</xmlcatalog>
+		<mapper type="glob" from="*.hbm.xml" to="*.orm.xml"/>
+	</xslt>
+	
+</target>
+-->
 
 <!-- ********************************************************************* -->
 <!-- Experimental Admin API SDK -->

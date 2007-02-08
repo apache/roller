@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+	<description>Persistence Metadata for Roller</description>
+	<persistence-unit-metadata>
+		<persistence-unit-defaults>
+			<access>PROPERTY</access>
+		</persistence-unit-defaults>
+	</persistence-unit-metadata>
+	<package>org.apache.roller.pojos</package>
+	<entity metadata-complete="true" name="TaskLockData" class="org.apache.roller.pojos.TaskLockData">
+		<table name="roller_tasklock"/>
+        <named-query name="TaskLockData.getByName">
+            <query>SELECT t FROM TaskLockData t WHERE t.name = ?1</query>
+        </named-query>
+        <named-query name="TaskLockData.updateClient&amp;Timeacquired&amp;TimeleasedByName&amp;Timeacquired">
+            <query> UPDATE TaskLockData t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2
+                    WHERE t.name=?3 AND t.timeAquired=?4 AND ?5 &lt; CURRENT_TIMESTAMP
+            </query>
+        </named-query>
+        <named-query name="TaskLockData.updateTimeLeasedByName&amp;Client">
+            <query>UPDATE TaskLockData t SET t.timeLeased=?1 WHERE t.name=?2 AND t.clientId=?3</query>
+        </named-query>
+        <attributes>
+			<id name="id">
+				<column name="id"/>
+				<generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+			</id>
+			<basic name="name">
+				<column name="name" insertable="true" updatable="true" unique="true"/>
+			</basic>
+			<basic name="timeAquired">
+				<column name="timeacquired" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+			<basic name="lastRun">
+				<column name="lastrun" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+			<basic name="locked">
+				<column name="islocked" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="timeLeased">
+				<column name="timeleased" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="clientId">
+                <column name="client" insertable="true" updatable="true" unique="false"/>
+            </basic>
+		</attributes>
+    </entity>
+</entity-mappings>

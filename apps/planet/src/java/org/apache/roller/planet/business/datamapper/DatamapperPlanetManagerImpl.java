@@ -116,7 +116,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
 
     public PlanetConfigData getConfiguration() throws RollerException {
         List results = (List) strategy.newQuery(PlanetConfigData.class, 
-                "PlanetConfigData.getAll"); 
+                "PlanetConfigData.getAll").execute(); 
         PlanetConfigData config = results.size()!=0 ? 
             (PlanetConfigData)results.get(0) : null;
             
@@ -132,7 +132,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     public PlanetSubscriptionData getSubscription(String feedUrl)
             throws RollerException {
         List results = (List) strategy.newQuery(PlanetSubscriptionData.class, 
-                "PlanetSubscriptionData.getByFeedURL"); 
+                "PlanetSubscriptionData.getByFeedURL").execute(feedUrl); 
         return results.size()!=0 ? 
             (PlanetSubscriptionData)results.get(0) : null;
     }
@@ -155,7 +155,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
 
     public int getSubscriptionCount() throws RollerException {
         return ((List)strategy.newQuery(PlanetSubscriptionData.class, 
-                "PlanetSubscriptionData.getAll")).size(); 
+                "PlanetSubscriptionData.getAll").execute()).size(); 
     }
 
     public List getTopSubscriptions(int offset, int length) 

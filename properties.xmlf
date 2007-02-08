@@ -133,11 +133,11 @@ in the "base.path" definition.
     <include name="hibernate3.jar"/>
 </fileset>
 
-<fileset id="jpa.jars" dir="${tools.jpa}/lib">
+<fileset id="hibernate.jars" dir="${tools.hibernate}/lib">
     <include name="*.jar"/>
 </fileset>
 
-<fileset id="hibernate.jars" dir="${tools.hibernate}/lib">
+<fileset id="jpa.jars" dir="${ro.tools}/jpa">
     <include name="*.jar"/>
 </fileset>
 
@@ -170,6 +170,7 @@ in the "base.path" definition.
     <path refid="base.path"/>
     <fileset refid="hibernate.jar" />
     <fileset refid="hibernate.jars" />
+    <fileset refid="jpa.jars" />
 </path>
 
 <path id="presentation.path">
