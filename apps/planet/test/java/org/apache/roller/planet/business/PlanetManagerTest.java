@@ -31,7 +31,6 @@ import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
@@ -43,86 +42,6 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 public class PlanetManagerTest extends TestCase {
     
     public static Log log = LogFactory.getLog(PlanetManagerTest.class);
-    
-    static {
-        try {
-            // planet config should always exist
-            PlanetConfigData config = new PlanetConfigData();
-            config.setTitle("test_title");
-            config.setAdminEmail("test_admin_email");
-            PlanetFactory.getPlanet().getPlanetManager().saveConfiguration(config);
-            TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new RuntimeException(ex);
-        }
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(PlanetManagerTest.class);
-    }
-    
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        //RollerConfig.setPlanetCachePath("." + File.separator + "planet-cache");
-    }
-    
-    public void testConfigurationStorage() throws Exception {
-        
-        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
-        
-        {   // retrieve config
-            PlanetConfigData config = planet.getConfiguration();
-            assertNotNull(config);
-            assertEquals("test_title", config.getTitle());
-            assertEquals("test_admin_email", config.getAdminEmail());
-            assertNull(config.getSiteURL());
-        }
-        {   // save config
-            PlanetConfigData config = planet.getConfiguration();
-            config.setSiteURL("http://footest/lskdf/null");
-            planet.saveConfiguration(config);
-            TestUtils.endSession(true);
-        }
-        {
-            // make sure config was saved
-            PlanetConfigData config = planet.getConfiguration();
-            assertNotNull(config);
-            assertEquals("http://footest/lskdf/null", config.getSiteURL());
-        }
-    }
-    
-    
-    public void testGroupStorage() throws Exception {
-        
-        PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
-        
-        {   // save group
-            PlanetGroupData group = new PlanetGroupData();
-            group.setDescription("test_group_desc");
-            group.setHandle("test_handle");
-            group.setTitle("test_title");
-            planet.saveGroup(group);
-            TestUtils.endSession(true);
-        }
-        {   // retrieve group
-            PlanetGroupData group = planet.getGroup("test_handle");
-            assertEquals("test_group_desc",group.getDescription());
-            assertEquals("test_title",group.getTitle());
-            assertTrue(planet.getGroupHandles().size() > 0);
-        }
-        {   // remove group
-            PlanetGroupData group = planet.getGroup("test_handle");
-            planet.deleteGroup(group);
-            TestUtils.endSession(true);
-        }
-        {   // verify that it is gone
-            PlanetGroupData group = planet.getGroup("test_handle");
-            assertNull(group);
-        }
-    }
     
     
     public void testSubscriptionStorage() throws Exception {
@@ -283,10 +202,10 @@ public class PlanetManagerTest extends TestCase {
         String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
         
         {
-            PlanetConfigData config = planet.getConfiguration();
-            config.setAdminName("admin");
-            config.setSiteURL("http://localhost:8080/roller");
-            planet.saveConfiguration(config);
+//            PlanetConfigData config = planet.getConfiguration();
+//            config.setAdminName("admin");
+//            config.setSiteURL("http://localhost:8080/roller");
+//            planet.saveConfiguration(config);
             
             PlanetGroupData group = new PlanetGroupData();
             group.setDescription("test_group_desc");

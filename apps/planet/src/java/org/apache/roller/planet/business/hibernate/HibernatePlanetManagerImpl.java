@@ -45,7 +45,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.config.PlanetRuntimeConfig;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
@@ -66,12 +67,13 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
         this.strategy = strat;
     }
-        
-    public void saveConfiguration(PlanetConfigData config) 
+    
+    
+    public void savePlanet(PlanetData planet) 
         throws RollerException {
-        strategy.store(config);
+        strategy.store(planet);
     }
-        
+    
     public void saveGroup(PlanetGroupData group) 
         throws RollerException {
         strategy.store(group);
@@ -96,7 +98,12 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         throws RollerException {
         strategy.remove(entry);
     }
-        
+    
+    public void deletePlanet(PlanetData planet) 
+        throws RollerException {
+        strategy.remove(planet);
+    }
+    
     public void deleteGroup(PlanetGroupData group) 
         throws RollerException {
         strategy.remove(group);
@@ -106,20 +113,34 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         throws RollerException {
         strategy.remove(sub);
     }
-        
-    public PlanetConfigData getConfiguration() throws RollerException {
-        PlanetConfigData config = null;
+    
+    public PlanetData getPlanet(String handle) throws RollerException {
+        PlanetData planet = null;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetConfigData.class);
+            Criteria criteria = session.createCriteria(PlanetData.class);
+            criteria.add(Expression.ilike("handle", handle));
             criteria.setMaxResults(1);
-            List list = criteria.list();
-            config = list.size()!=0 ? (PlanetConfigData)list.get(0) : null;
+            planet = (PlanetData) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-        return config;
-    }    
+        return planet;
+    }
+    
+    public PlanetData getPlanetById(String id) throws RollerException {
+        return (PlanetData) strategy.load(id, PlanetData.class);
+    }
+    
+    public List getPlanets() throws RollerException {
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            Criteria criteria = session.createCriteria(PlanetData.class);
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
     
     public PlanetSubscriptionData getSubscription(String feedURL) 
         throws RollerException {
@@ -206,11 +227,20 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     }
         
     public PlanetGroupData getGroup(String handle) throws RollerException {
+        return getGroup(null, handle);
+    }
+    
+    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
         try {
             Session session = strategy.getSession();
             Criteria criteria = session.createCriteria(PlanetGroupData.class);
             criteria.setMaxResults(1);
             criteria.add(Expression.eq("handle", handle));
+            if(planet != null) {
+                criteria.add(Expression.eq("planet", planet));
+            } else {
+                criteria.add(Expression.isNull("planet"));
+            }
             return (PlanetGroupData) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -222,9 +252,18 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     }
         
     public List getGroups() throws RollerException {
+        return getGroups(null);
+    }
+    
+    public List getGroups(PlanetData planet) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetGroupData.class);
+            if(planet != null) {
+                criteria.add(Expression.eq("planet", planet));
+            } else {
+                criteria.add(Expression.isNull("planet"));
+            }
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -232,8 +271,12 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     }
        
     public List getGroupHandles() throws RollerException {
+        return getGroupHandles(null);
+    }
+    
+    public List getGroupHandles(PlanetData planet) throws RollerException {
         List handles = new ArrayList();
-        Iterator list = getGroups().iterator();
+        Iterator list = getGroups(planet).iterator();
         while (list.hasNext()) {
             PlanetGroupData group = (PlanetGroupData)list.next();
             handles.add(group.getHandle());
@@ -358,7 +401,6 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         
         Date now = new Date();
         long startTime = System.currentTimeMillis();
-        PlanetConfigData config = getConfiguration();
         
         // can't continue without cache dir
         if (cacheDirPath == null) {
@@ -395,11 +437,12 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         FeedFetcherCache feedInfoCache =
                 new DiskFeedInfoCache(cacheDirName);
         
-        if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
+        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyHost");
+        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyPort");
+        if (proxyHost != null && proxyPort > 0) {
             System.setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", config.getProxyHost());
-            System.setProperty("http.proxyPort",
-                    Integer.toString(config.getProxyPort()));
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
         }
         /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
         System.setProperty("sun.net.client.defaultConnectTimeout", "15000");

@@ -41,6 +41,12 @@ public class PlanetTestSuite {
 	
         // TODO: add a test for PlanetConfig
         
+        suite.addTestSuite(PropertiesTest.class);
+        
+        suite.addTestSuite(PlanetTest.class);
+        
+        suite.addTestSuite(GroupTest.class);
+        
         suite.addTestSuite(PlanetManagerTest.class);
 
         return suite;
