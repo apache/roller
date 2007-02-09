@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.ui.core.struts2;
+package org.apache.roller.planet.ui.core.filters;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -32,8 +32,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 /**
- * 
+ * Used for debugging, not mapped by default.
  */
 public class DebugFilter implements Filter {
     
