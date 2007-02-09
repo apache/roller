@@ -5,10 +5,10 @@
     <!-- core package space -->
     <package name="planet" namespace="/planet-ui" extends="struts-default">
         <action name="Login" class="org.apache.roller.planet.ui.core.struts2.Login">
-            <result>/planet-ui/login.jsp</result>
+            <result>/WEB-INF/jsps/login.jsp</result>
         </action>
         <action name="Logout" class="org.apache.roller.planet.ui.core.struts2.Logout">
-            <result>/planet-ui/logout.jsp</result>
+            <result>/WEB-INF/jsps/logout.jsp</result>
         </action>
         <action name="MainMenu" class="org.apache.roller.planet.ui.core.struts2.MainMenu">
             <result>/WEB-INF/jsps/MainMenu.jsp</result>

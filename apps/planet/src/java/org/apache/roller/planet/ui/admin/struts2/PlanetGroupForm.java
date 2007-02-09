@@ -57,7 +57,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
         PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
         if(getGroupid() != null && !"".equals(getGroupid())) {
             // load a planet group
-            log.info("Loading Planet Group ...");
+            log.debug("Loading Planet Group ...");
             
             group = pMgr.getGroupById(getGroupid());
         } else {
