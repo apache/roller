@@ -20,7 +20,7 @@
     
     <filter>
         <filter-name>DebugFilter</filter-name>
-        <filter-class>org.apache.roller.planet.ui.core.struts2.DebugFilter</filter-class>
+        <filter-class>org.apache.roller.planet.ui.core.filters.DebugFilter</filter-class>
     </filter>
     
     <!--
@@ -53,17 +53,17 @@
     <servlet>
         <servlet-name>FeedServlet</servlet-name>
         <servlet-class>org.apache.roller.planet.ui.rendering.servlets.FeedServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>5</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>PageServlet</servlet-name>
         <servlet-class>org.apache.roller.planet.ui.rendering.servlets.PageServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>5</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>OpmlServlet</servlet-name>
         <servlet-class>org.apache.roller.planet.ui.rendering.servlets.OpmlServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>5</load-on-startup>
     </servlet>
     
     <servlet-mapping>
@@ -89,11 +89,6 @@
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-    
-    <error-page>
-        <error-code>500</error-code>
-        <location>/planet-ui/error.faces</location>
-    </error-page>
     
     <security-constraint>
         <display-name>planet-ui</display-name>
