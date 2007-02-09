@@ -165,13 +165,13 @@ public class WeblogCategoryCRUDTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         // root category is always available
-        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        WeblogCategoryData root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
         // add a small category tree /subcat/subcat2
-        WeblogCategoryData subcat = new WeblogCategoryData(testWeblog, root, "subcatTest1", null, null);
+        WeblogCategoryData subcat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "subcatTest1", null, null);
         root.addCategory(subcat);
         mgr.saveWeblogCategory(subcat);
-        WeblogCategoryData subcat2 = new WeblogCategoryData(testWeblog, subcat, "subcatTest2", null, null);
+        WeblogCategoryData subcat2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), subcat, "subcatTest2", null, null);
         subcat.addCategory(subcat2);
         mgr.saveWeblogCategory(subcat2);
         TestUtils.endSession(true);
