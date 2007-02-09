@@ -83,7 +83,6 @@ public class PlanetContext extends ContextLoaderListener
             Planet planet = PlanetFactory.getPlanet();
             
             setupRuntimeProperties();
-            setupVelocity();
             
             planet.flush();
             planet.release();
@@ -110,27 +109,6 @@ public class PlanetContext extends ContextLoaderListener
         PlanetFactory.getPlanet().getPropertiesManager();
     }
     
-    
-    private void setupVelocity() throws RollerException {
-        
-//        log.info("Initializing Velocity");
-//        
-//        try {
-//            InputStream instream = context.getResourceAsStream("/WEB-INF/velocity.properties");
-//            
-//            Properties velocityProps = new Properties();
-//            velocityProps.load(instream);
-//            
-//            log.debug("Velocity props = "+velocityProps);
-//            
-//            // init velocity
-//            RuntimeSingleton.init(velocityProps);
-//            
-//        } catch (Exception e) {
-//            throw new RollerException(e);
-//        }
-        
-    }
     
     private void upgradeDatabaseIfNeeded() throws RollerException {
         
