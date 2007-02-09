@@ -490,7 +490,7 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
         if (includeRoot) return getWeblogCategories(website);
         
         return (List) strategy.newQuery(WeblogCategoryData.class, 
-                "WeblogCategoryData.getByWebsite&ParentNull").execute(website);
+                "WeblogCategoryData.getByWebsite&ParentNotNull").execute(website);
     }
 
     /**
