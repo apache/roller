@@ -2,6 +2,12 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 4.0: Infrastructure upgrade - Java SE 5, Struts 2 and new JPA? backend
+
+    * New Java Persistence Architecture (JPA) backend added to Roller
+    * New components/core common code directory added, builds to roller-core.jar
+
+
 Roller 3.1: weblog tagging, better theme encapsulation, and other small features
 
 Please refer to the What's New page for an overview of the changes:

@@ -172,6 +172,8 @@
         <copy todir="${build.compile.business}">
             <fileset dir="${src}" excludes="**/*.java, **/*.html, **/*.png" />
         </copy>
+        <mkdir dir="${build.compile.business}/META-INF" />
+        <copy todir="${build.compile.business}" file="testdata/META-INF/persistence.xml" />
         
         <!-- Jar up the business layer -->
         <mkdir dir="${build.lib}"/>

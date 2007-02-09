@@ -2,12 +2,11 @@
     
     <persistence-unit name ="PlanetPU" transaction-type = "RESOURCE_LOCAL">
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
-
-	<mapping-file>org/apache/roller/planet/pojos/PlanetConfigData.orm.xml</mapping-file>
-	<mapping-file>org/apache/roller/planet/pojos/PlanetEntryData.orm.xml</mapping-file>
-	<mapping-file>org/apache/roller/planet/pojos/PlanetGroupData.orm.xml</mapping-file>
-	<mapping-file>org/apache/roller/planet/pojos/PlanetSubscriptionData.orm.xml</mapping-file>
-
+        <jta-data-source>jdbc/rollerdb</jta-data-source>
+        <mapping-file>org/apache/roller/planet/pojos/PlanetConfigData.orm.xml</mapping-file>
+        <mapping-file>org/apache/roller/planet/pojos/PlanetEntryData.orm.xml</mapping-file>
+        <mapping-file>org/apache/roller/planet/pojos/PlanetGroupData.orm.xml</mapping-file>
+        <mapping-file>org/apache/roller/planet/pojos/PlanetSubscriptionData.orm.xml</mapping-file>
     </persistence-unit>
     
 </persistence>

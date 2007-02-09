@@ -2,6 +2,7 @@
     
     <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        <jta-data-source>jdbc/rollerdb</jta-data-source>
         <mapping-file>org/apache/roller/pojos/AutoPingData.orm.xml                   </mapping-file>
         <mapping-file>org/apache/roller/pojos/BookmarkData.orm.xml                   </mapping-file>
         <mapping-file>org/apache/roller/pojos/CommentData.orm.xml                    </mapping-file>
@@ -25,6 +26,6 @@
         <mapping-file>org/apache/roller/pojos/WeblogEntryTagData.orm.xml             </mapping-file>
         <mapping-file>org/apache/roller/pojos/WeblogTemplate.orm.xml                 </mapping-file>
         <mapping-file>org/apache/roller/pojos/WebsiteData.orm.xml                    </mapping-file>
-    </persistence-unit>    
+    </persistence-unit>       
     
 </persistence>

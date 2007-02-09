@@ -408,6 +408,7 @@ ro.buildUser=${user.name}
         <fileset refid="presentation.jars" />
         <fileset refid="hibernate.jar" />
         <fileset refid="hibernate.jars" />
+        <fileset refid="jpa.jars" />
         <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
         <fileset refid="spring.jars" /> 
