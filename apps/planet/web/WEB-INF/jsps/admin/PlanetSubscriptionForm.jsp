@@ -21,7 +21,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><s:text name="PlanetSubscriptionForm.pageTitle" /></title>
-        <link rel="stylesheet" type="text/css" href="<s:url value="/planet-ui/planet.css" />" />
+        <link rel="stylesheet" type="text/css" href="<s:url value="/planet-ui/css/planet.css" />" />
     </head>
     <body>
         <div id="wrapper">

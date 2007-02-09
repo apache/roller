@@ -21,7 +21,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><s:text name="PlanetsList.pageTitle" /></title>
-        <link rel="stylesheet" type="text/css" href="<s:url value="/planet-ui/planet.css" />" />
+        <link rel="stylesheet" type="text/css" href="<s:url value="/planet-ui/css/planet.css" />" />
         <script type="text/javascript">
         function confirmPlanetDelete(planetid, handle) {
           if (window.confirm('Are you sure you want to remove planet: ' + handle)) {
