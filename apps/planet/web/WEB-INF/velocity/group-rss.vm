@@ -19,9 +19,9 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
     <title>$utils.escapeXML($model.group.title)</title>
-    <link>$utils.escapeXML($url.feed.rss)</link>
+    <link>$utils.escapeXML($url.feed.rss($model.group.handle))</link>
     <description>$utils.escapeXML($model.group.description)</description>
-    <lastBuildDate>$utils.formatRfc822Date($date)</lastBuildDate>
+    <lastBuildDate>$utils.formatRfc822Date($utils.now)</lastBuildDate>
     <generator>Planet Roller</generator>
     #set($entries = $model.pager.items)
     #foreach( $entry in $entries )

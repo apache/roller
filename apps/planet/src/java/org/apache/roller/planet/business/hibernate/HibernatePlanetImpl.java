@@ -26,6 +26,7 @@ import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.planet.business.URLStrategy;
 
 
 /**
@@ -44,6 +45,9 @@ public class HibernatePlanetImpl implements Planet {
     // references to the managers we maintain
     protected PlanetManager planetManager = null;
     protected PropertiesManager propertiesManager = null;
+    
+    // url strategy
+    protected URLStrategy urlStrategy = null;
     
         
     /**
@@ -101,6 +105,16 @@ public class HibernatePlanetImpl implements Planet {
             propertiesManager = new HibernatePropertiesManagerImpl(strategy);  
         }
         return propertiesManager;
+    }
+    
+    
+    public URLStrategy getURLStrategy() {
+        return this.urlStrategy;
+    }
+    
+    public void setURLStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+        log.info("Using URLStrategy: " + urlStrategy.getClass().getName());
     }
     
     

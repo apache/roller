@@ -2,8 +2,8 @@
 <opml version="1.1">
 <head>
    <title>Subscriptions list for $model.group.title</title>
-   <dateCreated>Fri, 15 Dec 2006 15:45:07 -0800</dateCreated>
-   <dateModified>Fri, 15 Dec 2006 15:45:07 -0800</dateModified>
+   <dateCreated>$utils.formatRfc822Date($utils.now)</dateCreated>
+   <dateModified>$utils.formatRfc822Date($utils.now)</dateModified>
    <ownerName>$model.planet.handle</ownerName>
    <ownerEmail>$model.planet.handle</ownerEmail>
 
