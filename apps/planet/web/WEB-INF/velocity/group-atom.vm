@@ -20,9 +20,9 @@
     <title type="html">$utils.escapeXML($model.group.title)</title>
     <subtitle type="html">$utils.escapeXML($model.group.description)</subtitle>
     <id>$utils.escapeXML($model.group.title)</id>
-    <link rel="self" type="application/atom+xml" href="$url.feed.atom" />
-    <link rel="alternate" type="text/html" href="" />
-    <updated></updated>
+    <link rel="self" type="application/atom+xml" href="$url.feed.atom($model.group.handle)" />
+    <link rel="alternate" type="text/html" href="$url.group($model.group.handle)" />
+    <updated>$utils.formatRfc822Date($utils.now)</updated>
     <generator uri="http://rollerweblogger.org">Roller Planet</generator>
     #set($entries = $model.pager.items)
     #foreach($entry in $entries)

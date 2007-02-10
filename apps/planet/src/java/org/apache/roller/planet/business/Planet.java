@@ -40,19 +40,31 @@ public interface Planet {
     
     
     /**
+     * Get the configured URLStrategy.
+     */
+    public URLStrategy getURLStrategy();
+    
+    
+    /**
+     * Set the configured URLStrategy.
+     */
+    public void setURLStrategy(URLStrategy urlStrategy);
+    
+    
+    /**
      * Flush object states.
      */
     public void flush() throws RollerException;
     
     
     /**
-     * Release all resources associated with Roller session.
+     * Release any resources associated with a session.
      */
     public void release();
     
     
     /**
-     * Release all resources necessary for this instance of Roller.
+     * Shutdown the application.
      */
     public void shutdown();
     

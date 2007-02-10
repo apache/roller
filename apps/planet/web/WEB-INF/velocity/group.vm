@@ -28,7 +28,7 @@
       <td width="80%" valign="top">
          <h1>$group.title</h1>
          <p><i>$group.description<i/></p>
-         <p>Last updated: $utils.formatRfc822Date($date)</p>
+         <p>Last updated: $utils.formatRfc822Date($utils.now)</p>
          #foreach($entry in $entries)
             <h2>$entry.title</h2>
             Blog: $entry.subscription.title <br/>
@@ -39,10 +39,8 @@
       </td>
       <td width="20%" valign="top">
          <h3>Other formats</h3>
-         <a href="feed/rss">
-            <img src="rss20.png" alt="RSS 2.0 Feed" border="0"></a><p />
-         <a href="opml">
-            <img src="opml.png" alt="OPML Subscriptions" border="0"></a>
+         <a href="$url.feed.atom($group.handle)">Atom 1.0 Feed</a><br/>
+         <a href="$url.opml($group.handle)">OPML Subscriptions</a>
          <h3>Subscriptions</h3>
          #foreach ($sub in $group.subscriptions)
          <a href="$sub.siteURL">$sub.title</a> <a href="$sub.feedURL">(feed)</a>

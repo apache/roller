@@ -18,8 +18,6 @@
 
 package org.apache.roller.planet.ui.core;
 
-import java.io.InputStream;
-import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -28,7 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.velocity.runtime.RuntimeSingleton;
+import org.apache.roller.planet.business.URLStrategy;
+import org.apache.roller.planet.config.PlanetConfig;
 import org.springframework.web.context.ContextLoaderListener;
 
 
@@ -83,6 +82,7 @@ public class PlanetContext extends ContextLoaderListener
             Planet planet = PlanetFactory.getPlanet();
             
             setupRuntimeProperties();
+            setupURLStrategy();
             
             planet.flush();
             planet.release();
@@ -107,6 +107,26 @@ public class PlanetContext extends ContextLoaderListener
     private void setupRuntimeProperties() {
         // init property manager by loading it
         PlanetFactory.getPlanet().getPropertiesManager();
+    }
+    
+    
+    /**
+     * Lookup configured URLStrategy from config and plug it in.
+     *
+     * If no URLStrategy can be configured then we bail and spew errors.
+     */
+    private void setupURLStrategy() throws Exception {
+        
+        String urlStratClass = PlanetConfig.getProperty("urlstrategy.classname");
+        if(urlStratClass == null || urlStratClass.trim().length() < 1) {
+            throw new Exception("No URLStrategy configured!!!");
+        }
+        
+        Class stratClass = Class.forName(urlStratClass);
+        URLStrategy urlStrategy = (URLStrategy) stratClass.newInstance();
+        
+        // plug it in
+        PlanetFactory.getPlanet().setURLStrategy(urlStrategy);
     }
     
     
