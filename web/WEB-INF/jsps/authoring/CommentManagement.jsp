@@ -370,11 +370,7 @@ function bulkDelete() {
                     <%-- comment content --%>
                     <br />
                     <span class="details">
-                       <pre><str:wordWrap>
-                            <str:truncateNicely upper="3000" appendToEnd="...">
-                                <c:out value="${comment.content}" escapeXml="true" />
-                            </str:truncateNicely>
-                       </str:wordWrap></pre>
+                       <pre><str:wordWrap><str:truncateNicely upper="3000" appendToEnd="..."><c:out value="${comment.content}" escapeXml="true" /></str:truncateNicely></str:wordWrap></pre>
                     </span>
                     
                 </td>

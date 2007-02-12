@@ -180,8 +180,10 @@ Show comments for weblog entry according to Roller configuration.
                     <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
                     <b>$comment.name</b>
-                #else
+                #elseif ($comment.remoteHost)
                     <b>$comment.remoteHost</b>
+                #else
+                    <b>$text.get("macro.weblog.comment.unknown")</b>
                 #end
 
                 $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
