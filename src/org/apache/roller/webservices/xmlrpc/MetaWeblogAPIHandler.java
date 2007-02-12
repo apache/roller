@@ -448,7 +448,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("guid", Utilities.escapeHTML(permalink));
         struct.put("permaLink", Utilities.escapeHTML(permalink));
         struct.put("postid", entry.getId());
-        struct.put("userid", userid);
+        
+        struct.put("userid", entry.getCreator().getUserName());
+        struct.put("author", entry.getCreator().getEmailAddress());
         
         Vector catArray = new Vector();
         catArray.addElement(entry.getCategory().getPath());
