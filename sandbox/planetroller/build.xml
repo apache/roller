@@ -45,7 +45,6 @@
     <fileset id="roller-jars" dir="${ro.tools}">
         <!-- needed for Hibernate -->
         <include name="hibernate-3.1/hibernate3.jar"/>
-        <include name="hibernate-3.1/lib/antlr.jar"/>
         <include name="hibernate-3.1/lib/asm.jar"/>
         <include name="hibernate-3.1/lib/asm-attrs.jar"/>
         <include name="hibernate-3.1/lib/cglib-2.1.3.jar"/>
@@ -65,17 +64,12 @@
         
         <!-- General dependencies -->
         <include name="lib/commons-codec-1.3.jar"/>
-        <include name="struts-1.2.4/lib/antlr.jar"/>
-        <include name="struts-1.2.4/lib/commons-lang-2.0.jar"/>
-        <include name="struts-1.2.4/lib/commons-logging.jar"/>
         <include name="struts-1.2.4/lib/commons-fileupload.jar"/>
-        <include name="struts-1.2.4/lib/commons-validator.jar"/>
-        <include name="struts-1.2.4/lib/commons-collections.jar"/>
         <include name="lib/log4j-1.2.11.jar"/>
         <include name="lib/jaxen-full.jar"/>
         <include name="lib/saxpath.jar"/>
-        <include name="lib/activation.jar"/>
-        <include name="lib/mail.jar"/>
+        <include name="buildtime/activation.jar"/>
+        <include name="buildtime/mail.jar"/>
     </fileset>
     
     <path id="planet.path">
@@ -90,12 +84,13 @@
             <include name="servlet-api.jar"/>
         </fileset>
         
-        <fileset dir="${ro.web}/WEB-INF/lib">
-            <include name="commons-logging-1.0.4.jar"/>
-            <include name="commons-lang-2.1.jar"/>  
-            <include name="myfaces-api-1.1.4.jar"/>  
-            <include name="tomahawk-1.1.3.jar"/>  
-        </fileset>                      
+        <fileset dir="./lib">
+            <include name="*.jar"/>  
+        </fileset>
+        
+        <fileset dir="./lib/struts2">
+            <include name="*.jar"/>
+        </fileset>
     </path>
     
     <path id="xdoclet.path">
@@ -192,7 +187,14 @@
             <fileset dir="../../apps/planet/build/lib">
                 <include name="roller-planet.jar"/>
             </fileset>
-        
+            
+            <fileset dir="./lib">
+                <include name="*.jar"/>  
+            </fileset>
+            
+            <fileset dir="./lib/struts2">
+                <include name="*.jar"/>
+            </fileset>
         </copy>         
 
         <copy todir="${build.webapp}">
