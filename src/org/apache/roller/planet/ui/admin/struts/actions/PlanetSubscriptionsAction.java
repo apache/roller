@@ -43,7 +43,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.util.Technorati;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.planet.pojos.PlanetConfigData;
+// TODO 4.0 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.ui.core.BasePageModel;
@@ -270,14 +270,14 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         int inboundblogs = -1;
         if (form.getSiteURL()!=null && form.getSiteURL().trim().length() > 0) {
             try {
-                PlanetConfigData config = planet.getConfiguration();
+                // TODO 4.0 PlanetConfigData config = planet.getConfiguration();
                 Technorati technorati = null;
-                if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
-                    technorati = new Technorati(
-                            config.getProxyHost(), config.getProxyPort());
-                } else {
+                //if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
+                    //technorati = new Technorati(
+                            //config.getProxyHost(), config.getProxyPort());
+                //} else {
                     technorati = new Technorati();
-                }
+                //}
                 Technorati.Result result =
                         technorati.getBloginfo(form.getSiteURL());
                 technoratiTitle = result.getWeblog().getName();

@@ -58,7 +58,7 @@ public class DatamapperPropertiesManagerImpl implements PropertiesManager {
     /** Creates a new instance of DatamapperPropertiesManagerImpl */
     public DatamapperPropertiesManagerImpl (
             DatamapperPersistenceStrategy strategy) {
-        log.debug("Instantiating Hibernate Properties Manager");
+        log.debug("Instantiating Datamapper Properties Manager");
 
         this.strategy = strategy;
 
