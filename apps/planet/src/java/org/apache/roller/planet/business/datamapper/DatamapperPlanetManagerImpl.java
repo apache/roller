@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
@@ -77,11 +77,6 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         this.strategy = strategy;
     }
 
-    public void saveConfiguration(PlanetConfigData config)
-            throws RollerException {
-        strategy.store(config);
-    }
-
     public void saveGroup(PlanetGroupData group) throws RollerException {
         strategy.store(group);
     }
@@ -112,21 +107,6 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     public void deleteSubscription(PlanetSubscriptionData sub)
             throws RollerException {
         strategy.remove(sub);
-    }
-
-    public PlanetConfigData getConfiguration() throws RollerException {
-        List results = (List) strategy.newQuery(PlanetConfigData.class, 
-                "PlanetConfigData.getAll").execute(); 
-        PlanetConfigData config = results.size()!=0 ? 
-            (PlanetConfigData)results.get(0) : null;
-            
-        // We inject the cache dir into the config object here to maintain
-        // compatibility with the standaline version of the aggregator.
-//        if (config != null) {
-//            config.setCacheDir(
-//                PlanetConfig.getProperty("planet.aggregator.cache.dir"));
-//        }
-        return config;
     }
 
     public PlanetSubscriptionData getSubscription(String feedUrl)
@@ -319,7 +299,6 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         
         Date now = new Date();
         long startTime = System.currentTimeMillis();
-        PlanetConfigData config = getConfiguration();
         
         // can't continue without cache dir
         if (cacheDirPath == null) {
@@ -356,12 +335,13 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         FeedFetcherCache feedInfoCache =
                 new DiskFeedInfoCache(cacheDirName);
         
-        if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
+        /*if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
             System.setProperty("proxySet", "true");
             System.setProperty("http.proxyHost", config.getProxyHost());
             System.setProperty("http.proxyPort",
                     Integer.toString(config.getProxyPort()));
-        }
+        }*/
+        
         /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
         System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
         System.setProperty("sun.net.client.defaultReadTimeout", "15000");
@@ -494,5 +474,56 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     }
 
     public void release() {}
+    
+
+    public void savePlanet(PlanetData planet) throws RollerException {
+        strategy.store(planet);
+    }
+
+    public PlanetData getPlanet(String handle) throws RollerException {
+        List results = (List) strategy.newQuery(PlanetData.class, 
+            "PlanetData.getByHandle").execute(handle); 
+        // TODO handle max result == 1
+        PlanetData planet = results.size()!=0 ? 
+            (PlanetData)results.get(0) : null;
+        return planet;
+    }
+
+    public PlanetData getPlanetById(String id) throws RollerException {
+        return (PlanetData)strategy.load(PlanetData.class, id);
+    }
+
+    public List getPlanets() throws RollerException {
+        return (List)strategy.newQuery(PlanetData.class, 
+            "PlanetData.getAll").execute(); 
+    }
+
+    public List getGroupHandles(PlanetData planet) throws RollerException { 
+        List handles = new ArrayList();
+        Iterator list = getGroups(planet).iterator();
+        while (list.hasNext()) {
+            PlanetGroupData group = (PlanetGroupData) list.next();
+            handles.add(group.getHandle());
+        }
+        return handles;
+    }
+
+    public List getGroups(PlanetData planet) throws RollerException {
+       return (List)strategy.newQuery(PlanetGroupData.class, 
+            "PlanetGroupData.getByPlanet").execute(planet.getHandle()); 
+    }
+
+    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
+        List results = (List) strategy.newQuery(PlanetData.class, 
+            "PlanetGroupData.getByPlanetAndHandle").execute(handle); 
+        // TODO handle max result == 1
+        PlanetGroupData group = results.size()!=0 ? 
+            (PlanetGroupData)results.get(0) : null;
+        return group;
+    }
+
+    public void deletePlanet(PlanetData planet) throws RollerException {
+        strategy.remove(planet);
+    }
 }
 

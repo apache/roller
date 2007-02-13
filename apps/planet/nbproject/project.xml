@@ -4,11 +4,16 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
-            <name>roller_planet</name>
+            <name>planet_4.0</name>
             <properties>
                 <property name="ant.script">build.xml</property>
             </properties>
             <folders>
+                <source-folder>
+                    <label>web</label>
+                    <type>doc_root</type>
+                    <location>web</location>
+                </source-folder>
                 <source-folder>
                     <label>src</label>
                     <type>java</type>
@@ -18,11 +23,6 @@
                     <label>test/java</label>
                     <type>java</type>
                     <location>test/java</location>
-                </source-folder>
-                <source-folder>
-                    <label>web</label>
-                    <type>doc_root</type>
-                    <location>web</location>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -74,7 +74,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/java</package-root>
-                <classpath mode="compile">../../tools/lib/activation.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/mail.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/jdom.jar:../../tools/struts-1.2.4/lib/commons-lang-2.0.jar:../../tools/struts-1.2.4/lib/commons-logging.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/struts-1.2.4/lib/antlr.jar:../../tools/roller-core/roller-core.jar</classpath>
+                <classpath mode="compile">../../tools/lib/activation.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/mail.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/jdom.jar:../../tools/struts-1.2.4/lib/commons-lang-2.0.jar:../../tools/struts-1.2.4/lib/commons-logging.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/struts-1.2.4/lib/antlr.jar:../../tools/roller-core/roller-core.jar:../../tools/struts-2.0.1/lib/antlr-2.7.2.jar:../../tools/struts-2.0.1/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.1/lib/commons-chain-1.1.jar:../../tools/struts-2.0.1/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.1/lib/freemarker-2.3.4.jar:../../tools/struts-2.0.1/lib/ognl-2.6.7.jar:../../tools/struts-2.0.1/lib/oro-2.0.8.jar:../../tools/struts-2.0.1/lib/spring-aop-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-beans-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-context-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-core-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-web-1.2.8.jar:../../tools/struts-2.0.1/lib/struts2-api-2.0.1.jar:../../tools/struts-2.0.1/lib/struts2-core-2.0.1.jar:../../tools/struts-2.0.1/lib/xwork-2.0-beta-1.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
             <compilation-unit>

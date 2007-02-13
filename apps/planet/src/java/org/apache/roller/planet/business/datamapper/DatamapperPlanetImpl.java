@@ -24,6 +24,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
+import org.apache.roller.planet.business.PropertiesManager;
 
 /**
  * A Datamapper specific implementation of the Roller business layer.
@@ -40,6 +41,7 @@ public abstract class DatamapperPlanetImpl implements Planet {
 
     // references to the managers we maintain
     private PlanetManager planetManager = null;
+    private PropertiesManager propertiesManager = null;
 
     
     protected DatamapperPlanetImpl() throws RollerException {
@@ -80,5 +82,20 @@ public abstract class DatamapperPlanetImpl implements Planet {
     protected PlanetManager createDatamapperPlanetManager(
             DatamapperPersistenceStrategy strategy) {
         return new DatamapperPlanetManagerImpl(strategy);
+    }    
+    
+    /**
+     * @see org.apache.roller.business.Roller#getBookmarkManager()
+     */
+    public PropertiesManager getPropertiesManager() {
+        if ( propertiesManager == null ) {
+            propertiesManager = createDatamapperPropertiesManager(strategy);
+        }
+        return propertiesManager;
+    }
+
+    protected PropertiesManager createDatamapperPropertiesManager(
+            DatamapperPersistenceStrategy strategy) {
+        return new DatamapperPropertiesManagerImpl(strategy);
     }    
 }

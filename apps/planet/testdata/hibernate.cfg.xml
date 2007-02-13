@@ -40,10 +40,11 @@
         <property name="hibernate.cache.use_structured_entries">true</property>
         
         <!-- Map Planet POJO classes -->
-        <mapping resource="org/apache/roller/planet/pojos/PlanetConfigData.hbm.xml" />
+        <mapping resource="org/apache/roller/planet/pojos/PlanetData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetGroupData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetEntryData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetSubscriptionData.hbm.xml" />
+        <mapping resource="org/apache/roller/planet/pojos/PropertyData.hbm.xml" />
                 
     </session-factory>
 </hibernate-configuration>

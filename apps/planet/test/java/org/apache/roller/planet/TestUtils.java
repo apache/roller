@@ -18,8 +18,10 @@
 
 package org.apache.roller.planet;
 
-import org.apache.roller.planet.business.Planet;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetData;
 
 
 /**
@@ -43,6 +45,47 @@ public final class TestUtils {
         }
         
         PlanetFactory.getPlanet().release();
+    }
+    
+    
+    /**
+     * Convenience method that creates a planet and stores it.
+     */
+    public static PlanetData setupPlanet(String handle) throws Exception {
+        
+        PlanetData testPlanet = new PlanetData(handle, handle);
+        
+        // store
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        mgr.savePlanet(testPlanet);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+        
+        // query to make sure we return the persisted object
+        PlanetData planet = mgr.getPlanet(handle);
+        
+        if(planet == null)
+            throw new RollerException("error inserting new planet");
+        
+        return planet;
+    }
+    
+    
+    /**
+     * Convenience method for removing a planet.
+     */
+    public static void teardownPlanet(String id) throws Exception {
+        
+        // lookup
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetData planet = mgr.getPlanetById(id);
+        
+        // remove
+        mgr.deletePlanet(planet);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
     }
     
 }

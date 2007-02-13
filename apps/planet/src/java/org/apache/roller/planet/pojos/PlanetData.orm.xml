@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+ orm_1_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.pojos</package>
+    <entity metadata-complete="true" name=""
+            class="org.apache.roller.planet.pojos.PlanetData">
+        <table name="rag_config"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="ROLLER_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <named-query name="PlanetData.getAll">
+            <query>SELECT p FROM PlanetData p</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="handle">
+                <column name="handle" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <one-to-many name="groups" mapped-by="planet_id" target-entity="org.apache.roller.planet.pojos.PlanetGroupData" fetch="LAZY">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+        </attributes>
+    </entity>
+</entity-mappings>

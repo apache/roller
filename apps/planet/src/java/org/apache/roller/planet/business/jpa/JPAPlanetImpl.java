@@ -21,6 +21,8 @@ package org.apache.roller.planet.business.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.datamapper.DatamapperPlanetImpl;
 import org.apache.roller.planet.business.datamapper.DatamapperPlanetManagerImpl;
 import org.apache.roller.planet.business.Planet;
@@ -42,6 +44,9 @@ public class JPAPlanetImpl extends DatamapperPlanetImpl {
     // references to the managers we maintain
     protected PlanetManager planetManager = null;
     
+    // url strategy
+    protected URLStrategy urlStrategy = null;
+    
         
     protected JPAPlanetImpl() throws RollerException {
         // set strategy used by Datamapper
@@ -59,13 +64,14 @@ public class JPAPlanetImpl extends DatamapperPlanetImpl {
         }
         
         return me;
+    }    
+
+    public URLStrategy getURLStrategy() {
+        return this.urlStrategy;
     }
     
-    
-    public PlanetManager getPlanetManager() {
-        if ( planetManager == null ) {
-            planetManager = new DatamapperPlanetManagerImpl(strategy);  
-        }
-        return planetManager;
-    }           
+    public void setURLStrategy(URLStrategy urlStrategy) {
+        this.urlStrategy = urlStrategy;
+        log.info("Using URLStrategy: " + urlStrategy.getClass().getName());
+    }
 }
