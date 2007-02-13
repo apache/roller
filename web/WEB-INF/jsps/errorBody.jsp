@@ -15,10 +15,10 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs-error.jsp" %>
 
 <%
-boolean debug = org.apache.roller.config.RollerRuntimeConfig.getBooleanProperty("site.debugMode");
+boolean debug = org.apache.roller.config.RollerConfig.getBooleanProperty("site.debugMode");
 request.setAttribute("debug", new Boolean(debug));
 %>
 
