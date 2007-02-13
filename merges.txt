@@ -1,5 +1,16 @@
-Merges from trunk into this branch:
+merges.txt
+==========
+
+Temporary file to track merges from trunk into the roller_4.0 branch. 
+
+
+Feb. 13, 2007: merging Allen's new planet work
+svn merge -r 504164:506460 https://svn.apache.org/repos/asf/incubator/roller/trunk
 
 Feb. 6, 2007: merging in LDAP/SSO related changes
 svn merge -r 504197:504198 https://svn.apache.org/repos/asf/incubator/roller/trunk
+
+Feb. 6, 2007: roller_4.0 branch created
+rev 504164
+
 
