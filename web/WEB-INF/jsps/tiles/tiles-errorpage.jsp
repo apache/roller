@@ -22,9 +22,6 @@
 <title><c:out value="${model.title}" /></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <tiles:insert page="/WEB-INF/jsps/tiles/head.jsp"  />
-<style type="text/css">
-<tiles:insert page="/WEB-INF/jsps/tiles/styles.jsp" />
-</style>
 </head>
 <body>
     
