@@ -263,11 +263,10 @@
         </copy>         
         <chmod perm="+x" dir="${build.webapp}/WEB-INF/scripts" includes="*.sh" />
         
-        <!-- distributable WAR file 
+        <!-- distributable WAR file -->
         <mkdir dir="${dist}/webapp" />
-        <war destfile="${dist}/webapp/roller-planet.war"
-             basedir="${build.webapp}"
-             webxml="${build.webapp}/WEB-INF/web.xml" /> -->
+        <jar destfile="${dist}/webapp/roller-planet.war"
+             basedir="${build.webapp}" />
              
     </target>
     
@@ -328,6 +327,9 @@
         
                 <!-- testdata.  the equivalent of /WEB-INF/classes in a webapp -->
                 <pathelement location="${basedir}/testdata" />
+                
+                <!-- plus the classpath for jars needed to talk to the test db -->
+                <pathelement path="${test.db.cpath}" />
             </classpath>
             
             <!-- needed to satisfy ref in log4j.properties -->
