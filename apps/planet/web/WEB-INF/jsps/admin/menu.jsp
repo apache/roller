@@ -18,8 +18,8 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
 <div class="menubar">
-    <a class="menubar" href="<s:url value="/" includeParams="none"/>"><s:text name="MenuBar.home" /></a> |
-    <a class="menubar" href="<s:url action="ConfigForm" includeParams="none"/>"><s:text name="MenuBar.config" /></a> |
-    <a class="menubar" href="<s:url action="PlanetsList" includeParams="none"/>"><s:text name="MenuBar.planets" /></a> |
-    <a class="menubar" href="<s:url action="Logout" includeParams="none"/>"><s:text name="MenuBar.logout" /></a>
+    <a class="menubar" href="<s:url value="/" />"><s:text name="MenuBar.home" /></a> |
+    <a class="menubar" href="<s:url action="ConfigForm" />"><s:text name="MenuBar.config" /></a> |
+    <a class="menubar" href="<s:url action="PlanetsList" />"><s:text name="MenuBar.planets" /></a> |
+    <a class="menubar" href="<s:url action="Logout" />"><s:text name="MenuBar.logout" /></a>
 </div>

@@ -25,7 +25,7 @@
         <script type="text/javascript">
         function confirmPlanetDelete(planetid, handle) {
           if (window.confirm('Are you sure you want to remove planet: ' + handle)) {
-            document.location.href='<s:url action="PlanetsList" method="deletePlanet" includeParams="none"/>?planetid='+planetid;
+            document.location.href='<s:url action="PlanetsList" method="deletePlanet" />?planetid='+planetid;
           }
         }
         </script>
