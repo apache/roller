@@ -26,7 +26,7 @@ import org.apache.roller.planet.pojos.PropertyData;
 /**
  * Manages global runtime properties.
  */
-public interface PropertiesManager {
+public interface PropertiesManager extends Manager {
     
     /** 
      * Save a single property 
@@ -50,11 +50,5 @@ public interface PropertiesManager {
      * Retrieve a list of all properties 
      */
     public Map getProperties() throws RollerException;
-    
-    
-    /**
-     * Release all resources associated with session.
-     */
-    public void release();
     
 }

@@ -124,15 +124,31 @@ public class HibernatePlanetImpl implements Planet {
     
     
     public void release() {
-                
-        // tell Hibernate to close down
+        // allow managers to do any session cleanup
+        if(this.propertiesManager != null) {
+            this.propertiesManager.release();
+        }
+        
+        if(this.planetManager != null) {
+            this.planetManager.release();
+        }
+        
+        // close down the session
         this.strategy.release();
     }
     
     
     public void shutdown() {
+        // allow managers to do any shutdown needed
+        if(this.propertiesManager != null) {
+            this.propertiesManager.shutdown();
+        }
         
-        // do our own shutdown first
+        if(this.planetManager != null) {
+            this.planetManager.shutdown();
+        }
+        
+        // trigger the final release()
         this.release();
     }
     
