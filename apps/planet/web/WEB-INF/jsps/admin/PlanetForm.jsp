@@ -25,7 +25,7 @@
         <script type="text/javascript">
         function confirmGroupDelete(groupid, handle) {
           if (window.confirm('Are you sure you want to remove group: ' + handle)) {
-            document.location.href='<s:url action="PlanetForm" method="deleteGroup" includeParams="none"/>?groupid='+groupid;
+            document.location.href='<s:url action="PlanetForm" method="deleteGroup" />?groupid='+groupid;
           }
         }
         </script>
@@ -43,9 +43,9 @@
             <%-- show a status message if needed --%>
             <%@include file="/WEB-INF/jsps/admin/statusMessage.jsp" %>
             
-            <p><a href='<s:url action="PlanetsList" includeParams="none"/>'><s:text name="PlanetForm.returnToList"/></a></p>
+            <p><a href='<s:url action="PlanetsList" includeParams="get" />'><s:text name="PlanetForm.returnToList"/></a></p>
             
-            <s:url id="action" action="PlanetForm" method="save" includeParams="none" />
+            <s:url id="action" action="PlanetForm" method="save" />
             <s:form name="PlanetForm" action="%{action}">
                 <s:hidden name="planetid" />
                 <s:textfield label="%{getText('PlanetForm.handle')}" name="planet.handle" size="40" />
@@ -67,13 +67,13 @@
                     </tr>
                     
                     <s:iterator value="planet.groups" status="status">
-                        <s:url id="editgroupurl" action="PlanetGroupForm" includeParams="none">
+                        <s:url id="editgroupurl" action="PlanetGroupForm" >
                             <s:param name="groupid"><s:property value="id"/></s:param>
                         </s:url>
                         <tr class='<s:if test="#status.even">evenRow</s:if><s:else>oddRow</s:else>'>
                             <td><s:a href="%{editgroupurl}"><s:property value="title"/></s:a></td>
                             <td><s:property value="handle"/></td>
-                            <td><img src='<s:url value="/planet-ui/images/world_link.png"/>' /><a href='<s:url value="/%{planet.handle}/group/%{handle}" includeParams="none"/>'><s:text name="PlanetForm.link" /></a></td>
+                            <td><img src='<s:url value="/planet-ui/images/world_link.png"/>' /><a href='<s:url value="/%{planet.handle}/group/%{handle}" />'><s:text name="PlanetForm.link" /></a></td>
                             <td><img src='<s:url value="/planet-ui/images/delete.png"/>' /><a href="javascript: void(0);" onclick="confirmGroupDelete('<s:property value="id"/>', '<s:property value="handle"/>');"><s:text name="PlanetForm.deleteGroup"/></a></td>
                         </tr>
                     </s:iterator>

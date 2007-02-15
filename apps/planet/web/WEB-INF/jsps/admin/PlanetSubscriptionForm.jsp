@@ -41,7 +41,7 @@
             </s:url>
             <p><s:a href="%{groupformurl}"><s:text name="PlanetSubscriptionForm.returnToGroup"/></s:a></p>
             
-            <s:url id="action" action="PlanetSubscriptionForm" method="save" includeParams="none" />
+            <s:url id="action" action="PlanetSubscriptionForm" method="save" />
             <s:form name="PlanetSubscriptionForm" action="%{action}">
                 <s:hidden name="groupid" />
                 <s:hidden name="subid" value="%{subscription.id}" />
@@ -52,7 +52,7 @@
             </s:form>
             
             <s:if test="subscription.id != null">
-                <s:url id="addsuburl" action="PlanetSubscriptionForm" includeParams="none">
+                <s:url id="addsuburl" action="PlanetSubscriptionForm" >
                     <s:param name="groupid"><s:property value="groupid"/></s:param>
                 </s:url>
                 <p><img src='<s:url value="/planet-ui/images/feed_add.png"/>' /><s:a href="%{addsuburl}"><s:text name="PlanetSubscriptionForm.addSubscription"/></s:a></p>
