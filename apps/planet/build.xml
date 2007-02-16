@@ -22,10 +22,14 @@
 
     <property file="build.properties" />
     
+    <!-- a pointer to the root of the entire Roller workspace -->
+    <property name="root"             value="${basedir}/../.." />
+    
     <!-- core properties -->
     <property name="build"            value="${basedir}/build" />
     <property name="dist"             value="${basedir}/dist" />
     <property name="lib"              value="${basedir}/lib" />
+    <property name="sql"              value="${basedir}/src/sql" />
     <property name="src"              value="${basedir}/src/java" />
     <property name="tools"            value="${basedir}/../../tools" />
     <property name="test"             value="${basedir}/test/java" />
@@ -38,6 +42,7 @@
     <property name="build.compile.test"             value="${build.compile}/test"/>
     <property name="build.lib"           value="${build}/lib"/>
     <property name="build.webapp"        value="${build}/webapp"/>
+    <property name="build.dbscripts"     value="${build}/dbscripts"/>
     <property name="build.test"          value="${build}/test"/>
     <property name="build.test.reports"  value="${build.test}/reports"/>
     
@@ -271,6 +276,34 @@
     </target>
     
     
+    <!-- generate database scripts -->
+    <target name="gen-dbscripts">
+        
+        <mkdir dir="${build.dbscripts}" />
+        
+        <!-- need a directory for each db to exist before generation can happen -->
+        <mkdir dir="${build.dbscripts}/db2" />
+        <mkdir dir="${build.dbscripts}/derby" />
+        <mkdir dir="${build.dbscripts}/hsqldb" />
+        <mkdir dir="${build.dbscripts}/mssql" />
+        <mkdir dir="${build.dbscripts}/mysql" />
+        <mkdir dir="${build.dbscripts}/oracle" />
+        <mkdir dir="${build.dbscripts}/postgresql" />
+        
+        <taskdef name="texen" 
+                 classname="org.apache.velocity.texen.ant.TexenTask"
+                 classpath="${tools}/lib/velocity-dep-1.4.jar:${root}/metadata/database/:${sql}" />
+                 
+        <texen
+            controlTemplate="control.vm" 
+            contextProperties="${sql}/dbscripts.properties"
+            useClasspath="true"
+            outputDirectory="${build.dbscripts}" 
+            outputFile="README.txt" />
+            
+    </target>
+
+
     <!-- ============================================== -->
     <!-- build code used for unit testing -->
     <target name="build-tests" depends="build" description="Build unit tests">

@@ -1,5 +1,7 @@
 README.txt
 
+Database scripts for $DBTYPE.
+
 Follow the installation guide for instructions on setting up your database.
 
 ## parse macros file to include it for use

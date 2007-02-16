@@ -122,9 +122,6 @@ Key Targets:
         
     </hibernatedoclet>
     
-    <!-- copy database related files -->
-    <antcall target="stage-dbscripts" />
-    
     <!-- allow for custom generation work -->
     &custom-gen-business;
     
@@ -377,23 +374,35 @@ ro.buildUser=${user.name}
     
 </target>
 
-
+    <!-- ============================================== -->
+    <!-- create distributable components -->
+    <target name="dist" depends="stage-webapp" description="Create Roller Weblogger distributables">
+        
+        <!-- distributable libraries -->
+        <mkdir dir="${ro.dist}/lib" />
+        <copy todir="${ro.dist}/lib" >
+            <fileset dir="${build.lib}" />
+        </copy>
+        
+        <!-- distributable WAR file -->
+        <mkdir dir="${ro.dist}/webapp" />
+        <jar destfile="${ro.dist}/webapp/roller-weblogger.war"
+             basedir="${build.webapp}" />
+             
+    </target>
+    
+    
 <!-- ********************************************************************* -->
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="gen-business, build-business, build-web, copy-webapp, gen-web" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts, copy-webapp, gen-web" description="Stage webapp, including jars">
 </target>
     
 <target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
 
     <mkdir dir="${build.webapp}/WEB-INF/lib"/>
     <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
-
-    <!-- Copy database configs to classpath in staging -->
-    <copy todir="${build.webapp}/WEB-INF/classes">
-        <fileset dir="${basedir}/metadata/database/hibernate" includes="hibernate.cfg.xml"/>
-    </copy>
 
     <!-- Copy WEB-INF contents to staging -->
     <copy todir="${build.webapp}/WEB-INF">
@@ -444,72 +453,48 @@ ro.buildUser=${user.name}
         </fileset>
     </copy>
     
+    <!-- copy database script files -->
+    <copy todir="${build.webapp}/WEB-INF/dbscripts">
+        <fileset dir="${build.dbscripts}" />
+    </copy>
+    
     <!-- apply custom web task -->
     &custom-web;
 
 </target>
 
 
-<!-- ********************************************************************* -->
-<!-- Create different versions of database setup script                    -->
-<!-- With this approach we won't have to expand the script all the time.   -->
-<!-- ********************************************************************* -->
-	
-<target name="stage-dbscripts">
+    <!-- ********************************************************************* -->
+    <!-- Create different versions of database setup script                    -->
+    <!-- With this approach we won't have to expand the script all the time.   -->
+    <!-- ********************************************************************* -->
     
-    <property name="dbscripts" value="${build.webapp}/WEB-INF/dbscripts"/>
-
-    <!-- Create database creation script directory -->
-     <mkdir dir="${dbscripts}"/>
-     <copy todir="${dbscripts}">
-         <fileset dir="./metadata/database" includes="droptables.sql"/>
-     </copy>
-    
-     <taskdef name="texen" classname="org.apache.velocity.texen.ant.TexenTask"
-         classpath="${basedir}/tools/lib/velocity-dep-1.4.jar" />
-     <texen 
-         controlTemplate="control.vm" 
-         contextProperties="${basedir}/metadata/database/mysql.properties"
-         templatePath="${basedir}/metadata/database/" 
-         outputDirectory="${build.webapp}/WEB-INF/dbscripts/mysql/" 
-         outputFile="README.txt" />
-     <texen 
-         controlTemplate="control.vm" 
-         contextProperties="${basedir}/metadata/database/postgresql.properties"
-         templatePath="${basedir}/metadata/database/" 
-         outputDirectory="${build.webapp}/WEB-INF/dbscripts/postgresql/" 
-         outputFile="README.txt" />
-     <texen 
-         controlTemplate="control.vm" 
-         contextProperties="${basedir}/metadata/database/hsqldb.properties"
-         templatePath="${basedir}/metadata/database/" 
-         outputDirectory="${build.webapp}/WEB-INF/dbscripts/hsqldb/" 
-         outputFile="README.txt" />
-     <texen 
-         controlTemplate="control.vm" 
-         contextProperties="${basedir}/metadata/database/derby.properties"
-         templatePath="${basedir}/metadata/database/" 
-         outputDirectory="${build.webapp}/WEB-INF/dbscripts/derby/" 
-         outputFile="README.txt" />
-     <texen 
-         controlTemplate="control.vm" 
-         contextProperties="${basedir}/metadata/database/db2.properties"
-         templatePath="${basedir}/metadata/database/" 
-         outputDirectory="${build.webapp}/WEB-INF/dbscripts/db2/" 
-         outputFile="README.txt" />
-     <texen 
-         controlTemplate="control.vm" 
-         contextProperties="${basedir}/metadata/database/oracle.properties"
-         templatePath="${basedir}/metadata/database/" 
-         outputDirectory="${build.webapp}/WEB-INF/dbscripts/oracle/" 
-         outputFile="README.txt" />
-    <texen 
-        controlTemplate="control.vm" 
-        contextProperties="${basedir}/metadata/database/mssql.properties"
-        templatePath="${basedir}/metadata/database/" 
-        outputDirectory="${build.webapp}/WEB-INF/dbscripts/mssql/" 
-        outputFile="README.txt" />
-</target>
+    <!-- generate database scripts -->
+    <target name="gen-dbscripts">
+        
+        <mkdir dir="${build.dbscripts}" />
+        
+        <!-- need a directory for each db to exist before generation can happen -->
+        <mkdir dir="${build.dbscripts}/db2" />
+        <mkdir dir="${build.dbscripts}/derby" />
+        <mkdir dir="${build.dbscripts}/hsqldb" />
+        <mkdir dir="${build.dbscripts}/mssql" />
+        <mkdir dir="${build.dbscripts}/mysql" />
+        <mkdir dir="${build.dbscripts}/oracle" />
+        <mkdir dir="${build.dbscripts}/postgresql" />
+        
+        <taskdef name="texen" 
+                 classname="org.apache.velocity.texen.ant.TexenTask"
+                 classpath="${ro.tools}/lib/velocity-dep-1.4.jar:${basedir}/metadata/database/:${basedir}/metadata/database/tmpls/" />
+                 
+        <texen
+            controlTemplate="control.vm" 
+            contextProperties="${basedir}/metadata/database/dbscripts.properties"
+            useClasspath="true"
+            outputDirectory="${build.dbscripts}" 
+            outputFile="README.txt" />
+            
+    </target>
 
 
 <!-- ********************************************************************* -->
