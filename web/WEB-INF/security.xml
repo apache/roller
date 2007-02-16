@@ -178,7 +178,7 @@
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationFailureUrl" value="/roller-ui/login.do?error=true"/>
         <property name="defaultTargetUrl" value="/"/>
-        <property name="filterProcessesUrl" value="/j_security_check"/>
+        <property name="filterProcessesUrl" value="/roller_j_security_check"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
     </bean>
     
