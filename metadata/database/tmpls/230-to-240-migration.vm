@@ -6,6 +6,6 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 -- Roller 2.4 schema changes
 
-#addColumnNotNull("pingtarget" "autoenabled" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
+#addColumnNotNull("pingtarget" "autoenabled" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
 
-#addColumnNull("website" "lastmodified" $TIMESTAMP_SQL_TYPE)
+#addColumnNull("website" "lastmodified" $db.TIMESTAMP_SQL_TYPE)

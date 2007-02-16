@@ -10,8 +10,8 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 #addColumnNull("website" "pagemodels" "varchar(512)")
 
 -- add new columns which hold the multi-lang settings for a weblog
-#addColumnNotNull("website" "enablemultilang" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
-#addColumnNotNull("website" "showalllangs" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
+#addColumnNotNull("website" "enablemultilang" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+#addColumnNotNull("website" "showalllangs" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)
 
 -- add new column which holds the locale for a weblog entry
 -- then set the values and make column not null
@@ -19,12 +19,12 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 create index we_locale_idx on weblogentry(locale);
 
 -- add new column which holds the hidden status for a page, default is false
-#addColumnNotNull("webpage" "hidden" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
+#addColumnNotNull("webpage" "hidden" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
 
 -- add new column which holds the hidden status for a page, default is false
-#addColumnNotNull("webpage" "navbar" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
-update webpage set navbar=$BOOLEAN_TRUE;
-update webpage set navbar=$BOOLEAN_FALSE where name like '\_%';
+#addColumnNotNull("webpage" "navbar" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+update webpage set navbar=$db.BOOLEAN_TRUE;
+update webpage set navbar=$db.BOOLEAN_FALSE where name like '\_%';
 
 -- add new column which holds the template language used for a page
 -- then set template language to velocity for all templates

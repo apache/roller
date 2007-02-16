@@ -63,7 +63,7 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 
 -- some missing foreign key constraints
 alter table roller_user_permissions add constraint up_userid_fk
-    foreign key ( user_id ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
+    foreign key ( user_id ) references rolleruser( id ) $!db.ADDL_FK_PARAMS ;
 
 alter table roller_user_permissions add constraint up_websiteid_fk
-    foreign key ( website_id ) references website( id ) $!ADDL_FK_PARAMS ;
+    foreign key ( website_id ) references website( id ) $!db.ADDL_FK_PARAMS ;
