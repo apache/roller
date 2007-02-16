@@ -301,6 +301,9 @@
             outputDirectory="${build.dbscripts}" 
             outputFile="README.txt" />
             
+        <!-- just copy over the droptables script -->
+        <copy todir="${build.dbscripts}" file="${sql}/droptables.sql" />
+        
     </target>
 
 
@@ -341,7 +344,7 @@
     
     <!-- ===================================== -->
     <!-- test planet business layer functionality -->
-    <target name="test-business" depends="build-tests" description="Back-end tests">
+    <target name="test-business" depends="build-tests, gen-dbscripts" description="Back-end tests">
         
         <mkdir dir="${build.test.reports}/business/xml"/>
         <mkdir dir="${build.test.reports}/business/html"/>
@@ -395,18 +398,22 @@
     
     <target name="init-db" description=
             "Initializes test database by running drop table and create table">
+        
+        <!-- start by dropping tables to reset everything -->
         <sql driver="${test.db.driver}"
              url="${test.db.url}"
              userid="${test.db.username}" 
              password="${test.db.password}"
-             src="../../build/webapp/WEB-INF/dbscripts/droptables.sql" 
+             src="${build.dbscripts}/droptables.sql" 
              onerror="continue"
              classpath="${test.db.cpath}" />
+             
+        <!-- now create fresh tables -->
         <sql driver="${test.db.driver}"
              url="${test.db.url}"
              userid="${test.db.username}" 
              password="${test.db.password}"
-             src="../../build/webapp/WEB-INF/dbscripts/${test.db.name}/createdb.sql"
+             src="${build.dbscripts}/${test.db.name}/createdb.sql"
              onerror="continue"
              classpath="${test.db.cpath}" />
     </target>
