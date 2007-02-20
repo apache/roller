@@ -52,6 +52,7 @@ import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 import org.apache.roller.business.datamapper.DatamapperQuery;
 
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
+import org.apache.roller.planet.business.AbstractManagerImpl;
 
 
 /**
@@ -59,7 +60,7 @@ import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
  * 
  * @author Dave Johnson
  */
-public class DatamapperPlanetManagerImpl implements PlanetManager {
+public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
 
     private static Log log = LogFactory.getLog(
         DatamapperPlanetManagerImpl.class);

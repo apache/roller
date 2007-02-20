@@ -32,7 +32,7 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
  * Manages groups and subscriptions, can return aggregation for any group.
  * @author David M Johnson
  */
-public interface PlanetManager extends Serializable {
+public interface PlanetManager extends Manager {
     
     //------------------------------------------------------------------ create
     

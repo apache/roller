@@ -30,7 +30,7 @@
 
 <form method="post" 
       id="loginForm" 
-      action="<c:url value="/j_security_check"/>"
+      action="<c:url value="/roller_j_security_check"/>"
       onsubmit="saveUsername(this)">
       
     <table>

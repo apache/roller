@@ -22,7 +22,7 @@
 <hibernate-configuration>
     <session-factory>
         
-        <!-- You can override this via the jdbc.XXX properties in roller-custom.properties -->
+        <!-- You can override this via the jdbc.XXX properties in planet-custom.properties -->
         <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
                         
         <!-- You can override this via the hibernate.dialect property in roller-custom.properties -->
@@ -42,7 +42,8 @@
         
         
         <!-- Map Planet pojo classes -->
-        <mapping resource="org/apache/roller/planet/pojos/PlanetConfigData.hbm.xml" />
+        <mapping resource="org/apache/roller/planet/pojos/PlanetData.hbm.xml" />
+        <mapping resource="org/apache/roller/planet/pojos/PropertyData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetGroupData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetEntryData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetSubscriptionData.hbm.xml" />

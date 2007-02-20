@@ -301,6 +301,7 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
     public void addWebsite(WebsiteData newWeblog) throws RollerException {
 
         this.strategy.store(newWeblog);
+        this.strategy.flush();
         this.addWeblogContents(newWeblog);
     }
 

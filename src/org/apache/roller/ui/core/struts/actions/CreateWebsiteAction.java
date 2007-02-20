@@ -142,14 +142,14 @@ public class CreateWebsiteAction extends DispatchAction {
         } else try {
             RollerContext rollerContext = RollerContext.getRollerContext();
             UserData user =
-                    RollerSession.getRollerSession(request).getAuthenticatedUser();
+                RollerSession.getRollerSession(request).getAuthenticatedUser();
             UserManager mgr = roller.getUserManager();
             
             if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
                 List permissions = roller.getUserManager().getAllPermissions(user);
                 if (permissions.size() > 0) {
-                    // sneaky user trying to get around 1 blog limit that applies
-                    // only when group blogging is disabled
+                    // sneaky user trying to get around 1 blog limit that 
+                    // applies only when group blogging is disabled
                     return mapping.findForward("access-denied");
                 }
             }
@@ -184,8 +184,7 @@ public class CreateWebsiteAction extends DispatchAction {
                     new ActionMessage("createWebsite.created", form.getHandle()));
             saveMessages(request, msgs);
         } catch (RollerException e) {
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError(e.getMessage()));
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("application.unexpectedError"));
             saveErrors(request, errors);
             mLogger.error("ERROR in createWebsite", e);
         }

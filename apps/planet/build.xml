@@ -22,10 +22,14 @@
 
     <property file="build.properties" />
     
+    <!-- a pointer to the root of the entire Roller workspace -->
+    <property name="root"             value="${basedir}/../.." />
+    
     <!-- core properties -->
     <property name="build"            value="${basedir}/build" />
     <property name="dist"             value="${basedir}/dist" />
     <property name="lib"              value="${basedir}/lib" />
+    <property name="sql"              value="${basedir}/src/sql" />
     <property name="src"              value="${basedir}/src/java" />
     <property name="tools"            value="${basedir}/../../tools" />
     <property name="test"             value="${basedir}/test/java" />
@@ -38,6 +42,7 @@
     <property name="build.compile.test"             value="${build.compile}/test"/>
     <property name="build.lib"           value="${build}/lib"/>
     <property name="build.webapp"        value="${build}/webapp"/>
+    <property name="build.dbscripts"     value="${build}/dbscripts"/>
     <property name="build.test"          value="${build}/test"/>
     <property name="build.test.reports"  value="${build.test}/reports"/>
     
@@ -272,15 +277,45 @@
         </copy>         
         <chmod perm="+x" dir="${build.webapp}/WEB-INF/scripts" includes="*.sh" />
         
-        <!-- distributable WAR file 
+        <!-- distributable WAR file -->
         <mkdir dir="${dist}/webapp" />
-        <war destfile="${dist}/webapp/roller-planet.war"
-             basedir="${build.webapp}"
-             webxml="${build.webapp}/WEB-INF/web.xml" /> -->
+        <jar destfile="${dist}/webapp/roller-planet.war"
+             basedir="${build.webapp}" />
              
     </target>
     
     
+    <!-- generate database scripts -->
+    <target name="gen-dbscripts">
+        
+        <mkdir dir="${build.dbscripts}" />
+        
+        <!-- need a directory for each db to exist before generation can happen -->
+        <mkdir dir="${build.dbscripts}/db2" />
+        <mkdir dir="${build.dbscripts}/derby" />
+        <mkdir dir="${build.dbscripts}/hsqldb" />
+        <mkdir dir="${build.dbscripts}/mssql" />
+        <mkdir dir="${build.dbscripts}/mysql" />
+        <mkdir dir="${build.dbscripts}/oracle" />
+        <mkdir dir="${build.dbscripts}/postgresql" />
+        
+        <taskdef name="texen" 
+                 classname="org.apache.velocity.texen.ant.TexenTask"
+                 classpath="${tools}/lib/velocity-dep-1.4.jar:${root}/metadata/database/:${sql}" />
+                 
+        <texen
+            controlTemplate="control.vm" 
+            contextProperties="${sql}/dbscripts.properties"
+            useClasspath="true"
+            outputDirectory="${build.dbscripts}" 
+            outputFile="README.txt" />
+            
+        <!-- just copy over the droptables script -->
+        <copy todir="${build.dbscripts}" file="${sql}/droptables.sql" />
+        
+    </target>
+
+
     <!-- ============================================== -->
     <!-- build code used for unit testing -->
     <target name="build-tests" depends="build" description="Build unit tests">
@@ -318,7 +353,7 @@
     
     <!-- ===================================== -->
     <!-- test planet business layer functionality -->
-    <target name="test-business" depends="build-tests" description="Back-end tests">
+    <target name="test-business" depends="build-tests, gen-dbscripts" description="Back-end tests">
         
         <mkdir dir="${build.test.reports}/business/xml"/>
         <mkdir dir="${build.test.reports}/business/html"/>
@@ -337,6 +372,9 @@
         
                 <!-- testdata.  the equivalent of /WEB-INF/classes in a webapp -->
                 <pathelement location="${basedir}/testdata" />
+                
+                <!-- plus the classpath for jars needed to talk to the test db -->
+                <pathelement path="${test.db.cpath}" />
             </classpath>
             
             <!-- needed to satisfy ref in log4j.properties -->
@@ -369,18 +407,22 @@
     
     <target name="init-db" description=
             "Initializes test database by running drop table and create table">
+        
+        <!-- start by dropping tables to reset everything -->
         <sql driver="${test.db.driver}"
              url="${test.db.url}"
              userid="${test.db.username}" 
              password="${test.db.password}"
-             src="../../build/webapp/WEB-INF/dbscripts/droptables.sql" 
+             src="${build.dbscripts}/droptables.sql" 
              onerror="continue"
              classpath="${test.db.cpath}" />
+             
+        <!-- now create fresh tables -->
         <sql driver="${test.db.driver}"
              url="${test.db.url}"
              userid="${test.db.username}" 
              password="${test.db.password}"
-             src="../../build/webapp/WEB-INF/dbscripts/${test.db.name}/createdb.sql"
+             src="${build.dbscripts}/${test.db.name}/createdb.sql"
              onerror="continue"
              classpath="${test.db.cpath}" />
     </target>

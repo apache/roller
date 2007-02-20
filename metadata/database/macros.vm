@@ -1,0 +1,58 @@
+
+#**
+Special macro to add table column with default null
+**#
+#macro(addColumnNull $table $column $type)
+#if ($db.DBTYPE == "ORACLE")
+    alter table $table add $column $type default null;
+#else
+    alter table $table add column $column $type default null;
+#end
+#end
+
+
+#**
+Special macro to add table column with not-null restriction and default value
+**#
+#macro(addColumnNotNull $table $column $type $default)
+#if($db.DBTYPE == "MYSQL" || $db.DBTYPE=="HSQDB")
+    alter table $table add column $column $type default $default not null;  
+#elseif ($db.DBTYPE == "POSTGRESQL")
+    alter table $table add column $column $type;
+    alter table $table alter $column set default $default;
+    update $table set $column=$default;
+    alter table $table alter $column set not null;
+#elseif ($db.DBTYPE == "HSQLDB")
+    alter table $table add column $column $type default $default not null; 
+#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
+    alter table $table add column $column $type with default $default not null;
+#elseif ($db.DBTYPE == "ORACLE")
+    alter table $table add $column $type default $default not null;  
+#end
+#end
+
+
+#**
+Special macro to drop NOT NULL requirement from an 'id' column.
+**#
+#macro(dropNotNullFromTableId $table)
+#if($db.DBTYPE == "MYSQL")
+    alter table $table drop primary key;
+    alter table $table modify id varchar(48) null;
+#elseif ($db.DBTYPE == "POSTGRESQL")
+    alter table $table drop constraint "${table}_pkey";
+    alter table $table  alter column id drop not null;
+#elseif ($db.DBTYPE == "HSQLDB")
+    alter table $table alter column id varchar(48) null;
+#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
+    alter table $table drop primary key;
+    alter table $table alter column id null;
+#elseif ($db.DBTYPE == "ORACLE")
+    alter table $table drop id not null;
+#end
+#end
+
+#**
+Macro to account for lack of comparable long varchar in MySQL
+**#
+#macro(longtext $size) #if($db.DBTYPE == "MYSQL") text #else varchar($size) #end #end

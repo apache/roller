@@ -6,12 +6,12 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 -- Roller 2.2 schema changes
 
-#addColumnNotNull("website" "isactive" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
-update website set isactive=$BOOLEAN_TRUE, datecreated=datecreated;
+#addColumnNotNull("website" "isactive" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)
+update website set isactive=$db.BOOLEAN_TRUE, datecreated=datecreated;
 
 -- Roller 2.3 schema changes
 
-#addColumnNull("weblogentry" "summary" $TEXT_SQL_TYPE)
+#addColumnNull("weblogentry" "summary" $db.TEXT_SQL_TYPE)
 #addColumnNull("weblogentry" "content_type" "varchar(48)")
 #addColumnNull("weblogentry" "content_src" "varchar(255)")
 

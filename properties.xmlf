@@ -43,6 +43,7 @@
 <property name="build.dist.apache"   value="${build.dist}/apache"/>
 <property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
 <property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
+<property name="build.dbscripts"     value="${ro.build}/dbscripts"/>
 <property name="build.tests"         value="${ro.build}/tests"/>
 <property name="build.reports"       value="${build.tests}/reports"/>
 <property name="build.docs"          value="${ro.build}/docs"/>
@@ -53,6 +54,7 @@
 
 <!-- various libraries used by Roller -->
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
+<property name="tools.struts2"       value="${ro.tools}/struts-2.0.1" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
 <property name="tools.jpa"           value="${ro.tools}/jpa" />
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
@@ -110,6 +112,15 @@ in the "base.path" definition.
 </fileset>
 
 <fileset id="struts.jars" dir="${tools.struts}/lib">
+    <!-- Only include parts of Struts 1.x not provided by Struts 2.x -->
+    <include name="struts.jar"/>
+    <include name="commons-digester.jar"/>
+    <include name="commons-fileupload.jar"/>
+    <include name="commons-lang-2.0.jar"/>
+    <include name="commons-logging.jar"/>
+</fileset>
+
+<fileset id="struts2.jars" dir="${tools.struts2}/lib">
     <include name="*.jar"/>
 </fileset>
 
@@ -177,6 +188,7 @@ in the "base.path" definition.
     <path refid="base.path"/>
     <fileset refid="presentation.jars"/>
     <fileset refid="struts.jars"/>
+    <fileset refid="struts2.jars"/>
     <fileset refid="servlet.jars"/>
     <fileset refid="mail.jars"/>
     <fileset refid="jstl.jars"/>

@@ -3,6 +3,8 @@ merges.txt
 
 Temporary file to track merges from trunk into the roller_4.0 branch. 
 
+Feb. 20, 2007: merging more planet work from trunk
+svn merge -r 506461:508659 https://svn.apache.org/repos/asf/incubator/roller/trunk
 
 Feb. 13, 2007: merging Allen's new planet work
 svn merge -r 504164:506460 https://svn.apache.org/repos/asf/incubator/roller/trunk

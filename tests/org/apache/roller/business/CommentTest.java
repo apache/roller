@@ -18,6 +18,8 @@
 
 package org.apache.roller.business;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -26,8 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -244,6 +244,9 @@ public class CommentTest extends TestCase {
             umgr.removeWebsite(TestUtils.getManagedWebsite(weblog));
             TestUtils.endSession(true);
         } catch (RollerException e) {
+            PrintWriter pw = new PrintWriter(new StringWriter()); 
+            e.printStackTrace(pw);
+            log.info(pw.toString());
             ex = e;
         }
         assertNull(ex);

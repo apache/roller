@@ -45,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -53,10 +54,12 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 
+
 /**
  * Hibernate implementation of the PlanetManager.
  */
-public class HibernatePlanetManagerImpl implements PlanetManager {
+public class HibernatePlanetManagerImpl extends AbstractManagerImpl
+        implements PlanetManager {
     
     private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);
     

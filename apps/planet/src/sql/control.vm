@@ -1,10 +1,11 @@
 README.txt
 
+Database scripts for $DBTYPE.
+
 Follow the installation guide for instructions on setting up your database.
 
 ## parse macros file to include it for use
 #parse("macros.vm")
-
 
 #** Loop through all databases and generate scripts for each one **#
 #set( $dbs = $strings.split($databases, " ") )

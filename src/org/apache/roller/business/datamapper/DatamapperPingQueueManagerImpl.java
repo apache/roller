@@ -94,7 +94,7 @@ public class DatamapperPingQueueManagerImpl implements PingQueueManager {
     public List getAllQueueEntries() 
             throws RollerException {
         return (List)strategy.newQuery(PingQueueEntryData.class,
-                "PingQueueEntryData.getAllOrderByEntryTime");
+                "PingQueueEntryData.getAllOrderByEntryTime").execute();
     }
 
     // private helper to determine if an has already been queued 

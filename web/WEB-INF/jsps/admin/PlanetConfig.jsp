@@ -15,92 +15,90 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
-<script type="text/javascript">
-<!--
-function refreshEntries()
-{
-    document.planetConfigForm.method.value = "refreshEntries";
-    document.planetConfigForm.submit();
-}
-function syncWebsites()
-{
-    document.planetConfigForm.method.value = "syncWebsites";
-    document.planetConfigForm.submit();
-}
-// -->
-</script>
 
-<html:form action="/roller-ui/admin/planetConfig" method="post">
-    <html:hidden property="id" />
-    <html:hidden property="cacheDir" />
-    <html:hidden property="templateDir" />
-    <html:hidden property="outputDir" />
-    <html:hidden property="method" value="saveConfig" />
+<%-- Start by parsing our config defs using the jstl xml toolkit --%>
+<%-- Then we'll progress through the config defs and print out the form --%>
+<x:parse var="configDefs">
+  <%= org.apache.roller.planet.config.PlanetRuntimeConfig.getRuntimeConfigDefsAsString() %>
+</x:parse>
+
+
+<roller:StatusMessage/>
+
+<p class="subtitle"><fmt:message key="planetConfig.subtitle" /></a>
+<p><fmt:message key="configForm.prompt" /></a>
+
+<form action="planetConfig.do" method="post">
+
+<input type="hidden" name="method" value="update">
+
+    <table class="formtableNoDesc">
     
-    <p class="subtitle"><fmt:message key="planetConfig.subtitle" /></p>
-    <p><fmt:message key="planetConfig.prompt" /></p>
-
-    <table class="formtable">
-
-    <tr>
-        <td class="label"><label for="title" /><fmt:message key="planetConfig.title" /></label></td>
-        <td class="field"><html:text property="title" size="40" maxlength="255" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.title" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="description" /><fmt:message key="planetConfig.description" /></label></td>
-        <td class="field"><html:text property="description" size="40" maxlength="255" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.description" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="siteURL" /><fmt:message key="planetConfig.siteUrl" /></label></td>
-        <td class="field"><html:text property="siteURL" size="40" maxlength="255" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.siteUrl" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="adminEmail" /><fmt:message key="planetConfig.adminEmail" /></label></td>
-        <td class="field"><html:text property="adminEmail" size="40" maxlength="255" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.adminEmail" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="proxyHost" /><fmt:message key="planetConfig.proxyHost" /></label></td>
-        <td class="field"><html:text property="proxyHost" size="40" maxlength="255" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.proxyHost" /></td>
-    </tr>
-
-    <tr>
-        <td class="label"><label for="proxyPort" /><fmt:message key="planetConfig.proxyPort" /></label></td>
-        <td class="field"><html:text property="proxyPort" size="6" maxlength="6" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.proxyPort" /></td>
-    </tr>
+    <x:forEach select="$configDefs//config-def[@name='global-properties']/display-group">
+        <c:set var="displayGroupKey"><x:out select="@key"/></c:set>
+    
+        <tr>
+            <td colspan="3"><h2><fmt:message key="${displayGroupKey}" /></h2></td>
+        </tr>
+    
+        <x:forEach select="property-def">
+            <c:set var="propLabelKey"><x:out select="@key"/></c:set>
+            <c:set var="name"><x:out select="@name"/></c:set>
+        
+            <tr>
+                <td class="label"><fmt:message key="${propLabelKey}" /></td>
+              
+                <%-- choose the right html input element for the display --%>
+                <x:choose>
+                
+                  <%-- "string" type means use a simple textbox --%>
+                  <x:when select="type='string'">
+                    <td class="field"><input type="text" name='<c:out value="${name}"/>' value='<c:out value="${PlanetProps[name].value}"/>' size="35" /></td>
+                  </x:when>
+                  
+                  <%-- "text" type means use a full textarea --%>
+                  <x:when select="type='text'">
+                    <td class="field">
+                      <textarea name='<c:out value="${name}"/>' rows="<x:out select="rows"/>" cols="<x:out select="cols"/>"><c:out value="${PlanetProps[name].value}"/></textarea>
+                    </td>
+                  </x:when>
+                  
+                  <%-- "boolean" type means use a checkbox --%>
+                  <x:when select="type='boolean'">
+                    <c:choose>
+                      <c:when test="${PlanetProps[name].value eq 'true'}">
+                          <td class="field"><input type="checkbox" name='<c:out value="${name}"/>' CHECKED></td>
+                      </c:when>
+                      <c:otherwise>
+                          <td class="field"><input type="checkbox" name='<c:out value="${name}"/>'></td>
+                      </c:otherwise>
+                    </c:choose>
+                  </x:when>
+                  
+                  <%-- if it's something we don't understand then use textbox --%>
+                  <x:otherwise>
+                    <td class="field"><input type="text" name='<c:out value="${name}"/>' size="50" /></td>
+                  </x:otherwise>
+                </x:choose>
+                
+                <td class="description"><%-- <fmt:message key="" /> --%></td>
+            </tr>
+          
+        </x:forEach>
+      
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        
+    </x:forEach>
 
     </table>
-
-    <br />
+    
     <div class="control">
-        <input type="submit" value='<fmt:message key="planetConfig.button.post" />' />
+        <input class="buttonBox" type="submit" value="<fmt:message key="configForm.save"/>"/>
     </div>
     
-    <br />           
-    <h3><fmt:message key="planetConfig.title.control" /></h3>
-    <p><i><fmt:message key="planetConfig.prompt.control" /></i></p>
-    
-    <input type="button" name="refresh"
-       value='<fmt:message key="planetConfig.button.refreshEntries" />'
-       onclick="refreshEntries()" />  
-
-    <input type="button" name="sync"
-       value='<fmt:message key="planetConfig.button.syncWebsites" />'
-       onclick="syncWebsites()" /> 
-
-</html:form>
-
-
-
-
+<form>
 

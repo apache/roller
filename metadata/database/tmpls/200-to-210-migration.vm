@@ -1,0 +1,21 @@
+#** 
+200-to-210-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- Add to roller_comment table: approved and pending fields
+#addColumnNotNull("roller_comment" "approved" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)
+#addColumnNotNull("roller_comment" "pending" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+update roller_comment set approved=$db.BOOLEAN_TRUE, pending=$db.BOOLEAN_FALSE, posttime=posttime;
+
+-- Add to website table: commentmod, blacklist, defaultallowcomments and defaultcommentdays 
+#addColumnNotNull("website" "commentmod" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_FALSE)
+#addColumnNotNull("website" "defaultallowcomments" $db.BOOLEAN_SQL_TYPE $db.BOOLEAN_TRUE)
+#addColumnNotNull("website" "defaultcommentdays" "integer" 7)
+#addColumnNull("website" "blacklist" $db.TEXT_SQL_TYPE)
+
+update website set commentmod=$db.BOOLEAN_FALSE, defaultallowcomments=$db.BOOLEAN_TRUE, defaultcommentdays=7, blacklist='', datecreated=datecreated;
+
+-- Add weblog displaydays column
+#addColumnNotNull("website" "displaycnt" "integer" 15)

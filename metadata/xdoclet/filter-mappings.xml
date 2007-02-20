@@ -62,7 +62,14 @@ Note: this filter does nothing if an ip ban list is not configured. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
-<!-- Map everything to the PersistenceSessionFilter.
+<filter-mapping>
+    <filter-name>struts2</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+    
+    <!-- Map everything to the PersistenceSessionFilter.
      NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
 <filter-mapping>
     <filter-name>PersistenceSessionFilter</filter-name>

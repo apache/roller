@@ -25,7 +25,7 @@
         <script type="text/javascript">
         function confirmSubDelete(subid, title) {
           if (window.confirm('Are you sure you want to remove subscription: ' + title)) {
-            document.location.href='<s:url action="PlanetGroupForm" method="deleteSub" includeParams="none"/>?groupid=<s:property value="groupid"/>&subid='+subid;
+            document.location.href='<s:url action="PlanetGroupForm" method="deleteSub" />?groupid=<s:property value="groupid"/>&subid='+subid;
           }
         }
         </script>
@@ -48,7 +48,7 @@
             </s:url>
             <p><s:a href="%{planetformurl}"><s:text name="PlanetGroupForm.returnToPlanet"/></s:a></p>
             
-            <s:url id="action" action="PlanetGroupForm" method="save" includeParams="none" />
+            <s:url id="action" action="PlanetGroupForm" method="save" />
             <s:form name="PlanetGroupForm" action="%{action}">
                 <s:hidden name="planetid" value="%{group.planet.id}" />
                 <s:hidden name="groupid" value="%{group.id}" />
@@ -73,7 +73,7 @@
                     </tr>
                     
                     <s:iterator value="group.subscriptions" status="status">
-                        <s:url id="editurl" action="PlanetSubscriptionForm">
+                        <s:url id="editurl" action="PlanetSubscriptionForm" includeParams="get">
                             <s:param name="subid"><s:property value="id"/></s:param>
                         </s:url>
                         <tr class='<s:if test="#status.even">evenRow</s:if><s:else>oddRow</s:else>'>

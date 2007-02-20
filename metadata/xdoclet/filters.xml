@@ -1,3 +1,9 @@
+
+<filter>
+    <filter-name>struts2</filter-name>
+    <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+</filter>
+    
 <filter>
     <filter-name>securityFilter</filter-name>
     <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
