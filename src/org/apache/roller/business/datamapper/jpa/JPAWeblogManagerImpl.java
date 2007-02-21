@@ -17,7 +17,7 @@
  */
 
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import java.util.ArrayList;
 import java.util.Arrays;

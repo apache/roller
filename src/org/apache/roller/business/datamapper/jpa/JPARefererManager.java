@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import org.apache.roller.business.datamapper.DatamapperRefererManagerImpl;
 import org.apache.roller.business.datamapper.DatamapperQuery;

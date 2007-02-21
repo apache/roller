@@ -17,11 +17,9 @@
  */
 
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import org.apache.roller.pojos.TagStat;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.business.jpa.JPAUpdateQuery;
 import org.apache.roller.business.datamapper.DatamapperUserManagerImpl;
 import org.apache.roller.RollerException;
 

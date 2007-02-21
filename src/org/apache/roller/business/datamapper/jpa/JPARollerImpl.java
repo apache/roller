@@ -16,7 +16,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

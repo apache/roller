@@ -424,6 +424,12 @@ create table entryattribute (
 create index ea_entryid_idx on entryattribute( entryid );
 alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!db.INDEXSIZE );
 
+create table planet_id_table (
+    pk              int not null primary key,
+    value           int not null
+);
+insert into planet_id_table (pk, value) values (1, 0);
+
 create table rag_group_subscription (
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
@@ -485,8 +491,14 @@ create table rag_entry (
     published        $db.TIMESTAMP_SQL_TYPE not null,
     updated          $db.TIMESTAMP_SQL_TYPE    
 );
-create index rage_sid_idx on rag_entry(subscription_id); 
-
+create index rage_sid_idx on rag_entry(subscription_id);
+ 
+create table rag_planet (
+    id              varchar(48) not null primary key,
+    name            varchar(255) not null,
+    handle          varchar(32) not null
+);
+create index ragp_handle_idx on rag_planet(handle); 
 insert into rag_planet (id,name,handle) values ('default_planet','default_planet','default_planet');
 
 

@@ -17,7 +17,7 @@
  */
 
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
