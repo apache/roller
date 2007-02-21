@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
- orm_1_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
     <description>Persistence Metadata for Roller</description>
     <persistence-unit-metadata>
         <persistence-unit-defaults>
@@ -54,6 +54,11 @@
             <basic name="inboundblogs">
                 <column name="inbound_blogs" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <one-to-many name="entries" mapped-by="subscription" target-entity="org.apache.roller.planet.pojos.PlanetEntryData" fetch="LAZY">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </one-to-many>
             <many-to-many name="groups"
                           target-entity="org.apache.roller.planet.pojos.PlanetGroupData">
                 <join-table name="rag_group_subscription">
@@ -61,13 +66,7 @@
                     <inverse-join-column name="group_id"/>
                 </join-table>
             </many-to-many>
-            <one-to-many name="entries" mapped-by="subscription" target-entity="org.apache.roller.planet.pojos.PlanetEntryData" fetch="LAZY">
-                <cascade>
-                    <cascade-all/>
-                </cascade>
-            </one-to-many>
             <transient name="name"/>
-            <transient name="entries"/>
             <transient name="uRL"/>
         </attributes>
     </entity>

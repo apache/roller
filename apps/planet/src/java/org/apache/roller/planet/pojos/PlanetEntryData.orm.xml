@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
- orm_1_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
     <description>Persistence Metadata for Roller</description>
     <persistence-unit-metadata>
         <persistence-unit-defaults>
@@ -80,6 +80,9 @@
                 <join-column name="subscription_id" insertable="true" updatable="true"
                              nullable="false"/>
             </many-to-one>
+            <transient name="published"/>
+            <transient name="updated"/>
+            <transient name="content"/>
         </attributes>
     </entity>
 </entity-mappings>

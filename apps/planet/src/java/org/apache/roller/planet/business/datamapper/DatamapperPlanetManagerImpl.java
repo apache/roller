@@ -127,7 +127,7 @@ public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements 
     public Iterator getAllSubscriptions() {
         try {
             return ((List)strategy.newQuery(PlanetSubscriptionData.class, 
-                    "PlanetSubscriptionData.getAll")).iterator(); 
+                    "PlanetSubscriptionData.getAll").execute()).iterator(); 
         } catch (Throwable e) {
             throw new RuntimeException(
                     "ERROR fetching subscription collection", e);
@@ -178,7 +178,7 @@ public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements 
 
     public List getGroups() throws RollerException {
         return (List) strategy.newQuery(PlanetGroupData.class, 
-                "PlanetGroupData.getAll").execute(); 
+            "PlanetGroupData.getWithPlanetNull").execute(); 
     }
 
     public List getGroupHandles() throws RollerException {
@@ -516,7 +516,7 @@ public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements 
 
     public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
         List results = (List) strategy.newQuery(PlanetData.class, 
-            "PlanetGroupData.getByPlanetAndHandle").execute(handle); 
+            "PlanetGroupData.getByPlanetAndHandle").execute(new Object[] {planet.getHandle(), handle}); 
         // TODO handle max result == 1
         PlanetGroupData group = results.size()!=0 ? 
             (PlanetGroupData)results.get(0) : null;

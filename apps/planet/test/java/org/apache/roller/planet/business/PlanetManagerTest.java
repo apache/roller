@@ -52,6 +52,7 @@ public class PlanetManagerTest extends TestCase {
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
             sub.setFeedURL("test_url");
             planet.saveSubscription(sub);
+            TestUtils.endSession(true);
             
             PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
             sub1.setFeedURL("test_url1");
@@ -165,6 +166,7 @@ public class PlanetManagerTest extends TestCase {
             entry3.setSubscription(sub);
             entry3.setPubTime(new Timestamp(System.currentTimeMillis()));
             planet.saveEntry(entry3);
+            sub.addEntry(entry3);
             TestUtils.endSession(true);
             
             // verify entry was added

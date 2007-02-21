@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
- orm_1_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
     <description>Persistence Metadata for Roller</description>
     <persistence-unit-metadata>
         <persistence-unit-defaults>
@@ -14,6 +14,15 @@
         <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetGroupData.getByHandle">
             <query>SELECT p FROM PlanetGroupData p WHERE p.handle = ?1</query>
+        </named-query>
+        <named-query name="PlanetGroupData.getByPlanetAndHandle">
+            <query>SELECT p FROM PlanetGroupData p WHERE p.planet.handle = ?1 and p.handle = ?2</query>
+        </named-query>
+        <named-query name="PlanetGroupData.getByPlanet">
+            <query>SELECT p FROM PlanetGroupData p WHERE p.planet.handle = ?1</query>
+        </named-query>
+        <named-query name="PlanetGroupData.getWithPlanetNull">
+            <query>SELECT p FROM PlanetGroupData p WHERE p.planet IS NULL</query>
         </named-query>
         <named-query name="PlanetGroupData.getAll">
             <query>SELECT p FROM PlanetGroupData p</query>
