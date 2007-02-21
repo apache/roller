@@ -8,11 +8,11 @@
             <access>PROPERTY</access>
         </persistence-unit-defaults>
     </persistence-unit-metadata>
-    <package>org.apache.roller.pojos</package>
+    <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="PlanetSubscriptionData"
             class="org.apache.roller.planet.pojos.PlanetSubscriptionData">
         <table name="rag_subscription"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="ROLLER_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetSubscriptionData.getAll">
             <query>SELECT p FROM PlanetSubscriptionData p</query>
         </named-query>
@@ -30,7 +30,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+                <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
             <basic name="feedURL">
                 <column name="feed_url" insertable="true" updatable="true" unique="false"/>
@@ -61,9 +61,14 @@
                     <inverse-join-column name="group_id"/>
                 </join-table>
             </many-to-many>
+            <one-to-many name="entries" mapped-by="subscription" target-entity="org.apache.roller.planet.pojos.PlanetEntryData" fetch="LAZY">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
             <transient name="name"/>
             <transient name="entries"/>
-            <transient name="url"/>
+            <transient name="uRL"/>
         </attributes>
     </entity>
 </entity-mappings>

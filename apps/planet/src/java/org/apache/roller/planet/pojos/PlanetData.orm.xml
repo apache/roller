@@ -8,18 +8,21 @@
             <access>PROPERTY</access>
         </persistence-unit-defaults>
     </persistence-unit-metadata>
-    <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name=""
+    <package>org.apache.roller.planet.pojos</package>
+    <entity metadata-complete="true" name="PlanetData"
             class="org.apache.roller.planet.pojos.PlanetData">
-        <table name="rag_config"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="ROLLER_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table name="rag_planet"/>
+        <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetData.getAll">
             <query>SELECT p FROM PlanetData p</query>
+        </named-query>
+        <named-query name="PlanetData.getByHandle">
+            <query>SELECT p FROM PlanetData p WHERE p.handle = ?1</query>
         </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+                <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
@@ -27,7 +30,7 @@
             <basic name="handle">
                 <column name="handle" insertable="true" updatable="true" unique="true"/>
             </basic>
-            <one-to-many name="groups" mapped-by="planet_id" target-entity="org.apache.roller.planet.pojos.PlanetGroupData" fetch="LAZY">
+            <one-to-many name="groups" mapped-by="planet" target-entity="org.apache.roller.planet.pojos.PlanetGroupData" fetch="LAZY">
                 <cascade>
                     <cascade-all/>
                 </cascade>

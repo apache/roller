@@ -11,14 +11,13 @@
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="PropertyData"
             class="org.apache.roller.planet.pojos.PropertyData">
-        <table name="roller_properties"/>
-        <named-query name="RollerData.getAll">
+        <table name="rag_properties"/>
+        <named-query name="PropertyData.getAll">
             <query>SELECT r FROM PropertyData r</query>
         </named-query>
         <attributes>
             <id name="name">
                 <column name="name"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="value">
                 <column name="value" insertable="true" updatable="true" unique="false"/>

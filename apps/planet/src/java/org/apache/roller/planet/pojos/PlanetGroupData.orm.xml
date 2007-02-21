@@ -8,10 +8,10 @@
             <access>PROPERTY</access>
         </persistence-unit-defaults>
     </persistence-unit-metadata>
-    <package>org.apache.roller.pojos</package>
+    <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="PlanetGroupData" class="org.apache.roller.planet.pojos.PlanetGroupData">
         <table name="rag_group"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="ROLLER_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetGroupData.getByHandle">
             <query>SELECT p FROM PlanetGroupData p WHERE p.handle = ?1</query>
         </named-query>
@@ -21,7 +21,7 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+                <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
             <basic name="categoryRestriction">
                 <column name="cat_restriction" insertable="true" updatable="true" unique="false"/>
@@ -41,6 +41,9 @@
             <basic name="title">
                 <column name="title" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <many-to-one name="planet" target-entity="org.apache.roller.planet.pojos.PlanetData">
+				<join-column name="planet_id" insertable="true" updatable="true" nullable="true"/>
+			</many-to-one>
             <many-to-many name="subscriptions"
                           target-entity="org.apache.roller.planet.pojos.PlanetSubscriptionData"
                           mapped-by="groups"/>

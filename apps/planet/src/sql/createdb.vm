@@ -9,6 +9,14 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 -- *****************************************************
 -- Create the tables and indices
 
+
+create table planet_id_table (
+    pk              int not null primary key,
+    value           int not null
+);
+insert into planet_id_table (pk, value) values (1, 0);
+
+
 create table rag_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE

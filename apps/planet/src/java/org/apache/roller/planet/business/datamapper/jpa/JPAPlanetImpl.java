@@ -16,7 +16,7 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.planet.business.jpa;
+package org.apache.roller.planet.business.datamapper.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +27,7 @@ import org.apache.roller.planet.business.datamapper.DatamapperPlanetImpl;
 import org.apache.roller.planet.business.datamapper.DatamapperPlanetManagerImpl;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.business.datamapper.jpa.JPAPersistenceStrategy;
 
 
 /**
