@@ -17,7 +17,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

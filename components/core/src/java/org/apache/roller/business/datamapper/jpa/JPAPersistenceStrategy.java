@@ -17,7 +17,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -73,7 +73,7 @@ public class JPAPersistenceStrategy implements DatamapperPersistenceStrategy {
             this.emf =
                 Persistence.createEntityManagerFactory(puName, emfProps);
         } catch (PersistenceException pe) {
-            logger.debug("ERROR: creating entity manager", pe);
+            logger.error("ERROR: creating entity manager", pe);
             throw new RollerException(pe);
         }
     }

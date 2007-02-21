@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -16,29 +17,50 @@
  * directory of this distribution.
  */
 
-
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import org.apache.roller.business.jpa.*;
+
+import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
 
 /**
  *
  */
-public class JPANamedQueryImpl extends JPAQueryImpl {
+public class JPARemoveQueryImpl implements DatamapperRemoveQuery {
+
+    /** */
+    protected EntityManager em;
+
+    /** */
+    protected Query q;
 
     /**
-     * Creates a new instance of JPANamedQueryImpl
+     * Creates a new instance of JPAQueryImpl
      */
-    public JPANamedQueryImpl(EntityManager em, String queryName) {
-        super(em, queryName);
+    public JPARemoveQueryImpl(EntityManager em, Class clazz, String queryName) {
+        this.em = em;
+        q = em.createNamedQuery(queryName);
     }
 
-    /**
-     * Create a Query for this instance
-     */
-    protected Query createQuery(String queryName) {
-        return em.createNamedQuery(queryName);
+    public void removeAll() {
+        q.executeUpdate();
     }
+
+    public void removeAll(Object param) {
+        q.setParameter(1, param);
+        q.executeUpdate();
+    }
+
+    public void removeAll(Object[] params) {
+        for (int i = 0; i < params.length ; i++) {
+            q.setParameter(i + 1, params[i]);
+        }
+        q.executeUpdate();
+    }
+
+    public DatamapperRemoveQuery setTypes(Object[] types) {
+        return this;
+    }
+
 }

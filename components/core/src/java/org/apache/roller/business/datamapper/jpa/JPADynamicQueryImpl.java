@@ -17,43 +17,27 @@
  */
 
 
-package org.apache.roller.business.jpa;
+package org.apache.roller.business.datamapper.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import org.apache.roller.business.jpa.*;
 
 /**
- * @author Mitesh Meswani
+ *
  */
-public class JPAUpdateQuery {
-
-    protected EntityManager em;
-
-    protected Query q;
+public class JPADynamicQueryImpl extends JPAQueryImpl {
 
     /**
-     * Creates a new instance of JPAQueryImpl
+     * Creates a new instance of JPADynamicQueryImpl
      */
-    public JPAUpdateQuery(EntityManager em, String queryName) {
-        this.em = em;
-        q = em.createNamedQuery(queryName);
+    public JPADynamicQueryImpl(EntityManager em, String queryString) {
+        super(em, queryString);
     }
 
-    public int updateAll() {
-        return q.executeUpdate();
+    /**
+     * Create a Query for this instance
+     */
+    protected Query createQuery(String queryString) {
+        return em.createQuery(queryString);
     }
-
-    public int updateAll(Object param) {
-        q.setParameter(1, param);
-        return q.executeUpdate();
-    }
-
-    public int updateAll(Object[] params) {
-        for (int i = 0; i < params.length ; i++) {
-            q.setParameter(i + 1, params[i]);
-        }
-        return q.executeUpdate();
-    }
-
 }
