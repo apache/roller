@@ -677,7 +677,7 @@ Show search again form for a weblog.
             <select name="cat">
             <option value="">- In Category -</option>
             #foreach( $cat in $cats )
-              <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
+              <option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
             #end
             </select>
 
