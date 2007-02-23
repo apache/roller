@@ -69,7 +69,7 @@ public class PlanetsList extends PlanetActionSupport {
         
         if(getPlanetid() != null && getPlanetid().length() > 0) {
             // delete a planet
-            log.info("Deleting Planet ... "+getPlanetid());
+            log.debug("Deleting Planet ... "+getPlanetid());
             
             try {
                 PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -78,15 +78,16 @@ public class PlanetsList extends PlanetActionSupport {
                     pMgr.deletePlanet(planet);
                     PlanetFactory.getPlanet().flush();
                 }
+                
+                // delete succeeded, handle rest of request as usual
+                setSuccess("PlanetsList.message.planetDeleteSucceeded", planet.getHandle());
+                return execute();
             } catch(Exception e) {
                 log.error("Error deleting planet", e);
                 setError("PlanetsList.error.planetDeleteFailed", getPlanetid());
                 return LIST;
             }
             
-            // delete succeeded, handle rest of request as usual
-            setSuccess("PlanetsList.message.planetDeleteSucceeded", getPlanetid());
-            return execute();
         } else {
             setError("PlanetsList.error.planetNull");
             return execute();

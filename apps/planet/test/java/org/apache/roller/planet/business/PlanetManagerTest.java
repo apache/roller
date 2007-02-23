@@ -50,10 +50,12 @@ public class PlanetManagerTest extends TestCase {
         
         {   // save subscriptions and a group
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
+            sub.setTitle("test_url");
             sub.setFeedURL("test_url");
             planet.saveSubscription(sub);
             
             PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
+            sub1.setTitle("test_url1");
             sub1.setFeedURL("test_url1");
             planet.saveSubscription(sub1);   
             
@@ -122,6 +124,7 @@ public class PlanetManagerTest extends TestCase {
         
         {   // save subscription
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
+            sub.setTitle("test_url");
             sub.setFeedURL("test_url");
             planet.saveSubscription(sub);
             TestUtils.endSession(true);
@@ -214,6 +217,7 @@ public class PlanetManagerTest extends TestCase {
             planet.saveGroup(group);
             
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
+            sub.setTitle(feed_url1);
             sub.setFeedURL(feed_url1);
             planet.saveSubscription(sub);
             
@@ -259,10 +263,12 @@ public class PlanetManagerTest extends TestCase {
                 planet.saveGroup(group);
                 
                 PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
+                sub1.setTitle(feed_url1);
                 sub1.setFeedURL(feed_url1);
                 planet.saveSubscription(sub1);
                 
                 PlanetSubscriptionData sub2 = new PlanetSubscriptionData();
+                sub2.setTitle(feed_url2);
                 sub2.setFeedURL(feed_url2);
                 planet.saveSubscription(sub2);
                 
@@ -318,9 +324,11 @@ public class PlanetManagerTest extends TestCase {
             
             {
                 PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
+                sub1.setTitle(feed_url1);
                 sub1.setFeedURL(feed_url1);
                 planet.saveSubscription(sub1);
                 PlanetSubscriptionData sub2 = new PlanetSubscriptionData();
+                sub2.setTitle(feed_url2);
                 sub2.setFeedURL(feed_url2);
                 planet.saveSubscription(sub2);
                 TestUtils.endSession(true);

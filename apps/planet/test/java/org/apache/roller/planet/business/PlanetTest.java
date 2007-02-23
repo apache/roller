@@ -52,7 +52,7 @@ public class PlanetTest extends TestCase {
         assertEquals("testPlanet", planet.getHandle());
         
         // modify
-        planet.setName("foo");
+        planet.setTitle("foo");
         mgr.savePlanet(planet);
         TestUtils.endSession(true);
         
@@ -60,7 +60,7 @@ public class PlanetTest extends TestCase {
         planet = null;
         planet = mgr.getPlanetById(testPlanet.getId());
         assertNotNull(planet);
-        assertEquals("foo", planet.getName());
+        assertEquals("foo", planet.getTitle());
         
         // remove
         mgr.deletePlanet(planet);

@@ -73,6 +73,8 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
     }
     
     
+    // TODO: Validation - check that planet handle is unique
+    // TODO: Validation - make sure html is not allowed in handle or title
     public String save() {
         
         if(this.planet != null) {
@@ -116,14 +118,15 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
                 pmgr.savePlanet(this.planet);
                 pmgr.deleteGroup(group);
                 PlanetFactory.getPlanet().flush();
+                
+                setSuccess("PlanetForm.message.groupDeleteSucceeded", group.getHandle());
+                return INPUT;
             } catch (RollerException ex) {
                 log.error("Error deleting planet group", ex);
                 setError("PlanetForm.error.groupDeleteFailed", getGroupid());
                 return INPUT;
             }
             
-            setSuccess("PlanetForm.message.groupDeleteSucceeded");
-            return INPUT;
         } else {
             setError("PlanetForm.error.groupNull");
             return INPUT;

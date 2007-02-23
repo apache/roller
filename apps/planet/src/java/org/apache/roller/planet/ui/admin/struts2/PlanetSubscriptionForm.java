@@ -67,6 +67,8 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
         return INPUT;
     }
     
+    
+    // TODO: Validation - make sure that html is not allowed in title
     public String save() {
         // save a subscription
         log.debug("Saving Planet Subscription ...");

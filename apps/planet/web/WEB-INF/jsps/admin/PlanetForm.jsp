@@ -49,7 +49,7 @@
             <s:form name="PlanetForm" action="%{action}">
                 <s:hidden name="planetid" />
                 <s:textfield label="%{getText('PlanetForm.handle')}" name="planet.handle" size="40" />
-                <s:textfield label="%{getText('PlanetForm.title')}" name="planet.name" size="40" />
+                <s:textfield label="%{getText('PlanetForm.title')}" name="planet.title" size="40" />
                 <s:submit />
             </s:form>
             
