@@ -85,7 +85,7 @@
         <include name="jakarta-taglibs-standard-1.1.2/lib/serializer.jar" />
         
         <!-- Struts 2 -->
-        <include name="struts-2.0.1/lib/*.jar"/>
+        <include name="struts-2.0.5/lib/*.jar"/>
     </fileset>
     
     <path id="planet.business.path">
