@@ -27,10 +27,10 @@
     #set($entries = $model.pager.items)
     #foreach($entry in $entries)
     <entry>
-        <id>$entry.permalink</id>
+        <id>$utils.escapeXML($entry.permalink)</id>
         <title type="html">$utils.escapeXML($entry.title)</title>
-        <author><name>$entry.author</name></author>
-        <link rel="alternate" type="text/html" href="$entry.permalink"/>
+        <author><name>$utils.escapeXML($entry.author)</name></author>
+        <link rel="alternate" type="text/html" href="$utils.escapeXML($entry.permalink)"/>
         <published>$utils.formatIso8601Date($entry.published)</published>
         <updated>$utils.formatIso8601Date($entry.published)</updated> 
         <category term="$utils.escapeXML($entry.category.name)" label="$utils.escapeXML($entry.category.name)" />
