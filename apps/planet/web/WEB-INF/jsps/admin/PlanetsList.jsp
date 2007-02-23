@@ -43,6 +43,8 @@
             <%-- show a status message if needed --%>
             <%@include file="/WEB-INF/jsps/admin/statusMessage.jsp" %>
             
+            <p/>
+            
             <table class="data">
                 <tr>
                     <th><s:text name="PlanetsList.planetTitle" /></th>
@@ -58,7 +60,7 @@
                         <s:param name="planetid"><s:property value="id"/></s:param>
                     </s:url>
                     <tr class='<s:if test="#status.even">evenRow</s:if><s:else>oddRow</s:else>'>
-                        <td><s:a href="%{editPlanetUrl}"><s:property value="name"/></s:a></td>
+                        <td><s:a href="%{editPlanetUrl}"><s:property value="title"/></s:a></td>
                         <td><s:property value="handle"/></td>
                         <td><img src='<s:url value="/planet-ui/images/world_link.png"/>' /><a href='<s:url value="/%{handle}" />'><s:text name="PlanetsList.link" /></a></td>
                         <td><img src='<s:url value="/planet-ui/images/delete.png"/>' /><a href="javascript: void(0);" onclick="confirmPlanetDelete('<s:property value="id"/>', '<s:property value="handle"/>');"><s:text name="PlanetsList.deletePlanet"/></a></td>

@@ -1,10 +1,19 @@
 /*
- * PlanetData.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on December 13, 2006, 5:09 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.planet.pojos;
@@ -21,7 +30,7 @@ import java.util.Set;
 public class PlanetData {
     
     private String id = null;
-    private String name = null;
+    private String title = null;
     private String handle = null;
     private Set groups = new HashSet();
     
@@ -31,7 +40,7 @@ public class PlanetData {
     
     
     public PlanetData(String name, String handle) {
-        this.name = name;
+        this.title = name;
         this.handle = handle;
     }
     
@@ -48,14 +57,14 @@ public class PlanetData {
     }
 
     /**
-     * @hibernate.property column="name" non-null="true" unique="false"
+     * @hibernate.property column="title" non-null="true" unique="false"
      */
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**

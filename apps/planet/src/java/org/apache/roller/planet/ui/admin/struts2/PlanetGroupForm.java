@@ -76,6 +76,10 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
         return INPUT;
     }
     
+    
+    // TODO: Validation - check that group handle is unique within planet
+    // TODO: Validation - make sure that html is not allowed in handle or title
+    // TODO: Validation - make sure maxXXXEntries have a proper value range
     public String save() {
         // save a group group
         log.debug("Saving Planet Group ...");
@@ -114,16 +118,18 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
                     pmgr.saveGroup(group);
                     PlanetFactory.getPlanet().flush();
                 }
+                
+                setSuccess("PlanetGroupForm.message.subscriptionDeleteSucceeded", sub.getTitle());
             }
+            
+            setError("PlanetGroupForm.error.subscriptionNull");
+            return INPUT;
             
         } catch (RollerException ex) {
             log.error("Unable to lookup planet group", ex);
             setError("PlanetGroupForm.error.subscriptionDeleteFailed", getSubid());
             return INPUT;
         }
-        
-        setSuccess("PlanetGroupForm.message.subscriptionDeleteSucceeded", getSubid());
-        return INPUT;
     }
 
     public String getPlanetid() {
