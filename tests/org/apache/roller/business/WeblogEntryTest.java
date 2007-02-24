@@ -332,9 +332,9 @@ public class WeblogEntryTest extends TestCase {
                 .getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date()
                 .getTime()));
-        testEntry.setWebsite(testWeblog);
-        testEntry.setCreator(testUser);
-        testEntry.setCategory(testWeblog.getDefaultCategory());
+        testEntry.setWebsite(TestUtils.getManagedWebsite(testWeblog));
+        testEntry.setCreator(TestUtils.getManagedUser(testUser));
+        testEntry.setCategory(TestUtils.getManagedWebsite(testWeblog).getDefaultCategory());
 
         // shortcut
         testEntry.addTag("testTag");

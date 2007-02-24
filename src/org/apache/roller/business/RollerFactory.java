@@ -31,7 +31,8 @@ public abstract class RollerFactory {
     private static Log log = LogFactory.getLog(RollerFactory.class);
     
     private static final String DEFAULT_IMPL =
-        "org.apache.roller.business.datamapper.jpa.JPARollerImpl";
+        "org.apache.roller.business.jpa.JPARollerImpl";
+        //"org.apache.roller.business.datamapper.jpa.JPARollerImpl";
         //"org.apache.roller.business.hibernate.HibernateRollerImpl";
     
     private static Roller rollerInstance = null;
