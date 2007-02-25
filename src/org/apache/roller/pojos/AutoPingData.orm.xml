@@ -12,7 +12,7 @@
     <entity metadata-complete="true" name="AutoPingData"
             class="org.apache.roller.pojos.AutoPingData">
         <table name="autoping"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="ROLLER_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="AutoPingData.getByPingTarget">
             <query>SELECT a FROM AutoPingData a WHERE a.pingTarget = ?1</query>
         </named-query>
