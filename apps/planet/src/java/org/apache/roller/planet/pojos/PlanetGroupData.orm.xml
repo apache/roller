@@ -11,7 +11,7 @@
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="PlanetGroupData" class="org.apache.roller.planet.pojos.PlanetGroupData">
         <table name="rag_group"/>
-        <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table-generator name="PLANET-TABLE-GENERATOR" table="planet_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetGroupData.getByHandle">
             <query>SELECT p FROM PlanetGroupData p WHERE p.handle = ?1</query>
         </named-query>

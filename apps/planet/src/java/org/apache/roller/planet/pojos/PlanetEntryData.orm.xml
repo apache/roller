@@ -11,7 +11,7 @@
     <package>org.apache.roller.planet.pojos</package>
     <entity metadata-complete="true" name="PlanetEntryData" class="org.apache.roller.planet.pojos.PlanetEntryData">
         <table name="rag_entry"/>
-        <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table-generator name="PLANET-TABLE-GENERATOR" table="planet_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetEntryData.getByFeedURL">
             <query>SELECT p FROM PlanetEntryData p WHERE p.subscription.feedURL = ?1</query>
         </named-query>

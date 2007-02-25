@@ -12,7 +12,7 @@
     <entity metadata-complete="true" name="PlanetSubscriptionData"
             class="org.apache.roller.planet.pojos.PlanetSubscriptionData">
         <table name="rag_subscription"/>
-        <table-generator name="PLANET-TABLE-GENERATOR" table="PLANET_ID_TABLE" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
+        <table-generator name="PLANET-TABLE-GENERATOR" table="planet_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetSubscriptionData.getAll">
             <query>SELECT p FROM PlanetSubscriptionData p</query>
         </named-query>
