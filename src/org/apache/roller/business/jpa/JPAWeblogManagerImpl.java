@@ -880,16 +880,8 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         for (int i=0; i<params.size(); i++) {
             query.setParameter(i+1, params.get(i));
         }
+        return query.getResultList();
         
-        List comments = query.getResultList();
-        if (offset==0 || comments.size() < offset) {
-            return comments;
-        }
-        List range = new ArrayList();
-        for (int i=offset; i<comments.size(); i++) {
-            range.add(comments.get(i));
-        }
-        return range;
     }
     
     
