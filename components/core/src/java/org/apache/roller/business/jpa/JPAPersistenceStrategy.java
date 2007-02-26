@@ -265,7 +265,7 @@ public class JPAPersistenceStrategy {
      */
     public Query getNamedUpdate(String queryName)
     throws RollerException {
-        EntityManager em = getEntityManager(false);
+        EntityManager em = getEntityManager(true);
         Query q = em.createNamedQuery(queryName);
         return q;
     }
