@@ -56,7 +56,10 @@
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.struts2"       value="${ro.tools}/struts-2.0.1" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
-<property name="tools.jpa"           value="${ro.tools}/jpa" />
+<property name="tools.jpa"           value="${ro.tools}/toplink-essentials-9.1" />
+<!-- 
+<property name="tools.jpa"           value="${ro.tools}/openjpa-0.9.6" />
+-->
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
 <property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
 <property name="tools.xdoclet"       value="${ro.tools}/buildtime/xdoclet-1.2.3" />
@@ -85,6 +88,7 @@ in the "base.path" definition.
 <fileset id="base.jars" dir="${ro.tools}/lib">
     <include name="commons-betwixt-1.0-beta-1.jar" />
     <include name="commons-cache.jar" />
+    <include name="commons-collections-3.2.jar" />
     <include name="commons-codec-1.3.jar" />
     <include name="concurrent-1.3.2.jar"/>
     <include name="jaxen-full.jar" />
@@ -148,7 +152,7 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
-<fileset id="jpa.jars" dir="${ro.tools}/jpa">
+<fileset id="jpa.jars" dir="${tools.jpa}">
     <include name="*.jar"/>
 </fileset>
 
@@ -175,13 +179,14 @@ in the "base.path" definition.
     <fileset refid="commons.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="roller-planet.jars" />
+    <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
+    <fileset refid="jpa.jars" />
 </path>
 
 <path id="business.path">
     <path refid="base.path"/>
     <fileset refid="hibernate.jar" />
     <fileset refid="hibernate.jars" />
-    <fileset refid="jpa.jars" />
 </path>
 
 <path id="presentation.path">

@@ -323,6 +323,19 @@ ro.buildUser=${user.name}
         <fileset dir="${build.generated.business}" excludes="**/*.java" />
     </copy>
     
+    <!-- define the openjpac task; this can be done at the top of the -->
+    <!-- build.xml file, so it will be available for all targets
+    <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
+    <openjpac>
+        <config propertiesFile="web/WEB-INF/classes/META-INF/persistence.xml" />
+        <classpath>
+            <path refid="business.path"/>
+            <pathelement location="${build.compile.business}" />
+            <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
+            &custom-jars;
+        </classpath>
+    </openjpac> -->
+    
     <!-- allow for custom build work -->
     &custom-build-business;
     
@@ -884,11 +897,9 @@ ro.buildUser=${user.name}
     <!-- 
     Copy custom testing files which will overwrite some config files 
     -->
-    <copy todir="${build.tests}">
+    <copy todir="${build.tests}" overwrite="true">
         <fileset dir="${basedir}/testdata" />
     </copy>    
-    <copy todir="${build.tests}/WEB-INF/classes" 
-        file="${basedir}/testdata/JPAEMF.properties" overwrite="true"/>
         
 </target>
 

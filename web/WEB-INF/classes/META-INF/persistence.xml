@@ -2,6 +2,9 @@
     
     <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        <!--
+        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        -->
         <jta-data-source>jdbc/rollerdb</jta-data-source>
         <mapping-file>org/apache/roller/pojos/AutoPingData.orm.xml                   </mapping-file>
         <mapping-file>org/apache/roller/pojos/BookmarkData.orm.xml                   </mapping-file>
@@ -29,7 +32,10 @@
     </persistence-unit> 
     
     <persistence-unit name ="PlanetPU" transaction-type = "RESOURCE_LOCAL">
+        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <!--
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        -->
         <jta-data-source>jdbc/rollerdb</jta-data-source>
         <mapping-file>org/apache/roller/planet/pojos/PlanetData.orm.xml</mapping-file>
         <mapping-file>org/apache/roller/planet/pojos/PlanetGroupData.orm.xml</mapping-file>
