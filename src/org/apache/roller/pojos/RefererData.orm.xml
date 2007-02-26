@@ -11,6 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="RefererData" class="org.apache.roller.pojos.RefererData">
         <table name="referer"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="RefererData.getByWeblogEntry&amp;TitleNotNull&amp;ExcerptNotNullOrderByTotalHitsDesc">
             <query>SELECT r FROM RefererData r WHERE r.weblogEntry = ?1 AND r.title IS NOT NULL AND r.excerpt IS NOT NULL
                                                ORDER BY r.totalHits DESC</query>

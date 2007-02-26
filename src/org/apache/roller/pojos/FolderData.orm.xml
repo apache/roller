@@ -11,6 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="FolderData" class="org.apache.roller.pojos.FolderData">
         <table name="folder"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="FolderData.getByWebsite">
             <query>SELECT f FROM FolderData f WHERE f.website = ?1</query>
         </named-query>

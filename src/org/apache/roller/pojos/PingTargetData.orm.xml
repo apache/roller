@@ -12,6 +12,7 @@
     <entity metadata-complete="true" name="PingTargetData"
             class="org.apache.roller.pojos.PingTargetData">
         <table name="pingtarget"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PingTargetData.getByWebsiteNullOrderByName">
             <query>SELECT p FROM PingTargetData p WHERE p.website IS NULL ORDER BY p.name</query>
         </named-query>

@@ -11,6 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="HitCountData" class="org.apache.roller.pojos.HitCountData">
         <table name="roller_hitcounts"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="HitCountData.getByWeblog">
             <query>SELECT h FROM HitCountData h WHERE h.weblog = ?1</query>
         </named-query>

@@ -11,6 +11,7 @@
 	<package>org.apache.roller.pojos</package>
 	<entity metadata-complete="true" name="TaskLockData" class="org.apache.roller.pojos.TaskLockData">
 		<table name="roller_tasklock"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="TaskLockData.getByName">
             <query>SELECT t FROM TaskLockData t WHERE t.name = ?1</query>
         </named-query>

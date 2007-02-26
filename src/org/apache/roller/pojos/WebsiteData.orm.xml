@@ -11,6 +11,7 @@
 	<package>org.apache.roller.pojos</package>
 	<entity metadata-complete="true" name="WebsiteData" class="org.apache.roller.pojos.WebsiteData">
 		<table name="website"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
 		<named-query name="WebsiteData.getByHandle">
 			<query>SELECT w FROM WebsiteData w WHERE w.handle = ?1</query>
 		</named-query>

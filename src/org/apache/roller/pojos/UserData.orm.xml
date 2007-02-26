@@ -11,6 +11,7 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="UserData" class="org.apache.roller.pojos.UserData">
         <table name="rolleruser"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="UserData.getAll">
             <query>SELECT u FROM UserData u</query>
         </named-query>

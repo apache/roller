@@ -12,6 +12,7 @@
     <entity metadata-complete="true" name="PermissionsData"
             class="org.apache.roller.pojos.PermissionsData">
         <table name="roller_user_permissions"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PermissionsData.getByWebsiteAndUser">
             <query>SELECT p FROM PermissionsData p WHERE p.website = ?1 AND p.user = ?2</query>
         </named-query>

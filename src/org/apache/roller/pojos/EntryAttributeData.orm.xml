@@ -12,6 +12,7 @@
     <entity metadata-complete="true" name="EntryAttributeData"
             class="org.apache.roller.pojos.EntryAttributeData">
         <table name="entryattribute"/>
+        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <attributes>
             <id name="id">
                 <column name="id"/>
