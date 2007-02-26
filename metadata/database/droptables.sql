@@ -15,11 +15,13 @@
 -- directory of this distribution.
 
 -- planet tables
+drop table planet_id_table;
 drop table rag_config;
 drop table rag_group;
 drop table rag_subscription;
 drop table rag_entry;
 drop table rag_group_subscription;
+drop table rag_planet;
 
 -- non-associated tables
 drop table newsfeed;
@@ -40,6 +42,7 @@ drop table folder;
 drop table folderassoc;
 
 -- core services tables
+drop table roller_id_table;
 drop table roller_hitcounts;
 drop table roller_comment;
 drop table roller_weblogentrytag;

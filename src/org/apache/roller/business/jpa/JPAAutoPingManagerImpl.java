@@ -74,7 +74,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     public void removeAutoPing(PingTargetData pingTarget, WebsiteData website)
             throws RollerException {
-        Query q = strategy.getNamedQuery("AutoPingData.removeByPingTarget&Website");
+        Query q = strategy.getNamedUpdate("AutoPingData.removeByPingTarget&Website");
         q.setParameter(1, pingTarget);
         q.setParameter(2, website);
         q.executeUpdate();

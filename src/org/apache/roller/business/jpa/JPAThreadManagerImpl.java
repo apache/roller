@@ -101,7 +101,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
     protected boolean acquireLeaseInDatabase(RollerTask task, TaskLockData taskLock,
             long leaseExpireTime) throws RollerException {
-        Query q = strategy.getNamedQuery(
+        Query q = strategy.getNamedUpdate(
             "TaskLockData.updateClient&Timeacquired&TimeleasedByName&Timeacquired");
         q.setParameter(1, task.getClientId());
         q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
@@ -149,7 +149,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
     protected boolean releaseLeaseInDatabase(RollerTask task)
             throws RollerException {
-        Query q = strategy.getNamedQuery(
+        Query q = strategy.getNamedUpdate(
             "TaskLockData.updateTimeLeasedByName&Client");
         q.setParameter(1, Integer.valueOf(task.getInterval()));
         q.setParameter(2, task.getName());

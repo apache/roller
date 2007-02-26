@@ -88,7 +88,7 @@ public class JPARefererManagerImpl implements RefererManager {
      */
     public void clearReferrers() throws RollerException {
         clearDayHits();
-        Query q = strategy.getNamedQuery("RefererData.removeByNullOrEmptyExcerpt");
+        Query q = strategy.getNamedUpdate("RefererData.removeByNullOrEmptyExcerpt");
         q.executeUpdate();
     }
 
@@ -97,7 +97,7 @@ public class JPARefererManagerImpl implements RefererManager {
      */
     public void clearReferrers(WebsiteData website) throws RollerException {
         clearDayHitsByWebsite(website);
-        Query q = strategy.getNamedQuery("RefererData.removeByNullOrEmptyExcerpt&Website");
+        Query q = strategy.getNamedUpdate("RefererData.removeByNullOrEmptyExcerpt&Website");
         q.setParameter(1, website);
         q.executeUpdate();
     }
@@ -630,12 +630,12 @@ public class JPARefererManagerImpl implements RefererManager {
     public void release() {}
     
     protected void clearDayHits() throws RollerException {
-        Query query = strategy.getNamedQuery("RefererData.clearDayHits");
+        Query query = strategy.getNamedUpdate("RefererData.clearDayHits");
         query.executeUpdate();
     }
 
     protected void clearDayHitsByWebsite(WebsiteData website) throws RollerException {
-        Query query = strategy.getNamedQuery("RefererData.clearDayHitsByWebsite");
+        Query query = strategy.getNamedUpdate("RefererData.clearDayHitsByWebsite");
         query.setParameter(1, website);
         query.executeUpdate();
     }

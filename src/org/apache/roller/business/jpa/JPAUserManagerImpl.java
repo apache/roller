@@ -116,13 +116,13 @@ public class JPAUserManagerImpl implements UserManager {
         updateTagAggregates(tags);
         
         // delete all weblog tag aggregates
-        Query removeAggs= strategy.getNamedQuery(
+        Query removeAggs= strategy.getNamedUpdate(
                 "WeblogEntryTagAggregateData.removeByWeblog");
         removeAggs.setParameter(1, website);
         removeAggs.executeUpdate();
         
         // delete all bad counts
-        Query removeCounts = strategy.getNamedQuery(
+        Query removeCounts = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregateData.removeByTotalLessEqual");
         removeCounts.setParameter(1, new Integer(0));
         removeCounts.executeUpdate();
@@ -215,7 +215,7 @@ public class JPAUserManagerImpl implements UserManager {
     protected void updateTagAggregates(List tags) throws RollerException {
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
             TagStat stat = (TagStat) iter.next();
-            Query query = strategy.getNamedQuery(
+            Query query = strategy.getNamedUpdate(
                     "WeblogEntryTagAggregateData.updateMinusFromTotalByName&WeblogNull");
             query.setParameter(1, Integer.valueOf(stat.getCount()));
             query.setParameter(2, stat.getName());
@@ -541,6 +541,7 @@ public class JPAUserManagerImpl implements UserManager {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
+        
         queryString.append("SELECT w FROM WebsiteData w WHERE ");
                      
         if (startDate != null) {
@@ -562,16 +563,13 @@ public class JPAUserManagerImpl implements UserManager {
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
         }
-        if (user != null) {
-            
-            whereClause.append(" AND EXISTS (SELECT p from PermissionsData p where p.website = w ");
+        if (user != null) {    
+            whereClause.append(" AND EXISTS (SELECT p from PermissionsData p WHERE p.website = w ");
             params.add(size++, user);         
             whereClause.append("    AND p.user = ?" + size);
             params.add(size++, Boolean.FALSE);
-            whereClause.append("    AND p.pending = ?" + size + ")");
-            
+            whereClause.append("    AND p.pending = ?" + size + ")");   
         }
-
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
         query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());

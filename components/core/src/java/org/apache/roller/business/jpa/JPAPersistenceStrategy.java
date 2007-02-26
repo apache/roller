@@ -69,8 +69,7 @@ public class JPAPersistenceStrategy {
         Properties emfProps = loadPropertiesFromResourceName(
                 "JPAEMF.properties", getContextClassLoader());
         try {
-            this.emf =
-                    Persistence.createEntityManagerFactory(puName, emfProps);
+            this.emf = Persistence.createEntityManagerFactory(puName, emfProps);
         } catch (PersistenceException pe) {
             logger.error("ERROR: creating entity manager", pe);
             throw new RollerException(pe);
@@ -230,7 +229,7 @@ public class JPAPersistenceStrategy {
     }
     
     /**
-     * Create query.
+     * Get named query with FlushModeType.COMMIT
      * @param clazz the class of instances to find
      * @param queryName the name of the query
      * @throws org.apache.roller.RollerException on any error
@@ -239,12 +238,13 @@ public class JPAPersistenceStrategy {
     throws RollerException {
         EntityManager em = getEntityManager(false);
         Query q = em.createNamedQuery(queryName);
+        // Never flush for queries. Roller code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
     
     /**
-     * Create query from queryString
+     * Create query from queryString with FlushModeType.COMMIT
      * @param queryString the quuery
      * @throws org.apache.roller.RollerException on any error
      */
@@ -252,7 +252,21 @@ public class JPAPersistenceStrategy {
     throws RollerException {
         EntityManager em = getEntityManager(false);
         Query q = em.createQuery(queryString);
+        // Never flush for queries. Roller code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
+        return q;
+    }
+    
+    /**
+     * Get named update query with default flush mode
+     * @param clazz the class of instances to find
+     * @param queryName the name of the query
+     * @throws org.apache.roller.RollerException on any error
+     */
+    public Query getNamedUpdate(String queryName)
+    throws RollerException {
+        EntityManager em = getEntityManager(false);
+        Query q = em.createNamedQuery(queryName);
         return q;
     }
     

@@ -69,19 +69,19 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     private void removePingTargetContents(PingTargetData ping) 
             throws RollerException {
         // Remove the website's ping queue entries
-        Query q = strategy.getNamedQuery("PingQueueEntryData.removeByPingTarget");
+        Query q = strategy.getNamedUpdate("PingQueueEntryData.removeByPingTarget");
         q.setParameter(1, ping);
         q.executeUpdate();
         
         // Remove the website's auto ping configurations
-        q = strategy.getNamedQuery("AutoPingData.removeByPingTarget");
+        q = strategy.getNamedUpdate("AutoPingData.removeByPingTarget");
         q.setParameter(1, ping);
         q.executeUpdate();
     }
 
     public void removeAllCustomPingTargets()
             throws RollerException {
-        Query q = strategy.getNamedQuery(
+        Query q = strategy.getNamedUpdate(
             "PingTargetData.removeByWebsiteNotNull");
         q.executeUpdate();
     }

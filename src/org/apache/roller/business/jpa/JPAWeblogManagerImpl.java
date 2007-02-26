@@ -1181,7 +1181,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         }
         
         // TODO: Non-standard JPA bulk update, using parameter values in set clause
-        Query q = strategy.getNamedQuery(
+        Query q = strategy.getNamedUpdate(
                 "WeblogEntryData.updateAllowComments&CommentDaysByWebsite");
         q.setParameter(1, website.getDefaultAllowComments());
         q.setParameter(2, new Integer(website.getDefaultCommentDays()));
@@ -1411,7 +1411,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
             weblogTagData.setLastUsed(lastUsed);
             strategy.store(weblogTagData);
         } else if(weblogTagData != null) {
-            Query update = strategy.getNamedQuery(
+            Query update = strategy.getNamedUpdate(
                     "WeblogEntryTagAggregateData.updateAddToTotalByName&Weblog");
             update.setParameter(1, new Long(amount));
             update.setParameter(2, weblogTagData.getName());
@@ -1425,7 +1425,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
             siteTagData.setLastUsed(lastUsed);
             strategy.store(siteTagData);
         } else if(siteTagData != null) {
-            Query update = strategy.getNamedQuery(
+            Query update = strategy.getNamedUpdate(
                     "WeblogEntryTagAggregateData.updateAddToTotalByName&WeblogNull");
             update.setParameter(1, new Long(amount));
             update.setParameter(2, weblogTagData.getName());
@@ -1433,7 +1433,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         }
         
         // delete all bad counts
-        Query removeq = strategy.getNamedQuery(
+        Query removeq = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregateData.removeByTotalLessEqual");
         removeq.setParameter(1, new Integer(0));
         removeq.executeUpdate();
@@ -1545,7 +1545,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
      * @inheritDoc
      */
     public void resetAllHitCounts() throws RollerException {       
-        Query q = strategy.getNamedQuery("HitCountData.updateDailyHitCountZero");
+        Query q = strategy.getNamedUpdate("HitCountData.updateDailyHitCountZero");
         q.executeUpdate();
     }
     
