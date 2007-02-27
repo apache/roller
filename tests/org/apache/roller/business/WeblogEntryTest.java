@@ -943,7 +943,9 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.teardownWeblog(blog2.getId());
             TestUtils.teardownWeblog(blog3.getId());
 
-            TestUtils.teardownUser(user1.getId());            
+            TestUtils.teardownUser(user1.getId());      
+            
+            TestUtils.endSession(true);
         }
     }
 }

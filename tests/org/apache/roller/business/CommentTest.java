@@ -206,54 +206,62 @@ public class CommentTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        UserManager umgr = RollerFactory.getRoller().getUserManager();
-        
-        // first make sure we can delete an entry with comments
-        UserData user = TestUtils.setupUser("commentParentDeleteUser");
-        WebsiteData weblog = TestUtils.setupWeblog("commentParentDelete", user);
-        WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", weblog.getDefaultCategory(), weblog, user);
-        
-        CommentData comment1 = TestUtils.setupComment("comment1", entry);
-        CommentData comment2 = TestUtils.setupComment("comment2", entry);
-        CommentData comment3 = TestUtils.setupComment("comment3", entry);
-        TestUtils.endSession(true);
-        
-        // now deleting the entry should succeed and delete all comments
-        Exception ex = null;
         try {
-            wmgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(entry));
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();        
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+
+            // first make sure we can delete an entry with comments
+            UserData user = TestUtils.setupUser("commentParentDeleteUser");
+            WebsiteData weblog = TestUtils.setupWeblog("commentParentDelete", user);
+            WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", weblog.getDefaultCategory(), weblog, user);
+
+            CommentData comment1 = TestUtils.setupComment("comment1", entry);
+            CommentData comment2 = TestUtils.setupComment("comment2", entry);
+            CommentData comment3 = TestUtils.setupComment("comment3", entry);
             TestUtils.endSession(true);
-        } catch (RollerException e) {
-            ex = e;
-        }
-        assertNull(ex);
-        
-        // now make sure we can delete a weblog with comments
-        weblog = TestUtils.getManagedWebsite(weblog);
-        entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", weblog.getDefaultCategory(), weblog, user);
-        
-        comment1 = TestUtils.setupComment("comment1", entry);
-        comment2 = TestUtils.setupComment("comment2", entry);
-        comment3 = TestUtils.setupComment("comment3", entry);
-        TestUtils.endSession(true);
-        
-        // now deleting the entry should succeed and delete all comments
-        ex = null;
-        try {
-            umgr.removeWebsite(TestUtils.getManagedWebsite(weblog));
+
+            // now deleting the entry should succeed and delete all comments
+            Exception ex = null;
+            try {
+                wmgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(entry));
+                TestUtils.endSession(true);
+            } catch (RollerException e) {
+                ex = e;
+            }
+            assertNull(ex);
+
+            // now make sure we can delete a weblog with comments
+            weblog = TestUtils.getManagedWebsite(weblog);
+            user = TestUtils.getManagedUser(user);
+            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", weblog.getDefaultCategory(), weblog, user);
+
+            comment1 = TestUtils.setupComment("comment1", entry);
+            comment2 = TestUtils.setupComment("comment2", entry);
+            comment3 = TestUtils.setupComment("comment3", entry);
             TestUtils.endSession(true);
-        } catch (RollerException e) {
-            PrintWriter pw = new PrintWriter(new StringWriter()); 
-            e.printStackTrace(pw);
-            log.info(pw.toString());
-            ex = e;
+
+            // now deleting the entry should succeed and delete all comments
+            ex = null;
+            try {
+                umgr.removeWebsite(TestUtils.getManagedWebsite(weblog));
+                TestUtils.endSession(true);
+            } catch (RollerException e) {
+                PrintWriter pw = new PrintWriter(new StringWriter()); 
+                e.printStackTrace(pw);
+                log.info(pw.toString());
+                ex = e;
+            }
+            assertNull(ex);
+
+            // and delete test user as well
+            umgr.removeUser(TestUtils.getManagedUser(user));
+            
+        } catch(Throwable t) {
+            log.error("Exception running test", t);
+            throw (Exception) t;
+        } finally {
+            TestUtils.endSession(true);
         }
-        assertNull(ex);
-        
-        // and delete test user as well
-        umgr.removeUser(user);
-        TestUtils.endSession(true);
         
         log.info("END");
     }

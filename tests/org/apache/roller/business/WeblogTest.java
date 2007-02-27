@@ -156,14 +156,15 @@ public class WeblogTest extends TestCase {
     public void testWeblogLookups() throws Exception {
         
         log.info("BEGIN");
-        
+        WebsiteData testWeblog1 = null;
+        WebsiteData testWeblog2 = null;
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             WebsiteData weblog = null;
             
             // add test weblogs
-            WebsiteData testWeblog1 = TestUtils.setupWeblog("testWeblog1", TestUtils.getManagedUser(testUser));
-            WebsiteData testWeblog2 = TestUtils.setupWeblog("testWeblog2", TestUtils.getManagedUser(testUser));
+            testWeblog1 = TestUtils.setupWeblog("testWeblog1", testUser);
+            testWeblog2 = TestUtils.setupWeblog("testWeblog2", testUser);
             TestUtils.endSession(true);
             
             // lookup by id
@@ -205,7 +206,7 @@ public class WeblogTest extends TestCase {
             List weblogs11 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, 1);
             assertEquals(1, weblogs11.size());
             List weblogs12 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 1, 1);
-            assertEquals(1, weblogs11.size());
+            assertEquals(1, weblogs12.size());
             
             // make sure disabled weblogs are not returned
             weblog.setEnabled(Boolean.FALSE);
@@ -223,13 +224,13 @@ public class WeblogTest extends TestCase {
             List weblogs3 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             assertEquals(0, weblogs3.size());
             
-            // remove test weblogs
-            TestUtils.teardownWeblog(testWeblog1.getId());
-            TestUtils.teardownWeblog(testWeblog2.getId());
-            TestUtils.endSession(true);
         } catch(Throwable t) {
             log.error("Exception running test", t);
             throw (Exception) t;
+        } finally {
+            TestUtils.teardownWeblog(testWeblog1.getId());
+            TestUtils.teardownWeblog(testWeblog2.getId());
+            TestUtils.endSession(true);
         }
         
         log.info("END");
