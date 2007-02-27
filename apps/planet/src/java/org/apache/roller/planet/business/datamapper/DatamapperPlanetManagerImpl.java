@@ -23,7 +23,6 @@ import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
-
 import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -37,12 +36,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.roller.RollerException;
-
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
@@ -50,7 +46,6 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 import org.apache.roller.business.datamapper.DatamapperQuery;
-
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 
@@ -368,7 +363,7 @@ public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements 
             
             log.debug("   Entry count: " + count);
             if (count > 0) {
-                sub.purgeEntries();
+                this.deleteEntries(sub);
                 sub.addEntries(newEntries);
                 this.saveSubscription(sub);
                 this.strategy.flush();
@@ -525,6 +520,17 @@ public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements 
 
     public void deletePlanet(PlanetData planet) throws RollerException {
         strategy.remove(planet);
+    }
+
+    public void deleteEntries(PlanetSubscriptionData sub) 
+        throws RollerException {
+        Iterator entries = sub.getEntries().iterator();
+        while(entries.hasNext()) {
+            strategy.remove(entries.next());
+        }
+        
+        // make sure and clear the other side of the assocation
+        sub.getEntries().clear();
     }
 }
 

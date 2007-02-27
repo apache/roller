@@ -374,7 +374,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             
             log.debug("   Entry count: " + count);
             if (count > 0) {
-                sub.purgeEntries();
+                this.deleteEntries(sub);
                 sub.addEntries(newEntries);
                 this.saveSubscription(sub);
                 this.strategy.flush();
@@ -534,6 +534,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public void deletePlanet(PlanetData planet) throws RollerException {
         strategy.remove(planet);
+    }
+    
+    public void deleteEntries(PlanetSubscriptionData sub) 
+        throws RollerException {
+        Iterator entries = sub.getEntries().iterator();
+        while(entries.hasNext()) {
+            strategy.remove(entries.next());
+        }
+        
+        // make sure and clear the other side of the assocation
+        sub.getEntries().clear();
     }
 }
 

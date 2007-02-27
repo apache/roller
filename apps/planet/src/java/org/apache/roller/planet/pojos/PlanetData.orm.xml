@@ -24,8 +24,8 @@
                 <column name="id"/>
                 <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
-            <basic name="name">
-                <column name="name" insertable="true" updatable="true" unique="false"/>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="handle">
                 <column name="handle" insertable="true" updatable="true" unique="true"/>

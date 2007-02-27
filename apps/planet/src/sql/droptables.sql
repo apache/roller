@@ -14,6 +14,7 @@
 -- copyright in this work, please see the NOTICE file in the top level
 -- directory of this distribution.
 
+drop table planet_id_table;
 drop table rag_entry;
 drop table rag_group_subscription;
 drop table rag_subscription;
