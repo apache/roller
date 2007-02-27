@@ -218,7 +218,7 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     }
     
     /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="all-delete-orphan" 
+     * @hibernate.bag lazy="true" inverse="true" cascade="all" 
      * @hibernate.collection-key column="subscription_id"
      * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetEntryData"
      */
@@ -248,8 +248,4 @@ public class PlanetSubscriptionData implements Serializable, Comparable
         this.getEntries().addAll(newEntries);
     }
     
-    public void purgeEntries()
-    {
-        this.getEntries().clear();
-    }
 }

@@ -171,6 +171,16 @@ public interface PlanetManager extends Manager {
     /** Delete entry. */
     public void deleteEntry(PlanetEntryData entry) throws RollerException;
     
+    
+    /**
+     * Delete all entries for a subscription.
+     *
+     * @param subscription The subscription to delete entries from.
+     * @throws RollerException If there is a problem doing the delete.
+     */
+    public void deleteEntries(PlanetSubscriptionData sub) throws RollerException;
+    
+    
     /** Clear any aggregations and update times that have been cached */
     public void clearCachedAggregations();
     
