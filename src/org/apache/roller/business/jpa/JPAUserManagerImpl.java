@@ -531,25 +531,21 @@ public class JPAUserManagerImpl implements UserManager {
             UserData user, Boolean enabled, Boolean active,
             Date startDate, Date endDate, int offset, int length) throws RollerException {
         
-        Query query = null;
-        List results = null;
-        boolean setRange = offset != 0 || length != -1;
-        
-        if (endDate == null) endDate = new Date();
+        //if (endDate == null) endDate = new Date();
                       
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
                 
-        if (user != null) {
+        if (user == null) {
             queryString.append("SELECT w FROM WebsiteData w WHERE ");
         } else {
-            queryString.append("SELECT w FROM WebsiteData w JOIN PermissionsData p WHERE ");
+            queryString.append("SELECT w FROM WebsiteData w JOIN w.permissions p WHERE ");
             params.add(size++, user);
             whereClause.append(" p.user = ?" + size);
             params.add(size++, Boolean.FALSE);
-            whereClause.append(" p.pending = ?" + size);
+            whereClause.append(" AND p.pending = ?" + size);
         }    
         if (startDate != null) {
             if (whereClause.length() > 0) whereClause.append(" AND ");
@@ -573,7 +569,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
-        query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
+        Query query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());
         if (offset != 0) {
             query.setFirstResult(offset);
         }
