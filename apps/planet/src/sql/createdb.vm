@@ -25,29 +25,29 @@ create table rag_properties (
 
 create table rag_planet (
     id              varchar(48) not null primary key,
-    name            varchar(255) not null,
+    title           varchar(255) not null,
     handle          varchar(32) not null
 );
-create index ragp_handle_idx on rag_planet(handle);
+alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 
 
 create table rag_group (
     id               varchar(48) not null primary key,
-    handle           varchar(255) not null,
+    planet_id        varchar(48),
+    handle           varchar(32) not null,
     title            varchar(255) not null,
     description      varchar(255),
-    cat_restriction  $db.TEXT_SQL_TYPE,
-    group_page       varchar(255),
     max_page_entries integer default 30,
     max_feed_entries integer default 30,
-    planet_id        varchar(48)
+    cat_restriction  $db.TEXT_SQL_TYPE,
+    group_page       varchar(255)
 );
-alter table rag_group add constraint ragg_handle_uq unique ( handle$!db.INDEXSIZE );
+alter table rag_group add constraint ragg_handle_uq unique ( planet_id, handle );
 
 
 create table rag_subscription (
     id               varchar(48) not null primary key,
-    title            varchar(255),
+    title            varchar(255) not null,
     feed_url         varchar(255) not null,
     site_url         varchar(255),
     author           varchar(255),

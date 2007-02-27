@@ -90,7 +90,7 @@ public class BasePageModel
                 DateFormat.SHORT, request.getLocale());
         if (sdf instanceof SimpleDateFormat)
         {
-            return ((SimpleDateFormat)sdf).toLocalizedPattern();
+            return ((SimpleDateFormat)sdf).toPattern();
         }
         return "yyyy/MM/dd";
     }
@@ -101,7 +101,7 @@ public class BasePageModel
                 DateFormat.MEDIUM, request.getLocale());
         if (sdf instanceof SimpleDateFormat)
         {
-            return ((SimpleDateFormat)sdf).toLocalizedPattern();
+            return ((SimpleDateFormat)sdf).toPattern();
         }
         return "MMM dd, yyyy";
     }

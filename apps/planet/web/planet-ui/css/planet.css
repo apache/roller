@@ -49,6 +49,11 @@ img {
     padding: 4px;
 }
 
+.errorMessage {
+    color: red;
+    font-weight: bold;
+}
+
 .success  { 
     border: 1px green  solid; 
     background: #AAFFAA;

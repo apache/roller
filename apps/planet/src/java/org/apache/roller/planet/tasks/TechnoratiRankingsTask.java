@@ -51,8 +51,8 @@ public class TechnoratiRankingsTask implements Runnable {
             PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
             Technorati technorati = null;
             try {
-                String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyHost");
-                int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyPort");
+                String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
+                int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyport");
                 if (proxyHost != null && proxyPort != -1) {
                     technorati = new Technorati(proxyHost, proxyPort);
                 } else {
