@@ -541,10 +541,18 @@ public class JPAUserManagerImpl implements UserManager {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
-        
-        queryString.append("SELECT w FROM WebsiteData w WHERE ");
-                     
+                
+        if (user != null) {
+            queryString.append("SELECT w FROM WebsiteData w WHERE ");
+        } else {
+            queryString.append("SELECT w FROM WebsiteData w JOIN PermissionsData p WHERE ");
+            params.add(size++, user);
+            whereClause.append(" p.user = ?" + size);
+            params.add(size++, Boolean.FALSE);
+            whereClause.append(" p.pending = ?" + size);
+        }    
         if (startDate != null) {
+            if (whereClause.length() > 0) whereClause.append(" AND ");
             params.add(size++, startDate);
             whereClause.append(" w.dateCreated > ?" + size);
         }
@@ -562,13 +570,6 @@ public class JPAUserManagerImpl implements UserManager {
             if (whereClause.length() > 0) whereClause.append(" AND ");
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
-        }
-        if (user != null) {    
-            whereClause.append(" AND EXISTS (SELECT p from PermissionsData p WHERE p.website = w ");
-            params.add(size++, user);         
-            whereClause.append("    AND p.user = ?" + size);
-            params.add(size++, Boolean.FALSE);
-            whereClause.append("    AND p.pending = ?" + size + ")");   
         }
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
