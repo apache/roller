@@ -71,8 +71,7 @@
         <include name="hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
 
         <!-- needed for JPA -->
-        <include name="jpa/toplink-essentials.jar"/>
-        <include name="jpa/bcel-5.1.jar"/>
+        <include name="toplink-essentials-9.1/toplink-essentials.jar"/>
                 
         <!-- needed for ROME -->
         <include name="lib/rome-0.9.jar"/>
