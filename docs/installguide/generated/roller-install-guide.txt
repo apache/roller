@@ -473,6 +473,8 @@ NOTE: If you have any new themes under roller/themes, make sure to copy those as
 Review properties as described in Section 8.0 of the installation guide. 
 NOTE: Make sure you set the right Hibernate dialect for your database in your roller-custom.properties file as discussed in Section 8.3.
 
+NOTE: In Roller 3.1 we changed the scheduled task properties, so if you were overriding  the tasks.daily or tasks.hourly properties you need to change your roller-custom.properties file. Refer to the notes in roller.properties in the section "Scheduled Background Tasks" for details.
+
 NOTE: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
 
 NOTE: The files required for Roller's JSPWiki plugin, Ekit editor and Javascript enhanced editor have been removed from the Roller distribution. If you'd like to continue to use these plugins, please visit the Roller Support project on Java.Net (http://roller.dev.java.net).
