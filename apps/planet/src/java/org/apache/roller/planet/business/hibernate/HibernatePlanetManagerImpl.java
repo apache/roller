@@ -102,6 +102,19 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         strategy.remove(entry);
     }
     
+    
+    public void deleteEntries(PlanetSubscriptionData sub) 
+        throws RollerException {
+        Iterator entries = sub.getEntries().iterator();
+        while(entries.hasNext()) {
+            strategy.remove(entries.next());
+        }
+        
+        // make sure and clear the other side of the assocation
+        sub.getEntries().clear();
+    }
+    
+    
     public void deletePlanet(PlanetData planet) 
         throws RollerException {
         strategy.remove(planet);
@@ -440,8 +453,8 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         FeedFetcherCache feedInfoCache =
                 new DiskFeedInfoCache(cacheDirName);
         
-        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyHost");
-        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyPort");
+        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
+        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyport");
         if (proxyHost != null && proxyPort > 0) {
             System.setProperty("proxySet", "true");
             System.setProperty("http.proxyHost", proxyHost);
@@ -472,7 +485,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             
             log.debug("   Entry count: " + count);
             if (count > 0) {
-                sub.purgeEntries();
+                this.deleteEntries(sub);
                 sub.addEntries(newEntries);
                 this.saveSubscription(sub);
                 this.strategy.flush();

@@ -177,8 +177,7 @@ public class PlanetManagerTest extends TestCase {
         {
             // purge entries
             PlanetSubscriptionData sub = planet.getSubscription("test_url");
-            sub.purgeEntries();
-            planet.saveSubscription(sub);
+            planet.deleteEntries(sub);
             TestUtils.endSession(true);
             
             // make sure they were removed
