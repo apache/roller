@@ -49,6 +49,7 @@
         <include name="struts-1.2.4/lib/commons-fileupload.jar"/>
         <include name="struts-1.2.4/lib/commons-validator.jar"/>
         <include name="struts-1.2.4/lib/commons-collections.jar"/>
+        <include name="lib/commons-id-0.1-SNAPSHOT.jar"/>
         
         <!-- needed for Hibernate -->
         <include name="hibernate-3.1/hibernate3.jar"/>
