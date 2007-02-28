@@ -90,6 +90,9 @@ public class PlanetManagerTest extends TestCase {
             PlanetSubscriptionData sub = planet.getSubscription("test_url");
             PlanetGroupData group = planet.getGroup("test_handle");
             group.getSubscriptions().remove(sub);
+            sub.getGroups().remove(group);
+            planet.saveSubscription(sub);
+            planet.saveGroup(group);
             TestUtils.endSession(true);
         }
         {   // get group and check it's subscriptions, remove it
