@@ -1,13 +1,5 @@
 README.txt
 
-   Roller is an effort undergoing incubation at the Apache Software 
-   Foundation (ASF). Incubation is required of all newly accepted projects 
-   until a further review indicates that the infrastructure, communications, 
-   and decision making process have stabilized in a manner consistent with 
-   other successful ASF projects. While incubation status is not necessarily a 
-   reflection of the completeness or stability of the code, it does indicate 
-   that the project has yet to be fully endorsed by the ASF.
-
    To install Roller, follow the instructions in the Installation Guide,
    which is available in three formats:
 
@@ -29,8 +21,7 @@ README.txt
        HTML       - docs/template/generated/roller-template-guide.html
        PDF        - docs/template/generated/roller-template-guide.pdf
        OpenOffice - docs/template/roller-template-guide.odt
-
-          
+        
 See also
 
    NOTICE.txt  - Roller credits and copyright notices
