@@ -54,7 +54,7 @@
 
 <!-- various libraries used by Roller -->
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
-<property name="tools.struts2"       value="${ro.tools}/struts-2.0.1" />
+<property name="tools.struts2"       value="${ro.tools}/struts-2.0.5" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
 <property name="tools.jpa"           value="${ro.tools}/toplink-essentials-9.1" />
 <!-- 
