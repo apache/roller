@@ -53,6 +53,7 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 import org.apache.roller.planet.business.AbstractManagerImpl;
+import org.apache.roller.planet.config.PlanetRuntimeConfig;
 
 
 /**
@@ -342,12 +343,13 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         FeedFetcherCache feedInfoCache =
                 new DiskFeedInfoCache(cacheDirName);
         
-        /*if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
+        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
+        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyport");
+        if (proxyHost != null && proxyPort > 0) {
             System.setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", config.getProxyHost());
-            System.setProperty("http.proxyPort",
-                    Integer.toString(config.getProxyPort()));
-        }*/
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
+        }
         
         /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
         System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
