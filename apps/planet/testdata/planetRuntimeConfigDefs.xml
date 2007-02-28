@@ -48,15 +48,19 @@
    <!-- Site Settings Group -->
    <display-group name="siteSettings" key="ConfigForm.siteSettings" >
        
-       <property-def  name="site.name"  key="ConfigForm.siteName">
+       <property-def  name="site.name"  key="ConfigForm.title">
            <type>string</type>
            <default-value>Roller Planet</default-value>
        </property-def>
-       <property-def  name="site.description"  key="ConfigForm.siteDescription">
+       <property-def  name="site.description"  key="ConfigForm.description">
            <type>string</type>
            <default-value>A default install of the Roller Planet open source aggregation server</default-value>
        </property-def>
-       <property-def  name="site.adminemail"  key="ConfigForm.siteAdminEmail">
+       <property-def  name="site.adminname"  key="ConfigForm.adminName">
+           <type>string</type>
+           <default-value></default-value>
+       </property-def>
+       <property-def  name="site.adminemail"  key="ConfigForm.adminEmail">
            <type>string</type>
            <default-value></default-value>
        </property-def>
@@ -64,13 +68,13 @@
            <type>string</type>
            <default-value></default-value>
        </property-def>
-       <property-def  name="site.proxyHost"  key="ConfigForm.proxyHost">
+       <property-def  name="site.proxyhost"  key="ConfigForm.proxyHost">
            <type>string</type>
-           <default-value></default-value>
+           <default-value>akula.sfbay.sun.com</default-value>
        </property-def>
-       <property-def  name="site.proxyPort"  key="ConfigForm.proxyPort">
-           <type>int</type>
-           <default-value></default-value>
+       <property-def  name="site.proxyport"  key="ConfigForm.proxyPort">
+           <type>string</type>
+           <default-value>8080</default-value>
        </property-def>
        
    </display-group >
