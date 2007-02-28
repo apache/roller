@@ -6,7 +6,6 @@ Installation Guide
 
 
 Apache Roller
- (incubating) 
 Version 3.1
 
 
@@ -126,9 +125,9 @@ Pick a directory on your computer and unpack the Roller distribution using eithe
 UNIX example
 Assuming you download the distribution into your home directory and you'd like to install Roller into /usr/local you might do something like this in the bash shell:
 	% cd /usr/local
-	% tar xzvf ~/apache-roller-incubating-3.1.tar.gz
+	% tar xzvf ~/apache-roller-3.1.tar.gz
 
-That would create the Roller installation directory /usr/local/apache-roller-incubating-3.1  
+That would create the Roller installation directory /usr/local/apache-roller-3.1  
 Windows example
 You can Use WinZip to extract the Roller distribution file into the directory of your choice. 
 Roller distribution layout
@@ -142,9 +141,9 @@ Once you've extracted the files you'll see that the Roller release contains two 
 The ROLLER environment variable
 In this guide, we'll refer to the Roller web application directory using the ROLLER environment variable. In UNIX this will be $ROLLER. In Windows, it will be %ROLLER%. You don't have to set the ROLLER environment variable, we just use it to simplify the installation guide, but here's how you'd do it.
 UNIX example (assuming you installed into /usr/local):
-	% set $ROLLER = /usr/local/apache-roller-incubating-3.1/webapp/roller
+	% set $ROLLER = /usr/local/apache-roller-3.1/webapp/roller
 Windows example (assuming you installed into c:\)
-	% set %ROLLER% = c:\apache-roller-incubating-3.1/webapp/roller
+	% set %ROLLER% = c:\apache-roller-3.1/webapp/roller
 
 
 STEP 3: Install required third party jars
@@ -231,7 +230,7 @@ Example context configuration file for Tomcat 5.0.X users
 The portions shown in bold are the ones that you'll probably have to change. Make sure you set the docBase to point to your Roller installation directory. Make sure you set the JDBC connection string to point to your database and the database username and password too.
 
 <Context path="/roller" 
-  docBase="/usr/local/apache-roller-incubating-3.1/webapp/roller" debug="0">
+  docBase="/usr/local/apache-roller-3.1/webapp/roller" debug="0">
   <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource" />
   <ResourceParams name="jdbc/rollerdb">
     <parameter>
@@ -271,7 +270,7 @@ Example context configuration file for Tomcat 5.5.X users
 The portions shown in bold are the ones that you'll probably have to change. Make sure you set the docBase to point to your Roller installation directory. Make sure you set the JDBC connection string to point to your database and the database username and password too.
 
 <Context path="/roller" 
-  docBase="/usr/local/apache-roller-incubating-3.2/webapp/roller" debug="0">
+  docBase="/usr/local/apache-roller-3.2/webapp/roller" debug="0">
   <Resource name="jdbc/rollerdb" auth="Container" 
       type="javax.sql.DataSource"
     driverClassName="com.mysql.jdbc.Driver"

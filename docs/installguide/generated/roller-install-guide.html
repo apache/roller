@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20070227;10131400">
+	<META NAME="CHANGED" CONTENT="20070228;9045500">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.5in }
@@ -44,9 +44,6 @@ Guide</B></FONT></P>
 </P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
 Roller</B></FONT></P>
-<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in">
-<FONT SIZE=5 STYLE="font-size: 20pt"><B>(incubating) </B></FONT>
-</P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><A NAME="DDE_LINK1"></A>
 <FONT SIZE=7 STYLE="font-size: 32pt"><B>Version 3.1</B></FONT></P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
@@ -312,11 +309,10 @@ Roller on your computer.</P>
 home directory and you'd like to install Roller into <FONT FACE="Courier New">/usr/local</FONT>
 you might do something like this in the bash shell:</P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=3>	% cd /usr/local</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=3>	% tar xzvf ~/apache-roller-incubating-3.1.tar.gz</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=3>	% tar xzvf ~/apache-roller-3.1.tar.gz</FONT></FONT>
 </PRE><P CLASS="western">
 That would create the Roller installation directory
-<FONT FACE="Courier New">/usr/local/<FONT SIZE=3>apache-roller-incubating-3.1
-</FONT></FONT> 
+<FONT FACE="Courier New">/usr/local/<FONT SIZE=3>apache-roller-3.1 </FONT></FONT>
 </P>
 <H4 CLASS="western">Windows example</H4>
 <P CLASS="western">You can Use WinZip to extract the Roller
@@ -342,10 +338,10 @@ the installation guide, but here's how you'd do it.</P>
 <P CLASS="western">UNIX example (assuming you installed into
 <FONT FACE="Courier New">/usr/local</FONT>):</P>
 <P CLASS="western"><FONT FACE="Courier New">	% set $ROLLER =
-/usr/local/<FONT SIZE=3>apache-roller-incubating-3.1</FONT>/webapp/roller</FONT></P>
+/usr/local/<FONT SIZE=3>apache-roller-3.1</FONT>/webapp/roller</FONT></P>
 <P CLASS="western">Windows example (assuming you installed into <FONT FACE="Courier New">c:\</FONT>)</P>
 <P CLASS="western"><FONT FACE="Courier New">	% set %ROLLER% =
-c:\<FONT SIZE=3>apache-roller-incubating-3.1</FONT>/webapp/roller</FONT></P>
+c:\<FONT SIZE=3>apache-roller-3.1</FONT>/webapp/roller</FONT></P>
 <P CLASS="western"><A NAME="DDE_LINK3"></A><BR><BR>
 </P>
 <H2 CLASS="western"></H2>
@@ -529,7 +525,7 @@ to point to your database and the database username and password too.</P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Context path=&quot;/roller&quot; </FONT></FONT>
-  <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">docBase=&quot;<B>/usr/local/apache-roller-incubating-3.1/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">docBase=&quot;<B>/usr/local/apache-roller-3.1/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot; /&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;ResourceParams name=&quot;jdbc/rollerdb&quot;&gt;</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;parameter&gt;</FONT></FONT>
@@ -575,7 +571,7 @@ to point to your database and the database username and password too.</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=3>&lt;Context path=&quot;/roller&quot; </FONT></FONT>
-  <FONT FACE="Courier New"><FONT SIZE=3>docBase=&quot;<B><FONT SIZE=2 STYLE="font-size: 11pt">/usr/local/apache-roller-incubating-3.2/webapp/roller</FONT></B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=3>docBase=&quot;<B><FONT SIZE=2 STYLE="font-size: 11pt">/usr/local/apache-roller-3.2/webapp/roller</FONT></B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=3>&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; </FONT></FONT>
       <FONT FACE="Courier New"><FONT SIZE=3>type=&quot;javax.sql.DataSource&quot;</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=3>driverClassName=&quot;com.mysql.jdbc.Driver&quot;</FONT></FONT>
@@ -1118,6 +1114,17 @@ the installation guide.
 	NOTE: Make sure you set the right Hibernate dialect for your
 	database in your roller-custom.properties file as discussed in
 	Section 8.3.</P>
+</UL>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<UL>
+	<LI VALUE=1><P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium">
+	NOTE: In Roller 3.1 we changed the scheduled task properties, so if
+	you were overriding  the<FONT FACE="Courier New, monospace">
+	tasks.daily</FONT> or <FONT FACE="Courier New, monospace">tasks.hourly</FONT>
+	properties you need to change your roller-custom.properties file.
+	Refer to the notes in roller.properties in the section &ldquo;Scheduled
+	Background Tasks&rdquo; for details.</P>
 </UL>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
