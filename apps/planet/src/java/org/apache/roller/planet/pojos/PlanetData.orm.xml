@@ -22,7 +22,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
             <basic name="title">
                 <column name="title" insertable="true" updatable="true" unique="false"/>

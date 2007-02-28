@@ -30,7 +30,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
             <basic name="feedURL">
                 <column name="feed_url" insertable="true" updatable="true" unique="false"/>
@@ -67,7 +66,7 @@
                 </join-table>
             </many-to-many>
             <transient name="name"/>
-            <transient name="uRL"/>
+            <transient name="URL"/>
         </attributes>
     </entity>
 </entity-mappings>

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -34,7 +35,7 @@ import java.util.Set;
 public class PlanetSubscriptionData implements Serializable, Comparable
 {
     /** Database ID */
-    protected String id;
+    protected String id = UUIDGenerator.generateUUID();
     
     /** Title of the blog or website */
     protected String title;

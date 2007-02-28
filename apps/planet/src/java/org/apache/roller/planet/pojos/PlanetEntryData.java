@@ -31,6 +31,7 @@ import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -45,7 +46,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  */
 public class PlanetEntryData implements Serializable, Comparable {
     
-    protected String    id;
+    protected String    id = UUIDGenerator.generateUUID();
     protected String    handle;
     protected String    title;
     protected String    guid;

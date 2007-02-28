@@ -38,7 +38,7 @@
         <named-query
                 name="PlanetEntryData.getByExternalOrInternalGroup&amp;EndDateOrderByPubTimeDesc">
             <query>SELECT p FROM PlanetEntryData p JOIN p.subscription s JOIN s.groups g
-                WHERE (g.handle = "external" OR g.handle = "all")
+                WHERE (g.handle = 'external' OR g.handle = 'all')
                 AND p.pubTime &lt; ?2
                 ORDER BY p.pubTime DESC
             </query>
@@ -46,7 +46,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="PLANET-TABLE-GENERATOR"/>
             </id>
             <basic name="categoriesString">
                 <column name="categories" insertable="true" updatable="true" unique="false"/>
@@ -83,6 +82,12 @@
             <transient name="published"/>
             <transient name="updated"/>
             <transient name="content"/>
+            
+            <transient name="categories"/>
+            <transient name="category"/>
+            <transient name="creator"/>
+            <transient name="summary"/>
+            <transient name="website"/>
         </attributes>
     </entity>
 </entity-mappings>

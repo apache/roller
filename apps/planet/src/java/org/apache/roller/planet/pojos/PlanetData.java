@@ -20,6 +20,7 @@ package org.apache.roller.planet.pojos;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -29,7 +30,7 @@ import java.util.Set;
  */
 public class PlanetData {
     
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String title = null;
     private String handle = null;
     private Set groups = new HashSet();

@@ -17,12 +17,10 @@
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -35,7 +33,7 @@ public class PlanetGroupData implements Serializable
     transient private String[] catArray = null;
 
     /** Database ID */
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     
     /** Unique handle by which group may be fetched */
     private String handle = null;
