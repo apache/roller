@@ -16,7 +16,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="absoluteURL">
                 <column name="absoluteurl" insertable="true" updatable="true" unique="false"/>
@@ -101,6 +100,8 @@
                 <column name="refspamwords" insertable="true" updatable="true" unique="false"/>
             </basic>
             <transient name="adminUsers"/>
+            
+            <transient name="editorPagesList"/>
         </attributes>
     </entity>
 </entity-mappings>

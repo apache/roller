@@ -47,6 +47,7 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Website has many-to-many association with users. Website has one-to-many and
@@ -66,7 +67,7 @@ public class WebsiteData implements Serializable {
     private static Log log = LogFactory.getLog(WebsiteData.class);
     
     // Simple properties
-    private String  id               = null;
+    private String  id               = UUIDGenerator.generateUUID();
     private String  handle           = null;
     private String  name             = null;
     private String  description      = null;

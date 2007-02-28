@@ -31,7 +31,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>

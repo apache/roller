@@ -135,7 +135,6 @@
 		<attributes>
 			<id name="id">
 				<column name="id"/>
-				<generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
 			</id>
 			<basic name="handle">
 				<column name="handle" insertable="true" updatable="true" unique="true"/>
@@ -237,8 +236,16 @@
 			<transient name="commentModerationRequired"/>
 			<transient name="todaysHits"/>
 			<transient name="todaysReferrers"/>
-			<transient name="uRL"/>
+			<transient name="URL"/>
 			<transient name="userCount"/>
+                        
+                        <transient name="defaultPage"/>
+			<transient name="entryCount"/>
+                        <transient name="initializedPlugins"/>
+			<transient name="pages"/>
+                        <transient name="weblogCategories"/>
+                        <transient name="localeInstance"/>
+                        <transient name="timeZoneInstance" />
 		</attributes>
 	</entity>
 </entity-mappings>

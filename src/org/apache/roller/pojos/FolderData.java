@@ -29,6 +29,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -49,7 +50,7 @@ public class FolderData implements Serializable, Comparable {
     public static final long serialVersionUID = -6272468884763861944L;
     
     // attributes
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
     private String path = null;

@@ -56,7 +56,7 @@
             </query>
         </named-query>
         <named-query name="RefererData.getDaysPopularWebsitesByWebsite.enabled&amp;Website.active">
-            <query>SELECT SUM(DISTINCT r.dayHits), r.website.id, r.website.name, r.website.handle
+            <query>SELECT SUM(r.dayHits), r.website.id, r.website.name, r.website.handle
                 FROM RefererData r WHERE r.website.enabled = ?1 AND r.website.active = ?2
                 GROUP BY r.website.id, r.website.name, r.website.handle
             </query>
@@ -81,7 +81,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="dateString">
                 <column name="datestr" insertable="true" updatable="true" unique="false"/>

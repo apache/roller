@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
@@ -42,7 +43,7 @@ public class PingTargetData implements Serializable {
     public static final int CONDITION_FAILING = 1;      // last use failed after retrials
     public static final int CONDITION_DISABLED = 2;     // disabled by failure policy after failures - editing resets
 
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String pingUrl = null;
     private WebsiteData website = null;
@@ -67,7 +68,7 @@ public class PingTargetData implements Serializable {
      * @param website the website (on this server) for which this is a custom ping target (may be null)
      */
     public PingTargetData(String id, String name, String pingUrl, WebsiteData website, boolean autoEnable) {
-        this.id = id;
+        //this.id = id;
         this.name = name;
         this.pingUrl = pingUrl;
         this.website = website;

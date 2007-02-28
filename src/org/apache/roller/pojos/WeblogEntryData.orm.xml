@@ -86,7 +86,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="title">
                 <column name="title" insertable="true" updatable="true" unique="false"/>
@@ -170,6 +169,12 @@
             <transient name="tagsAsString"/>
             <transient name="transformedText"/>
             <transient name="transformedSummary"/>
+            
+            <transient name="comments"/>
+            <transient name="pluginsList"/>
+            <transient name="referers"/>
+            <transient name="addedTags"/>
+            <transient name="removedTags"/>
         </attributes>
     </entity>
 </entity-mappings>

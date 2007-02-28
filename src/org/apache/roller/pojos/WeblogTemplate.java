@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Pojo that represents a single user defined template page.
@@ -48,7 +49,7 @@ public class WeblogTemplate
     private static Log log = LogFactory.getLog(WeblogTemplate.class);
     private static Set requiredTemplates = null;
     
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
     private String link = null;
@@ -84,7 +85,7 @@ public class WeblogTemplate
             boolean hid,
             boolean navbar,
             String decorator) {
-        this.id = id;
+        //this.id = id;
         this.weblog = website;
         this.name = name;
         this.description = description;

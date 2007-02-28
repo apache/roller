@@ -22,7 +22,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
@@ -48,6 +47,8 @@
             <many-to-one name="folder" target-entity="org.apache.roller.pojos.FolderData">
                 <join-column name="folderid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
+            
+            <transient name="website"/>
         </attributes>
     </entity>
 </entity-mappings>

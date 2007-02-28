@@ -25,7 +25,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="permissionMask">
                 <column name="permission_mask" insertable="true" updatable="true" unique="false"/>

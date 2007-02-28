@@ -19,6 +19,7 @@ package org.apache.roller.pojos;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * @author David M Johnson
@@ -28,7 +29,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class EntryAttributeData implements java.lang.Comparable
 {
-    private String id;
+    private String id = UUIDGenerator.generateUUID();
     private WeblogEntryData entry;
     private String name;
     private String value;
@@ -43,7 +44,7 @@ public class EntryAttributeData implements java.lang.Comparable
         String name,
         String value)
     {
-        this.id = id;
+        //this.id = id;
         this.entry = entry;
         this.name = name;
         this.value = value;

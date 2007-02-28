@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Weblogentry Comment bean.
@@ -41,7 +42,7 @@ public class CommentData implements Serializable {
     public static final String SPAM = "SPAM";
     public static final String PENDING = "PENDING";
     
-    private String    id = null;
+    private String    id = UUIDGenerator.generateUUID();
     
     private String    name = null;
     private String    email = null;

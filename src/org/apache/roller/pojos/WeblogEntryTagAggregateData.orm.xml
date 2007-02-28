@@ -20,10 +20,12 @@
             <query>SELECT w FROM WeblogEntryTagAggregateData w WHERE w.name = ?1 AND w.weblog IS NULL ORDER BY w.lastUsed DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getNameByNameIn&amp;Website">
-            <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog = ?2</query>
+            <!-- <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog = ?2</query> -->
+            <query>SELECT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog = ?2</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getNameByNameIn&amp;WebsiteNull">
-            <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog IS NULL</query>
+            <!-- <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog IS NULL</query> -->
+            <query>SELECT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite&amp;StartDate">
             <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.lastUsed &gt;= ?2</query>
@@ -82,7 +84,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>

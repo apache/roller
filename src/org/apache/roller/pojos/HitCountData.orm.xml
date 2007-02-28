@@ -27,7 +27,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="dailyHits">
                 <column name="dailyhits" insertable="true" updatable="true" unique="false"/>

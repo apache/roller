@@ -23,6 +23,7 @@ import org.apache.roller.business.BookmarkManager;
 import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -45,7 +46,7 @@ public class BookmarkData
     
     private FolderData folder;
 
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name;
     private String description;
     private String url;

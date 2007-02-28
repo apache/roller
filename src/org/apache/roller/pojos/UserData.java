@@ -31,6 +31,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
+import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.util.Utilities;
 
 
@@ -55,7 +56,7 @@ public class UserData
     
     static final long serialVersionUID = -6354583200913127874L;
     
-    private String  id;
+    private String  id = UUIDGenerator.generateUUID();
     private String  userName;
     private String  password;
     private String  fullName;
@@ -77,7 +78,7 @@ public class UserData
             String locale, String timeZone,
             Date dateCreated,
             Boolean isEnabled) {
-        this.id = id;
+        //this.id = id;
         this.userName = userName;
         this.password = password;
         this.fullName = fullName;

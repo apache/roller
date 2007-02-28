@@ -12,14 +12,12 @@
     <entity metadata-complete="true" name="RollerPropertyData"
             class="org.apache.roller.pojos.RollerPropertyData">
         <table name="roller_properties"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="RollerPropertyData.getAll">
             <query>SELECT r FROM RollerPropertyData r</query>
         </named-query>
         <attributes>
             <id name="name">
-                <column name="name"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
+                <column name="name" unique="true" />
             </id>
             <basic name="value">
                 <column name="value" insertable="true" updatable="true" unique="false"/>

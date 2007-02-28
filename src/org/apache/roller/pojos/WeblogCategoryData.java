@@ -29,6 +29,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -45,7 +46,7 @@ public class WeblogCategoryData implements Serializable {
     public static final long serialVersionUID = 1435782148712018954L;
     
     // attributes
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
     private String image = null;

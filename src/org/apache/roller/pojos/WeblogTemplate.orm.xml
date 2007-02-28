@@ -29,7 +29,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false"/>
@@ -63,6 +62,8 @@
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <transient name="required"/>
+            
+            <transient name="decorator"/>
         </attributes>
     </entity>
 </entity-mappings>

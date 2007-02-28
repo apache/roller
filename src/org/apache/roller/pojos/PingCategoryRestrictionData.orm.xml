@@ -16,7 +16,6 @@
         <attributes>
             <id name="id">
                 <column name="id"/>
-                <generated-value strategy="TABLE" generator="ROLLER-TABLE-GENERATOR"/>
             </id>
             <many-to-one name="autoping" target-entity="org.apache.roller.pojos.AutoPingData">
                 <join-column name="autopingid" insertable="true" updatable="true" nullable="false"/>

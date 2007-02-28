@@ -52,6 +52,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.MessageUtilities;
 import org.apache.roller.util.URLUtilities;
+import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.util.Utilities;
 
 /**
@@ -74,7 +75,7 @@ public class WeblogEntryData implements Serializable {
     public static final String SCHEDULED = "SCHEDULED";
     
     // Simple properies
-    private String    id            = null;
+    private String    id            = UUIDGenerator.generateUUID();
     private String    title         = null;
     private String    link          = null;
     private String    summary       = null;
@@ -122,7 +123,7 @@ public class WeblogEntryData implements Serializable {
             Timestamp pubTime,
             Timestamp updateTime,
             String status) {
-        this.id = id;
+        //this.id = id;
         this.category = category;
         this.website = website;
         this.creator = creator;

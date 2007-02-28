@@ -18,6 +18,7 @@ package org.apache.roller.pojos;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Represents a user's permissions within a website.
@@ -31,7 +32,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class PermissionsData
 {
-    private String      id = null;
+    private String      id = UUIDGenerator.generateUUID();
     private WebsiteData website = null;
     private UserData    user = null;
     private boolean     pending = true;

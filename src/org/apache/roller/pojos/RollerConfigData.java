@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Configuration object for Roller.  Reads and writes roller-config.xml.
@@ -42,7 +43,7 @@ public class RollerConfigData
 {
     static final long serialVersionUID = -6354583200913127875L;
 
-    protected java.lang.String id = null;
+    protected java.lang.String id = UUIDGenerator.generateUUID();
     
     /**
      * Roller database version.
