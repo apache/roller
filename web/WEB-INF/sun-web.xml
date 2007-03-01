@@ -13,5 +13,10 @@
         <res-ref-name>jdbc/rollerdb</res-ref-name>
         <jndi-name>jdbc/rollerdb</jndi-name>
     </resource-ref>
+    
+    <resource-ref>
+        <res-ref-name>mail/Session</res-ref-name>
+        <jndi-name>mail/Session</jndi-name>
+    </resource-ref>
 
 </sun-web-app>
