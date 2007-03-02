@@ -4,6 +4,7 @@
     <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
     <!--
     <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+    <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
     -->
     <mapping-file>org/apache/roller/pojos/AutoPingData.orm.xml                   </mapping-file>
     <mapping-file>org/apache/roller/pojos/BookmarkData.orm.xml                   </mapping-file>

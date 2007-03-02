@@ -180,8 +180,8 @@ in the "base.path" definition.
     <fileset refid="commons.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="roller-planet.jars" />
-    <!-- JPA bytecode enhancement apparently wants JPA classes everywhere
-    <fileset refid="jpa.jars" /> -->
+    <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
+    <fileset refid="jpa.jars" />
 </path>
 
 <path id="business.path">
