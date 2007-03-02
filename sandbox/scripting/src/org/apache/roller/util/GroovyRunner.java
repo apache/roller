@@ -63,15 +63,15 @@ public class GroovyRunner {
         // Apparently bug GROOVY-1194 prevents both of these approaches from working
         
         // Approach #1
-        GroovyShell gshell = new GroovyShell(cl);
-        gshell.evaluate(new File(args[2]));
+        //GroovyShell gshell = new GroovyShell(cl);
+        //gshell.evaluate(new File(args[2]));
                 
         // Approach #2
         //ClassLoader parent = GroovyRunner.class.getClassLoader();
-        //GroovyClassLoader loader = new GroovyClassLoader(cl);
-        //Class groovyClass = loader.parseClass(new File(scriptFile));
-        //GroovyObject groovyObject = (GroovyObject)groovyClass.newInstance();
-        //groovyObject.invokeMethod("run", null);
+        GroovyClassLoader loader = new GroovyClassLoader(cl);
+        Class groovyClass = loader.parseClass(new File(scriptFile));
+        GroovyObject groovyObject = (GroovyObject)groovyClass.newInstance();
+        groovyObject.invokeMethod("run", null);
     }
 }
 

@@ -16,7 +16,7 @@ export JARS_DIR=/Applications/Java/jakarta-tomcat-5.5.9/common/lib
 
 export RGPATH=\
 ../build/classes:\
-${GROOVY_HOME}/embeddable/groovy-all-1.0-JSR-06.jar:\
+${GROOVY_HOME}/embeddable/groovy-all-1.0.jar:\
 ${GROOVY_HOME}/lib/commons-cli-1.0.jar:\
 ${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar
 echo ${RGPATH}
