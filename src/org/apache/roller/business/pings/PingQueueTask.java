@@ -32,7 +32,7 @@ import org.apache.roller.business.RollerFactory;
 
 /**
  * Task for processing the ping queue at fixed intervals.   This is set up during context initialization by {@link
- * RollerContext}.  The queue processing interval is currently set from the configuration {@link
+ * org.apache.roller.ui.core.RollerContext}.  The queue processing interval is currently set from the configuration {@link
  * org.apache.roller.config.PingConfig} at startup time only.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
