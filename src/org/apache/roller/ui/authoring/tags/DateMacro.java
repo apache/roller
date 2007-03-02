@@ -22,9 +22,6 @@ import java.util.Date;
 
 /** For formatting a date using patterns from 
  * {@link java.text.SimpleDateFormat SimpleDateFormat}.
- * @deprecated Use methods on 
- * {@link org.apache.roller.presentation.weblog.WeblogEntryDataEx WeblogEntryDataEx} 
- * instead.
  */
 public class DateMacro
 {

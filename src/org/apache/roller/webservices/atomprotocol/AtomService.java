@@ -274,7 +274,7 @@ public class AtomService {
     
       
     /** 
-     * Represents an <atom:category> object 
+     * Represents an &lt;atom:category&gt; object 
      *//*
 	    atomCategory =
 	    element atom:category {

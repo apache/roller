@@ -312,9 +312,7 @@ public abstract class BasePingTargetsAction extends DispatchAction {
 
     /**
      * Helper defined by the subclass to determine if user has adequate
-     * rights for the action. This and the
-     * {@link org.apache.roller.pojos.PingTargetData#canSave()} method determine the
-     * access control for the action.
+     * rights for the action. This helps determine the access control for the action.
      */
     protected abstract boolean hasRequiredRights(RollerRequest rreq, WebsiteData website) throws RollerException;
 

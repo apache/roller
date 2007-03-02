@@ -624,7 +624,7 @@ public class Utilities {
      *
      * WARNING: this method has serious performance problems a
      *
-     * @author Alexis Moussine-Pouchkine <alexis.moussine-pouchkine@france.sun.com>
+     * @author Alexis Moussine-Pouchkine (alexis.moussine-pouchkine@france.sun.com)
      * @author Lance Lavandowska
      * @param str the String object to modify
      * @return the new String object without the HTML "visible" tags
