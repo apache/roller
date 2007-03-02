@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="WeblogTemplate"
             class="org.apache.roller.pojos.WeblogTemplate">
         <table name="webpage"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="WeblogTemplate.getByWebsite">
             <query>SELECT w FROM WeblogTemplate w Where w.website = ?1</query>
         </named-query>

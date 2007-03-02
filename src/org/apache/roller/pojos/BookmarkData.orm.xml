@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="BookmarkData"
             class="org.apache.roller.pojos.BookmarkData">
         <table name="bookmark"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="BoomarkData.getByFolder">
             <query>SELECT b FROM BookmarkData b WHERE b.folder = ?1</query>
         </named-query>

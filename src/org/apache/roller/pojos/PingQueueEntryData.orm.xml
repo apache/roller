@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="PingQueueEntryData"
             class="org.apache.roller.pojos.PingQueueEntryData">
         <table name="pingqueueentry"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PingQueueEntryData.getAllOrderByEntryTime">
             <query>SELECT p FROM PingQueueEntryData p ORDER BY p.entryTime</query>
         </named-query>

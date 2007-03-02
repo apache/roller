@@ -66,7 +66,7 @@
                 </join-table>
             </many-to-many>
             <transient name="name"/>
-            <transient name="URL"/>
+            <transient name="uRL"/>
         </attributes>
     </entity>
 </entity-mappings>

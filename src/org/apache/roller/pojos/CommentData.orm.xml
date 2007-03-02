@@ -11,7 +11,6 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="CommentData" class="org.apache.roller.pojos.CommentData">
         <table name="roller_comment"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="CommentData.getCountAllDistinctByStatus">
             <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
             <query>SELECT COUNT(c) FROM CommentData c where c.status = ?1</query>
@@ -25,19 +24,14 @@
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result 
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
-                   FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1
-                   GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
-            </query>
+            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name</query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWebsiteByEndDate&amp;StartDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
-                   FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2
-                GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
+            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
             </query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByEndDate">
@@ -45,41 +39,28 @@
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-                   FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1
-                   GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-            </query>
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByEndDate&amp;StartDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-                   FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2
-                   GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-            </query>
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM CommentData c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByWebsite&amp;EndDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-                   FROM CommentData c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2
-                  GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-            </query>
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM CommentData c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <named-query name="CommentData.getMostCommentedWeblogEntryByWebsite&amp;EndDate&amp;StartDate">
             <!--
             DISTINCT is not required for this query - comments would never be duplicated in retrieved result
             because all the navigations from c are for ManyToOne relationship.
             -->
-            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-                   FROM CommentData c WHERE c.weblogEntry.website = ?1
-                                        AND c.weblogEntry.pubTime &lt; ?2 AND c.weblogEntry.pubTime &gt; ?3
-                  GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title
-            </query>
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM CommentData c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2 AND c.weblogEntry.pubTime &gt; ?3 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
         </named-query>
         <attributes>
             <id name="id">

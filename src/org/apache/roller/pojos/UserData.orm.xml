@@ -11,7 +11,6 @@
     <package>org.apache.roller.pojos</package>
     <entity metadata-complete="true" name="UserData" class="org.apache.roller.pojos.UserData">
         <table name="rolleruser"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="UserData.getAll">
             <query>SELECT u FROM UserData u</query>
         </named-query>
@@ -52,14 +51,10 @@
             <query>SELECT u FROM UserData u JOIN u.permissions p WHERE p.website = ?1</query>
         </named-query>
         <named-query name="UserData.getByPermissions.website&amp;Enabled&amp;EndDate&amp;StartDate">
-            <query>SELECT u FROM UserData u JOIN u.permissions p WHERE p.website = ?1 AND u.enabled = ?2
-                                              AND u.dateCreated &lt; ?3 AND u.dateCreated &gt; ?4
-            </query>
+            <query>SELECT u FROM UserData u JOIN u.permissions p WHERE p.website = ?1 AND u.enabled = ?2 AND u.dateCreated &lt; ?3 AND u.dateCreated &gt; ?4</query>
         </named-query>
         <named-query name="UserData.getByPermissions.website&amp;EndDate&amp;StartDate">
-            <query>SELECT u FROM UserData u JOIN u.permissions p WHERE p.website = ?1 
-                                              AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3
-            </query>
+            <query>SELECT u FROM UserData u JOIN u.permissions p WHERE p.website = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3</query>
         </named-query>
         <named-query name="UserData.getByEndDate&amp;StartDateOrderByStartDateDesc">
             <query>SELECT u FROM UserData u WHERE u.dateCreated &lt; ?1 AND u.dateCreated &gt; ?2 ORDER BY u.dateCreated DESC</query>

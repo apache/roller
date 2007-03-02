@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="WeblogCategoryData"
             class="org.apache.roller.pojos.WeblogCategoryData">
         <table name="weblogcategory"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="WeblogCategoryData.getByPath&amp;Website">
                 <query>SELECT w FROM WeblogCategoryData w WHERE w.path = ?1 AND w.website = ?2</query>
         </named-query>

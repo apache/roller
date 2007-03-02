@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="WeblogEntryTagAggregateData"
             class="org.apache.roller.pojos.WeblogEntryTagAggregateData">
         <table name="roller_weblogentrytagagg"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="WeblogEntryTagAggregateData.getByName&amp;WebsiteOrderByLastUsedDesc">
             <query>SELECT w FROM WeblogEntryTagAggregateData w WHERE w.name = ?1 AND w.weblog = ?2 ORDER BY w.lastUsed DESC</query>
         </named-query>
@@ -64,8 +63,7 @@
             <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;Weblog">
-            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1, lastUsed = CURRENT_TIMESTAMP
-                                                      WHERE w.name = ?2 AND w.weblog = ?3</query>
+            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1, lastUsed = CURRENT_TIMESTAMP WHERE w.name = ?2 AND w.weblog = ?3</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;WeblogNull">
             <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>

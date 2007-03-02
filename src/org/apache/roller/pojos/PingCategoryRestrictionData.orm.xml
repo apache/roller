@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="PingCategoryRestrictionData"
             class="org.apache.roller.pojos.PingCategoryRestrictionData">
         <table name="pingcategory"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <attributes>
             <id name="id">
                 <column name="id"/>

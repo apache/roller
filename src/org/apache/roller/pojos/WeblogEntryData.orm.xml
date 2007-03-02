@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="WeblogEntryData"
             class="org.apache.roller.pojos.WeblogEntryData">
         <table name="weblogentry"/>
-        <table-generator name="ROLLER-TABLE-GENERATOR" table="roller_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="WeblogEntryData.getByStatus&amp;Category">
             <query>SELECT w FROM WeblogEntryData w WHERE w.status = ?1 AND w.category = ?2</query>
         </named-query>
