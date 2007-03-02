@@ -791,12 +791,6 @@ public class JPAUserManagerImpl implements UserManager {
     public List getUsersStartingWith(String startsWith, Boolean enabled,
             int offset, int length) throws RollerException {
         Query query = null;
-        List results = null;
-        boolean setRange = offset != 0 || length != -1;
-        
-        if (length == -1) {
-            length = Integer.MAX_VALUE - offset;
-        }
         
         if (enabled != null) {
             if (startsWith != null) {
