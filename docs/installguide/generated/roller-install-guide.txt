@@ -6,7 +6,6 @@ Installation Guide
 
 
 Apache Roller
- (incubating) 
 Version 3.2
 
 
@@ -126,9 +125,9 @@ Pick a directory on your computer and unpack the Roller distribution using eithe
 UNIX example
 Assuming you download the distribution into your home directory and you'd like to install Roller into /usr/local you might do something like this in the bash shell:
 	% cd /usr/local
-	% tar xzvf ~/apache-roller-3.0-incubating.tar.gz
+	% tar xzvf ~/apache-roller-3.2.tar.gz
 
-That would create the Roller installation directory /usr/local/apache-roller-3.0-incubating. 
+That would create the Roller installation directory /usr/local/apache-roller-3.2. 
 Windows example
 You can Use WinZip to extract the Roller distribution file into the directory of your choice. 
 Roller distribution layout
@@ -142,15 +141,15 @@ Once you've extracted the files you'll see that the Roller release contains two 
 The ROLLER environment variable
 In this guide, we'll refer to the Roller web application directory using the ROLLER environment variable. In UNIX this will be $ROLLER. In Windows, it will be %ROLLER%. You don't have to set the ROLLER environment variable, we just use it to simplify the installation guide, but here's how you'd do it.
 UNIX example (assuming you installed into /usr/local):
-	% set $ROLLER = /usr/local/apache-roller-3.0-incubating/webapp/roller
+	% set $ROLLER = /usr/local/apache-roller-3.2/webapp/roller
 Windows example (assuming you installed into c:\)
-	% set %ROLLER% = c:\apache-roller-3.0-incubating/webapp/roller
+	% set %ROLLER% = c:\apache-roller-3.2/webapp/roller
 
 
 STEP 3: Install required third party jars
 You also need to download and install some third-party jars, jars that we can't include in Roller due to licensing restrictions. These are the JDBC driver, JavaMail and Activation jars.
 STEP 3.1: Download and install Hibernate
-Roller requires the Hibernate persistence library, which you must download separately from Roller. 
+Roller requires Hibernate Version 3.1.2, which you must download separately from Roller. 
 	Download Hibernate 3.1.2 from SourceForge
 	http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz
 Copy the following files from Hibernate into the Roller WEB-INF/lib directory:
@@ -194,7 +193,6 @@ WEB-INF/dbscripts/hsqldb/creatdb.sql
 WEB-INF/dbscripts/derby/creatdb.sql
 WEB-INF/dbscripts/db2/creatdb.sql
 WEB-INF/dbscripts/oracle/creatdb.sql
-WEB-INF/dbscripts/oracle/creatdb.sql
 Here are some examples to show you how you might create the Roller tables in MySQL:
 UNIX example
 	% cd $ROLLER/WEB-INF/dbscripts/mysql
@@ -221,16 +219,18 @@ For MySQL, don't forget to call flush privileges to commit your changes to MySQL
 To check whether your MySQL is setup properly, use the command line mysql program to connect using the user name and password you created. For example (we use 127.0.0.1 here instead of localhost to ensure that TCP/IP networking is enabled):
 		mysql roller -h 127.0.0.1 -u scott -ptiger
 STEP 5: Deploy Roller to your application server
-To deploy Roller to your application server you need to inform your application server:
-Where to find the Roller installation directory  
-How to configure the Roller datasource under the JNDI name jdbc/rollerdb 
+To deploy Roller you will need to inform your application server:
+Where to find the Roller installation directory
+How to configure the Roller database data-source under the JNDI name jdbc/rollerdb 
+How to configure the Roller email session under the JNDI name mail/Session
 For Tomcat you can do this by creating what's known as a context configuration file named roller.xml and placing that file in the Tomcat conf/Catalina/localhost directory. 
 
 Example context configuration file for Tomcat 5.0.X users
 
 The portions shown in bold are the ones that you'll probably have to change. Make sure you set the docBase to point to your Roller installation directory. Make sure you set the JDBC connection string to point to your database and the database username and password too.
 
-<Context path="/roller" docBase="/usr/local/apache-roller-3.0-incubating/webapp/roller" debug="0">
+<Context path="/roller" 
+  docBase="/usr/local/apache-roller-3.2/webapp/roller" debug="0">
   <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource" />
   <ResourceParams name="jdbc/rollerdb">
     <parameter>
@@ -265,12 +265,12 @@ The portions shown in bold are the ones that you'll probably have to change. Mak
   </ResourceParams>
   -->
 </Context>
-
 Example context configuration file for Tomcat 5.5.X users
 
 The portions shown in bold are the ones that you'll probably have to change. Make sure you set the docBase to point to your Roller installation directory. Make sure you set the JDBC connection string to point to your database and the database username and password too.
 
-<Context path="/roller" docBase="/usr/local/apache-roller-3.0-incubating/webapp/roller" debug="0">
+<Context path="/roller" 
+  docBase="/usr/local/apache-roller-3.2/webapp/roller" debug="0">
   <Resource name="jdbc/rollerdb" auth="Container" 
       type="javax.sql.DataSource"
     driverClassName="com.mysql.jdbc.Driver"
@@ -288,8 +288,10 @@ The portions shown in bold are the ones that you'll probably have to change. Mak
      mail.smtp.host="mailhost.example.com" />
   -->
 </Context>
+
 NOTES
-If Roller starts up fine but later fails and you find an error like the one below in your roller.log file then try dropping your maxActive, maxIdle, and removeAbandoned values. Depending on your database configuration you may have to go pretty low, such as setting maxActive to 6, maxIdle to 3 and removeAbandonedTimeout to 60. 
+Email configuration. If you want to use email notification of comments, group blogging invitations and other events, you'll have  to enable that in your application server. For Tomcat, you can do that by uncommenting the indicated sections of the context configuration file above. No matter what application server you use, you'll also have to uncomment the mail/Session resource reference <resource-ref> near the end of the roller/WEB-INF/web.xml file.
+The max_user_connections error. If Roller starts up fine but later fails and you find an error like the one below in your roller.log file then try dropping your maxActive, maxIdle, and removeAbandoned values. Depending on your database configuration you may have to go pretty low, such as setting maxActive to 6, maxIdle to 3 and removeAbandonedTimeout to 60. 
 	User scott@localhost has more than 'max_user_connections' active connections
 
 
@@ -422,8 +424,8 @@ STEP 2: Install the new Roller
 STEP 3: Copy old configuration
 STEP 4: Upgrade the database
 STEP 5: Startup Tomcat 
-Important notes about Roller 3.0
-WARNING! Roller 3.0 is a major release and makes some big changes to the way that Roller works. If you're upgrading you need to be aware of the new URL structure and the new template system.
+Important notes for those upgrading from Roller 2.x to Roller 3.2
+WARNING! Roller 3.0 was a major release and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of the new URL structure and the new template system.
 The new URL structure
 The most significant change is the new URL structure - we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are redirected (using HTTP 301) redirects to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
 	http://<hostname>/roller/page/<weblog-handle>
@@ -474,9 +476,11 @@ NOTE: If you have any new themes under roller/themes, make sure to copy those as
 
 3.3 Review configuration properties
 Review properties as described in STEP #8 of the installation guide.
-WARNING: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
+NOTE: In Roller 3.1 we changed the scheduled task properties, so if you were overriding  the tasks.daily or tasks.hourly properties you need to change your roller-custom.properties file. Refer to the notes in roller.properties in the section "Scheduled Background Tasks" for details.
 
-WARNING: The files required for Roller's JSPWiki plugin, Ekit editor and Javascript enhanced editor have been removed from the Roller distribution. If you'd like to continue to use these plugins, please visit the Roller Support project on Java.Net (http://roller.dev.java.net).
+NOTE: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
+
+NOTE: The files required for Roller's JSPWiki plugin, Ekit editor and Javascript enhanced editor have been removed from the Roller distribution. If you'd like to continue to use these plugins, please visit the Roller Support project on Java.Net (http://roller.dev.java.net).
 UPGRADE STEP 4: Upgrade the database 
 Use the appropriate database upgrade script to upgrade your database. To do this, login to your database and run one (or more) of the Roller upgrade scripts located in Roller's WEB-INF/dbscripts directory that corresponds to your database. There's a directory for MySQL, PostgreSQL, HSQLDB and more. 
 The database script directories 
@@ -495,8 +499,10 @@ There is an upgrade script for each release of Roller. If you're upgrading from 
     mysql> quit
 
 If you're upgrading from an earlier release you'll have to run each of the older scripts in order to upgrade your database.
+
 UPGRADE STEP 5: Startup your app server 
 Use the standard Tomcat startup.sh (or startup.bat on Windows) script to start Tomcat. As Roller starts up, it will perform some final steps to upgrade your database, this may take few seconds longer than your average Roller startup. 
+NOTE: before you startup Tomcat, you should remove contents of the Tomcat work directory, a temporary, it may contain old classes from your previous Roller installation directory.
 And you're done! 
 If Roller doesn't come up, check the logs for exceptions and error messages. You should see these messages in the tomcat/logs/catalina.out file and in tomcat/logs/roller.log. If you still can't diagnose and fix your startup program, then subscribe to the Roller user mailing list for help. If there are any interesting messages in the log files, send those along too. 
 Appendix B: The WEB-INF/roller.properties file
