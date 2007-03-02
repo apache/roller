@@ -334,7 +334,7 @@ ro.buildUser=${user.name}
             <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
             &custom-jars;
         </classpath>
-    </openjpac> -->
+    </openjpac>  -->
     
     <!-- allow for custom build work -->
     &custom-build-business;

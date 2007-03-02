@@ -86,6 +86,7 @@ in the "base.path" definition.
 <!-- **************************************************************** -->
 
 <fileset id="base.jars" dir="${ro.tools}/lib">
+    <include name="commons-id-0.1-SNAPSHOT.jar"/>
     <include name="commons-betwixt-1.0-beta-1.jar" />
     <include name="commons-cache.jar" />
     <include name="commons-collections-3.2.jar" />
@@ -179,8 +180,8 @@ in the "base.path" definition.
     <fileset refid="commons.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="roller-planet.jars" />
-    <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
-    <fileset refid="jpa.jars" />
+    <!-- JPA bytecode enhancement apparently wants JPA classes everywhere
+    <fileset refid="jpa.jars" /> -->
 </path>
 
 <path id="business.path">
