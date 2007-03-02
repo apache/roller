@@ -9,7 +9,7 @@
             <include name="roller-business.jar"/>   
         </fileset>
         <fileset dir="${groovy.home}/lib">
-            <include name="groovy-1.0-JSR-06.jar"/>
+            <include name="groovy-1.0.jar"/>
         </fileset>                      
     </path>
     
