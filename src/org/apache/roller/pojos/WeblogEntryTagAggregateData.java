@@ -67,7 +67,7 @@ public class WeblogEntryTagAggregateData
     /** 
      * Unique ID and primary key of this Referer.
      *
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public java.lang.String getId()
     {

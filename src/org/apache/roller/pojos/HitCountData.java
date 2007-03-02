@@ -78,7 +78,7 @@ public class HitCountData implements Serializable {
     
     /**
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

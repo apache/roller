@@ -401,7 +401,7 @@ public class WebsiteData implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public String getId() {
         return this.id;

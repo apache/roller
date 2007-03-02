@@ -93,7 +93,8 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     public void saveFolder(FolderData folder) throws RollerException {
         
-        if(folder.getId() == null && isDuplicateFolderName(folder)) {
+        FolderData existingFolder = getFolder(folder.getId());        
+        if(existingFolder == null && isDuplicateFolderName(folder)) {
             throw new RollerException("Duplicate folder name");
         }
         

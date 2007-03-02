@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20070226;10243900">
+	<META NAME="CHANGED" CONTENT="20070302;9530400">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.5in }
@@ -44,9 +44,6 @@ Guide</B></FONT></P>
 </P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
 Roller</B></FONT></P>
-<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in">
-<FONT SIZE=5 STYLE="font-size: 20pt"><B>(incubating) </B></FONT>
-</P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><A NAME="DDE_LINK1"></A>
 <FONT SIZE=7 STYLE="font-size: 32pt"><B>Version 3.2</B></FONT></P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
@@ -312,10 +309,10 @@ Roller on your computer.</P>
 home directory and you'd like to install Roller into <FONT FACE="Courier New">/usr/local</FONT>
 you might do something like this in the bash shell:</P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=3>	% cd /usr/local</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=3>	% tar xzvf ~/apache-roller-3.0-incubating.tar.gz</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=3>	% tar xzvf ~/apache-roller-3.2.tar.gz</FONT></FONT>
 </PRE><P CLASS="western">
 That would create the Roller installation directory
-<FONT FACE="Courier New">/usr/local/apache-roller-3.0-incubating</FONT>.
+<FONT FACE="Courier New">/usr/local/apache-roller-3.2</FONT>. 
 </P>
 <H4 CLASS="western">Windows example</H4>
 <P CLASS="western">You can Use WinZip to extract the Roller
@@ -341,10 +338,10 @@ the installation guide, but here's how you'd do it.</P>
 <P CLASS="western">UNIX example (assuming you installed into
 <FONT FACE="Courier New">/usr/local</FONT>):</P>
 <P CLASS="western"><FONT FACE="Courier New">	% set $ROLLER =
-/usr/local/apache-roller-3.0-incubating/webapp/roller</FONT></P>
+/usr/local/apache-roller-3.2/webapp/roller</FONT></P>
 <P CLASS="western">Windows example (assuming you installed into <FONT FACE="Courier New">c:\</FONT>)</P>
 <P CLASS="western"><FONT FACE="Courier New">	% set %ROLLER% =
-c:\apache-roller-3.0-incubating/webapp/roller</FONT></P>
+c:\apache-roller-3.2/webapp/roller</FONT></P>
 <P CLASS="western"><A NAME="DDE_LINK3"></A><BR><BR>
 </P>
 <H2 CLASS="western"></H2>
@@ -524,7 +521,7 @@ to point to your database and the database username and password too.</P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Context path=&quot;/roller&quot; </FONT></FONT>
-  <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">docBase=&quot;<B>/usr/local/apache-roller-incubating-3.1/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">docBase=&quot;<B>/usr/local/apache-roller-3.2/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot; /&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;ResourceParams name=&quot;jdbc/rollerdb&quot;&gt;</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;parameter&gt;</FONT></FONT>
@@ -558,7 +555,7 @@ to point to your database and the database username and password too.</P>
       <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;/parameter&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;/ResourceParams&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">--&gt;</FONT></FONT>
-<FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New">&lt;/Context&gt;</FONT></FONT></PRE><P CLASS="western" STYLE="margin-bottom: 0in; page-break-before: always">
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;/Context&gt;</FONT></FONT></PRE><P CLASS="western" STYLE="margin-bottom: 0in; page-break-before: always">
 <B>Example context configuration file for Tomcat 5.5.X users</B></P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
@@ -570,7 +567,7 @@ to point to your database and the database username and password too.</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=3>&lt;Context path=&quot;/roller&quot; </FONT></FONT>
-  <FONT FACE="Courier New"><FONT SIZE=3>docBase=&quot;<B><FONT SIZE=2 STYLE="font-size: 11pt">/usr/local/apache-roller-<FONT SIZE=2 STYLE="font-size: 11pt">incubating-</FONT>3.1/webapp/roller</FONT></B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
+  <FONT FACE="Courier New"><FONT SIZE=3>docBase=&quot;<B><FONT SIZE=2 STYLE="font-size: 11pt">/usr/local/apache-roller-3.2/webapp/roller</FONT></B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
   <FONT FACE="Courier New"><FONT SIZE=3>&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; </FONT></FONT>
       <FONT FACE="Courier New"><FONT SIZE=3>type=&quot;javax.sql.DataSource&quot;</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=3>driverClassName=&quot;com.mysql.jdbc.Driver&quot;</FONT></FONT>
@@ -765,10 +762,9 @@ configuration, then show which properties we think you should set.
 <B>NOTE</B>: the default <FONT FACE="Courier New">roller.properties</FONT>
 file is shown in Appendix B.</P>
 <H4 CLASS="western"><A NAME="section-ConfigurationGuide_2.x-WhereToDefineCustomProperties"></A>
-Don't edit roller.properties directly! Create an override file
-instead</H4>
-<P CLASS="western" STYLE="margin-bottom: 0in">There are two ways you
-can alter the default configuration for Roller. 
+Where to define custom properties</H4>
+<P CLASS="western" STYLE="margin-bottom: 0in">There are three ways
+you can alter the default configuration for Roller. 
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
@@ -874,29 +870,37 @@ values specific to your own site.
 	</UL>
 </UL>
 <H3 CLASS="western"><SPAN STYLE="background: transparent">STEP 8.3:
-Verify the database dialect setting in the Hibernate configuration
+Verify the database dialet setting in the Hibernate configuration
 file</SPAN></H3>
 <P CLASS="western"><SPAN STYLE="background: transparent">If you're
 using MySQL 4.X for Roller, then you can skip this step.</SPAN></P>
 <P CLASS="western"><SPAN STYLE="background: transparent">If you're
-using some other database with Roller, then you must override the
-Hibernate dialect. In your roller-custom.properties override file,
-override the <SPAN STYLE="font-weight: medium"><FONT SIZE=2><FONT FACE="Courier New">hibernate.dialect</FONT></FONT><FONT SIZE=3><FONT FACE="Times New Roman, serif">
-property. For example, to set the dialect for MySQL 5, you would add
-this to your override file:</FONT></FONT></SPAN></SPAN></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><SPAN STYLE="background: transparent">
-  <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">hibernate.dialect=org.hibernate.dialect.MySQL5Dialect</SPAN></FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+using some other database with Roller, then you must check the
+Hibernate dialect setting in the file
+<FONT FACE="Courier New">WEB-INF/classes/hibernate.cfg.xml</FONT>. 
+In that file, you'll see the section of code shown below. The line
+shown in bold is the current dialect setting. If you want to switch
+to another database, move the MySQLDialect line inside the<FONT FACE="Courier New">
+&lt;!-- --&gt;</FONT> comments and replace it with the line for your
+database of choice. </SPAN>
 </P>
-<P CLASS="western" STYLE="font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2><SPAN STYLE="background: transparent"><FONT SIZE=3><FONT FACE="Times New Roman, serif">Here
-are all of the available dialect settings:</FONT></FONT></SPAN></FONT></FONT></P>
-<PRE>   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">org.hibernate.dialect.HQLDBDialect</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">org.hibernate.dialect.PostgreSQLDialect</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">org.hibernate.dialect.DB2Dialect</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">org.hibernate.dialect.DerbyDialect</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">org.hibernate.dialect.Oracle9Dialect</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">org.hibernate.dialect.SQLServerDialect</FONT></FONT>
-</PRE><P CLASS="western" STYLE="margin-bottom: 0in">
+<P CLASS="western"><BR><BR>
+</P>
+<PRE><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;!-- select SQL dialect, MySQL 3.X or 4.X by default --&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><B>&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.MySQLDialect&lt;/property&gt;</B></FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;!--</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle, SQLServer then use the right dialect   </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.HQLDBDialect&lt;/property&gt; </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.PostgreSQLDialect&lt;/property&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.DB2Dialect&lt;/property&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.DerbyDialect&lt;/property&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.Oracle9Dialect&lt;/property&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.SQLServerDialect&lt;/property&gt;</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">For MySQL 5.X, use the MySQL5 dialect and J/Connector 3.1.X</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;property name=&quot;dialect&quot;&gt;org.hibernate.dialect.MySQL5Dialect&lt;/property&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt">--&gt;</FONT></FONT></PRE><P CLASS="western" STYLE="margin-bottom: 0in">
 <BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
@@ -963,7 +967,7 @@ the new release. The steps are:</P>
 	</P>
 </UL>
 <H3 CLASS="western"><SPAN STYLE="background: transparent">Important
-notes for those upgrading from Roller 2.x to Roller 3.1</SPAN></H3>
+notes for those upgrading from Roller 2.x to Roller 3.2</SPAN></H3>
 <P CLASS="western"><SPAN STYLE="background: transparent"><B>WARNING!</B>
 Roller 3.0 was a major release and made some big changes to the way
 that Roller works. If you're upgrading from the 2.x series you need
@@ -1069,7 +1073,7 @@ to somewhere safe, for example:
 <PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3 CLASS="western">
-<A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
+<A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
 UPGRADE STEP 2: Install the new Roller 
 </H3>
 <P CLASS="western">Follow the normal installation instructions to
@@ -1084,7 +1088,7 @@ install Roller, except:
 	the installation, we'll do that later 
 	</P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
 UPGRADE STEP 3: Copy resources and update configs 
 </H3>
 <H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
@@ -1106,19 +1110,21 @@ copy those as well.
 </P>
 <H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.3ReviewConfigurationProperties"></A>
 3.3 Review configuration properties</H4>
-<P CLASS="western"><A NAME="DDE_LINK5"></A>Review properties as
-described in Section 8.0 of the installation guide. 
-</P>
+<P CLASS="western">Review properties as described in STEP #8 of the
+installation guide.</P>
 <UL>
-	<LI><P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium">
-	NOTE: Make sure you set the right Hibernate dialect for your
-	database in your roller-custom.properties file as discussed in
-	Section 8.3.</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0in"><SPAN STYLE="font-weight: medium">NOTE:
+	In Roller 3.1 we changed the scheduled task properties, so if you
+	were overriding  the<FONT FACE="Courier New, monospace"> tasks.daily</FONT>
+	or <FONT FACE="Courier New, monospace">tasks.hourly</FONT>
+	properties you need to change your roller-custom.properties file.
+	Refer to the notes in roller.properties in the section &ldquo;Scheduled
+	Background Tasks&rdquo; for details.</SPAN></P>
 </UL>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <UL>
-	<LI><P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium">
+	<LI VALUE=1><P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium">
 	NOTE: In Roller 2.3 we changed the Roller package names from
 	org.roller to org.apache.roller. Because of this you MUST review
 	your roller-custom.properties file, search for the string
@@ -1135,7 +1141,7 @@ described in Section 8.0 of the installation guide.
 	visit the Roller Support project on Java.Net
 	(http://roller.dev.java.net).</P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 UPGRADE STEP 4: Upgrade the database 
 </H3>
 <P CLASS="western">Use the appropriate database upgrade script to
@@ -1182,7 +1188,8 @@ UNIX:
 <P CLASS="western">If you're upgrading from an earlier release you'll
 have to run each of the older scripts in order to upgrade your
 database.</P>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
+<H3 CLASS="western"></H3>
+<H3 CLASS="western" STYLE="page-break-before: always"><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
 UPGRADE STEP 5: Startup your app server 
 </H3>
 <P CLASS="western">Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
@@ -1191,6 +1198,9 @@ start Tomcat. As Roller starts up, it will perform some final steps
 to upgrade your database, this may take few seconds longer than your
 average Roller startup. 
 </P>
+<P CLASS="western"><B>NOTE</B>: before you startup Tomcat, you should
+remove contents of the Tomcat work directory, a temporary, it may
+contain old classes from your previous Roller installation directory.</P>
 <H4 CLASS="western">And you're done! 
 </H4>
 <P CLASS="western">If Roller doesn't come up, check the logs for

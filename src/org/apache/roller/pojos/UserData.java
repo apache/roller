@@ -125,7 +125,7 @@ public class UserData
      * @struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public String getId() {
         return this.id;

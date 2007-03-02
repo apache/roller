@@ -145,7 +145,7 @@ public class WeblogCategoryData implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      *
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public java.lang.String getId() {
         return this.id;

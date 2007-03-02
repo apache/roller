@@ -150,7 +150,7 @@ public class FolderData implements Serializable, Comparable {
      * @roller.wrapPojoMethod type="simple"
      *
      * @hibernate.id column="id"
-     *     generator-class="uuid.hex" unsaved-value="null"
+     *     generator-class="assigned"  
      */
     public String getId() {
         return this.id;

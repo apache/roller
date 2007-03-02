@@ -99,7 +99,7 @@ public class PingTargetData implements Serializable {
      * @return the unique id of this ping target.
      * @struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public java.lang.String getId() {
         return this.id;

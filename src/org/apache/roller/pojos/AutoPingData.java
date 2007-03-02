@@ -75,7 +75,7 @@ public class AutoPingData implements Serializable {
      *
      * @return the unique id of this object. -- struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

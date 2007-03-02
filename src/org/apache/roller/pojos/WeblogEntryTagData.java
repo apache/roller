@@ -74,7 +74,7 @@ public class WeblogEntryTagData
      * Unique ID and primary key of this Referer.
      *
      * @roller.wrapPojoMethod type="simple"
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public java.lang.String getId()
     {

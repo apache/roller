@@ -98,7 +98,7 @@ public class BookmarkData
      * @ejb:persistent-field 
      * 
      * @hibernate.id column="id"
-     *     generator-class="uuid.hex" unsaved-value="null"
+     *     generator-class="assigned"  
      */
     public String getId()
     {
