@@ -515,26 +515,25 @@ ro.buildUser=${user.name}
 <target name="javadoc">
     <mkdir dir="${build.javadoc}"/>
     <javadoc
-        bottom="Copyright (C) David M Johnson"
+        doctitle="Javadocs: Apache Roller ${ro.version}"        
+        bottom="Copyright 2007 Apache Software Foundation"
         classpathref="javadoc.path"
         destdir="${build.javadoc}"
-        doctitle="Javadocs: Roller Weblogger ${ro.version}"        
         private="false"
         version="false"
-        windowtitle="Javadocs: Roller Weblogger ${ro.version}">
+        verbose="false"
+        windowtitle="Javadocs: Apache Roller - Weblogger ${ro.version}">
         <sourcepath>
             <pathelement path="./src"/>
-            <pathelement path="${ro.build}/generated/src.business"/>
-            <pathelement path="${ro.build}/generated/src.presentation"/>
+            <pathelement path="${ro.build}/generated/business"/>
+            <pathelement path="${ro.build}/generated/presentation"/>
         </sourcepath>
         <packageset dir="src" defaultexcludes="yes">
           <include name="org/apache/roller/**" />
-          <exclude name="org/apache/roller/business/prevayler/**" />
         </packageset>
         <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
         <link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
         <link href="http://jakarta.apache.org/struts/doc-1.0.2/api"/>
-        <link href="http://hibernate.bluemars.net/hib_docs/api/"/>
     </javadoc>
     <copy todir="${build.javadoc}">
         <fileset dir="${basedir}/src">
