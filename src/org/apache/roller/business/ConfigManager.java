@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * Manages Roller configuration
- * @deprecated Replaced by {@link RollerProperties}.
+ * @deprecated Replaced by {@link org.apache.roller.business.PropertiesManager}.
  */
 public interface ConfigManager extends Serializable 
 {

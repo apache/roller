@@ -50,7 +50,7 @@ import org.apache.struts.util.RequestUtils;
 /**
  * Roller's Trackback server implementation. POSTing to this Servlet will add a
  * Trackback to a Weblog Entry. For more info on Trackback, read the spec:
- * <a href="http://www.movabletype.org/docs/mttrackback.html>MT Trackback</a>.
+ * <a href="http://www.movabletype.org/docs/mttrackback.html">MT Trackback</a>.
  *
  * @web.servlet name="TrackbackServlet"
  * @web.servlet-mapping url-pattern="/roller-ui/rendering/trackback/*"
