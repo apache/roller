@@ -32,23 +32,21 @@ import org.apache.roller.planet.util.URLUtilities;
 
 
 /**
- * Model which provides information needed to render a weblog page.
+ * Model which provides information needed to render a planet page.
  */
-public class PageModel implements Model {
+public class PageModel extends PlanetGroupModel {
     
     private static Log log = LogFactory.getLog(PageModel.class);
     
     private PlanetGroupPageRequest pageRequest = null;
-    private Map requestParameters = null;
-    private PlanetData planet = null;
-    private PlanetGroupData group = null;
     
     
     /** 
-     * Creates an un-initialized new instance, Roller calls init() to complete
-     * construction. 
+     * Creates an un-initialized new instance.
      */
-    public PageModel() {}
+    public PageModel() {
+        super();
+    }
     
     
     /** 
@@ -64,6 +62,9 @@ public class PageModel implements Model {
      */
     public void init(Map initData) throws RollerException {
         
+        // parent gets to go first
+        super.init(initData);
+        
         // we expect the init data to contain a weblogRequest object
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
@@ -78,37 +79,12 @@ public class PageModel implements Model {
             throw new RollerException("weblogRequest is not a WeblogPageRequest."+
                     "  PageModel only supports page requests.");
         }
-        
-        // custom request parameters
-        this.requestParameters = (Map)initData.get("requestParameters");
-        
-        // extract planet object
-        planet = pageRequest.getPlanet();
-        
-        // extract group object
-        group = pageRequest.getGroup();
-    }
-    
-    
-    /**
-     * Get planet being displayed.
-     */
-    public PlanetData getPlanet() {
-        return planet;
-    }
-    
-    
-    /**
-     * Get group being displayed.
-     */
-    public PlanetGroupData getGroup() {
-        return group;
     }
     
     
     public Pager getPager() {
         
-        String pagerUrl = URLUtilities.getPlanetGroupURL(planet.getHandle(), pageRequest.getGroupHandle());
+        String pagerUrl = URLUtilities.getPlanetGroupURL(getPlanet().getHandle(), pageRequest.getGroupHandle());
         
         return new PlanetEntriesPager(
                 null,
@@ -117,18 +93,6 @@ public class PageModel implements Model {
                 0,
                 0,
                 30);
-    }
-    
-    
-    /**
-     * Get request parameter by name.
-     */
-    public String getRequestParameter(String paramName) {
-        String[] values = (String[])requestParameters.get(paramName);
-        if (values != null && values.length > 0) {
-            return values[0];
-        }
-        return null;
     }
     
 }

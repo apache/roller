@@ -37,15 +37,15 @@ import org.apache.roller.planet.pojos.Template;
 import org.apache.roller.planet.ui.rendering.Renderer;
 import org.apache.roller.planet.ui.rendering.RendererManager;
 import org.apache.roller.planet.ui.rendering.model.ModelLoader;
-import org.apache.roller.planet.ui.rendering.util.PlanetGroupOpmlRequest;
+import org.apache.roller.planet.ui.rendering.util.PlanetGroupPageRequest;
 
 
 /**
- * Responsible for rendering planet opml files.
+ * Responsible for rendering application homepage.
  */
-public class OpmlServlet extends HttpServlet {
+public class HomepageServlet extends HttpServlet {
 
-    private static Log log = LogFactory.getLog(OpmlServlet.class);
+    private static Log log = LogFactory.getLog(HomepageServlet.class);
 
 
     /**
@@ -55,7 +55,7 @@ public class OpmlServlet extends HttpServlet {
 
         super.init(servletConfig);
 
-        log.info("Initializing OpmlServlet");
+        log.info("Initializing HomepageServlet");
     }
 
 
@@ -66,51 +66,23 @@ public class OpmlServlet extends HttpServlet {
             throws ServletException, IOException {
 
         log.debug("Entering");
-        
-        PlanetData planet = null;
-        PlanetGroupData group = null;
-
-        PlanetGroupOpmlRequest opmlRequest = null;
-        try {
-            // parse the incoming request and extract the relevant data
-            opmlRequest = new PlanetGroupOpmlRequest(request);
-
-            planet = opmlRequest.getPlanet();
-            if(planet == null) {
-                throw new RollerException("unable to lookup planet: "+
-                        opmlRequest.getPlanetHandle());
-            }
-            
-            group = opmlRequest.getGroup();
-            if(group == null) {
-                throw new RollerException("unable to lookup group: "+
-                        opmlRequest.getGroupHandle());
-            }
-
-        } catch(Exception e) {
-            // invalid feed request format or weblog doesn't exist
-            log.debug("error creating planet page request", e);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
 
         // set content type
-        response.setContentType("application/xml; charset=utf-8");
+        response.setContentType("text/html; charset=utf-8");
         
         
-        // looks like we need to render content
+        // initialize model
         HashMap model = new HashMap();
         try {
             // populate the rendering model
             Map initData = new HashMap();
-            initData.put("planetRequest", opmlRequest);
             
-            // Load models for feeds
-            String opmlModels = PlanetConfig.getProperty("rendering.opmlModels");
-            ModelLoader.loadModels(opmlModels, model, initData, true);
+            // Load models for pages
+            String models = PlanetConfig.getProperty("rendering.homepageModels");
+            ModelLoader.loadModels(models, model, initData, true);
 
         } catch (RollerException ex) {
-            log.error("ERROR loading model for page", ex);
+            log.error("ERROR loading model", ex);
 
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -122,8 +94,13 @@ public class OpmlServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("opml.vm", null, "velocity");
+            
+            // what template are we going to render?
+            Template template = new StaticTemplate("home.vm", null, "velocity");
+            
+            // get the Renderer
             renderer = RendererManager.getRenderer(template);
+            
         } catch(Exception e) {
             // nobody wants to render my content :(
 
@@ -131,14 +108,15 @@ public class OpmlServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
-        // render content.  use default size of about 24K for a standard page
+        
+        
+        // render content
         try {
             log.debug("Doing rendering");
             renderer.render(model, response.getWriter());
         } catch(Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for opml.vm", e);
+            log.error("Error during rendering", e);
 
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

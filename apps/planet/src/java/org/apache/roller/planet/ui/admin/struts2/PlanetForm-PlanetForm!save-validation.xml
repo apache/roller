@@ -35,4 +35,15 @@
             <message key="PlanetForm.error.titleSize">title must be less than 255 characters</message>
         </field-validator>
     </field>
+    
+    <!-- validate the planet description field -->
+    <field name="planet.description">
+        
+        <!-- description has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <param name="trim">true</param>
+            <message key="PlanetForm.error.descriptionSize">description must be less than 255 characters</message>
+        </field-validator>
+    </field>
 </validators>

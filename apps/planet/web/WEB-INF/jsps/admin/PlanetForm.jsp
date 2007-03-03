@@ -50,6 +50,7 @@
                 <s:hidden name="planetid" />
                 <s:textfield label="%{getText('PlanetForm.handle')}" name="planet.handle" size="40" />
                 <s:textfield label="%{getText('PlanetForm.title')}" name="planet.title" size="40" />
+                <s:textarea label="%{getText('PlanetForm.description')}" name="planet.description" cols="47" rows="3" />
                 <s:submit />
             </s:form>
             
@@ -60,7 +61,6 @@
                 
                 <table class="data">
                     <tr>
-                        <th><s:text name="PlanetForm.groupHandle" /></th>
                         <th><s:text name="PlanetForm.groupTitle" /></th>
                         <th><s:text name="PlanetForm.groupURL" /></th>
                         <th><s:text name="PlanetForm.action" /></th>
@@ -72,8 +72,7 @@
                         </s:url>
                         <tr class='<s:if test="#status.even">evenRow</s:if><s:else>oddRow</s:else>'>
                             <td><s:a href="%{editgroupurl}"><s:property value="title"/></s:a></td>
-                            <td><s:property value="handle"/></td>
-                            <td><img src='<s:url value="/planet-ui/images/world_link.png"/>' /><a href='<s:url value="/%{planet.handle}/group/%{handle}" />'><s:text name="PlanetForm.link" /></a></td>
+                            <td><img src='<s:url value="/planet-ui/images/world_link.png"/>' /><a href='<s:url value="/%{planet.handle}/group/%{handle}/" />'><s:text name="PlanetForm.link" /></a></td>
                             <td><img src='<s:url value="/planet-ui/images/delete.png"/>' /><a href="javascript: void(0);" onclick="confirmGroupDelete('<s:property value="id"/>', '<s:property value="handle"/>');"><s:text name="PlanetForm.deleteGroup"/></a></td>
                         </tr>
                     </s:iterator>

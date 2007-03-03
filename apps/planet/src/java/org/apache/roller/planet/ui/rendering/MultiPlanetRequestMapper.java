@@ -35,7 +35,7 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 
 
 /**
- * Planets's multi-planet request mapper.
+ * Multi-planet request mapper.
  *
  * This request mapper is used to map all planet specific urls of the form
  * /<planet handle>/* to the appropriate servlet for handling the actual
@@ -153,10 +153,12 @@ public class MultiPlanetRequestMapper implements RequestMapper {
         // special handling for trailing slash issue
         // we need this because by http standards the urls /foo and /foo/ are
         // supposed to be considered different, so we must enforce that
-        if(planetContext == null && !trailingSlash) {
-            // this means someone referred to a planet index page with the 
-            // shortest form of url /<planet> and we need to do a redirect 
-            // to /<planet>/
+        if( (planetContext == null && !trailingSlash) ||
+            (groupHandle != null && groupContext == null && !trailingSlash) ) {
+            
+            // this means someone referred to a planet or group index page 
+            // with the shortest form of url /<planet> or /<planet>/group/<group>
+            // and we need to add a slash to the url and redirect
             String redirectUrl = request.getRequestURI() + "/";
             if(request.getQueryString() != null) {
                 redirectUrl += "?"+request.getQueryString();
@@ -165,6 +167,12 @@ public class MultiPlanetRequestMapper implements RequestMapper {
             response.sendRedirect(redirectUrl);
             return true;
             
+        } else if(groupContext != null && trailingSlash) {
+            // this means that someone has accessed a url and included a 
+            // trailing slash, like /<planet>/group/<group>/feed/atom/ which is
+            // not supported, so we need to offer up a 404 Not Found
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return true;
         }
         
         // calculate forward url

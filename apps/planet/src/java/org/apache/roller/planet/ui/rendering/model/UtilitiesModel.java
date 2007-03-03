@@ -37,6 +37,7 @@ import org.apache.roller.util.DateUtil;
 import org.apache.roller.planet.util.RegexUtil;
 import org.apache.roller.planet.util.Utilities;
 
+
 /**
  * Model which provides access to a set of general utilities.
  */
@@ -87,7 +88,6 @@ public class UtilitiesModel implements Model {
     private static final Pattern QUOTE_PATTERN = 
             Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
     
-    private HttpServletRequest request = null;
     private TimeZone tz = null;
     
     
@@ -99,9 +99,6 @@ public class UtilitiesModel implements Model {
     
     /** Init page model based on request */
     public void init(Map initData) throws RollerException {
-        
-        // extract request object
-        this.request = (HttpServletRequest) initData.get("request");
     }
     
         

@@ -82,10 +82,6 @@ public class PageServlet extends HttpServlet {
             }
             
             group = pageRequest.getGroup();
-            if(group == null) {
-                throw new RollerException("unable to lookup group: "+
-                        pageRequest.getGroupHandle());
-            }
 
         } catch(Exception e) {
             // invalid feed request format or weblog doesn't exist
@@ -103,10 +99,9 @@ public class PageServlet extends HttpServlet {
         try {
             // populate the rendering model
             Map initData = new HashMap();
-            initData.put("request", request);
             initData.put("planetRequest", pageRequest);
             
-            // Load models for feeds
+            // Load models for pages
             String pageModels = PlanetConfig.getProperty("rendering.pageModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
 
@@ -123,8 +118,20 @@ public class PageServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("group.vm", null, "velocity");
+            
+            // what template are we going to render?
+            Template template = null;
+            if(group == null) {
+                // planet homepage
+                template = new StaticTemplate("planet.vm", null, "velocity");
+            } else {
+                // group homepage
+                template = new StaticTemplate("group.vm", null, "velocity");
+            }
+            
+            // get the Renderer
             renderer = RendererManager.getRenderer(template);
+            
         } catch(Exception e) {
             // nobody wants to render my content :(
 
@@ -132,14 +139,15 @@ public class PageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
-        // render content.  use default size of about 24K for a standard page
+        
+        
+        // render content
         try {
             log.debug("Doing rendering");
             renderer.render(model, response.getWriter());
         } catch(Exception e) {
             // bummer, error during rendering
-            log.error("Error during rendering for group.vm", e);
+            log.error("Error during rendering", e);
 
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

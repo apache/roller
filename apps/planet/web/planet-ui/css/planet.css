@@ -72,6 +72,10 @@ div.menubar {
     text-align: right;
 }
 
+td.tdLabel {
+    vertical-align:top;
+}
+
 table.form {
     width: 80%
 }
