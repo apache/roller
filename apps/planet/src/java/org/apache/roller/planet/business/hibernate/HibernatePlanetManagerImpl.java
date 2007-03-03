@@ -440,13 +440,13 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             cacheDir = new File(cacheDirName);
             if (!cacheDir.exists()) cacheDir.mkdirs();
         } catch (Exception e) {
-            log.error("Unable to create planet cache directory");
+            log.error("Unable to create planet cache directory: " + cacheDir.getPath(), e);
             return;
         }
         
         // abort if cache dir is not writable
         if (!cacheDir.canWrite()) {
-            log.error("Planet cache directory is not writable");
+            log.error("Planet cache directory is not writable: " + cacheDir.getPath());
             return;
         }
         
