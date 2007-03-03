@@ -50,21 +50,35 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
+    
+    <servlet>
+        <servlet-name>HomepageServlet</servlet-name>
+        <servlet-class>org.apache.roller.planet.ui.rendering.servlets.HomepageServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+    
     <servlet>
         <servlet-name>FeedServlet</servlet-name>
         <servlet-class>org.apache.roller.planet.ui.rendering.servlets.FeedServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
+    
     <servlet>
         <servlet-name>PageServlet</servlet-name>
         <servlet-class>org.apache.roller.planet.ui.rendering.servlets.PageServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
+    
     <servlet>
         <servlet-name>OpmlServlet</servlet-name>
         <servlet-class>org.apache.roller.planet.ui.rendering.servlets.OpmlServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>HomepageServlet</servlet-name>
+        <url-pattern>/planet-ui/rendering/homepage</url-pattern>
+    </servlet-mapping>
     
     <servlet-mapping>
         <servlet-name>FeedServlet</servlet-name>
@@ -81,9 +95,11 @@
         <url-pattern>/planet-ui/rendering/opml/*</url-pattern>
     </servlet-mapping>
     
+    
     <listener>
         <listener-class>org.apache.roller.planet.ui.core.PlanetContext</listener-class>
     </listener>
+    
     
     <resource-ref>
             <res-ref-name>jdbc/rollerdb</res-ref-name>

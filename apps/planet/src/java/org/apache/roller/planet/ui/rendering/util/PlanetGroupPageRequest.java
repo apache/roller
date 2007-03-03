@@ -50,7 +50,7 @@ public class PlanetGroupPageRequest extends PlanetGroupRequest {
             throws InvalidRequestException {
         
         // let our parent take care of their business first
-        // parent determines weblog handle and locale if specified
+        // parent determines planet handle
         super(request);
         
         // we only want the path info left over from after our parents parsing

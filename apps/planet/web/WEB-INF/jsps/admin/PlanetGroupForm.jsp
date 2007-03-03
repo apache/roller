@@ -54,7 +54,7 @@
                 <s:hidden name="groupid" value="%{group.id}" />
                 <s:textfield label="%{getText('PlanetGroupForm.handle')}" name="group.handle" size="40" />
                 <s:textfield label="%{getText('PlanetGroupForm.title')}" name="group.title" size="40" />
-                <s:textfield label="%{getText('PlanetGroupForm.description')}" name="group.description" size="40" />
+                <s:textarea label="%{getText('PlanetGroupForm.description')}" name="group.description" cols="47" rows="3" />
                 <s:textfield label="%{getText('PlanetGroupForm.maxPageEntries')}" name="group.maxPageEntries" size="4" />
                 <s:textfield label="%{getText('PlanetGroupForm.maxFeedEntries')}" name="group.maxFeedEntries" size="4" />
                 <s:submit />
