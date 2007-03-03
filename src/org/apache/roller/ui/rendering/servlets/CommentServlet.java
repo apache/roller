@@ -626,8 +626,8 @@ public class CommentServlet extends HttpServlet {
             msg.append("\n\n");
             
             // Build link back to comment
-            StringBuffer commentURL = new StringBuffer(rootURL);
-            commentURL.append(entry.getPermaLink());
+            StringBuffer commentURL = new StringBuffer();
+            commentURL.append(entry.getPermalink());
             commentURL.append("#comments");
             msg.append(commentURL.toString());
             
