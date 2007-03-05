@@ -77,8 +77,13 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         strategy.store(planet);
     }
     
-    public void saveGroup(PlanetGroupData group) 
-        throws RollerException {
+    public void saveGroup(PlanetGroupData group)  throws RollerException {
+        if (group.getId() == null || getGroupById(group.getId()) == null) {
+            // If new group, make sure hadnle is unique within Planet
+            if (getGroup(group.getPlanet(), group.getHandle()) != null) {
+                throw new RollerException("ERROR group handle already exists in Planet");
+            }
+        }
         strategy.store(group);
     }
         
@@ -254,8 +259,6 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             criteria.add(Expression.eq("handle", handle));
             if(planet != null) {
                 criteria.add(Expression.eq("planet", planet));
-            } else {
-                criteria.add(Expression.isNull("planet"));
             }
             return (PlanetGroupData) criteria.uniqueResult();
         } catch (HibernateException e) {
@@ -277,8 +280,6 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             Criteria criteria = session.createCriteria(PlanetGroupData.class);
             if(planet != null) {
                 criteria.add(Expression.eq("planet", planet));
-            } else {
-                criteria.add(Expression.isNull("planet"));
             }
             return criteria.list();
         } catch (HibernateException e) {

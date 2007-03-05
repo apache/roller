@@ -31,6 +31,7 @@ import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
@@ -41,8 +42,17 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
  */
 public class PlanetManagerTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(PlanetManagerTest.class);
+    public static Log log = LogFactory.getLog(PlanetManagerTest.class);   
+    private PlanetData testPlanet = null;
     
+        
+    protected void setUp() throws Exception {
+        testPlanet = TestUtils.setupPlanet("groupTestPlanet");
+    }
+        
+    protected void tearDown() throws Exception {
+        TestUtils.teardownPlanet(testPlanet.getId());
+    }
     
     public void testSubscriptionStorage() throws Exception {
         
@@ -63,6 +73,7 @@ public class PlanetManagerTest extends TestCase {
             group.setDescription("test_group_desc");
             group.setHandle("test_handle");
             group.setTitle("test_title");
+            group.setPlanet(testPlanet);
             planet.saveGroup(group);
             
             TestUtils.endSession(true);
@@ -213,6 +224,7 @@ public class PlanetManagerTest extends TestCase {
             group.setDescription("test_group_desc");
             group.setHandle("test_handle");
             group.setTitle("test_title");
+            group.setPlanet(testPlanet);
             planet.saveGroup(group);
             
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
@@ -259,6 +271,7 @@ public class PlanetManagerTest extends TestCase {
                 group.setDescription("test_group_desc");
                 group.setHandle("test_handle");
                 group.setTitle("test_title");
+                group.setPlanet(testPlanet);
                 planet.saveGroup(group);
                 
                 PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
