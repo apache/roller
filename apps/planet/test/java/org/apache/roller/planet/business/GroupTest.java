@@ -95,6 +95,7 @@ public class GroupTest extends TestCase {
         testGroup2.setDescription("group2");
         testGroup2.setHandle("test_group2");
         testGroup2.setTitle("test_group2");
+        testGroup2.setPlanet(testPlanet);
         
         PlanetGroupData group = null;
         List groups = null;
@@ -104,31 +105,27 @@ public class GroupTest extends TestCase {
         mgr.saveGroup(testGroup2);
         TestUtils.endSession(true);
         
-        // lookup groups not in a planet
+        // lookup all grous
         groups = mgr.getGroups();
         assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group2".equals(((PlanetGroupData)groups.get(0)).getHandle()));
+        assertEquals(2, groups.size());
         
         // lookup groups in test planet
         groups = mgr.getGroups(testPlanet);
         assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group1".equals(((PlanetGroupData)groups.get(0)).getHandle()));
+        assertEquals(2, groups.size());
         
-        // lookup group handles not in a planet
+        // lookup all group handles
         groups = null;
         groups = mgr.getGroupHandles();
         assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group2".equals(((String)groups.get(0))));
+        assertEquals(2, groups.size());
         
         // lookup group handles in test planet
         groups = null;
         groups = mgr.getGroupHandles(testPlanet);
         assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group1".equals(((String)groups.get(0))));
+        assertEquals(2, groups.size());
         
         // lookup group by id
         group = null;

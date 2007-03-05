@@ -173,7 +173,7 @@ public class DatamapperPlanetManagerImpl extends AbstractManagerImpl implements 
 
     public List getGroups() throws RollerException {
         return (List) strategy.newQuery(PlanetGroupData.class, 
-            "PlanetGroupData.getWithPlanetNull").execute(); 
+            "PlanetGroupData.getAll").execute(); 
     }
 
     public List getGroupHandles() throws RollerException {

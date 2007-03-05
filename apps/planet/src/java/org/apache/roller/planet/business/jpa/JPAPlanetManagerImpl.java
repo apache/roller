@@ -181,7 +181,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public List getGroups() throws RollerException {
         return strategy.getNamedQuery(
-                "PlanetGroupData.getWithPlanetNull").getResultList();
+                "PlanetGroupData.getAll").getResultList();
     }
     
     public List getGroupHandles() throws RollerException {

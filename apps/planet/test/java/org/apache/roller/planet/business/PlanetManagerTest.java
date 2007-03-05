@@ -43,22 +43,11 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 public class PlanetManagerTest extends TestCase {
     
     public static Log log = LogFactory.getLog(PlanetManagerTest.class);   
-    private PlanetData testPlanet = null;
-    private PlanetData testPlanet = null;
-    
+    private PlanetData testPlanet = null;    
         
     protected void setUp() throws Exception {
         testPlanet = TestUtils.setupPlanet("groupTestPlanet");
-    }
-        
-    protected void tearDown() throws Exception {
-        TestUtils.teardownPlanet(testPlanet.getId());
-    }
-    
-    protected void setUp() throws Exception {
-        testPlanet = TestUtils.setupPlanet("groupTestPlanet");
-    }
-    
+    }    
     
     protected void tearDown() throws Exception {
         TestUtils.teardownPlanet(testPlanet.getId());
