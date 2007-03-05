@@ -15,5 +15,6 @@ rem limitations under the License.  For additional information regarding
 rem copyright in this work, please see the NOTICE file in the top level
 rem directory of this distribution.
 
-set JAVA_OPTS=-Dhsqldb_database=%CATALINA_HOME%\blogdata\rollerdb -Dhsqldb_port=7475 -DrollerPageDir=%CATALINA_HOME%\wikidata -DrollerStorageDir=%CATALINA_HOME%\wikiattachments
+set JAVA_OPTS=-Dderby.system.home=%CATALINA_HOME%\blogdata -Dderby.drda.portNumber=7475 -DrollerPageDir=%CATALINA_HOME%\wikidata -DrollerStorageDir=%CATALINA_HOME%\wikiattachments
+
 set CATALINA_TMPDIR=\temp
