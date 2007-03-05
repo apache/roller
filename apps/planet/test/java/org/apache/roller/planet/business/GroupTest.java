@@ -84,76 +84,64 @@ public class GroupTest extends TestCase {
     public void testGroupLookups() throws Exception {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
-        PlanetGroupData testGroup1 = new PlanetGroupData();
-        testGroup1.setDescription("group1");
-        testGroup1.setHandle("test_group1");
-        testGroup1.setTitle("test_group1");
-        testGroup1.setPlanet(testPlanet);
-        
-        PlanetGroupData testGroup2 = new PlanetGroupData();
-        testGroup2.setDescription("group2");
-        testGroup2.setHandle("test_group2");
-        testGroup2.setTitle("test_group2");
-        
-        PlanetGroupData group = null;
-        List groups = null;
-        
-        // add
-        mgr.saveGroup(testGroup1);
-        mgr.saveGroup(testGroup2);
-        TestUtils.endSession(true);
-        
-        // lookup groups not in a planet
-        groups = mgr.getGroups();
-        assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group2".equals(((PlanetGroupData)groups.get(0)).getHandle()));
-        
-        // lookup groups in test planet
-        groups = mgr.getGroups(testPlanet);
-        assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group1".equals(((PlanetGroupData)groups.get(0)).getHandle()));
-        
-        // lookup group handles not in a planet
-        groups = null;
-        groups = mgr.getGroupHandles();
-        assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group2".equals(((String)groups.get(0))));
-        
-        // lookup group handles in test planet
-        groups = null;
-        groups = mgr.getGroupHandles(testPlanet);
-        assertNotNull(groups);
-        assertEquals(1, groups.size());
-        assertTrue("test_group1".equals(((String)groups.get(0))));
-        
-        // lookup group by id
-        group = null;
-        group = mgr.getGroupById(testGroup1.getId());
-        assertNotNull(group);
-        assertEquals("test_group1", group.getHandle());
-        
-        // lookup group not in a planet by handle
-        group = null;
-        group = mgr.getGroup(testGroup2.getHandle());
-        assertNotNull(group);
-        assertEquals("test_group2", group.getHandle());
-        
-        // lookup group in test planet by handle
-        group = null;
-        group = mgr.getGroup(testPlanet, testGroup1.getHandle());
-        assertNotNull(group);
-        assertEquals("test_group1", group.getHandle());
-        
-        // cleanup
-        testGroup1 = mgr.getGroupById(testGroup1.getId());
-        testGroup2 = mgr.getGroupById(testGroup2.getId());
-        mgr.deleteGroup(testGroup1);
-        mgr.deleteGroup(testGroup2);
-        TestUtils.endSession(true);
+        PlanetGroupData testGroup1 = null;
+        PlanetGroupData testGroup2 = null;
+        try {    
+            testGroup1 = new PlanetGroupData();
+            testGroup1.setDescription("group1");
+            testGroup1.setHandle("test_group1");
+            testGroup1.setTitle("test_group1");
+            testGroup1.setPlanet(testPlanet);
+
+            testGroup2 = new PlanetGroupData();
+            testGroup2.setDescription("group2");
+            testGroup2.setHandle("test_group2");
+            testGroup2.setTitle("test_group2");
+            testGroup2.setPlanet(testPlanet);
+
+            PlanetGroupData group = null;
+            List groups = null;
+
+            // add
+            mgr.saveGroup(testGroup1);
+            mgr.saveGroup(testGroup2);
+            TestUtils.endSession(true);
+
+            // lookup all groups
+            groups = mgr.getGroups();
+            assertNotNull(groups);
+            assertEquals(2, groups.size());
+
+            // lookup groups in test planet
+            groups = mgr.getGroups(testPlanet);
+            assertNotNull(groups);
+            assertEquals(2, groups.size());
+
+            // lookup group handles in test planet
+            groups = null;
+            groups = mgr.getGroupHandles(testPlanet);
+            assertNotNull(groups);
+            assertEquals(2, groups.size());
+
+            // lookup group by id
+            group = null;
+            group = mgr.getGroupById(testGroup1.getId());
+            assertNotNull(group);
+            assertEquals("test_group1", group.getHandle());
+
+            // lookup group in test planet by handle
+            group = null;
+            group = mgr.getGroup(testPlanet, testGroup1.getHandle());
+            assertNotNull(group);
+            assertEquals("test_group1", group.getHandle());
+
+        } finally {
+            testGroup1 = mgr.getGroupById(testGroup1.getId());
+            testGroup2 = mgr.getGroupById(testGroup2.getId());
+            mgr.deleteGroup(testGroup1);
+            mgr.deleteGroup(testGroup2);
+            TestUtils.endSession(true);
+        }
     }
     
 }
