@@ -323,8 +323,7 @@ public class WeblogEntryPageModel extends BasePageModel
     
     public String getPermaLink() throws RollerException
     {
-        String context = RollerRuntimeConfig.getAbsoluteContextURL();
-        return context + getWeblogEntry().getPermaLink();
+        return getWeblogEntry().getPermalink();
     }
     
     public static String makeSelect(String word, List words)
