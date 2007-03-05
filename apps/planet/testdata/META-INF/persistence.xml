@@ -1,9 +1,9 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     
     <persistence-unit name ="PlanetPU" transaction-type = "RESOURCE_LOCAL">        
-        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
-        <!--
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <!--
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         -->
         <mapping-file>org/apache/roller/planet/pojos/PropertyData.orm.xml</mapping-file>

@@ -29,14 +29,13 @@ import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
 
 /**
- * Model which provides information needed to render a weblog page.
+ * Model which provides information common to a planet group request
  */
 public class PlanetGroupModel implements Model {
     
     private static Log log = LogFactory.getLog(PlanetGroupModel.class);
     
     private PlanetGroupRequest planetGroupRequest = null;
-    private Map requestParameters = null;
     private PlanetData planet = null;
     private PlanetGroupData group = null;
     
@@ -61,23 +60,20 @@ public class PlanetGroupModel implements Model {
      */
     public void init(Map initData) throws RollerException {
         
-        // we expect the init data to contain a weblogRequest object
+        // we expect the init data to contain a planetRequest object
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
             throw new RollerException("expected planetRequest from init data");
         }
         
-        // PageModel only works on page requests, so cast planetRequest
-        // into a PlanetRequest and if it fails then throw exception
+        // only works on planet group requests, so cast planetRequest
+        // into a PlanetGroupRequest and if it fails then throw exception
         if(planetRequest instanceof PlanetGroupRequest) {
             this.planetGroupRequest = (PlanetGroupRequest) planetRequest;
         } else {
-            throw new RollerException("weblogRequest is not a WeblogPageRequest."+
-                    "  PageModel only supports page requests.");
+            throw new RollerException("planetRequest is not a PlanetGroupRequest."+
+                    "  PlanetGroupModel only supports planet group requests.");
         }
-        
-        // custom request parameters
-        this.requestParameters = (Map)initData.get("requestParameters");
         
         // extract planet object
         planet = planetGroupRequest.getPlanet();
@@ -100,18 +96,6 @@ public class PlanetGroupModel implements Model {
      */
     public PlanetGroupData getGroup() {
         return group;
-    }
-    
-    
-    /**
-     * Get request parameter by name.
-     */
-    public String getRequestParameter(String paramName) {
-        String[] values = (String[])requestParameters.get(paramName);
-        if (values != null && values.length > 0) {
-            return values[0];
-        }
-        return null;
     }
     
 }

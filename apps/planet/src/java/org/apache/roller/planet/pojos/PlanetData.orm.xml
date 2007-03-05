@@ -12,7 +12,6 @@
     <entity metadata-complete="true" name="PlanetData"
             class="org.apache.roller.planet.pojos.PlanetData">
         <table name="rag_planet"/>
-        <table-generator name="PLANET-TABLE-GENERATOR" table="planet_id_table" pk-column-name="pk" value-column-name="value" pk-column-value="1"/>
         <named-query name="PlanetData.getAll">
             <query>SELECT p FROM PlanetData p</query>
         </named-query>
@@ -25,6 +24,9 @@
             </id>
             <basic name="title">
                 <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="description">
+                <column name="description" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="handle">
                 <column name="handle" insertable="true" updatable="true" unique="true"/>

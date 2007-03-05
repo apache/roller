@@ -31,8 +31,9 @@ import org.apache.roller.util.UUIDGenerator;
 public class PlanetData {
     
     private String id = UUIDGenerator.generateUUID();
-    private String title = null;
     private String handle = null;
+    private String title = null;
+    private String description = null;
     private Set groups = new HashSet();
     
     
@@ -58,6 +59,17 @@ public class PlanetData {
     }
 
     /**
+     * @hibernate.property column="handle" non-null="true" unique="true"
+     */
+    public String getHandle() {
+        return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
+    }
+    
+    /**
      * @hibernate.property column="title" non-null="true" unique="false"
      */
     public String getTitle() {
@@ -69,16 +81,16 @@ public class PlanetData {
     }
 
     /**
-     * @hibernate.property column="handle" non-null="true" unique="true"
+     * @hibernate.property column="description" non-null="false" unique="false"
      */
-    public String getHandle() {
-        return handle;
+    public String getDescription() {
+        return description;
     }
 
-    public void setHandle(String handle) {
-        this.handle = handle;
+    public void setDescription(String description) {
+        this.description = description;
     }
-
+    
     /** 
      * @hibernate.set lazy="true" invert="true" cascade="all"
      * @hibernate.collection-key column="planet_id"

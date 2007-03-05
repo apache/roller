@@ -30,7 +30,7 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 /**
  * Represents a request to a planet group.
  * 
- * /<planetHandle>/<groupHandle>[/extra/path/info]
+ * /<planetHandle>/group/<groupHandle>[/extra/path/info]
  *
  */
 public class PlanetGroupRequest extends PlanetRequest {
@@ -72,9 +72,6 @@ public class PlanetGroupRequest extends PlanetRequest {
                 this.pathInfo = urlPath[1];
             }
             
-        } else {
-            throw new InvalidRequestException("invalid feed path info, "+
-                    request.getRequestURL());
         }
         
         if(log.isDebugEnabled()) {

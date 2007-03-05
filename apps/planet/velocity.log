@@ -1,0 +1,44 @@
+Mon Mar 05 10:36:41 EST 2007  [debug] AvalonLogSystem initialized using logfile 'velocity.log'
+Mon Mar 05 10:36:41 EST 2007   [info] ************************************************************** 
+Mon Mar 05 10:36:41 EST 2007   [info] Starting Jakarta Velocity v1.4
+Mon Mar 05 10:36:41 EST 2007   [info] RuntimeInstance initializing.
+Mon Mar 05 10:36:41 EST 2007   [info] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+Mon Mar 05 10:36:41 EST 2007   [info] Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Mon Mar 05 10:36:41 EST 2007   [info] Using logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Mon Mar 05 10:36:41 EST 2007   [info] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+Mon Mar 05 10:36:41 EST 2007   [info] Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ClasspathResourceLoader : initialization starting.
+Mon Mar 05 10:36:41 EST 2007   [info] ClasspathResourceLoader : initialization complete.
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+Mon Mar 05 10:36:41 EST 2007   [info] Default ResourceManager initialization complete.
+Mon Mar 05 10:36:41 EST 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+Mon Mar 05 10:36:41 EST 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+Mon Mar 05 10:36:41 EST 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+Mon Mar 05 10:36:41 EST 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+Mon Mar 05 10:36:41 EST 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+Mon Mar 05 10:36:41 EST 2007   [info] Created: 20 parsers.
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : initialization starting.
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : adding VMs from VM library template : VM_global_library.vm
+Mon Mar 05 10:36:41 EST 2007  [error] ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro :  VM library template macro registration complete.
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : allowInline = true : VMs can be defined inline in templates
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : messages on  : VM system will output logging messages
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : autoload off  : VM system will not automatically reload global library macros
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : initialization complete.
+Mon Mar 05 10:36:41 EST 2007   [info] Velocity successfully started.
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : added new VM : #addColumnNull( table column type ) : source = macros.vm
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : added new VM : #addColumnNotNull( table column type default ) : source = macros.vm
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : added new VM : #dropNotNullFromTableId( table ) : source = macros.vm
+Mon Mar 05 10:36:41 EST 2007   [info] Velocimacro : added new VM : #longtext( size ) : source = macros.vm
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Mar 05 10:36:41 EST 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
