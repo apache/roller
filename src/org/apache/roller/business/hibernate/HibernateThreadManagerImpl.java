@@ -98,7 +98,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
                     "and :leaseends < current_timestamp()";
             Query query = session.createQuery(queryHQL);
             query.setString("client", task.getClientId());
-            query.setString("timeleased", ""+task.getLeaseTime());
+            query.setInteger("timeleased", task.getLeaseTime());
             query.setString("name", task.getName());
             query.setTimestamp("timeacquired", taskLock.getTimeAquired());
             query.setTimestamp("leaseends", new Date(leaseExpireTime));
@@ -145,7 +145,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             String queryHQL = "update TaskLockData set timeLeased=:interval "+
                     "where name=:name and client=:client";
             Query query = session.createQuery(queryHQL);
-            query.setString("interval", ""+task.getInterval());
+            query.setInteger("interval", task.getInterval());
             query.setString("name", task.getName());
             query.setString("client", task.getClientId());
             int result = query.executeUpdate();
