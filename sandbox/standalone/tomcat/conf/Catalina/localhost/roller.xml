@@ -2,8 +2,8 @@
   <Logger className="org.apache.catalina.logger.FileLogger" prefix="localhost_roller" suffix=".log" timestamp="true" verbosity="4"/>
   <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource" 
    maxActive="40" maxIdle="15" maxWait="10000" logAbandoned="true" 
-   username="sa" password="" driverClassName="org.hsqldb.jdbcDriver" 
-   url="jdbc:hsqldb:hsql://localhost:7475" />
+   username="APP" password="APP" driverClassName="org.apache.derby.jdbc.ClientDriver" 
+   url="jdbc:derby://localhost:7475/rollerdb" />
   <Resource name="mail/Session" auth="Container" type="javax.mail.Session" mail.smtp.host="localhost"/>
 </Context> 
 

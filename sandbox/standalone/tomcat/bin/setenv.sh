@@ -16,5 +16,6 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 
-JAVA_OPTS="-Dhsqldb_database=${CATALINA_HOME}/blogdata/rollerdb -Dhsqldb_port=7475 -DrollerPageDir=${CATALINA_HOME}/wikidata -DrollerStorageDir=${CATALINA_HOME}/wikiattachments"
+JAVA_OPTS="-Dderby.system.home=${CATALINA_HOME}/blogdata -Dderby.drda.portNumber=7475 -DrollerPageDir=${CATALINA_HOME}/wikidata -DrollerStorageDir=${CATALINA_HOME}/wikiattachments"
+
 export JAVA_OPTS
