@@ -29,14 +29,15 @@
   </div>
 
   <table class="groupListings">
+    #foreach($group in $model.planet.groups)
     <tr>
-      #foreach($group in $model.planet.groups)
       <td class="planetGroup">
          <h3 class="groupTitle"><a href="$url.group($group.handle)">$group.title</a></h3>
          <p class="groupDescription">$group.description</p>
+         <br/>
       </td>
-      #end
     </tr>
+    #end
   </table>
 
   </body>
