@@ -87,7 +87,8 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     public void removeAllAutoPings() 
             throws RollerException {
-        strategy.removeAll(AutoPingData.class);
+        Query q = strategy.getNamedUpdate("AutoPingData.getAll");
+        removeAutoPings(q.getResultList());
     }
 
     public void queueApplicableAutoPings(WeblogEntryData changedWeblogEntry)

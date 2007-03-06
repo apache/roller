@@ -147,6 +147,7 @@ public class CommentTest extends TestCase {
         List comments = null;
         
         // we need some comments to play with
+        testEntry = TestUtils.getManagedWeblogEntry(testEntry);
         CommentData comment1 = TestUtils.setupComment("comment1", testEntry);
         CommentData comment2 = TestUtils.setupComment("comment2", testEntry);
         CommentData comment3 = TestUtils.setupComment("comment3", testEntry);
@@ -159,6 +160,7 @@ public class CommentTest extends TestCase {
         assertEquals(3, comments.size());
         
         // get all comments for entry
+        testEntry = TestUtils.getManagedWeblogEntry(testEntry);
         comments = null;
         comments = mgr.getComments(null, testEntry, null, null, null, null, false, 0, -1);
         assertNotNull(comments);
@@ -246,9 +248,10 @@ public class CommentTest extends TestCase {
                 umgr.removeWebsite(TestUtils.getManagedWebsite(weblog));
                 TestUtils.endSession(true);
             } catch (RollerException e) {
-                PrintWriter pw = new PrintWriter(new StringWriter()); 
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw); 
                 e.printStackTrace(pw);
-                log.info(pw.toString());
+                log.info(sw.toString());
                 ex = e;
             }
             assertNull(ex);
@@ -256,9 +259,6 @@ public class CommentTest extends TestCase {
             // and delete test user as well
             umgr.removeUser(TestUtils.getManagedUser(user));
             
-        } catch(Throwable t) {
-            log.error("Exception running test", t);
-            throw (Exception) t;
         } finally {
             TestUtils.endSession(true);
         }

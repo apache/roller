@@ -197,6 +197,7 @@ public class PingsTest extends TestCase {
         TestUtils.endSession(true);
         
         // create custom ping
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testCustomPing.setWebsite(testWeblog);
         mgr.savePingTarget(testCustomPing);
         String customId = testCustomPing.getId();
@@ -214,6 +215,7 @@ public class PingsTest extends TestCase {
         assertEquals(1, commonPings.size());
         
         // lookup all custom pings for weblog
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List customPings = mgr.getCustomPingTargets(testWeblog);
         assertNotNull(customPings);
         assertEquals(1, customPings.size());
@@ -290,6 +292,7 @@ public class PingsTest extends TestCase {
     public void testPingTargetRemovals() throws Exception {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetManager ptmgr = RollerFactory.getRoller().getPingTargetManager();
         AutoPingData testAutoPing = null;
         
         // create ping target to use for tests
@@ -297,54 +300,63 @@ public class PingsTest extends TestCase {
         PingTargetData pingTarget2 = TestUtils.setupPingTarget("blahPing", "http://blah/null");
         PingTargetData pingTarget3 = TestUtils.setupPingTarget("gahPing", "http://gah/null");
         
-        // create auto pings for test
-        AutoPingData autoPing = TestUtils.setupAutoPing(pingTarget, testWeblog);
-        AutoPingData autoPing2 = TestUtils.setupAutoPing(pingTarget2, testWeblog);
-        AutoPingData autoPing3 = TestUtils.setupAutoPing(pingTarget3, testWeblog);
-        TestUtils.endSession(true);
+        try {
         
-        // remove by weblog/target
-        mgr.removeAutoPing(pingTarget, testWeblog);
-        TestUtils.endSession(true);
+            // create auto pings for test
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            AutoPingData autoPing = TestUtils.setupAutoPing(pingTarget, testWeblog);
+            AutoPingData autoPing2 = TestUtils.setupAutoPing(pingTarget2, testWeblog);
+            AutoPingData autoPing3 = TestUtils.setupAutoPing(pingTarget3, testWeblog);
+            TestUtils.endSession(true);
+
+            // remove by weblog/target
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            pingTarget = ptmgr.getPingTarget(pingTarget.getId());
+            mgr.removeAutoPing(pingTarget, testWeblog);
+            TestUtils.endSession(true);
+
+            // make sure remove succeeded
+            testAutoPing = null;
+            testAutoPing = mgr.getAutoPing(autoPing.getId());
+            assertNull(testAutoPing);
+
+            // remove a collection
+            List autoPings = new ArrayList();
+            autoPing2 = mgr.getAutoPing(autoPing2.getId()); //Get managed version of autoPing2
+            autoPings.add(autoPing2);
+            autoPing3 = mgr.getAutoPing(autoPing3.getId()); //Get managed version of autoPing2
+            autoPings.add(autoPing3);
+            mgr.removeAutoPings(autoPings);
+            TestUtils.endSession(true);
+
+            // make sure delete was successful
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            autoPings = mgr.getAutoPingsByWebsite(testWeblog);
+            assertNotNull(autoPings);
+            assertEquals(0, autoPings.size());
+
+            // need to create more test pings
+            autoPing = TestUtils.setupAutoPing(pingTarget, testWeblog);
+            autoPing2 = TestUtils.setupAutoPing(pingTarget2, testWeblog);
+            autoPing3 = TestUtils.setupAutoPing(pingTarget3, testWeblog);
+            TestUtils.endSession(true);
+
+            // remove all
+            mgr.removeAllAutoPings();
+            TestUtils.endSession(true);
+
+            // make sure remove succeeded
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            autoPings = mgr.getAutoPingsByWebsite(testWeblog);
+            assertNotNull(autoPings);
+            assertEquals(0, autoPings.size());
         
-        // make sure remove succeeded
-        testAutoPing = null;
-        testAutoPing = mgr.getAutoPing(autoPing.getId());
-        assertNull(testAutoPing);
-        
-        // remove a collection
-        List autoPings = new ArrayList();
-        autoPing2 = mgr.getAutoPing(autoPing2.getId()); //Get managed version of autoPing2
-        autoPings.add(autoPing2);
-        autoPing3 = mgr.getAutoPing(autoPing3.getId()); //Get managed version of autoPing2
-        autoPings.add(autoPing3);
-        mgr.removeAutoPings(autoPings);
-        TestUtils.endSession(true);
-        
-        // make sure delete was successful
-        autoPings = mgr.getAutoPingsByWebsite(testWeblog);
-        assertNotNull(autoPings);
-        assertEquals(0, autoPings.size());
-        
-        // need to create more test pings
-        autoPing = TestUtils.setupAutoPing(pingTarget, testWeblog);
-        autoPing2 = TestUtils.setupAutoPing(pingTarget2, testWeblog);
-        autoPing3 = TestUtils.setupAutoPing(pingTarget3, testWeblog);
-        TestUtils.endSession(true);
-        
-        // remove all
-        mgr.removeAllAutoPings();
-        TestUtils.endSession(true);
-        
-        // make sure remove succeeded
-        autoPings = mgr.getAutoPingsByWebsite(testWeblog);
-        assertNotNull(autoPings);
-        assertEquals(0, autoPings.size());
-        
-        // teardown test ping target
-        TestUtils.teardownPingTarget(pingTarget.getId());
-        TestUtils.teardownPingTarget(pingTarget2.getId());
-        TestUtils.endSession(true);
+        } finally {
+            // teardown test ping target
+            TestUtils.teardownPingTarget(pingTarget.getId());
+            TestUtils.teardownPingTarget(pingTarget2.getId());
+            TestUtils.endSession(true);
+        }
     }
     
     
@@ -354,6 +366,7 @@ public class PingsTest extends TestCase {
     public void testAutoPingLookups() throws Exception {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetManager ptmgr = RollerFactory.getRoller().getPingTargetManager();
         AutoPingData autoPing = null;
         
         // create autoPing target to use for tests
@@ -361,6 +374,8 @@ public class PingsTest extends TestCase {
         TestUtils.endSession(true);
         
         // create autoPing
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        pingTarget = ptmgr.getPingTarget(pingTarget.getId());
         autoPing = new AutoPingData(null, pingTarget, testWeblog);
         mgr.saveAutoPing(autoPing);
         String id = autoPing.getId();
@@ -373,17 +388,20 @@ public class PingsTest extends TestCase {
         assertEquals(pingTarget, autoPing.getPingTarget());
         
         // lookup by ping target
+        pingTarget = ptmgr.getPingTarget(pingTarget.getId());
         List autoPings = mgr.getAutoPingsByTarget(pingTarget);
         assertNotNull(autoPings);
         assertEquals(1, autoPings.size());
         
         // lookup by weblog
         autoPings = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         autoPings = mgr.getAutoPingsByWebsite(testWeblog);
         assertNotNull(autoPing);
         assertEquals(1, autoPings.size());
         
         // delete autoPing
+        autoPing = mgr.getAutoPing(autoPing.getId());
         mgr.removeAutoPing(autoPing);
         TestUtils.endSession(true);
         

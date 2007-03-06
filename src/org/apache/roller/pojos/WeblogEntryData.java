@@ -657,7 +657,7 @@ public class WeblogEntryData implements Serializable {
         if(name.length() == 0)
             return;
         
-        for (Iterator it = tagSet.iterator(); it.hasNext();) {
+        for (Iterator it = getTags().iterator(); it.hasNext();) {
             WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
             if (tag.getName().equals(name))
                 return;
@@ -702,7 +702,7 @@ public class WeblogEntryData implements Serializable {
         HashSet removeTags = new HashSet();
 
         // remove old ones no longer passed.
-        for (Iterator it = tagSet.iterator(); it.hasNext();) {
+        for (Iterator it = getTags().iterator(); it.hasNext();) {
             WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
             if (!newTags.contains(tag.getName())) {
                 removeTags.add(tag.getName());

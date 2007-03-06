@@ -83,6 +83,7 @@ public class FolderCRUDTest extends TestCase {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         FolderData testFolder = new FolderData(null, "root", "root", TestUtils.getManagedWebsite(testWeblog));
@@ -104,6 +105,7 @@ public class FolderCRUDTest extends TestCase {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // start out with no folders and no bookmarks
@@ -116,6 +118,7 @@ public class FolderCRUDTest extends TestCase {
         TestUtils.endSession(true);
         
         // check that folder was saved
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(1, root.getFolders().size());
         FolderData folder = (FolderData) root.getFolders().iterator().next();
@@ -127,6 +130,7 @@ public class FolderCRUDTest extends TestCase {
         TestUtils.endSession(true);
         
         // check that folder was saved
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         folder = (FolderData) root.getFolders().iterator().next();
         assertEquals("folderTest1", folder.getName());
@@ -136,6 +140,7 @@ public class FolderCRUDTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure folder was removed
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(0, root.getFolders().size());
         folder = bmgr.getFolder(newFolder.getId());
@@ -154,18 +159,20 @@ public class FolderCRUDTest extends TestCase {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // add a small tree /fold1/fold2
-        FolderData fold1 = new FolderData(root, "fold1", null, TestUtils.getManagedWebsite(testWeblog));
+        FolderData fold1 = new FolderData(root, "fold1", null, testWeblog);
         root.addFolder(fold1);
         bmgr.saveFolder(fold1);
-        FolderData fold2 = new FolderData(fold1, "fold2", null, TestUtils.getManagedWebsite(testWeblog));
+        FolderData fold2 = new FolderData(fold1, "fold2", null, testWeblog);
         fold1.addFolder(fold2);
         bmgr.saveFolder(fold2);
         TestUtils.endSession(true);
         
         // check that tree can be navigated
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(1, root.getFolders().size());
         fold1 = (FolderData) root.getFolders().iterator().next();
@@ -179,9 +186,10 @@ public class FolderCRUDTest extends TestCase {
         TestUtils.endSession(true);
         
         // verify cascading delete succeeded
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(0, root.getFolders().size());
-        assertNull(bmgr.getFolder(TestUtils.getManagedWebsite(testWeblog), "/fold1/fold2"));
+        assertNull(bmgr.getFolder(testWeblog, "/fold1/fold2"));
         
         log.info("END");
     }

@@ -547,7 +547,12 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
             queryString.append(" AND e.category.id = ?").append(size);
         }
         
-        if (tags != null && tags.size() > 0) {
+        if (tags != null && tags.size() > 0) {            
+            //for(int i = 0; i < tags.size(); i++) {
+                //params.add(size++, tags.get(i));
+                //queryString.append(" AND e.tags.name = ?").append(size);                
+            //}
+            
             // A JOIN with WeblogEntryTagData in parent quert will cause a DISTINCT in SELECT clause
             // WeblogEntryData has a clob field and many databases do not link DISTINCT for CLOB fields
             // Hence as a workaround using corelated EXISTS query.
@@ -577,9 +582,9 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         }
         
         if (sortby != null && sortby.equals("updateTime")) {
-            queryString.append("ORDER BY e.updateTime ");
+            queryString.append(" ORDER BY e.updateTime ");
         } else {
-            queryString.append("ORDER BY e.pubTime ");
+            queryString.append(" ORDER BY e.pubTime ");
         }
         
         if (sortOrder != null && sortOrder.equals(ASCENDING)) {
@@ -1405,31 +1410,41 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         Timestamp lastUsed = new Timestamp((new Date()).getTime());
         
         // create it only if we are going to need it.
-        if(weblogTagData == null && amount > 0) {
-            weblogTagData = new WeblogEntryTagAggregateData(
-                    null, website, name, amount);
+        if (weblogTagData == null && amount > 0) {
+            weblogTagData = new WeblogEntryTagAggregateData(null, website, name, amount);
             weblogTagData.setLastUsed(lastUsed);
             strategy.store(weblogTagData);
-        } else if(weblogTagData != null) {
-            Query update = strategy.getNamedUpdate(
-                    "WeblogEntryTagAggregateData.updateAddToTotalByName&Weblog");
-            update.setParameter(1, new Long(amount));
-            update.setParameter(2, weblogTagData.getName());
-            update.setParameter(3, website);
-            update.executeUpdate();
+            
+        } else if (weblogTagData != null) {
+            weblogTagData.setTotal(weblogTagData.getTotal() + amount);
+            weblogTagData.setLastUsed(lastUsed);
+            strategy.store(weblogTagData);
+            // Why use update query when only one object needs update?
+//            Query update = strategy.getNamedUpdate(
+//                    "WeblogEntryTagAggregateData.updateAddToTotalByName&Weblog");
+//            update.setParameter(1, new Long(amount));
+//            update.setParameter(2, lastUsed);
+//            update.setParameter(3, weblogTagData.getName());
+//            update.setParameter(4, website);
+//            update.executeUpdate();
         }
         
         // create it only if we are going to need it.
-        if(siteTagData == null && amount > 0) {
+        if (siteTagData == null && amount > 0) {
             siteTagData = new WeblogEntryTagAggregateData(null, null, name, amount);
             siteTagData.setLastUsed(lastUsed);
             strategy.store(siteTagData);
+            
         } else if(siteTagData != null) {
-            Query update = strategy.getNamedUpdate(
-                    "WeblogEntryTagAggregateData.updateAddToTotalByName&WeblogNull");
-            update.setParameter(1, new Long(amount));
-            update.setParameter(2, weblogTagData.getName());
-            update.executeUpdate();
+            siteTagData.setTotal(siteTagData.getTotal() + amount);
+            siteTagData.setLastUsed(lastUsed);
+            strategy.store(weblogTagData);
+            // Why use update query when only one object needs update?
+//            Query update = strategy.getNamedUpdate(
+//                    "WeblogEntryTagAggregateData.updateAddToTotalByName&WeblogNull");
+//            update.setParameter(1, new Long(amount));
+//            update.setParameter(2, siteTagData.getName());
+//            update.executeUpdate();
         }
         
         // delete all bad counts

@@ -160,8 +160,7 @@ public class JPAUserManagerImpl implements UserManager {
         List entries = refQuery.getResultList();
         for (Iterator iter = entries.iterator(); iter.hasNext();) {
             WeblogEntryData entry = (WeblogEntryData) iter.next();
-            
-            this.strategy.remove(entry);
+            wmgr.removeWeblogEntry(entry);
         }
         
         // remove associated referers
@@ -798,6 +797,7 @@ public class JPAUserManagerImpl implements UserManager {
                         "UserData.getByEnabled&UserNameOrEmailAddressStartsWith");
                 query.setParameter(1, enabled);
                 query.setParameter(2, startsWith + '%');
+                query.setParameter(3, startsWith + '%');
             } else {
                 query = strategy.getNamedQuery(
                         "UserData.getByEnabled");

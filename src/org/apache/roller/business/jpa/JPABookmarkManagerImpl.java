@@ -18,6 +18,7 @@
  */
 package org.apache.roller.business.jpa;
 
+import com.sun.media.jai.codecimpl.BMPCodec;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
@@ -92,13 +93,13 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
     public void saveFolder(FolderData folder) throws RollerException {
         
-        if(folder.getId() == null && isDuplicateFolderName(folder)) {
-            throw new RollerException("Duplicate folder name");
-        }
+        if(folder.getId() == null || this.getFolder(folder.getId()) == null) {
+            // New folder, so make sure name is unique
+            if (isDuplicateFolderName(folder)) {
+                throw new RollerException("Duplicate folder name");
+            }
 
-        if (folder.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(folder)) {
-            // Newly added object. If it has a parent,
-            // maintain relationship from both sides
+            // And If it has a parent, maintain relationship from both sides
             FolderData parent = folder.getParent();
             if(parent != null) {
                 parent.getFolders().add(folder);
@@ -108,8 +109,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().
-            saveWebsite(folder.getWebsite());
+        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
     }
 
     public void removeFolder(FolderData folder) throws RollerException {

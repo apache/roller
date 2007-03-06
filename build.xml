@@ -323,8 +323,7 @@ ro.buildUser=${user.name}
         <fileset dir="${build.generated.business}" excludes="**/*.java" />
     </copy>
     
-    <!-- define the openjpac task; this can be done at the top of the -->
-    <!-- build.xml file, so it will be available for all targets
+    <!-- OpenJPA bytecode enhancement -->
     <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
     <openjpac>
         <config propertiesFile="web/WEB-INF/classes/META-INF/persistence.xml" />
@@ -334,7 +333,7 @@ ro.buildUser=${user.name}
             <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
             &custom-jars;
         </classpath>
-    </openjpac>  -->
+    </openjpac>
     
     <!-- allow for custom build work -->
     &custom-build-business;

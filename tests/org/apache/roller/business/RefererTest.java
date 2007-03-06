@@ -137,6 +137,7 @@ public class RefererTest extends TestCase {
         RefererManager mgr = RollerFactory.getRoller().getRefererManager();
         RefererData referer = null;
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         RefererData testReferer = new RefererData();
         testReferer.setWebsite(testWeblog);
         testReferer.setDateString("20060420");
@@ -187,6 +188,7 @@ public class RefererTest extends TestCase {
         
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List referers = rmgr.getReferersToDate(testWeblog, testDay);
         assertEquals("Should be one Referer.", referers.size(), 1);
     }
@@ -196,6 +198,7 @@ public class RefererTest extends TestCase {
         
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List refs = rmgr.getReferers(testWeblog);
         assertEquals("number of referers should equal count", count, refs.size());
         
@@ -210,6 +213,7 @@ public class RefererTest extends TestCase {
         
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List refs = rmgr.getReferers(testWeblog);
         assertEquals(count, refs.size());
         
@@ -223,6 +227,7 @@ public class RefererTest extends TestCase {
         rmgr.applyRefererFilters();
         TestUtils.endSession(true);
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         refs = rmgr.getReferers(testWeblog);
         assertEquals(0, refs.size());
         
@@ -239,20 +244,23 @@ public class RefererTest extends TestCase {
         
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List refs = rmgr.getReferers(testWeblog);
         assertEquals(count, refs.size());
         String origWords = null;
         
         UserManager umgr = RollerFactory.getRoller().getUserManager();
-        testWeblog = umgr.getWebsite(testWeblog.getId());
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         origWords = testWeblog.getBlacklist();
         testWeblog.setBlacklist("test");
         umgr.saveWebsite(testWeblog);
         TestUtils.endSession(true);
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         rmgr.applyRefererFilters(testWeblog);
         TestUtils.endSession(true);
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         refs = rmgr.getReferers(testWeblog);
         assertEquals(0, refs.size());
     }

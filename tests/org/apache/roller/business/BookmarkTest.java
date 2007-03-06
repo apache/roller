@@ -86,6 +86,7 @@ public class BookmarkTest extends TestCase {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         FolderData folder = new FolderData(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
@@ -157,6 +158,7 @@ public class BookmarkTest extends TestCase {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // add some folders
@@ -227,6 +229,7 @@ public class BookmarkTest extends TestCase {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         FolderData dest = new FolderData(root, "dest", null, TestUtils.getManagedWebsite(testWeblog));
@@ -320,6 +323,7 @@ public class BookmarkTest extends TestCase {
         
         FolderData fd = null;
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");
         assertTrue(fd.retrieveBookmarks(true).size() > 0 );
         getRoller().getBookmarkManager().removeFolder(fd);

@@ -63,7 +63,7 @@
             <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;Weblog">
-            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1, lastUsed = CURRENT_TIMESTAMP WHERE w.name = ?2 AND w.weblog = ?3</query>
+            <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1, w.lastUsed = ?2 WHERE w.name = ?3 AND w.weblog = ?4</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.updateAddToTotalByName&amp;WeblogNull">
             <query>UPDATE WeblogEntryTagAggregateData w SET w.total = w.total + ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>

@@ -30,7 +30,7 @@
             <query>SELECT u FROM UserData u JOIN u.permissions p WHERE u.enabled = ?1 AND p.website = ?2</query>
         </named-query>
         <named-query name="UserData.getByEnabled&amp;UserNameOrEmailAddressStartsWith">
-            <query>SELECT u FROM UserData u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?2)</query>
+            <query>SELECT u FROM UserData u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?3)</query>
         </named-query>
         <named-query name="UserData.getByEndDateOrderByStartDateDesc">
             <query>SELECT u FROM UserData u WHERE u.dateCreated &lt; ?1 ORDER BY u.dateCreated DESC</query>

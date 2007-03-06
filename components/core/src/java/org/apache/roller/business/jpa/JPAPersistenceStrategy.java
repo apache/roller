@@ -149,25 +149,7 @@ public class JPAPersistenceStrategy {
             Object obj = iterator.next();
             em.remove(obj);
         }
-    }
-    
-    /**
-     * Remove objects from persistence storage.
-     * @param clazz the persistent from which to remove all objects
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public void removeAll(Class clazz) throws RollerException {
-        // The only caller of this method is DatamapperAutoPingManagerImpl@removeAllAutoPings()
-        // Discuss with Craig to remove this method from interface
-        
-        //Derive name of entity from class name
-        String fullyQualifiedClassName = clazz.getName();
-        int indexOfLastDot = fullyQualifiedClassName.lastIndexOf('.');
-        String className = fullyQualifiedClassName.substring(indexOfLastDot + 1);
-        String queryName = className + ".removeAll";
-        Query rq = getNamedQuery(queryName);
-        rq.executeUpdate();
-    }
+    }    
     
     /**
      * Retrieve object, no transaction needed.

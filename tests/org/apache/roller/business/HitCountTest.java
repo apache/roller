@@ -132,6 +132,7 @@ public class HitCountTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         HitCountData testCount = new HitCountData();
         testCount.setWeblog(testWeblog);
         testCount.setDailyHits(10);
@@ -150,6 +151,7 @@ public class HitCountTest extends TestCase {
         
         // test lookup by weblog
         hitCount = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
         assertEquals(testCount, hitCount);
@@ -171,6 +173,7 @@ public class HitCountTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         HitCountData testCount = new HitCountData();
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testCount.setWeblog(testWeblog);
         testCount.setDailyHits(10);
         
@@ -181,6 +184,7 @@ public class HitCountTest extends TestCase {
         
         // make sure it was created
         HitCountData hitCount = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
         assertEquals(10, hitCount.getDailyHits());
@@ -191,6 +195,7 @@ public class HitCountTest extends TestCase {
         
         // make sure it was incremented properly
         hitCount = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
         assertEquals(35, hitCount.getDailyHits());
@@ -207,9 +212,9 @@ public class HitCountTest extends TestCase {
     
     
     public void testResetHitCounts() throws Exception {
-        
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testUser = TestUtils.getManagedUser(testUser);
         WebsiteData blog1 = TestUtils.setupWeblog("hitCntTest1", testUser);
         WebsiteData blog2 = TestUtils.setupWeblog("hitCntTest2", testUser);
         WebsiteData blog3 = TestUtils.setupWeblog("hitCntTest3", testUser);
@@ -220,46 +225,50 @@ public class HitCountTest extends TestCase {
         
         TestUtils.endSession(true);
         
-        // make sure data was properly initialized
-        HitCountData testCount = null;
-        testCount = mgr.getHitCount(cnt1.getId());
-        assertEquals(10, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt2.getId());
-        assertEquals(20, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt3.getId());
-        assertEquals(30, testCount.getDailyHits());
+        try {
+            // make sure data was properly initialized
+            HitCountData testCount = null;
+            testCount = mgr.getHitCount(cnt1.getId());
+            assertEquals(10, testCount.getDailyHits());
+            testCount = mgr.getHitCount(cnt2.getId());
+            assertEquals(20, testCount.getDailyHits());
+            testCount = mgr.getHitCount(cnt3.getId());
+            assertEquals(30, testCount.getDailyHits());
+
+            // reset count for one weblog
+            blog1 = TestUtils.getManagedWebsite(blog1);
+            mgr.resetHitCount(blog1);
+            TestUtils.endSession(true);
+
+            // make sure it reset only one weblog
+            testCount = mgr.getHitCount(cnt1.getId());
+            assertEquals(0, testCount.getDailyHits());
+            testCount = mgr.getHitCount(cnt2.getId());
+            assertEquals(20, testCount.getDailyHits());
+            testCount = mgr.getHitCount(cnt3.getId());
+            assertEquals(30, testCount.getDailyHits());
+
+            // reset all counts
+            mgr.resetAllHitCounts();
+            TestUtils.endSession(true);
+
+            // make sure it reset all counts
+            testCount = mgr.getHitCount(cnt1.getId());
+            assertEquals(0, testCount.getDailyHits());
+            testCount = mgr.getHitCount(cnt2.getId());
+            assertEquals(0, testCount.getDailyHits());
+            testCount = mgr.getHitCount(cnt3.getId());
+            assertEquals(0, testCount.getDailyHits());
         
-        // reset count for one weblog
-        mgr.resetHitCount(blog1);
-        TestUtils.endSession(true);
-        
-        // make sure it reset only one weblog
-        testCount = mgr.getHitCount(cnt1.getId());
-        assertEquals(0, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt2.getId());
-        assertEquals(20, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt3.getId());
-        assertEquals(30, testCount.getDailyHits());
-        
-        // reset all counts
-        mgr.resetAllHitCounts();
-        TestUtils.endSession(true);
-        
-        // make sure it reset all counts
-        testCount = mgr.getHitCount(cnt1.getId());
-        assertEquals(0, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt2.getId());
-        assertEquals(0, testCount.getDailyHits());
-        testCount = mgr.getHitCount(cnt3.getId());
-        assertEquals(0, testCount.getDailyHits());
-        
-        // cleanup
-        TestUtils.teardownHitCount(cnt1.getId());
-        TestUtils.teardownHitCount(cnt2.getId());
-        TestUtils.teardownHitCount(cnt3.getId());
-        TestUtils.teardownWeblog(blog1.getId());
-        TestUtils.teardownWeblog(blog2.getId());
-        TestUtils.teardownWeblog(blog3.getId());
+        } finally {
+            // cleanup
+            TestUtils.teardownHitCount(cnt1.getId());
+            TestUtils.teardownHitCount(cnt2.getId());
+            TestUtils.teardownHitCount(cnt3.getId());
+            TestUtils.teardownWeblog(blog1.getId());
+            TestUtils.teardownWeblog(blog2.getId());
+            TestUtils.teardownWeblog(blog3.getId());
+        }
     }
 
     
@@ -267,6 +276,7 @@ public class HitCountTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testUser = TestUtils.getManagedUser(testUser);
         WebsiteData blog1 = TestUtils.setupWeblog("hitCntHotTest1", testUser);
         WebsiteData blog2 = TestUtils.setupWeblog("hitCntHotTest2", testUser);
         WebsiteData blog3 = TestUtils.setupWeblog("hitCntHotTest3", testUser);

@@ -184,6 +184,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategoryData cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
@@ -216,6 +217,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         // including root
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List cats = mgr.getWeblogCategories(testWeblog, true);
         assertNotNull(cats);
         assertEquals(5, cats.size());
@@ -236,19 +238,21 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         // add some categories and entries to test with
-        WeblogCategoryData dest = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c0", null, null);
+        WeblogCategoryData dest = new WeblogCategoryData(testWeblog, root, "c0", null, null);
         mgr.saveWeblogCategory(dest);
         
-        WeblogCategoryData c1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c1", null, null);
+        WeblogCategoryData c1 = new WeblogCategoryData(testWeblog, root, "c1", null, null);
         mgr.saveWeblogCategory(c1);
         
-        WeblogCategoryData c2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c1, "c2", null, null);
+        WeblogCategoryData c2 = new WeblogCategoryData(testWeblog, c1, "c2", null, null);
         mgr.saveWeblogCategory(c2);
         
-        WeblogCategoryData c3 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c2, "c3", null, null);
+        WeblogCategoryData c3 = new WeblogCategoryData(testWeblog, c2, "c3", null, null);
         mgr.saveWeblogCategory(c3);
         
         TestUtils.endSession(true);
@@ -309,19 +313,21 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         // add some categories and entries to test with
-        WeblogCategoryData dest = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c0", null, null);
+        WeblogCategoryData dest = new WeblogCategoryData(testWeblog, root, "c0", null, null);
         mgr.saveWeblogCategory(dest);
         
-        WeblogCategoryData c1 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "c1", null, null);
+        WeblogCategoryData c1 = new WeblogCategoryData(testWeblog, root, "c1", null, null);
         mgr.saveWeblogCategory(c1);
         
-        WeblogCategoryData c2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c1, "c2", null, null);
+        WeblogCategoryData c2 = new WeblogCategoryData(testWeblog, c1, "c2", null, null);
         mgr.saveWeblogCategory(c2);
         
-        WeblogCategoryData c3 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), c2, "c3", null, null);
+        WeblogCategoryData c3 = new WeblogCategoryData(testWeblog, c2, "c3", null, null);
         mgr.saveWeblogCategory(c3);
         
         TestUtils.endSession(true);
@@ -331,6 +337,8 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         c3 = mgr.getWeblogCategory(c3.getId());
         dest = mgr.getWeblogCategory(dest.getId());
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         WeblogEntryData e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
         WeblogEntryData e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
         WeblogEntryData e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);

@@ -106,6 +106,7 @@ public class WeblogPageTest extends TestCase {
         TestUtils.endSession(true);
         
         // check that create was successful
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         template = null;
         template = mgr.getPageByName(testWeblog, testPage.getName());
         assertNotNull(template);
@@ -118,6 +119,7 @@ public class WeblogPageTest extends TestCase {
         
         // check that update was successful
         template = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         template = mgr.getPageByName(testWeblog, "testtesttest");
         assertNotNull(template);
         assertEquals(testPage.getContents(), template.getContents());
@@ -128,6 +130,7 @@ public class WeblogPageTest extends TestCase {
         
         // check that delete was successful
         template = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         template = mgr.getPageByName(testWeblog, testPage.getName());
         assertNull(template);
     }
@@ -153,6 +156,7 @@ public class WeblogPageTest extends TestCase {
         
         // lookup by name
         page = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         page = mgr.getPageByName(testWeblog, testPage.getName());
         assertNotNull(page);
         assertEquals(testPage.getContents(), page.getContents());

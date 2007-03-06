@@ -99,8 +99,10 @@ public class PermissionTest extends TestCase {
         
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         PermissionsData perm = null;
-        
+                
         // delete permissions
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNotNull(perm);
         mgr.removePermissions(perm);
@@ -108,19 +110,23 @@ public class PermissionTest extends TestCase {
         
         // check that delete was successful
         perm = null;
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNull(perm);
         
         // create permissions
         perm = new PermissionsData();
-        perm.setUser(TestUtils.getManagedUser(testUser) );
-        perm.setWebsite(TestUtils.getManagedWebsite(testWeblog));
+        perm.setUser(testUser);
+        perm.setWebsite(testWeblog);
         perm.setPending(false);
         perm.setPermissionMask(PermissionsData.ADMIN);
         mgr.savePermissions(perm);
         TestUtils.endSession(true);
         
         // check that create was successful
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         perm = null;
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNotNull(perm);
@@ -132,6 +138,8 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
 
         // check that update was successful
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
         perm = null;
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNotNull(perm);
@@ -237,6 +245,8 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
 
         // accept invitation
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        user = TestUtils.getManagedUser(user);
         perm = mgr.getPermissions(testWeblog, user);
         perm.setPending(false);
         mgr.savePermissions(perm);
@@ -247,6 +257,8 @@ public class PermissionTest extends TestCase {
         testWeblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
 
         // assert that invitation list is empty
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        user = TestUtils.getManagedUser(user);
         assertTrue(mgr.getPendingPermissions(user).isEmpty());
         assertTrue(mgr.getPendingPermissions(testWeblog).isEmpty());
 
