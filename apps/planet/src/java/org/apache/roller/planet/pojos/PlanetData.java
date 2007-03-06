@@ -40,9 +40,10 @@ public class PlanetData {
     }
     
     
-    public PlanetData(String name, String handle) {
-        this.title = name;
+    public PlanetData(String handle, String title, String desc) {
+        this.title = title;
         this.handle = handle;
+        this.description = desc;
     }
     
 

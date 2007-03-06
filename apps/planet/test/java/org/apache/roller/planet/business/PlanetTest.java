@@ -35,7 +35,7 @@ public class PlanetTest extends TestCase {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
-        PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet");
+        PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet", "testPlanet");
         PlanetData planet = null;
         
         planet = mgr.getPlanet("testPlanet");
@@ -80,7 +80,7 @@ public class PlanetTest extends TestCase {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
-        PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet");
+        PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet", "testPlanet");
         PlanetData planet = null;
         
         // add
