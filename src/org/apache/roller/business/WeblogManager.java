@@ -69,6 +69,7 @@ public interface WeblogManager {
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
+     * @param text       Text appearing in the text or summary, or null for all
      * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
      * @param sortOrder  Sort order of ASCENDING or DESCENDING (null for DESCENDING)
      * @param offset     Offset into results for paging
@@ -84,6 +85,7 @@ public interface WeblogManager {
             String      catName,
             List        tags,
             String      status,
+            String      text,
             String      sortBy, 
             String      sortOrder,
             String      locale,             

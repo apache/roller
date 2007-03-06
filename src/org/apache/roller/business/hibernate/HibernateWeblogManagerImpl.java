@@ -450,6 +450,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
             String      catName,
             List        tags,
             String      status,
+            String      text,
             String      sortby,
             String      sortOrder,
             String      locale,
@@ -510,6 +511,14 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
             if (status != null) {
                 queryString.append("and status = ? ");
                 params.add(status);
+            }
+            
+            if (text != null) {
+                queryString.append("and (text like ? or summary like ? or title like ?) ");
+                String tmp = "%" + text + "%";
+                params.add(tmp);
+                params.add(tmp);
+                params.add(tmp);
             }
             
             if (locale != null) {
@@ -1034,6 +1043,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
             catName,
             tags,
             status,
+            null,
             null,
             null,
             locale,             
