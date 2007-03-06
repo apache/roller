@@ -53,7 +53,7 @@ public final class TestUtils {
      */
     public static PlanetData setupPlanet(String handle) throws Exception {
         
-        PlanetData testPlanet = new PlanetData(handle, handle);
+        PlanetData testPlanet = new PlanetData(handle, handle, handle);
         
         // store
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
