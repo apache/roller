@@ -18,7 +18,6 @@
  */
 package org.apache.roller.business.jpa;
 
-import com.sun.media.jai.codecimpl.BMPCodec;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
