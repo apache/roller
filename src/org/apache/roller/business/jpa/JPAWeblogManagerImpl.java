@@ -517,7 +517,19 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();
-        queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
+        
+        if (tags == null) {
+            queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
+        } else {
+            queryString.append("SELECT e FROM WeblogEntryData e JOIN e.tags t WHERE ");
+            queryString.append("(");
+            for(int i = 0; i < tags.size(); i++) {
+                if (i != 0) queryString.append(" OR ");
+                params.add(size++, tags.get(i));
+                queryString.append(" t.name = ?").append(size);                
+            }
+            queryString.append(") AND ");
+        }
         
         if (website != null) {
             params.add(size++, website.getId());
@@ -546,31 +558,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
             params.add(size++, cat.getId());
             queryString.append(" AND e.category.id = ?").append(size);
         }
-        
-        if (tags != null && tags.size() > 0) {            
-            //for(int i = 0; i < tags.size(); i++) {
-                //params.add(size++, tags.get(i));
-                //queryString.append(" AND e.tags.name = ?").append(size);                
-            //}
-            
-            // A JOIN with WeblogEntryTagData in parent quert will cause a DISTINCT in SELECT clause
-            // WeblogEntryData has a clob field and many databases do not link DISTINCT for CLOB fields
-            // Hence as a workaround using corelated EXISTS query.
-            queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTagData t WHERE "
-                    + " t.weblogEntry = e AND t.name IN (");
-            final String PARAM_SEPERATOR = ", ";
-            for(int i = 0; i < tags.size(); i++) {
-                params.add(size++, tags.get(i));
-                queryString.append("?").append(size).append(PARAM_SEPERATOR);
-            }
-            // Remove the trailing PARAM_SEPERATOR
-            queryString.delete(queryString.length() - PARAM_SEPERATOR.length(),
-                    queryString.length());
-            
-            // Close the brace FOR IN clause and EXIST clause
-            queryString.append(" ) )");
-        }
-        
+                
         if (status != null) {
             params.add(size++, status);
             queryString.append(" AND e.status = ?").append(size);

@@ -213,12 +213,12 @@ public class JPAUserManagerImpl implements UserManager {
     
     protected void updateTagAggregates(List tags) throws RollerException {
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
-            TagStat stat = (TagStat) iter.next();
+            TagStat stat = (TagStat) iter.next();            
             Query query = strategy.getNamedUpdate(
-                    "WeblogEntryTagAggregateData.updateMinusFromTotalByName&WeblogNull");
-            query.setParameter(1, Integer.valueOf(stat.getCount()));
-            query.setParameter(2, stat.getName());
-            query.executeUpdate();
+                "WeblogEntryTagAggregateData.getByName&WebsiteNullOrderByLastUsedDesc");
+            query.setParameter(1, stat.getName());
+            WeblogEntryTagAggregateData agg = (WeblogEntryTagAggregateData)query.getSingleResult();
+            agg.setTotal(agg.getTotal() - stat.getCount());
         }
     }
     

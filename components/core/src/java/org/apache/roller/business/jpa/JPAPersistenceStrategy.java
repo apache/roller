@@ -221,7 +221,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         Query q = em.createNamedQuery(queryName);
         // Never flush for queries. Roller code assumes this behavior
-        q.setFlushMode(FlushModeType.COMMIT);
+        //q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
     
@@ -235,7 +235,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         Query q = em.createQuery(queryString);
         // Never flush for queries. Roller code assumes this behavior
-        q.setFlushMode(FlushModeType.COMMIT);
+        //q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
     
