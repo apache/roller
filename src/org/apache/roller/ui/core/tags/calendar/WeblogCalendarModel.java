@@ -109,6 +109,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     cat,                       // cat
                     null,                      // tags
                     WeblogEntryData.PUBLISHED, // status
+                    null,                      // text
                     null,                      // sortby (null means pubTime)
                     WeblogManager.DESCENDING,  // sortorder, null means DESCENDING
                     locale,                    // locale
@@ -134,6 +135,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     cat,                       // cat
                     null,                      // tags
                     WeblogEntryData.PUBLISHED, // status
+                    null,                      // text
                     null,                      // sortby (null means pubTime)
                     WeblogManager.ASCENDING,   // sortorder
                     locale,                    // locale

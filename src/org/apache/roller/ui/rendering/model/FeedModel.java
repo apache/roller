@@ -133,6 +133,7 @@ public class FeedModel implements Model {
                     feedRequest.getWeblogCategoryName(), 
                     feedRequest.getTags(), 
                     WeblogEntryData.PUBLISHED, 
+                    null,
                     "pubTime", 
                     null,
                     feedRequest.getLocale(), 

@@ -409,6 +409,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                         null,              // catName
                         null,              // tags
                         null,              // status
+                        null,              // text
                         "updateTime",      // sortby
                         null,
                         null,

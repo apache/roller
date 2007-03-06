@@ -484,6 +484,7 @@ public class OldWeblogPageModel {
                     catParam,                    // catName
                     null,                        // tags
                     WeblogEntryData.PUBLISHED,   // status
+                    null,                        // text
                     null,                        // sortby (null for pubTime)
                     null,
                     mLocale, 0, mWebsite.getEntryDisplayCount());    
