@@ -46,9 +46,9 @@
       <site-url>http://www.busybuddha.org/blog/page/anil</site-url>
    </subscription>
    <subscription id="henri">
-      <title>Goldfish Bowl</title>
-      <feed-url>http://blog.generationjava.com/roller/rss/bayard</feed-url>
-      <site-url>http://blog.generationjava.com/roller/page/bayard</site-url>
+      <title>The Goldfish Chronicles</title>
+      <feed-url>http://blog.generationjava.com/roller/bayard/feed/entries/rss</feed-url>
+      <site-url>http://blog.generationjava.com/</site-url>
    </subscription>
    <group handle="roller">
       <title>Planet Roller</title>
