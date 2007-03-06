@@ -29,14 +29,15 @@
   </div>
 
   <table class="planetListings">
+    #foreach($planet in $site.planets)
     <tr>
-      #foreach($planet in $site.planets)
       <td class="planet">
          <h3 class="planetTitle"><a href="$url.planet($planet.handle)">$planet.title</a></h3>
          <p class="planetDescription">$planet.description</p>
+         <br/>
       </td>
-      #end
     </tr>
+    #end
   </table>
 
   </body>
