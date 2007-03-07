@@ -17,10 +17,10 @@
 -->
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
-<c:if test="${!empty parentFolder.parent.path}">
-    <c:set var="folderName" value="${parentFolder.parent.path}" />
+<c:if test="${!empty parentFolder.path}">
+    <c:set var="folderName" value="${parentFolder.path}" />
 </c:if>
-<c:if test="${empty parentFolder.parent.path}">
+<c:if test="${empty parentFolder.path}">
     <c:set var="folderName" value="/" />
 </c:if>
 
@@ -40,11 +40,6 @@
         <fmt:param value="${folderName}" />
     </fmt:message>
 </c:if>
-</p>
-
-<p>
-<b><fmt:message key="bookmarksForm.path" /></b>:
-   <c:out value="${folderName}" />
 </p>
 
 <html:form action="/roller-ui/authoring/bookmarkSave" method="post" focus="name">
