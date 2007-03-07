@@ -155,15 +155,6 @@ public class JPAUserManagerImpl implements UserManager {
             this.strategy.remove((PingTargetData) it.next());
         }
         
-        // remove entries
-        Query refQuery = strategy.getNamedQuery("WeblogEntryData.getByWebsite");
-        refQuery.setParameter(1, website);
-        List entries = refQuery.getResultList();
-        for (Iterator iter = entries.iterator(); iter.hasNext();) {
-            WeblogEntryData entry = (WeblogEntryData) iter.next();
-            wmgr.removeWeblogEntry(entry);
-        }
-        
         // remove associated referers
         Query refQuery2 = strategy.getNamedQuery("RefererData.getByWebsite");
         refQuery2.setParameter(1, website);
@@ -186,6 +177,17 @@ public class JPAUserManagerImpl implements UserManager {
         FolderData rootFolder = bmgr.getRootFolder(website);
         if (null != rootFolder) {
             this.strategy.remove(rootFolder);
+        }
+        
+        this.strategy.flush();
+
+        // remove entries
+        Query refQuery = strategy.getNamedQuery("WeblogEntryData.getByWebsite");
+        refQuery.setParameter(1, website);
+        List entries = refQuery.getResultList();
+        for (Iterator iter = entries.iterator(); iter.hasNext();) {
+            WeblogEntryData entry = (WeblogEntryData) iter.next();
+            wmgr.removeWeblogEntry(entry);
         }
         
         // remove categories
@@ -544,7 +546,7 @@ public class JPAUserManagerImpl implements UserManager {
         StringBuffer whereClause = new StringBuffer();
         
         //queryString.append("SELECT w FROM WebsiteData w WHERE ");
-        if (user == null) {
+        if (user == null) { // OpenJPA likes JOINs
             queryString.append("SELECT w FROM WebsiteData w WHERE ");
         } else {
             queryString.append("SELECT w FROM WebsiteData w JOIN w.permissions p WHERE ");
@@ -575,7 +577,7 @@ public class JPAUserManagerImpl implements UserManager {
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
         }      
-        /*if (user != null) {    
+        /*if (user != null) { // Toplink likes sub-selects    
             if (whereClause.length() > 0) whereClause.append(" AND ");
             whereClause.append(" EXISTS (SELECT p from PermissionsData p WHERE p.website = w ");
             params.add(size++, user);         

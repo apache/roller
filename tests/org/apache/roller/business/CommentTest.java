@@ -215,11 +215,14 @@ public class CommentTest extends TestCase {
             // first make sure we can delete an entry with comments
             UserData user = TestUtils.setupUser("commentParentDeleteUser");
             WebsiteData weblog = TestUtils.setupWeblog("commentParentDelete", user);
-            WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", weblog.getDefaultCategory(), weblog, user);
+            WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", 
+                    weblog.getDefaultCategory(), weblog, user);
+            TestUtils.endSession(true);
 
-            CommentData comment1 = TestUtils.setupComment("comment1", entry);
-            CommentData comment2 = TestUtils.setupComment("comment2", entry);
-            CommentData comment3 = TestUtils.setupComment("comment3", entry);
+            entry = TestUtils.getManagedWeblogEntry(entry);
+            TestUtils.setupComment("comment1", entry);
+            TestUtils.setupComment("comment2", entry);
+            TestUtils.setupComment("comment3", entry);
             TestUtils.endSession(true);
 
             // now deleting the entry should succeed and delete all comments
@@ -235,17 +238,21 @@ public class CommentTest extends TestCase {
             // now make sure we can delete a weblog with comments
             weblog = TestUtils.getManagedWebsite(weblog);
             user = TestUtils.getManagedUser(user);
-            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", weblog.getDefaultCategory(), weblog, user);
-
-            comment1 = TestUtils.setupComment("comment1", entry);
-            comment2 = TestUtils.setupComment("comment2", entry);
-            comment3 = TestUtils.setupComment("comment3", entry);
+            entry = TestUtils.setupWeblogEntry("CommentParentDeletes2", 
+                    weblog.getDefaultCategory(), weblog, user);
             TestUtils.endSession(true);
 
-            // now deleting the entry should succeed and delete all comments
+            entry = TestUtils.getManagedWeblogEntry(entry);
+            TestUtils.setupComment("comment1", entry);
+            TestUtils.setupComment("comment2", entry);
+            TestUtils.setupComment("comment3", entry);
+            TestUtils.endSession(true);
+
+            // now deleting the website should succeed 
             ex = null;
             try {
-                umgr.removeWebsite(TestUtils.getManagedWebsite(weblog));
+                weblog = TestUtils.getManagedWebsite(weblog);
+                umgr.removeWebsite(weblog);
                 TestUtils.endSession(true);
             } catch (RollerException e) {
                 StringWriter sw = new StringWriter();
