@@ -294,9 +294,9 @@ public class UserData
         String encrypt = RollerConfig.getProperty("passwds.encryption.enabled");
         String algorithm = RollerConfig.getProperty("passwds.encryption.algorithm");
         if (new Boolean(encrypt).booleanValue()) {
-            password = Utilities.encodePassword(new1, algorithm);
+            setPassword(Utilities.encodePassword(new1, algorithm));
         } else {
-            password = new1;
+            setPassword(new1);
         }
     }
     
@@ -322,7 +322,7 @@ public class UserData
      * Returns true if user has role specified.
      */
     public boolean hasRole(String roleName) {
-        Iterator iter = roles.iterator();
+        Iterator iter = getRoles().iterator();
         while (iter.hasNext()) {
             RoleData role = (RoleData) iter.next();
             if (role.getRole().equals(roleName)) {
@@ -338,7 +338,7 @@ public class UserData
     public void grantRole(String roleName) throws RollerException {
         if (!hasRole(roleName)) {
             RoleData role = new RoleData(null, this, roleName);
-            roles.add(role);
+            getRoles().add(role);
             role.setUser(this);
         }
     }

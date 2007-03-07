@@ -32,6 +32,7 @@ import java.util.TreeMap;
 import java.sql.Timestamp;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
@@ -518,7 +519,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         
-        if (tags == null) {
+        if (tags == null || tags.size()==0) {
             queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
         } else {
             queryString.append("SELECT e FROM WeblogEntryData e JOIN e.tags t WHERE ");
@@ -545,12 +546,14 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         }
         
         if (startDate != null) {
-            params.add(size++, startDate);
+            Timestamp start = new Timestamp(startDate.getTime());
+            params.add(size++, start);
             queryString.append(" AND e.pubTime >= ?").append(size);
         }
         
         if (endDate != null) {
-            params.add(size++, endDate);
+            Timestamp end = new Timestamp(endDate.getTime());
+            params.add(size++, end);
             queryString.append(" AND e.pubTime <= ?").append(size);
         }
         
@@ -830,12 +833,14 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         }
         
         if (startDate != null) {
-            params.add(size++, startDate);
+            Timestamp start = new Timestamp(startDate.getTime());
+            params.add(size++, start);
             appendConjuctionToWhereclause(whereClause, "c.postTime >= ?");
         }
         
         if (endDate != null) {
-            params.add(size++, endDate);
+            Timestamp end = new Timestamp(endDate.getTime());
+            params.add(size++, end);
             appendConjuctionToWhereclause(whereClause, "c.postTime <= ?");
         }
         
@@ -1086,27 +1091,33 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         
         if (website != null) {
             if (startDate != null) {
+                Timestamp start = new Timestamp(startDate.getTime());
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate&StartDate");
                 query.setParameter(1, website);
-                query.setParameter(2, endDate);
-                query.setParameter(3, startDate);
+                query.setParameter(2, end);
+                query.setParameter(3, start);
             } else {
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate");
                 query.setParameter(1, website);
-                query.setParameter(2, endDate);
+                query.setParameter(2, end);
             }
         } else {
             if (startDate != null) {
+                Timestamp start = new Timestamp(startDate.getTime());
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "CommentData.getMostCommentedWeblogEntryByEndDate&StartDate");
-                query.setParameter(1, endDate);
-                query.setParameter(2, startDate);
+                query.setParameter(1, end);
+                query.setParameter(2, start);
             } else {
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "CommentData.getMostCommentedWeblogEntryByEndDate");
-                query.setParameter(1, endDate);
+                query.setParameter(1, end);
             }
         }
         if (offset != 0) {
@@ -1192,20 +1203,23 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         
         if (website != null) {
             if (startDate != null) {
+                Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
                         "WeblogEntryTagAggregateData.getPopularTagsByWebsite&StartDate");
                 query.setParameter(1, website);
-                query.setParameter(2, startDate);
+                query.setParameter(2, start);
             } else {
+                Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
                         "WeblogEntryTagAggregateData.getPopularTagsByWebsite");
-                query.setParameter(1, startDate);
+                query.setParameter(1, start);
             }
         } else {
             if (startDate != null) {
+                Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
                         "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&StartDate");
-                query.setParameter(1, startDate);
+                query.setParameter(1, start);
             } else {
                 query = strategy.getNamedQuery(
                         "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull");

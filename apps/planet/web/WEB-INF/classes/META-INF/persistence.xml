@@ -6,7 +6,6 @@
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         -->
-        <jta-data-source>jdbc/planetdb</jta-data-source>
         <mapping-file>org/apache/roller/planet/pojos/PlanetData.orm.xml</mapping-file>
         <mapping-file>org/apache/roller/planet/pojos/PlanetGroupData.orm.xml</mapping-file>
         <mapping-file>org/apache/roller/planet/pojos/PropertyData.orm.xml</mapping-file>

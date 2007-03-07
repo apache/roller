@@ -21,6 +21,7 @@ package org.apache.roller.ui.authoring.struts.actions;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -155,7 +156,7 @@ public final class WeblogEntryManagementAction extends DispatchAction {
                 offset = 0;
             }
             
-            entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            List allEntries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     website,
                     null,
                     startDate,
@@ -168,6 +169,8 @@ public final class WeblogEntryManagementAction extends DispatchAction {
                     null,
                     offset,
                     queryForm.getCount() + 1);
+            entries = new ArrayList();
+            entries.addAll(allEntries);            
             if (entries.size() > queryForm.getCount()) {
                 more = true;
                 entries.remove(entries.size()-1);

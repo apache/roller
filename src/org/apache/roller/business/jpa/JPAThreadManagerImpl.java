@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.jpa;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -107,7 +108,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
         q.setParameter(3, task.getName());
         q.setParameter(4, taskLock.getTimeAquired());
-        q.setParameter(5, new Date(leaseExpireTime));
+        q.setParameter(5, new Timestamp(leaseExpireTime));
         int rowsUpdated = q.executeUpdate();
         return rowsUpdated == 1;
     }

@@ -18,6 +18,7 @@
  */
 package org.apache.roller.business.jpa;
 
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -186,9 +187,10 @@ public class JPARefererManagerImpl implements RefererManager {
             q.setFirstResult(offset);
             q.setMaxResults(length);
         }
+        Timestamp start = new Timestamp(startDate.getTime());
         q.setParameter(1, Boolean.TRUE);
         q.setParameter(2, Boolean.TRUE);
-        q.setParameter(3, startDate);
+        q.setParameter(3, start);
         List queryResults = (List)q.getResultList();
         for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
             Object[] row = (Object[])it.next();

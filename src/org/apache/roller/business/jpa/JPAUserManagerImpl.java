@@ -18,6 +18,7 @@
  */
 package org.apache.roller.business.jpa;
 
+import java.sql.Timestamp;
 import javax.persistence.NoResultException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -547,13 +548,15 @@ public class JPAUserManagerImpl implements UserManager {
             whereClause.append(" AND p.pending = ?" + size);
         }    
         if (startDate != null) {
+            Timestamp start = new Timestamp(startDate.getTime());
             if (whereClause.length() > 0) whereClause.append(" AND ");
-            params.add(size++, startDate);
+            params.add(size++, start);
             whereClause.append(" w.dateCreated > ?" + size);
         }
         if (endDate != null) {
+            Timestamp end = new Timestamp(endDate.getTime());
             if (whereClause.length() > 0) whereClause.append(" AND ");
-            params.add(size++, endDate);
+            params.add(size++, end);
             whereClause.append(" w.dateCreated < ?" + size);
         }
         if (enabled != null) {
@@ -682,9 +685,11 @@ public class JPAUserManagerImpl implements UserManager {
             if(endDate == null) {
                 endDate = new Date();
             }
-            params.add(size++, startDate);
+            Timestamp start = new Timestamp(startDate.getTime());
+            Timestamp end = new Timestamp(endDate.getTime());
+            params.add(size++, start);
             whereClause.append("u.dateCreated > ?" + size);
-            params.add(size++, endDate);
+            params.add(size++, end);
             whereClause.append(" AND u.dateCreated < ?" + size);
         }
         whereClause.append(" ORDER BY u.dateCreated DESC");
@@ -717,27 +722,33 @@ public class JPAUserManagerImpl implements UserManager {
         
         if (enabled != null) {
             if (startDate != null) {
+                Timestamp start = new Timestamp(startDate.getTime());
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "UserData.getByEnabled&EndDate&StartDateOrderByStartDateDesc");
                 query.setParameter(1, enabled);
-                query.setParameter(2, endDate);
-                query.setParameter(3, startDate);
+                query.setParameter(2, end);
+                query.setParameter(3, start);
             } else {
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "UserData.getByEnabled&EndDateOrderByStartDateDesc");
                 query.setParameter(1, enabled);
-                query.setParameter(2, endDate);
+                query.setParameter(2, end);
             }
         } else {
             if (startDate != null) {
+                Timestamp start = new Timestamp(startDate.getTime());
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "UserData.getByEndDate&StartDateOrderByStartDateDesc");
-                query.setParameter(1, endDate);
-                query.setParameter(2, startDate);
+                query.setParameter(1, end);
+                query.setParameter(2, start);
             } else {
+                Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
                         "UserData.getByEndDateOrderByStartDateDesc");
-                query.setParameter(1, endDate);
+                query.setParameter(1, end);
             }
         }
         if (offset != 0) {
@@ -1019,14 +1030,17 @@ public class JPAUserManagerImpl implements UserManager {
         if (endDate == null) endDate = new Date();
         
         if (startDate != null) {
+            Timestamp start = new Timestamp(startDate.getTime());
+            Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
                     "CommentData.getMostCommentedWebsiteByEndDate&StartDate");
-            query.setParameter(1, endDate);
-            query.setParameter(2, startDate);
+            query.setParameter(1, end);
+            query.setParameter(2, start);
         } else {
+            Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
                     "CommentData.getMostCommentedWebsiteByEndDate");
-            query.setParameter(1, endDate);
+            query.setParameter(1, end);
         }
         if (offset != 0) {
             query.setFirstResult(offset);
