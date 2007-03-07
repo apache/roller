@@ -72,14 +72,14 @@
         <include name="hibernate-3.1/lib/jta.jar"/>
         <include name="hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
 
-        <!-- needed for JPA/OpenJPA 
+        <!-- needed for JPA/OpenJPA -->
         <include name="openjpa-0.9.6/openjpa-all-0.9.6-incubating.jar"/>
         <include name="openjpa-0.9.6/persistence-api-1.0.jar"/>
         <include name="openjpa-0.9.6/serp-1.11.0.jar"/>
-        <include name="openjpa-0.9.6/geronimo-j2ee-connector_1.5_spec.jar"/> -->
+        <include name="openjpa-0.9.6/geronimo-j2ee-connector_1.5_spec.jar"/> 
         
-        <!-- Needed for JPA/Toplink -->
-        <include name="toplink-essentials-9.1/toplink-essentials.jar"/>        
+        <!-- Needed for JPA/Toplink
+        <include name="toplink-essentials-9.1/toplink-essentials.jar"/> -->
         
         <!-- needed for ROME -->
         <include name="lib/rome-0.9.jar"/>
