@@ -80,7 +80,7 @@
        #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)
     #end
     #if( $website.allowComments )
-    <comments>$utils.textToHTML($entry.commentLink)</comments>
+    <comments>$url.comments($entry.anchor)</comments>
     #end
   </item>
   #end
