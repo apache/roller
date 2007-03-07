@@ -3,10 +3,9 @@
     <persistence-unit name ="RollerPU" transaction-type = "RESOURCE_LOCAL">
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
         <!--
-        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        -->
         <jta-data-source>java:comp/env/jdbc/rollerdb</jta-data-source>
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        -->
         <mapping-file>org/apache/roller/pojos/AutoPingData.orm.xml                   </mapping-file>
         <mapping-file>org/apache/roller/pojos/BookmarkData.orm.xml                   </mapping-file>
         <mapping-file>org/apache/roller/pojos/CommentData.orm.xml                    </mapping-file>
