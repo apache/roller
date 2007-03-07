@@ -18,6 +18,13 @@
  */
 package org.apache.roller.business.jpa;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Enumeration;
+import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -28,12 +35,12 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerImpl;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.business.datamapper.jpa.JPARefererManager;
 import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.referrers.RefererManager;
+import org.apache.roller.config.RollerConfig;
 
 /**
  * A JPA specific implementation of the Roller business layer.
@@ -66,8 +73,54 @@ public class JPARollerImpl extends RollerImpl {
      * @throws org.apache.roller.RollerException on any error
      */
     protected JPARollerImpl() throws RollerException {
-        // set strategy used by JPA
-        strategy = new JPAPersistenceStrategy("RollerPU");
+        
+        // set strategy used by Datamapper
+        // You can configure JPA completely via the JPAEMF.properties file
+        Properties emfProps = loadPropertiesFromResourceName(
+           "JPAEMF.properties", getContextClassLoader());
+        
+        // Or add OpenJPA, Toplink and Hibernate properties to Roller config.
+        // These override properties set so far.
+        Enumeration keys = RollerConfig.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
+                String value = RollerConfig.getProperty(key);
+                logger.info(key + ": " + value);
+                emfProps.setProperty(key, value);
+            }
+        }
+
+        // Or, for plain-old JDBC, use Roller's jdbc properties and
+        // we'll convert them to OpenJPA, Toplink and Hibernate properties.
+        // These override properties set so far.
+        if (StringUtils.isNotEmpty(RollerConfig.getProperty("jdbc.driverClass"))) {
+            
+            String driver =   RollerConfig.getProperty("jdbc.driverClass");
+            String url =      RollerConfig.getProperty("jdbc.connectionURL");
+            String username = RollerConfig.getProperty("jdbc.username");
+            String password = RollerConfig.getProperty("jdbc.password");
+            logger.info("driverClass:    " + driver);
+            logger.info("connectionURL:  " + url);
+            logger.info("username:       " + username);         
+            
+            emfProps.setProperty("openjpa.ConnectionDriverName", driver);
+            emfProps.setProperty("openjpa.ConnectionURL", url);
+            emfProps.setProperty("openjpa.ConnectionUserName", username);
+            emfProps.setProperty("openjpa.ConnectionPassword", password); 
+           
+            emfProps.setProperty("toplink.jdbc.driver", driver);
+            emfProps.setProperty("toplink.jdbc.url", url);
+            emfProps.setProperty("toplink.jdbc.user", username);
+            emfProps.setProperty("toplink.jdbc.password", password);
+            
+            emfProps.setProperty("hibernate.connection.driver_class", driver);
+            emfProps.setProperty("hibernate.connection.url", url);
+            emfProps.setProperty("hibernate.connection.username", username);
+            emfProps.setProperty("hibernate.connection.password", password);      
+        } 
+        
+        strategy = new JPAPersistenceStrategy("RollerPU", emfProps);
     }
 
     protected UserManager createJPAUserManager(JPAPersistenceStrategy strategy) {
@@ -254,6 +307,55 @@ public class JPARollerImpl extends RollerImpl {
      */
     public ConfigManager getConfigManager() {
         throw new RuntimeException("Deprecated method getConfigManager.");
+    }
+    
+        
+    /**
+     * Loads properties from given resourceName using given class loader
+     * @param resourceName The name of the resource containing properties
+     * @param cl Classloeder to be used to locate the resouce
+     * @return A properties object
+     * @throws RollerException
+     */
+    private static Properties loadPropertiesFromResourceName(
+            String resourceName, ClassLoader cl) throws RollerException {
+        Properties props = new Properties();
+        InputStream in = null;
+        in = cl.getResourceAsStream(resourceName);
+        if (in == null) {
+            //TODO: Check how i18n is done in roller
+            throw new RollerException(
+                    "Could not locate properties to load " + resourceName);
+        }
+        try {
+            props.load(in);
+        } catch (IOException ioe) {
+            throw new RollerException(
+                    "Could not load properties from " + resourceName);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ioe) {
+                }
+            }
+        }
+        
+        return props;
+    }
+    
+    /**
+     * Get the context class loader associated with the current thread. This is
+     * done in a doPrivileged block because it is a secure method.
+     * @return the current thread's context class loader.
+     */
+    private static ClassLoader getContextClassLoader() {
+        return (ClassLoader) AccessController.doPrivileged(
+                new PrivilegedAction() {
+            public Object run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
     }
     
 }

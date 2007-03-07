@@ -22,15 +22,11 @@ package org.apache.roller.business.jpa;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Iterator;
-import java.io.InputStream;
-import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -60,22 +56,20 @@ public class JPAPersistenceStrategy {
      */
     private static Log logger = LogFactory.getFactory().getInstance(
             JPAPersistenceStrategy.class);
-    
+            
     /**
      * Construct by finding JPA EntityManagerFactory.
      * @throws org.apache.roller.RollerException on any error
      */
-    public JPAPersistenceStrategy(String puName) throws RollerException {
-        Properties emfProps = loadPropertiesFromResourceName(
-                "JPAEMF.properties", getContextClassLoader());
+    public JPAPersistenceStrategy(String puName, Properties emfProperties) throws RollerException {                   
         try {
-            this.emf = Persistence.createEntityManagerFactory(puName, emfProps);
+            this.emf = Persistence.createEntityManagerFactory(puName, emfProperties);
         } catch (PersistenceException pe) {
             logger.error("ERROR: creating entity manager", pe);
             throw new RollerException(pe);
         }
-    }
-    
+    }    
+        
     /**
      * Flush changes to the datastore, commit transaction, release em.
      * @throws org.apache.roller.RollerException on any error
@@ -221,7 +215,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         Query q = em.createNamedQuery(queryName);
         // Never flush for queries. Roller code assumes this behavior
-        //q.setFlushMode(FlushModeType.COMMIT);
+        q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
     
@@ -235,7 +229,7 @@ public class JPAPersistenceStrategy {
         EntityManager em = getEntityManager(false);
         Query q = em.createQuery(queryString);
         // Never flush for queries. Roller code assumes this behavior
-        //q.setFlushMode(FlushModeType.COMMIT);
+        q.setFlushMode(FlushModeType.COMMIT);
         return q;
     }
     
@@ -251,54 +245,6 @@ public class JPAPersistenceStrategy {
         Query q = em.createNamedQuery(queryName);
         return q;
     }
-    
-    
-    /**
-     * Loads properties from given resourceName using given class loader
-     * @param resourceName The name of the resource containing properties
-     * @param cl Classloeder to be used to locate the resouce
-     * @return A properties object
-     * @throws RollerException
-     */
-    private static Properties loadPropertiesFromResourceName(
-            String resourceName, ClassLoader cl) throws RollerException {
-        Properties props = new Properties();
-        InputStream in = null;
-        in = cl.getResourceAsStream(resourceName);
-        if (in == null) {
-            //TODO: Check how i18n is done in roller
-            throw new RollerException(
-                    "Could not locate properties to load " + resourceName);
-        }
-        try {
-            props.load(in);
-        } catch (IOException ioe) {
-            throw new RollerException(
-                    "Could not load properties from " + resourceName);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioe) {
-                }
-            }
-        }
-        
-        return props;
-    }
-    
-    /**
-     * Get the context class loader associated with the current thread. This is
-     * done in a doPrivileged block because it is a secure method.
-     * @return the current thread's context class loader.
-     */
-    private static ClassLoader getContextClassLoader() {
-        return (ClassLoader) AccessController.doPrivileged(
-                new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
+       
 }
 
