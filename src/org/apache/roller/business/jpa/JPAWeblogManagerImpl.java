@@ -96,13 +96,12 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
     /**
      * @inheritDoc
      */
-    public void saveWeblogCategory(WeblogCategoryData cat)
-    throws RollerException {
-        if(cat.getId() == null && this.isDuplicateWeblogCategoryName(cat)) {
-            throw new RollerException("Duplicate category name, cannot save category");
-        }
-        
-        if (cat.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(cat)) {
+    public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException {
+        boolean exists = getWeblogCategory(cat.getId()) != null;
+        if (!exists) {
+            if (isDuplicateWeblogCategoryName(cat)) {
+                throw new RollerException("Duplicate category name, cannot save category");
+            }
             // Newly added object. If it has a parent,
             // maintain relationship from both sides
             WeblogCategoryData parent = cat.getParent();
@@ -112,8 +111,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
-        
+        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());        
         this.strategy.store(cat);
     }
     
@@ -519,6 +517,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         
+        //queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
         if (tags == null || tags.size()==0) {
             queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
         } else {
@@ -540,6 +539,25 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
             queryString.append("e.website.enabled = ?").append(size);
         }
         
+        /*if (tags != null && tags.size() > 0) {
+            // A JOIN with WeblogEntryTagData in parent quert will cause a DISTINCT in SELECT clause
+            // WeblogEntryData has a clob field and many databases do not link DISTINCT for CLOB fields
+            // Hence as a workaround using corelated EXISTS query.
+            queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTagData t WHERE "
+                    + " t.weblogEntry = e AND t.name IN (");
+            final String PARAM_SEPERATOR = ", ";
+            for(int i = 0; i < tags.size(); i++) {
+                params.add(size++, tags.get(i));
+                queryString.append("?").append(size).append(PARAM_SEPERATOR);
+            }
+            // Remove the trailing PARAM_SEPERATOR
+            queryString.delete(queryString.length() - PARAM_SEPERATOR.length(),
+                    queryString.length());
+
+            // Close the brace FOR IN clause and EXIST clause
+            queryString.append(" ) )");
+        }*/
+
         if (user != null) {
             params.add(size++, user.getId());
             queryString.append(" AND e.creator.id = ?").append(size);
@@ -1440,7 +1458,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         } else if(siteTagData != null) {
             siteTagData.setTotal(siteTagData.getTotal() + amount);
             siteTagData.setLastUsed(lastUsed);
-            strategy.store(weblogTagData);
+            strategy.store(siteTagData);
             // Why use update query when only one object needs update?
 //            Query update = strategy.getNamedUpdate(
 //                    "WeblogEntryTagAggregateData.updateAddToTotalByName&WeblogNull");

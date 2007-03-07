@@ -198,13 +198,16 @@ public class JPAUserManagerImpl implements UserManager {
         // make sure that both sides of the relationship are maintained
         for (Iterator iterator = website.getPermissions().iterator(); iterator.hasNext();) {
             PermissionsData perms = (PermissionsData) iterator.next();
-            //Remove it from database
-            this.strategy.remove(perms);
+            
             //Remove it from website
             iterator.remove();
+            
             //Remove it from corresponding user
             UserData user = perms.getUser();
             user.getPermissions().remove(perms);
+
+            //Remove it from database
+            this.strategy.remove(perms);
         }
         
         // flush the changes before returning. This is required as there is a
@@ -218,8 +221,10 @@ public class JPAUserManagerImpl implements UserManager {
             Query query = strategy.getNamedUpdate(
                 "WeblogEntryTagAggregateData.getByName&WebsiteNullOrderByLastUsedDesc");
             query.setParameter(1, stat.getName());
-            WeblogEntryTagAggregateData agg = (WeblogEntryTagAggregateData)query.getSingleResult();
-            agg.setTotal(agg.getTotal() - stat.getCount());
+            try {
+                WeblogEntryTagAggregateData agg = (WeblogEntryTagAggregateData)query.getSingleResult();
+                agg.setTotal(agg.getTotal() - stat.getCount());
+            } catch (NoResultException ignored) {} // no agg to be updated
         }
     }
     
@@ -249,7 +254,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void savePermissions(PermissionsData perms)
     throws RollerException {
-        if (perms.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(perms)) {
+        if (getPermissions(perms.getId()) == null) { 
             // This is a new object make sure that relationship is set on managed
             // copy of other side
             WebsiteData website = perms.getWebsite(); //(WebsiteData) getManagedObject(perms.getWebsite());
@@ -537,7 +542,8 @@ public class JPAUserManagerImpl implements UserManager {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
-                
+        
+        //queryString.append("SELECT w FROM WebsiteData w WHERE ");
         if (user == null) {
             queryString.append("SELECT w FROM WebsiteData w WHERE ");
         } else {
@@ -546,7 +552,7 @@ public class JPAUserManagerImpl implements UserManager {
             whereClause.append(" p.user = ?" + size);
             params.add(size++, Boolean.FALSE);
             whereClause.append(" AND p.pending = ?" + size);
-        }    
+        }
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
             if (whereClause.length() > 0) whereClause.append(" AND ");
@@ -568,7 +574,16 @@ public class JPAUserManagerImpl implements UserManager {
             if (whereClause.length() > 0) whereClause.append(" AND ");
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
-        }
+        }      
+        /*if (user != null) {    
+            if (whereClause.length() > 0) whereClause.append(" AND ");
+            whereClause.append(" EXISTS (SELECT p from PermissionsData p WHERE p.website = w ");
+            params.add(size++, user);         
+            whereClause.append("    AND p.user = ?" + size);
+            params.add(size++, Boolean.FALSE);
+            whereClause.append("    AND p.pending = ?" + size + ")");   
+        }*/
+                
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
         Query query = strategy.getDynamicQuery(queryString.toString() + whereClause.toString());

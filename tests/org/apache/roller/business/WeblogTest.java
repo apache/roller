@@ -94,58 +94,65 @@ public class WeblogTest extends TestCase {
         
         log.info("BEGIN");
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
-        WebsiteData weblog = null;
+        try {
         
-        WebsiteData testWeblog = new WebsiteData();
-        testWeblog.setName("Test Weblog");
-        testWeblog.setDescription("Test Weblog");
-        testWeblog.setHandle("testweblog");
-        testWeblog.setEmailAddress("testweblog@dev.null");
-        testWeblog.setEditorPage("editor-text.jsp");
-        testWeblog.setBlacklist("");
-        testWeblog.setEmailFromAddress("");
-        testWeblog.setEditorTheme("basic");
-        testWeblog.setLocale("en_US");
-        testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(new java.util.Date());
-        testWeblog.setCreator(testUser);
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            WebsiteData weblog = null;
+
+            WebsiteData testWeblog = new WebsiteData();
+            testUser = TestUtils.getManagedUser(testUser);
+            testWeblog.setName("Test Weblog");
+            testWeblog.setDescription("Test Weblog");
+            testWeblog.setHandle("testweblog");
+            testWeblog.setEmailAddress("testweblog@dev.null");
+            testWeblog.setEditorPage("editor-text.jsp");
+            testWeblog.setBlacklist("");
+            testWeblog.setEmailFromAddress("");
+            testWeblog.setEditorTheme("basic");
+            testWeblog.setLocale("en_US");
+            testWeblog.setTimeZone("America/Los_Angeles");
+            testWeblog.setDateCreated(new java.util.Date());
+            testWeblog.setCreator(testUser);
+
+            // make sure test weblog does not exist
+            weblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
+            assertNull(weblog);
+
+            // add test weblog
+            mgr.addWebsite(testWeblog);
+            String id = testWeblog.getId();
+            TestUtils.endSession(true);
+
+            // make sure test weblog exists
+            weblog = null;
+            weblog = mgr.getWebsite(id);
+            assertNotNull(weblog);
+            assertEquals(testWeblog, weblog);
+
+            // modify weblog and save
+            weblog.setName("testtesttest");
+            mgr.saveWebsite(weblog);
+            TestUtils.endSession(true);
+
+            // make sure changes were saved
+            weblog = null;
+            weblog = mgr.getWebsite(id);
+            assertNotNull(weblog);
+            assertEquals("testtesttest", weblog.getName());
+
+            // remove test weblog
+            mgr.removeWebsite(weblog);
+            TestUtils.endSession(true);
+
+            // make sure weblog no longer exists
+            weblog = null;
+            weblog = mgr.getWebsite(id);
+            assertNull(weblog);
         
-        // make sure test weblog does not exist
-        weblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
-        assertNull(weblog);
-        
-        // add test weblog
-        mgr.addWebsite(testWeblog);
-        String id = testWeblog.getId();
-        TestUtils.endSession(true);
-        
-        // make sure test weblog exists
-        weblog = null;
-        weblog = mgr.getWebsite(id);
-        assertNotNull(weblog);
-        assertEquals(testWeblog, weblog);
-        
-        // modify weblog and save
-        weblog.setName("testtesttest");
-        mgr.saveWebsite(weblog);
-        TestUtils.endSession(true);
-        
-        // make sure changes were saved
-        weblog = null;
-        weblog = mgr.getWebsite(id);
-        assertNotNull(weblog);
-        assertEquals("testtesttest", weblog.getName());
-        
-        // remove test weblog
-        mgr.removeWebsite(weblog);
-        TestUtils.endSession(true);
-        
-        // make sure weblog no longer exists
-        weblog = null;
-        weblog = mgr.getWebsite(id);
-        assertNull(weblog);
-        
+        } catch(Throwable t) {
+            log.error("Exception running test", t);
+            throw (Exception) t;
+        }
         log.info("END");
     }
     

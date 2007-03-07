@@ -72,14 +72,14 @@
         <include name="hibernate-3.1/lib/jta.jar"/>
         <include name="hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
 
-        <!-- needed for JPA -->
+        <!-- needed for JPA/OpenJPA 
         <include name="openjpa-0.9.6/openjpa-all-0.9.6-incubating.jar"/>
         <include name="openjpa-0.9.6/persistence-api-1.0.jar"/>
         <include name="openjpa-0.9.6/serp-1.11.0.jar"/>
-        <include name="openjpa-0.9.6/geronimo-j2ee-connector_1.5_spec.jar"/>
-        <!-- 
-        <include name="toplink-essentials-9.1/toplink-essentials.jar"/>
-        -->
+        <include name="openjpa-0.9.6/geronimo-j2ee-connector_1.5_spec.jar"/> -->
+        
+        <!-- Needed for JPA/Toplink -->
+        <include name="toplink-essentials-9.1/toplink-essentials.jar"/>        
         
         <!-- needed for ROME -->
         <include name="lib/rome-0.9.jar"/>
@@ -212,7 +212,7 @@
         <mkdir dir="${build.compile.business}/META-INF" />
         <copy todir="${build.compile.business}/META-INF" file="testdata/META-INF/persistence.xml" />
                 
-        <!-- OpenJPA bytecode enhancement -->
+        <!-- OpenJPA bytecode enhancement   -->
         <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="planet.business.path" />
         <openjpac>
             <config propertiesFile="web/WEB-INF/classes/META-INF/persistence.xml" />
@@ -222,6 +222,16 @@
                 <pathelement location="${build.compile.business}/org/apache/roller/planet/pojos" />
             </classpath>
         </openjpac>
+        
+        <!-- JPA/Toplink bytecode enhancement
+        <taskdef name="weave" classname="oracle.toplink.essentials.weaving.StaticWeaveAntTask" classpathref="planet.business.path"/>
+        <weave  source="${build.compile.business}" target="${build.compile.business}">
+            <classpath>
+                <path refid="planet.business.path"/>
+                <pathelement location="${build.compile.business}" />
+                <pathelement location="${build.compile.business}/org/apache/roller/planet/pojos" />
+            </classpath>
+        </weave> -->
         
         <!-- Jar up the business layer -->
         <mkdir dir="${build.lib}"/>

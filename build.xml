@@ -323,7 +323,10 @@ ro.buildUser=${user.name}
         <fileset dir="${build.generated.business}" excludes="**/*.java" />
     </copy>
     
-    <!-- OpenJPA bytecode enhancement -->
+    <mkdir dir="${build.compile.business}/META-INF" />
+    <copy todir="${build.compile.business}/META-INF" file="web/WEB-INF/classes/META-INF/persistence.xml" />
+
+    <!-- OpenJPA bytecode enhancement  -->
     <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
     <openjpac>
         <config propertiesFile="web/WEB-INF/classes/META-INF/persistence.xml" />
@@ -335,6 +338,16 @@ ro.buildUser=${user.name}
         </classpath>
     </openjpac>
     
+    <!-- JPA/Toplink bytecode enhancement
+    <taskdef name="weave" classname="oracle.toplink.essentials.weaving.StaticWeaveAntTask" classpathref="business.path"/>
+    <weave  source="${build.compile.business}" target="${build.compile.business}">
+        <classpath>
+            <path refid="business.path"/>
+            <pathelement location="${build.compile.business}" />
+            <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
+        </classpath>
+    </weave> -->
+        
     <!-- allow for custom build work -->
     &custom-build-business;
     

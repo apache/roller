@@ -63,9 +63,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public void saveBookmark(BookmarkData bookmark) throws RollerException {
-        if (bookmark.getId() == null) { //(!PersistentObjectHelper.isObjectPersistent(bookmark)) {
-            // This is a new object make sure that relationship is set on managed
-            // copy of other side
+        boolean exists = getBookmark(bookmark.getId()) != null;        
+        if (!exists) {
+            // New object make sure that relationship is set on managed copy of other side
             bookmark.getFolder().getBookmarks().add(bookmark);
         }
 
