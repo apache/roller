@@ -71,10 +71,12 @@ public abstract class AbstractPager implements Pager {
     
     
     public String getPrevLink() {
-        if (page > 0) {
+        if (page > 1) {
             int prevPage = page - 1;
             Map params = new HashMap();
             params.put("page", ""+prevPage);
+            return createURL(url, params);
+        } else if (page == 1) {
             return createURL(url, params);
         }
         return null;
