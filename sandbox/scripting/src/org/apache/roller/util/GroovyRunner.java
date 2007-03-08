@@ -75,3 +75,20 @@ public class GroovyRunner {
     }
 }
 
+
+/*
+# --- SHOULD NOT NEED TO EDIT BELOW THIS LINE ---
+
+export RGPATH=\
+../build/classes:\
+${GROOVY_HOME}/embeddable/groovy-all-1.0.jar:\
+${GROOVY_HOME}/lib/commons-cli-1.0.jar:\
+${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar
+echo ${RGPATH}
+
+# Hack: setting catalina.base=. allows us to save log in ./logs
+java \
+-Droller.custom.config=roller-custom.properties \
+-Dcatalina.base=. \
+-cp ${RGPATH} org.apache.roller.util.GroovyRunner $WEBAPP_DIR $JARS_DIR $1
+*/

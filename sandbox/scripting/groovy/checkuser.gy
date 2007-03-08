@@ -16,16 +16,17 @@
 * directory of this distribution.
 */
 
-username = "admin";
+if (args.length < 1) {
+    println "USAGE: groovy checkuser.gy <username>";
+    return;
+}
 
 roller = org.apache.roller.business.RollerFactory.getRoller();
-user = roller.getUserManager().getUserByUserName(username);
-
-println roller.getUserManager().getUsers(0,-1);
+user = roller.getUserManager().getUserByUserName(args[0]);
 
 if (user == null) {
     println "User ${username} not found";
 } else {
-    println "User ${user.userName} with id ${user.id} has roles:";
+    println "User ${user.userName} with id [${user.id}] has roles:";
     user.getRoles().each({ item -> println "   ${item.getRole()}" });
 }

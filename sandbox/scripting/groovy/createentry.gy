@@ -15,17 +15,34 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-username = "scratch";
-handle =   "scratchblog";
-title =    "Test post";
-text =     "Testing 1 2 3 <em>Hello World!</em>";
-catpath =  "/General";
+
+if (args.length < 2) {
+    println "USAGE: groovy createblog.gy <username> <handle> <title> <content> <catpath>";
+    return;
+}
+
+username = args[0];
+handle =   args[1];
+title =    args[2];
+text =     args[3];
+catpath =  args[4];
  
 roller = org.apache.roller.business.RollerFactory.getRoller();
-
 user = roller.getUserManager().getUser(username);
+if (user == null) {
+   println "ERROR: user ${username} not found";
+   return;
+}
 blog = roller.getUserManager().getWebsiteByHandle(handle);
+if (blog == null) {
+   println "ERROR: blog ${handle} not found";
+   return;
+}
 category = roller.getWeblogManager().getWeblogCategoryByPath(blog, null, catpath);
+if (category == null) {
+   println "ERROR: category ${catpath} not found";
+   return;
+}
 
 entry = new org.apache.roller.pojos.WeblogEntryData();
 entry.setWebsite(blog);
