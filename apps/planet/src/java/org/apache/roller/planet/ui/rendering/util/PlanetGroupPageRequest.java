@@ -21,8 +21,6 @@ package org.apache.roller.planet.ui.rendering.util;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.ui.rendering.util.InvalidRequestException;
-import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
 
 /**
@@ -38,6 +36,7 @@ public class PlanetGroupPageRequest extends PlanetGroupRequest {
     private static Log log = LogFactory.getLog(PlanetGroupPageRequest.class);
     
     // lightweight attributes
+    private int pageNum = 0;
     
     
     public PlanetGroupPageRequest() {}
@@ -63,6 +62,24 @@ public class PlanetGroupPageRequest extends PlanetGroupRequest {
             throw new InvalidRequestException("not a valid planet group page, "+
                     request.getRequestURL());
         }
+        
+        // parse request parameters, right now we only allow for a "page" param
+        if(request.getParameter("page") != null) {
+            String pageInt = request.getParameter("page");
+            try {
+                this.pageNum = Integer.parseInt(pageInt);
+            } catch(NumberFormatException e) {
+                // ignored, bad input
+            }
+        }
+    }
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
     }
     
 }
