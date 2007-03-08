@@ -77,7 +77,7 @@ public abstract class AbstractPager implements Pager {
             params.put("page", ""+prevPage);
             return createURL(url, params);
         } else if (page == 1) {
-            return createURL(url, params);
+            return url;
         }
         return null;
     }
