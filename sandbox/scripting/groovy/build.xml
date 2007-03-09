@@ -23,8 +23,8 @@
                 <path refid="scripting.path"/>
             </classpath>
         </javac>
-        <mkdir dir="./build/lib" />
-        <jar basedir="build/classes" jarfile="./build/lib/roller-groovy.jar" />
+        <mkdir dir="./dist" />
+        <jar basedir="build/classes" jarfile="./dist/roller-groovy.jar" />
     </target>
     
     <target name="clean">

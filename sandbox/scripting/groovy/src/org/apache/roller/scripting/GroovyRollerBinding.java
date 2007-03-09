@@ -36,8 +36,8 @@ public class GroovyRollerBinding extends Binding {
     private Writer writer;
     
     public GroovyRollerBinding(Map model, Writer writer) {
+        this.writer = writer;
         binding = new Binding(model);
-        binding.setVariable("out", writer);
         binding.setVariable("utils", new UtilitiesModel()); 
     }
         
