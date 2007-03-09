@@ -1,12 +1,14 @@
 
 <project name="scripting" default="build" basedir=".">
-    <description>Build scripting tools for Roller</description>   
+    <description>Build Roller-Groovy integration classes</description>   
 
     <property file="./ant.properties" />
         
     <path id="scripting.path">
-        <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">
+        <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">   
+            <include name="roller-web.jar"/>   
             <include name="roller-business.jar"/>   
+            <include name="commons-logging.jar"/>   
         </fileset>
         <fileset dir="${groovy.home}/lib">
             <include name="groovy-1.0.jar"/>
@@ -21,6 +23,8 @@
                 <path refid="scripting.path"/>
             </classpath>
         </javac>
+        <mkdir dir="./build/lib" />
+        <jar basedir="build/classes" jarfile="./build/lib/roller-groovy.jar" />
     </target>
     
     <target name="clean">

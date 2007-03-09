@@ -19,7 +19,7 @@
  * Created on October 20, 2006, 10:54 PM
  */
 
-package org.apache.roller.util;
+package org.apache.roller.scripting;
 
 import java.io.File;
 import groovy.lang.*;
@@ -90,5 +90,5 @@ echo ${RGPATH}
 java \
 -Droller.custom.config=roller-custom.properties \
 -Dcatalina.base=. \
--cp ${RGPATH} org.apache.roller.util.GroovyRunner $WEBAPP_DIR $JARS_DIR $1
+-cp ${RGPATH} org.apache.roller.scripting.GroovyRunner $WEBAPP_DIR $JARS_DIR $1
 */
