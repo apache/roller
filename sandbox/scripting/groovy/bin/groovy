@@ -6,7 +6,7 @@
 export GROOVY_HOME=/Applications/Java/groovy
 
 # Directory of Roller webapp context
-export WEBAPP_DIR=/Users/dave/src/roller-svn/roller/trunk/build/webapp
+export WEBAPP_DIR=../../../../../trunk/build/webapp
 
 # Directory of additional jars
 export JARS_DIR=/Applications/Java/jakarta-tomcat-5.5.9/common/lib
