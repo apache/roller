@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 
 /**
- * Binds Roller model objects to Groovy context.
+ * Binds Roller model objects and Groovelet style 'out' and 'html' objects to Groovy context.
  */
 public class GroovyRollerBinding extends Binding {
     private static Log log = LogFactory.getLog(GroovyRollerBinding.class);
