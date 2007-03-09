@@ -25,7 +25,7 @@ import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererFactory;
 
 /**
- * Renderer for "groovy" templates.
+ * RendererFactory that handles "groovy" templates.
  */
 public class GroovyRendererFactory implements RendererFactory {
     private static Log log = LogFactory.getLog(GroovyRendererFactory.class);
