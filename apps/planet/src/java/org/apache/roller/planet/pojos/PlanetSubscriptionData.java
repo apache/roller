@@ -65,7 +65,7 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     //----------------------------------------------------------- persistent fields
 
     /** 
-     * @hibernate.set table="rag_group_subscription" lazy="true" cascade="save-update"
+     * @hibernate.set table="rag_group_subscription" lazy="true" cascade="none"
      * @hibernate.collection-key column="subscription_id"
      * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroupData"
      */

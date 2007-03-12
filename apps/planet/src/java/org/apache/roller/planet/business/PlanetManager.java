@@ -98,7 +98,7 @@ public interface PlanetManager extends Manager {
     /**
      * Get all subscriptions.
      */
-    public Iterator getAllSubscriptions() throws RollerException;
+    public List getSubscriptions() throws RollerException;
     
     
     /**
@@ -142,61 +142,49 @@ public interface PlanetManager extends Manager {
     
     
     /**
+     * Lookup an entry by id.
+     */
+    public PlanetEntryData getEntryById(String id) throws RollerException;
+    
+    
+    /**
      * Get entries in a single feed as list of PlanetEntryData objects.
      */
-    public List getFeedEntries(
-            String feedUrl, int offset, int len) throws RollerException;
-    
-    /**
-     * Get agggration for group from cache, enries in reverse chonological order.
-     * Respects category constraints of group.
-     * @param group Restrict to entries from one subscription group.
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
-     */
-    public List getAggregation(
-            PlanetGroupData group, Date startDate, Date endDate,
-            int offset, int len) throws RollerException;
-    
-    
-    public List getAggregation(
-            int offset, int len) throws RollerException;
-    
-    
-    public List getAggregation(
-            PlanetGroupData group, int offset, int len) throws RollerException;
+    public List getEntries(PlanetSubscriptionData sub, int offset, int len) 
+        throws RollerException;
     
     
     /**
-     * Get agggration from cache, enries in reverse chonological order.
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
+     * Get Entries for a Group in reverse chonological order.
+     *
+     * @param group Restrict to entries from one group.
+     * @param offset Offset into results (for paging)
+     * @param len Maximum number of results to return (for paging)
      */
-    public List getAggregation(Date startDate, Date endDate,
-            int offset, int len) throws RollerException;
+    public List getEntries(PlanetGroupData group, int offset, int len) 
+        throws RollerException;
+    
+    
+    /**
+     * Get Entries for a Group in reverse chonological order, optionally 
+     * constrained to a certain timeframe.
+     *
+     * @param group Restrict to entries from one group.
+     * @param startDate The oldest date for entries to include.
+     * @param endDate The newest date for entries to include.
+     * @param offset Offset into results (for paging)
+     * @param len Maximum number of results to return (for paging)
+     */
+    public List getEntries(PlanetGroupData group, 
+                           Date startDate, 
+                           Date endDate,
+                           int offset, 
+                           int len) throws RollerException;
     
     
     /** 
      * Refresh entry data by fetching and parsing feeds. 
      */
     public void refreshEntries(String cacheDirPath) throws RollerException;
-    
-    
-    /** 
-     * Clear any aggregations and update times that have been cached 
-     */
-    public void clearCachedAggregations();
-    
-    
-    /** 
-     * Get last update time for entries most recent 'all' aggregation 
-     */
-    public Date getLastUpdated();
-    
-    
-    /** 
-     * Get last updated time for entries in a specify group 
-     */
-    public Date getLastUpdated(PlanetGroupData group);
     
 }

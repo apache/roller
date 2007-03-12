@@ -28,10 +28,8 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.hibernate.Criteria;
@@ -61,10 +59,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);
     
-    protected static final String NO_GROUP = "zzz_nogroup_zzz";
-    
     private HibernatePersistenceStrategy strategy = null;
-    private Map lastUpdatedByGroup = new HashMap();
     
     
     public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
@@ -207,16 +202,14 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     
     // lookup all Subscriptions
-    // TODO: return List, not Iterator
     // TODO: make pageable
-    public Iterator getAllSubscriptions() throws RollerException {
+    public List getSubscriptions() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
                     session.createCriteria(PlanetSubscriptionData.class);
             criteria.addOrder(Order.asc("feedURL"));
-            List list = criteria.list();
-            return list.iterator();
+            return criteria.list();
         } catch (Throwable e) {
             throw new RollerException("ERROR fetching subscription collection", e);
         }
@@ -305,15 +298,24 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     }
     
     
-    // TODO: remove method
-    public List getFeedEntries(String feedURL, int offset, int length)
+    // lookup Entry by id
+    public PlanetEntryData getEntryById(String id) throws RollerException {
+        return (PlanetEntryData)strategy.load(id, PlanetEntryData.class);
+    }
+    
+    
+    // lookup Entries from a specific Subscription
+    public List getEntries(PlanetSubscriptionData sub, int offset, int length)
             throws RollerException {
             
+        if(sub == null) {
+            throw new RollerException("subscription cannot be null");
+        }
+        
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
-            criteria.createAlias("subscription", "sub");
-            criteria.add(Expression.eq("sub.feedURL", feedURL));
+            criteria.add(Expression.eq("subscription", sub));
             criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
             if (length != -1) criteria.setMaxResults(length);
@@ -324,113 +326,88 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     }
     
     
-    // TODO: rename method getEntries()
-    public synchronized List getAggregation(int offset, int len)
+    // lookup Entries from a specific Group
+    public List getEntries(PlanetGroupData group, int offset, int len) 
             throws RollerException {
-        return getAggregation(null, null, null, offset, len);
-    }
-    
-    
-    // TODO: rename method getEntries()
-    public synchronized List getAggregation(Date startDate, Date endDate, int offset, int len)
-            throws RollerException {
-        return getAggregation(null, startDate, endDate, offset, len);
-    }
-    
-    
-    // TODO: rename method getEntries()
-    public synchronized List getAggregation(PlanetGroupData group, int offset, int len) 
-        throws RollerException {
-        return getAggregation(group, null, null, offset, len);
+        return getEntries(group, null, null, offset, len);
     } 
     
     
-    // TODO: rename method getEntries()
-    public synchronized List getAggregation(
-        PlanetGroupData group, Date startDate, Date endDate, int offset, int length)
-        throws RollerException {
-        // TODO: ATLAS getAggregation DONE TESTED
+    // lookup Entries from a specific Group
+    public List getEntries(PlanetGroupData group, Date startDate, 
+                           Date endDate, int offset, int length)
+            throws RollerException {
+        
+        if(group == null) {
+            throw new RollerException("group cannot be null");
+        }
+        
         List ret = null;
-        if (endDate == null) endDate = new Date();
         try {
-            String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
             long startTime = System.currentTimeMillis();
-            Session session =
-                    ((HibernatePersistenceStrategy)strategy).getSession();
             
-            if (group != null) {
-                StringBuffer sb = new StringBuffer();
-                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
-                sb.append("join e.subscription.groups g ");
-                sb.append("where g.handle=:groupHandle and e.pubTime < :endDate ");
-                if (startDate != null) {
-                    sb.append("and e.pubTime > :startDate ");
-                }
-                sb.append("order by e.pubTime desc");
-                Query query = session.createQuery(sb.toString());
-                query.setParameter("groupHandle", group.getHandle());
-                query.setFirstResult(offset);
-                if (length != -1) query.setMaxResults(length);
-                query.setParameter("endDate", endDate);
-                if (startDate != null) {
-                    query.setParameter("startDate", startDate);
-                }
-                ret = query.list();
-            } else {
-                StringBuffer sb = new StringBuffer();
-                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
-                sb.append("join e.subscription.groups g ");
-                sb.append("where (g.handle='external' or g.handle='all') ");
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            
+            StringBuffer sb = new StringBuffer();
+            sb.append("select e from PlanetEntryData e ");
+            sb.append("join e.subscription.groups g ");
+            sb.append("where g=:group ");
+            if (startDate != null) {
+                sb.append("and e.pubTime > :startDate ");
+            }
+            if (endDate != null) {
                 sb.append("and e.pubTime < :endDate ");
-                if (startDate != null) {
-                    sb.append("and e.pubTime > :startDate ");
-                }
-                sb.append("order by e.pubTime desc");
-                Query query = session.createQuery(sb.toString());
+            }
+            sb.append("order by e.pubTime desc");
+            
+            Query query = session.createQuery(sb.toString());
+            query.setParameter("group", group);
+            if(offset > 0) {
                 query.setFirstResult(offset);
-                if (length != -1) query.setMaxResults(length);
+            }
+            if (length != -1) {
+                query.setMaxResults(length);
+            }
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+            }
+            if(endDate != null) {
                 query.setParameter("endDate", endDate);
-                if (startDate != null) {
-                    query.setParameter("startDate", startDate);
-                }
-                ret = query.list();
             }
-            Date retLastUpdated = null;
-            if (ret.size() > 0) {
-                PlanetEntryData entry = (PlanetEntryData)ret.get(0);
-                retLastUpdated = entry.getPubTime();
-            } else {
-                retLastUpdated = new Date();
-            }
-            lastUpdatedByGroup.put(groupHandle, retLastUpdated);
+            
+            ret = query.list();
+
+            // old logic used when group was null, this is hacky and weird!
+//            else {
+//                StringBuffer sb = new StringBuffer();
+//                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+//                sb.append("join e.subscription.groups g ");
+//                sb.append("where (g.handle='external' or g.handle='all') ");
+//                sb.append("and e.pubTime < :endDate ");
+//                if (startDate != null) {
+//                    sb.append("and e.pubTime > :startDate ");
+//                }
+//                sb.append("order by e.pubTime desc");
+//                Query query = session.createQuery(sb.toString());
+//                query.setFirstResult(offset);
+//                if (length != -1) query.setMaxResults(length);
+//                query.setParameter("endDate", endDate);
+//                if (startDate != null) {
+//                    query.setParameter("startDate", startDate);
+//                }
+//                ret = query.list();
+//            }
             
             long endTime = System.currentTimeMillis();
+            
             log.debug("Generated aggregation in "
                     +((endTime-startTime)/1000.0)+" seconds");
             
         } catch (Throwable e) {
-            log.error("ERROR: building aggregation for: "+group.getHandle(), e);
             throw new RollerException(e);
         }
+        
         return ret;
-    } 
-    
-    
-    // TODO: is this needed?
-    public synchronized void clearCachedAggregations() {
-        lastUpdatedByGroup.clear();
-    }
-    
-    
-    // TODO: is this needed?
-    public Date getLastUpdated() {
-        return (Date)lastUpdatedByGroup.get(NO_GROUP);
-    }
-    
-    
-    // TODO: is this needed?
-    public Date getLastUpdated(PlanetGroupData group) {
-        return (Date)lastUpdatedByGroup.get(group);
     }
     
     
@@ -492,7 +469,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         feedFetcher.setUserAgent("RollerPlanetAggregator");
         
         // Loop through all subscriptions in the system
-        Iterator subs = getAllSubscriptions();
+        Iterator subs = getSubscriptions().iterator();
         while (subs.hasNext()) {
             
             long subStartTime = System.currentTimeMillis();
@@ -518,8 +495,6 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
                     + " seconds to process (" + count + ") entries of "
                     + sub.getFeedURL());
         }
-        // Clear the aggregation cache
-        clearCachedAggregations();
         
         long endTime = System.currentTimeMillis();
         log.info("--- DONE --- Refreshed entries in "

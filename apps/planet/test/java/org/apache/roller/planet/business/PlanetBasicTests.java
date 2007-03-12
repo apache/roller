@@ -16,6 +16,7 @@
 
 package org.apache.roller.planet.business;
 
+import java.util.List;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,11 +25,11 @@ import org.apache.roller.planet.pojos.PlanetData;
 
 
 /**
- * Test database implementation of PlanetManager.
+ * Test Planet CRUD.
  */
-public class PlanetTest extends TestCase {
+public class PlanetBasicTests extends TestCase {
     
-    public static Log log = LogFactory.getLog(PlanetTest.class);
+    public static Log log = LogFactory.getLog(PlanetBasicTests.class);
     
     
     public void testPlanetCRUD() throws Exception {
@@ -70,38 +71,6 @@ public class PlanetTest extends TestCase {
         planet = null;
         planet = mgr.getPlanet(testPlanet.getId());
         assertNull(planet);
-    }
-    
-    
-    /**
-     * Test lookup mechanisms.
-     */
-    public void testPlanetLookups() throws Exception {
-        
-        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        
-        PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet", "testPlanet");
-        PlanetData planet = null;
-        
-        // add
-        mgr.savePlanet(testPlanet);
-        TestUtils.endSession(true);
-        
-        // verify
-        planet = null;
-        planet = mgr.getPlanetById(testPlanet.getId());
-        assertNotNull(planet);
-        assertEquals("testPlanet", planet.getHandle());
-        
-        // by handle
-        planet = null;
-        planet = mgr.getPlanet("testPlanet");
-        assertNotNull(planet);
-        assertEquals("testPlanet", planet.getHandle());
-        
-        // remove
-        mgr.deletePlanet(planet);
-        TestUtils.endSession(true);
     }
     
 }
