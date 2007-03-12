@@ -19,6 +19,7 @@
 package org.apache.roller.planet.tasks;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -88,7 +89,10 @@ public class GeneratePlanetTask implements Runnable {
             // Ensure that output directories exists, one for each group
             File outputDirObj = new File(outputDir);
             if (!outputDirObj.exists()) outputDirObj.mkdirs();
-            List groups = planetManager.getGroupHandles();
+            
+            List groups = Collections.EMPTY_LIST;
+            // groups must be part of a planet now, so getGroupHandles() was removed
+            //List groups = planetManager.getGroupHandles();
             for (Iterator it = groups.iterator(); it.hasNext();) {
                 String groupHandle = (String) it.next();
                 String groupDirName = outputDirObj + File.separator + groupHandle;

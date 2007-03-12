@@ -62,15 +62,15 @@ public class StaticPlanetModel {
         }
     }
        
+    // removed now that groups must be part of a planet, this method no longer makes sense
+//    public List getGroups() throws RollerException {
+//        return planetManager.getGroups();
+//    }
     
-    public List getGroups() throws RollerException {
-        return planetManager.getGroups();
-    }
-    
-    
-    public PlanetGroupData getGroup(String handle) throws RollerException {
-        return planetManager.getGroup(handle);
-    }
+    // removed now that groups must be part of a planet, this method no longer makes sense
+//    public PlanetGroupData getGroup(String handle) throws RollerException {
+//        return planetManager.getGroup(handle);
+//    }
     
     
     public List getAggregation(

@@ -26,7 +26,6 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,8 +79,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     
     // delete a Planet
-    public void deletePlanet(PlanetData planet) 
-        throws RollerException {
+    public void deletePlanet(PlanetData planet) throws RollerException {
         strategy.remove(planet);
     }
     
@@ -122,6 +120,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     // save a Group
     public void saveGroup(PlanetGroupData group)  throws RollerException {
+        // TODO: move this check outside this method?
         if (group.getId() == null || getGroupById(group.getId()) == null) {
             // If new group, make sure hadnle is unique within Planet
             if (getGroup(group.getPlanet(), group.getHandle()) != null) {
@@ -133,28 +132,25 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         
     
     // delete a Group
-    public void deleteGroup(PlanetGroupData group) 
-        throws RollerException {
+    public void deleteGroup(PlanetGroupData group) throws RollerException {
         strategy.remove(group);
     }
     
     
-    // TODO: remove method
-    public PlanetGroupData getGroup(String handle) throws RollerException {
-        return getGroup(null, handle);
-    }
-    
-    
     // lookup a Group by Planet & handle
-    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
+    public PlanetGroupData getGroup(PlanetData planet, String handle) 
+            throws RollerException {
+        
+        if(planet == null) {
+            throw new RollerException("planet cannot be null");
+        }
+        
         try {
             Session session = strategy.getSession();
             Criteria criteria = session.createCriteria(PlanetGroupData.class);
-            criteria.setMaxResults(1);
+            criteria.add(Expression.eq("planet", planet));
             criteria.add(Expression.eq("handle", handle));
-            if(planet != null) {
-                criteria.add(Expression.eq("planet", planet));
-            }
+            criteria.setMaxResults(1);
             return (PlanetGroupData) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -166,51 +162,11 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     public PlanetGroupData getGroupById(String id) throws RollerException {
         return (PlanetGroupData) strategy.load(id, PlanetGroupData.class);
     }
-        
-    
-    // lookup all Groups
-    // TODO: remove method
-    public List getGroups() throws RollerException {
-        return getGroups(null);
-    }
-    
-    
-    // lookup all Groups by Planet
-    public List getGroups(PlanetData planet) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetGroupData.class);
-            if(planet != null) {
-                criteria.add(Expression.eq("planet", planet));
-            }
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    
-    // TODO: remove method
-    public List getGroupHandles() throws RollerException {
-        return getGroupHandles(null);
-    }
-    
-    
-    // TODO: remove method
-    public List getGroupHandles(PlanetData planet) throws RollerException {
-        List handles = new ArrayList();
-        Iterator list = getGroups(planet).iterator();
-        while (list.hasNext()) {
-            PlanetGroupData group = (PlanetGroupData)list.next();
-            handles.add(group.getHandle());
-        }
-        return handles;
-    }
     
     
     // save a Subscription
     public void saveSubscription(PlanetSubscriptionData sub) 
-        throws RollerException {
+            throws RollerException {
         PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             this.strategy.store(sub);
@@ -222,22 +178,21 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     // delete a Subscription
     public void deleteSubscription(PlanetSubscriptionData sub) 
-        throws RollerException {
+            throws RollerException {
         strategy.remove(sub);
     }
     
     
-    // lookup a Subscription by feed url
+    // lookup a Subscription by url
     public PlanetSubscriptionData getSubscription(String feedURL) 
-        throws RollerException {
+            throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
                     session.createCriteria(PlanetSubscriptionData.class);
-            criteria.setMaxResults(1);
             criteria.add(Expression.eq("feedURL", feedURL));
-            List list = criteria.list();
-            return list.size()!=0 ? (PlanetSubscriptionData)list.get(0) : null;
+            criteria.setMaxResults(1);
+            return (PlanetSubscriptionData) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
@@ -246,7 +201,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     // lookup a Subscription by id
     public PlanetSubscriptionData getSubscriptionById(String id) 
-        throws RollerException {
+            throws RollerException {
         return (PlanetSubscriptionData) strategy.load(id, PlanetSubscriptionData.class);
     }
     
@@ -254,7 +209,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     // lookup all Subscriptions
     // TODO: return List, not Iterator
     // TODO: make pageable
-    public Iterator getAllSubscriptions() {
+    public Iterator getAllSubscriptions() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
@@ -263,8 +218,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             List list = criteria.list();
             return list.iterator();
         } catch (Throwable e) {
-            throw new RuntimeException(
-                    "ERROR fetching subscription collection", e);
+            throw new RollerException("ERROR fetching subscription collection", e);
         }
     }
     
@@ -277,36 +231,36 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
                     "select count(*) from org.apache.roller.planet.pojos.PlanetSubscriptionData").uniqueResult();
             return count.intValue();
         } catch (Throwable e) {
-            throw new RuntimeException(
-                    "ERROR fetching subscription count", e);
+            throw new RollerException("ERROR fetching subscription count", e);
         }
     }
     
     
-    // get popular subscriptions
-    public synchronized List getTopSubscriptions(int offset, int length) 
+    // get popular Subscriptions from all Planets & Groups
+    // TODO: test this method
+    public List getTopSubscriptions(int offset, int length) 
             throws RollerException {
         
         return getTopSubscriptions(null, offset, length);
     }
     
     
-    // get popular subscriptions
-    public synchronized List getTopSubscriptions(String groupHandle, int offset, int length) 
+    // get popular Subscriptions from a specific Group
+    // TODO: test this method
+    public List getTopSubscriptions(PlanetGroupData group, int offset, int length) 
             throws RollerException {
         
         List ret = null;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Query query = null;
-            if (groupHandle != null) {
+            if (group != null) {
                 query = session.createQuery(
                     "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
                     +"join sub.groups group "
-                    +"where "
-                    +"group.handle=:groupHandle "
+                    +"where group=:group "
                     +"order by sub.inboundblogs desc");
-                query.setString("groupHandle", groupHandle);
+                query.setSerializable("group", group);
             } else {
                 query = session.createQuery(
                     "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
@@ -327,22 +281,20 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     
     // save an Entry
-    public void saveEntry(PlanetEntryData entry) 
-        throws RollerException {
+    public void saveEntry(PlanetEntryData entry) throws RollerException {
         strategy.store(entry);
     }
     
     
     // delete an Entry
-    public void deleteEntry(PlanetEntryData entry) 
-        throws RollerException {
+    public void deleteEntry(PlanetEntryData entry) throws RollerException {
         strategy.remove(entry);
     }
     
     
     // delete all Entries from a Subscription
     public void deleteEntries(PlanetSubscriptionData sub) 
-        throws RollerException {
+            throws RollerException {
         Iterator entries = sub.getEntries().iterator();
         while(entries.hasNext()) {
             strategy.remove(entries.next());
