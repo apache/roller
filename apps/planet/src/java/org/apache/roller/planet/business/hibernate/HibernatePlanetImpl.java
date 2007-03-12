@@ -30,7 +30,7 @@ import org.apache.roller.planet.business.URLStrategy;
 
 
 /**
- * A Hibernate specific implementation of the Roller business layer.
+ * A Hibernate specific implementation of the Roller Planet business layer.
  */
 public class HibernatePlanetImpl implements Planet {   
     

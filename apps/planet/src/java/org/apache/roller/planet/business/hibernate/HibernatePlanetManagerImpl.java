@@ -66,75 +66,27 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     private HibernatePersistenceStrategy strategy = null;
     private Map lastUpdatedByGroup = new HashMap();
-       
+    
+    
     public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
         this.strategy = strat;
     }
     
     
-    public void savePlanet(PlanetData planet) 
-        throws RollerException {
+    // save a Planet
+    public void savePlanet(PlanetData planet) throws RollerException {
         strategy.store(planet);
     }
     
-    public void saveGroup(PlanetGroupData group)  throws RollerException {
-        if (group.getId() == null || getGroupById(group.getId()) == null) {
-            // If new group, make sure hadnle is unique within Planet
-            if (getGroup(group.getPlanet(), group.getHandle()) != null) {
-                throw new RollerException("ERROR group handle already exists in Planet");
-            }
-        }
-        strategy.store(group);
-    }
-        
-    public void saveEntry(PlanetEntryData entry) 
-        throws RollerException {
-        strategy.store(entry);
-    }
-        
-    public void saveSubscription(PlanetSubscriptionData sub) 
-        throws RollerException {
-        PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
-        if (existing == null || (existing.getId().equals(sub.getId()))) {
-            this.strategy.store(sub);
-        } else {
-            throw new RollerException("ERROR: duplicate feed URLs not allowed");
-        }
-    }
-        
-    public void deleteEntry(PlanetEntryData entry) 
-        throws RollerException {
-        strategy.remove(entry);
-    }
     
-    
-    public void deleteEntries(PlanetSubscriptionData sub) 
-        throws RollerException {
-        Iterator entries = sub.getEntries().iterator();
-        while(entries.hasNext()) {
-            strategy.remove(entries.next());
-        }
-        
-        // make sure and clear the other side of the assocation
-        sub.getEntries().clear();
-    }
-    
-    
+    // delete a Planet
     public void deletePlanet(PlanetData planet) 
         throws RollerException {
         strategy.remove(planet);
     }
     
-    public void deleteGroup(PlanetGroupData group) 
-        throws RollerException {
-        strategy.remove(group);
-    }
-        
-    public void deleteSubscription(PlanetSubscriptionData sub) 
-        throws RollerException {
-        strategy.remove(sub);
-    }
     
+    // lookup Planet by handle
     public PlanetData getPlanet(String handle) throws RollerException {
         PlanetData planet = null;
         try {
@@ -149,10 +101,14 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         return planet;
     }
     
+    
+    // lookup Planet by id
     public PlanetData getPlanetById(String id) throws RollerException {
         return (PlanetData) strategy.load(id, PlanetData.class);
     }
     
+    
+    // lookup all Planets
     public List getPlanets() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -163,6 +119,115 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         }
     }
     
+    
+    // save a Group
+    public void saveGroup(PlanetGroupData group)  throws RollerException {
+        if (group.getId() == null || getGroupById(group.getId()) == null) {
+            // If new group, make sure hadnle is unique within Planet
+            if (getGroup(group.getPlanet(), group.getHandle()) != null) {
+                throw new RollerException("ERROR group handle already exists in Planet");
+            }
+        }
+        strategy.store(group);
+    }
+        
+    
+    // delete a Group
+    public void deleteGroup(PlanetGroupData group) 
+        throws RollerException {
+        strategy.remove(group);
+    }
+    
+    
+    // TODO: remove method
+    public PlanetGroupData getGroup(String handle) throws RollerException {
+        return getGroup(null, handle);
+    }
+    
+    
+    // lookup a Group by Planet & handle
+    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
+        try {
+            Session session = strategy.getSession();
+            Criteria criteria = session.createCriteria(PlanetGroupData.class);
+            criteria.setMaxResults(1);
+            criteria.add(Expression.eq("handle", handle));
+            if(planet != null) {
+                criteria.add(Expression.eq("planet", planet));
+            }
+            return (PlanetGroupData) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    
+    // lookup a Planet by id
+    public PlanetGroupData getGroupById(String id) throws RollerException {
+        return (PlanetGroupData) strategy.load(id, PlanetGroupData.class);
+    }
+        
+    
+    // lookup all Groups
+    // TODO: remove method
+    public List getGroups() throws RollerException {
+        return getGroups(null);
+    }
+    
+    
+    // lookup all Groups by Planet
+    public List getGroups(PlanetData planet) throws RollerException {
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            Criteria criteria = session.createCriteria(PlanetGroupData.class);
+            if(planet != null) {
+                criteria.add(Expression.eq("planet", planet));
+            }
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    
+    // TODO: remove method
+    public List getGroupHandles() throws RollerException {
+        return getGroupHandles(null);
+    }
+    
+    
+    // TODO: remove method
+    public List getGroupHandles(PlanetData planet) throws RollerException {
+        List handles = new ArrayList();
+        Iterator list = getGroups(planet).iterator();
+        while (list.hasNext()) {
+            PlanetGroupData group = (PlanetGroupData)list.next();
+            handles.add(group.getHandle());
+        }
+        return handles;
+    }
+    
+    
+    // save a Subscription
+    public void saveSubscription(PlanetSubscriptionData sub) 
+        throws RollerException {
+        PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
+        if (existing == null || (existing.getId().equals(sub.getId()))) {
+            this.strategy.store(sub);
+        } else {
+            throw new RollerException("ERROR: duplicate feed URLs not allowed");
+        }
+    }
+    
+    
+    // delete a Subscription
+    public void deleteSubscription(PlanetSubscriptionData sub) 
+        throws RollerException {
+        strategy.remove(sub);
+    }
+    
+    
+    // lookup a Subscription by feed url
     public PlanetSubscriptionData getSubscription(String feedURL) 
         throws RollerException {
         try {
@@ -177,12 +242,18 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             throw new RollerException(e);
         }
     }
-        
+    
+    
+    // lookup a Subscription by id
     public PlanetSubscriptionData getSubscriptionById(String id) 
         throws RollerException {
         return (PlanetSubscriptionData) strategy.load(id, PlanetSubscriptionData.class);
     }
-        
+    
+    
+    // lookup all Subscriptions
+    // TODO: return List, not Iterator
+    // TODO: make pageable
     public Iterator getAllSubscriptions() {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -197,6 +268,8 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         }
     }
     
+    
+    // get subscriptions count
     public int getSubscriptionCount() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -208,15 +281,20 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
                     "ERROR fetching subscription count", e);
         }
     }
-        
+    
+    
+    // get popular subscriptions
     public synchronized List getTopSubscriptions(int offset, int length) 
-        throws RollerException {
+            throws RollerException {
+        
         return getTopSubscriptions(null, offset, length);
     }
     
-    public synchronized List getTopSubscriptions(
-            String groupHandle, int offset, int length) 
+    
+    // get popular subscriptions
+    public synchronized List getTopSubscriptions(String groupHandle, int offset, int length) 
             throws RollerException {
+        
         List ret = null;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -246,64 +324,39 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         }
         return ret;
     }
-        
-    public PlanetGroupData getGroup(String handle) throws RollerException {
-        return getGroup(null, handle);
-    }
     
-    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
-        try {
-            Session session = strategy.getSession();
-            Criteria criteria = session.createCriteria(PlanetGroupData.class);
-            criteria.setMaxResults(1);
-            criteria.add(Expression.eq("handle", handle));
-            if(planet != null) {
-                criteria.add(Expression.eq("planet", planet));
-            }
-            return (PlanetGroupData) criteria.uniqueResult();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
     
-    public PlanetGroupData getGroupById(String id) throws RollerException {
-        return (PlanetGroupData) strategy.load(id, PlanetGroupData.class);
-    }
-        
-    public List getGroups() throws RollerException {
-        return getGroups(null);
-    }
-    
-    public List getGroups(PlanetData planet) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetGroupData.class);
-            if(planet != null) {
-                criteria.add(Expression.eq("planet", planet));
-            }
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-       
-    public List getGroupHandles() throws RollerException {
-        return getGroupHandles(null);
-    }
-    
-    public List getGroupHandles(PlanetData planet) throws RollerException {
-        List handles = new ArrayList();
-        Iterator list = getGroups(planet).iterator();
-        while (list.hasNext()) {
-            PlanetGroupData group = (PlanetGroupData)list.next();
-            handles.add(group.getHandle());
-        }
-        return handles;
-    }
-    
-     public List getFeedEntries(String feedURL, int offset, int length)
+    // save an Entry
+    public void saveEntry(PlanetEntryData entry) 
         throws RollerException {
-        // TODO: ATLAS getFeedEntries DONE       
+        strategy.store(entry);
+    }
+    
+    
+    // delete an Entry
+    public void deleteEntry(PlanetEntryData entry) 
+        throws RollerException {
+        strategy.remove(entry);
+    }
+    
+    
+    // delete all Entries from a Subscription
+    public void deleteEntries(PlanetSubscriptionData sub) 
+        throws RollerException {
+        Iterator entries = sub.getEntries().iterator();
+        while(entries.hasNext()) {
+            strategy.remove(entries.next());
+        }
+        
+        // make sure and clear the other side of the assocation
+        sub.getEntries().clear();
+    }
+    
+    
+    // TODO: remove method
+    public List getFeedEntries(String feedURL, int offset, int length)
+            throws RollerException {
+            
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
@@ -316,23 +369,31 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-    }    
-   
-    public synchronized List getAggregation(int offset, int len) 
-        throws RollerException {
+    }
+    
+    
+    // TODO: rename method getEntries()
+    public synchronized List getAggregation(int offset, int len)
+            throws RollerException {
         return getAggregation(null, null, null, offset, len);
-    } 
+    }
     
-    public synchronized List getAggregation(Date startDate, Date endDate, int offset, int len) 
-        throws RollerException {
+    
+    // TODO: rename method getEntries()
+    public synchronized List getAggregation(Date startDate, Date endDate, int offset, int len)
+            throws RollerException {
         return getAggregation(null, startDate, endDate, offset, len);
-    } 
+    }
     
+    
+    // TODO: rename method getEntries()
     public synchronized List getAggregation(PlanetGroupData group, int offset, int len) 
         throws RollerException {
         return getAggregation(group, null, null, offset, len);
     } 
     
+    
+    // TODO: rename method getEntries()
     public synchronized List getAggregation(
         PlanetGroupData group, Date startDate, Date endDate, int offset, int length)
         throws RollerException {
@@ -402,18 +463,26 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         return ret;
     } 
     
+    
+    // TODO: is this needed?
     public synchronized void clearCachedAggregations() {
         lastUpdatedByGroup.clear();
     }
     
+    
+    // TODO: is this needed?
     public Date getLastUpdated() {
         return (Date)lastUpdatedByGroup.get(NO_GROUP);
     }
     
+    
+    // TODO: is this needed?
     public Date getLastUpdated(PlanetGroupData group) {
         return (Date)lastUpdatedByGroup.get(group);
     }
-        
+    
+    
+    // refresh Entries for all Subscriptions
     public void refreshEntries(String cacheDirPath) throws RollerException {
         
         Date now = new Date();
@@ -504,7 +573,9 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         log.info("--- DONE --- Refreshed entries in "
                 + ((endTime-startTime)/1000.0) + " seconds");
     }
-        
+    
+    
+    // get new Entries for a specific Subscription
     protected Set getNewEntries(PlanetSubscriptionData sub,
                                 FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
@@ -593,4 +664,3 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     }
 
 }
-
