@@ -52,6 +52,18 @@ public interface Planet {
     
     
     /**
+     * Get the configured FeedFetcher.
+     */
+    public FeedFetcher getFeedFetcher();
+    
+    
+    /**
+     * Set the configured FeedFetcher.
+     */
+    public void setFeedFetcher(FeedFetcher feedFetcher);
+    
+    
+    /**
      * Flush object states.
      */
     public void flush() throws RollerException;
