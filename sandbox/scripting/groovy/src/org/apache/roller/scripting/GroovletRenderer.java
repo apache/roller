@@ -20,6 +20,7 @@ package org.apache.roller.scripting;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -29,32 +30,52 @@ import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RenderingException;
 
 /**
- * Renderer that evaluates template as Groovy script.
+ * Renderer that evaluates Roller Template as Groovy script.
+ *
+ * <p>Implementation notes</p>
+ * 
+ * <p>Executes template using GroovyShell. I'd much prefer to use the 
+ * GroovyScriptEngine, but it doesn't seem flexible enough as it returns each 
+ * resource as a URLConnection.</p>
+ *
+ * <p>Check the Groovy Servlet code for an example of GroovyScriptEngine:</br />
+ * http://svn.codehaus.org/groovy/trunk/groovy/groovy-core/src/main/groovy/servlet/
+ * </p>
  */
-public class GroovyRenderer implements Renderer {
-    private static Log log = LogFactory.getLog(GroovyRenderer.class);
+public class GroovletRenderer implements Renderer {
+    private static Log log = LogFactory.getLog(GroovletRenderer.class);
     private Template template = null;
     
-    public GroovyRenderer(Template template) {
+    public GroovletRenderer(Template template) {
         this.template = template;
     }
     
     public void render(Map model, Writer writer) throws RenderingException {
         try {
+            long startTime = System.currentTimeMillis();            
             Binding binding = new GroovyRollerBinding(model, writer);
             GroovyShell shell = new GroovyShell(binding);
-            
-            long startTime = System.currentTimeMillis();
-            
-            shell.evaluate(template.getContents());  
-            
+            shell.evaluate(template.getContents());              
             long endTime = System.currentTimeMillis();
+
             long renderTime = (endTime - startTime)/1000;
             log.debug("Rendered ["+template.getId()+"] in "+renderTime+" secs"); 
             
-        } catch (Exception ex) {
-            throw new RenderingException("Error during rendering", ex);
+        } catch (Throwable ex) {
+            log.debug("Executing Groovy script", ex);
+            renderThrowable(ex, writer);
         }
+    }
+    
+    private void renderThrowable(Throwable ex, Writer writer) {
+        Binding binding = new Binding();
+        binding.setVariable("ex", ex);
+        binding.setVariable("out", new PrintWriter(writer));
+        GroovyShell shell = new GroovyShell(binding);
+        shell.evaluate(
+             "s = \"<p><b>Exception</b>: ${ex}<br /><b>Message</b>: ${ex.message}</p>\";"
+           +" out.println(s);"
+           +" out.flush();");         
     }
 }
 

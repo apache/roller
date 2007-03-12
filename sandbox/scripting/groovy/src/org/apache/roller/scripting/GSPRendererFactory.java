@@ -18,6 +18,8 @@
 
 package org.apache.roller.scripting;
 
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.TemplateEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.Template;
@@ -25,23 +27,25 @@ import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererFactory;
 
 /**
- * RendererFactory that handles "groovy" templates.
+ * RendererFactory that handles Groovy Server Page (GSP) style templates 
+ * w/language name "gsp"
  */
-public class GroovyRendererFactory implements RendererFactory {
-    private static Log log = LogFactory.getLog(GroovyRendererFactory.class);
-        
-    public Renderer getRenderer(Template template) {        
+public class GSPRendererFactory implements RendererFactory {
+    private static Log log = LogFactory.getLog(GroovletRendererFactory.class);
+    private TemplateEngine templateEngine = new SimpleTemplateEngine();
+    
+    public Renderer getRenderer(Template template) {
         Renderer renderer = null;
         if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
-        }        
-        if("groovy".equals(template.getTemplateLanguage())) {             
+        }
+        if("gsp".equals(template.getTemplateLanguage())) {
             try {
-               renderer = new GroovyRenderer(template);
+                renderer = new GSPRenderer(templateEngine, template); 
             } catch(Exception ex) {
                 return null;
-            }                        
-        }        
+            }
+        }
         return renderer;
     }
     

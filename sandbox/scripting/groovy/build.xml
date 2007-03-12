@@ -1,5 +1,5 @@
 
-<project name="scripting" default="build" basedir=".">
+<project name="roller-groovy" default="build" basedir=".">
     <description>Build Roller-Groovy integration classes</description>   
 
     <property file="./ant.properties" />
@@ -27,6 +27,16 @@
         <jar basedir="build/classes" jarfile="./dist/roller-groovy.jar" />
     </target>
     
+    <target name="copy-to-roller" >
+        <copy todir="../../../build/webapp/WEB-INF/lib">
+            <fileset dir="./dist">
+               <include name="roller-groovy.jar" />
+            </fileset>
+            <fileset dir="${groovy.home}/embeddable">
+               <include name="groovy-all-1.0.jar" />
+            </fileset>
+        </copy>
+    </target>    
     <target name="clean">
         <delete dir="./build" />
     </target>
