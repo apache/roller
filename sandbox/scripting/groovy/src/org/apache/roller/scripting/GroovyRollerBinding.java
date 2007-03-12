@@ -20,6 +20,7 @@ package org.apache.roller.scripting;
 
 import groovy.lang.Binding;
 import groovy.xml.MarkupBuilder;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -27,16 +28,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 
 /**
- * Binds Roller model objects and Groovelet style 'out' and 'html' objects to Groovy context.
+ * Binds Roller model objects along with Groovlet and GSP style "out" and "html" variables.
  */
 public class GroovyRollerBinding extends Binding {
     private static Log log = LogFactory.getLog(GroovyRollerBinding.class);
     private Binding binding;
     private MarkupBuilder html;
-    private Writer writer;
+    private PrintWriter printWriter;
     
     public GroovyRollerBinding(Map model, Writer writer) {
-        this.writer = writer;
+        this.printWriter = new PrintWriter(writer);
         binding = new Binding(model);
         binding.setVariable("utils", new UtilitiesModel()); 
     }
@@ -70,11 +71,11 @@ public class GroovyRollerBinding extends Binding {
         }
         try {
             if ("out".equals(name)) {
-                return writer;
+                return printWriter;
             }
             if ("html".equals(name)) {
                 if (html == null) {
-                    html = new MarkupBuilder(writer);
+                    html = new MarkupBuilder(printWriter);
                 }
                 return html;
             }
