@@ -181,10 +181,4 @@ public interface PlanetManager extends Manager {
                            int offset, 
                            int len) throws RollerException;
     
-    
-    /** 
-     * Refresh entry data by fetching and parsing feeds. 
-     */
-    public void refreshEntries(String cacheDirPath) throws RollerException;
-    
 }

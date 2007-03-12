@@ -41,7 +41,7 @@ public class RefreshPlanetTask implements Runnable {
             // Update all feeds in planet
             log.info("Refreshing Planet entries");
             Planet planet = PlanetFactory.getPlanet();
-            planet.getPlanetManager().refreshEntries(
+            planet.getFeedFetcher().refreshEntries(
                 PlanetConfig.getProperty("cache.dir"));                        
             planet.flush();
             planet.release();
