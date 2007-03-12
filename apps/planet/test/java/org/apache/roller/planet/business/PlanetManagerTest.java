@@ -82,7 +82,7 @@ public class PlanetManagerTest extends TestCase {
             
             PlanetSubscriptionData sub = planet.getSubscription("test_url");
             PlanetSubscriptionData sub1 = planet.getSubscription("test_url1");
-            PlanetGroupData group = planet.getGroup("test_handle");
+            PlanetGroupData group = planet.getGroup(testPlanet, "test_handle");
             
             group.getSubscriptions().add(sub);
             sub.getGroups().add(group);
@@ -98,19 +98,19 @@ public class PlanetManagerTest extends TestCase {
         }
         {   // get group and remove one subscription
             PlanetSubscriptionData sub = planet.getSubscription("test_url");
-            PlanetGroupData group = planet.getGroup("test_handle");
+            PlanetGroupData group = planet.getGroup(testPlanet, "test_handle");
             group.getSubscriptions().remove(sub);
             TestUtils.endSession(true);
         }
         {   // get group and check it's subscriptions, remove it
-            PlanetGroupData group = planet.getGroup("test_handle");
+            PlanetGroupData group = planet.getGroup(testPlanet, "test_handle");
             Set subs = group.getSubscriptions();
             assertEquals(1, subs.size());
             planet.deleteGroup(group);
             TestUtils.endSession(true);
         }
         {   // make sure group gone, subs still there, then remove them too
-            PlanetGroupData group = planet.getGroup("test_handle");
+            PlanetGroupData group = planet.getGroup(testPlanet, "test_handle");
             assertNull(group);
             PlanetSubscriptionData sub = planet.getSubscription("test_url");
             assertNotNull(sub);
@@ -243,7 +243,7 @@ public class PlanetManagerTest extends TestCase {
             PlanetSubscriptionData sub = planet.getSubscription(feed_url1);
             int entriesSize = sub.getEntries().size();
             
-            PlanetGroupData group = planet.getGroup("test_handle");
+            PlanetGroupData group = planet.getGroup(testPlanet, "test_handle");
             assertNotNull(group);
             
             planet.deleteGroup(group);
@@ -305,7 +305,7 @@ public class PlanetManagerTest extends TestCase {
                 assertTrue(sub2.getEntries().size() > 0);
                 assertEquals(count, sub1.getEntries().size() + sub2.getEntries().size());
                 
-                PlanetGroupData group = planet.getGroup("test_handle");
+                PlanetGroupData group = planet.getGroup(testPlanet, "test_handle");
                 assertNotNull(group);
                 
                 List bigag = planet.getAggregation(group, null, null, 0, 30);

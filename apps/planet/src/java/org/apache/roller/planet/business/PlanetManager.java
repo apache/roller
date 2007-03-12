@@ -62,30 +62,6 @@ public interface PlanetManager extends Manager {
     public void deleteGroup(PlanetGroupData group) throws RollerException;
     
     
-    /**
-     * Get handles for all defined groups
-     */
-    public List getGroupHandles() throws RollerException;
-    
-    
-    public List getGroupHandles(PlanetData planet) throws RollerException;
-    
-    
-    /**
-     * Get list of group objects
-     */
-    public List getGroups() throws RollerException;
-    
-    
-    public List getGroups(PlanetData planet) throws RollerException;
-    
-    
-    /**
-     * Get group by handle, group has subscriptions
-     */
-    public PlanetGroupData getGroup(String handle) throws RollerException;
-    
-    
     public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException;
     
     
@@ -140,8 +116,8 @@ public interface PlanetManager extends Manager {
     /**
      * Get top X subscriptions, restricted by group.
      */
-    public List getTopSubscriptions(
-            String groupHandle, int offset, int len) throws RollerException;
+    public List getTopSubscriptions(PlanetGroupData group, int offset, int len) 
+        throws RollerException;
     
     
     /**

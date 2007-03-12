@@ -45,7 +45,7 @@ public class GroupTest extends TestCase {
         testGroup.setPlanet(testPlanet);
         PlanetGroupData group = null;
         
-        group = mgr.getGroup("test_handle");
+        group = mgr.getGroup(testPlanet, "test_handle");
         assertNull(group);
         
         // add
@@ -106,22 +106,6 @@ public class GroupTest extends TestCase {
             mgr.saveGroup(testGroup1);
             mgr.saveGroup(testGroup2);
             TestUtils.endSession(true);
-
-            // lookup all groups
-            groups = mgr.getGroups();
-            assertNotNull(groups);
-            assertEquals(2, groups.size());
-
-            // lookup groups in test planet
-            groups = mgr.getGroups(testPlanet);
-            assertNotNull(groups);
-            assertEquals(2, groups.size());
-
-            // lookup group handles in test planet
-            groups = null;
-            groups = mgr.getGroupHandles(testPlanet);
-            assertNotNull(groups);
-            assertEquals(2, groups.size());
 
             // lookup group by id
             group = null;
