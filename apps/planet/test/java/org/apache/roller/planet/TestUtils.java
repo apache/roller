@@ -22,6 +22,9 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.PlanetEntryData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 
 
 /**
@@ -83,6 +86,148 @@ public final class TestUtils {
         
         // remove
         mgr.deletePlanet(planet);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+    }
+    
+    
+    /**
+     * Convenience method that creates a group and stores it.
+     */
+    public static PlanetGroupData setupGroup(PlanetData planet, String handle) 
+            throws Exception {
+        
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        
+        // make sure we are using a persistent object
+        PlanetData testPlanet = mgr.getPlanetById(planet.getId());
+        
+        // store
+        PlanetGroupData testGroup = new PlanetGroupData(testPlanet, handle, handle, handle);
+        testPlanet.getGroups().add(testGroup);
+        mgr.saveGroup(testGroup);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+        
+        // query to make sure we return the persisted object
+        PlanetGroupData group = mgr.getGroupById(testGroup.getId());
+        
+        if(group == null)
+            throw new RollerException("error inserting new group");
+        
+        return group;
+    }
+    
+    
+    /**
+     * Convenience method for removing a group.
+     */
+    public static void teardownGroup(String id) throws Exception {
+        
+        // lookup
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetGroupData group = mgr.getGroupById(id);
+        
+        // remove
+        mgr.deleteGroup(group);
+        group.getPlanet().getGroups().remove(group);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+    }
+    
+    
+    /**
+     * Convenience method that creates a sub and stores it.
+     */
+    public static PlanetSubscriptionData setupSubscription(String feedUrl) 
+            throws Exception {
+        
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        
+        // store
+        PlanetSubscriptionData testSub = new PlanetSubscriptionData();
+        testSub.setFeedURL(feedUrl);
+        testSub.setTitle(feedUrl);
+        mgr.saveSubscription(testSub);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+        
+        // query to make sure we return the persisted object
+        PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub.getId());
+        
+        if(sub == null)
+            throw new RollerException("error inserting new subscription");
+        
+        return sub;
+    }
+    
+    
+    /**
+     * Convenience method for removing a sub.
+     */
+    public static void teardownSubscription(String id) throws Exception {
+        
+        // lookup
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetSubscriptionData sub = mgr.getSubscriptionById(id);
+        
+        // remove
+        mgr.deleteSubscription(sub);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+    }
+    
+    
+    /**
+     * Convenience method that creates an entry and stores it.
+     */
+    public static PlanetEntryData setupEntry(PlanetSubscriptionData sub, String title) 
+            throws Exception {
+        
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        
+        // make sure we are using a persistent object
+        PlanetSubscriptionData testSub = mgr.getSubscriptionById(sub.getId());
+        
+        // store
+        PlanetEntryData testEntry = new PlanetEntryData();
+        testEntry.setPermalink(title);
+        testEntry.setTitle(title);
+        testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
+        testEntry.setSubscription(testSub);
+        testSub.getEntries().add(testEntry);
+        mgr.saveEntry(testEntry);
+        
+        // flush
+        PlanetFactory.getPlanet().flush();
+        
+        // query to make sure we return the persisted object
+        PlanetEntryData entry = mgr.getEntryById(testEntry.getId());
+        
+        if(entry == null)
+            throw new RollerException("error inserting new entry");
+        
+        return entry;
+    }
+    
+    
+    /**
+     * Convenience method for removing an entry.
+     */
+    public static void teardownEntry(String id) throws Exception {
+        
+        // lookup
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        PlanetEntryData entry = mgr.getEntryById(id);
+        
+        // remove
+        mgr.deleteEntry(entry);
+        entry.getSubscription().getEntries().remove(entry);
         
         // flush
         PlanetFactory.getPlanet().flush();

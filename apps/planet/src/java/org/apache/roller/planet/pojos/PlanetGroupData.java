@@ -60,6 +60,17 @@ public class PlanetGroupData implements Serializable
 
     private PlanetData planet = null;
     
+    
+    public PlanetGroupData() {}
+    
+    public PlanetGroupData(PlanetData planet, String handle, String title, String desc) {
+        this.planet = planet;
+        this.handle = handle;
+        this.title = title;
+        this.description = desc;
+    }
+    
+    
     //------------------------------------------------------- persistent fields
 
     /** 
@@ -76,7 +87,7 @@ public class PlanetGroupData implements Serializable
     }
     
     /** 
-     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="save-update"
+     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none"
      * @hibernate.collection-key column="group_id"
      * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.PlanetSubscriptionData"
      */
@@ -168,7 +179,8 @@ public class PlanetGroupData implements Serializable
     }
     
     //--------------------------------------------------------------- app logic
-
+    
+    
     /**
      * Returns true if entry is qualified for inclusion in this group.
      */
