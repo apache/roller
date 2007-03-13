@@ -27,183 +27,32 @@ import java.util.Set;
 
 
 /**
- * @struts.form include-all="true"
- * @ejb:bean name="PlanetSubscriptionData"
+ * Planet Subscription.
+ *
  * @hibernate.class lazy="true" table="rag_subscription"
  */
-public class PlanetSubscriptionData implements Serializable, Comparable
-{
-    /** Database ID */
+public class PlanetSubscriptionData implements Serializable, Comparable {
+    
+    // attributes
     protected String id;
-    
-    /** Title of the blog or website */
     protected String title;
-    
-    /** Name of blog or website author */
-    protected String author; 
-    
-    /** URL of the newsfeed */
+    protected String author;
     protected String feedUrl;
-    
-    /** URL of the blog or website */
     protected String siteUrl;
-    
-    /** Last update time of site */
     protected Date lastUpdated;
-    
-    /** Most recent entries from site (a set of EntityData objects) */
-    protected List entries = new ArrayList(); 
-    
-    /** Inbound links according to Technorati */
     protected int inboundlinks = 0;
-
-    /** Inbound blogs according to Technorati */
     protected int inboundblogs = 0;
     
+    // associations
     protected Set groups = new HashSet();
+    protected List entries = new ArrayList();
     
-    //----------------------------------------------------------- persistent fields
-
-    /** 
-     * @hibernate.set table="rag_group_subscription" lazy="true" cascade="none"
-     * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroupData"
-     */
-    public Set getGroups()
-    {
-        return groups;
-    }
-    public void setGroups(Set groups)
-    {
-        this.groups = groups;
-    }
-
-    /** 
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getId()
-    {
-        return id;
-    }
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-    /** 
-     * @hibernate.property column="feed_url" non-null="true" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getFeedURL()
-    {
-        return feedUrl;
-    }
-    public void setFeedURL(String feedUrl)
-    {
-        this.feedUrl = feedUrl;
-    }
-    /** 
-     * @hibernate.property column="last_updated" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public Date getLastUpdated()
-    {
-        return lastUpdated;
-    }
-    public void setLastUpdated(Date lastUpdated)
-    {
-        this.lastUpdated = lastUpdated;
-    }
-    /** 
-     * @hibernate.property column="site_url" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getSiteURL()
-    {
-        return siteUrl;
-    }
-    public void setSiteURL(String siteUrl)
-    {
-        this.siteUrl = siteUrl;
-    }
-    /** 
-     * @hibernate.property column="title" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getTitle()
-    {
-        return title;
-    }
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
-    /** 
-     * @hibernate.property column="author" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getAuthor()
-    {
-        return author;
-    }
-    public void setAuthor(String author)
-    {
-        this.author = author;
-    }
-    /** 
-     * @hibernate.property column="inbound_links" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public int getInboundlinks()
-    {
-        return inboundlinks;
-    }
-    public void setInboundlinks(int inboundlinks)
-    {
-        this.inboundlinks = inboundlinks;
-    }
-    /** 
-     * @hibernate.property column="inbound_blogs" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public int getInboundblogs()
-    {
-        return inboundblogs;
-    }
-    public void setInboundblogs(int inboundblogs)
-    {
-        this.inboundblogs = inboundblogs;
-    }
-
-    /** 
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getName() {
-        return title;
-    }
-    public void setName(String name) {
-        // no op to please XDoclet
-    }
-    /** 
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getURL() {
-        return siteUrl;
-    }
-    public void setURL(String url) {
-        // no op to please XDoclet
+    
+    public int compareTo(Object o) {
+        PlanetSubscriptionData other = (PlanetSubscriptionData) o;
+        return getTitle().compareTo(other.getTitle());
     }
     
-    //-------------------------------------------------------------- implementation
-    
-    /**
-     */
-    public int compareTo(Object o)
-    {
-        PlanetSubscriptionData other = (PlanetSubscriptionData)o;
-        return getFeedURL().compareTo(other.getFeedURL());
-    }
-
     public boolean equals(Object other) {
         
         if(this == other) return true;
@@ -217,29 +66,148 @@ public class PlanetSubscriptionData implements Serializable, Comparable
         return this.feedUrl.hashCode();
     }
     
-    /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="all" 
+    
+    /**
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     */
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    
+    /**
+     * @hibernate.property column="feed_url" non-null="true" unique="false"
+     */
+    public String getFeedURL() {
+        return feedUrl;
+    }
+    
+    public void setFeedURL(String feedUrl) {
+        this.feedUrl = feedUrl;
+    }
+    
+    
+    /**
+     * @hibernate.property column="last_updated" non-null="false" unique="false"
+     */
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+    
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+    
+    
+    /**
+     * @hibernate.property column="site_url" non-null="false" unique="false"
+     */
+    public String getSiteURL() {
+        return siteUrl;
+    }
+    
+    public void setSiteURL(String siteUrl) {
+        this.siteUrl = siteUrl;
+    }
+    
+    
+    /**
+     * @hibernate.property column="title" non-null="false" unique="false"
+     */
+    public String getTitle() {
+        return title;
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    
+    /**
+     * @hibernate.property column="author" non-null="false" unique="false"
+     */
+    public String getAuthor() {
+        return author;
+    }
+    
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    
+    
+    /**
+     * @hibernate.property column="inbound_links" non-null="false" unique="false"
+     */
+    public int getInboundlinks() {
+        return inboundlinks;
+    }
+    
+    public void setInboundlinks(int inboundlinks) {
+        this.inboundlinks = inboundlinks;
+    }
+    
+    
+    /**
+     * @hibernate.property column="inbound_blogs" non-null="false" unique="false"
+     */
+    public int getInboundblogs() {
+        return inboundblogs;
+    }
+    
+    public void setInboundblogs(int inboundblogs) {
+        this.inboundblogs = inboundblogs;
+    }
+    
+    
+    // for backwards compatability?
+    public String getName() {
+        return title;
+    }
+    
+    // for backwards compatability?
+    public String getURL() {
+        return siteUrl;
+    }
+    
+    
+    /**
+     * @hibernate.set table="rag_group_subscription" lazy="true" cascade="none"
+     * @hibernate.collection-key column="subscription_id"
+     * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroupData"
+     */
+    public Set getGroups() {
+        return groups;
+    }
+    
+    public void setGroups(Set groups) {
+        this.groups = groups;
+    }
+    
+    
+    /**
+     * @hibernate.bag lazy="true" inverse="true" cascade="all"
      * @hibernate.collection-key column="subscription_id"
      * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetEntryData"
      */
-    public List getEntries()
-    {
+    public List getEntries() {
         return entries;
     }
-
-    private void setEntries(List entries)
-    {
+    
+    private void setEntries(List entries) {
         this.entries = entries;
     }
-    public void addEntry(PlanetEntryData entry)
-    {
-        // bi-directional one-to-many 
+    
+    
+    public void addEntry(PlanetEntryData entry) {
+        // bi-directional one-to-many
         entry.setSubscription(this);
         this.getEntries().add(entry);
     }
     
-    public void addEntries(Collection newEntries)
-    {
+    public void addEntries(Collection newEntries) {
         // bi-directional one-to-many
         for (Iterator it = newEntries.iterator(); it.hasNext();) {
             PlanetEntryData entry = (PlanetEntryData) it.next();
