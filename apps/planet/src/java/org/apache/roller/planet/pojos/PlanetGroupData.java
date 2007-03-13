@@ -17,9 +17,9 @@
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 
 /**
@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
  *
  * @hibernate.class lazy="true" table="rag_group"
  */
-public class PlanetGroupData implements Serializable {
+public class PlanetGroupData implements Serializable, Comparable {
     
     transient private String[] catArray = null;
     
@@ -44,7 +44,7 @@ public class PlanetGroupData implements Serializable {
     
     // associations
     private PlanetData planet = null;
-    private Set subscriptions = new HashSet();
+    private Set subscriptions = new TreeSet();
     
     
     public PlanetGroupData() {}
@@ -54,6 +54,15 @@ public class PlanetGroupData implements Serializable {
         this.handle = handle;
         this.title = title;
         this.description = desc;
+    }
+    
+    
+    /**
+     * For comparing groups and sorting, ordered by Title.
+     */
+    public int compareTo(Object o) {
+        PlanetGroupData other = (PlanetGroupData) o;
+        return getTitle().compareTo(other.getTitle());
     }
     
     
@@ -70,7 +79,7 @@ public class PlanetGroupData implements Serializable {
     
     
     /**
-     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none"
+     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none" sort="natural"
      * @hibernate.collection-key column="group_id"
      * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.PlanetSubscriptionData"
      */

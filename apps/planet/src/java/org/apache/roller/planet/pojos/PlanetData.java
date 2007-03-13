@@ -18,8 +18,8 @@
 
 package org.apache.roller.planet.pojos;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -27,13 +27,13 @@ import java.util.Set;
  * 
  * @hibernate.class lazy="true" table="rag_planet"
  */
-public class PlanetData {
+public class PlanetData implements Comparable {
     
     private String id = null;
     private String handle = null;
     private String title = null;
     private String description = null;
-    private Set groups = new HashSet();
+    private Set groups = new TreeSet();
     
     
     public PlanetData() {
@@ -46,7 +46,16 @@ public class PlanetData {
         this.description = desc;
     }
     
-
+    
+    /**
+     * For comparing planets and sorting, ordered by Title.
+     */
+    public int compareTo(Object o) {
+        PlanetData other = (PlanetData) o;
+        return getTitle().compareTo(other.getTitle());
+    }
+    
+    
     /**
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
@@ -57,7 +66,8 @@ public class PlanetData {
     public void setId(String id) {
         this.id = id;
     }
-
+    
+    
     /**
      * @hibernate.property column="handle" non-null="true" unique="true"
      */
@@ -69,6 +79,7 @@ public class PlanetData {
         this.handle = handle;
     }
     
+    
     /**
      * @hibernate.property column="title" non-null="true" unique="false"
      */
@@ -79,7 +90,8 @@ public class PlanetData {
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
+    
     /**
      * @hibernate.property column="description" non-null="false" unique="false"
      */
@@ -91,8 +103,9 @@ public class PlanetData {
         this.description = description;
     }
     
+    
     /** 
-     * @hibernate.set lazy="true" invert="true" cascade="all"
+     * @hibernate.set lazy="true" invert="true" cascade="all" sort="natural"
      * @hibernate.collection-key column="planet_id"
      * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetGroupData"
      */
