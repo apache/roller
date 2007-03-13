@@ -16,6 +16,7 @@
 
 package org.apache.roller.planet.business.hibernate;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -90,6 +91,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetData.class);
+            criteria.addOrder(Order.asc("title"));
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
