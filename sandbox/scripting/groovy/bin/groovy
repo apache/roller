@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# -- ENSURE THESE ARE CORRECT ---
+
+# Directory where Groovy release is installed
+export GROOVY_HOME=/Applications/Java/groovy
+
+# Directory of Roller webapp context
+export WEBAPP_DIR=../../../../../trunk/build/webapp
+
+# Directory of additional jars
+export JARS_DIR=/Applications/Java/jakarta-tomcat-5.5.9/common/lib
+
+
+# --- SHOULD NOT NEED TO EDIT BELOW THIS LINE ---
+
+RGPATH=${WEBAPP_DIR}/WEB-INF/classes:\
+${GROOVY_HOME}/embeddable/groovy-all-1.0.jar:\
+${GROOVY_HOME}/lib/commons-cli-1.0.jar
+
+for i in "$WEBAPP_DIR"/WEB-INF/lib/*.jar; do
+  RGPATH="$RGPATH":"$i"
+done
+
+for i in "$JARS_DIR"/*.jar; do
+  RGPATH="$RGPATH":"$i"
+done
+
+export RGPATH
+
+# Hack: setting catalina.base=. allows us to save log in ./logs
+java \
+ -Droller.custom.config=roller-custom.properties \
+-Dcatalina.base=. \
+-classpath ${RGPATH} groovy.lang.GroovyShell $1 $2 $3 $4 $5 $6 $7 $8 $9 $10

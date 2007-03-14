@@ -283,25 +283,4 @@ public class MultiPlanetRequestMapper implements RequestMapper {
         return isPlanet;
     }
     
-    
-    private boolean isGroup(String groupHandle) {
-        
-        log.debug("checking group handle "+groupHandle);
-        
-        boolean isGroup = false;
-        
-        try {
-            PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-            PlanetGroupData group = mgr.getGroup(groupHandle);
-            
-            if(group != null) {
-                isGroup = true;
-            }
-        } catch(Exception ex) {
-            // doesn't really matter to us why it's not a valid group
-        }
-        
-        return isGroup;
-    }
-    
 }

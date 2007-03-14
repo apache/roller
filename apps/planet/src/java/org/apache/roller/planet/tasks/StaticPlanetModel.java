@@ -17,6 +17,7 @@
  */
 package org.apache.roller.planet.tasks;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -55,32 +56,37 @@ public class StaticPlanetModel {
     
     public List getFeedEntries(String feedUrl, int maxEntries) throws Exception {
         try {
-            return planetManager.getFeedEntries(feedUrl, 0, maxEntries);
+            PlanetSubscriptionData sub = planetManager.getSubscription(feedUrl);
+            if(sub != null) {
+                return planetManager.getEntries(sub, 0, maxEntries);
+            } else {
+                return Collections.EMPTY_LIST;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
        
+    // removed now that groups must be part of a planet, this method no longer makes sense
+//    public List getGroups() throws RollerException {
+//        return planetManager.getGroups();
+//    }
     
-    public List getGroups() throws RollerException {
-        return planetManager.getGroups();
-    }
-    
-    
-    public PlanetGroupData getGroup(String handle) throws RollerException {
-        return planetManager.getGroup(handle);
-    }
+    // removed now that groups must be part of a planet, this method no longer makes sense
+//    public PlanetGroupData getGroup(String handle) throws RollerException {
+//        return planetManager.getGroup(handle);
+//    }
     
     
     public List getAggregation(
             PlanetGroupData group, int maxEntries) throws RollerException {
-        return planetManager.getAggregation(group, 0, maxEntries);
+        return planetManager.getEntries(group, 0, maxEntries);
     }
     
     
     public Iterator getAllSubscriptions() throws RollerException {
-        return planetManager.getAllSubscriptions();
+        return planetManager.getSubscriptions().iterator();
     }
     
     

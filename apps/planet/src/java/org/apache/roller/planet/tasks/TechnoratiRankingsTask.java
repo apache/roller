@@ -83,7 +83,7 @@ public class TechnoratiRankingsTask implements Runnable {
                 end = end > userCount ? userCount : end;
                 log.info("Updating subscriptions ["+start+":"+end+"]");
                 
-                Iterator subs = planet.getAllSubscriptions();
+                Iterator subs = planet.getSubscriptions().iterator();
                 while (subs.hasNext()) {
                     PlanetSubscriptionData sub =
                             (PlanetSubscriptionData)subs.next();

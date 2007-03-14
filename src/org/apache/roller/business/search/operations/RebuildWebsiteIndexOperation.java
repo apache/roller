@@ -122,6 +122,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         null,                      // catName
                         null,
                         WeblogEntryData.PUBLISHED, // status
+                        null,                      // text
                         null,                      // sortby (null means pubTime)
                         null, 
                         null,

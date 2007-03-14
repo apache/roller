@@ -1180,6 +1180,7 @@ public class WebsiteData implements Serializable {
                     cat,        // cat or null
                     null, 
                     WeblogEntryData.PUBLISHED, 
+                    null,       // text
                     "pubTime",  // sortby
                     null,
                     null, 
@@ -1218,6 +1219,7 @@ public class WebsiteData implements Serializable {
                     null,       // cat or null
                     tags,       //  
                     WeblogEntryData.PUBLISHED, 
+                    null,       // text
                     "pubTime",  // sortby
                     null,
                     null, 

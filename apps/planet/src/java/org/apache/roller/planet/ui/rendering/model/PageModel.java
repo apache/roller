@@ -91,8 +91,8 @@ public class PageModel extends PlanetGroupModel {
                 pageRequest.getGroup(),
                 pagerUrl,
                 0,
-                0,
-                30);
+                pageRequest.getPageNum(),
+                getGroup().getMaxPageEntries());
     }
     
 }

@@ -44,6 +44,7 @@ public class WeblogEntryManagementForm
     private String mExportFormat = "rss";
     private String mCategoryId = null;
     private String mTags = "";
+    private String mText = "";
     private String mStatus = "ALL";
     private String mSortby = "updateTime";
     
@@ -69,6 +70,7 @@ public class WeblogEntryManagementForm
         mStartDateString = df.format( cal.getTime() );
         
         mTags = "";
+        mText = "";
     }
     
     /**
@@ -186,6 +188,14 @@ public class WeblogEntryManagementForm
         mSortby = sortby;
     }
 
+    public String getText() {
+        return mText;
+    }
+
+    public void setText(String text) {
+        mText = text;
+    }  
+    
     public String getTags() {
         return mTags;
     }

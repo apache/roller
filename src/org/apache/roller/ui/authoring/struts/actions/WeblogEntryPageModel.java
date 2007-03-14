@@ -142,6 +142,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 null,              // tags
                 WeblogEntryData.PUBLISHED, // status
+                null,              // text
                 null,              // sortby (null for pubTime)
                 null, 
                 null,
@@ -166,6 +167,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 null,              // tags
                 WeblogEntryData.SCHEDULED, // status
+                null,              // text
                 null,              // sortby (null for pubTime)
                 null, 
                 null,
@@ -190,6 +192,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 null,              // tags
                 WeblogEntryData.DRAFT, // status
+                null,              // text
                 "updateTime",      // sortby 
                 null, 
                 null,
@@ -214,6 +217,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 null,              // tags
                 WeblogEntryData.PENDING, // status
+                null,              // text
                 "updateTime",      // sortby
                 null, 
                 null,                 

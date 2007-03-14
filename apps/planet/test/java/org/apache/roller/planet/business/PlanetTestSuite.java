@@ -43,11 +43,23 @@ public class PlanetTestSuite {
         
         suite.addTestSuite(PropertiesTest.class);
         
-        suite.addTestSuite(PlanetTest.class);
+        // planets
+        suite.addTestSuite(PlanetBasicTests.class);
+        suite.addTestSuite(PlanetFunctionalTests.class);
         
-        suite.addTestSuite(GroupTest.class);
+        // groups
+        suite.addTestSuite(GroupBasicTests.class);
+        suite.addTestSuite(GroupFunctionalTests.class);
         
-        suite.addTestSuite(PlanetManagerTest.class);
+        // subscriptions
+        suite.addTestSuite(SubscriptionBasicTests.class);
+        suite.addTestSuite(SubscriptionFunctionalTests.class);
+        
+        // entries
+        suite.addTestSuite(EntryBasicTests.class);
+        suite.addTestSuite(EntryFunctionalTests.class);
+        
+        suite.addTestSuite(RomeFeedFetcherTest.class);
 
         return suite;
     }

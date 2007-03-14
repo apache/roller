@@ -80,7 +80,7 @@
        #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)
     #end
     #if( $website.allowComments )
-    <comments>$utils.textToHTML($entry.commentLink)</comments>
+    <comments>$url.comments($entry.anchor)</comments>
     #end
   </item>
   #end
@@ -89,10 +89,10 @@
 #macro(showCommentsAtom10 $comments)
     #foreach($comment in $comments)
     <entry>
-        <id>$url.comment($comment.weblogEntry.anchor, $comment.timestamp)</id> 
+        <id>${comment.weblogEntry.permalink}#comment-${comment.timestamp}</id> 
         <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
         <author><name>$utils.escapeXML($utils.removeHTML($comment.name))</name></author>
-        <link rel="alternate" type="text/html" href="$url.comment($comment.weblogEntry.anchor, $comment.timestamp)"/>
+        <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
         #if($config.commentescapeXML)
@@ -112,7 +112,7 @@
 #macro(showCommentsRSS20 $comments)
     #foreach($comment in $comments)
     <item>
-        <guid isPermaLink="true">$url.comment($comment.weblogEntry.anchor, $comment.timestamp)</guid>
+        <guid isPermaLink="true">${comment.weblogEntry.permalink}#comment-${comment.timestamp}</guid>
         <title>Re: $utils.escapeXML($comment.weblogEntry.title)</title>
         <dc:creator>$utils.escapeXML($utils.removeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>

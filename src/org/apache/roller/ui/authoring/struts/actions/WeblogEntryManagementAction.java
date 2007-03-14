@@ -101,6 +101,7 @@ public final class WeblogEntryManagementAction extends DispatchAction {
         private Date               startDate = null;
         private Date               endDate = null;
         private String             status = WeblogEntryData.PUBLISHED;
+        private String             text = null;
         private Integer            maxEntries = null;
         private boolean            more = false;
         private WeblogEntryManagementForm    queryForm = null;
@@ -145,6 +146,7 @@ public final class WeblogEntryManagementAction extends DispatchAction {
             
             this.status = "ALL".equals(queryForm.getStatus()) ? null: queryForm.getStatus();
             this.maxEntries = maxEntries;
+            this.text = queryForm.getText();
             
             String[] tagsarr = new String[0];
             
@@ -164,6 +166,7 @@ public final class WeblogEntryManagementAction extends DispatchAction {
                     category,
                     Arrays.asList(tagsarr),
                     status,
+                    text,
                     queryForm.getSortby(),
                     null,
                     null,
@@ -269,6 +272,11 @@ public final class WeblogEntryManagementAction extends DispatchAction {
             if (StringUtils.isNotEmpty(queryForm.getTags())) {
                 sb.append("&tags=");
                 sb.append(queryForm.getTags());
+            }
+            
+            if (StringUtils.isNotEmpty(queryForm.getText())) {
+                sb.append("&text=");
+                sb.append(queryForm.getText());
             }
             
             if (StringUtils.isNotEmpty(queryForm.getSortby())) {

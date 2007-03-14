@@ -16,25 +16,10 @@
 
 package org.apache.roller.planet.business.hibernate;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-import com.sun.syndication.fetcher.impl.SyndFeedInfo;
-import java.io.File;
-import java.net.URL;
-import java.sql.Timestamp;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -47,12 +32,10 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 
 
 /**
@@ -63,22 +46,62 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);
     
-    protected static final String NO_GROUP = "zzz_nogroup_zzz";
-    
     private HibernatePersistenceStrategy strategy = null;
-    private Map lastUpdatedByGroup = new HashMap();
-       
+    
+    
     public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
         this.strategy = strat;
     }
     
     
-    public void savePlanet(PlanetData planet) 
-        throws RollerException {
+    // save a Planet
+    public void savePlanet(PlanetData planet) throws RollerException {
         strategy.store(planet);
     }
+        
+    // delete a Planet
+    public void deletePlanet(PlanetData planet) throws RollerException {
+        strategy.remove(planet);
+    }
     
+    
+    // lookup Planet by handle
+    public PlanetData getPlanet(String handle) throws RollerException {
+        PlanetData planet = null;
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            Criteria criteria = session.createCriteria(PlanetData.class);
+            criteria.add(Expression.ilike("handle", handle));
+            planet = (PlanetData) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+        return planet;
+    }
+    
+    
+    // lookup Planet by id
+    public PlanetData getPlanetById(String id) throws RollerException {
+        return (PlanetData) strategy.load(id, PlanetData.class);
+    }
+    
+    
+    // lookup all Planets
+    public List getPlanets() throws RollerException {
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            Criteria criteria = session.createCriteria(PlanetData.class);
+            criteria.addOrder(Order.asc("title"));
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    
+    // save a Group
     public void saveGroup(PlanetGroupData group)  throws RollerException {
+        // TODO: move this check outside this method?
         if (group.getId() == null || getGroupById(group.getId()) == null) {
             // If new group, make sure hadnle is unique within Planet
             if (getGroup(group.getPlanet(), group.getHandle()) != null) {
@@ -88,13 +111,42 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         strategy.store(group);
     }
         
-    public void saveEntry(PlanetEntryData entry) 
-        throws RollerException {
-        strategy.store(entry);
+    
+    // delete a Group
+    public void deleteGroup(PlanetGroupData group) throws RollerException {
+        strategy.remove(group);
     }
+    
+    
+    // lookup a Group by Planet & handle
+    public PlanetGroupData getGroup(PlanetData planet, String handle) 
+            throws RollerException {
         
+        if(planet == null) {
+            throw new RollerException("planet cannot be null");
+        }
+        
+        try {
+            Session session = strategy.getSession();
+            Criteria criteria = session.createCriteria(PlanetGroupData.class);
+            criteria.add(Expression.eq("planet", planet));
+            criteria.add(Expression.eq("handle", handle));
+            return (PlanetGroupData) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    
+    // lookup a Planet by id
+    public PlanetGroupData getGroupById(String id) throws RollerException {
+        return (PlanetGroupData) strategy.load(id, PlanetGroupData.class);
+    }
+    
+    
+    // save a Subscription
     public void saveSubscription(PlanetSubscriptionData sub) 
-        throws RollerException {
+            throws RollerException {
         PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             this.strategy.store(sub);
@@ -102,102 +154,53 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             throw new RollerException("ERROR: duplicate feed URLs not allowed");
         }
     }
-        
-    public void deleteEntry(PlanetEntryData entry) 
-        throws RollerException {
-        strategy.remove(entry);
-    }
     
     
-    public void deleteEntries(PlanetSubscriptionData sub) 
-        throws RollerException {
-        Iterator entries = sub.getEntries().iterator();
-        while(entries.hasNext()) {
-            strategy.remove(entries.next());
-        }
-        
-        // make sure and clear the other side of the assocation
-        sub.getEntries().clear();
-    }
-    
-    
-    public void deletePlanet(PlanetData planet) 
-        throws RollerException {
-        strategy.remove(planet);
-    }
-    
-    public void deleteGroup(PlanetGroupData group) 
-        throws RollerException {
-        strategy.remove(group);
-    }
-        
+    // delete a Subscription
     public void deleteSubscription(PlanetSubscriptionData sub) 
-        throws RollerException {
+            throws RollerException {
         strategy.remove(sub);
     }
     
-    public PlanetData getPlanet(String handle) throws RollerException {
-        PlanetData planet = null;
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetData.class);
-            criteria.add(Expression.ilike("handle", handle));
-            criteria.setMaxResults(1);
-            planet = (PlanetData) criteria.uniqueResult();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-        return planet;
-    }
     
-    public PlanetData getPlanetById(String id) throws RollerException {
-        return (PlanetData) strategy.load(id, PlanetData.class);
-    }
-    
-    public List getPlanets() throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetData.class);
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
+    // lookup a Subscription by url
     public PlanetSubscriptionData getSubscription(String feedURL) 
-        throws RollerException {
+            throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
                     session.createCriteria(PlanetSubscriptionData.class);
-            criteria.setMaxResults(1);
             criteria.add(Expression.eq("feedURL", feedURL));
-            List list = criteria.list();
-            return list.size()!=0 ? (PlanetSubscriptionData)list.get(0) : null;
+            return (PlanetSubscriptionData) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
-        
+    
+    
+    // lookup a Subscription by id
     public PlanetSubscriptionData getSubscriptionById(String id) 
-        throws RollerException {
+            throws RollerException {
         return (PlanetSubscriptionData) strategy.load(id, PlanetSubscriptionData.class);
     }
-        
-    public Iterator getAllSubscriptions() {
+    
+    
+    // lookup all Subscriptions
+    // TODO: make pageable
+    public List getSubscriptions() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
                     session.createCriteria(PlanetSubscriptionData.class);
             criteria.addOrder(Order.asc("feedURL"));
-            List list = criteria.list();
-            return list.iterator();
+            return criteria.list();
         } catch (Throwable e) {
-            throw new RuntimeException(
-                    "ERROR fetching subscription collection", e);
+            throw new RollerException("ERROR fetching subscription collection", e);
         }
     }
     
+    
+    // get subscriptions count
     public int getSubscriptionCount() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -205,31 +208,36 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
                     "select count(*) from org.apache.roller.planet.pojos.PlanetSubscriptionData").uniqueResult();
             return count.intValue();
         } catch (Throwable e) {
-            throw new RuntimeException(
-                    "ERROR fetching subscription count", e);
+            throw new RollerException("ERROR fetching subscription count", e);
         }
     }
+    
+    
+    // get popular Subscriptions from all Planets & Groups
+    // TODO: test this method
+    public List getTopSubscriptions(int offset, int length) 
+            throws RollerException {
         
-    public synchronized List getTopSubscriptions(int offset, int length) 
-        throws RollerException {
         return getTopSubscriptions(null, offset, length);
     }
     
-    public synchronized List getTopSubscriptions(
-            String groupHandle, int offset, int length) 
+    
+    // get popular Subscriptions from a specific Group
+    // TODO: test this method
+    public List getTopSubscriptions(PlanetGroupData group, int offset, int length) 
             throws RollerException {
+        
         List ret = null;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Query query = null;
-            if (groupHandle != null) {
+            if (group != null) {
                 query = session.createQuery(
                     "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
                     +"join sub.groups group "
-                    +"where "
-                    +"group.handle=:groupHandle "
+                    +"where group=:group "
                     +"order by sub.inboundblogs desc");
-                query.setString("groupHandle", groupHandle);
+                query.setSerializable("group", group);
             } else {
                 query = session.createQuery(
                     "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
@@ -248,68 +256,49 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         return ret;
     }
         
-    public PlanetGroupData getGroup(String handle) throws RollerException {
-        return getGroup(null, handle);
+    // save an Entry
+    public void saveEntry(PlanetEntryData entry) throws RollerException {
+        strategy.store(entry);
     }
     
-    public PlanetGroupData getGroup(PlanetData planet, String handle) throws RollerException {
-        try {
-            Session session = strategy.getSession();
-            Criteria criteria = session.createCriteria(PlanetGroupData.class);
-            criteria.setMaxResults(1);
-            criteria.add(Expression.eq("handle", handle));
-            if(planet != null) {
-                criteria.add(Expression.eq("planet", planet));
-            }
-            return (PlanetGroupData) criteria.uniqueResult();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
+    
+    // delete an Entry
+    public void deleteEntry(PlanetEntryData entry) throws RollerException {
+        strategy.remove(entry);
+    }
+    
+    
+    // delete all Entries from a Subscription
+    public void deleteEntries(PlanetSubscriptionData sub) 
+            throws RollerException {
+        Iterator entries = sub.getEntries().iterator();
+        while(entries.hasNext()) {
+            strategy.remove(entries.next());
         }
-    }
-    
-    public PlanetGroupData getGroupById(String id) throws RollerException {
-        return (PlanetGroupData) strategy.load(id, PlanetGroupData.class);
-    }
         
-    public List getGroups() throws RollerException {
-        return getGroups(null);
+        // make sure and clear the other side of the assocation
+        sub.getEntries().clear();
     }
     
-    public List getGroups(PlanetData planet) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetGroupData.class);
-            if(planet != null) {
-                criteria.add(Expression.eq("planet", planet));
-            }
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
+    
+    // lookup Entry by id
+    public PlanetEntryData getEntryById(String id) throws RollerException {
+        return (PlanetEntryData)strategy.load(id, PlanetEntryData.class);
+    }
+    
+    
+    // lookup Entries from a specific Subscription
+    public List getEntries(PlanetSubscriptionData sub, int offset, int length)
+            throws RollerException {
+            
+        if(sub == null) {
+            throw new RollerException("subscription cannot be null");
         }
-    }
-       
-    public List getGroupHandles() throws RollerException {
-        return getGroupHandles(null);
-    }
-    
-    public List getGroupHandles(PlanetData planet) throws RollerException {
-        List handles = new ArrayList();
-        Iterator list = getGroups(planet).iterator();
-        while (list.hasNext()) {
-            PlanetGroupData group = (PlanetGroupData)list.next();
-            handles.add(group.getHandle());
-        }
-        return handles;
-    }
-    
-     public List getFeedEntries(String feedURL, int offset, int length)
-        throws RollerException {
-        // TODO: ATLAS getFeedEntries DONE       
+        
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
-            criteria.createAlias("subscription", "sub");
-            criteria.add(Expression.eq("sub.feedURL", feedURL));
+            criteria.add(Expression.eq("subscription", sub));
             criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
             if (length != -1) criteria.setMaxResults(length);
@@ -317,281 +306,92 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-    }    
-   
-    public synchronized List getAggregation(int offset, int len) 
-        throws RollerException {
-        return getAggregation(null, null, null, offset, len);
+    }
+    
+    
+    // lookup Entries from a specific Group
+    public List getEntries(PlanetGroupData group, int offset, int len) 
+            throws RollerException {
+        return getEntries(group, null, null, offset, len);
     } 
     
-    public synchronized List getAggregation(Date startDate, Date endDate, int offset, int len) 
-        throws RollerException {
-        return getAggregation(null, startDate, endDate, offset, len);
-    } 
     
-    public synchronized List getAggregation(PlanetGroupData group, int offset, int len) 
-        throws RollerException {
-        return getAggregation(group, null, null, offset, len);
-    } 
-    
-    public synchronized List getAggregation(
-        PlanetGroupData group, Date startDate, Date endDate, int offset, int length)
-        throws RollerException {
-        // TODO: ATLAS getAggregation DONE TESTED
+    // lookup Entries from a specific Group
+    public List getEntries(PlanetGroupData group, Date startDate, 
+                           Date endDate, int offset, int length)
+            throws RollerException {
+        
+        if(group == null) {
+            throw new RollerException("group cannot be null");
+        }
+        
         List ret = null;
-        if (endDate == null) endDate = new Date();
         try {
-            String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
             long startTime = System.currentTimeMillis();
-            Session session =
-                    ((HibernatePersistenceStrategy)strategy).getSession();
             
-            if (group != null) {
-                StringBuffer sb = new StringBuffer();
-                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
-                sb.append("join e.subscription.groups g ");
-                sb.append("where g.handle=:groupHandle and e.pubTime < :endDate ");
-                if (startDate != null) {
-                    sb.append("and e.pubTime > :startDate ");
-                }
-                sb.append("order by e.pubTime desc");
-                Query query = session.createQuery(sb.toString());
-                query.setParameter("groupHandle", group.getHandle());
-                query.setFirstResult(offset);
-                if (length != -1) query.setMaxResults(length);
-                query.setParameter("endDate", endDate);
-                if (startDate != null) {
-                    query.setParameter("startDate", startDate);
-                }
-                ret = query.list();
-            } else {
-                StringBuffer sb = new StringBuffer();
-                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
-                sb.append("join e.subscription.groups g ");
-                sb.append("where (g.handle='external' or g.handle='all') ");
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            
+            StringBuffer sb = new StringBuffer();
+            sb.append("select e from PlanetEntryData e ");
+            sb.append("join e.subscription.groups g ");
+            sb.append("where g=:group ");
+            if (startDate != null) {
+                sb.append("and e.pubTime > :startDate ");
+            }
+            if (endDate != null) {
                 sb.append("and e.pubTime < :endDate ");
-                if (startDate != null) {
-                    sb.append("and e.pubTime > :startDate ");
-                }
-                sb.append("order by e.pubTime desc");
-                Query query = session.createQuery(sb.toString());
+            }
+            sb.append("order by e.pubTime desc");
+            
+            Query query = session.createQuery(sb.toString());
+            query.setParameter("group", group);
+            if(offset > 0) {
                 query.setFirstResult(offset);
-                if (length != -1) query.setMaxResults(length);
+            }
+            if (length != -1) {
+                query.setMaxResults(length);
+            }
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+            }
+            if(endDate != null) {
                 query.setParameter("endDate", endDate);
-                if (startDate != null) {
-                    query.setParameter("startDate", startDate);
-                }
-                ret = query.list();
             }
-            Date retLastUpdated = null;
-            if (ret.size() > 0) {
-                PlanetEntryData entry = (PlanetEntryData)ret.get(0);
-                retLastUpdated = entry.getPubTime();
-            } else {
-                retLastUpdated = new Date();
-            }
-            lastUpdatedByGroup.put(groupHandle, retLastUpdated);
+            
+            ret = query.list();
+
+            // old logic used when group was null, this is hacky and weird!
+//            else {
+//                StringBuffer sb = new StringBuffer();
+//                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+//                sb.append("join e.subscription.groups g ");
+//                sb.append("where (g.handle='external' or g.handle='all') ");
+//                sb.append("and e.pubTime < :endDate ");
+//                if (startDate != null) {
+//                    sb.append("and e.pubTime > :startDate ");
+//                }
+//                sb.append("order by e.pubTime desc");
+//                Query query = session.createQuery(sb.toString());
+//                query.setFirstResult(offset);
+//                if (length != -1) query.setMaxResults(length);
+//                query.setParameter("endDate", endDate);
+//                if (startDate != null) {
+//                    query.setParameter("startDate", startDate);
+//                }
+//                ret = query.list();
+//            }
             
             long endTime = System.currentTimeMillis();
+            
             log.debug("Generated aggregation in "
                     +((endTime-startTime)/1000.0)+" seconds");
             
         } catch (Throwable e) {
-            log.error("ERROR: building aggregation for: "+group.getHandle(), e);
             throw new RollerException(e);
         }
+        
         return ret;
-    } 
-    
-    public synchronized void clearCachedAggregations() {
-        lastUpdatedByGroup.clear();
     }
-    
-    public Date getLastUpdated() {
-        return (Date)lastUpdatedByGroup.get(NO_GROUP);
-    }
-    
-    public Date getLastUpdated(PlanetGroupData group) {
-        return (Date)lastUpdatedByGroup.get(group);
-    }
-        
-    public void refreshEntries(String cacheDirPath) throws RollerException {
-        
-        Date now = new Date();
-        long startTime = System.currentTimeMillis();
-        
-        // can't continue without cache dir
-        if (cacheDirPath == null) {
-            log.warn("Planet cache directory not set, aborting refresh");
-            return;
-        }
-        
-        // allow ${user.home} in cache dir property
-        String cacheDirName = cacheDirPath.replaceFirst(
-                "\\$\\{user.home}",System.getProperty("user.home"));
-        
-        // allow ${catalina.home} in cache dir property
-        if (System.getProperty("catalina.home") != null) {
-            cacheDirName = cacheDirName.replaceFirst(
-                "\\$\\{catalina.home}",System.getProperty("catalina.home"));
-        }
-        
-        // create cache  dir if it does not exist
-        File cacheDir = null;
-        try {
-            cacheDir = new File(cacheDirName);
-            if (!cacheDir.exists()) cacheDir.mkdirs();
-        } catch (Exception e) {
-            log.error("Unable to create planet cache directory: " + cacheDir.getPath(), e);
-            return;
-        }
-        
-        // abort if cache dir is not writable
-        if (!cacheDir.canWrite()) {
-            log.error("Planet cache directory is not writable: " + cacheDir.getPath());
-            return;
-        }
-        
-        FeedFetcherCache feedInfoCache =
-                new DiskFeedInfoCache(cacheDirName);
-        
-        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
-        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyport");
-        if (proxyHost != null && proxyPort > 0) {
-            System.setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", proxyHost);
-            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
-        }
-        /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
-        System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
-        System.setProperty("sun.net.client.defaultReadTimeout", "15000");
-        
-        FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
-        //FeedFetcher feedFetcher = new HttpClientFeedFetcher(feedInfoCache);
-        feedFetcher.setUsingDeltaEncoding(false);
-        feedFetcher.setUserAgent("RollerPlanetAggregator");
-        
-        // Loop through all subscriptions in the system
-        Iterator subs = getAllSubscriptions();
-        while (subs.hasNext()) {
-            
-            long subStartTime = System.currentTimeMillis();
-            
-            PlanetSubscriptionData sub = (PlanetSubscriptionData)subs.next();
-            
-            // reattach sub.  sub gets detached as we iterate
-            sub = this.getSubscriptionById(sub.getId());
-            
-            Set newEntries = this.getNewEntries(sub, feedFetcher, feedInfoCache);
-            int count = newEntries.size();
-            
-            log.debug("   Entry count: " + count);
-            if (count > 0) {
-                this.deleteEntries(sub);
-                sub.addEntries(newEntries);
-                this.saveSubscription(sub);
-                this.strategy.flush();
-            }
-            long subEndTime = System.currentTimeMillis();
-            log.debug("   " + count + " - "
-                    + ((subEndTime-subStartTime)/1000.0)
-                    + " seconds to process (" + count + ") entries of "
-                    + sub.getFeedURL());
-        }
-        // Clear the aggregation cache
-        clearCachedAggregations();
-        
-        long endTime = System.currentTimeMillis();
-        log.info("--- DONE --- Refreshed entries in "
-                + ((endTime-startTime)/1000.0) + " seconds");
-    }
-        
-    protected Set getNewEntries(PlanetSubscriptionData sub,
-                                FeedFetcher feedFetcher,
-                                FeedFetcherCache feedInfoCache)
-            throws RollerException {
-        
-        Set newEntries = new TreeSet();
-        SyndFeed feed = null;
-        URL feedURL = null;
-        Date lastUpdated = new Date();
-        try {
-            feedURL = new URL(sub.getFeedURL());
-            log.debug("Get feed from cache "+sub.getFeedURL());
-            feed = feedFetcher.retrieveFeed(feedURL);
-            SyndFeedInfo feedInfo = feedInfoCache.getFeedInfo(feedURL);
-            if (feedInfo.getLastModified() != null) {
-                long lastUpdatedLong =
-                        ((Long)feedInfo.getLastModified()).longValue();
-                if (lastUpdatedLong != 0) {
-                    lastUpdated = new Date(lastUpdatedLong);
-                }
-            }
-            Thread.sleep(100); // be nice
-        } catch (Exception e) {
-            log.warn("ERROR parsing " + sub.getFeedURL()
-            + " : " + e.getClass().getName() + " : " + e.getMessage());
-            log.debug(e);
-            return newEntries; // bail out
-        }
-        if (lastUpdated!=null && sub.getLastUpdated()!=null) {
-            Calendar feedCal = Calendar.getInstance();
-            feedCal.setTime(lastUpdated);
-            
-            Calendar subCal = Calendar.getInstance();
-            subCal.setTime(sub.getLastUpdated());
-            
-            if (!feedCal.after(subCal)) {
-                if (log.isDebugEnabled()) {
-                    String msg = MessageFormat.format(
-                            "   Skipping ({0} / {1})",
-                            new Object[] {
-                        lastUpdated, sub.getLastUpdated()});
-                    log.debug(msg);
-                }
-                return newEntries; // bail out
-            }
-        }
-        if (feed.getPublishedDate() != null) {
-            sub.setLastUpdated(feed.getPublishedDate());
-            // saving sub here causes detachment issues, so we save it later
-        }
-        
-        // Horrible kludge for Feeds without entry dates: most recent entry is 
-        // given feed's last publish date (or yesterday if none exists) and 
-        // earler entries are placed at once day intervals before that.
-        Calendar cal = Calendar.getInstance();
-        if (sub.getLastUpdated() != null) {
-            cal.setTime(sub.getLastUpdated());
-        } else {
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1);
-        }
-        
-        // Populate subscription object with new entries
-        Iterator entries = feed.getEntries().iterator();
-        while (entries.hasNext()) {
-            try {
-                SyndEntry romeEntry = (SyndEntry) entries.next();
-                PlanetEntryData entry =
-                        new PlanetEntryData(feed, romeEntry, sub);
-                log.debug("Entry title=" + entry.getTitle() + " content size=" + entry.getContent().length());
-                if (entry.getPubTime() == null) {
-                    log.debug("No published date, assigning fake date for "+feedURL);
-                    entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
-                }
-                if (entry.getPermalink() == null) {
-                    log.warn("No permalink, rejecting entry from "+feedURL);
-                } else {
-                    newEntries.add(entry);
-                }
-                cal.add(Calendar.DATE, -1);
-            } catch (Exception e) {
-                log.error("ERROR processing subscription entry", e);
-            }
-        }
-        return newEntries;
-    }
+
 
 }
-

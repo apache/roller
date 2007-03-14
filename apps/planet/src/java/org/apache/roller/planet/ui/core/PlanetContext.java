@@ -24,6 +24,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.URLStrategy;
@@ -64,7 +65,7 @@ public class PlanetContext extends ContextLoaderListener
      */
     public void contextInitialized(ServletContextEvent sce) {
         
-        log.debug("Roller Planet Initializing");
+        log.debug("Roller Planet Initializing ... ");
         
         // keep a reverence to ServletContext object
         this.context = sce.getServletContext();
@@ -83,6 +84,7 @@ public class PlanetContext extends ContextLoaderListener
             
             setupRuntimeProperties();
             setupURLStrategy();
+            setupFeedFetcher();
             
             planet.flush();
             planet.release();
@@ -92,7 +94,7 @@ public class PlanetContext extends ContextLoaderListener
             throw new RuntimeException(t);
         }
         
-        log.debug("Initialization Complete");
+        log.debug("Roller Planet Initialization Complete");
     }
     
     
@@ -127,6 +129,26 @@ public class PlanetContext extends ContextLoaderListener
         
         // plug it in
         PlanetFactory.getPlanet().setURLStrategy(urlStrategy);
+    }
+    
+    
+    /**
+     * Lookup configured FeedFetcher from config and plug it in.
+     *
+     * If no FeedFetcher can be configured then we bail and spew errors.
+     */
+    private void setupFeedFetcher() throws Exception {
+        
+        String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
+        if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
+            throw new Exception("No FeedFetcher configured!!!");
+        }
+        
+        Class fetchClass = Class.forName(feedFetchClass);
+        FeedFetcher feedFetcher = (FeedFetcher) fetchClass.newInstance();
+        
+        // plug it in
+        PlanetFactory.getPlanet().setFeedFetcher(feedFetcher);
     }
     
     

@@ -20,16 +20,17 @@ package org.apache.roller.planet.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 
 
 /**
@@ -93,11 +94,15 @@ public class PlanetEntriesPager extends AbstractPager {
                 
                 List rawEntries = null;
                 if (feedURL != null) {
-                    rawEntries = planetManager.getFeedEntries(feedURL, offset, length+1);
+                    PlanetSubscriptionData sub = planetManager.getSubscription(feedURL);
+                    if(sub != null) {
+                        rawEntries = planetManager.getEntries(sub, offset, length+1);
+                    }
                 } else if (group != null) {
-                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length+1);
+                    rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 } else {
-                    rawEntries = planetManager.getAggregation(startDate, null, offset, length+1);
+                    //rawEntries = planetManager.getEntries(startDate, null, offset, length+1);
+                    rawEntries = Collections.EMPTY_LIST;
                 }
                 
                 // check if there are more results for paging
