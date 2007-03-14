@@ -114,7 +114,9 @@ File upload form, but only if it's enabled and weblog is under quota
 Create directory form
 --%>
 <c:if test="${model.showingRoot}">
-<form name="createSubdir" method="post" action="/roller-ui/authoring/uploadFiles.do">
+<% String create = RequestUtils.computeURL( pageContext,
+   "uploadFiles", null, null, null, new Hashtable(), null, false); %>
+<form name="createSubdir" method="post" action="<%= create %>">
     <input type="hidden" name="method" value="createSubdir" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}"/>'>
     <input type="hidden" name="path" value='<c:out value="${model.path}"/>'>

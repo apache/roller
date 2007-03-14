@@ -131,7 +131,7 @@ public class WeblogRequest extends ParsedRequest {
      * Convenience method which determines if the given string is a valid
      * locale string.
      */
-    private boolean isLocale(String potentialLocale) {
+    protected boolean isLocale(String potentialLocale) {
         
         boolean isLocale = false;
         
