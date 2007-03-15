@@ -75,12 +75,14 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         // since this operation can be run on a separate thread we must treat
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
-        try {
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            this.website = uMgr.getWebsite(this.website.getId());
-        } catch (RollerException ex) {
-            mLogger.error("Error getting website object", ex);
-            return;
+        if(this.website != null) {
+            try {
+                UserManager uMgr = RollerFactory.getRoller().getUserManager();
+                this.website = uMgr.getWebsite(this.website.getId());
+            } catch (RollerException ex) {
+                mLogger.error("Error getting website object", ex);
+                return;
+            }
         }
         
         IndexReader reader = beginDeleting();
