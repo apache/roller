@@ -17,16 +17,16 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 
-Powered by <a href="http://roller.apache.org">Apache Roller</a>  
-<%= RollerContext.getRollerContext().getRollerVersion() %> |
+Powered by <a href="http://www.rollerweblogger.org">Apache Roller (incubating)</a> 
+<%= RollerFactory.getRoller().getVersion() %> |
 
 <a href="http://opensource2.atlassian.com/projects/roller/">
     <fmt:message key="footer.reportIssue" /></a> | 
 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">
+<a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">
     <fmt:message key="footer.userGuide" /></a> | 
 
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">
+<a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=RollerMailingLists">
     <fmt:message key="footer.mailingLists" /></a>
 
 
