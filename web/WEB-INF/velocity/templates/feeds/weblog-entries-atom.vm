@@ -16,22 +16,28 @@
   directory of this distribution.
 
 *#<?xml version="1.0" encoding='utf-8'?>
-#if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/roller-ui/styles/atom.xsl" media="screen"?>#end
+#if($config.feedStyle)
+<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/roller-ui/styles/atom.xsl" media="screen"?>
+#end
+#set($pager = $model.getWeblogEntriesPager())
+#set($entries = $pager.items)
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title type="html">$utils.escapeXML($model.weblog.name)</title>
     <subtitle type="html">$utils.escapeXML($model.weblog.description)</subtitle>
     <id>$url.feed.entries.atom</id>
-    #if($model.tags)
+#if($model.tags)
     <link rel="self" type="application/atom+xml" href="$url.feed.entries.atomByTags($model.tags, $model.excerpts)" />
-    #elseif($model.categoryPath)
+#elseif($model.categoryPath)
     <link rel="self" type="application/atom+xml" href="$url.feed.entries.atom($model.categoryPath, $model.excerpts)" />
-    #else
+#else
     <link rel="self" type="application/atom+xml" href="$url.feed.entries.atom" />
-    #end
+#end
     <link rel="alternate" type="text/html" href="$url.home" />
+#if($config.feedHistoryEnabled)
+    #showFeedHistory($pager)
+#end
     <updated>$utils.formatIso8601Date($model.weblog.lastModified)</updated>
     <generator uri="http://rollerweblogger.org" version="$config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)">Apache Roller (incubating)</generator>
-    #set($entries = $model.getWeblogEntries())
-    #showEntriesAtom10($entries)
+#showEntriesAtom10($entries)
 </feed>
 

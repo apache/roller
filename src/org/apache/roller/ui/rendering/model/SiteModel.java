@@ -63,6 +63,7 @@ public class SiteModel implements Model {
     
     private WebsiteData weblog = null;
     private WeblogRequest weblogRequest = null;
+    private WeblogFeedRequest feedRequest = null;
     private List tags = new ArrayList();
     private String pageLink = null;
     private int pageNum = 0;
@@ -86,7 +87,9 @@ public class SiteModel implements Model {
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
             tags = ((WeblogPageRequest)weblogRequest).getTags();
         } else if (weblogRequest instanceof WeblogFeedRequest) {
-            tags = ((WeblogFeedRequest)weblogRequest).getTags();
+            this.feedRequest = (WeblogFeedRequest) weblogRequest;
+            tags = feedRequest.getTags();
+            pageNum = feedRequest.getPage();
         }
         
         // extract weblog object
@@ -102,9 +105,18 @@ public class SiteModel implements Model {
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = null;
+        
+        if (feedRequest != null) {
+            pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
+                    feedRequest.getTags(), feedRequest.isExcerpts(), true);
+        } else {        
+            pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, tags, 0, false);
+        }
         
         return new WeblogEntriesListPager(
             pagerUrl, null, null, null,
@@ -150,9 +162,17 @@ public class SiteModel implements Model {
      */   
     public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, String cat, int sinceDays, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = null;
+        if (feedRequest != null) {
+            pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
+                    feedRequest.getTags(), feedRequest.isExcerpts(), true);
+        } else {
+            pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, tags, 0, false);
+        }
        
         return new WeblogEntriesListPager(
             pagerUrl, queryWeblog, user, cat,
@@ -172,9 +192,17 @@ public class SiteModel implements Model {
      */
     public Pager getCommentsPager(int sinceDays, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = null;
+        if (feedRequest != null) {
+            pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null, 
+                    feedRequest.isExcerpts(), true);
+        } else {        
+            pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
+        }
         
         return new CommentsPager(
             pagerUrl,
@@ -188,9 +216,16 @@ public class SiteModel implements Model {
     /* Get pager of users whose names begin with specified letter */
     public Pager getUsersByLetterPager(String letter, int sinceDays, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = null;
+        if (feedRequest != null) {
+            pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                    weblogRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null, feedRequest.isExcerpts(), true);
+        } else {        
+            pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
+        }        
         
         if(letter != null && StringUtils.isEmpty(letter)) {
             letter = null;

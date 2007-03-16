@@ -70,6 +70,10 @@ public class ConfigModel implements Model {
         return getProperty("users.registration.url");
     }
     
+    public boolean getFeedHistoryEnabled() {
+        return getBooleanProperty("site.newsfeeds.history.enabled");
+    }
+    
     public int getFeedSize() {
         return getIntProperty("site.newsfeeds.defaultEntries");
     }
