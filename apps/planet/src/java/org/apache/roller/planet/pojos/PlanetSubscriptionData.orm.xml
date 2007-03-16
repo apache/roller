@@ -15,10 +15,13 @@
         <named-query name="PlanetSubscriptionData.getAll">
             <query>SELECT p FROM PlanetSubscriptionData p</query>
         </named-query>
+        <named-query name="PlanetSubscriptionData.getAllOrderByFeedURL">
+            <query>SELECT p FROM PlanetSubscriptionData p ORDER BY p.feedURL DESC</query>
+        </named-query>
         <named-query name="PlanetSubscriptionData.getAllOrderByInboundBlogsDesc">
             <query>SELECT p FROM PlanetSubscriptionData p ORDER BY p.inboundblogs DESC</query>
         </named-query>
-        <named-query name="PlanetSubscriptionData.getByGroupHandleOrderByInboundBlogsDesc">
+        <named-query name="PlanetSubscriptionData.getByGroupOrderByInboundBlogsDesc">
             <query>SELECT p FROM PlanetSubscriptionData p JOIN p.groups g WHERE g.handle = ?1 ORDER
                 BY p.inboundblogs DESC
             </query>

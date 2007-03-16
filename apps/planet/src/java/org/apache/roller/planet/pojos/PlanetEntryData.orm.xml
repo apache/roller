@@ -26,20 +26,9 @@
                 ORDER BY p.pubTime DESC
             </query>
         </named-query>
-        <named-query
-                name="PlanetEntryData.getByExternalOrInternalGroup&amp;EndDate&amp;StartDateOrderByPubTimeDesc">
-            <query>SELECT p FROM PlanetEntryData p JOIN p.subscription s JOIN s.groups g
-                WHERE (g.handle = 'external' OR g.handle = 'all')
-                AND p.pubTime &lt; ?2 AND p.pubTime &gt; ?3
-                ORDER BY p.pubTime DESC
-            </query>
-        </named-query>
-        <named-query
-                name="PlanetEntryData.getByExternalOrInternalGroup&amp;EndDateOrderByPubTimeDesc">
-            <query>SELECT p FROM PlanetEntryData p JOIN p.subscription s JOIN s.groups g
-                WHERE (g.handle = 'external' OR g.handle = 'all')
-                AND p.pubTime &lt; ?2
-                ORDER BY p.pubTime DESC
+        <named-query name="PlanetEntryData.getBySubscription">
+            <query>
+                SELECT p FROM PlanetEntryData p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC
             </query>
         </named-query>
         <attributes>

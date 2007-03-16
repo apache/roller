@@ -149,19 +149,22 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
      * Get top X subscriptions, restricted by group.
      */
     public List getTopSubscriptions(
-            String groupHandle, int offset, int len) throws RollerException {
+            PlanetGroupData group, int offset, int len) throws RollerException {
         List result = null;
-        if (groupHandle != null) {
+        if (group != null) {
             Query q = strategy.getNamedQuery(
-                    "PlanetSubscriptionData.getByGroupHandleOrderByInboundBlogsDesc");
-            q.setParameter(1, groupHandle);
+                    "PlanetSubscriptionData.getByGroupOrderByInboundBlogsDesc");
+            q.setParameter(1, group);
+            if (offset != 0) q.setFirstResult(offset);
+            if (len != -1) q.setMaxResults(len);
             result = q.getResultList();
         } else {
             Query q = strategy.getNamedQuery(
                     "PlanetSubscriptionData.getAllOrderByInboundBlogsDesc");
+            if (offset != 0) q.setFirstResult(offset);
+            if (len != -1) q.setMaxResults(len);
             result = q.getResultList();
         }
-        // TODO handle offset and length
         return result;
     }
     
@@ -177,310 +180,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     
     public PlanetGroupData getGroupById(String id) throws RollerException {
         return (PlanetGroupData) strategy.load(PlanetGroupData.class, id);
-    }
-    
-    public List getGroups() throws RollerException {
-        return strategy.getNamedQuery(
-                "PlanetGroupData.getAll").getResultList();
-    }
-    
-    public List getGroupHandles() throws RollerException {
-        List handles = new ArrayList();
-        Iterator list = getGroups().iterator();
-        while (list.hasNext()) {
-            PlanetGroupData group = (PlanetGroupData) list.next();
-            handles.add(group.getHandle());
-        }
-        return handles;
-    }
-    
-    /**
-     * Get entries in a single feed as list of PlanetEntryData objects.
-     */
-    public List getFeedEntries(
-            String feedUrl, int offset, int len) throws RollerException {
-        Query q = strategy.getNamedQuery("PlanetEntryData.getByFeedURL");
-        q.setParameter(1, feedUrl);
-        q.setFirstResult(offset);
-        if (len != -1) q.setMaxResults(len);
-        return q.getResultList();
-    }
-    
-    public List getAggregation(
-            int offset, int len) throws RollerException {
-        return getAggregation(null, null, null, offset, len);
-    }
-    
-    /**
-     * Get agggration from cache, enries in reverse chonological order.
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
-     */
-    public List getAggregation(Date startDate, Date endDate,
-            int offset, int len) throws RollerException {
-        return getAggregation(null, startDate, endDate, offset, len);
-    }
-    
-    public List getAggregation(
-            PlanetGroupData group, int offset, int len)
-            throws RollerException {
-        return getAggregation(group, null, null, offset, len);
-    }
-    
-    /**
-     * Get agggration for group from cache, enries in reverse chonological order.
-     * Respects category constraints of group.
-     * @param group Restrict to entries from one subscription group.
-     * @param offset    Offset into results (for paging)
-     * @param length    Maximum number of results to return (for paging)
-     */
-    public List getAggregation(
-            PlanetGroupData group, Date startDate, Date endDate,
-            int offset, int length) throws RollerException {
-        List result = null;
-        if (endDate == null) endDate = new Date();
-        try {
-            String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
-            long startTime = System.currentTimeMillis();
-            Query query;
-            Object[] params;
-            if (group != null) {
-                if (startDate != null) {
-                    params = new Object[] {groupHandle, endDate, startDate};
-                    query = strategy.getNamedQuery(
-                            "PlanetEntryData.getByGroup&EndDate&StartDateOrderByPubTimeDesc");
-                } else {
-                    params = new Object[] {groupHandle, endDate};
-                    query = strategy.getNamedQuery(
-                            "PlanetEntryData.getByGroup&EndDateOrderByPubTimeDesc");
-                }
-            } else {
-                if (startDate != null) {
-                    params = new Object[] {endDate, startDate};
-                    query = strategy.getNamedQuery(
-                            "PlanetEntryData.getByExternalOrInternalGroup&EndDate&StartDateOrderByPubTimeDesc");
-                } else {
-                    params = new Object[] {endDate};
-                    query = strategy.getNamedQuery(
-                            "PlanetEntryData.getByExternalOrInternalGroup&EndDateOrderByPubTimeDesc");
-                }
-            }
-            query.setFirstResult(offset);
-            if (length != -1) query.setMaxResults(length);
-            for (int i=0; i<params.length; i++) {
-                query.setParameter(i, params[i]);
-            }
-            result = query.getResultList();
-            Date retLastUpdated;
-            if (result.size() > 0) {
-                PlanetEntryData entry = (PlanetEntryData)result.get(0);
-                retLastUpdated = entry.getPubTime();
-            } else {
-                retLastUpdated = new Date();
-            }
-            lastUpdatedByGroup.put(groupHandle, retLastUpdated);
-            
-            long endTime = System.currentTimeMillis();
-            log.debug("Generated aggregation in "
-                    + ((endTime-startTime)/1000.0) + " seconds");
-            
-        } catch (Throwable e) {
-            log.error("ERROR: building aggregation for: " + group, e);
-            throw new RollerException(e);
-        }
-        return result;
-    }
-    
-    public synchronized void clearCachedAggregations() {
-        lastUpdatedByGroup.clear();
-    }
-    
-    public Date getLastUpdated() {
-        return (Date) lastUpdatedByGroup.get(NO_GROUP);
-    }
-    
-    public Date getLastUpdated(PlanetGroupData group) {
-        return (Date) lastUpdatedByGroup.get(group);
-    }
-    
-    public void refreshEntries(String cacheDirPath) throws RollerException {
-        
-        Date now = new Date();
-        long startTime = System.currentTimeMillis();
-        
-        // can't continue without cache dir
-        if (cacheDirPath == null) {
-            log.warn("Planet cache directory not set, aborting refresh");
-            return;
-        }
-        
-        // allow ${user.home} in cache dir property
-        String cacheDirName = cacheDirPath.replaceFirst(
-                "\\$\\{user.home}",System.getProperty("user.home"));
-        
-        // allow ${catalina.home} in cache dir property
-        if (System.getProperty("catalina.home") != null) {
-            cacheDirName = cacheDirName.replaceFirst(
-                    "\\$\\{catalina.home}",System.getProperty("catalina.home"));
-        }
-        
-        // create cache  dir if it does not exist
-        File cacheDir = null;
-        try {
-            cacheDir = new File(cacheDirName);
-            if (!cacheDir.exists()) cacheDir.mkdirs();
-        } catch (Exception e) {
-            log.error("Unable to create planet cache directory");
-            return;
-        }
-        
-        // abort if cache dir is not writable
-        if (!cacheDir.canWrite()) {
-            log.error("Planet cache directory is not writable");
-            return;
-        }
-        
-        FeedFetcherCache feedInfoCache =
-                new DiskFeedInfoCache(cacheDirName);
-        
-        String proxyHost = PlanetRuntimeConfig.getProperty("site.proxyhost");
-        int proxyPort = PlanetRuntimeConfig.getIntProperty("site.proxyport");
-        if (proxyHost != null && proxyPort > 0) {
-            System.setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", proxyHost);
-            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
-        }
-        
-        /** a hack to set 15 sec timeouts for java.net.HttpURLConnection */
-        System.setProperty("sun.net.client.defaultConnectTimeout", "15000");
-        System.setProperty("sun.net.client.defaultReadTimeout", "15000");
-        
-        FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
-        //FeedFetcher feedFetcher = new HttpClientFeedFetcher(feedInfoCache);
-        feedFetcher.setUsingDeltaEncoding(false);
-        feedFetcher.setUserAgent("RollerPlanetAggregator");
-        
-        // Loop through all subscriptions in the system
-        Iterator subs = getAllSubscriptions();
-        while (subs.hasNext()) {
-            
-            long subStartTime = System.currentTimeMillis();
-            
-            PlanetSubscriptionData sub = (PlanetSubscriptionData)subs.next();
-            
-            // reattach sub.  sub gets detached as we iterate
-            sub = this.getSubscriptionById(sub.getId());
-            
-            Set newEntries = this.getNewEntries(sub, feedFetcher, feedInfoCache);
-            int count = newEntries.size();
-            
-            log.debug("   Entry count: " + count);
-            if (count > 0) {
-                this.deleteEntries(sub);
-                sub.addEntries(newEntries);
-                this.saveSubscription(sub);
-                this.strategy.flush();
-            }
-            long subEndTime = System.currentTimeMillis();
-            log.info("   " + count + " - "
-                    + ((subEndTime-subStartTime)/1000.0)
-                    + " seconds to process (" + count + ") entries of "
-                    + sub.getFeedURL());
-        }
-        // Clear the aggregation cache
-        clearCachedAggregations();
-        
-        long endTime = System.currentTimeMillis();
-        log.info("--- DONE --- Refreshed entries in "
-                + ((endTime-startTime)/1000.0) + " seconds");
-    }
-    
-    protected Set getNewEntries(PlanetSubscriptionData sub,
-            FeedFetcher feedFetcher,
-            FeedFetcherCache feedInfoCache)
-            throws RollerException {
-        
-        Set newEntries = new TreeSet();
-        SyndFeed feed = null;
-        URL feedURL = null;
-        Date lastUpdated = new Date();
-        try {
-            feedURL = new URL(sub.getFeedURL());
-            log.debug("Get feed from cache "+sub.getFeedURL());
-            feed = feedFetcher.retrieveFeed(feedURL);
-            SyndFeedInfo feedInfo = feedInfoCache.getFeedInfo(feedURL);
-            if (feedInfo.getLastModified() != null) {
-                long lastUpdatedLong =
-                        ((Long)feedInfo.getLastModified()).longValue();
-                if (lastUpdatedLong != 0) {
-                    lastUpdated = new Date(lastUpdatedLong);
-                }
-            }
-            Thread.sleep(100); // be nice
-        } catch (Exception e) {
-            log.warn("ERROR parsing " + sub.getFeedURL()
-            + " : " + e.getClass().getName() + " : " + e.getMessage());
-            log.debug(e);
-            return newEntries; // bail out
-        }
-        if (lastUpdated!=null && sub.getLastUpdated()!=null) {
-            Calendar feedCal = Calendar.getInstance();
-            feedCal.setTime(lastUpdated);
-            
-            Calendar subCal = Calendar.getInstance();
-            subCal.setTime(sub.getLastUpdated());
-            
-            if (!feedCal.after(subCal)) {
-                if (log.isDebugEnabled()) {
-                    String msg = MessageFormat.format(
-                            "   Skipping ({0} / {1})",
-                            new Object[] {
-                        lastUpdated, sub.getLastUpdated()});
-                    log.debug(msg);
-                }
-                return newEntries; // bail out
-            }
-        }
-        if (feed.getPublishedDate() != null) {
-            sub.setLastUpdated(feed.getPublishedDate());
-            // saving sub here causes detachment issues, so we save it later
-        }
-        
-        // Horrible kludge for Feeds without entry dates: most recent entry is
-        // given feed's last publish date (or yesterday if none exists) and
-        // earler entries are placed at once day intervals before that.
-        Calendar cal = Calendar.getInstance();
-        if (sub.getLastUpdated() != null) {
-            cal.setTime(sub.getLastUpdated());
-        } else {
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1);
-        }
-        
-        // Populate subscription object with new entries
-        Iterator entries = feed.getEntries().iterator();
-        while (entries.hasNext()) {
-            try {
-                SyndEntry romeEntry = (SyndEntry) entries.next();
-                PlanetEntryData entry =
-                        new PlanetEntryData(feed, romeEntry, sub);
-                log.debug("Entry title=" + entry.getTitle() + " content size=" + entry.getContent().length());
-                if (entry.getPubTime() == null) {
-                    log.debug("No published date, assigning fake date for "+feedURL);
-                    entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
-                }
-                if (entry.getPermalink() == null) {
-                    log.warn("No permalink, rejecting entry from "+feedURL);
-                } else {
-                    newEntries.add(entry);
-                }
-                cal.add(Calendar.DATE, -1);
-            } catch (Exception e) {
-                log.error("ERROR processing subscription entry", e);
-            }
-        }
-        return newEntries;
-    }
+    }        
     
     public void release() {}
     
@@ -548,5 +248,86 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         // make sure and clear the other side of the assocation
         sub.getEntries().clear();
     }
+    
+    public List getSubscriptions() throws RollerException {
+        Query q = strategy.getNamedQuery("PlanetSubscriptionData.getAllOrderByFeedURL");
+        return q.getResultList();
+    }
+
+    public PlanetEntryData getEntryById(String id) throws RollerException {
+        return (PlanetEntryData) strategy.load(PlanetEntryData.class, id);
+    }
+
+    public List getEntries(PlanetSubscriptionData sub, int offset, int len) throws RollerException {            
+        if(sub == null) {
+            throw new RollerException("subscription cannot be null");
+        }
+        Query q = strategy.getNamedQuery("PlanetEntryData.getBySubscription");
+        q.setParameter(1, sub);
+        if (offset != 0) q.setFirstResult(offset);
+        if (len != -1) q.setMaxResults(len);
+        return q.getResultList();
+    }
+
+    public List getEntries(PlanetGroupData group, int offset, int len) throws RollerException {
+        return getEntries(group, null, null, offset, len);
+    }
+
+    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, int offset, int len) throws RollerException {
+        StringBuffer queryString = new StringBuffer();
+                
+        if(group == null) {
+            throw new RollerException("group cannot be null");
+        }
+        
+        List ret = null;
+        try {
+            long startTime = System.currentTimeMillis();
+            
+            StringBuffer sb = new StringBuffer();
+            List params = new ArrayList();
+            int size = 0;
+            sb.append("SELECT e FROM PlanetEntryData e ");
+            sb.append("JOIN e.subscription.groups g ");
+            params.add(size++, group);
+            sb.append("WHERE g = ?").append(size);
+            if (startDate != null) {
+                params.add(size++, startDate);
+                sb.append("AND e.pubTime > ?").append(size);
+            }
+            if (endDate != null) {
+                params.add(size++, endDate);
+                sb.append("AND e.pubTime < :?").append(size);
+            }
+            sb.append("ORDER BY e.pubTime DESC");
+            
+            Query query = strategy.getDynamicQuery(sb.toString());
+            for (int i=0; i<params.size(); i++) {
+                query.setParameter(i+1, params.get(i));
+            }
+            if(offset > 0) {
+                query.setFirstResult(offset);
+            }
+            if (len != -1) {
+                query.setMaxResults(len);
+            }
+            
+            ret = query.getResultList();
+            
+            long endTime = System.currentTimeMillis();
+            
+            log.debug("Generated aggregation in "
+                    +((endTime-startTime)/1000.0)+" seconds");
+            
+        } catch (Throwable e) {
+            throw new RollerException(e);
+        }
+        
+        return ret;
+    }
 }
+
+
+
+
 

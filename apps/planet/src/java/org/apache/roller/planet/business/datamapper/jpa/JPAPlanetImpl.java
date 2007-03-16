@@ -21,10 +21,9 @@ package org.apache.roller.planet.business.datamapper.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.datamapper.DatamapperPlanetImpl;
-import org.apache.roller.planet.business.datamapper.DatamapperPlanetManagerImpl;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.datamapper.jpa.JPAPersistenceStrategy;
@@ -47,12 +46,13 @@ public class JPAPlanetImpl extends DatamapperPlanetImpl {
     // url strategy
     protected URLStrategy urlStrategy = null;
     
-        
+    // feed fetcher
+    protected FeedFetcher feedFetcher = null;
+    
     protected JPAPlanetImpl() throws RollerException {
         // set strategy used by Datamapper
         strategy = new JPAPersistenceStrategy("PlanetPU");
     }
-    
     
     /**
      * Instantiates and returns an instance of JPAPlanetImpl.
@@ -73,5 +73,14 @@ public class JPAPlanetImpl extends DatamapperPlanetImpl {
     public void setURLStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
         log.info("Using URLStrategy: " + urlStrategy.getClass().getName());
+    }
+
+    public FeedFetcher getFeedFetcher() {
+        return this.feedFetcher;
+    }
+    
+    public void setFeedFetcher(FeedFetcher feedFetcher) {
+        this.feedFetcher = feedFetcher;
+        log.info("Using FeedFetcher: " + feedFetcher.getClass().getName());
     }
 }

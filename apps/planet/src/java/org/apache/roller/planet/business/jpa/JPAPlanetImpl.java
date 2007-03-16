@@ -33,6 +33,7 @@ import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.PropertiesManager;
 
 
@@ -56,6 +57,9 @@ public class JPAPlanetImpl implements Planet {
     
     // url strategy
     protected URLStrategy urlStrategy = null;
+    
+    // feed fetcher
+    protected FeedFetcher feedFetcher = null;
     
         
     protected JPAPlanetImpl() throws RollerException {
@@ -181,6 +185,15 @@ public class JPAPlanetImpl implements Planet {
             JPAPersistenceStrategy strategy) {
         return new JPAPropertiesManagerImpl(strategy);
     } 
+    
+    public FeedFetcher getFeedFetcher() {
+        return this.feedFetcher;
+    }
+    
+    public void setFeedFetcher(FeedFetcher feedFetcher) {
+        this.feedFetcher = feedFetcher;
+        log.info("Using FeedFetcher: " + feedFetcher.getClass().getName());
+    }
     
     /**
      * Loads properties from given resourceName using given class loader
