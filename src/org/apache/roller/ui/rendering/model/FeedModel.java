@@ -36,8 +36,12 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.rendering.pagers.CommentsPager;
+import org.apache.roller.ui.rendering.pagers.Pager;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesListPager;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -115,38 +119,24 @@ public class FeedModel implements Model {
      * Gets most recent entries limited by: weblog and category specified in 
      * request plus the weblog.entryDisplayCount.
      */
-    public List getWeblogEntries() {
+    public Pager getWeblogEntriesPager() {
         
         // all feeds get the site-wide default # of entries
         int entryCount =
                 RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         
-        List results = new ArrayList();
-        try {             
-            Roller roller = RollerFactory.getRoller();
-            WeblogManager wmgr = roller.getWeblogManager();
-            List entries = wmgr.getWeblogEntries(
-                    weblog,
-                    null, 
-                    null, 
-                    null, 
-                    feedRequest.getWeblogCategoryName(), 
-                    feedRequest.getTags(), 
-                    WeblogEntryData.PUBLISHED, 
-                    null,
-                    "pubTime", 
-                    null,
-                    feedRequest.getLocale(), 
-                    0, 
-                    entryCount);
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                WeblogEntryData entry = (WeblogEntryData) it.next();
-                results.add(WeblogEntryDataWrapper.wrap(entry));
-            }
-        } catch (Exception e) {
-            log.error("ERROR: fetching weblog list", e);
-        }
-        return results;
+        String  pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
+                    feedRequest.getTags(), feedRequest.isExcerpts(), true);
+       
+        return new WeblogEntriesListPager(
+            pagerUrl, weblog, null, feedRequest.getWeblogCategoryName(),
+            feedRequest.getTags(),
+            feedRequest.getLocale(),
+            -1,
+            feedRequest.getPage(), 
+            entryCount);        
     }
     
     
@@ -154,36 +144,23 @@ public class FeedModel implements Model {
      * Gets most recent comments limited by: weblog specified in request and 
      * the weblog.entryDisplayCount.
      */
-    public List getComments() {
+    public Pager getCommentsPager() {
             
         // all feeds get the site-wide default # of entries
         int entryCount =
                 RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         
-        List recentComments = new ArrayList();
-        try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List recent = wmgr.getComments(
-                    RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle()) ? null : weblog,
-                    null,          // weblog entry
-                    null,          // search String
-                    null,          // startDate
-                    null,          // endDate
-                    CommentData.APPROVED, // approved comments only
-                    true,          // we want reverse chrono order
-                    0,             // offset
-                    entryCount); // length
-            
-            // wrap pojos
-            recentComments = new ArrayList(recent.size());
-            Iterator it = recent.iterator();
-            while(it.hasNext()) {
-                recentComments.add(CommentDataWrapper.wrap((CommentData) it.next()));
-            }
-        } catch (RollerException e) {
-            log.error("ERROR: getting comments", e);
-        }
-        return recentComments;
+        String pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null, 
+                    feedRequest.isExcerpts(), true);
+        
+        return new CommentsPager(
+            pagerUrl,
+            feedRequest.getLocale(),
+            -1,
+            feedRequest.getPage(), 
+            entryCount);        
     }
     
     /**
