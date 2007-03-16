@@ -289,17 +289,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             int size = 0;
             sb.append("SELECT e FROM PlanetEntryData e ");
             sb.append("JOIN e.subscription.groups g ");
-            params.add(size++, group);
-            sb.append("WHERE g = ?").append(size);
+            params.add(size++, group.getHandle());
+            sb.append("WHERE g.handle = ?").append(size);
             if (startDate != null) {
                 params.add(size++, startDate);
-                sb.append("AND e.pubTime > ?").append(size);
+                sb.append(" AND e.pubTime > ?").append(size);
             }
             if (endDate != null) {
                 params.add(size++, endDate);
-                sb.append("AND e.pubTime < :?").append(size);
+                sb.append(" AND e.pubTime < :?").append(size);
             }
-            sb.append("ORDER BY e.pubTime DESC");
+            sb.append(" ORDER BY e.pubTime DESC");
             
             Query query = strategy.getDynamicQuery(sb.toString());
             for (int i=0; i<params.size(); i++) {

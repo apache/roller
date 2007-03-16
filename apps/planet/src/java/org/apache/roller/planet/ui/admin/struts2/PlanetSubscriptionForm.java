@@ -96,6 +96,7 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
                 
                 // add the sub to the group
                 group.getSubscriptions().add(this.subscription);
+                this.subscription.getGroups().add(group);
                 pMgr.saveGroup(group);
                 
             } else {

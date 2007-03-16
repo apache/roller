@@ -25,6 +25,7 @@ import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.planet.business.datamapper.jpa.JPAPlanetManagerImpl;
 
 /**
  * A Datamapper specific implementation of the Roller business layer.
@@ -81,7 +82,7 @@ public abstract class DatamapperPlanetImpl implements Planet {
 
     protected PlanetManager createDatamapperPlanetManager(
             DatamapperPersistenceStrategy strategy) {
-        return new DatamapperPlanetManagerImpl(strategy);
+        return new JPAPlanetManagerImpl(strategy);
     }    
     
     /**

@@ -115,6 +115,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
                 } else {
                     PlanetGroupData group = getGroup();
                     group.getSubscriptions().remove(sub);
+                    sub.getGroups().remove(group);
                     pmgr.saveGroup(group);
                     PlanetFactory.getPlanet().flush();
                 }
