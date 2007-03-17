@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 /**
- * Interface representing a content renderer in Roller.
+ * Renders content to writer based on values in a map.
  */
 public interface Renderer {
     
