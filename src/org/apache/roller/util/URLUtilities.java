@@ -250,6 +250,7 @@ public final class URLUtilities {
                                                 String type,
                                                 String format,
                                                 String category,
+                                                String term,
                                                 List tags,
                                                 boolean excerpts,
                                                 boolean absolute) {
@@ -269,6 +270,9 @@ public final class URLUtilities {
         }
         if(tags != null && tags.size() > 0) {
           params.put("tags", getEncodedTagsString(tags));
+        }
+        if(term != null && term.trim().length() > 0) {
+            params.put("q", encode(term.trim()));
         }
         if(excerpts) {
             params.put("excerpts", "true");

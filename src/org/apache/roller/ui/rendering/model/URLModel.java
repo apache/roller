@@ -32,6 +32,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.URLUtilities;
+import org.apache.roller.util.Utilities;
 import org.apache.struts.util.RequestUtils;
 
 
@@ -238,6 +239,9 @@ public class URLModel implements Model {
         return URLUtilities.getWeblogSearchURL(weblog, locale, query, catPath, pageNum, false);
     }
     
+    public String absoluteSearch(String query, String catPath, int pageNum) {
+        return URLUtilities.getWeblogSearchURL(weblog, locale, query, catPath, pageNum, true);
+    }        
     
     public String page(String pageLink) {
         return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, null, null, null, -1, true);
@@ -326,46 +330,50 @@ public class URLModel implements Model {
     public class EntryFeedURLS {
         
         public String getRss() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, null, null, false, true);
         }
         
         public String rss(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, null, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, null, null, excerpts, true);
         }
         
         public String rssByTags(List tags, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, tags, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, null, tags, excerpts, true);
         }
         
         public String getAtom() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, null, false, true);
         }
         
         public String atom(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, null, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, null, null, excerpts, true);
         }
         
+        public String search(String term, String catPath) {
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "search", "atom", catPath, term, null, false, true);
+        }        
+        
         public String atomByTags(List tags, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, tags, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, tags, excerpts, true);
         }
     }
     
     public class CommentFeedURLS {
         
         public String getRss() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", null, null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", null, null, null, false, true);
         }
         
         public String rss(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", catPath, null, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", catPath, null, null, excerpts, true);
         }
         
         public String getAtom() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", null, null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", null, null, null, false, true);
         }
         
         public String atom(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", catPath, null, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", catPath, null, null, excerpts, true);
         }
         
     }

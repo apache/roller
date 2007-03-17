@@ -57,6 +57,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     private List   tags = null;
     private int    page = 0;
     private boolean excerpts = false;
+    private String term = null;
     
     // heavyweight attributes
     private WeblogCategoryData weblogCategory = null;
@@ -150,6 +151,11 @@ public class WeblogFeedRequest extends WeblogRequest {
             } catch(NumberFormatException e) {
                 // 
             }
+        }     
+        
+        if(request.getParameter("q") != null &&
+                request.getParameter("q").trim().length() > 0) {
+            this.term = URLUtilities.decode(request.getParameter("q"));
         }        
         
         if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
@@ -232,5 +238,13 @@ public class WeblogFeedRequest extends WeblogRequest {
     public void setPage(int page) {
         this.page = page;
     }
-    
+
+    public String getTerm() {
+        return term;
+    }
+
+
+    public void setTerm(String query) {
+        this.term = query;
+    }
 }
