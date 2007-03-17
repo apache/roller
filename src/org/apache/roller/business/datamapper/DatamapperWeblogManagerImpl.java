@@ -856,6 +856,7 @@ public abstract class DatamapperWeblogManagerImpl extends WeblogManagerImpl {
             status,
             null,
             null,
+            null,
             locale,          
             offset,
             length);

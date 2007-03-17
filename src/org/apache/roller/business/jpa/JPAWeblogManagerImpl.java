@@ -498,6 +498,7 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
             String      catName,
             List        tags,
             String      status,
+            String      text,
             String      sortby,
             String      sortOrder,
             String      locale,
@@ -588,6 +589,14 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         if (locale != null) {
             params.add(size++, locale + '%');
             queryString.append(" AND e.locale like ?").append(size);
+        }
+        
+        if (text != null) {
+            params.add(size++, '%' + text + '%');
+            queryString.append(" AND ( text LIKE ?").append(size);
+            queryString.append("    OR summary LIKE ? ").append(size);
+            queryString.append("    OR title LIKE ?").append(size);
+            queryString.append(") ");
         }
         
         if (sortby != null && sortby.equals("updateTime")) {
@@ -1059,16 +1068,17 @@ public class JPAWeblogManagerImpl extends WeblogManagerImpl {
         
         TreeMap map = new TreeMap(reverseComparator);
         
-        List entries = getWeblogEntries(
+        List entries = getWeblogEntries( 
                 website,
-                null,
+                null, // user
                 startDate,
                 endDate,
                 catName,
                 tags,
                 status,
-                null,
-                null,
+                null, // text
+                null, // sortBy
+                null, // sortOrder
                 locale,
                 offset,
                 length);

@@ -59,6 +59,7 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             String      catName,
             List        tags,
             String      status,
+            String      text,
             String      sortby,
             String      sortOrder,
             String      locale,
@@ -131,6 +132,14 @@ public class JPAWeblogManagerImpl extends DatamapperWeblogManagerImpl {
             queryString.append(" AND e.status = ?").append(size);
         }
 
+        if (text != null) {
+            params.add(size++, '%' + text + '%');
+            queryString.append(" AND ( text LIKE ?").append(size);
+            queryString.append("    OR summary LIKE ? ").append(size);
+            queryString.append("    OR title LIKE ?").append(size);
+            queryString.append(") ");
+        }
+        
         if (locale != null) {
             params.add(size++, locale + '%');
             queryString.append(" AND e.locale like ?").append(size);
