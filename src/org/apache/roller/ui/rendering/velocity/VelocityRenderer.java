@@ -35,7 +35,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 
 
 /**
- * Renderer for Velocity templates.
+ * Renderer that renders using the Velocity template engine.
  */
 public class VelocityRenderer implements Renderer {
     
