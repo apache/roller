@@ -73,6 +73,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #end
     
     ## main feed urls are always available
+    #if (!$model.searchResults)
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
     <link rel="alternate" type="application/rss+xml"  title="Recent Entries (RSS)"   href="$url.feed.entries.rss" />
     <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" href="$url.feed.comments.atom" />
@@ -84,8 +85,10 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #elseif ($model.weblogCategory)
       <link rel="alternate" type="application/atom+xml" title="Entries for category $model.weblogCategory.name (Atom)"  href="$url.feed.entries.atom($model.weblogCategory.path, false)" />
       <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.weblogCategory.name (RSS)"   href="$url.feed.entries.rss($model.weblogCategory.path, false)" />
+    #end
+
     #else
-      
+    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeXML($model.term)'"  href="$utils.escapeXML($url.feed.entries.search($model.term))" />
     #end
 #end
 

@@ -41,6 +41,7 @@ import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
+import org.apache.roller.ui.rendering.model.SearchResultsFeedModel;
 import org.apache.roller.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
@@ -234,6 +235,11 @@ public class FeedServlet extends HttpServlet {
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
+            
+            if("search".equals(feedRequest.getType())) {
+                pageId = "templates/feeds/weblog-search-atom.vm";                
+                ModelLoader.loadModels(SearchResultsFeedModel.class.getName(), model, initData, true);
+            }                        
 
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

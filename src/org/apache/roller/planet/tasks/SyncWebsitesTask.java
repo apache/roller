@@ -155,7 +155,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                 WebsiteData weblog = (WebsiteData) websites.next();
                 
                 String siteUrl = URLUtilities.getWeblogURL(weblog, null, true);
-                String feedUrl = URLUtilities.getWeblogFeedURL(weblog, null, "entries", "rss", null, null, false, true);
+                String feedUrl = URLUtilities.getWeblogFeedURL(weblog, null, "entries", "rss", null, null, null, false, true);
                 
                 // add feed url to the "live" list
                 liveUserFeeds.add(feedUrl);

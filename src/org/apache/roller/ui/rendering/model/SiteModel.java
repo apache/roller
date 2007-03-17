@@ -110,7 +110,7 @@ public class SiteModel implements Model {
         if (feedRequest != null) {
             pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
+                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
                     feedRequest.getTags(), feedRequest.isExcerpts(), true);
         } else {        
             pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
@@ -166,7 +166,7 @@ public class SiteModel implements Model {
         if (feedRequest != null) {
             pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
+                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), null,
                     feedRequest.getTags(), feedRequest.isExcerpts(), true);
         } else {
             pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
@@ -196,7 +196,7 @@ public class SiteModel implements Model {
         if (feedRequest != null) {
             pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, 
+                    feedRequest.getFormat(), null, null, null,
                     feedRequest.isExcerpts(), true);
         } else {        
             pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
@@ -220,7 +220,7 @@ public class SiteModel implements Model {
         if (feedRequest != null) {
             pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                     weblogRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, feedRequest.isExcerpts(), true);
+                    feedRequest.getFormat(), null, null, null, feedRequest.isExcerpts(), true);
         } else {        
             pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 

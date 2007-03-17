@@ -128,7 +128,7 @@ public class FeedModel implements Model {
         String  pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
-                    feedRequest.getTags(), feedRequest.isExcerpts(), true);
+                    null, feedRequest.getTags(), feedRequest.isExcerpts(), true);
        
         return new WeblogEntriesListPager(
             pagerUrl, weblog, null, feedRequest.getWeblogCategoryName(),
@@ -152,7 +152,7 @@ public class FeedModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                     feedRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, 
+                    feedRequest.getFormat(), null, null, null,
                     feedRequest.isExcerpts(), true);
         
         return new CommentsPager(
