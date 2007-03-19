@@ -35,7 +35,7 @@ import org.apache.roller.planet.util.Technorati;
 /**
  * Rank each subscription by populating Technorati inbound blog and link counts.
  */
-public class TechnoratiRankingsTask implements Runnable {
+public class TechnoratiRankingsTask extends PlanetTask {
     
     private static Log log = LogFactory.getLog(TechnoratiRankingsTask.class);
     
@@ -131,6 +131,13 @@ public class TechnoratiRankingsTask implements Runnable {
         } catch (Exception e) {
             log.error("ERROR ranking subscriptions", e);
         }
+    }
+    
+    
+    public static void main(String[] args) throws Exception{
+        TechnoratiRankingsTask task = new TechnoratiRankingsTask();
+        task.initialize();
+        task.run();
     }
     
 }

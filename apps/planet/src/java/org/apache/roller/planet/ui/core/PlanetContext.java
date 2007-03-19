@@ -65,7 +65,7 @@ public class PlanetContext extends ContextLoaderListener
      */
     public void contextInitialized(ServletContextEvent sce) {
         
-        log.debug("Roller Planet Initializing ... ");
+        log.info("Roller Planet Initializing ... ");
         
         // keep a reverence to ServletContext object
         this.context = sce.getServletContext();
@@ -94,7 +94,7 @@ public class PlanetContext extends ContextLoaderListener
             throw new RuntimeException(t);
         }
         
-        log.debug("Roller Planet Initialization Complete");
+        log.info("Roller Planet Initialization Complete");
     }
     
     
