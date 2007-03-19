@@ -2,6 +2,22 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 3.0.1: minor release to fix comment form XSS security risk
+
+Allowing commenters to leave HTML in comments is a potential security risk 
+because it allows commenters can add malicious Javascipt code. You can 
+disable HTML in comments via the Roller admin interface, but in Roller 2.3 and 
+earlier versions of Roller, attackers could still add malicious HTML to the 
+name, email and URL fields. 
+
+We fixed the problem in Roller 2.3.1 and all subsequent versions of 
+Roller by stripping all HTML from name, email and comment fields at 
+comment post time. Also, we do HTML escaping whenever we display the
+suspect fields.
+
+
+-------------------------------------------------------------------------------
+
 Roller 3.0: major release with new URL structure and new template syste
 
 Please refer to the What's New page for an overview of the changes:
