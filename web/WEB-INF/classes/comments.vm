@@ -61,15 +61,15 @@
     <p class="comment-details">
     $text.get("macro.weblog.postedby")
     #if (!$stringUtils.isEmpty($comment.name) && !$stringUtils.isEmpty($comment.remoteHost))
-        <b>$comment.name</b> ($comment.remoteHost)
+        <b>$utilities.escapeHTML($comment.name)</b> ($utilities.escapeHTML($comment.remoteHost))
     #elseif (!$stringUtils.isEmpty($comment.name))
-        <b>$comment.name</b>
+        <b>$utilities.escapeHTML($comment.name)</b>
     #elseif (!$stringUtils.isEmpty($comment.remoteHost))
-        <b>$comment.remoteHost</b>
+        <b>$utilities.escapeHTML($comment.remoteHost)</b>
     #end
     $text.get("macro.weblog.on") $dateFormatter.format($comment.postTime)
     #if( $stringUtils.isNotEmpty($comment.url) )
-        $text.get( "macro.weblog.postedbywebsite", [$comment.url, $comment.url] )
+        $text.get( "macro.weblog.postedbywebsite", [$utilities.escapeHTML($comment.url), $utilities.escapeHTML($comment.url)] )
     #end
     #if( $showPermalink )
     <a href="${ctxPath}${entry.permaLink}#comment${velocityCount}"
@@ -199,15 +199,15 @@
 
         <table cellspacing="0" cellpadding="1" border="0" width="95%">
         <tr><th>$text.get( "macro.weblog.name" )</th>
-            <td><input type="text" name="name" value="$commentForm.name" size="50" maxlength="255" /></td>
+            <td><input type="text" name="name" value="$utilities.escapeHTML($commentForm.name)" size="50" maxlength="255" /></td>
         </tr>
 
         <tr><th>$text.get( "macro.weblog.email" )</th>
-            <td><input type="text" name="email" value="$commentForm.email" size="50" maxlength="255" /></td>
+            <td><input type="text" name="email" value="$utilities.escapeHTML($commentForm.email)" size="50" maxlength="255" /></td>
         </tr>
 
         <tr><th>$text.get( "macro.weblog.url" )</th>
-            <td><input type="text" name="url" value="$commentForm.url" size="50" maxlength="255" /></td>
+            <td><input type="text" name="url" value="$utilities.escapeHTML($commentForm.url)" size="50" maxlength="255" /></td>
         </tr>
         #if ($pageModel.emailComments)
         <tr>

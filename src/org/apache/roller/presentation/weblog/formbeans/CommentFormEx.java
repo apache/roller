@@ -114,6 +114,8 @@ public class CommentFormEx extends CommentForm
     public void copyTo(org.apache.roller.pojos.CommentData dataHolder, Locale locale) 
         throws RollerException
     {
+        super.copyTo(dataHolder, locale);
+        
         if (!StringUtils.isEmpty(name)) {
             name = Utilities.removeHTML(name);
         }
@@ -123,7 +125,9 @@ public class CommentFormEx extends CommentForm
         if (!StringUtils.isEmpty(email)) {
             email = Utilities.removeHTML(email);
         }
-        super.copyTo(dataHolder, locale);
+        if (!StringUtils.isEmpty(remoteHost)) {
+            remoteHost = Utilities.removeHTML(remoteHost);
+        }
         if (getSpam() == null) dataHolder.setSpam(Boolean.FALSE);
         if (getNotify() == null) dataHolder.setNotify(Boolean.FALSE);
     }
