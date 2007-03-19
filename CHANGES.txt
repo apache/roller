@@ -30,6 +30,9 @@ Features
 Bug Fixes
     * [ROL-829] - comment munging escaped HTML content
     * [ROL-1280] - entry management paging
+    * [ROL-1374] - Logout doesn't work once logged in with Remember Me option
+    * [ROL-936] - Session timeout causes entry post to fail, despite successful login
+    * Fixes for XSS vulnerabilties in comment display in blog and comment mgmt pages
     * Fix to prevent entries published to future from being viewable via permalinks
     * Fixed bug allowing user to create multiple pages with the same name
     * Fixed bug allowing user to create a 'Weblog' template without setting defaultPageId
