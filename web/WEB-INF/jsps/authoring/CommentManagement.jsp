@@ -329,27 +329,27 @@ function bulkDelete() {
                             <c:choose>
                                 <c:when test="${!empty comment.email && !empty comment.name}">
                                     <fmt:message key="commentManagement.commentByBoth" >
-                                        <fmt:param value="${comment.name}" />
-                                        <fmt:param value="${comment.email}" />
+                                        <fmt:param><c:out value="${comment.name}" /></fmt:param>
+                                        <fmt:param><c:out value="${comment.email}" /></fmt:param>
                                         <fmt:param value="mailto" />
-                                        <fmt:param value="${comment.remoteHost}" />
+                                        <fmt:param><c:out value="${comment.remoteHost}" /></fmt:param>
                                      </fmt:message>
                                 </c:when>
                                 <c:when test="${!empty comment.name}">
                                     <fmt:message key="commentManagement.commentByName" >
-                                        <fmt:param value="${comment.name}" />
-                                        <fmt:param value="${comment.remoteHost}" />
+                                        <fmt:param><c:out value="${comment.name}" /></fmt:param>
+                                        <fmt:param><c:out value="${comment.remoteHost}" /></fmt:param>
                                      </fmt:message>
                                 </c:when>
                                 <c:when test="${!empty comment.email}">
                                     <fmt:message key="commentManagement.commentByName" >
-                                        <fmt:param value="${comment.email}" />
-                                        <fmt:param value="${comment.remoteHost}" />
+                                        <fmt:param><c:out value="${comment.name}" /></fmt:param>
+                                        <fmt:param><c:out value="${comment.remoteHost}" /></fmt:param>
                                      </fmt:message>
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:message key="commentManagement.commentByIP" >
-                                        <fmt:param value="${comment.remoteHost}" />
+                                        <fmt:param><c:out value="${comment.remoteHost}" /></fmt:param>
                                      </fmt:message>
                                 </c:otherwise>
                             </c:choose>

@@ -27,6 +27,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.util.Utilities;
 
 
 /**
@@ -121,15 +122,15 @@ public class WeblogCommentRequest extends WeblogRequest {
          *   notify - if commenter wants to receive notifications
          */
         if(request.getParameter("name") != null) {
-            this.name = request.getParameter("name");
+            this.name = Utilities.removeHTML(request.getParameter("name"));
         }
         
         if(request.getParameter("email") != null) {
-            this.email = request.getParameter("email");
+            this.email = Utilities.removeHTML(request.getParameter("email"));
         }
         
         if(request.getParameter("url") != null) {
-            this.url = request.getParameter("url");
+            this.url = Utilities.removeHTML(request.getParameter("url"));
         }
         
         if(request.getParameter("content") != null) {
