@@ -160,11 +160,10 @@ Show comments for weblog entry according to Roller configuration.
     <br/>
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
-            #set($content = $utils.encodeEmail($comment.content))
             #if($config.commentEscapeHtml)
-                #set($content = $utils.escapeHTML($content))
+                #set($content = $utils.escapeHTML($comment.content))
             #else 
-                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($content)))
+                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($comment.content)))
             #end
             #if($config.commentAutoFormat)
                 #set($content = $utils.autoformat($content))
@@ -177,11 +176,11 @@ Show comments for weblog entry according to Roller configuration.
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
-                    <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+                    <a rel="nofollow" href="$comment.url"><b>$utils.escapeHTML($comment.name)</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
-                    <b>$comment.name</b>
+                    <b>$utils.escapeHTML($comment.name)</b>
                 #elseif ($comment.remoteHost)
-                    <b>$comment.remoteHost</b>
+                    <b>$utils.escapeHTML($comment.remoteHost)</b>
                 #else
                     <b>$text.get("macro.weblog.comment.unknown")</b>
                 #end
@@ -247,7 +246,12 @@ Show comments form for weblog entry.
             </li>
             <li>
                 <label class="desc">$text.get( "macro.weblog.yourcomment" )</label>
-                <textarea name="content" class="textarea large" cols="40" rows="10">$utils.escapeHTML($cform.content)</textarea>
+                #if($config.commentEscapeHtml)
+                    #set($content = $utils.escapeHTML($cform.content))
+                #else 
+                    #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($cform.content)))
+                #end
+                <textarea name="content" class="textarea large" cols="" rows="">$content</textarea>
             </li>
             <li class="info">
                 <span class="comments-syntax-indicator">
