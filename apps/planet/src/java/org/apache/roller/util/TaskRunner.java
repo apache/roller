@@ -18,7 +18,7 @@
 package org.apache.roller.util;
         
 import java.io.File;
-import org.apache.roller.util.StandaloneWebappClassLoader;
+import org.apache.roller.planet.tasks.PlanetTask;
 
 /**
  * Sets up classpath for Roller and runs a task. 
@@ -61,7 +61,8 @@ public class TaskRunner {
 
         // Go!
         Class taskClass = cl.loadClass(taskClassName);
-        Runnable task = (Runnable)taskClass.newInstance();
+        PlanetTask task = (PlanetTask) taskClass.newInstance();
+        task.initialize();
         task.run();
     }
 }

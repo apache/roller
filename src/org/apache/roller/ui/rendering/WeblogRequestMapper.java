@@ -36,7 +36,7 @@ import org.apache.roller.pojos.WebsiteData;
 
 
 /**
- * Roller's weblog request mapper.
+ * Handles rendering requests for Roller pages/feeds by routing to the appropriate Servlet.
  *
  * This request mapper is used to map all weblog specific urls of the form
  * /<weblog handle>/* to the appropriate servlet for handling the actual

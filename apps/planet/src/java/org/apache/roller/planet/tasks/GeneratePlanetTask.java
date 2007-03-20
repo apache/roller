@@ -44,8 +44,10 @@ import org.apache.velocity.texen.Generator;
  * - Uses Velocity Texen to generate the static files
  * </pre>
  */
-public class GeneratePlanetTask implements Runnable {
+public class GeneratePlanetTask extends PlanetTask {
+    
     private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
+    
     
     public void run() {
         try {            
@@ -113,5 +115,12 @@ public class GeneratePlanetTask implements Runnable {
         } catch (Exception e) {
             log.error("ERROR generating planet", e);
         }
-    }   
+    }
+    
+    public static void main(String[] args) throws Exception{
+        GeneratePlanetTask task = new GeneratePlanetTask();
+        task.initialize();
+        task.run();
+    }
+    
 }

@@ -33,8 +33,10 @@ import org.apache.roller.planet.business.PlanetFactory;
  * - Calls Planet business layer to refresh entries
  * </pre>
  */
-public class RefreshPlanetTask implements Runnable {
+public class RefreshPlanetTask extends PlanetTask {
+    
     private static Log log = LogFactory.getLog(RefreshPlanetTask.class);
+    
     
     public void run() {
         try {            
@@ -52,8 +54,10 @@ public class RefreshPlanetTask implements Runnable {
     }
     
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         RefreshPlanetTask task = new RefreshPlanetTask();
+        task.initialize();
         task.run();
     }
+    
 }

@@ -73,6 +73,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #end
     
     ## main feed urls are always available
+    #if (!$model.searchResults)
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
     <link rel="alternate" type="application/rss+xml"  title="Recent Entries (RSS)"   href="$url.feed.entries.rss" />
     <link rel="alternate" type="application/atom+xml" title="Recent Comments (Atom)" href="$url.feed.comments.atom" />
@@ -84,8 +85,10 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #elseif ($model.weblogCategory)
       <link rel="alternate" type="application/atom+xml" title="Entries for category $model.weblogCategory.name (Atom)"  href="$url.feed.entries.atom($model.weblogCategory.path, false)" />
       <link rel="alternate" type="application/rss+xml"  title="Entries for category $model.weblogCategory.name (RSS)"   href="$url.feed.entries.rss($model.weblogCategory.path, false)" />
+    #end
+
     #else
-      
+    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term))" />
     #end
 #end
 
@@ -176,11 +179,10 @@ Show comments for weblog entry according to Roller configuration.
     <br/>
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
-            #set($content = $utils.encodeEmail($comment.content))
             #if($config.commentEscapeHtml)
-                #set($content = $utils.escapeHTML($content))
+                #set($content = $utils.escapeHTML($comment.content))
             #else 
-                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($content)))
+                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($comment.content)))
             #end
             #if($config.commentAutoFormat)
                 #set($content = $utils.autoformat($content))
@@ -194,11 +196,11 @@ Show comments for weblog entry according to Roller configuration.
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
-                    <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+                    <a rel="nofollow" href="$comment.url"><b>$utils.escapeHTML($comment.name)</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
-                    <b>$comment.name</b>
+                    <b>$utils.escapeHTML($comment.name)</b>
                 #elseif ($comment.remoteHost)
-                    <b>$comment.remoteHost</b>
+                    <b>$utils.escapeHTML($comment.remoteHost)</b>
                 #else
                     <b>$text.get("macro.weblog.comment.unknown")</b>
                 #end
@@ -242,16 +244,15 @@ Show comments form for weblog entry.
         <ul>
             <li>
                 <label class="desc">$text.get( "macro.weblog.name" )</label>
-                <input type="text" name="name" class="text large" value="$cform.name" size="50" maxlength="255" />
+                <input type="text" name="name" class="text large" value="$utils.escapeHTML($cform.name)" size="50" maxlength="255" />
             </li>
 
-
             <li><label class="desc">$text.get( "macro.weblog.email" )</label>
-                <input type="text" name="email" class="text large" value="$cform.email" size="50" maxlength="255" />
+                <input type="text" name="email" class="text large" value="$utils.escapeHTML($cform.email)" size="50" maxlength="255" />
             </li>
 
             <li><label class="desc">$text.get( "macro.weblog.url" )</label>
-                <input type="text" name="url" class="text large" value="$cform.url" size="50" maxlength="255" />
+                <input type="text" name="url" class="text large" value="$utils.escapeHTML($cform.url)" size="50" maxlength="255" />
             </li>
 
         #if ($config.commentEmailNotify)
@@ -265,7 +266,14 @@ Show comments form for weblog entry.
             </li>
             <li>
                 <label class="desc">$text.get( "macro.weblog.yourcomment" )</label>
-                <textarea name="content" class="textarea large" cols="40" rows="10">$utils.escapeHTML($cform.content)</textarea>
+
+            #if($config.commentEscapeHtml)
+                #set($content = $utils.escapeHTML($cform.content))
+            #else 
+                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($cform.content)))
+            #end               
+            <textarea name="content" class="textarea large" cols="40" rows="10">$utils.escapeHTML($content)</textarea>
+
             </li>
             <li class="info">
                 <span class="comments-syntax-indicator">

@@ -21,104 +21,127 @@ package org.apache.roller.ui.rendering.model;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
-import org.apache.commons.collections.comparators.ReverseComparator;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.search.FieldConstants;
-import org.apache.roller.business.search.operations.SearchOperation;
-import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.business.search.FieldConstants;
+import org.apache.roller.business.search.IndexManager;
+import org.apache.roller.business.search.operations.SearchOperation;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogEntryWrapperComparator;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.ui.rendering.pagers.SearchResultsPager;
-import org.apache.roller.ui.rendering.pagers.WeblogEntriesPager;
-import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
-import org.apache.roller.util.DateUtil;
+import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.rendering.pagers.Pager;
+import org.apache.roller.ui.rendering.pagers.SearchResultsFeedPager;
+import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
- * Extends normal page renderer model to represent search results.
+ * Extends normal page renderer model to represent search results for Atom feeds.
  *
  * Also adds some new methods which are specific only to search results.
  */
-public class SearchResultsModel extends PageModel {
+public class SearchResultsFeedModel implements Model {
+
+    private static Log log = LogFactory.getLog(SearchResultsFeedModel.class);
     
     private static final ResourceBundle bundle = 
             ResourceBundle.getBundle("ApplicationResources");
     
-    public static final int RESULTS_PER_PAGE = 10;
-    
-    
-    // the original search request
-    WeblogSearchRequest searchRequest = null;
-    
-    // the actual search results mapped by Day -> Set of entries
-    private TreeMap results = new TreeMap(new ReverseComparator());
-    
+    private WeblogFeedRequest feedRequest = null;
+
+    private WebsiteData weblog = null;
+        
     // the pager used by the 3.0+ rendering system
-    private SearchResultsPager pager = null;
+    private SearchResultsFeedPager pager = null;
     
+    private List results = new LinkedList();
+    
+    private Set categories = new TreeSet();
+
+    private boolean websiteSpecificSearch = true;
+
     private int hits = 0;
     private int offset = 0;
     private int limit = 0;
-    private Set categories = new TreeSet();
-    private boolean websiteSpecificSearch = true;
-    private String errorMessage = null;
     
+    private int entryCount = 0;
+
+
+    public String getModelName() {
+        return "model";
+    }
+
     
     public void init(Map initData) throws RollerException {
         
-        // we expect the init data to contain a searchRequest object
-        searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
-        if(searchRequest == null) {
-            throw new RollerException("expected searchRequest from init data");
+        // we expect the init data to contain a weblogRequest object
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        if(weblogRequest == null) {
+            throw new RollerException("expected weblogRequest from init data");
         }
         
-        // let parent initialize
-        super.init(initData);
+        if(weblogRequest instanceof WeblogFeedRequest) {
+            this.feedRequest = (WeblogFeedRequest) weblogRequest;
+        } else {
+            throw new RollerException("weblogRequest is not a WeblogFeedRequest."+
+                    "  FeedModel only supports feed requests.");
+        }
+                
+        // extract weblog object
+        weblog = feedRequest.getWeblog();
+        
+        String  pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+                feedRequest.getLocale(), feedRequest.getType(),
+                feedRequest.getFormat(), null, null, /* cat and term are null but added to the url in the pager */
+                feedRequest.getTags(), feedRequest.isExcerpts(), true);
         
         // if there is no query, then we are done
-        if(searchRequest.getQuery() == null) {
-            pager = new SearchResultsPager(searchRequest, results, false);
+        if(feedRequest.getTerm() == null) {
+            pager = new SearchResultsFeedPager(pagerUrl, feedRequest.getPage(),
+                    feedRequest, results, false);
             return;
         }
+        
+        this.entryCount = RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         
         // setup the search
         IndexManager indexMgr = RollerFactory.getRoller().getIndexManager();
         
         SearchOperation search = new SearchOperation(indexMgr);
-        search.setTerm(searchRequest.getQuery());
+        search.setTerm(feedRequest.getTerm());
         
-        if(RollerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
-            this.websiteSpecificSearch = false;
+        if(RollerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle())) {
+            this.websiteSpecificSearch  = false;
         } else {
-            search.setWebsiteHandle(searchRequest.getWeblogHandle());
+            search.setWebsiteHandle(feedRequest.getWeblogHandle());
         }
         
-        if(StringUtils.isNotEmpty(searchRequest.getWeblogCategoryName())) {
-            search.setCategory(searchRequest.getWeblogCategoryName());
+        if(StringUtils.isNotEmpty(feedRequest.getWeblogCategoryName())) {
+            search.setCategory(feedRequest.getWeblogCategoryName());
         }
         
         // execute search
         indexMgr.executeIndexOperationNow(search);
         
-        if (search.getResultsCount() == -1) {
-            // this means there has been a parsing (or IO) error
-            this.errorMessage = bundle.getString("error.searchProblem");
-        } else {
+        if (search.getResultsCount() > -1) {
             Hits hits = search.getResults();
             this.hits = search.getResultsCount();
             
@@ -127,36 +150,24 @@ public class SearchResultsModel extends PageModel {
         }
         
         // search completed, setup pager based on results
-        pager = new SearchResultsPager(searchRequest, results, (hits > (offset+limit)));
+        pager = new SearchResultsFeedPager(pagerUrl, feedRequest.getPage(),
+                feedRequest, results, (hits > (offset+limit)));
     }
     
-    /**
-     * Is this page showing search results?
-     */
-    public boolean isSearchResults() {
-        return true;
-    }
-    
-    // override page model and return search results pager
-    public WeblogEntriesPager getWeblogEntriesPager() {
-        return pager;
-    }
-    
-    // override page model and return search results pager
-    public WeblogEntriesPager getWeblogEntriesPager(String category) {
+    public Pager getSearchResultsPager() {
         return pager;
     }
     
     private void convertHitsToEntries(Hits hits) throws RollerException {
         
         // determine offset
-        this.offset = searchRequest.getPageNum() * RESULTS_PER_PAGE;
+        this.offset = feedRequest.getPage() * this.entryCount;
         if(this.offset >= hits.length()) {
             this.offset = 0;
         }
         
         // determine limit
-        this.limit = RESULTS_PER_PAGE;
+        this.limit = this.entryCount;
         if(this.offset + this.limit > hits.length()) {
             this.limit = hits.length() - this.offset;
         }
@@ -178,7 +189,7 @@ public class SearchResultsModel extends PageModel {
                 handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
                 
                 if(websiteSpecificSearch &&
-                        handle.equals(searchRequest.getWeblogHandle())) {
+                        handle.equals(feedRequest.getWeblogHandle())) {
                     
                     entry = weblogMgr.getWeblogEntry(
                             doc.getField(FieldConstants.ID).stringValue());
@@ -197,7 +208,7 @@ public class SearchResultsModel extends PageModel {
                 // or entry's user is not the requested user.
                 // but don't return future posts
                 if (entry != null && entry.getPubTime().before(now)) {
-                    addEntryToResults(WeblogEntryDataWrapper.wrap(entry));
+                    results.add(WeblogEntryDataWrapper.wrap(entry));
                 }
             }
             
@@ -209,26 +220,15 @@ public class SearchResultsModel extends PageModel {
         }
     }
     
-    
-    private void addEntryToResults(WeblogEntryDataWrapper entry) {
-        
-        // convert entry's each date to midnight (00m 00h 00s)
-        Date midnight = DateUtil.getStartOfDay(entry.getPubTime());
-        
-        // ensure we do not get duplicates from Lucene by
-        // using a Set Collection.  Entries sorted by pubTime.
-        TreeSet set = (TreeSet) this.results.get(midnight);
-        if (set == null) {
-            // date is not mapped yet, so we need a new Set
-            set = new TreeSet( new WeblogEntryWrapperComparator());
-            this.results.put(midnight, set);
-        }
-        set.add(entry);
+    /**
+     * Get weblog being displayed.
+     */
+    public WebsiteDataWrapper getWeblog() {
+        return WebsiteDataWrapper.wrap(weblog);
     }
     
-    
     public String getTerm() {
-        return (searchRequest.getQuery() == null) ? "" : searchRequest.getQuery();
+        return (feedRequest.getTerm() == null) ? "" : feedRequest.getTerm();
     }
 
     public int getHits() {
@@ -238,12 +238,16 @@ public class SearchResultsModel extends PageModel {
     public int getOffset() {
         return offset;
     }
+    
+    public int getPage() {
+        return feedRequest.getPage();
+    }
 
     public int getLimit() {
         return limit;
     }
 
-    public TreeMap getResults() {
+    public List getResults() {
         return results;
     }
 
@@ -253,21 +257,16 @@ public class SearchResultsModel extends PageModel {
 
     public boolean isWebsiteSpecificSearch() {
         return websiteSpecificSearch;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+    }   
     
-    public String getWeblogCategoryName() {
-        return searchRequest.getWeblogCategoryName();
+    public String getCategoryPath() {
+        return feedRequest.getWeblogCategoryName();
     }
     
     public WeblogCategoryDataWrapper getWeblogCategory() {
-        if(searchRequest.getWeblogCategory() != null) {
-            return WeblogCategoryDataWrapper.wrap(searchRequest.getWeblogCategory());
+        if(feedRequest.getWeblogCategory() != null) {
+            return WeblogCategoryDataWrapper.wrap(feedRequest.getWeblogCategory());
         }
         return null;
-    }
-    
+    }    
 }

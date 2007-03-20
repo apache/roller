@@ -51,6 +51,9 @@ h3 {
     color: #ad3537;
     font-weight: bold;
 }
+.fakelink {
+    color: #ad3537;
+}
 a:link {
     color: #ad3537;
 }

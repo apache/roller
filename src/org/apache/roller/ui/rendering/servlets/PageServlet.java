@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -329,11 +330,17 @@ public class PageServlet extends HttpServlet {
         // looks like we need to render content
         
         // set the content type
-        String mimeType = RollerContext.getServletContext().getMimeType(page.getLink());
         String contentType = "text/html; charset=utf-8";
-        if(mimeType != null) {
-            // we found a match ... set the content type
-            contentType = mimeType+"; charset=utf-8";
+        if (StringUtils.isNotEmpty(page.getOutputContentType())) {
+            contentType = page.getOutputContentType() + "; charset=utf-8";
+        } else {
+            String mimeType = RollerContext.getServletContext().getMimeType(page.getLink()); 
+            if (mimeType != null) {
+                // we found a match ... set the content type
+                contentType = mimeType + "; charset=utf-8";
+            } else {
+                contentType = "text/html; charset=utf-8";
+            }
         }
 
         HashMap model = new HashMap();

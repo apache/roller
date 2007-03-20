@@ -28,7 +28,7 @@ import org.apache.roller.pojos.Template;
 
 
 /**
- * A governing class for Rollers rendering system.
+ * Returns Renderer for Template via configured RendererFactories. 
  * 
  * The purpose of the RendererManager is to provide a level of abstraction 
  * between classes that are rendering content and the implementations of the

@@ -22,7 +22,7 @@ import org.apache.roller.pojos.Template;
 
 
 /**
- * A factory for Renderer objects.
+ * Returns Renderer best suited to render a Template or null if available.
  *
  * Implementations of this interface are used to handle the actual lookup of
  * what Renderer object should be used to render a given resource.

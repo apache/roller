@@ -83,7 +83,8 @@ create table webpage (
     hidden          $db.BOOLEAN_SQL_TYPE_FALSE not null,
     navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
     templatelang    varchar(20) not null,
-    decorator       varchar(255) default null
+    decorator       varchar(255) default null,
+    outputtype      varchar(48) default null
 );
 create index wp_name_idx on webpage( name$!db.INDEXSIZE );
 create index wp_link_idx on webpage( link$!db.INDEXSIZE );

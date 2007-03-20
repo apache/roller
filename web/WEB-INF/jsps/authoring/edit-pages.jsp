@@ -29,63 +29,59 @@ request.setAttribute("customTheme", org.apache.roller.pojos.Theme.CUSTOM); %>
    <fmt:message key="pagesForm.tip" />
 </p>
 
-<c:if test="${website.editorTheme ne customTheme}">
-<p><fmt:message key="pagesForm.themesReminder"><fmt:param value="${website.editorTheme}"/></fmt:message></p>
+<c:if test="${model.website.editorTheme ne customTheme}">
+<p><fmt:message key="pagesForm.themesReminder"><fmt:param value="${model.website.editorTheme}"/></fmt:message></p>
 </c:if>
 
 <%-- table of pages --%>
 <table class="rollertable">
     <tr>
-        <th width="10%"><fmt:message key="pagesForm.name" /></th>
+        <th width="30%"><fmt:message key="pagesForm.name" /></th>
         <th width="60%"><fmt:message key="pagesForm.description" /></th>
-        <th width="10%"><fmt:message key="pagesForm.link" /></th>
-        <th width="5%"><fmt:message key="pagesForm.column.navbar" /></th>
-        <th width="5%"><fmt:message key="pagesForm.column.hidden" /></th>
-        <th width="5%"><fmt:message key="pagesForm.edit" /></th>
-        <th width="5%"><fmt:message key="pagesForm.remove" /></th>
+        <th width="10"><fmt:message  key="pagesForm.remove" /></th>
     </tr>
-    <logic:iterate id="p" name="pages" >
+    <c:forEach var="p" items="${model.pages}" >
         <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
 
-            <td><bean:write name="p" property="name" /></td>
-            <td><bean:write name="p" property="description" /></td>
-            <td><bean:write name="p" property="link" /></td>
-            <td class="center">
-                <logic:equal name="p" property="navbar" value="true">
-                    <fmt:message key="application.true" />
-                </logic:equal>
+            <td style="vertical-align:middle">
+                <c:choose>
+                    <c:when test="${!p.hidden}">
+                        <img src='<c:url value="/images/page_white.png"/>' border="0" alt="icon" />
+                        <roller:link forward="editPage">
+                            <roller:linkparam id="pageId" name="p" property="id" />
+                            <c:out value="${p.name}" />
+                        </roller:link>
+                    </c:when>
+                    <c:otherwise>
+                        <img src='<c:url value="/images/page_white_gear.png"/>' border="0" alt="icon" />
+                        <roller:link forward="editPage">
+                            <roller:linkparam id="pageId" name="p" property="id" />
+                            <c:out value="${p.name}" />
+                        </roller:link>
+                    </c:otherwise>
+                </c:choose>
             </td>
-            <td class="center">
-                <logic:equal name="p" property="hidden" value="true">
-                    <fmt:message key="application.true" />
-                </logic:equal>
-            </td>
-
-            <td class="center">
-               <roller:link forward="editPage">
-                  <roller:linkparam id="username" name="user" property="userName" />
-                  <roller:linkparam id="pageId" name="p" property="id" />
-                  <img src='<c:url value="/images/page_edit.png"/>' border="0" alt="icon" />
-               </roller:link>
-            </td>
-
-            <td class="center">
+            
+            <td style="vertical-align:middle"><c:out value="${p.description}" /></td>
+                        
+            <td class="center" style="vertical-align:middle">
                <c:choose>
                  <c:when test="${!p.required}">
                    <roller:link forward="removePage.ok">
-                      <roller:linkparam id="username" name="user" property="userName" />
                       <roller:linkparam id="pageId" name="p" property="id" />
-                      <img src='<c:url value="/images/delete.png"/>' border="0" alt="icon" />
+                      <img src='<c:url value="/images/delete.png"/>' border="0" alt="icon" 
+                          title'<fmt:message  key="pagesForm.remove" />' />
                    </roller:link>
                  </c:when>
                  <c:otherwise>
-                    <fmt:message key="pagesForm.required"/>
+                    <img src='<c:url value="/images/lock.png"/>' border="0" alt="icon" 
+                        title='<fmt:message key="pagesForm.required"/>' />
                  </c:otherwise>
                </c:choose>
             </td>
 
         </roller:row>
-    </logic:iterate>
+    </c:forEach>
 </table>
 
 

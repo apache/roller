@@ -26,7 +26,7 @@ import org.apache.roller.ui.rendering.RendererFactory;
 
 
 /**
- * Velocity RendererFactory for Roller.
+ * RendererFactory for Velocity, creates VelocityRenderers.
  */
 public class VelocityRendererFactory implements RendererFactory {
     

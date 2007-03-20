@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Interface representing an object that maps requests.
+ * Interface for object that can handle requests, return true if handled.
  */
 public interface RequestMapper {
     
