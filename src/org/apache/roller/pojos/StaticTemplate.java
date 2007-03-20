@@ -40,6 +40,7 @@ public class StaticTemplate implements Template, Serializable {
     private String templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
+    private String  outputContentType = null;
     
     
     public StaticTemplate() {}
@@ -132,5 +133,11 @@ public class StaticTemplate implements Template, Serializable {
         return navbar; 
     }
     
-    
+    public String getOutputContentType() {
+        return outputContentType;
+    }
+
+    public void setOutputContentType(String outputContentType) {
+        this.outputContentType = outputContentType;
+    }    
 }

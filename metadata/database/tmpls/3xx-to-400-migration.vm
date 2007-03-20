@@ -4,6 +4,9 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+#addColumnNull("webpage" "outputtype" "varchar(48)")
+
+
 -- remove old id column of group subscription table
 alter table rag_group_subscription drop column id;
 
