@@ -19,6 +19,7 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -34,11 +35,13 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.authoring.struts.forms.WeblogTemplateForm;
+import org.apache.roller.ui.authoring.struts.formbeans.WeblogTemplateFormEx;
 import org.apache.roller.ui.core.BasePageModel;
+import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.Utilities;
@@ -51,12 +54,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.util.LabelValueBean;
 
 
 /**
  * Handles actions for weblog template management.
  *
- * @struts.action name="weblogTemplateForm" path="/roller-ui/authoring/page"
+ * @struts.action name="weblogTemplateFormEx" path="/roller-ui/authoring/page"
  *  	scope="session" parameter="method"
  *
  * @struts.action-forward name="removePage.page" path=".remove-page"
@@ -79,15 +83,14 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             throws IOException, ServletException {
         
         ActionForward forward = mapping.findForward("editPages.page");
-        WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+        WeblogTemplateFormEx form = (WeblogTemplateFormEx)actionForm;
         try {
-            request.setAttribute("model", new BasePageModel(
-                    "pagesForm.title", request, response, mapping));
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
             WebsiteData website = rreq.getWebsite();
             if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
+
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
                 
                 // first off, check if template already exists
@@ -96,33 +99,35 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                     ActionErrors errors = new ActionErrors();
                     errors.add(null, new ActionError("pagesForm.error.alreadyExists", form.getName()));
                     saveErrors(request, errors);
-                    addModelObjects(request, response, mapping, website, null);
+                    request.setAttribute("model",
+                        new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, null));
                     return forward;
                 }
                 
-                WeblogTemplate data = new WeblogTemplate();
-                form.copyTo(data, request.getLocale());
-                data.setWebsite(website);
-                data.setLastModified( new Date() );
-                data.setDescription(data.getName());
-                data.setContents(bundle.getString("pageForm.newTemplateContent"));
-                validateLink( data );
+                WeblogTemplate page = new WeblogTemplate();
+                form.copyTo(page, request.getLocale());
+                page.setWebsite(website);
+                page.setLastModified( new Date() );
+                page.setDescription(page.getName());
+                page.setContents(bundle.getString("pageForm.newTemplateContent"));
+                
+                validateLink(page);
                 
                 // all templates start out as velocity templates
-                data.setTemplateLanguage("velocity");
+                page.setTemplateLanguage("velocity");
                 
                 // for now, all templates just use _decorator
-                if(!"_decorator".equals(data.getName())) {
-                    data.setDecoratorName("_decorator");
+                if(!"_decorator".equals(page.getName())) {
+                    page.setDecoratorName("_decorator");
                 }
                 
                 // save the page
-                mgr.savePage( data );
+                mgr.savePage( page );
                 
                 // if this person happened to create a Weblog template from
                 // scratch then make sure and set the defaultPageId
-                if(WeblogTemplate.DEFAULT_PAGE.equals(data.getName())) {
-                    website.setDefaultPageId(data.getId());
+                if(WeblogTemplate.DEFAULT_PAGE.equals(page.getName())) {
+                    website.setDefaultPageId(page.getId());
                     mgr.saveWebsite(website);
                 }
                 
@@ -132,12 +137,14 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("pagesForm.addNewPage.success",
-                        data.getName()));
+                        page.getName()));
                 saveMessages(request, uiMessages);
                 
                 actionForm.reset(mapping,request);
                 
-                addModelObjects(request, response, mapping, website, data);
+                request.setAttribute("model",
+                    new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, page));
+                
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -160,19 +167,25 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         ActionForward forward = mapping.findForward("editPage.page");
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WeblogTemplate pd = (WeblogTemplate)rreq.getPage();
+            WeblogTemplate page = (WeblogTemplate)rreq.getPage();
             
             RollerSession rses = RollerSession.getRollerSession(request);
-            if ( rses.isUserAuthorizedToAdmin(pd.getWebsite()) ) {
-                BasePageModel pageModel = new BasePageModel(
-                        "pageForm.title", request, response, mapping);
-                pageModel.setWebsite(pd.getWebsite());
-                request.setAttribute("model", pageModel);
+            if ( rses.isUserAuthorizedToAdmin(page.getWebsite()) ) {
                 
-                WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
-                pf.copyFrom(pd, request.getLocale());
+                WeblogTemplateFormEx form = (WeblogTemplateFormEx)actionForm;
+                form.copyFrom(page, request.getLocale());
                 
-                addModelObjects(request, response, mapping, pd.getWebsite(), pd);
+                // empty content-type indicates that page uses auto content-type detection
+                if (StringUtils.isEmpty(page.getOutputContentType())) {
+                    form.setAutoContentType(Boolean.TRUE);
+                } else {
+                    form.setAutoContentType(Boolean.FALSE);
+                    form.setManualContentType(page.getOutputContentType());
+                }
+                
+                request.setAttribute("model",
+                    new WeblogTemplateFormModel("pageForm.title", request, response, mapping, page));
+
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -193,12 +206,10 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("editPages.page");
         try {
-            WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+            WeblogTemplateFormEx form = (WeblogTemplateFormEx)actionForm;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
-            request.setAttribute("model", new BasePageModel(
-                    "pagesForm.title", request, response, mapping));
-            
+
             WebsiteData website = rreq.getWebsite();
             if (website == null && form.getId()!=null) {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -206,11 +217,13 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 website = template.getWebsite();
             }
             
-            if ( rses.isUserAuthorizedToAdmin(website)) {
-                addModelObjects(request, response, mapping, website, null);
-            } else {
+            request.setAttribute("model", 
+                new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, null));
+            
+            if (!rses.isUserAuthorizedToAdmin(website)) {
                 forward = mapping.findForward("access-denied");
             }
+            
         } catch (Exception e) {
             log.error("ERROR in action",e);
             throw new ServletException(e);
@@ -227,14 +240,16 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             throws IOException, ServletException {
         
         ActionForward forward = mapping.findForward("editPages");
-        request.setAttribute("model", new BasePageModel(
-                "pagesForm.title", request, response, mapping));
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+            WeblogTemplateFormEx form = (WeblogTemplateFormEx)actionForm;
             WeblogTemplate template = mgr.getPage(form.getId());
             WebsiteData website = template.getWebsite();
             
+            WeblogTemplateFormModel pageModel = 
+                new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, null);
+            request.setAttribute("model", pageModel);
+
             RollerSession rses = RollerSession.getRollerSession(request);
             if ( rses.isUserAuthorizedToAdmin(website) ) {
                 if(!template.isRequired()) {
@@ -250,8 +265,6 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                     throw new RollerException("Cannot remove required page");
                 }
                 
-                addModelObjects(
-                        request, response, mapping, template.getWebsite(), template);
                 actionForm.reset(mapping, request);
             } else {
                 forward = mapping.findForward("access-denied");
@@ -284,18 +297,13 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             WeblogTemplate page = (WeblogTemplate) rreq.getPage();
             WebsiteData website = page.getWebsite();
             if ( rses.isUserAuthorizedToAdmin(website) ) {
-                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                WeblogTemplateFormEx form = (WeblogTemplateFormEx)actionForm;
                 form.copyFrom(page, request.getLocale());
                 
-                addModelObjects(request, response, mapping, page.getWebsite(), page);
-                
-                BasePageModel pageModel = new BasePageModel(
-                        "editPages.title.removeOK", request, response, mapping);
-                pageModel.setWebsite(website);
+                WeblogTemplateFormModel pageModel = 
+                    new WeblogTemplateFormModel("editPages.title.removeOK", request, response, mapping, page);
                 request.setAttribute("model", pageModel);
                 
-                UserData ud = rses.getAuthenticatedUser();
-                request.setAttribute("user",ud);
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -316,38 +324,46 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("editPage.page");
         try {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WeblogTemplate data = mgr.getPage(form.getId());
-            WebsiteData website = data.getWebsite();
+            WeblogTemplateFormEx form = (WeblogTemplateFormEx)actionForm;
+
+            RollerRequest  rreq = RollerRequest.getRollerRequest(request);
+            UserManager    mgr = RollerFactory.getRoller().getUserManager();
+            WeblogTemplate page = mgr.getPage(form.getId());
+            WebsiteData    website = page.getWebsite();
+            
             
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses.isUserAuthorizedToAdmin(website)) {
-                form.copyTo(data, request.getLocale());
-                data.setLastModified( new Date() );
                 
-                validateLink( data );
+
+                form.copyTo(page, request.getLocale());
+                page.setLastModified( new Date() );                                
                 
-                mgr.savePage( data );
+                if (form.getAutoContentType() == null || !form.getAutoContentType().booleanValue()) { 
+                    page.setOutputContentType(form.getManualContentType());
+                } else {
+                    // empty content-type indicates that page uses auto content-type detection
+                    page.setOutputContentType(null);
+                }
+                
+                validateLink(page);
+
+                mgr.savePage( page );
                 RollerFactory.getRoller().flush();
                 
                 // set the (possibly) new link back into the Form bean
-                ((WeblogTemplateForm)actionForm).setLink( data.getLink() );
+                ((WeblogTemplateFormEx)actionForm).setLink( page.getLink() );
                 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("pageForm.save.success",
-                        data.getName()));
+                        page.getName()));
                 saveMessages(request, uiMessages);
                 
-                CacheManager.invalidate(data);
+                CacheManager.invalidate(page);
                 
-                addModelObjects(request, response, mapping, data.getWebsite(), data);
-                
-                BasePageModel pageModel = new BasePageModel(
-                        "pageForm.title", request, response, mapping);
-                pageModel.setWebsite(website);
+                WeblogTemplateFormModel pageModel = 
+                    new WeblogTemplateFormModel("pageForm.title", request, response, mapping, page);
                 request.setAttribute("model", pageModel);
                 
             } else {
@@ -377,21 +393,21 @@ public final class WeblogTemplateFormAction extends DispatchAction {
      * characters that are web-safe), this is a much easier
      * test-and-correct.  Otherwise we would need a RegEx package.
      */
-    private void validateLink( WeblogTemplate data ) {
-        // if data.getLink() is null or empty
-        // use the title ( data.getName() )
-        if ( StringUtils.isEmpty( data.getLink() ) ) {
-            data.setLink( data.getName() );
+    private void validateLink( WeblogTemplate page ) {
+        // if page.getLink() is null or empty
+        // use the title ( page.getName() )
+        if ( StringUtils.isEmpty( page.getLink() ) ) {
+            page.setLink( page.getName() );
         }
         
         // if link contains any nonAlphanumeric, strip them
         // first we must remove any html, as this is
         // non-instructional markup.  Then do a straight
         // removeNonAlphanumeric.
-        if ( !StringUtils.isAlphanumeric( data.getLink() ) ) {
-            String link = Utilities.removeHTML( data.getLink() );
+        if ( !StringUtils.isAlphanumeric( page.getLink() ) ) {
+            String link = Utilities.removeHTML( page.getLink() );
             link = Utilities.removeNonAlphanumeric( link );
-            data.setLink( link );
+            page.setLink( link );
         }
     }
     
@@ -402,33 +418,88 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
-        request.setAttribute("model", new BasePageModel(
-                "pagesForm.title", request, response, mapping));
-        return (mapping.findForward("editPages"));
+        try {
+            request.setAttribute("model", new WeblogTemplateFormModel(
+                    "pagesForm.title", request, response, mapping, null));
+            return (mapping.findForward("editPages"));
+        } catch (Exception e) {
+            log.error("ERROR in action",e);
+            throw new ServletException(e);
+        }
     }
     
-    
-    private void addModelObjects(
-            HttpServletRequest  request,
-            HttpServletResponse response,
-            ActionMapping mapping,
-            WebsiteData website,
-            WeblogTemplate page)
-            throws RollerException {
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
-        RollerSession rses = RollerSession.getRollerSession(request);
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        
-        UserData user = rses.getAuthenticatedUser();
-        request.setAttribute("user", user);
-        
-        WebsiteData wd = rreq.getWebsite();
-        request.setAttribute("website", website);
-        
-        List pages = mgr.getPages(website);
-        request.setAttribute("pages", pages);
-        
-        if (page != null) request.setAttribute("page", page);
+    public class WeblogTemplateFormModel extends BasePageModel {
+        private UserData       user;
+        private WeblogTemplate page;
+        private List           pages;
+        private List           languages = new ArrayList();
+
+        public WeblogTemplateFormModel(
+                String titleKey,
+                HttpServletRequest request,
+                HttpServletResponse response,
+                ActionMapping mapping,
+                WeblogTemplate page) throws RollerException {
+
+            super(titleKey, request, response, mapping);
+
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            RollerSession rses = RollerSession.getRollerSession(request);
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);  
+            
+            if (page != null) {
+                this.setWebsite(page.getWebsite());
+            } else {
+                this.setWebsite(rreq.getWebsite());
+            }
+ 
+            this.setUser(rses.getAuthenticatedUser());        
+            this.setPages(mgr.getPages(getWebsite()));
+            this.setPage(page); 
+            
+            if (page != null) {
+                String langs = RollerConfig.getProperty("rendering.templateLanguages","velocity");
+                String[] langsArray = Utilities.stringToStringArray(langs, ",");
+                for (int i = 0; i < langsArray.length; i++) {
+                    getLanguages().add(new LabelValueBean(langsArray[i], langsArray[i]));
+                }
+            }
+        }
+
+        public UserData getUser() {
+            return user;
+        }
+
+        public void setUser(UserData user) {
+            this.user = user;
+        }
+
+        public WeblogTemplate getPage() {
+            return page;
+        }
+
+        public void setPage(WeblogTemplate page) {
+            this.page = page;
+        }
+
+        public List getPages() {
+            return pages;
+        }
+
+        public void setPages(List pages) {
+            this.pages = pages;
+        }
+
+        public List getLanguages() {
+            return languages;
+        }
+
+        public void setLanguages(List languages) {
+            this.languages = languages;
+        }
     }
-    
+
 }
+
+
+

@@ -24,15 +24,15 @@
 
 <p>
 <fmt:message key="pageRemove.youSure"> 
-    <fmt:param value="${page.name}" />
+    <fmt:param value="${model.page.name}" />
 </fmt:message>
 
 </p>
 
 <p>
-<fmt:message key="pageRemove.pageId" /> = [<c:out value="${page.id}" />]
+<fmt:message key="pageRemove.pageId" /> = [<c:out value="${model.page.id}" />]
 <br />
-<fmt:message key="pageRemove.pageName" /> = [<c:out value="${page.name}" />]
+<fmt:message key="pageRemove.pageName" /> = [<c:out value="${model.page.name}" />]
 </p>
 
 <table>

@@ -39,6 +39,7 @@ public class ThemeTemplate implements Template, Serializable {
     private boolean hidden = false;
     private boolean navbar = false;
     private String decoratorName = null;
+    private String  outputContentType = null;
     
     private Theme myTheme = null;
     
@@ -150,6 +151,14 @@ public class ThemeTemplate implements Template, Serializable {
 
     public void setDecoratorName(String decorator) {
         this.decoratorName = decorator;
+    }
+
+    public String getOutputContentType() {
+        return outputContentType;
+    }
+
+    public void setOutputContentType(String outputContentType) {
+        this.outputContentType = outputContentType;
     }
     
     public String toString() {

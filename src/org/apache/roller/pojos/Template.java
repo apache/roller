@@ -98,4 +98,9 @@ public interface Template {
      */
     public Template getDecorator();
     
+    /**
+     * Content-type of output or null if none defined.
+     */
+    public String getOutputContentType();
+    
 }

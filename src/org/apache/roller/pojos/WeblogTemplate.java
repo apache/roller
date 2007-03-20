@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 /**
- * Pojo that represents a single user defined template page.
+ * POJO that represents a single user defined template page.
  *
  * This template is different from the generic template because it also
  * contains a reference to the website it is part of.
@@ -39,8 +39,7 @@ import org.apache.roller.RollerException;
  * @hibernate.class lazy="true" table="webpage"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogTemplate 
-        implements Serializable, Template {
+public class WeblogTemplate implements Serializable, Template {
     
     public static final long serialVersionUID = -613737191638263428L;
     public static final String DEFAULT_PAGE = "Weblog";
@@ -48,16 +47,17 @@ public class WeblogTemplate
     private static Log log = LogFactory.getLog(WeblogTemplate.class);
     private static Set requiredTemplates = null;
     
-    private String id = null;
-    private String name = null;
-    private String description = null;
-    private String link = null;
-    private String contents = null;
-    private Date lastModified = null;
-    private String templateLanguage = null;
+    private String  id = null;
+    private String  name = null;
+    private String  description = null;
+    private String  link = null;
+    private String  contents = null;
+    private Date    lastModified = null;
+    private String  templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
-    private String decoratorName = null;
+    private String  decoratorName = null;
+    private String  outputContentType = null;
     
     private WebsiteData weblog = null;
     
@@ -272,6 +272,20 @@ public class WeblogTemplate
     /** @ejb:persistent-field */
     public void setDecoratorName(String decorator) {
         this.decoratorName = decorator;
+    }
+    
+    /** 
+     * Content-type rendered by template or null for auto-detection by link extension.
+     * @ejb:persistent-field
+     * @hibernate.property column="outputtype" non-null="false" unique="false"
+     */
+    public String getOutputContentType() {
+        return outputContentType;
+    }
+
+    /** @ejb:persistent-field */
+    public void setOutputContentType(String outputContentType) {
+        this.outputContentType = outputContentType;
     }
     
     
