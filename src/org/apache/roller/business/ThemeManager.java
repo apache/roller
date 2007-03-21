@@ -33,12 +33,13 @@ import org.apache.roller.pojos.WebsiteData;
 public interface ThemeManager {
     
     /**
-     * Get the Theme object with the given name.
+     * Get the Theme object with the given id.
      *
+     * @return Theme The Theme object with the given id.
      * @throws ThemeNotFoundException If the named theme cannot be found.
      * @throws RollerException If there is some kind of fatal backend error.
      **/
-    public Theme getTheme(String name)
+    public Theme getTheme(String id)
         throws ThemeNotFoundException, RollerException;
     
     
@@ -46,7 +47,7 @@ public interface ThemeManager {
      * Get a list of all theme names that are currently enabled.
      * This list is ordered alphabetically by default.
      *
-     * NOTE: this only returns a list of theme names, not actual Theme objects.
+     * @return List A list of Theme objects which are enabled.
      */
     public List getEnabledThemesList();
     

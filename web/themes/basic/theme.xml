@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogtheme>
+    
+    <id>basic</id>
+    <name>Basic</name>
+    <author>Roller Weblogger</author>
+    
+    <!-- theme preview image -->
+    <preview-image path="sm-theme-basic.jpg" />
+    
+    <!-- templates -->
+    <template action="weblog">
+        <name>Weblog</name>
+        <description>Weblog</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>Weblog.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>_day</name>
+        <description>_day</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>_day.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>_css</name>
+        <description>_css</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/css</contentType>
+        <contentsFile>_css.vm</contentsFile>
+    </template>
+    
+    <!-- resources -->
+    <resource path="theme.css" />
+    
+</weblogtheme>

@@ -107,8 +107,18 @@ public class ThemeEditorAction extends DispatchAction {
                 ThemeManager themeMgr = roller.getThemeManager();
                 
                 String username = rses.getAuthenticatedUser().getUserName();
-                String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
+                
+                // TODO: hack to make 'custom' an actual Theme object
+                // maybe there should be an actual Theme representing custom themes?
+                Theme currentTheme = null;
+                if(Theme.CUSTOM.equals(website.getEditorTheme())) {
+                    currentTheme = new Theme();
+                    currentTheme.setId(Theme.CUSTOM);
+                    currentTheme.setName(Theme.CUSTOM);
+                } else {
+                    currentTheme = themeMgr.getTheme(website.getEditorTheme());
+                }
                 
                 // this checks if the website has a default page template
                 // if not then we don't allow for a custom theme
@@ -121,14 +131,14 @@ public class ThemeEditorAction extends DispatchAction {
                 // if we allow custom themes then add it to the end of the list
                 if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")
                         && allowCustomTheme)
-                    themes.add(Theme.CUSTOM);
+                    request.setAttribute("allowCustomOption", Boolean.TRUE);
                 
                 // on the first pass just show a preview of the current theme
                 request.setAttribute("previewTheme", currentTheme);
                 request.setAttribute("currentTheme", currentTheme);
                 request.setAttribute("themesList", themes);
                 
-                mLogger.debug("Previewing theme "+currentTheme+" to "+username);
+                mLogger.debug("Previewing theme "+currentTheme.getName()+" to "+username);
                 
             } else {
                 forward = mapping.findForward("access-denied");
@@ -174,8 +184,18 @@ public class ThemeEditorAction extends DispatchAction {
                 request.setAttribute("model",pageModel);          
                     
                 String username = rses.getAuthenticatedUser().getUserName();
-                String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
+                
+                // TODO: hack to make 'custom' an actual Theme object
+                // maybe there should be an actual Theme representing custom themes?
+                Theme currentTheme = null;
+                if(Theme.CUSTOM.equals(website.getEditorTheme())) {
+                    currentTheme = new Theme();
+                    currentTheme.setId(Theme.CUSTOM);
+                    currentTheme.setName(Theme.CUSTOM);
+                } else {
+                    currentTheme = themeMgr.getTheme(website.getEditorTheme());
+                }
                 
                 // this checks if the website has a default page template
                 // if not then we don't allow for a custom theme
@@ -188,7 +208,7 @@ public class ThemeEditorAction extends DispatchAction {
                 // if we allow custom themes then add it to the end of the list
                 if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")
                         && allowCustomTheme)
-                    themes.add(Theme.CUSTOM);
+                    request.setAttribute("allowCustomOption", Boolean.TRUE);
                 
                 // set the current theme in the request
                 request.setAttribute("currentTheme", currentTheme);
@@ -200,7 +220,7 @@ public class ThemeEditorAction extends DispatchAction {
                     
                     if(previewTheme.isEnabled()) {
                         // make sure the view knows what theme to preview
-                        request.setAttribute("previewTheme", previewTheme.getName());
+                        request.setAttribute("previewTheme", previewTheme);
                     
                         mLogger.debug("Previewing theme "+previewTheme.getName()+
                                 " to "+username);
@@ -213,7 +233,11 @@ public class ThemeEditorAction extends DispatchAction {
                 } catch(ThemeNotFoundException tnfe) {
                     // hmm ... maybe they chose "custom"?
                     if(theme != null && theme.equals(Theme.CUSTOM)) {
-                        request.setAttribute("previewTheme", Theme.CUSTOM);
+                        // TODO: total hack, this needs fixing
+                        Theme customTheme = new Theme();
+                        customTheme.setId(Theme.CUSTOM);
+                        customTheme.setName(Theme.CUSTOM);
+                        request.setAttribute("previewTheme", customTheme);
                     } else {
                         // we should never get here
                         request.setAttribute("previewTheme", currentTheme);
@@ -271,7 +295,7 @@ public class ThemeEditorAction extends DispatchAction {
                     Theme previewTheme = themeMgr.getTheme(theme);
                     
                     if(previewTheme.isEnabled()) {
-                        newTheme = previewTheme.getName();
+                        newTheme = previewTheme.getId();
                     } else {
                         errors.add(null, new ActionMessage("Theme not enabled"));
                         saveErrors(request, errors);

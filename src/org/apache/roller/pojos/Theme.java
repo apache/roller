@@ -35,46 +35,45 @@ import java.util.Map;
  * is used mostly to contain all the templates for a theme, but does contain
  * other theme related attributes such as name, last modifed date, etc.
  */
-public class Theme implements Serializable {
+public class Theme implements Serializable, Comparable {
     
     // this is the name that will be used to identify a user customized theme
     public static final String CUSTOM = "custom";
     
-    private String id;
-    private String name;
-    private String description;
-    private String author;
-    private String lastEditor; // user id value of last editor
-    private Date lastModified;
-    private boolean enabled;
+    private String id = null;
+    private String name = null;
+    private String description = null;
+    private String author = null;
+    private Date lastModified = null;
+    private boolean enabled = false;
     
     // we keep templates in a Map for faster lookups by name
     // the Map contains ... (template name, ThemeTemplate)
-    private Map templates;
+    private Map templatesByName = new HashMap();
+    
+    // we keep templates in a Map for faster lookups by link
+    // the Map contains ... (template link, ThemeTemplate)
+    private Map templatesByLink = new HashMap();
     
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, File)
-    private Map resources;
+    private Map resources = new HashMap();
     
     
-    public Theme() {
-        this.id = null;
-        this.name = null;
-        this.description = null;
-        this.author = null;
-        this.lastEditor = null;
-        this.lastModified = null;
-        this.enabled = false;
-        this.templates = new HashMap();
-        this.resources = new HashMap();
-    }
+    public Theme() {}
 
     
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public Collection getTemplates() {
-        return this.templates.values();
+    public List getTemplates() {
+        return new ArrayList(this.templatesByName.values());
+    }
+    
+    
+    public Template getDefaultTemplate() {
+        // TODO: this should return the template defined as action="weblog"
+        return (ThemeTemplate) this.templatesByName.get("Weblog");
     }
     
     
@@ -83,38 +82,25 @@ public class Theme implements Serializable {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getTemplate(String name) {
-        return (ThemeTemplate) this.templates.get(name);
+        return (ThemeTemplate) this.templatesByName.get(name);
     }
     
     
     /**
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
-     *
-     * NOTE: for themes we enforce the rule that 
-     *          Theme.link == Theme.name
-     *
-     * So this lookup is basically the same as lookup by name.
      */
-    public ThemeTemplate getTemplateByLink(String link) {
-        return (ThemeTemplate) this.templates.get(link);
+    public Template getTemplateByLink(String link) {
+        return (ThemeTemplate) this.templatesByLink.get(link);
     }
     
     
     /**
      * Set the value for a given template name.
      */
-    public void setTemplate(String name, ThemeTemplate template) {
-        this.templates.put(name, template);
-    }
-    
-    
-    /**
-     * Check if this Theme contains the named template.
-     * Returns true if the template exists, false otherwise.
-     */
-    public boolean hasTemplate(String name) {
-        return this.templates.containsKey(name);
+    public void addTemplate(ThemeTemplate template) {
+        this.templatesByName.put(template.getName(), template);
+        this.templatesByLink.put(template.getLink(), template);
     }
     
     
@@ -150,22 +136,11 @@ public class Theme implements Serializable {
     }
     
     
-    /**
-     * Check if this Theme contains the named resource.
-     * Returns true if the resource exists, false otherwise.
-     */
-    public boolean hasResource(String path) {
-        return this.resources.containsKey(path);
-    }
-    
-    
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
@@ -193,14 +168,6 @@ public class Theme implements Serializable {
         this.author = author;
     }
 
-    public String getLastEditor() {
-        return lastEditor;
-    }
-
-    public void setLastEditor(String lastEditor) {
-        this.lastEditor = lastEditor;
-    }
-
     public Date getLastModified() {
         return lastModified;
     }
@@ -222,7 +189,7 @@ public class Theme implements Serializable {
         sb.append(name);
         sb.append("\n");
         
-        Iterator it = this.templates.values().iterator();
+        Iterator it = this.templatesByName.values().iterator();
         while(it.hasNext()) {
             sb.append(it.next());
             sb.append("\n");
@@ -231,5 +198,14 @@ public class Theme implements Serializable {
         return sb.toString();
         
     }
-
+    
+    
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object o) {
+        Theme other = (Theme) o;
+        return getName().compareTo(other.getName());
+    }
+    
 }
