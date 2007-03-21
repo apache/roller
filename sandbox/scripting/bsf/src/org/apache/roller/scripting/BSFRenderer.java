@@ -18,9 +18,11 @@
 
 package org.apache.roller.scripting;
 
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.bsf.BSFException;
 import org.apache.bsf.BSFManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,8 +55,10 @@ public class BSFRenderer implements Renderer {
             for (Iterator it = model.keySet().iterator(); it.hasNext();) {
                 String key = (String)it.next();
                 manager.declareBean(key, model.get(key), model.get(key).getClass());
+                manager.registerBean(key, model.get(key));
             }
             manager.declareBean("out", writer, Writer.class);
+            manager.registerBean("out", writer);
             manager.exec(template.getTemplateLanguage(), 
                     "(java)", 1, 1, template.getContents());
 
@@ -63,10 +67,22 @@ public class BSFRenderer implements Renderer {
             log.debug("Rendered ["+template.getId()+"] with language ["
                     +template.getTemplateLanguage()+"] in "+renderTime+" secs"); 
             
-        } catch (Exception ex) {
-            throw new RenderingException("Error during rendering", ex);
+        } catch (BSFException ex) {
+            log.debug("Executing BSF script", ex);
+            renderThrowable(ex, writer);
         }
+        finally {}
+    }
+    
+    private void renderThrowable(BSFException ex, Writer writer) {
+        PrintWriter pw = new PrintWriter(writer);
+        if (ex.getTargetException() != null) {
+            pw.println("<p><b>Exception</b>: "+ex.getTargetException()
+                + "<br /><b>Message</b>: "+ex.getTargetException().getMessage()+"</p>");
+        } else {
+            pw.println("<p><b>Exception</b>: "+ex
+                + "<br /><b>Message</b>: "+ex.getMessage()+"</p>");
+        }
+        pw.flush();
     }
 }
-
-    
