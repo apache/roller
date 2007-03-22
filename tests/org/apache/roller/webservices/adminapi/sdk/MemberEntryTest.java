@@ -17,6 +17,8 @@
 */
 package org.apache.roller.webservices.adminapi.sdk;
 
+import org.apache.roller.webservices.adminprotocol.sdk.MemberEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.UnexpectedRootElementException;
 import org.jdom.Document;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;

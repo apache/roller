@@ -18,9 +18,9 @@
 package org.apache.roller.webservices.adminapi;
 
 import java.io.IOException;
-import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
-import org.apache.roller.webservices.adminapi.sdk.WeblogEntry;
-import org.apache.roller.webservices.adminapi.sdk.WeblogEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.UnexpectedRootElementException;
+import org.apache.roller.webservices.adminprotocol.sdk.WeblogEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.WeblogEntrySet;
 import org.jdom.JDOMException;
 
 public class WeblogHandlerTest extends HandlerBaseTest {

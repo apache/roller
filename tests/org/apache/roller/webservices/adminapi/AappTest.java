@@ -21,12 +21,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import junit.framework.TestCase;
-import org.apache.roller.webservices.adminapi.sdk.MemberEntry;
-import org.apache.roller.webservices.adminapi.sdk.MemberEntrySet;
-import org.apache.roller.webservices.adminapi.sdk.UserEntry;
-import org.apache.roller.webservices.adminapi.sdk.UserEntrySet;
-import org.apache.roller.webservices.adminapi.sdk.WeblogEntry;
-import org.apache.roller.webservices.adminapi.sdk.WeblogEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.MemberEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.MemberEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.UserEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.UserEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.WeblogEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.WeblogEntrySet;
 
 public abstract class AappTest extends TestCase {
     private static final Date sampleDate = new Date();
