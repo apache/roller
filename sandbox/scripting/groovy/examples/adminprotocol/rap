@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service xmlns="http://purl.org/apache/roller/aapp#">
+  <workspace title="Workspace: Collections for administration">
+    <collection title="Collection: Weblog administration entries" href="http://localhost:8080/roller/roller-services/rap/weblogs">
+      <member-type>weblog</member-type>
+    </collection>
+    <collection title="Collection: User administration entries" href="http://localhost:8080/roller/roller-services/rap/users">
+      <member-type>user</member-type>
+    </collection>
+    <collection title="Collection: Member administration entries" href="http://localhost:8080/roller/roller-services/rap/members">
+      <member-type>member</member-type>
+    </collection>
+  </workspace>
+</service>
+
