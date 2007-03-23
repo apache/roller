@@ -350,7 +350,7 @@ public class URLModel implements Model {
         }
         
         public String search(String term, String catPath) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "search", "atom", catPath, term, null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, term, null, false, true);
         }        
         
         public String atomByTags(List tags, boolean excerpts) {
