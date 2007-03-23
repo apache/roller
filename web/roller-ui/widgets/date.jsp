@@ -20,7 +20,8 @@ String prefix = org.apache.roller.ui.core.tags.DateTag.KEY_PREFIX;
 String formName = request.getAttribute(prefix+"_formName").toString(); 
 String dateField = request.getAttribute(prefix+"_property").toString(); 
 String dateFormat = request.getAttribute(prefix+"_dateFormat").toString();
-String value = request.getAttribute(prefix+"_value").toString();
+// value comes from request, must escape to avoid XSS vulnerability
+String value = org.apache.roller.util.Utilities.escapeHTML(request.getAttribute(prefix+"_value").toString());
 Boolean readOnly = (Boolean)request.getAttribute(prefix+"_readOnly");
 %>
 <script type="text/javascript" >
