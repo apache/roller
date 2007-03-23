@@ -28,6 +28,8 @@ import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.runnable.ThreadManager;
+import org.apache.roller.business.themes.ThemeManager;
+import org.apache.roller.business.themes.ThemeManagerImpl;
 
 
 /**

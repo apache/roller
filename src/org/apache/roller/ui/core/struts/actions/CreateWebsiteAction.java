@@ -37,7 +37,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
