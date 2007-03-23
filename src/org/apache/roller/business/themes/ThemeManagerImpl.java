@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business;
+package org.apache.roller.business.themes;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,9 +33,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.themes.ThemeMetadataTemplate;
-import org.apache.roller.business.themes.ThemeMetadata;
-import org.apache.roller.business.themes.ThemeMetadataParser;
+import org.apache.roller.business.FileManager;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.ThemeTemplate;
@@ -60,7 +60,7 @@ public class ThemeManagerImpl implements ThemeManager {
     private Map themes = null;
     
     
-    protected ThemeManagerImpl() {
+    public ThemeManagerImpl() {
         
         log.debug("Initializing ThemeManagerImpl");
         

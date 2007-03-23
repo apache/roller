@@ -39,12 +39,12 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.ThemeNotFoundException;
+import org.apache.roller.business.themes.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
-import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 

@@ -16,14 +16,11 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business;
+package org.apache.roller.business.themes;
 
-import java.io.File;
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.pojos.Theme;
-import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WebsiteData;
 
 

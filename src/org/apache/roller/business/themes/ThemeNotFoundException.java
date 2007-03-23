@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business;
+package org.apache.roller.business.themes;
 
 import org.apache.roller.RollerException;
 
