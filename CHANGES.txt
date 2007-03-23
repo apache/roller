@@ -2,18 +2,29 @@
 ROLLER CHANGE LOG
 -----------------
 
+
 Roller 3.0.1: minor release to fix comment form XSS security risk
 
-Allowing commenters to leave HTML in comments is a potential security risk 
-because it allows commenters can add malicious Javascipt code. You can 
-disable HTML in comments via the Roller admin interface, but in Roller 2.3 and 
-earlier versions of Roller, attackers could still add malicious HTML to the 
-name, email and URL fields. 
 
-We fixed the problem in Roller 2.3.1 and all subsequent versions of 
-Roller by stripping all HTML from name, email and comment fields at 
-comment post time. Also, we do HTML escaping whenever we display the
-suspect fields.
+*** Fixes for Cross-site Scripting (XSS) vulnerabilities
+
+Fixed multiple XSS vulnerabilities. Changes were isoluated in these files:
+
+- WEB-INF/lib/roller-web.jar
+  Now strips HTML from all incoming comment fields
+
+- WEB-INF/velocity/weblog.vm
+  Now HTML-escapes all comment-form fields before display
+
+- WEB-INF/jsps/authoring/CommentManagement.jsp
+  Now HTML-escapes all comment-form fields before display
+
+- WEB-INF/jsps/tiles/head.jsp
+  Eliminated the "look" request parameter, which was for debugging only
+
+- roller-ui/widgets/date.jsp
+  Now HTML-escapes value field of date widget
+
 
 
 -------------------------------------------------------------------------------
