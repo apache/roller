@@ -29,12 +29,23 @@ import java.util.Date;
  */
 public interface Template {
     
+    public static final String ACTION_WEBLOG = "weblog";
+    public static final String ACTION_PERMALINK = "permalink";
+    public static final String ACTION_SEARCH = "search";
+    public static final String ACTION_CUSTOM = "custom";
+    
+    
     /**
      * The unique identifier for this Template.
      *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getId();
+    
+    /**
+     * The action this template is defined for.
+     */
+    public String getAction();
     
     /**
      * A simple name for this Template.

@@ -41,9 +41,9 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.InvalidRequestException;
@@ -221,9 +221,9 @@ public class PageServlet extends HttpServlet {
                 log.debug("MISS "+cacheKey);
             }
         }
-
         
-        // figure out what we are going to render
+        
+        // figure out what template to use
         Template page = null;
         
         // If this is a popup request, then deal with it specially
@@ -238,21 +238,29 @@ public class PageServlet extends HttpServlet {
             
             // User doesn't have one so return the default
             if(page == null) {
-                page = new WeblogTemplate("templates/weblog/popupcomments.vm", weblog,
-                        "Comments", "Comments", "dummy_link",
-                        "dummy_template", new Date(), "velocity", true, false, null);
+                page = new StaticTemplate("templates/weblog/popupcomments.vm", null, "velocity");
             }
             
         // If request specified the page, then go with that
-        } else if (pageRequest.getWeblogPageName() != null) {
+        } else if(pageRequest.getWeblogPageName() != null) {
             page = pageRequest.getWeblogPage();
             
-        // If page not available from request, then use weblog's default
-        } else {
+        // If this is a permalink then look for a permalink template
+        } else if(pageRequest.getWeblogAnchor() != null) {
+            try {
+                page = weblog.getPageByAction(Template.ACTION_PERMALINK);
+            } catch(Exception e) {
+                log.error("Error getting weblog page for action 'permalink'", e);
+            }
+        }
+        
+        // if we haven't found a page yet then try our default page
+        if(page == null) {
             try {
                 page = weblog.getDefaultPage();
             } catch(Exception e) {
-                log.error("Error getting weblogs default page", e);
+                log.error("Error getting default page for weblog = "+
+                        weblog.getHandle(), e);
             }
         }
         

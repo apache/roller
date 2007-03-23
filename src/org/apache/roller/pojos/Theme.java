@@ -55,6 +55,10 @@ public class Theme implements Serializable, Comparable {
     // the Map contains ... (template link, ThemeTemplate)
     private Map templatesByLink = new HashMap();
     
+    // we keep templates in a Map for faster lookups by action
+    // the Map contains ... (template action, ThemeTemplate)
+    private Map templatesByAction = new HashMap();
+    
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, File)
     private Map resources = new HashMap();
@@ -72,8 +76,7 @@ public class Theme implements Serializable, Comparable {
     
     
     public Template getDefaultTemplate() {
-        // TODO: this should return the template defined as action="weblog"
-        return (ThemeTemplate) this.templatesByName.get("Weblog");
+        return (ThemeTemplate) this.templatesByAction.get(Template.ACTION_WEBLOG);
     }
     
     
@@ -96,11 +99,21 @@ public class Theme implements Serializable, Comparable {
     
     
     /**
+     * Lookup the specified template by action.
+     * Returns null if the template cannot be found.
+     */
+    public Template getTemplateByAction(String action) {
+        return (ThemeTemplate) this.templatesByAction.get(action);
+    }
+    
+    
+    /**
      * Set the value for a given template name.
      */
     public void addTemplate(ThemeTemplate template) {
         this.templatesByName.put(template.getName(), template);
         this.templatesByLink.put(template.getLink(), template);
+        this.templatesByAction.put(template.getAction(), template);
     }
     
     

@@ -30,6 +30,7 @@ import org.apache.roller.pojos.Template;
 public class ThemeTemplate implements Template, Serializable {
     
     private String id = null;
+    private String action = null;
     private String name = null;
     private String description = null;
     private String contents = null;
@@ -46,12 +47,13 @@ public class ThemeTemplate implements Template, Serializable {
     
     public ThemeTemplate() {}
     
-    public ThemeTemplate(Theme theme, String id, String name, String desc, 
-            String contents, String link, Date date, String tempLang, 
-            boolean hid, boolean navbar, String decor) {
+    public ThemeTemplate(Theme theme, String id, String action, String name, 
+            String desc, String contents, String link, Date date, 
+            String tempLang, boolean hid, boolean navbar, String decor) {
         
         this.myTheme = theme;
         this.id = id;
+        this.action = action;
         this.name = name;
         this.description = desc;
         this.contents = contents;
@@ -164,6 +166,14 @@ public class ThemeTemplate implements Template, Serializable {
     public String toString() {
         return (id + "," + name + "," + description + "," + link + "," + 
                 lastModified + "\n\n" + contents + "\n");
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
     
 }

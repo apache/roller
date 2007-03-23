@@ -264,6 +264,50 @@ public class WebsiteData implements Serializable {
     
     
     /**
+     * Lookup a Template for this website by action.
+     * 
+     * @roller.wrapPojoMethod type="pojo"
+     */
+    public Template getPageByAction(String action) throws RollerException {
+        
+        if(action == null)
+            return null;
+        
+        log.debug("looking up template for action ["+action+"]");
+        
+        Template template = null;
+        
+        // first check if this user has selected a theme
+        // if so then return the proper theme template
+        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+            
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
+                template = usersTheme.getTemplateByAction(action);
+                
+            } catch(ThemeNotFoundException tnfe) {
+                // i sure hope not!
+                log.error(tnfe);
+            }
+            
+        } else {
+        
+            // NOTE: we specifically do *NOT* return templates by action from the
+            // weblog's custom templates if the weblog is using a theme because we
+            // don't want old templates to take effect when using a specific theme
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            template = userMgr.getPageByAction(this, action);
+        }
+
+        if(template != null)
+            log.debug("returning template ["+template.getId()+"]");
+        
+        return template;
+    }
+    
+    
+    /**
      * Lookup a Template for this website by name.
      * @roller.wrapPojoMethod type="pojo"
      */
