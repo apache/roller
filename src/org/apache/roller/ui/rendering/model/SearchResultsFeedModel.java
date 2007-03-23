@@ -111,7 +111,7 @@ public class SearchResultsFeedModel implements Model {
         String  pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
                 feedRequest.getLocale(), feedRequest.getType(),
                 feedRequest.getFormat(), null, null, /* cat and term are null but added to the url in the pager */
-                feedRequest.getTags(), feedRequest.isExcerpts(), true);
+                null, false, true);
         
         // if there is no query, then we are done
         if(feedRequest.getTerm() == null) {
