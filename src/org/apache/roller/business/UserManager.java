@@ -27,6 +27,7 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 
+
 /**
  * Manages users, weblogs, permissions, and weblog pages.
  */
@@ -349,6 +350,12 @@ public interface UserManager {
      * Get page by id.
      */
     public WeblogTemplate getPage(String id) throws RollerException;
+    
+    
+    /**
+     * Get user's page by action.
+     */
+    public WeblogTemplate getPageByAction(WebsiteData w, String a) throws RollerException;
     
     
     /**

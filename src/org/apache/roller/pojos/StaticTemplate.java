@@ -32,6 +32,7 @@ import java.util.Date;
 public class StaticTemplate implements Template, Serializable {
     
     private String id = null;
+    private String action = null;
     private String name = null;
     private String description = null;
     private String contents = null;
@@ -140,4 +141,12 @@ public class StaticTemplate implements Template, Serializable {
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
     }    
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 }

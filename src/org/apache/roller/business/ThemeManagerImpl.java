@@ -143,10 +143,10 @@ public class ThemeManagerImpl implements ThemeManager {
                 
                 WeblogTemplate template = null;
                 
-                if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
+                if(theme_template.getAction().equals(WeblogTemplate.ACTION_WEBLOG)) {
                     // this is the main Weblog template
                     try {
-                        template = userMgr.getPage(website.getDefaultPageId());
+                        template = userMgr.getPageByAction(website, WeblogTemplate.ACTION_WEBLOG);
                     } catch(Exception e) {
                         // user may not have a default page yet
                     }
@@ -155,6 +155,9 @@ public class ThemeManagerImpl implements ThemeManager {
                     template = userMgr.getPageByName(website, theme_template.getName());
                 }
                 
+                // TODO: in order to ensure that left over templates don't cause
+                // conflicts we should probably delete all templates where
+                // action!=custom that isn't in the theme we are customizing
                 
                 if (template != null) {
                     // User already has page by that name, so overwrite it.
@@ -163,19 +166,19 @@ public class ThemeManagerImpl implements ThemeManager {
                     
                 } else {
                     // User does not have page by that name, so create new page.
-                    template = new WeblogTemplate(
-                            null,                               // id
-                            website,                            // website
-                            theme_template.getName(),           // name
-                            theme_template.getDescription(),    // description
-                            theme_template.getLink(),           // link
-                            theme_template.getContents(),       // contents
-                            new Date(),                         // last mod
-                            theme_template.getTemplateLanguage(), // temp lang
-                            theme_template.isHidden(),          // hidden
-                            theme_template.isNavbar(),          // navbar
-                            theme_template.getDecoratorName()   // decorator
-                            );
+                    template = new WeblogTemplate();
+                    template.setWebsite(website);
+                    template.setAction(theme_template.getAction());
+                    template.setName(theme_template.getName());
+                    template.setDescription(theme_template.getDescription());
+                    template.setContents(theme_template.getContents());
+                    template.setHidden(theme_template.isHidden());
+                    template.setNavbar(theme_template.isNavbar());
+                    template.setTemplateLanguage(theme_template.getTemplateLanguage());
+                    template.setDecoratorName(theme_template.getDecoratorName());
+                    template.setLastModified(new Date());
+                    
+                    // save it
                     userMgr.savePage( template );
                     
                     // we just created and saved the default page for the first
@@ -361,6 +364,7 @@ public class ThemeManagerImpl implements ThemeManager {
             theme_template = new ThemeTemplate(
                     theme,
                     themeMetadata.getId()+":"+templateMetadata.getName(),
+                    templateMetadata.getAction(),
                     templateMetadata.getName(),
                     templateMetadata.getDescription(),
                     new String(chars, 0, length),

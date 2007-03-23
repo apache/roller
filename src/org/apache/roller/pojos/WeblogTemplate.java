@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
+
 /**
  * POJO that represents a single user defined template page.
  *
@@ -48,6 +49,7 @@ public class WeblogTemplate implements Serializable, Template {
     private static Set requiredTemplates = null;
     
     private String  id = null;
+    private String  action = null;
     private String  name = null;
     private String  description = null;
     private String  link = null;
@@ -70,32 +72,9 @@ public class WeblogTemplate implements Serializable, Template {
         requiredTemplates.add("_decorator");
     }
     
+    
     public WeblogTemplate() {}
     
-    public WeblogTemplate(
-            java.lang.String id,
-            WebsiteData website,
-            java.lang.String name,
-            java.lang.String description,
-            java.lang.String link,
-            java.lang.String template,
-            java.util.Date updateTime,
-            String tempLang,
-            boolean hid,
-            boolean navbar,
-            String decorator) {
-        this.id = id;
-        this.weblog = website;
-        this.name = name;
-        this.description = description;
-        this.link = link;
-        this.contents = template;
-        this.lastModified = (Date)updateTime.clone();
-        this.templateLanguage = tempLang;
-        this.hidden = hid;
-        this.navbar = navbar;
-        this.decoratorName = decorator;
-    }
     
     public WeblogTemplate( WeblogTemplate otherData ) {
         setData(otherData);
@@ -143,6 +122,19 @@ public class WeblogTemplate implements Serializable, Template {
     /** @ejb:persistent-field */
     public void setWebsite( WebsiteData website ) {
         this.weblog = website;
+    }
+    
+    
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="action" non-null="true" unique="false"
+     */
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
     
     

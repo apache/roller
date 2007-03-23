@@ -95,16 +95,25 @@ public class SearchServlet extends HttpServlet {
             return;
         }
         
-        // get their default page template to use for rendering
+        // lookup template to use for rendering
         Template page = null;
         try {
-            page = weblog.getDefaultPage();
+            // first try looking for a specific search page
+            page = weblog.getPageByAction(Template.ACTION_SEARCH);
+            
+            // if not found then fall back on default page
+            if(page == null) {
+                page = weblog.getDefaultPage();
+            }
+            
+            // if still null then that's a problem
             if(page == null) {
                 throw new RollerException("Could not lookup default page "+
                         "for weblog "+weblog.getHandle());
             }
         } catch(Exception e) {
-            log.error("Error getting weblogs default page", e);
+            log.error("Error getting default page for weblog "+
+                    weblog.getHandle(), e);
         }
         
         // set the content type

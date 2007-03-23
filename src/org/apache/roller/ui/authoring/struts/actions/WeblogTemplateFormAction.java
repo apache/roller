@@ -107,6 +107,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 WeblogTemplate page = new WeblogTemplate();
                 form.copyTo(page, request.getLocale());
                 page.setWebsite(website);
+                page.setAction(WeblogTemplate.ACTION_CUSTOM);
                 page.setLastModified( new Date() );
                 page.setDescription(page.getName());
                 page.setContents(bundle.getString("pageForm.newTemplateContent"));

@@ -279,6 +279,19 @@
                 </td>
                 <td class="description"></td>
             </tr>
+            
+            <tr>
+                <td class="field">
+                            <tr>
+                                <td class="label"><fmt:message key="pageForm.action" />&nbsp;</td>
+                                <td class="field">
+                                    <html:text property="action" size="30" />
+                                </td>
+                                <td class="description"></td>
+                            </tr>
+                </td>
+                <td class="description"></td>
+            </tr>
                         
         </table>
         <br />
