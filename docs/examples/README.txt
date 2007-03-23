@@ -1,7 +1,7 @@
-
 Example Roller configuration and testing files
 
-rollertask.sh          - can be used to run a Roller task on the command-line 
-mod_jk.conf            - example mod_jk.conf config file for Roller 
-roller-for-resin3.conf - example Roller config file for Resin 3
-roller.conf            - example Roller config file for Resin
+rollertask       - example script for running Roller asks on the command-line
+configs/resin    - example configs for Resin
+configs/tomcat   - example configs for Tomcat
+configs/wbloggar - example config for w:bloggar blogging client
+
