@@ -13,18 +13,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <link rel="stylesheet" type="text/css" media="all" 
     href="<%= request.getContextPath() %>/theme/calendar.css" />
       
-<%
-//String theme = theme = RollerConfig.getProperty("editor.theme");
-
-String theme = request.getParameter("look");
-if (theme == null && session != null) {
-    theme = (String)session.getAttribute("look");
-}
-if (theme == null) {
-    theme = RollerConfig.getProperty("editor.theme");
-}
-if (session !=null) session.setAttribute("look", theme);
-%>
+<% String theme = theme = RollerConfig.getProperty("editor.theme"); %>
 
 <link rel="stylesheet" type="text/css" media="all" 
     href="<%= request.getContextPath() %>/theme/<%= theme %>/colors.css" />  
