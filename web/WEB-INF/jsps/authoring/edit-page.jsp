@@ -38,6 +38,7 @@
     <html:hidden property="id"/>
     <html:hidden property="decoratorName" />
     <html:hidden property="required" />
+    <html:hidden property="action" />
     <input type="hidden" name="method" value="update" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
     
@@ -276,19 +277,6 @@
                             </tr>
                         </c:otherwise>
                     </c:choose>
-                </td>
-                <td class="description"></td>
-            </tr>
-            
-            <tr>
-                <td class="field">
-                            <tr>
-                                <td class="label"><fmt:message key="pageForm.action" />&nbsp;</td>
-                                <td class="field">
-                                    <html:text property="action" size="30" />
-                                </td>
-                                <td class="description"></td>
-                            </tr>
                 </td>
                 <td class="description"></td>
             </tr>
