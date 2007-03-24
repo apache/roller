@@ -30,7 +30,6 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
 
@@ -128,9 +127,7 @@ public class BaseAPIHandler implements Serializable {
             }
             
             if (user != null) {
-                // are passwords encrypted?
-                RollerContext rollerContext =
-                        RollerContext.getRollerContext();
+                // are passwords encrypted
                 String encrypted =
                         RollerConfig.getProperty("passwds.encryption.enabled");
                 //System.out.print("password was [" + password + "] ");
@@ -186,8 +183,6 @@ public class BaseAPIHandler implements Serializable {
             enabled = user.getEnabled().booleanValue();
             if (enabled) {
                 // are passwords encrypted?
-                RollerContext rollerContext =
-                        RollerContext.getRollerContext();
                 String encrypted =
                         RollerConfig.getProperty("passwds.encryption.enabled");
                 //System.out.print("password was [" + password + "] ");

@@ -68,7 +68,6 @@ public class RollerContext extends ContextLoaderListener
     private static Log log = LogFactory.getLog(RollerContext.class);
     
     private static ServletContext servletContext = null;
-    private static RollerContext rollerContext = null;
     
     
     public RollerContext() {
@@ -382,16 +381,6 @@ public class RollerContext extends ContextLoaderListener
             defmap.addSecureUrl("/**<!-- need to remove this when uncommenting -->/*.do*", insecureDef);
         }
         */
-    }
-    
-    
-    /**
-     * Get the RollerContext.
-     *
-     * @return RollerContext
-     */
-    public static RollerContext getRollerContext() {
-        return rollerContext;
     }
     
     

@@ -49,7 +49,6 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.InviteMemberForm;
@@ -209,7 +208,6 @@ public class InviteMemberAction extends DispatchAction {
                 String content;
                 
                 // Figure URL to entry edit page
-                RollerContext rc = RollerContext.getRollerContext();
                 String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0) {
                     rootURL = RequestUtils.serverURL(request)

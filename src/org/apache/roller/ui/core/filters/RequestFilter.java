@@ -18,9 +18,6 @@
 package org.apache.roller.ui.core.filters;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,20 +28,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.jstl.core.Config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
-import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.UserManager;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.ui.core.util.RequestUtil;
-
 
 /**
  * Entry point filter for Weblog page and Editor UI, this filter

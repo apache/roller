@@ -41,7 +41,6 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;

@@ -43,7 +43,6 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.ui.core.RequestConstants;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;

@@ -31,7 +31,6 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.Utilities;
 
 /**
@@ -73,8 +72,6 @@ public class ShowEntryTextTag extends TagSupport {
             try {
                 String xformed = sourceText;        
                 if (entry.getPlugins() != null) {
-                    RollerContext rctx = 
-                        RollerContext.getRollerContext();
                     try {
                         PluginManager ppmgr = roller.getPagePluginManager();
                         Map plugins = ppmgr.getWeblogEntryPlugins(
