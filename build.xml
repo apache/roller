@@ -95,7 +95,7 @@ Key Targets:
 <!-- XDoclet code generation -->
 <!-- ********************************************************************* -->
 
-<target name="generate" depends="gen-wrappers,gen-forms" >
+<target name="generate" depends="gen-forms" >
 </target>
 
 <!-- ============================================== -->
