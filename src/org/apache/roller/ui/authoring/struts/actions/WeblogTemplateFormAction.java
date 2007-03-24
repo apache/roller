@@ -20,7 +20,10 @@ package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -36,12 +39,12 @@ import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogTemplateFormEx;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.Utilities;
@@ -107,10 +110,14 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 WeblogTemplate page = new WeblogTemplate();
                 form.copyTo(page, request.getLocale());
                 page.setWebsite(website);
-                page.setAction(WeblogTemplate.ACTION_CUSTOM);
                 page.setLastModified( new Date() );
                 page.setDescription(page.getName());
                 page.setContents(bundle.getString("pageForm.newTemplateContent"));
+                
+                // if no action specified then it's a custom page
+                if(page.getAction() == null) {
+                    page.setAction(WeblogTemplate.ACTION_CUSTOM);
+                }
                 
                 validateLink(page);
                 
@@ -145,6 +152,9 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 
                 request.setAttribute("model",
                     new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, page));
+                
+                // TODO: when a new template is successfully added then we should
+                // take the user directly to edit that new page
                 
             } else {
                 forward = mapping.findForward("access-denied");
@@ -218,8 +228,31 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 website = template.getWebsite();
             }
             
-            request.setAttribute("model", 
-                new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, null));
+            WeblogTemplateFormModel model = 
+                    new WeblogTemplateFormModel("pagesForm.title", request, response, mapping, null);
+            request.setAttribute("model", model);
+            
+            List availableActions = new ArrayList();
+            availableActions.add(WeblogTemplate.ACTION_CUSTOM);
+            
+            if(Theme.CUSTOM.equals(website.getEditorTheme())) {
+                // if the weblog is using a custom theme then determine which
+                // action templates are still available to be created
+                availableActions.add(WeblogTemplate.ACTION_PERMALINK);
+                availableActions.add(WeblogTemplate.ACTION_SEARCH);
+                availableActions.add(WeblogTemplate.ACTION_WEBLOG);
+                
+                WeblogTemplate tmpPage = null;
+                Iterator pagesIter = model.getPages().iterator();
+                while(pagesIter.hasNext()) {
+                    tmpPage = (WeblogTemplate) pagesIter.next();
+                    
+                    if(!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage.getAction())) {
+                        availableActions.remove(tmpPage.getAction());
+                    }
+                }
+            }
+            request.setAttribute("availableActions", availableActions);
             
             if (!rses.isUserAuthorizedToAdmin(website)) {
                 forward = mapping.findForward("access-denied");
@@ -434,7 +467,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         private WeblogTemplate page;
         private List           pages;
         private List           languages = new ArrayList();
-
+        
         public WeblogTemplateFormModel(
                 String titleKey,
                 HttpServletRequest request,
@@ -456,7 +489,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
  
             this.setUser(rses.getAuthenticatedUser());        
             this.setPages(mgr.getPages(getWebsite()));
-            this.setPage(page); 
+            this.setPage(page);
             
             if (page != null) {
                 String langs = RollerConfig.getProperty("rendering.templateLanguages","velocity");
