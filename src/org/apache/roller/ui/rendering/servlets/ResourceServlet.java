@@ -104,20 +104,19 @@ public class ResourceServlet extends HttpServlet {
         InputStream resourceStream = null;
         
         // first see if resource comes from weblog's shared theme
-        if(!Theme.CUSTOM.equals(weblog.getEditorTheme())) {
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme weblogTheme = themeMgr.getTheme(weblog.getEditorTheme());
+        try {
+            Theme weblogTheme = weblog.getTheme();
+            if(weblogTheme != null) {
                 File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
                 if(resource != null) {
                     resourceLastMod = resource.lastModified();
                     resourceStream = new FileInputStream(resource);
                 }
-            } catch (Exception ex) {
-                // hmmm, some kind of error getting theme.  that's an error.
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
             }
+        } catch (Exception ex) {
+            // hmmm, some kind of error getting theme.  that's an error.
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
         }
         
         // if not from theme then see if resource is in weblog's upload dir

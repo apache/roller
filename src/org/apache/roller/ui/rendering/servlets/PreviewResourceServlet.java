@@ -106,19 +106,22 @@ public class PreviewResourceServlet extends HttpServlet {
         if(resourceRequest.getThemeName() != null) {
             Theme theme = resourceRequest.getTheme();
             File resource = theme.getResource(resourceRequest.getResourcePath());
-            resourceLastMod = resource.lastModified();
-            resourceStream = new FileInputStream(resource);
+            if(resource != null) {
+                resourceLastMod = resource.lastModified();
+                resourceStream = new FileInputStream(resource);
+            }
         }
         
         // second, see if resource comes from weblog's configured shared theme
-        if(resourceStream == null && !Theme.CUSTOM.equals(weblog.getEditorTheme())) {
+        if(resourceStream == null) {
             try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme weblogTheme = themeMgr.getTheme(weblog.getEditorTheme());
-                File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
-                if(resource != null) {
-                    resourceLastMod = resource.lastModified();
-                    resourceStream = new FileInputStream(resource);
+                Theme weblogTheme = weblog.getTheme();
+                if(weblogTheme != null) {
+                    File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
+                    if(resource != null) {
+                        resourceLastMod = resource.lastModified();
+                        resourceStream = new FileInputStream(resource);
+                    }
                 }
             } catch (Exception ex) {
                 // hmmm, some kind of error getting theme.  that's an error.
