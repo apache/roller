@@ -26,8 +26,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-
-import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -111,14 +109,11 @@ public class RollerSession
     public void sessionCreated(HttpSessionEvent se) {
         RollerSession rollerSession = new RollerSession();
         se.getSession().setAttribute(ROLLER_SESSION, rollerSession);
-        RollerContext rctx = RollerContext.getRollerContext();
-        rctx.sessionCreated(se);
     }
     
     
     public void sessionDestroyed(HttpSessionEvent se) {
         RollerContext rctx = RollerContext.getRollerContext();
-        rctx.sessionDestroyed(se);
         clearSession(se);
     }
     

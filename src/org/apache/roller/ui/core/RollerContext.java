@@ -18,9 +18,7 @@
 
 package org.apache.roller.ui.core;
 
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -31,7 +29,6 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
@@ -65,47 +62,28 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  *
  * @web.listener
  */
-public class RollerContext extends ContextLoaderListener implements ServletContextListener {
+public class RollerContext extends ContextLoaderListener 
+        implements ServletContextListener {
     
-    private static Log mLogger = LogFactory.getLog(RollerContext.class);
+    private static Log log = LogFactory.getLog(RollerContext.class);
     
-    public static final String ROLLER_CONTEXT = "roller.context";
-    
-    private static ServletContext mContext = null;
-    private final SynchronizedInt mSessionCount = new SynchronizedInt(0);
+    private static ServletContext servletContext = null;
+    private static RollerContext rollerContext = null;
     
     
-    /**
-     * Constructor for RollerContext.
-     */
     public RollerContext() {
         super();
     }
     
     
-    /* Returns Roller instance for specified app */
-    public static RollerContext getRollerContext() {
-        // get roller from servlet context
-        ServletContext sc = RollerContext.getServletContext();
-        return (RollerContext) sc.getAttribute(ROLLER_CONTEXT);
-    }
-    
-    
-    /** Responds to app-destroy by saving the indexManager's information */
-    public void contextDestroyed(ServletContextEvent sce) {
-        RollerFactory.getRoller().shutdown();
-        
-        // do we need a more generic mechanism for presentation layer shutdown?
-        CacheManager.shutdown();
-    }
-    
-    
     /**
-     * Responds to context initialization event by processing context
-     * paramters for easy access by the rest of the application.
+     * Responds to app-init event and triggers startup procedures.
      */
     public void contextInitialized(ServletContextEvent sce) {
         
+        log.info("Roller Weblogger Initializing ...");
+        
+        // check that Hibernate code is in place
         try {
             Class.forName("org.hibernate.Session");
         } catch (Throwable t) {
@@ -114,14 +92,17 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                "FATAL ERROR: Hibernate not found, please refer to the Roller Installation Guide for instructions on how to install the required Hibernate jars");
         }
         
-        mLogger.debug("RollerContext initializing");
+        // keep a reverence to ServletContext object
+        this.servletContext = sce.getServletContext();
         
-        // Save context in self and self in context
-        mContext = sce.getServletContext();
-        mContext.setAttribute(ROLLER_CONTEXT, this);
-        
+        // call Spring's context ContextLoaderListener to initialize
+        // all the context files specified in web.xml. This is necessary
+        // because listeners don't initialize in the order specified in
+        // 2.3 containers
+        super.contextInitialized(sce);
+            
         // get the *real* path to <context>/resources
-        String ctxPath = mContext.getRealPath("/");
+        String ctxPath = servletContext.getRealPath("/");
         if(!ctxPath.endsWith(File.separator))
             ctxPath += File.separator + "resources";
         else
@@ -145,7 +126,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         // also, the RollerConfig.setThemesDir() method is smart
         // enough to disregard this call unless the themes.dir
         // is set to ${webapp.context}
-        RollerConfig.setThemesDir(mContext.getRealPath("/")+File.separator+"themes");
+        RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
         
         try {
             // always upgrade database first
@@ -153,42 +134,69 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             Roller roller = RollerFactory.getRoller();
             
-            setupRollerProperties();
-            
-            // call Spring's context ContextLoaderListener to initialize
-            // all the context files specified in web.xml. This is necessary
-            // because listeners don't initialize in the order specified in
-            // 2.3 containers
-            super.contextInitialized(sce);
-            
-            initializeSecurityFeatures(mContext);
-            
+            setupRuntimeProperties();
+            initializeSecurityFeatures(servletContext);
+            setupSearch();
+            initializePingFeatures();
+            setupThemeLibrary();
+            setupScheduledTasks();
             setupVelocity();
-            roller.getThemeManager();
-            setupIndexManager(roller);
-            initializePingFeatures(roller);
-            setupTasks();
             
             roller.flush();
             roller.release();
             
         } catch (Throwable t) {
-            mLogger.fatal("RollerContext initialization failed", t);
+            log.fatal("Roller Weblogger initialization failed", t);
+            throw new RuntimeException(t);
         }
         
-        mLogger.debug("RollerContext initialization complete");
+        log.info("Roller Weblogger Initialization Complete");
     }
     
     
-    private void setupVelocity() throws RollerException {
+    /** 
+     * Responds to app-destroy event and triggers shutdown sequence.
+     */
+    public void contextDestroyed(ServletContextEvent sce) {
         
-        mLogger.info("Initializing Velocity");
+        RollerFactory.getRoller().shutdown();
+        
+        // do we need a more generic mechanism for presentation layer shutdown?
+        CacheManager.shutdown();
+    }
+    
+    
+    /**
+     * Trigger any database upgrade work that needs to be done.
+     */
+    private void upgradeDatabaseIfNeeded() throws Exception {
+        
+        try {
+            InitialContext ic = new InitialContext();
+            DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
+            Connection con = ds.getConnection();
+            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
+            con.close();
+        } catch (NamingException e) {
+            log.warn("Unable to access DataSource", e);
+        } catch (SQLException e) {
+            log.warn(e);
+        }
+    }
+    
+    
+    /**
+     * Initialize the Velocity rendering engine.
+     */
+    private void setupVelocity() throws Exception {
+        
+        log.info("Initializing Velocity");
         
         // initialize the Velocity engine
         Properties velocityProps = new Properties();
         
         try {
-            InputStream instream = mContext.getResourceAsStream("/WEB-INF/velocity.properties");
+            InputStream instream = servletContext.getResourceAsStream("/WEB-INF/velocity.properties");
             
             velocityProps.load(instream);
             
@@ -201,7 +209,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                 velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
             }
             
-            mLogger.debug("Velocity props = "+velocityProps);
+            log.debug("Velocity props = "+velocityProps);
             
             // init velocity
             RuntimeSingleton.init(velocityProps);
@@ -213,14 +221,37 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    private void setupRollerProperties() throws RollerException {
-        // init property manager by creating it
-        Roller mRoller = RollerFactory.getRoller();
-        mRoller.getPropertiesManager();
+    /**
+     * Initialize the runtime configuration.
+     */
+    private void setupRuntimeProperties() throws Exception {
+        // PropertiesManager initializes itself
+        RollerFactory.getRoller().getPropertiesManager();
     }
     
     
-    private void setupTasks() throws RollerException {
+    /**
+     * Initialize the built-in search engine.
+     */
+    private void setupSearch() throws Exception {
+        // IndexManager initializes itself
+        RollerFactory.getRoller().getIndexManager();
+    }
+    
+    
+    /**
+     * Initialize the Theme Library.
+     */
+    private void setupThemeLibrary() throws Exception {
+        // theme manager initializes itself
+        RollerFactory.getRoller().getThemeManager();
+    }
+    
+    
+    /**
+     * Start up any scheduled background jobs.
+     */
+    private void setupScheduledTasks() throws Exception {
         
         ThreadManager tmgr = RollerFactory.getRoller().getThreadManager();
         
@@ -233,7 +264,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             String taskClassName = RollerConfig.getProperty("tasks."+tasks[i]+".class");
             if(taskClassName != null) {
-                mLogger.info("Initializing task: "+tasks[i]);
+                log.info("Initializing task: "+tasks[i]);
                 
                 try {
                     Class taskClass = Class.forName(taskClassName);
@@ -249,11 +280,11 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                     tmgr.scheduleFixedRateTimerTask(task, startTime, task.getInterval());
                     
                 } catch (ClassCastException ex) {
-                    mLogger.warn("Task does not extend RollerTask class", ex);
+                    log.warn("Task does not extend RollerTask class", ex);
                 } catch (RollerException ex) {
-                    mLogger.error("Error scheduling task", ex);
+                    log.error("Error scheduling task", ex);
                 } catch (Exception ex) {
-                    mLogger.error("Error instantiating task", ex);
+                    log.error("Error instantiating task", ex);
                 }
             }
         }
@@ -261,7 +292,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     
     // Initialize ping features
-    private void initializePingFeatures(Roller roller) throws RollerException {
+    private void initializePingFeatures() throws RollerException {
         
         // Initialize common targets from the configuration
         PingConfig.initializeCommonTargets();
@@ -269,17 +300,20 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         PingConfig.initializePingVariants();
         // Remove custom ping targets if they have been disallowed
         if (PingConfig.getDisallowCustomTargets()) {
-            mLogger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
-            roller.getPingTargetManager().removeAllCustomPingTargets();
+            log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
+            RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
         }
         // Remove all autoping configurations if ping usage has been disabled.
         if (PingConfig.getDisablePingUsage()) {
-            mLogger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-            roller.getAutopingManager().removeAllAutoPings();
+            log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+            RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
         }
     }
     
     
+    /**
+     * Setup Acegi security features.
+     */
     protected void initializeSecurityFeatures(ServletContext context) { 
         
         ApplicationContext ctx =
@@ -288,7 +322,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         String rememberMe = RollerConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe).booleanValue();
         
-        mLogger.info("Remember Me enabled: " + rememberMeEnabled);
+        log.info("Remember Me enabled: " + rememberMeEnabled);
         
         context.setAttribute("rememberMeEnabled", rememberMe);
         
@@ -310,12 +344,12 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             } else if (algorithm.equalsIgnoreCase("MD5")) {
                 encoder = new Md5PasswordEncoder();
             } else {
-                mLogger.error("Encryption algorithm '" + algorithm +
+                log.error("Encryption algorithm '" + algorithm +
                         "' not supported, disabling encryption.");
             }
             if (encoder != null) {
                 provider.setPasswordEncoder(encoder);
-                mLogger.info("Password Encryption Algorithm set to '" + algorithm + "'");
+                log.info("Password Encryption Algorithm set to '" + algorithm + "'");
             }
         }
         
@@ -351,42 +385,13 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    protected void upgradeDatabaseIfNeeded() throws RollerException {
-        
-        try {
-            InitialContext ic = new InitialContext();
-            DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
-            Connection con = ds.getConnection();
-            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
-            con.close();
-        } catch (NamingException e) {
-            mLogger.warn("Unable to access DataSource", e);
-        } catch (SQLException e) {
-            mLogger.warn(e);
-        }
-    }
-    
-    
-    private void setupIndexManager(Roller roller) throws RollerException {
-        roller.getIndexManager();
-    }
-    
-    
-    public void sessionCreated(HttpSessionEvent se) {
-        mSessionCount.increment();
-        
-        mLogger.debug("sessions="+ mSessionCount
-                    + ":freemem=" + Runtime.getRuntime().freeMemory()
-                    + ":totmem=" + Runtime.getRuntime().totalMemory());
-    }
-    
-    
-    public void sessionDestroyed(HttpSessionEvent se) {
-        mSessionCount.decrement();
-        
-        mLogger.debug("sessions=" + mSessionCount
-                    + ":freemem=" + Runtime.getRuntime().freeMemory()
-                    + ":totalmem=" + Runtime.getRuntime().totalMemory());
+    /**
+     * Get the RollerContext.
+     *
+     * @return RollerContext
+     */
+    public static RollerContext getRollerContext() {
+        return rollerContext;
     }
     
     
@@ -396,9 +401,10 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      * @return ServletContext
      */
     public static ServletContext getServletContext() {
-        return mContext;
+        return servletContext;
     }
-        
+    
+    
     /**
      * Get an instance of AutoProvision, if available in roller.properties
      * 
@@ -416,7 +422,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
       try {
         clazz = Class.forName(clazzName);
       } catch (ClassNotFoundException e) {
-        mLogger.warn("Unable to found specified Auto Provision class.", e);
+        log.warn("Unable to found specified Auto Provision class.", e);
         return null;
       }
       
@@ -431,9 +437,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             try {
               return (AutoProvision) clazz.newInstance();
             } catch (InstantiationException e) {
-              mLogger.warn("InstantiationException while creating: " + clazzName, e);
+              log.warn("InstantiationException while creating: " + clazzName, e);
             } catch (IllegalAccessException e) {
-              mLogger.warn("IllegalAccessException while creating: " + clazzName, e);
+              log.warn("IllegalAccessException while creating: " + clazzName, e);
             }
           }
       }
