@@ -117,7 +117,7 @@ public class ThemeEditorAction extends DispatchAction {
                     currentTheme.setId(Theme.CUSTOM);
                     currentTheme.setName(Theme.CUSTOM);
                 } else {
-                    currentTheme = themeMgr.getTheme(website.getEditorTheme());
+                    currentTheme = website.getTheme();
                 }
                 
                 // this checks if the website has a default page template
@@ -194,7 +194,7 @@ public class ThemeEditorAction extends DispatchAction {
                     currentTheme.setId(Theme.CUSTOM);
                     currentTheme.setName(Theme.CUSTOM);
                 } else {
-                    currentTheme = themeMgr.getTheme(website.getEditorTheme());
+                    currentTheme = website.getTheme();
                 }
                 
                 // this checks if the website has a default page template
@@ -388,7 +388,7 @@ public class ThemeEditorAction extends DispatchAction {
                 String username = rses.getAuthenticatedUser().getUserName();
                 
                 try {
-                    Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
+                    Theme usersTheme = website.getTheme();
                     
                     // only if custom themes are allowed
                     if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
