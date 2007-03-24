@@ -42,7 +42,6 @@
 
 <%@ page import="org.apache.roller.ui.core.RequestConstants" %>
 <%@ page import="org.apache.roller.ui.core.BasePageModel" %>
-<%@ page import="org.apache.roller.ui.core.RollerContext" %>
 <%@ page import="org.apache.roller.ui.core.RollerSession" %>
 
 <%   
