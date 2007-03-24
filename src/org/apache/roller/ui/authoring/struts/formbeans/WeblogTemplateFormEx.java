@@ -22,7 +22,6 @@ import java.util.Locale;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.ui.authoring.struts.forms.WeblogTemplateForm;
-import org.apache.roller.ui.core.RollerContext;
 
 /**
  * @struts.form name="weblogTemplateFormEx"

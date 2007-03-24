@@ -32,7 +32,6 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.ui.core.RollerContext;
 
 /**
  * Shows entry summary with plugins applied.
@@ -59,8 +58,6 @@ public class ShowEntrySummaryTag extends TagSupport {
             String xformed = entry.getSummary();
             try {        
                 if (entry.getPlugins() != null) {
-                    RollerContext rctx = 
-                        RollerContext.getRollerContext();
                     PluginManager ppmgr = roller.getPagePluginManager();
                     Map plugins = ppmgr.getWeblogEntryPlugins(
                         entry.getWebsite());

@@ -32,7 +32,6 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RequestConstants;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
@@ -91,7 +90,6 @@ public class ToggleLinkbackDisplayAction extends Action
 		String url = null;
 		try
 		{
-			RollerContext rctx = RollerContext.getRollerContext();
             if (entry != null) {
                 url = entry.getPermalink();
             } else {

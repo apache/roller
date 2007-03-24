@@ -48,7 +48,6 @@ import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.velocity.deprecated.NewsfeedCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
@@ -111,8 +110,6 @@ public class ContextLoader {
             WeblogPageRequest pageRequest) throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
-        
-        RollerContext rollerCtx = RollerContext.getRollerContext( );
         
         WebsiteData weblog = null;
         WeblogEntryData entry = null;
@@ -197,9 +194,9 @@ public class ContextLoader {
         
         // Load standard Roller objects and values into the context
         loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request);
-        loadPathValues(ctx, request, rollerCtx, weblog, locale);
+        loadPathValues(ctx, request, weblog, locale);
         loadRssValues(ctx, request, weblog, category);
-        loadUtilityObjects(ctx, request, rollerCtx, weblog, page);
+        loadUtilityObjects(ctx, request, weblog, page);
         loadRequestParamKeys(ctx);
         loadStatusMessage(ctx, request);
         
@@ -368,7 +365,6 @@ public class ContextLoader {
     private static void loadUtilityObjects(
             Map ctx,
             HttpServletRequest request,
-            RollerContext rollerCtx,
             WebsiteData website,
             Template page) throws RollerException {
         
@@ -407,7 +403,6 @@ public class ContextLoader {
     private static void loadPathValues(
             Map ctx,
             HttpServletRequest request,
-            RollerContext rollerCtx,
             WebsiteData   website,
             String locale) throws RollerException {
         

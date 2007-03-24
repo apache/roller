@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.webservices.adminprotocol.sdk.EntrySet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -95,7 +94,6 @@ abstract class Handler {
     
     private HttpServletRequest request;
     private Roller roller;
-    private RollerContext rollerContext;
     private String userName;
     private URI uri;
     private String urlPrefix;
@@ -133,7 +131,6 @@ abstract class Handler {
     public Handler(HttpServletRequest request) throws HandlerException {
         this.request = request;
         this.uri = new URI(request);
-        this.rollerContext = RollerContext.getRollerContext();
         this.roller = RollerFactory.getRoller();
         //TODO: is this the right thing to do? hardcode roller-services?
         this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
@@ -172,10 +169,6 @@ abstract class Handler {
     
     protected HttpServletRequest getRequest() {
         return request;
-    }
-    
-    protected RollerContext getRollerContext() {
-        return rollerContext;
     }
     
     protected Roller getRoller() {

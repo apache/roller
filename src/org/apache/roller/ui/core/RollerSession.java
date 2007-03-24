@@ -113,7 +113,6 @@ public class RollerSession
     
     
     public void sessionDestroyed(HttpSessionEvent se) {
-        RollerContext rctx = RollerContext.getRollerContext();
         clearSession(se);
     }
     

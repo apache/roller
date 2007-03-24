@@ -59,7 +59,6 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
@@ -402,7 +401,6 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 to = (String[])reviewers.toArray(new String[reviewers.size()]);
                 
                 // Figure URL to entry edit page
-                RollerContext rc = RollerContext.getRollerContext();
                 String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0) {
                     rootURL = RequestUtils.serverURL(request)
@@ -616,7 +614,6 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 entryid = request.getParameter(RequestConstants.WEBLOGENTRY_ID);
             }
             Roller roller = RollerFactory.getRoller();
-            RollerContext rctx= RollerContext.getRollerContext();
             WeblogManager wmgr= roller.getWeblogManager();
             entry = wmgr.getWeblogEntry(entryid);
             
