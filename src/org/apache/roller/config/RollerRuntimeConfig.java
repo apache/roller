@@ -21,13 +21,13 @@ package org.apache.roller.config;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.pojos.RollerPropertyData;
 
 
 /**
@@ -64,7 +64,10 @@ public class RollerRuntimeConfig {
         
         try {
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-            value = pmgr.getProperty(name).getValue();
+            RollerPropertyData prop = pmgr.getProperty(name);
+            if(prop != null) {
+                value = prop.getValue();
+            }
         } catch(Exception e) {
             log.warn("Trouble accessing property: "+name, e);
         }
