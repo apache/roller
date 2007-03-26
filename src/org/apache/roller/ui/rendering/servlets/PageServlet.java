@@ -242,8 +242,25 @@ public class PageServlet extends HttpServlet {
             }
             
         // If request specified the page, then go with that
-        } else if(pageRequest.getWeblogPageName() != null) {
+        } else if("page".equals(pageRequest.getContext())) {
             page = pageRequest.getWeblogPage();
+            
+        // If request specified tags section index, then look for custom template
+        } else if("tags".equals(pageRequest.getContext()) &&
+                pageRequest.getTags() == null) {
+            try {
+                page = weblog.getPageByAction(Template.ACTION_TAGSINDEX);
+            } catch(Exception e) {
+                log.error("Error getting weblog page for action 'tagsIndex'", e);
+            }
+            
+            // if we don't have a custom tags page then 404, we don't let
+            // this one fall through to the default template
+            if(page == null) {
+                if(!response.isCommitted()) response.reset();
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             
         // If this is a permalink then look for a permalink template
         } else if(pageRequest.getWeblogAnchor() != null) {
