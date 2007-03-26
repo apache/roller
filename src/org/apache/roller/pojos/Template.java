@@ -32,6 +32,7 @@ public interface Template {
     public static final String ACTION_WEBLOG = "weblog";
     public static final String ACTION_PERMALINK = "permalink";
     public static final String ACTION_SEARCH = "search";
+    public static final String ACTION_TAGSINDEX = "tagsIndex";
     public static final String ACTION_CUSTOM = "custom";
     
     

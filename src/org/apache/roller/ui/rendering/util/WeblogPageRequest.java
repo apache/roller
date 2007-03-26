@@ -108,7 +108,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * /entry/<anchor> - permalink
          * /date/<YYYYMMDD> - date collection view
          * /category/<category> - category collection view
-         * /tags/spring+framework - tags
+         * /tags/<tag>+<tag> - tags
          * /page/<pagelink> - custom page
          *
          * path info may be null, which indicates the weblog homepage
@@ -116,22 +116,14 @@ public class WeblogPageRequest extends WeblogRequest {
         if(pathInfo != null && pathInfo.trim().length() > 0) {
             
             // all views use 2 path elements, except category
-            String[] pathElements = pathInfo.split("/");
-            if(pathElements.length > 1 && "category".equals(pathElements[0])) {
+            String[] pathElements = pathInfo.split("/", 2);
+            
+            // the first part of the path always represents the context
+            this.context = pathElements[0];
+            
+            // now check the rest of the path and extract other details
+            if(pathElements.length == 2) {
                 
-                // category may have multiple path elements, so re-split with max 2
-                pathElements = pathInfo.split("/", 2);
-                this.context = pathElements[0];
-                this.weblogCategoryName = "/"+URLUtilities.decode(pathElements[1]);
-                
-                // all categories must start with a /
-                if(!this.weblogCategoryName.startsWith("/")) {
-                    this.weblogCategoryName = "/"+this.weblogCategoryName;
-                }
-
-            } else if(pathElements.length == 2) {
-                
-                this.context = pathElements[0];
                 if("entry".equals(this.context)) {
                     this.weblogAnchor = URLUtilities.decode(pathElements[1]);
                     
@@ -141,6 +133,14 @@ public class WeblogPageRequest extends WeblogRequest {
                     } else {
                         throw new InvalidRequestException("invalid date, "+
                             request.getRequestURL());
+                    }
+                    
+                } else if("category".equals(this.context)) {
+                    this.weblogCategoryName = URLUtilities.decode(pathElements[1]);
+                    
+                    // all categories must start with a /
+                    if(!this.weblogCategoryName.startsWith("/")) {
+                        this.weblogCategoryName = "/"+this.weblogCategoryName;
                     }
                     
                 } else if("page".equals(this.context)) {
@@ -159,8 +159,11 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
                 
             } else {
-                throw new InvalidRequestException("bad path info, "+
-                        request.getRequestURL());
+                // empty data is only allowed for the tags section
+                if(!"tags".equals(this.context)) {
+                    throw new InvalidRequestException("invalid index page, "+
+                            request.getRequestURL());
+                }
             }
             
         } else {

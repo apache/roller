@@ -238,6 +238,9 @@ public class HibernateUserManagerImpl implements UserManager {
         
     public void removePage(WeblogTemplate page) throws RollerException {
         this.strategy.remove(page);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
         
     public void addUser(UserData newUser) throws RollerException {

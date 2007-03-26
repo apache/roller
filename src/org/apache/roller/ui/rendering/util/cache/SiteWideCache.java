@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -228,10 +229,13 @@ public class SiteWideCache implements CacheHandler {
                 key.append("/").append(cat);
             }
             
-            if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-              String[] tags = new String[pageRequest.getTags().size()];
-              new TreeSet(pageRequest.getTags()).toArray(tags);
-              key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+            if("tags".equals(pageRequest.getContext())) {
+                key.append("/tags/");
+                if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+                    Set ordered = new TreeSet(pageRequest.getTags());
+                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
+                    key.append(Utilities.stringArrayToString(tags,"+"));
+                }
             }
         }
         

@@ -241,6 +241,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 availableActions.add(WeblogTemplate.ACTION_PERMALINK);
                 availableActions.add(WeblogTemplate.ACTION_SEARCH);
                 availableActions.add(WeblogTemplate.ACTION_WEBLOG);
+                availableActions.add(WeblogTemplate.ACTION_TAGSINDEX);
                 
                 WeblogTemplate tmpPage = null;
                 Iterator pagesIter = model.getPages().iterator();
