@@ -44,6 +44,7 @@ public class Theme implements Serializable, Comparable {
     private String name = null;
     private String description = null;
     private String author = null;
+    private String customStylesheet = null;
     private Date lastModified = null;
     private boolean enabled = false;
     
@@ -181,6 +182,14 @@ public class Theme implements Serializable, Comparable {
         this.author = author;
     }
 
+    public String getCustomStylesheet() {
+        return customStylesheet;
+    }
+
+    public void setCustomStylesheet(String customStylesheet) {
+        this.customStylesheet = customStylesheet;
+    }
+    
     public Date getLastModified() {
         return lastModified;
     }
@@ -220,5 +229,5 @@ public class Theme implements Serializable, Comparable {
         Theme other = (Theme) o;
         return getName().compareTo(other.getName());
     }
-    
+
 }

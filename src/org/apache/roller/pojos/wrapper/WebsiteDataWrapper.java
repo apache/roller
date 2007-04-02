@@ -419,6 +419,12 @@ public class WebsiteDataWrapper {
         return this.pojo.isShowAllLangs();
     }
 
+    
+    public String getCustomStylesheet() {
+        return this.pojo.getCustomStylesheet();
+    }
+    
+    
     /**
      * pojo method tagged with @roller.wrapPojoMethod type="simple"
      *

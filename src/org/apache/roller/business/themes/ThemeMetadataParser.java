@@ -41,7 +41,7 @@ public class ThemeMetadataParser {
      * set of Java objects.
      **/
     public ThemeMetadata unmarshall(InputStream instream) 
-        throws IOException, JDOMException {
+        throws ThemeParsingException, IOException, JDOMException {
         
         if(instream == null)
             throw new IOException("InputStream is null!");
@@ -59,7 +59,17 @@ public class ThemeMetadataParser {
         
         // now grab the preview image path
         Element previewImage = root.getChild("preview-image");
-        theme.setPreviewImage(previewImage.getAttributeValue("path"));
+        if(previewImage != null) {
+            theme.setPreviewImage(previewImage.getAttributeValue("path"));
+        } else {
+            throw new ThemeParsingException("No preview image specified");
+        }
+        
+        // grab the custom stylesheet path
+        Element customStylesheet = root.getChild("custom-stylesheet");
+        if(customStylesheet != null) {
+            theme.setCustomStylesheet(customStylesheet.getAttributeValue("path"));
+        }
         
         // now grab the static resources
         List resources = root.getChildren("resource");
