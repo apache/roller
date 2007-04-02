@@ -27,9 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -136,58 +138,68 @@ public class ThemeManagerImpl implements ThemeManager {
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
-            Iterator iter = theme.getTemplates().iterator();
+            Set importedActionTemplates = new HashSet();
             ThemeTemplate themeTemplate = null;
+            Iterator iter = theme.getTemplates().iterator();
             while ( iter.hasNext() ) {
                 themeTemplate = (ThemeTemplate) iter.next();
                 
                 WeblogTemplate template = null;
                 
-                if(themeTemplate.getAction().equals(WeblogTemplate.ACTION_WEBLOG)) {
-                    // this is the main Weblog template
-                    try {
-                        template = userMgr.getPageByAction(website, WeblogTemplate.ACTION_WEBLOG);
-                    } catch(Exception e) {
-                        // user may not have a default page yet
+                // if template is an action, lookup by action
+                if(themeTemplate.getAction() != null &&
+                        !themeTemplate.getAction().equals(WeblogTemplate.ACTION_CUSTOM)) {
+                    template = userMgr.getPageByAction(website, themeTemplate.getAction());
+                    if(template != null) {
+                        importedActionTemplates.add(themeTemplate.getAction());
                     }
+                    
+                // otherwise, lookup by name
                 } else {
-                    // any other template
                     template = userMgr.getPageByName(website, themeTemplate.getName());
                 }
                 
-                // TODO: in order to ensure that left over templates don't cause
-                // conflicts we should probably delete all templates where
-                // action!=custom that isn't in the theme we are customizing
-                
-                if (template != null) {
-                    // User already has page by that name, so overwrite it.
-                    template.setContents(themeTemplate.getContents());
-                    template.setLink(themeTemplate.getLink());
-                    
-                } else {
-                    // User does not have page by that name, so create new page.
+                // Weblog does not have this template, so create it.
+                if (template == null) {
                     template = new WeblogTemplate();
                     template.setWebsite(website);
-                    template.setAction(themeTemplate.getAction());
-                    template.setName(themeTemplate.getName());
-                    template.setDescription(themeTemplate.getDescription());
-                    template.setContents(themeTemplate.getContents());
-                    template.setHidden(themeTemplate.isHidden());
-                    template.setNavbar(themeTemplate.isNavbar());
-                    template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
-                    template.setDecoratorName(themeTemplate.getDecoratorName());
-                    template.setLastModified(new Date());
-                    
-                    // save it
-                    userMgr.savePage( template );
-                    
-                    // we just created and saved the default page for the first
-                    // time so we need to set website.defaultpageid
-                    if(themeTemplate.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
-                        website.setDefaultPageId(template.getId());
+                }
+
+                // TODO: fix conflict situation
+                // it's possible that someone has defined a theme template which
+                // matches 2 existing templates, 1 by action, the other by name
+                
+                // update template attributes
+                template.setAction(themeTemplate.getAction());
+                template.setName(themeTemplate.getName());
+                template.setDescription(themeTemplate.getDescription());
+                template.setLink(themeTemplate.getLink());
+                template.setContents(themeTemplate.getContents());
+                template.setHidden(themeTemplate.isHidden());
+                template.setNavbar(themeTemplate.isNavbar());
+                template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
+                template.setDecoratorName(themeTemplate.getDecoratorName());
+                template.setLastModified(new Date());
+                
+                // save it
+                userMgr.savePage( template );
+            }
+            
+            // now, see if the weblog has left over action templates that
+            // need to be deleted because they aren't in their new theme
+            for(int i=0; i < WeblogTemplate.ACTIONS.length; i++) {
+                String action = WeblogTemplate.ACTIONS[i];
+                
+                // if we didn't import this action then see if it should be deleted
+                if(!importedActionTemplates.contains(action)) {
+                    WeblogTemplate toDelete = userMgr.getPageByAction(website, action);
+                    if(toDelete != null) {
+                        log.debug("Removing stale action template "+toDelete.getId());
+                        userMgr.removePage(toDelete);
                     }
                 }
             }
+            
             
             // always update this weblog's theme and customStylesheet, then save
             website.setEditorTheme(Theme.CUSTOM);
