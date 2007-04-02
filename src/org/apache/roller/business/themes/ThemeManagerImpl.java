@@ -137,13 +137,13 @@ public class ThemeManagerImpl implements ThemeManager {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
             Iterator iter = theme.getTemplates().iterator();
-            ThemeTemplate theme_template = null;
+            ThemeTemplate themeTemplate = null;
             while ( iter.hasNext() ) {
-                theme_template = (ThemeTemplate) iter.next();
+                themeTemplate = (ThemeTemplate) iter.next();
                 
                 WeblogTemplate template = null;
                 
-                if(theme_template.getAction().equals(WeblogTemplate.ACTION_WEBLOG)) {
+                if(themeTemplate.getAction().equals(WeblogTemplate.ACTION_WEBLOG)) {
                     // this is the main Weblog template
                     try {
                         template = userMgr.getPageByAction(website, WeblogTemplate.ACTION_WEBLOG);
@@ -152,7 +152,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     }
                 } else {
                     // any other template
-                    template = userMgr.getPageByName(website, theme_template.getName());
+                    template = userMgr.getPageByName(website, themeTemplate.getName());
                 }
                 
                 // TODO: in order to ensure that left over templates don't cause
@@ -161,21 +161,21 @@ public class ThemeManagerImpl implements ThemeManager {
                 
                 if (template != null) {
                     // User already has page by that name, so overwrite it.
-                    template.setContents(theme_template.getContents());
-                    template.setLink(theme_template.getLink());
+                    template.setContents(themeTemplate.getContents());
+                    template.setLink(themeTemplate.getLink());
                     
                 } else {
                     // User does not have page by that name, so create new page.
                     template = new WeblogTemplate();
                     template.setWebsite(website);
-                    template.setAction(theme_template.getAction());
-                    template.setName(theme_template.getName());
-                    template.setDescription(theme_template.getDescription());
-                    template.setContents(theme_template.getContents());
-                    template.setHidden(theme_template.isHidden());
-                    template.setNavbar(theme_template.isNavbar());
-                    template.setTemplateLanguage(theme_template.getTemplateLanguage());
-                    template.setDecoratorName(theme_template.getDecoratorName());
+                    template.setAction(themeTemplate.getAction());
+                    template.setName(themeTemplate.getName());
+                    template.setDescription(themeTemplate.getDescription());
+                    template.setContents(themeTemplate.getContents());
+                    template.setHidden(themeTemplate.isHidden());
+                    template.setNavbar(themeTemplate.isNavbar());
+                    template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
+                    template.setDecoratorName(themeTemplate.getDecoratorName());
                     template.setLastModified(new Date());
                     
                     // save it
@@ -183,14 +183,15 @@ public class ThemeManagerImpl implements ThemeManager {
                     
                     // we just created and saved the default page for the first
                     // time so we need to set website.defaultpageid
-                    if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
+                    if(themeTemplate.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
                         website.setDefaultPageId(template.getId());
                     }
                 }
             }
             
-            // always update this weblog's theme to custom and then save
+            // always update this weblog's theme and customStylesheet, then save
             website.setEditorTheme(Theme.CUSTOM);
+            website.setCustomStylesheetPath(theme.getCustomStylesheet());
             userMgr.saveWebsite(website);
             
             
@@ -300,6 +301,7 @@ public class ThemeManagerImpl implements ThemeManager {
         theme.setName(themeMetadata.getName());
         theme.setDescription(themeMetadata.getName());
         theme.setAuthor(themeMetadata.getAuthor());
+        theme.setCustomStylesheet(themeMetadata.getCustomStylesheet());
         theme.setLastModified(new Date());
         theme.setEnabled(true);
         

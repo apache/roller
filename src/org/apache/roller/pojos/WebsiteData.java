@@ -94,6 +94,7 @@ public class WebsiteData implements Serializable {
     private String  pageModels       = new String();
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
+    private String customStylesheetPath = null;
     
     
     // Associated objects
@@ -1049,6 +1050,37 @@ public class WebsiteData implements Serializable {
 
     
     /**
+     * The path under the weblog's resources to a stylesheet override.
+     *
+     * @hibernate.property column="customstylesheet" not-null="false"
+     */
+    public String getCustomStylesheetPath() {
+        return customStylesheetPath;
+    }
+
+    public void setCustomStylesheetPath(String customStylesheetPath) {
+        this.customStylesheetPath = customStylesheetPath;
+    }
+    
+    
+    public String getCustomStylesheet() {
+        try {
+            Theme weblogTheme = getTheme();
+            if(weblogTheme != null) {
+                return weblogTheme.getCustomStylesheet();
+            } else {
+                return getCustomStylesheetPath();
+            }
+        } catch(RollerException re) {
+            // hmmm, some exception getting theme
+            return null;
+        }
+    }
+    
+    // no-op to please xdoclet
+    public void setCustomStylesheet(String noop) {}
+    
+    /**
      * Get initialized plugins for use during rendering process.
      */
     public Map getInitializedPlugins() {
@@ -1375,8 +1407,3 @@ public class WebsiteData implements Serializable {
     public void setEntryCount(int ignored) {}
     
 }
-
-
-
-
-

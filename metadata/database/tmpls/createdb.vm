@@ -117,7 +117,8 @@ create table website (
     lastmodified         $db.TIMESTAMP_SQL_TYPE,
     pagemodels           varchar(255) default null,
     enablemultilang   $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null
+    showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    customstylesheet  varchar(128)
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
