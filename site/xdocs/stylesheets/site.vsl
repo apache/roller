@@ -280,7 +280,6 @@ href="$title.getAttributeValue("href")">$menu.getChildText("title")</a></div>
   <table border="0" width="100%" cellspacing="0">
    <tr><!-- SITE BANNER AND PROJECT IMAGE -->
     #getProjectImage()
-   <img src="images/apache-incubator-logo.png" align="right"></img>
    </tr>
   </table>
   <table border="0" width="100%" cellspacing="4">
