@@ -4,6 +4,8 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+#addColumnNull("rolleruser" "activationcode" "varchar(48)")
+
 #addColumnNull("webpage" "outputtype" "varchar(48)")
 
 -- add new action column to webpage table, default value is custom

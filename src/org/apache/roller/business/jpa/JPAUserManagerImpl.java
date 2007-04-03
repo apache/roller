@@ -309,6 +309,11 @@ public class JPAUserManagerImpl implements UserManager {
         if(existingUsers.size() == 0) {
             // Make first user an admin
             adminUser = true;
+            
+            //if user was disabled (because of activation user 
+            // account with e-mail property), enable it for admin user
+            newUser.setEnabled(Boolean.TRUE);
+            newUser.setActivationCode(null);
         }
         
         if(getUserByUserName(newUser.getUserName()) != null ||
@@ -1128,8 +1133,7 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public long getUserCount() throws RollerException {
         long ret = 0;
-        Query q = strategy.getNamedQuery(
-                "UserData.getCountEnabledDistinct");
+        Query q = strategy.getNamedQuery("UserData.getCountEnabledDistinct");
         q.setParameter(1, Boolean.TRUE);
         List results = q.getResultList();
         ret =((Long)results.get(0)).longValue(); 
@@ -1137,4 +1141,16 @@ public class JPAUserManagerImpl implements UserManager {
         return ret;
     }
     
+	public UserData getUserByActivationCode(String activationCode) throws RollerException {
+		if (activationCode == null)
+			throw new RollerException("activationcode is null");
+        Query q = strategy.getNamedQuery("UserData.getUserByActivationCode");
+        q.setParameter(1, activationCode);
+        try {
+            return (UserData)q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }		
+	}    
 }
+

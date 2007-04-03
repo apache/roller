@@ -19,6 +19,7 @@
 <forward name="yourProfile"            path="/roller-ui/yourProfile.do?method=edit" />
 <forward name="createWebsite"          path="/roller-ui/createWebsite.do?method=create" />
 <forward name="yourWebsites"           path="/roller-ui/yourWebsites.do?method=edit" />
+<forward name="activateUser"           path="/rollerui/user.do?method=activateUser"/>
 
 <!--  LIMITED/AUTHOR weblog UI actions -->
 

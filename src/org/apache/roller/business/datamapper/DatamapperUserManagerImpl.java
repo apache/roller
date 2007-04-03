@@ -296,6 +296,11 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         newUser.grantRole("editor");
         if(adminUser) {
             newUser.grantRole("admin");
+            
+            //if user was disabled (because of activation user 
+            // account with e-mail property), enable it for admin user
+            newUser.setEnabled(Boolean.TRUE);
+            newUser.setActivationCode(null);
         }
 
         this.strategy.store(newUser);
@@ -1128,5 +1133,19 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
         return ret;
     }
+    
+	public UserData getUserByActivationCode(String activationCode) throws RollerException {
+		if (activationCode == null)
+			throw new RollerException("activationcode is null");
+        try {
+            DatamapperQuery q = strategy.newQuery(UserData.class,"UserData.getUserByActivationCode");
+            q.setRange(0, 1);
+            List list = (List)q.execute(new Object[] {activationCode}); 
+            return list.size()!=0? (UserData)list.get(0) : null;
+        
+        } catch (Exception e) {
+            return null;
+        }		
+	} 
     
 }
