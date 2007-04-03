@@ -64,9 +64,11 @@ public class UserData
     private String  locale;
     private String  timeZone;
     private Boolean enabled = Boolean.TRUE;
+    private String  activationCode; 
     
     private Set roles = new HashSet();
     private List permissions = new ArrayList();
+    
     
     public UserData() {
     }
@@ -275,6 +277,7 @@ public class UserData
         this.locale = other.getLocale();
         this.timeZone = other.getTimeZone();
         this.dateCreated = other.getDateCreated()!=null ? (Date)other.getDateCreated().clone() : null;
+        this.activationCode = other.getActivationCode();
     }
     
     
@@ -341,6 +344,22 @@ public class UserData
             role.setUser(this);
         }
     }
+    
+    /** activation code 
+     * @ejb:persistent-field
+     * @hibernate.property column="activationcode" non-null="false"
+     * @roller.wrapPojoMethod type="simple"
+     */
+	public String getActivationCode() { 
+		return activationCode;
+	}
+	
+	/** @ejb:persistent-field */
+	public void setActivationCode(String activationCode) {
+		this.activationCode = activationCode;
+	}
+
+
     
     //------------------------------------------------------- Good citizenship
 

@@ -94,6 +94,14 @@
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
+      <property-def  name="user.account.activation.enabled"  key="configForm.accountActivation">
+         <type>boolean</type>
+         <default-value>true</default-value>
+      </property-def>
+      <property-def  name="user.account.activation.mail.from"  key="configForm.accountActivationFromAddress">
+         <type>string</type>
+         <default-value></default-value>
+      </property-def>
       <property-def  name="users.registration.url"  key="configForm.registrationUrl">
           <type>string</type>
           <default-value></default-value>

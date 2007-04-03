@@ -264,6 +264,11 @@ public class HibernateUserManagerImpl implements UserManager {
         newUser.grantRole("editor");
         if(adminUser) {
             newUser.grantRole("admin");
+            
+            //if user was disabled (because of activation user account with e-mail property), 
+            //enable it for admin user
+            newUser.setEnabled(Boolean.TRUE);
+            newUser.setActivationCode(null);
         }
         
         this.strategy.store(newUser);
@@ -1024,6 +1029,27 @@ public class HibernateUserManagerImpl implements UserManager {
             super(property, value, "=", true);
         }
     }
+
+
+	public UserData getUserByActivationCode(String activationCode) throws RollerException {
+
+		if (activationCode == null)
+			throw new RollerException("activationcode is null");
+
+		try {
+			Session session = ((HibernatePersistenceStrategy) this.strategy)
+					.getSession();
+			Criteria criteria = session.createCriteria(UserData.class);
+
+			criteria.add(Expression.eq("activationCode", activationCode));
+
+			UserData user = (UserData) criteria.uniqueResult();
+
+			return user;
+		} catch (HibernateException e) {
+			throw new RollerException(e);
+		}		
+	}
 }
 
 
