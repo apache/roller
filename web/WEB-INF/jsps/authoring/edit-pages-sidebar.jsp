@@ -26,10 +26,31 @@
              <hr size="1" noshade="noshade" />
              
              <html:form action="/roller-ui/authoring/page" method="post" focus="name">
-
-                <fmt:message key="pagesForm.name"/>: <input type="text" name="name" size="12" />
-
-                <input type="submit" value='<fmt:message key="pagesForm.add" />' />
+                 <table cellpadding="0" cellspacing="0">
+                     <tr>
+                         <td><fmt:message key="pagesForm.name"/>:</td>
+                         <td><input type="text" name="name" size="12" /></td>
+                     </tr>
+                     
+                     <c:if test="${ not empty availableActions }" >
+                         <tr>
+                             <td><fmt:message key="pagesForm.action"/>:</td>
+                             <td>
+                                 <html:select property="action">
+                                     <c:forEach var="act" items="${availableActions}">
+                                         <option value="<c:out value="${act}"/>"><c:out value="${act}"/></option>
+                                     </c:forEach>
+                                 </html:select>
+                             </td>
+                         </tr>
+                     </c:if>
+                     
+                     <tr>
+                         <td></td>
+                         <td><input type="submit" value='<fmt:message key="pagesForm.add" />' /></td>
+                     </tr>
+                 </table>
+                
                 <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
                 <html:hidden property="method" value="add"/>
 

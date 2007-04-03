@@ -293,6 +293,9 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void removePage(WeblogTemplate page) throws RollerException {
         this.strategy.remove(page);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
     
     public void addUser(UserData newUser) throws RollerException {
@@ -876,6 +879,29 @@ public class JPAUserManagerImpl implements UserManager {
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    /**
+     * @see org.apache.roller.model.UserManager#getPageByAction(WebsiteData, java.lang.String)
+     */
+    public WeblogTemplate getPageByAction(WebsiteData website, String action)
+            throws RollerException {
+        
+        if (website == null)
+            throw new RollerException("website is null");
+        
+        if (action == null)
+            throw new RollerException("Action name is null");
+        
+        
+        Query query = strategy.getNamedQuery("WeblogTemplate.getByAction"); 
+        query.setParameter(1, website);
+        query.setParameter(2, action);
+        try {
+            return (WeblogTemplate)query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }        
     }
     
     /**

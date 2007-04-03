@@ -3,7 +3,11 @@ merges.txt
 
 Temporary file to track merges from trunk into the roller_4.0_newbackend branch. 
 
+April 3, 2007: merging latest from trunk
+svn merge -r 520487:525007 https://svn.apache.org/repos/asf/incubator/roller/trunk
+
 March 20, 2007: merging latest from trunk (including template editor changes)
+svn merge -r 520393:520486 https://svn.apache.org/repos/asf/incubator/roller/trunk
 svn merge -r 517890:520240 https://svn.apache.org/repos/asf/incubator/roller/trunk
 
 March 14, 2007: merging latest from trunk

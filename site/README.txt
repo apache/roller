@@ -1,4 +1,4 @@
-README for the Apache Roller site - http://incubator.apache.org/roller
+README for the Apache Roller site - http://roller.apache.org
 
 To update the website:
 
@@ -12,7 +12,7 @@ To update the website:
 
 3) ssh to people.apache.org
 
-4) cd /www/incubator.apache.org/roller
+4) cd /www/roller.apache.org
 
 5) svn update
 

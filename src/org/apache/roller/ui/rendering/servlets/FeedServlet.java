@@ -236,7 +236,7 @@ public class FeedServlet extends HttpServlet {
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
-            if("search".equals(feedRequest.getType())) {
+            if("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
                 pageId = "templates/feeds/weblog-search-atom.vm";                
                 ModelLoader.loadModels(SearchResultsFeedModel.class.getName(), model, initData, true);
             }                        

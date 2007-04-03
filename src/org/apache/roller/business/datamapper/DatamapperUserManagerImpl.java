@@ -270,6 +270,9 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
 
     public void removePage(WeblogTemplate page) throws RollerException {
         this.strategy.remove(page);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
 
     public void addUser(UserData newUser) throws RollerException {
@@ -883,6 +886,25 @@ public abstract class DatamapperUserManagerImpl implements UserManager {
         return (WeblogTemplate)this.strategy.load(WeblogTemplate.class,id);
     }
 
+    /**
+     * @see org.apache.roller.model.UserManager#getPageByAction(WebsiteData, java.lang.String)
+     */
+    public WeblogTemplate getPageByAction(WebsiteData website, String action)
+            throws RollerException {
+        
+        if (website == null)
+            throw new RollerException("website is null");
+        
+        if (action == null)
+            throw new RollerException("Action name is null");
+        
+        DatamapperQuery query = strategy.newQuery(
+                WeblogTemplate.class, "WeblogTemplate.getByAction");
+        query.setRange(0, 1);  // => query.setFirstResult(1).setMaxResult(1)
+        List list = (List)query.execute(new Object[] {website, action});
+        return list.size()!=0 ? (WeblogTemplate)list.get(0) : null;     
+    }
+    
     /**
      * Use Datamapper directly because Roller's Query API does too much allocation.
      */

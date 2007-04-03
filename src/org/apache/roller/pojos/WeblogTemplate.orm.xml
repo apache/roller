@@ -13,16 +13,19 @@
             class="org.apache.roller.pojos.WeblogTemplate">
         <table name="webpage"/>
         <named-query name="WeblogTemplate.getByWebsite">
-            <query>SELECT w FROM WeblogTemplate w Where w.website = ?1</query>
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1</query>
         </named-query>
         <named-query name="WeblogTemplate.getByWebsiteOrderByName">
-            <query>SELECT w FROM WeblogTemplate w Where w.website = ?1 ORDER BY w.name</query>
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 ORDER BY w.name</query>
         </named-query>
         <named-query name="WeblogTemplate.getByWebsite&amp;Link">
-            <query>SELECT w FROM WeblogTemplate w Where w.website = ?1 AND w.link = ?2</query>
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.link = ?2</query>
+        </named-query>
+        <named-query name="WeblogTemplate.getByAction">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.action = ?2</query>
         </named-query>
         <named-query name="WeblogTemplate.getByWebsite&amp;Name">
-            <query>SELECT w FROM WeblogTemplate w Where w.website = ?1 AND w.name= ?2</query>
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.name= ?2</query>
         </named-query>
 
         <attributes>
@@ -34,6 +37,9 @@
             </basic>
             <basic name="description">
                 <column name="description" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="action">
+                <column name="action" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="link">
                 <column name="link" insertable="true" updatable="true" unique="false"/>

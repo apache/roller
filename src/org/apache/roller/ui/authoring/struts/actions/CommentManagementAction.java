@@ -45,7 +45,6 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
@@ -266,7 +265,6 @@ public final class CommentManagementAction extends DispatchAction {
     private void sendCommentNotifications(
         HttpServletRequest req, List comments) throws RollerException {
         
-        RollerContext rc = RollerContext.getRollerContext();                             
         String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
         try {
             if (rootURL == null || rootURL.trim().length()==0) {

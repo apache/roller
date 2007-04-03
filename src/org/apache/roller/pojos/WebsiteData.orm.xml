@@ -218,6 +218,9 @@
 			<basic name="pageModels">
 				<column name="pagemodels" insertable="true" updatable="true" unique="false"/>
 			</basic>
+			<basic name="customStylesheetPath">
+				<column name="customstylesheet" insertable="true" updatable="true" unique="false"/>
+			</basic>
 			<many-to-one name="creator" target-entity="org.apache.roller.pojos.UserData">
 				<join-column name="userid" insertable="true" updatable="true" nullable="false"/>
 			</many-to-one>
@@ -233,18 +236,18 @@
 			<transient name="adminUserCount"/>
 			<transient name="commentCount"/>
 			<transient name="commentModerationRequired"/>
+            <transient name="customStylesheet" />
 			<transient name="todaysHits"/>
 			<transient name="todaysReferrers"/>
 			<transient name="uRL"/>
 			<transient name="userCount"/>
-                        
-                        <transient name="defaultPage"/>
+            <transient name="defaultPage"/>
 			<transient name="entryCount"/>
-                        <transient name="initializedPlugins"/>
+            <transient name="initializedPlugins"/>
 			<transient name="pages"/>
-                        <transient name="weblogCategories"/>
-                        <transient name="localeInstance"/>
-                        <transient name="timeZoneInstance" />
+            <transient name="weblogCategories"/>
+            <transient name="localeInstance"/>
+            <transient name="timeZoneInstance" />
 		</attributes>
 	</entity>
 </entity-mappings>

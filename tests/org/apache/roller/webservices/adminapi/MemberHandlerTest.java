@@ -18,8 +18,8 @@
 package org.apache.roller.webservices.adminapi;
 
 import java.io.IOException;
-import org.apache.roller.webservices.adminapi.sdk.MemberEntrySet;
-import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
+import org.apache.roller.webservices.adminprotocol.sdk.MemberEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.UnexpectedRootElementException;
 import org.jdom.JDOMException;
 
 public class MemberHandlerTest extends HandlerBaseTest {

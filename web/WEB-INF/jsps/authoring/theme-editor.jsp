@@ -43,11 +43,11 @@ request.setAttribute("allowCustom", new Boolean(allowCustom));
         <tr>
             <td>
                 <p>
-                    <fmt:message key="themeEditor.yourCurrentTheme" />: <b><c:out value="${currentTheme}"/></b><br/>
+                    <fmt:message key="themeEditor.yourCurrentTheme" />: <b><c:out value="${currentTheme.name}"/></b><br/>
                     
                     <c:choose>
                         <c:when test="${currentTheme ne previewTheme}" >
-                            <fmt:message key="themeEditor.themeBelowIsCalled" /> <b><c:out value="${previewTheme}" /></b><br/>
+                            <fmt:message key="themeEditor.themeBelowIsCalled" /> <b><c:out value="${previewTheme.name}" /></b><br/>
                             <fmt:message key="themeEditor.savePrompt" /><br/>
                             <input type="button" 
                                 value='<fmt:message key="themeEditor.save" />'
@@ -62,7 +62,7 @@ request.setAttribute("allowCustom", new Boolean(allowCustom));
                                 tabindex="4" />
                         </c:when>
                         
-                        <c:when test="${(currentTheme ne customTheme) and allowCustom}">
+                        <c:when test="${(currentTheme.id ne customTheme) and allowCustom}">
                             <fmt:message key="themeEditor.youMayCustomize" /><br/>
                             <input type="button" 
                                 value='<fmt:message key="themeEditor.customize" />'
@@ -84,20 +84,25 @@ request.setAttribute("allowCustom", new Boolean(allowCustom));
                 <p>
                 <fmt:message key="themeEditor.selectTheme" /> : 
                 <select name="theme" size="1" onchange="this.form.submit()" >
-                    <c:forEach var="themeName" items="${themesList}">
+                    <c:forEach var="theme" items="${themesList}">
                         <c:choose>
-                            <c:when test="${themeName eq previewTheme}">
-                                <option value="<c:out value="${themeName}"/>" selected>
-                                    <c:out value="${themeName}"/>
+                            <c:when test="${theme.id eq previewTheme.id}">
+                                <option value="<c:out value="${theme.id}"/>" selected>
+                                    <c:out value="${theme.name}"/>
                                 </option>
                             </c:when>
                             <c:otherwise>
-                                <option value="<c:out value="${themeName}"/>">
-                                    <c:out value="${themeName}"/>
+                                <option value="<c:out value="${theme.id}"/>">
+                                    <c:out value="${theme.name}"/>
                                 </option>
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
+                    <c:if test="${allowCustomOption}">
+                            <option value="<c:out value="${customTheme}"/>" <c:if test="${previewTheme.id eq customTheme}">selected</c:if>>
+                            <c:out value="${customTheme}"/>
+                        </option>
+                    </c:if>
                 </select>
                 </p>
             </td>
@@ -106,7 +111,7 @@ request.setAttribute("allowCustom", new Boolean(allowCustom));
         <tr>
             <td>
                 <iframe name="preview" id="preview" 
-                src='<%= request.getContextPath() %>/roller-ui/authoring/preview/<c:out value="${model.website.handle}" />?theme=<c:out value="${previewTheme}"/>' 
+                src='<%= request.getContextPath() %>/roller-ui/authoring/preview/<c:out value="${model.website.handle}" />?theme=<c:out value="${previewTheme.id}"/>' 
                 frameborder=1 width="100%" height="400" 
                 marginheight="0" marginwidth="0"></iframe>
             </td>

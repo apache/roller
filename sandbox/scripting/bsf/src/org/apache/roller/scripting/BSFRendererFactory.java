@@ -27,7 +27,7 @@ import org.apache.roller.ui.rendering.RendererFactory;
 import org.apache.roller.util.Utilities;
 
 /**
- * RendererFactory that calls BSF scripting language.
+ * RendererFactory that calls BSF scripting languages (groovy, jruby and javascript).
  */
 public class BSFRendererFactory implements RendererFactory {   
     private static String[] names = {"groovy", "jruby", "javascript"};

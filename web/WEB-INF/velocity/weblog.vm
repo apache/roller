@@ -88,7 +88,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #end
 
     #else
-    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term))" />
+    <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term,$model.weblogCategory.path))" />
     #end
 #end
 

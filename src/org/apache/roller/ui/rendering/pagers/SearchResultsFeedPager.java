@@ -89,6 +89,13 @@ public class SearchResultsFeedPager extends AbstractPager {
         String term = feedRequest.getTerm();
         if(term != null && term.trim().length() > 0) {
             params.put("q", URLUtilities.encode(term.trim()));
+        }     
+        List tags = feedRequest.getTags();
+        if(tags != null && tags.size() > 0) {
+            params.put("tags", URLUtilities.getEncodedTagsString(tags));
+        }
+        if(feedRequest.isExcerpts()) {
+            params.put("excerpts", "true");
         }        
         return super.createURL(url, params);
     }

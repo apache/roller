@@ -84,7 +84,8 @@ create table webpage (
     navbar          $db.BOOLEAN_SQL_TYPE_FALSE not null,
     templatelang    varchar(20) not null,
     decorator       varchar(255) default null,
-    outputtype      varchar(48) default null
+    outputtype      varchar(48) default null,
+    action          varchar(16) not null default 'custom'
 );
 create index wp_name_idx on webpage( name$!db.INDEXSIZE );
 create index wp_link_idx on webpage( link$!db.INDEXSIZE );
@@ -122,7 +123,8 @@ create table website (
     lastmodified         $db.TIMESTAMP_SQL_TYPE,
     pagemodels           varchar(255) default null,
     enablemultilang   $db.BOOLEAN_SQL_TYPE_FALSE not null,
-    showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null
+    showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
+    customstylesheet  varchar(128)
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);

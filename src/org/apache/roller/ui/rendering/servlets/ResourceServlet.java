@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.FileManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.pojos.WebsiteData;
@@ -104,20 +104,19 @@ public class ResourceServlet extends HttpServlet {
         InputStream resourceStream = null;
         
         // first see if resource comes from weblog's shared theme
-        if(!Theme.CUSTOM.equals(weblog.getEditorTheme())) {
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme weblogTheme = themeMgr.getTheme(weblog.getEditorTheme());
+        try {
+            Theme weblogTheme = weblog.getTheme();
+            if(weblogTheme != null) {
                 File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
                 if(resource != null) {
                     resourceLastMod = resource.lastModified();
                     resourceStream = new FileInputStream(resource);
                 }
-            } catch (Exception ex) {
-                // hmmm, some kind of error getting theme.  that's an error.
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
             }
+        } catch (Exception ex) {
+            // hmmm, some kind of error getting theme.  that's an error.
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
         }
         
         // if not from theme then see if resource is in weblog's upload dir

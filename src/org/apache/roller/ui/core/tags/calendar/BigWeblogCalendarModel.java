@@ -28,7 +28,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.URLUtilities;
@@ -75,7 +74,6 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     public String getContent(Date day) {
         String content = null;
         try {
-            RollerContext rctx = RollerContext.getRollerContext();
             StringBuffer sb = new StringBuffer();
             
             // get the 8 char YYYYMMDD datestring for day, returns null

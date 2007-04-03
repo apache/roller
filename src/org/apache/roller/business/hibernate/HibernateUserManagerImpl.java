@@ -238,6 +238,9 @@ public class HibernateUserManagerImpl implements UserManager {
         
     public void removePage(WeblogTemplate page) throws RollerException {
         this.strategy.remove(page);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
         
     public void addUser(UserData newUser) throws RollerException {
@@ -673,6 +676,32 @@ public class HibernateUserManagerImpl implements UserManager {
             throw new RollerException(e);
         }
     }
+    
+    
+    /**
+     * @see org.apache.roller.model.UserManager#getPageByAction(WebsiteData, java.lang.String)
+     */
+    public WeblogTemplate getPageByAction(WebsiteData website, String action)
+            throws RollerException {
+        
+        if (website == null)
+            throw new RollerException("website is null");
+        
+        if (action == null)
+            throw new RollerException("Action name is null");
+        
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(WeblogTemplate.class);
+            criteria.add(Expression.eq("website", website));
+            criteria.add(Expression.eq("action", action));
+            
+            return (WeblogTemplate) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
     
     /**
      * @see org.apache.roller.model.UserManager#getPageByName(WebsiteData, java.lang.String)

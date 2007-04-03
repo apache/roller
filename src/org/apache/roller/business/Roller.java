@@ -28,6 +28,7 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.business.search.IndexManager;
+import org.apache.roller.business.themes.ThemeManager;
 
 
 /** 

@@ -44,7 +44,6 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.WSSEUtilities;
@@ -115,7 +114,6 @@ import org.apache.roller.util.cache.CacheManager;
 public class RollerAtomHandler implements AtomHandler {
     private HttpServletRequest mRequest;
     private Roller             mRoller;
-    private RollerContext      mRollerContext;
     private UserData           user;
     private int                mMaxEntries = 20;
     //private MessageDigest    md5Helper = null;
@@ -134,7 +132,6 @@ public class RollerAtomHandler implements AtomHandler {
     public RollerAtomHandler(HttpServletRequest request) {
         mRequest = request;
         mRoller = RollerFactory.getRoller();
-        mRollerContext = RollerContext.getRollerContext();
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //String userName = authenticateWSSE(request);
@@ -938,8 +935,6 @@ public class RollerAtomHandler implements AtomHandler {
                             boolean enabled = user.getEnabled().booleanValue();
                             if (enabled) {
                                 // are passwords encrypted?
-                                RollerContext rollerContext =
-                                        RollerContext.getRollerContext();
                                 String encrypted =
                                         RollerConfig.getProperty("passwds.encryption.enabled");
                                 password = userPass.substring(p+1);

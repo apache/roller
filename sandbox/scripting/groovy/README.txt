@@ -3,14 +3,19 @@ Some experiments with using Groovy
 
 A) Some scripts that run against the Roller API
 
-   bin/groovy - Runs Groovy with Roller jars in path. Edit it to set paths.
-   bin/roller-custom.properties - Database properties for bin/groovy
-   bin/listusers.gy - Lists users and roles in Roller system
-   bin/createuser.gy - Create a user
-   bin/createblog.gy - Create a blog
+   examples/rollerapi/groovy - Runs Groovy with Roller jars in path. Edit it to set paths.
+   examples/rollerapi/roller-custom.properties - Database properties for bin/groovy
+   examples/rollerapi/listusers.gy - Lists users and roles in Roller system
+   examples/rollerapi/createuser.gy - Create a user
+   examples/rollerapi/createblog.gy - Create a blog
 
 
-B) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code 
+B) Some scripts that run against the Roller Admin Protocol
+
+   examples/adminprotocol
+
+
+C) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code 
    with Groovlet-style "out" and "html" bindings.
 
    The implementation:
@@ -43,7 +48,7 @@ B) A Roller GroovletRenderer that can evaluate a Roller template as Groovy code
             }
         }
 
-C) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
+D) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
    with GSP-style "out" and "html" bindings.
 
     The implementation:
@@ -80,7 +85,7 @@ C) A Roller GSPRenderer that can evaluate a Roller template as a Groovy Template
         </html>
 
 
-To use renderers (B) and (C) in Roller:
+To use renderers (C) and (D) in Roller:
 
 1) Put roller-groovy.jar and groovy-all-1.0.jar in WEB-INF/lib
 

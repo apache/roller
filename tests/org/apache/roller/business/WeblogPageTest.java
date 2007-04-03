@@ -69,6 +69,7 @@ public class WeblogPageTest extends TestCase {
         }
         
         testPage = new WeblogTemplate();
+        testPage.setAction(WeblogTemplate.ACTION_WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
         testPage.setLink("testTemp");
@@ -154,9 +155,15 @@ public class WeblogPageTest extends TestCase {
         assertNotNull(page);
         assertEquals(testPage.getContents(), page.getContents());
         
-        // lookup by name
+        // lookup by action
         page = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        page = mgr.getPageByAction(testWeblog, testPage.getAction());
+        assertNotNull(page);
+        assertEquals(testPage.getContents(), page.getContents());
+        
+        // lookup by name
+        page = null;
         page = mgr.getPageByName(testWeblog, testPage.getName());
         assertNotNull(page);
         assertEquals(testPage.getContents(), page.getContents());

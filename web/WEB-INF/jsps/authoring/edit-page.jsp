@@ -38,6 +38,7 @@
     <html:hidden property="id"/>
     <html:hidden property="decoratorName" />
     <html:hidden property="required" />
+    <html:hidden property="action" />
     <input type="hidden" name="method" value="update" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
     

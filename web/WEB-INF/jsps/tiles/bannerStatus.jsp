@@ -17,7 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <%
-RollerContext rctx = RollerContext.getRollerContext();
 RollerSession rollerSession = RollerSession.getRollerSession(request);
 UserData user = rollerSession.getAuthenticatedUser();
 

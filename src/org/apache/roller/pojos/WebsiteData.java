@@ -39,12 +39,12 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.ThemeNotFoundException;
+import org.apache.roller.business.themes.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
-import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.util.UUIDGenerator;
@@ -95,6 +95,7 @@ public class WebsiteData implements Serializable {
     private String  pageModels       = new String();
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
+    private String customStylesheetPath = null;
     
     
     // Associated objects
@@ -183,6 +184,28 @@ public class WebsiteData implements Serializable {
         permissions.remove(perms);
     }
     
+    
+    /**
+     * Get the Theme object in use by this weblog, or null if no theme selected.
+     */
+    public Theme getTheme() throws RollerException {
+        
+        // if theme is custom or null then just return null
+        if(getEditorTheme() == null || Theme.CUSTOM.equals(getEditorTheme())) {
+            return null;
+        } else {
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                return themeMgr.getTheme(getEditorTheme());
+            } catch(ThemeNotFoundException tnfe) {
+                // i sure hope not!
+                log.error("Unable to find theme = "+getEditorTheme(), tnfe);
+                return null;
+            }
+        }
+    }
+    
+    
     /**
      * Lookup the default page for this website.
      */
@@ -192,19 +215,9 @@ public class WebsiteData implements Serializable {
         
         // first check if this user has selected a theme
         // if so then return the themes Weblog template
-        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
-                
-                // this is a bit iffy :/
-                // we assume that all theme use "Weblog" for a default template
-                template = usersTheme.getTemplate("Weblog");
-                
-            } catch(ThemeNotFoundException tnfe) {
-                // i sure hope not!
-                log.error(tnfe);
-            }
+        Theme weblogTheme = getTheme();
+        if(weblogTheme != null) {
+            template = weblogTheme.getTemplateByAction(Template.ACTION_WEBLOG);
         }
         
         // if we didn't get the Template from a theme then look in the db
@@ -221,44 +234,35 @@ public class WebsiteData implements Serializable {
     
     
     /**
-     * Lookup a Template for this website by id.
+     * Lookup a Template for this website by action.
+     * 
+     * @roller.wrapPojoMethod type="pojo"
      */
-    public Template getPageById(String id) throws RollerException {
+    public Template getPageByAction(String action) throws RollerException {
         
-        if(id == null)
+        if(action == null)
             return null;
+        
+        log.debug("looking up template for action ["+action+"]");
         
         Template template = null;
         
         // first check if this user has selected a theme
         // if so then return the proper theme template
-        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
-            
-            // we don't actually expect to get lookups for theme pages by id
-            // but we have to be thorough and check anyways
-            String[] split = id.split(":",  2);
-            
-            // only continue if this looks like a theme id
-            // and the theme name matches this users current theme
-            if(split.length == 2 && split[0].equals(this.editorTheme)) {
-                try {
-                    ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                    Theme usersTheme = themeMgr.getTheme(this.editorTheme);
-                    template = usersTheme.getTemplate(split[1]);
-                    
-                } catch(ThemeNotFoundException tnfe) {
-                    // i sure hope not!
-                    log.error(tnfe);
-                }
-            }
-            
-        }
+        Theme weblogTheme = getTheme();
+        if(weblogTheme != null) {
+            template = weblogTheme.getTemplateByAction(action);
+        } else {
         
-        // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
+            // NOTE: we specifically do *NOT* return templates by action from the
+            // weblog's custom templates if the weblog is using a theme because we
+            // don't want old templates to take effect when using a specific theme
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            template = userMgr.getPageByName(this, name);
+            template = userMgr.getPageByAction(this, action);
         }
+
+        if(template != null)
+            log.debug("returning template ["+template.getId()+"]");
         
         return template;
     }
@@ -279,18 +283,9 @@ public class WebsiteData implements Serializable {
         
         // first check if this user has selected a theme
         // if so then return the proper theme template
-        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
-            
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
-                template = usersTheme.getTemplate(name);
-                
-            } catch(ThemeNotFoundException tnfe) {
-                // i sure hope not!
-                log.error(tnfe);
-            }
-            
+        Theme weblogTheme = getTheme();
+        if(weblogTheme != null) {
+            template = weblogTheme.getTemplate(name);
         }
         
         // if we didn't get the Template from a theme then look in the db
@@ -321,18 +316,9 @@ public class WebsiteData implements Serializable {
         
         // first check if this user has selected a theme
         // if so then return the proper theme template
-        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
-            
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
-                template = usersTheme.getTemplateByLink(link);
-                
-            } catch(ThemeNotFoundException tnfe) {
-                // i sure hope not!
-                log.error(tnfe);
-            }
-            
+        Theme weblogTheme = getTheme();
+        if(weblogTheme != null) {
+            template = weblogTheme.getTemplateByLink(link);
         }
         
         // if we didn't get the Template from a theme then look in the db
@@ -372,12 +358,11 @@ public class WebsiteData implements Serializable {
         
         
         // now get theme pages if needed and put them in place of db pages
-        if (this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
-            try {
+        try {
+            Theme weblogTheme = getTheme();
+            if(weblogTheme != null) {
                 Template template = null;
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
-                Iterator themePages = usersTheme.getTemplates().iterator();
+                Iterator themePages = weblogTheme.getTemplates().iterator();
                 while(themePages.hasNext()) {
                     template = (Template) themePages.next();
                     
@@ -385,10 +370,10 @@ public class WebsiteData implements Serializable {
                     // pages in the pages list, which is what we want
                     pages.put(template.getName(), template);
                 }
-            } catch(Exception e) {
-                // how??
-                log.error(e);
             }
+        } catch(Exception e) {
+            // how??
+            log.error(e);
         }
         
         return new ArrayList(pages.values());
@@ -1066,6 +1051,37 @@ public class WebsiteData implements Serializable {
 
     
     /**
+     * The path under the weblog's resources to a stylesheet override.
+     *
+     * @hibernate.property column="customstylesheet" not-null="false"
+     */
+    public String getCustomStylesheetPath() {
+        return customStylesheetPath;
+    }
+
+    public void setCustomStylesheetPath(String customStylesheetPath) {
+        this.customStylesheetPath = customStylesheetPath;
+    }
+    
+    
+    public String getCustomStylesheet() {
+        try {
+            Theme weblogTheme = getTheme();
+            if(weblogTheme != null) {
+                return weblogTheme.getCustomStylesheet();
+            } else {
+                return getCustomStylesheetPath();
+            }
+        } catch(RollerException re) {
+            // hmmm, some exception getting theme
+            return null;
+        }
+    }
+    
+    // no-op to please xdoclet
+    public void setCustomStylesheet(String noop) {}
+    
+    /**
      * Get initialized plugins for use during rendering process.
      */
     public Map getInitializedPlugins() {
@@ -1392,8 +1408,3 @@ public class WebsiteData implements Serializable {
     public void setEntryCount(int ignored) {}
     
 }
-
-
-
-
-

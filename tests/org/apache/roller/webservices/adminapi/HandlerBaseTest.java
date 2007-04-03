@@ -27,13 +27,13 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.util.Base64;
-import org.apache.roller.webservices.adminapi.sdk.MemberEntry;
-import org.apache.roller.webservices.adminapi.sdk.MemberEntrySet;
-import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
-import org.apache.roller.webservices.adminapi.sdk.UserEntry;
-import org.apache.roller.webservices.adminapi.sdk.UserEntrySet;
-import org.apache.roller.webservices.adminapi.sdk.WeblogEntry;
-import org.apache.roller.webservices.adminapi.sdk.WeblogEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.MemberEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.MemberEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.UnexpectedRootElementException;
+import org.apache.roller.webservices.adminprotocol.sdk.UserEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.UserEntrySet;
+import org.apache.roller.webservices.adminprotocol.sdk.WeblogEntry;
+import org.apache.roller.webservices.adminprotocol.sdk.WeblogEntrySet;
 import org.jdom.JDOMException;
 
 public abstract class HandlerBaseTest extends AappTest {

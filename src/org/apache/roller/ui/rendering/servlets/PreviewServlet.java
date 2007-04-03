@@ -106,7 +106,7 @@ public class PreviewServlet extends HttpServlet {
         WebsiteData tmpWebsite = new WebsiteData();
         tmpWebsite.setData(weblog);
         if(previewTheme != null && previewTheme.isEnabled()) {
-            tmpWebsite.setEditorTheme(previewTheme.getName());
+            tmpWebsite.setEditorTheme(previewTheme.getId());
         } else if(Theme.CUSTOM.equals(previewRequest.getThemeName())) {
             tmpWebsite.setEditorTheme(Theme.CUSTOM);
         }

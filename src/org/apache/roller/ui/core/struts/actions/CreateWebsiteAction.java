@@ -37,12 +37,11 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.CreateWebsiteForm;
 import org.apache.roller.util.Utilities;
@@ -140,7 +139,6 @@ public class CreateWebsiteAction extends DispatchAction {
             saveErrors(request, errors);
             forward = mapping.findForward("createWebsite.page");
         } else try {
-            RollerContext rollerContext = RollerContext.getRollerContext();
             UserData user =
                 RollerSession.getRollerSession(request).getAuthenticatedUser();
             UserManager mgr = roller.getUserManager();
@@ -237,7 +235,6 @@ public class CreateWebsiteAction extends DispatchAction {
                 HttpServletResponse response, ActionMapping mapping, WebsiteData wd)
                 throws RollerException {
             super("createWebsite.title", request, response, mapping);
-            RollerContext rollerContext = RollerContext.getRollerContext();
             Roller roller = RollerFactory.getRoller();
             ThemeManager themeMgr = roller.getThemeManager();
             themes = themeMgr.getEnabledThemesList();

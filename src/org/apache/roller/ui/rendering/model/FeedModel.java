@@ -20,6 +20,7 @@ package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,8 @@ import org.apache.roller.util.URLUtilities;
 public class FeedModel implements Model {
     
     private static Log log = LogFactory.getLog(FeedModel.class); 
+    
+    private static int DEFAULT_ENTRIES = RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     
     private WeblogFeedRequest feedRequest = null;
     private WebsiteData weblog = null;
@@ -114,29 +117,12 @@ public class FeedModel implements Model {
         return feedRequest.getWeblogCategoryName();
     }
     
-    
     /**
      * Gets most recent entries limited by: weblog and category specified in 
      * request plus the weblog.entryDisplayCount.
      */
     public Pager getWeblogEntriesPager() {
-        
-        // all feeds get the site-wide default # of entries
-        int entryCount =
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
-        
-        String  pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
-                    feedRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), feedRequest.getWeblogCategoryName(), 
-                    null, feedRequest.getTags(), feedRequest.isExcerpts(), true);
-       
-        return new WeblogEntriesListPager(
-            pagerUrl, weblog, null, feedRequest.getWeblogCategoryName(),
-            feedRequest.getTags(),
-            feedRequest.getLocale(),
-            -1,
-            feedRequest.getPage(), 
-            entryCount);        
+        return new FeedEntriesPager(feedRequest);        
     }
     
     
@@ -145,24 +131,9 @@ public class FeedModel implements Model {
      * the weblog.entryDisplayCount.
      */
     public Pager getCommentsPager() {
-            
-        // all feeds get the site-wide default # of entries
-        int entryCount =
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+        return new FeedCommentsPager(feedRequest);
+    }    
         
-        String pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
-                    feedRequest.getLocale(), feedRequest.getType(),
-                    feedRequest.getFormat(), null, null, null,
-                    feedRequest.isExcerpts(), true);
-        
-        return new CommentsPager(
-            pagerUrl,
-            feedRequest.getLocale(),
-            -1,
-            feedRequest.getPage(), 
-            entryCount);        
-    }
-    
     /**
      * Returns the list of tags specified in the request /?tags=foo+bar
      * @return
@@ -170,5 +141,69 @@ public class FeedModel implements Model {
     public List getTags() {
         return feedRequest.getTags();
     }    
+
+    public static class FeedEntriesPager extends WeblogEntriesListPager {
+        
+        private WeblogFeedRequest feedRequest;
+        
+        public FeedEntriesPager(WeblogFeedRequest feedRequest) {
+            super(URLUtilities.getWeblogFeedURL(feedRequest.getWeblog(), 
+                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null, null, false, true), 
+                    feedRequest.getWeblog(), null, null, feedRequest.getTags(),
+                    feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+            this.feedRequest = feedRequest;
+        }
+        
+        protected String createURL(String url, Map params) {
+            List tags = feedRequest.getTags();
+            if(tags != null && tags.size() > 0) {
+                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+            }
+            String category = feedRequest.getWeblogCategoryName();
+            if(category != null && category.trim().length() > 0) {
+                params.put("cat", URLUtilities.encode(category));
+            }  
+            if(feedRequest.isExcerpts()) {
+                params.put("excerpts", "true");
+            }            
+            return super.createURL(url, params);
+        }
+        
+        public String getUrl() {
+            return createURL(super.getUrl(), new HashMap());
+        }
+    }
     
+    public static class FeedCommentsPager extends CommentsPager {
+        
+        private WeblogFeedRequest feedRequest;
+        
+        public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
+            super(URLUtilities.getWeblogFeedURL(feedRequest.getWeblog(), 
+                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null,
+                    null, false, true), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+            this.feedRequest = feedRequest;
+        }
+        
+        protected String createURL(String url, Map params) {
+            List tags = feedRequest.getTags();
+            if(tags != null && tags.size() > 0) {
+                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+            }
+            String category = feedRequest.getWeblogCategoryName();
+            if(category != null && category.trim().length() > 0) {
+                params.put("cat", URLUtilities.encode(category));
+            }  
+            if(feedRequest.isExcerpts()) {
+                params.put("excerpts", "true");
+            }   
+            return super.createURL(url, params);
+        }
+        
+        public String getUrl() {
+            return createURL(super.getUrl(), new HashMap());
+        }
+    }      
 }

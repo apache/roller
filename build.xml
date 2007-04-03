@@ -95,7 +95,7 @@ Key Targets:
 <!-- XDoclet code generation -->
 <!-- ********************************************************************* -->
 
-<target name="generate" depends="gen-wrappers,gen-forms" >
+<target name="generate" depends="gen-forms" >
 </target>
 
 <!-- ============================================== -->
@@ -440,8 +440,10 @@ ro.buildUser=${user.name}
         <fileset dir="./contrib/lib" />
         <fileset refid="base.jars" />
         <fileset refid="presentation.jars" />
+        <!--
         <fileset refid="hibernate.jar" />
         <fileset refid="hibernate.jars" />
+        -->
         <fileset refid="jpa.jars" />
         <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
@@ -1050,11 +1052,11 @@ ro.buildUser=${user.name}
 
 </target>
 
-    <target name="test-aapp" depends="test-aapp-sdk, test-aapp-handler"/>
+    <target name="test-rap" depends="test-rap-sdk, test-rap-handler"/>
    
-    <target name="test-aapp-sdk">
-        <mkdir dir="${build.reports}/webservices/adminapi/sdk/xml"/>
-        <mkdir dir="${build.reports}/webservices/adminapi/sdk/html"/>
+    <target name="test-rap-sdk">
+        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/xml"/>
+        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/html"/>
 
         <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
             <syspropertyset>
@@ -1064,23 +1066,23 @@ ro.buildUser=${user.name}
                 <path refid="tests.run.path"/>
             </classpath>
             <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/webservices/adminapi/sdk/xml">
+            <batchtest toDir="${build.reports}/webservices/protocol/sdk/xml">
                 <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/webservices/adminapi/sdk/*EntryTest.class"/>
+                    <include name="org/apache/roller/webservices/protocol/sdk/*EntryTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.reports}/webservices/adminapi/sdk/xml">
-            <fileset dir="${build.reports}/webservices/adminapi/sdk/xml">
+        <junitreport todir="${build.reports}/webservices/protocol/sdk/xml">
+            <fileset dir="${build.reports}/webservices/protocol/sdk/xml">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/webservices/adminapi/sdk/html"/>
+            <report format="noframes" toDir="${build.reports}/webservices/protocol/sdk/html"/>
         </junitreport>
     </target>
     
-    <target name="test-aapp-handler">
-        <mkdir dir="${build.reports}/webservices/adminapi/xml"/>
-        <mkdir dir="${build.reports}/webservices/adminapi/html"/>
+    <target name="test-rap-handler">
+        <mkdir dir="${build.reports}/webservices/protocol/xml"/>
+        <mkdir dir="${build.reports}/webservices/protocol/html"/>
 
         <junit fork="true" dir="${build.tests}" printsummary="on">
             <syspropertyset>
@@ -1090,17 +1092,17 @@ ro.buildUser=${user.name}
                 <path refid="tests.run.path"/>
             </classpath>
             <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/webservices/adminapi/xml">
+            <batchtest toDir="${build.reports}/webservices/protocol/xml">
                 <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/webservices/adminapi/*HandlerTest.class"/>
+                    <include name="org/apache/roller/webservices/protocol/*HandlerTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.reports}/webservices/adminapi/xml">
-            <fileset dir="${build.reports}/webservices/adminapi/xml">
+        <junitreport todir="${build.reports}/webservices/protocol/xml">
+            <fileset dir="${build.reports}/webservices/protocol/xml">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/webservices/adminapi/html"/>
+            <report format="noframes" toDir="${build.reports}/webservices/protocol/html"/>
         </junitreport>
     </target>
 
@@ -1231,15 +1233,15 @@ Use -Dverbose=1 to get verbose output.
 <!-- Experimental Admin API SDK -->
 <!-- ********************************************************************* -->
 
-<!-- build standalone aapp-sdk.jar, for external consumption -->
-<target name="aapp-sdk" depends="build">
+<!-- build standalone rap-sdk.jar, for external consumption -->
+<target name="rap-sdk" depends="build">
     <mkdir dir="${build.lib}"/>
-    <jar destfile="${build.lib}/roller-aapp-sdk.jar">
+    <jar destfile="${build.lib}/roller-rap-sdk.jar">
         <manifest>
             <attribute name="Manifest-Version" value="${ro.version}"/>
         </manifest>
         <fileset dir="${build.compile.web}">
-            <include name="org/apache/roller/webservices/adminapi/sdk/*"/>
+            <include name="org/apache/roller/webservices/adminprotocol/sdk/*"/>
         </fileset>        
     </jar>
 </target>

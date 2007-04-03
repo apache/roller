@@ -37,6 +37,16 @@
                     <location>apps/planet/src/java</location>
                 </source-folder>
                 <source-folder>
+                    <label>sandbox/scripting/bsf/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/bsf/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/groovy/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/groovy/src</location>
+                </source-folder>
+                <source-folder>
                     <label>web</label>
                     <type>doc_root</type>
                     <location>web</location>
@@ -120,6 +130,14 @@
                         <label>apps/planet/src/java</label>
                         <location>apps/planet/src/java</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/bsf/src</label>
+                        <location>sandbox/scripting/bsf/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/groovy/src</label>
+                        <location>sandbox/scripting/groovy/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -145,7 +163,9 @@
                 <package-root>apps/planet/src/java</package-root>
                 <package-root>apps/planet/test/java</package-root>
                 <package-root>sandbox/jdobackend/src</package-root>
-                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:tools/lib/jdom.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar:contrib/lib/textile4j-1.20.jar:tools/buildtime/derby.jar:tools/buildtime/ant-1.6.2/ant.jar:tools/buildtime/derbynet.jar:tools/lib/rome-0.9.jar:tools/lib/rome-fetcher-0.9.jar:tools/buildtime/activation.jar:tools/buildtime/mail.jar:tools/spring-1.2/acegi-security-1.0.1.jar:tools/spring-1.2/spring.jar:sandbox/jdobackend/lib/bcel-5.1.jar:sandbox/jdobackend/lib/jdo2-api-2.0.jar:sandbox/jdobackend/lib/jdom.jar:sandbox/jdobackend/lib/jpox-1.1.0-beta-5.jar:sandbox/jdobackend/lib/jpox-1.1.0.jar:sandbox/jdobackend/lib/jpox-enhancer-1.1.0-beta-5.jar:sandbox/jdobackend/lib/jpox-enhancer-1.1.0.jar:sandbox/jdobackend/lib/toplink-essentials.jar</classpath>
+                <package-root>sandbox/scripting/bsf/src</package-root>
+                <package-root>sandbox/scripting/groovy/src</package-root>
+                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:tools/lib/jdom.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar:contrib/lib/textile4j-1.20.jar:tools/buildtime/derby.jar:tools/buildtime/ant-1.6.2/ant.jar:tools/buildtime/derbynet.jar:tools/lib/rome-0.9.jar:tools/lib/rome-fetcher-0.9.jar:tools/buildtime/activation.jar:tools/buildtime/mail.jar:tools/spring-1.2/acegi-security-1.0.1.jar:tools/spring-1.2/spring.jar:sandbox/scripting/bsf/lib/bsf.jar:tools/openjpa-0.9.6/geronimo-j2ee-connector_1.5_spec.jar:tools/openjpa-0.9.6/geronimo-jta_1.0.1B_spec-1.0.1.jar:tools/openjpa-0.9.6/openjpa-all-0.9.6-incubating.jar:tools/openjpa-0.9.6/persistence-api-1.0.jar:tools/openjpa-0.9.6/serp-1.11.0.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>

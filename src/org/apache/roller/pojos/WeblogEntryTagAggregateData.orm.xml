@@ -27,16 +27,16 @@
             <query>SELECT w.name FROM WeblogEntryTagAggregateData w WHERE w.name IN (?1) AND w.weblog IS NULL</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite&amp;StartDate">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.lastUsed &gt;= ?2</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.lastUsed &gt;= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsite">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&amp;StartDate">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL AND w.lastUsed &gt;= ?2</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL AND w.lastUsed &gt;= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull">
-            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL</query>
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.total DESC</query>
         </named-query>
         <named-query name="WeblogEntryTagAggregateData.getTagsByWebsite&amp;NameStartsWith">
             <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE w.weblog = ?1 AND w.name LIKE ?2 GROUP BY w.name, w.total </query>

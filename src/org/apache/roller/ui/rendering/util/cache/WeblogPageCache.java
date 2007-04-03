@@ -201,11 +201,14 @@ public class WeblogPageCache {
                 key.append("/").append(cat);
             }
             
-            if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-              Set ordered = new TreeSet(pageRequest.getTags());
-              String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
-              key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
-            }            
+            if("tags".equals(pageRequest.getContext())) {
+                key.append("/tags/");
+                if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+                    Set ordered = new TreeSet(pageRequest.getTags());
+                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
+                    key.append(Utilities.stringArrayToString(tags,"+"));
+                }
+            }
         }
         
         if(pageRequest.getLocale() != null) {

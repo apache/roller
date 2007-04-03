@@ -29,12 +29,33 @@ import java.util.Date;
  */
 public interface Template {
     
+    public static final String ACTION_WEBLOG = "weblog";
+    public static final String ACTION_PERMALINK = "permalink";
+    public static final String ACTION_SEARCH = "search";
+    public static final String ACTION_TAGSINDEX = "tagsIndex";
+    public static final String ACTION_CUSTOM = "custom";
+    
+    // the full list of supported special actions, which purposely does not
+    // contain an entry for the 'custom' action
+    public static final String[] ACTIONS = {
+        ACTION_WEBLOG, 
+        ACTION_PERMALINK, 
+        ACTION_SEARCH, 
+        ACTION_TAGSINDEX
+    };
+    
+    
     /**
      * The unique identifier for this Template.
      *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getId();
+    
+    /**
+     * The action this template is defined for.
+     */
+    public String getAction();
     
     /**
      * A simple name for this Template.

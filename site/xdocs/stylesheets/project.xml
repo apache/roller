@@ -15,7 +15,7 @@ limitations under the License.
 -->
 <project href="http://www.apache.org/">
 
-<title>Apache Roller (incubating)</title>
+<title>Apache Roller</title>
 <body>
     
 <projects><title>Project information</title>
@@ -37,8 +37,8 @@ limitations under the License.
 </projects>
 
 <menu><title>Related Sites</title>
-  <li><a href="http://incubator.apache.org/projects/roller.html">Roller Incubation Status</a></li>
-  <li><a href="http://rollerweblogger.org">Old Roller website</a></li>
+  <li><a href="http://rollerweblogger.org/project">Roller project announcements blog</a></li>
+  <li><a href="http://roller.dev.java.net"></a>Java.Net Roller Support projet</li>
 </menu>
 
 <menu><title href="http://projects.apache.org/">Related Projects</title>
@@ -47,7 +47,6 @@ limitations under the License.
   <li><a href="http://jakarta.apache.org"></a>Apache Jakarta</li>
   <li><a href="http://db.apache.org"></a>Apache Derby</li>
   <li><a href="http://incubator.apache.org/abdera"></a>Apache Abdera (incubating)</li>
-  <li><a href="http://roller.dev.java.net"></a>Java.Net Roller</li>
   <li><a href="http://rome.dev.java.net"></a>Java.Net ROME</li>
   <li><a href="http://blogapps.dev.java.net"></a>Java.Net Blogapps</li>
 </menu>

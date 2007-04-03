@@ -6,6 +6,13 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 #addColumnNull("webpage" "outputtype" "varchar(48)")
 
+-- add new action column to webpage table, default value is custom
+#addColumnNotNull("webpage" "action" "varchar(16)" "'custom'")
+update webpage set action = 'weblog' where name = 'Weblog';
+
+-- add new custom stylesheet column to website table
+#addColumnNull("website" "customstylesheet" "varchar(128)")
+
 -- remove old id column of group subscription table
 alter table rag_group_subscription drop column id;
 

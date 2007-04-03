@@ -193,6 +193,15 @@ public class WeblogRequestMapper implements RequestMapper {
             response.sendRedirect(redirectUrl);
             return true;
             
+        } else if(weblogRequestContext != null &&
+                "tags".equals(weblogRequestContext)) {
+            // tags section can have an index page at /<weblog>/tags/ and
+            // a tags query at /<weblog>/tags/tag1+tag2, buth that's it
+            if((weblogRequestData == null && !trailingSlash) ||
+                    (weblogRequestData != null && trailingSlash)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return true;
+            }
         } else if(weblogRequestContext != null && trailingSlash) {
             // this means that someone has accessed a weblog url and included
             // a trailing slash, like /<weblog>/entry/<anchor>/ which is not

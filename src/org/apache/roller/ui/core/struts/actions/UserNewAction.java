@@ -44,7 +44,6 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.security.CustomUserRegistry;
 import org.apache.roller.ui.authoring.struts.formbeans.UserFormEx;
@@ -139,7 +138,6 @@ public class UserNewAction extends UserBaseAction {
         UserFormEx form = (UserFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         ServletContext ctx = rreq.getServletContext();
-        RollerContext rollerContext = RollerContext.getRollerContext();
         
         boolean reg_allowed =
                 RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");

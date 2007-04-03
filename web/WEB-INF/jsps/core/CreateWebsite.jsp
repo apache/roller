@@ -15,6 +15,10 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
+<%
+java.util.List themes = ((org.apache.roller.ui.core.struts.actions.CreateWebsiteAction.CreateWebsitePageModel)request.getAttribute("model")).getThemes();
+request.setAttribute("themes", themes);
+%>
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
@@ -101,11 +105,11 @@ function handlePreview() {
     <td class="label"><label for="theme" /><fmt:message key="createWebsite.theme" /></label></td>
     <td class="field">
        <html:select property="theme" size="1" onchange="previewImage(this[selectedIndex].value)">
-           <html:options name="model" property="themes" />
+           <html:options collection="themes" property="id" labelProperty="name" />
        </html:select>
        <br />
        <br />
-       <img name="preview" src='<%= request.getContextPath() %>/themes/<c:out value="${model.themes[0]}"/>/sm-theme-<c:out value="${model.themes[0]}" />.png' />
+       <img name="preview" src='<%= request.getContextPath() %>/themes/<c:out value="${model.themes[0].id}"/>/sm-theme-<c:out value="${model.themes[0].id}" />.png' />
     </td>
     <td class="description"><fmt:message key="createWebsite.tip.theme" /></td>
 </tr>
