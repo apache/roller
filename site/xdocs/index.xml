@@ -16,7 +16,7 @@ limitations under the License.
 <document>
   <properties>
     <author email="apache.AT.apache.DOT.org">The Apache Software Foundation</author>
-    <title>Apache Roller (incubating) - open source Java blog server</title>
+    <title>Apache Roller - open source Java blog server</title>
   </properties>
 <body>
 
@@ -26,7 +26,7 @@ limitations under the License.
 
 <section><title>Welcome!</title>
     <p>
-        Apache Roller (incubating) is a full-featured, multi-user and group-blog 
+        Apache Roller is a full-featured, multi-user and group-blog 
         server suitable for blog sites large and small. This is the project's 
         homepage, which provides a brief overview of the software and project as 
         well as links to 
@@ -63,20 +63,13 @@ limitations under the License.
 
 <section><title>Project Status</title>
 <p>
-    As a web application, Roller is a stable and production-ready blog 
+    Roller is a stable and production-ready blog 
     server in it's third major revision. It powers internal and external 
     employee blogs and Sun, IBM and other companies as well as the JRoller.com 
-    Java blogging community. But as a project, Roller is in incubation.
+    Java blogging community. Roller graduated from the Apache Incubator in March
+    2007 and is now an official Apache project.
 </p>        
-<p>
-    The Roller project is in the process of moving to the 
-    <a href="http://www.apache.org">Apache Software Foundation</a> (ASF) and is 
-    currently part of the <a href="http://incubator.apache.org/">Apache Incubator 
-    program</a>. The ASF incubation process is designed to ensure that projects 
-    entering Apache have a strong and diverse community, have Apache compatible 
-    licensing and work according to the ASF's philosophy and guidelines for 
-    collaborative development. 
-</p>
+
     
 </section>
 
