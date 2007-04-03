@@ -19,13 +19,35 @@
 
 <h2><fmt:message key="welcome.title" /></h2>
 
-<p><fmt:message key="welcome.accountCreated" /></p>
+<% 
 
-<p><html:link forward="login-redirect"><fmt:message key="welcome.clickHere" /></html:link> 
-<fmt:message key="welcome.toLoginAndPost" /></p>
+	String activationStatus = (String) request.getAttribute("activationStatus"); 
+	if (activationStatus != null){
+		if (activationStatus.equals("0")) {
+			%>
+			<p><fmt:message key="welcome.accountCreated" /></p>
+			<p><fmt:message key="welcome.user.account.not.activated" /></p>
+			<% 
+		} else if(activationStatus.equals("1")) {
+			%>			
+			<p><fmt:message key="welcome.user.account.activated" /></p>
+			<p><html:link forward="login-redirect"><fmt:message key="welcome.clickHere" /></html:link> 
+			<fmt:message key="welcome.toLoginAndPost" /></p>
+			<%
+		} else if(activationStatus.equals("-1")) {
+			//error
+		}
+	} else {
+		%>
+		<p><fmt:message key="welcome.accountCreated" /></p>
+		<p><html:link forward="login-redirect"><fmt:message key="welcome.clickHere" /></html:link> 
+		<fmt:message key="welcome.toLoginAndPost" /></p>
+		<% 
+	}
+
+%>
+
+
 <br />
 <br />
 <br />
-
-
-

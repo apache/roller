@@ -394,4 +394,13 @@ public interface UserManager {
      */
     public void release();
     
+    
+    /**
+     * get a user by activation code
+     * @param activationCode
+     * @return
+     * @throws RollerException
+     */
+    public UserData getUserByActivationCode(String activationCode) throws RollerException;
+
 }
