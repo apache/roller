@@ -69,7 +69,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.WeblogEntryTagData;
-import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -228,7 +228,7 @@ public class RollerAtomHandler implements AtomHandler {
                 workspace.addCollection(uploadCol);
 
                 // And add one media collection for each of weblog's upload sub-directories
-                WeblogResource[] dirs;
+                ThemeResource[] dirs;
                 try {
                     dirs = mRoller.getFileManager().getDirectories(perm.getWebsite());
                     for (int i=0; i<dirs.length; i++) {
@@ -413,7 +413,7 @@ public class RollerAtomHandler implements AtomHandler {
                     "ERROR: cannot find specified weblog");
             }
             FileManager fmgr = mRoller.getFileManager();
-            WeblogResource[] files = fmgr.getFiles(website, path);
+            ThemeResource[] files = fmgr.getFiles(website, path);
                         
             if (canView(website)) {
                 Feed feed = new Feed();
@@ -429,8 +429,8 @@ public class RollerAtomHandler implements AtomHandler {
                 
                 SortedSet sortedSet = new TreeSet(new Comparator() {
                     public int compare(Object o1, Object o2) {
-                        WeblogResource f1 = (WeblogResource)o1;
-                        WeblogResource f2 = (WeblogResource)o2;
+                        ThemeResource f1 = (ThemeResource)o1;
+                        ThemeResource f2 = (ThemeResource)o2;
                         if (f1.getLastModified() < f2.getLastModified()) return 1;
                         else if (f1.getLastModified() == f2.getLastModified()) return 0;
                         else return -1;
@@ -446,7 +446,7 @@ public class RollerAtomHandler implements AtomHandler {
                     }
                 }
                 int count = 0;
-                WeblogResource[] sortedArray = (WeblogResource[])sortedSet.toArray(new WeblogResource[sortedSet.size()]);
+                ThemeResource[] sortedArray = (ThemeResource[])sortedSet.toArray(new ThemeResource[sortedSet.size()]);
                 for (int i=start; i<(start + max) && i<(sortedArray.length); i++) {
                     Entry entry = createAtomResourceEntry(website, sortedArray[i]);
                     atomEntries.add(entry);
@@ -552,7 +552,7 @@ public class RollerAtomHandler implements AtomHandler {
                     String handle = pathInfo[0];
                     WebsiteData website = 
                         mRoller.getUserManager().getWebsiteByHandle(handle);                    
-                    WeblogResource resource = 
+                    ThemeResource resource = 
                         mRoller.getFileManager().getFile(website, fileName);
                     if (resource != null) return createAtomResourceEntry(website, resource);
                 }
@@ -681,7 +681,7 @@ public class RollerAtomHandler implements AtomHandler {
                     fmgr.saveFile(website, path + fileName, contentType, tempFile.length(), fis);
                     fis.close();
                     
-                    WeblogResource resource = fmgr.getFile(website, path + fileName);
+                    ThemeResource resource = fmgr.getFile(website, path + fileName);
                     
                     // Throttle one entry per second
                     try { Thread.sleep(1000); } catch (Exception ignored) {}
@@ -1031,7 +1031,7 @@ public class RollerAtomHandler implements AtomHandler {
         return atomEntry;
     }
     
-    private Entry createAtomResourceEntry(WebsiteData website, WeblogResource file) {
+    private Entry createAtomResourceEntry(WebsiteData website, ThemeResource file) {
         String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         String editURI = 
                 URLUtilities.getAtomProtocolURL(true)+"/"+website.getHandle()

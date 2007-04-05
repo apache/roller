@@ -254,7 +254,7 @@ public class FeedServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate(pageId, null, "velocity");
+            Template template = new StaticTemplate(pageId, "velocity");
             renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(

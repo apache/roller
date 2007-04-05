@@ -82,6 +82,7 @@ public class WebsiteDataWrapper {
      * each pojo that is part of the collection.
      */
     public java.util.List getPages()
+        throws org.apache.roller.RollerException
     {
         java.util.List initialCollection = this.pojo.getPages();
 
@@ -92,7 +93,7 @@ public class WebsiteDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.TemplateWrapper.wrap((org.apache.roller.pojos.Template) it.next()));
+            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.TemplateWrapper.wrap((org.apache.roller.pojos.ThemeTemplate) it.next()));
             i++;
         }
 

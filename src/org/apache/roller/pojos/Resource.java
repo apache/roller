@@ -18,50 +18,54 @@
 
 package org.apache.roller.pojos;
 
-import java.util.Date;
+import java.io.InputStream;
 
 
 /**
- * The Template interface represents the abstract concept of a single unit
- * of templated or non-rendered content.  For Roller we mainly think of
- * templates as Velocity templates which are meant to be fed into the
- * Velocity rendering engine.
+ * Represents a static resource of some kind.
  */
-public interface Template {
-    
-    /**
-     * The unique identifier for this Template.
-     */
-    public String getId();
+public interface Resource {
     
     
     /**
-     * A simple name for this Template.
+     * The short name of this resource.
+     * i.e. "some.jpg"
+     *
+     * @returns The short name for the resource.
      */
     public String getName();
     
     
     /**
-     * A description of the contents of this Template.
+     * The path to this resource, relative to its container.
+     * i.e. "images/some.jpg"
+     *
+     * @returns The path to the resource, relative to its container.
      */
-    public String getDescription();
+    public String getPath();
     
     
     /**
-     * The last time the template was modified.
+     * The last-modified time for this resource.
+     *
+     * @returns The last time the resource changed, as a long value.
      */
-    public Date getLastModified();
+    public long getLastModified();
     
     
     /**
-     * The templating language used by this template.
+     * The length of this resource, in bytes.
+     *
+     * @returns The length of the resource in bytes.
      */
-    public String getTemplateLanguage();
+    public long getLength();
     
     
     /**
-     * Content-type of output or null if none defined.
+     * An InputStream that the resource can be read from.
+     *
+     * @returns an InputStream for the resource.
      */
-    public String getOutputContentType();
+    public InputStream getInputStream();
     
 }

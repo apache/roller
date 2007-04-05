@@ -166,7 +166,7 @@ public class UpgradeDatabase {
             PreparedStatement setCustomThemeStmt = con.prepareStatement(
                     "update website set editortheme = ?");
             
-            setCustomThemeStmt.setString(1, org.apache.roller.pojos.Theme.CUSTOM);
+            setCustomThemeStmt.setString(1, org.apache.roller.pojos.WeblogTheme.CUSTOM);
             setCustomThemeStmt.executeUpdate();
             
             if (!con.getAutoCommit()) con.commit();

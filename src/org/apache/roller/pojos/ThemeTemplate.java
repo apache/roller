@@ -18,162 +18,71 @@
 
 package org.apache.roller.pojos;
 
-import java.io.Serializable;
-import java.util.Date;
-import org.apache.roller.pojos.Template;
-
 
 /**
- * A Theme based implementation of a Template.  A ThemeTemplate represents a
- * template which is part of a shared Theme.
+ * A Theme specific implementation of a Template.
+ * 
+ * A ThemeTemplate represents a template which is part of a Theme.
  */
-public class ThemeTemplate implements Template, Serializable {
+public interface ThemeTemplate extends Template {
     
-    private String id = null;
-    private String action = null;
-    private String name = null;
-    private String description = null;
-    private String contents = null;
-    private String link = null;
-    private Date lastModified = null;
-    private String templateLanguage = null;
-    private boolean hidden = false;
-    private boolean navbar = false;
-    private String decoratorName = null;
-    private String  outputContentType = null;
+    public static final String ACTION_WEBLOG = "weblog";
+    public static final String ACTION_PERMALINK = "permalink";
+    public static final String ACTION_SEARCH = "search";
+    public static final String ACTION_TAGSINDEX = "tagsIndex";
+    public static final String ACTION_CUSTOM = "custom";
     
-    private Theme myTheme = null;
-    
-    
-    public ThemeTemplate() {}
-    
-    public ThemeTemplate(Theme theme, String id, String action, String name, 
-            String desc, String contents, String link, Date date, 
-            String tempLang, boolean hid, boolean navbar, String decor) {
-        
-        this.myTheme = theme;
-        this.id = id;
-        this.action = action;
-        this.name = name;
-        this.description = desc;
-        this.contents = contents;
-        this.link = link;
-        this.lastModified = date;
-        this.templateLanguage = tempLang;
-        this.hidden = hid;
-        this.navbar = navbar;
-        this.decoratorName = decor;
-    }
+    // the full list of supported special actions, which purposely does not
+    // contain an entry for the 'custom' action
+    public static final String[] ACTIONS = {
+        ACTION_WEBLOG, 
+        ACTION_PERMALINK, 
+        ACTION_SEARCH, 
+        ACTION_TAGSINDEX
+    };
     
     
-    public Template getDecorator() {
-        if(decoratorName != null && !id.equals(decoratorName)) {
-            return myTheme.getTemplate(decoratorName);
-        }
-        return null;
-    }
+    /**
+     * The action this template is defined for.
+     */
+    public String getAction();
     
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getTemplateLanguage() {
-        return templateLanguage;
-    }
-
-    public void setTemplateLanguage(String templateLanguage) {
-        this.templateLanguage = templateLanguage;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean isHidden) {
-        this.hidden = isHidden;
-    }
-
-    public boolean isNavbar() {
-        return navbar;
-    }
-
-    public void setNavbar(boolean navbar) {
-        this.navbar = navbar;
-    }
-
-    public String getDecoratorName() {
-        return decoratorName;
-    }
-
-    public void setDecoratorName(String decorator) {
-        this.decoratorName = decorator;
-    }
-
-    public String getOutputContentType() {
-        return outputContentType;
-    }
-
-    public void setOutputContentType(String outputContentType) {
-        this.outputContentType = outputContentType;
-    }
     
-    public String toString() {
-        return (id + "," + name + "," + description + "," + link + "," + 
-                lastModified + "\n\n" + contents + "\n");
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
+    /**
+     * The contents or body of the Template.
+     */
+    public String getContents();
+    
+    
+    /**
+     * The url link value for this Template.  If this template is not
+     * private this is the url that it can be accessed at.
+     */
+    public String getLink();
+    
+    
+    /**
+     * Is the Template hidden?  A hidden template cannot be accessed directly.
+     */
+    public boolean isHidden();
+    
+    
+    /**
+     * Is the Template to be included in the navbar?
+     */
+    public boolean isNavbar();
+    
+    
+    /**
+     * The name of the decorator template to apply.
+     */
+    public String getDecoratorName();
+    
+    
+    /**
+     * The decorator Template to apply.  This returns null if no decorator
+     * should be applied.
+     */
+    public ThemeTemplate getDecorator();
     
 }

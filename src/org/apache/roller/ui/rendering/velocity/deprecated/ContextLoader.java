@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,31 +32,25 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.RollerPropertyData;
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.velocity.deprecated.NewsfeedCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.URLUtilities;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
-
 
 /**
  * Load Velocity Context with Roller objects, values, and custom plugins.
@@ -114,7 +107,7 @@ public class ContextLoader {
         WebsiteData weblog = null;
         WeblogEntryData entry = null;
         WeblogCategoryData category = null;
-        Template page = null;
+        ThemeTemplate page = null;
         FolderData folder = null;  // don't even know how this is involved :/
         Date date = null;
         boolean isDay = false;
@@ -249,7 +242,7 @@ public class ContextLoader {
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
         
         // alternative display pages - customization
-        Template entryPage = weblog.getPageByName("_entry");
+        ThemeTemplate entryPage = weblog.getPageByName("_entry");
         if (entryPage != null) {
             ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
         }
@@ -366,7 +359,7 @@ public class ContextLoader {
             Map ctx,
             HttpServletRequest request,
             WebsiteData website,
-            Template page) throws RollerException {
+            ThemeTemplate page) throws RollerException {
         
         mLogger.debug("Loading utility objects");
         

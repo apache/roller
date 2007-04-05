@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -39,13 +38,11 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.themes.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.themes.ThemeManager;
-import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 
 /**
@@ -187,48 +184,26 @@ public class WebsiteData implements Serializable {
     /**
      * Get the Theme object in use by this weblog, or null if no theme selected.
      */
-    public Theme getTheme() throws RollerException {
+    public WeblogTheme getTheme() throws RollerException {
         
-        // if theme is custom or null then just return null
-        if(getEditorTheme() == null || Theme.CUSTOM.equals(getEditorTheme())) {
-            return null;
-        } else {
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                return themeMgr.getTheme(getEditorTheme());
-            } catch(ThemeNotFoundException tnfe) {
-                // i sure hope not!
-                log.error("Unable to find theme = "+getEditorTheme(), tnfe);
-                return null;
-            }
-        }
+        // let the ThemeManager handle it
+        ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+        return themeMgr.getTheme(this);
     }
     
     
     /**
      * Lookup the default page for this website.
      */
-    public Template getDefaultPage() throws RollerException {
+    public ThemeTemplate getDefaultPage() throws RollerException {
         
-        Template template = null;
-        
-        // first check if this user has selected a theme
-        // if so then return the themes Weblog template
+        // look for the page in our Theme
         Theme weblogTheme = getTheme();
         if(weblogTheme != null) {
-            template = weblogTheme.getTemplateByAction(Template.ACTION_WEBLOG);
+            return weblogTheme.getDefaultTemplate();
         }
         
-        // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            template = userMgr.getPage(this.defaultPageId);
-        }
-        
-        if(template != null)
-            log.debug("returning default template id ["+template.getId()+"]");
-        
-        return template;
+        return null;
     }
     
     
@@ -237,33 +212,18 @@ public class WebsiteData implements Serializable {
      * 
      * @roller.wrapPojoMethod type="pojo"
      */
-    public Template getPageByAction(String action) throws RollerException {
+    public ThemeTemplate getPageByAction(String action) throws RollerException {
         
         if(action == null)
             return null;
         
-        log.debug("looking up template for action ["+action+"]");
-        
-        Template template = null;
-        
-        // first check if this user has selected a theme
-        // if so then return the proper theme template
+        // look for the page in our Theme
         Theme weblogTheme = getTheme();
         if(weblogTheme != null) {
-            template = weblogTheme.getTemplateByAction(action);
-        } else {
-        
-            // NOTE: we specifically do *NOT* return templates by action from the
-            // weblog's custom templates if the weblog is using a theme because we
-            // don't want old templates to take effect when using a specific theme
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            template = userMgr.getPageByAction(this, action);
+            return weblogTheme.getTemplateByAction(action);
         }
-
-        if(template != null)
-            log.debug("returning template ["+template.getId()+"]");
         
-        return template;
+        return null;
     }
     
     
@@ -271,32 +231,18 @@ public class WebsiteData implements Serializable {
      * Lookup a Template for this website by name.
      * @roller.wrapPojoMethod type="pojo"
      */
-    public Template getPageByName(String name) throws RollerException {
+    public ThemeTemplate getPageByName(String name) throws RollerException {
         
         if(name == null)
             return null;
         
-        log.debug("looking up template ["+name+"]");
-        
-        Template template = null;
-        
-        // first check if this user has selected a theme
-        // if so then return the proper theme template
+        // look for the page in our Theme
         Theme weblogTheme = getTheme();
         if(weblogTheme != null) {
-            template = weblogTheme.getTemplate(name);
+            return weblogTheme.getTemplateByName(name);
         }
         
-        // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            template = userMgr.getPageByName(this, name);
-        }
-        
-        if(template != null)
-            log.debug("returning template ["+template.getId()+"]");
-        
-        return template;
+        return null;
     }
     
     
@@ -304,32 +250,18 @@ public class WebsiteData implements Serializable {
      * Lookup a template for this website by link.
      * @roller.wrapPojoMethod type="pojo"
      */
-    public Template getPageByLink(String link) throws RollerException {
+    public ThemeTemplate getPageByLink(String link) throws RollerException {
         
         if(link == null)
             return null;
         
-        log.debug("looking up template ["+link+"]");
-        
-        Template template = null;
-        
-        // first check if this user has selected a theme
-        // if so then return the proper theme template
+        // look for the page in our Theme
         Theme weblogTheme = getTheme();
         if(weblogTheme != null) {
-            template = weblogTheme.getTemplateByLink(link);
+            return weblogTheme.getTemplateByLink(link);
         }
         
-        // if we didn't get the Template from a theme then look in the db
-        if(template == null) {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            template = userMgr.getPageByLink(this, link);
-        }
-        
-        if(template != null)
-            log.debug("returning template ["+template.getId()+"]");
-        
-        return template;
+        return null;
     }
     
     
@@ -337,45 +269,15 @@ public class WebsiteData implements Serializable {
      * Get a list of all pages that are part of this website.
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.Template"
      */
-    public List getPages() {
+    public List getPages() throws RollerException {
         
-        Map pages = new TreeMap();
-        
-        // first get the pages from the db
-        try {
-            Template template = null;
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            Iterator dbPages = userMgr.getPages(this).iterator();
-            while(dbPages.hasNext()) {
-                template = (Template) dbPages.next();
-                pages.put(template.getName(), template);
-            }
-        } catch(Exception e) {
-            // db error
-            log.error(e);
+        // look for the pages in our Theme
+        Theme weblogTheme = getTheme();
+        if(weblogTheme != null) {
+            return weblogTheme.getTemplates();
         }
         
-        
-        // now get theme pages if needed and put them in place of db pages
-        try {
-            Theme weblogTheme = getTheme();
-            if(weblogTheme != null) {
-                Template template = null;
-                Iterator themePages = weblogTheme.getTemplates().iterator();
-                while(themePages.hasNext()) {
-                    template = (Template) themePages.next();
-                    
-                    // note that this will put theme pages over custom
-                    // pages in the pages list, which is what we want
-                    pages.put(template.getName(), template);
-                }
-            }
-        } catch(Exception e) {
-            // how??
-            log.error(e);
-        }
-        
-        return new ArrayList(pages.values());
+        return Collections.EMPTY_LIST;
     }
     
     

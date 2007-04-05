@@ -18,216 +18,91 @@
 
 package org.apache.roller.pojos;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import org.apache.roller.RollerException;
 
 
 /**
- * The Theme object encapsulates all elements of a single weblog theme.  It
- * is used mostly to contain all the templates for a theme, but does contain
- * other theme related attributes such as name, last modifed date, etc.
+ * A Theme represents the set of components which are used to generate the
+ * web design for a weblog along with some metadata like a name, etc.
  */
-public class Theme implements Serializable, Comparable {
-    
-    // this is the name that will be used to identify a user customized theme
-    public static final String CUSTOM = "custom";
-    
-    private String id = null;
-    private String name = null;
-    private String description = null;
-    private String author = null;
-    private String customStylesheet = null;
-    private Date lastModified = null;
-    private boolean enabled = false;
-    
-    // we keep templates in a Map for faster lookups by name
-    // the Map contains ... (template name, ThemeTemplate)
-    private Map templatesByName = new HashMap();
-    
-    // we keep templates in a Map for faster lookups by link
-    // the Map contains ... (template link, ThemeTemplate)
-    private Map templatesByLink = new HashMap();
-    
-    // we keep templates in a Map for faster lookups by action
-    // the Map contains ... (template action, ThemeTemplate)
-    private Map templatesByAction = new HashMap();
-    
-    // we keep resources in a Map for faster lookups by path
-    // the Map contains ... (resource path, File)
-    private Map resources = new HashMap();
-    
-    
-    public Theme() {}
-
+public interface Theme {
     
     /**
-     * Get the collection of all templates associated with this Theme.
+     * A unique identifier for this Theme.
      */
-    public List getTemplates() {
-        return new ArrayList(this.templatesByName.values());
-    }
-    
-    
-    public Template getDefaultTemplate() {
-        return (ThemeTemplate) this.templatesByAction.get(Template.ACTION_WEBLOG);
-    }
+    public String getId();
     
     
     /**
-     * Lookup the specified template by name.
+     * A common or display name for this Theme.
+     */
+    public String getName();
+    
+    
+    /**
+     * A description of the Theme.
+     */
+    public String getDescription();
+    
+    
+    /**
+     * The last modification date of the Theme.
+     */
+    public Date getLastModified();
+    
+    
+    /**
+     * The path within the Theme to a custom stylesheet override, or null if
+     * no stylesheet override is set.
+     */
+    public String getCustomStylesheet();
+    
+    
+    /**
+     * Is the Theme enable for use?
+     */
+    public boolean isEnabled();
+    
+    
+    /**
+     * Get the list of all templates associated with this Theme.
+     */
+    public List getTemplates() throws RollerException;
+    
+    
+    /**
+     * Lookup the default template for the Theme.
+     */
+    public ThemeTemplate getDefaultTemplate() throws RollerException;
+    
+    
+    /**
+     * Lookup a template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplate(String name) {
-        return (ThemeTemplate) this.templatesByName.get(name);
-    }
+    public ThemeTemplate getTemplateByAction(String action) throws RollerException;
     
     
     /**
-     * Lookup the specified template by link.
+     * Lookup a template by name.
      * Returns null if the template cannot be found.
      */
-    public Template getTemplateByLink(String link) {
-        return (ThemeTemplate) this.templatesByLink.get(link);
-    }
+    public ThemeTemplate getTemplateByName(String name) throws RollerException;
     
     
     /**
-     * Lookup the specified template by action.
+     * Lookup a template by link.
      * Returns null if the template cannot be found.
      */
-    public Template getTemplateByAction(String action) {
-        return (ThemeTemplate) this.templatesByAction.get(action);
-    }
+    public ThemeTemplate getTemplateByLink(String link) throws RollerException;
     
     
     /**
-     * Set the value for a given template name.
-     */
-    public void addTemplate(ThemeTemplate template) {
-        this.templatesByName.put(template.getName(), template);
-        this.templatesByLink.put(template.getLink(), template);
-        this.templatesByAction.put(template.getAction(), template);
-    }
-    
-    
-    /**
-     * Get the collection of all resources associated with this Theme.
-     *
-     * It is assured that the resources are returned sorted by pathname.
-     */
-    public List getResources() {
-        
-        // make sure resources are sorted.
-        List myResources = new ArrayList(this.resources.values());
-        Collections.sort(myResources);
-        
-        return myResources;
-    }
-    
-    
-    /**
-     * Lookup the specified resource by path.
+     * Lookup a resource by path.
      * Returns null if the resource cannot be found.
      */
-    public File getResource(String path) {
-        return (File) this.resources.get(path);
-    }
+    public ThemeResource getResource(String path);
     
-    
-    /**
-     * Set the value for a given resource path.
-     */
-    public void setResource(String path, File resource) {
-        this.resources.put(path, resource);
-    }
-    
-    
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getCustomStylesheet() {
-        return customStylesheet;
-    }
-
-    public void setCustomStylesheet(String customStylesheet) {
-        this.customStylesheet = customStylesheet;
-    }
-    
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(name);
-        sb.append("\n");
-        
-        Iterator it = this.templatesByName.values().iterator();
-        while(it.hasNext()) {
-            sb.append(it.next());
-            sb.append("\n");
-        }
-        
-        return sb.toString();
-        
-    }
-    
-    
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object o) {
-        Theme other = (Theme) o;
-        return getName().compareTo(other.getName());
-    }
-
 }

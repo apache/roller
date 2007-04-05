@@ -167,7 +167,7 @@ public class PlanetFeedServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("templates/planet/planetrss.vm", null, "velocity");
+            Template template = new StaticTemplate("templates/planet/planetrss.vm", "velocity");
             renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(

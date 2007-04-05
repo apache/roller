@@ -29,20 +29,28 @@ import java.util.Date;
  * mainly as a wrapper so that we can represent our static template files as
  * an object.
  */
-public class StaticTemplate implements Template, Serializable {
+public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     
     private String id = null;
     private String name = null;
     private String description = null;
+    private String action = null;
+    private String link = null;
+    private String contents = null;
+    private boolean hidden = false;
+    private boolean navbar = false;
     private Date lastModified = new Date();
     private String templateLanguage = null;
-    private String  outputContentType = null;
+    private String outputContentType = null;
+    private String decoratorName = null;
+    private ThemeTemplate decorator = null;
     
     
-    public StaticTemplate(String id, String lang) {
+    public StaticThemeTemplate(String id, String lang) {
         this.id = id;
         this.name = id;
         this.description = id;
+        this.link = id;
         this.templateLanguage = lang;
     }
     
@@ -93,6 +101,62 @@ public class StaticTemplate implements Template, Serializable {
 
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public boolean isNavbar() {
+        return navbar;
+    }
+
+    public void setNavbar(boolean navbar) {
+        this.navbar = navbar;
+    }
+
+    public ThemeTemplate getDecorator() {
+        return decorator;
+    }
+
+    public void setDecorator(ThemeTemplate decorator) {
+        this.decorator = decorator;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public String getDecoratorName() {
+        return decoratorName;
+    }
+
+    public void setDecoratorName(String decoratorName) {
+        this.decoratorName = decoratorName;
     }
     
 }

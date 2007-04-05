@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -485,7 +485,7 @@ public final class URLUtilities {
         }
         
         Map params = new HashMap();
-        if(previewTheme != null && !Theme.CUSTOM.equals(previewTheme)) {
+        if(previewTheme != null && !WeblogTheme.CUSTOM.equals(previewTheme)) {
             params.put("theme", encode(previewTheme));
         }
         

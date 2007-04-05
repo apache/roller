@@ -21,8 +21,6 @@ package org.apache.roller.business.themes;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,8 +38,10 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -96,11 +96,11 @@ public class ThemeManagerImpl implements ThemeManager {
     /**
      * @see org.apache.roller.model.ThemeManager#getTheme(java.lang.String)
      */
-    public Theme getTheme(String id) 
+    public SharedTheme getTheme(String id) 
             throws ThemeNotFoundException, RollerException {
         
         // try to lookup theme from library
-        Theme theme = (Theme) this.themes.get(id);
+        SharedTheme theme = (SharedTheme) this.themes.get(id);
         
         // no theme?  throw exception.
         if(theme == null) {
@@ -110,6 +110,38 @@ public class ThemeManagerImpl implements ThemeManager {
         return theme;
     }
     
+    
+    /**
+     * @see org.apache.roller.model.ThemeManager#getTheme(weblog)
+     */
+    public WeblogTheme getTheme(WebsiteData weblog) throws RollerException {
+        
+        if(weblog == null)
+            return null;
+        
+        WeblogTheme weblogTheme = null;
+        
+        // if theme is custom or null then return a WeblogCustomTheme
+        if(weblog.getEditorTheme() == null || 
+                WeblogTheme.CUSTOM.equals(weblog.getEditorTheme())) {
+            weblogTheme = new WeblogCustomTheme(weblog);
+            
+        // otherwise we are returning a WeblogSharedTheme
+        } else {
+            ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+            SharedTheme staticTheme =
+                    (SharedTheme) this.themes.get(weblog.getEditorTheme());
+            if(staticTheme != null) {
+                weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
+            }
+        }
+        
+        // TODO: if somehow the theme is still null should we provide some
+        // kind of fallback option like a default theme?
+        
+        return weblogTheme;
+    }
+
     
     /**
      * @see org.apache.roller.model.ThemeManager#getEnabledThemesList()
@@ -130,10 +162,10 @@ public class ThemeManagerImpl implements ThemeManager {
     /**
      * @see org.apache.roller.model.ThemeManager#importTheme(website, theme)
      */
-    public void importTheme(WebsiteData website, Theme theme)
+    public void importTheme(WebsiteData website, SharedTheme theme)
             throws RollerException {
         
-        log.debug("Importing theme "+theme.getName()+" to weblog "+website.getName());
+        log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
         
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
@@ -202,7 +234,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
             
             // always update this weblog's theme and customStylesheet, then save
-            website.setEditorTheme(Theme.CUSTOM);
+            website.setEditorTheme(WeblogTheme.CUSTOM);
             website.setCustomStylesheetPath(theme.getCustomStylesheet());
             userMgr.saveWebsite(website);
             
@@ -212,26 +244,18 @@ public class ThemeManagerImpl implements ThemeManager {
             
             List resources = theme.getResources();
             Iterator iterat = resources.iterator();
-            File resourceFile = null;
+            ThemeResource resource = null;
             while ( iterat.hasNext() ) {
-                resourceFile = (File) iterat.next();
+                resource = (ThemeResource) iterat.next();
                 
-                String path = resourceFile.getAbsolutePath().substring(
-                        this.themeDir.length()+theme.getId().length()+1);
-                
-                // make sure path isn't prefixed with a /
-                if(path.startsWith("/")) {
-                    path = path.substring(1);
-                }
-                
-                log.debug("Importing resource "+resourceFile.getAbsolutePath()+" to "+path);
+                log.debug("Importing resource to "+resource.getPath());
                 
                 try {
-                    if(resourceFile.isDirectory()) {
-                        fileMgr.createDirectory(website, path);
+                    if(resource.isDirectory()) {
+                        fileMgr.createDirectory(website, resource.getPath());
                     } else {
-                        fileMgr.saveFile(website, path, "text/plain", 
-                                resourceFile.length(), new FileInputStream(resourceFile));
+                        fileMgr.saveFile(website, resource.getPath(), "text/plain", 
+                                resource.getLength(), resource.getInputStream());
                     }
                 } catch (Exception ex) {
                     log.info(ex);
@@ -272,7 +296,7 @@ public class ThemeManagerImpl implements ThemeManager {
         // now go through each theme and load it into a Theme object
         for(int i=0; i < themenames.length; i++) {
             try {
-                Theme theme = loadThemeFromDisk(this.themeDir + File.separator + themenames[i]);
+                Theme theme = new SharedThemeFromDir(this.themeDir + File.separator + themenames[i]);
                 if(theme != null) {
                     themes.put(theme.getId(), theme);
                 }
@@ -283,117 +307,6 @@ public class ThemeManagerImpl implements ThemeManager {
         }
         
         return themes;
-    }
-    
-    
-    /**
-     * Another convenience method which knows how to load a single theme
-     * off the filesystem and return a Theme object
-     */
-    private Theme loadThemeFromDisk(String themepath) {
-        
-        log.debug("Parsing theme descriptor for "+themepath);
-        
-        ThemeMetadata themeMetadata = null;
-        try {
-            // lookup theme descriptor and parse it
-            ThemeMetadataParser parser = new ThemeMetadataParser();
-            InputStream is = new FileInputStream(themepath + File.separator + "theme.xml");
-            themeMetadata = parser.unmarshall(is);
-        } catch (Exception ex) {
-            log.warn("Unable to parse theme descriptor for theme "+themepath, ex);
-            return null;
-        }
-        
-        log.debug("Loading Theme "+themeMetadata.getName());
-        
-        // use parsed theme descriptor to load Theme object
-        Theme theme = new Theme();
-        theme.setId(themeMetadata.getId());
-        theme.setName(themeMetadata.getName());
-        theme.setDescription(themeMetadata.getName());
-        theme.setAuthor(themeMetadata.getAuthor());
-        theme.setCustomStylesheet(themeMetadata.getCustomStylesheet());
-        theme.setLastModified(new Date());
-        theme.setEnabled(true);
-        
-        // go through static resources and add them to the theme
-        String resourcePath = null;
-        Iterator resourcesIter = themeMetadata.getResources().iterator();
-        while (resourcesIter.hasNext()) {
-            resourcePath = (String) resourcesIter.next();
-            
-            // construct File object from resource
-            File resourceFile = new File(themepath + File.separator + resourcePath);
-            
-            // Continue reading theme even if problem encountered with one file
-            if(!resourceFile.exists() || !resourceFile.canRead()) {
-                log.warn("Couldn't read theme resource file ["+resourcePath+"]");
-                continue;
-            }
-            
-            // add it to the theme
-            theme.setResource(resourcePath, resourceFile);
-        }
-        
-        // go through templates and read in contents to a ThemeTemplate
-        ThemeTemplate theme_template = null;
-        ThemeMetadataTemplate templateMetadata = null;
-        Iterator templatesIter = themeMetadata.getTemplates().iterator();
-        while (templatesIter.hasNext()) {
-            templateMetadata = (ThemeMetadataTemplate) templatesIter.next();
-            
-            // construct File object from path
-            File templateFile = new File(themepath + File.separator + 
-                    templateMetadata.getContentsFile());
-            
-            // Continue reading theme even if problem encountered with one file
-            if(!templateFile.exists() && !templateFile.canRead()) {
-                log.error("Couldn't read theme template file ["+templateFile+"]");
-                continue;
-            }
-            
-            char[] chars = null;
-            int length;
-            try {
-                chars = new char[(int) templateFile.length()];
-            	FileInputStream stream = new FileInputStream(templateFile);
-            	InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-                length = reader.read(chars);            
-            } catch (Exception noprob) {
-                log.error("Exception reading template file ["+templateFile+"]");
-                if (log.isDebugEnabled()) 
-                    log.debug(noprob);
-                continue;
-            }
-            
-            String decorator = "_decorator";
-            if("_decorator".equals(templateMetadata.getName())) {
-                decorator = null;
-            }
-            
-            // construct ThemeTemplate representing this file
-            // a few restrictions for now:
-            //   - decorator is always "_decorator" or null
-            theme_template = new ThemeTemplate(
-                    theme,
-                    themeMetadata.getId()+":"+templateMetadata.getName(),
-                    templateMetadata.getAction(),
-                    templateMetadata.getName(),
-                    templateMetadata.getDescription(),
-                    new String(chars, 0, length),
-                    templateMetadata.getLink(),
-                    new Date(templateFile.lastModified()),
-                    templateMetadata.getTemplateLanguage(),
-                    templateMetadata.isHidden(),
-                    templateMetadata.isNavbar(),
-                    decorator);
-
-            // add it to the theme
-            theme.addTemplate(theme_template);
-        }
-        
-        return theme;
     }
     
 }

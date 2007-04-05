@@ -26,12 +26,9 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.business.FileManager;
-import org.apache.roller.business.PropertiesManager;
-import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.pojos.WebsiteData;
 
 /**
@@ -138,7 +135,7 @@ public class FileManagerTest extends TestCase {
         fmgr.createDirectory(testWeblog, "bucket0");
         
         // make sure directory was created
-        WeblogResource[] dirs = fmgr.getDirectories(testWeblog);
+        ThemeResource[] dirs = fmgr.getDirectories(testWeblog);
         assertNotNull(dirs);
         assertEquals(1, dirs.length);
         assertEquals("bucket0", dirs[0].getName());
@@ -175,7 +172,7 @@ public class FileManagerTest extends TestCase {
         fmgr.createDirectory(testWeblog, "bucket1");
         
         // make sure directory was created
-        WeblogResource[] dirs = fmgr.getDirectories(testWeblog);
+        ThemeResource[] dirs = fmgr.getDirectories(testWeblog);
         assertNotNull(dirs);
         assertEquals(1, dirs.length);
         assertEquals("bucket1", dirs[0].getName());

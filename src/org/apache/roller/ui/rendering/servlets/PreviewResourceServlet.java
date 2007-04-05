@@ -18,8 +18,6 @@
 
 package org.apache.roller.ui.rendering.servlets;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,9 +32,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.FileManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.pojos.Theme;
-import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.ThemeResource;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.ui.rendering.util.WeblogPreviewResourceRequest;
@@ -105,22 +103,22 @@ public class PreviewResourceServlet extends HttpServlet {
         // first, see if we have a preview theme to operate from
         if(resourceRequest.getThemeName() != null) {
             Theme theme = resourceRequest.getTheme();
-            File resource = theme.getResource(resourceRequest.getResourcePath());
+            ThemeResource resource = theme.getResource(resourceRequest.getResourcePath());
             if(resource != null) {
-                resourceLastMod = resource.lastModified();
-                resourceStream = new FileInputStream(resource);
+                resourceLastMod = resource.getLastModified();
+                resourceStream = resource.getInputStream();
             }
         }
         
         // second, see if resource comes from weblog's configured shared theme
         if(resourceStream == null) {
             try {
-                Theme weblogTheme = weblog.getTheme();
+                WeblogTheme weblogTheme = weblog.getTheme();
                 if(weblogTheme != null) {
-                    File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
+                    ThemeResource resource = weblogTheme.getResource(resourceRequest.getResourcePath());
                     if(resource != null) {
-                        resourceLastMod = resource.lastModified();
-                        resourceStream = new FileInputStream(resource);
+                        resourceLastMod = resource.getLastModified();
+                        resourceStream = resource.getInputStream();
                     }
                 }
             } catch (Exception ex) {
@@ -134,7 +132,7 @@ public class PreviewResourceServlet extends HttpServlet {
         if(resourceStream == null) {
             try {
                 FileManager fileMgr = RollerFactory.getRoller().getFileManager();
-                WeblogResource resource = fileMgr.getFile(weblog, 
+                ThemeResource resource = fileMgr.getFile(weblog, 
                         resourceRequest.getResourcePath());
                 resourceLastMod = resource.getLastModified();
                 resourceStream = resource.getInputStream();
