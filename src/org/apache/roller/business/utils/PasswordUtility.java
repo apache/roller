@@ -60,7 +60,7 @@ public class PasswordUtility
         
         String algorithm = props.getProperty("algorithm");
         
-        Connection con = ConsistencyCheck.createConnection(props,"");
+        Connection con = createConnection(props,"");
         
         if (args.length == 2 && args[0].equals("-save")) 
         {
@@ -108,6 +108,38 @@ public class PasswordUtility
             System.out.println("   rollerpw -revoke_admin <username>");
             System.out.println("");
         }
+    }
+    
+    /** 
+     * Create connection based on properties:<br/>
+     * - driverClassName<br/>
+     * - connectionUrl<br/>
+     * - userName<br/>
+     * - password<br/>
+     */
+    public static Connection createConnection(Properties props, String prefix) 
+        throws Exception
+    {
+        Connection con = null;
+        if (prefix == null) 
+        {
+            prefix = "";
+        }
+        String driverClassName = props.getProperty(prefix+"driverClassName");
+        String connectionUrl = props.getProperty(prefix+"connectionUrl");
+        String userName = props.getProperty(prefix+"userName");
+        String password = props.getProperty(prefix+"password");
+        
+        Class.forName(driverClassName);
+        if (userName != null && password != null)
+        {
+           con = DriverManager.getConnection(connectionUrl, userName, password);
+        }
+        else
+        {
+           con = DriverManager.getConnection(connectionUrl);
+        }
+        return con;
     }
     
     /** 

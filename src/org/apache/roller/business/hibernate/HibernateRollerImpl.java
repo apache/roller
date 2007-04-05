@@ -25,7 +25,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerImpl;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.BookmarkManager;
-import org.apache.roller.business.ConfigManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
@@ -54,7 +53,6 @@ public class HibernateRollerImpl extends RollerImpl {
     
     // references to the managers we maintain
     private BookmarkManager bookmarkManager = null;
-    private ConfigManager configManager = null;
     private PropertiesManager propertiesManager = null;
     private RefererManager refererManager = null;
     private UserManager userManager = null;
@@ -112,7 +110,6 @@ public class HibernateRollerImpl extends RollerImpl {
         
         // release our own stuff first
         if (bookmarkManager != null) bookmarkManager.release();
-        if (configManager != null) configManager.release();
         if (refererManager != null) refererManager.release();
         if (userManager != null) userManager.release();
         if (weblogManager != null) weblogManager.release();
@@ -180,17 +177,6 @@ public class HibernateRollerImpl extends RollerImpl {
             refererManager = new HibernateRefererManagerImpl(strategy);
         }
         return refererManager;
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.Roller#getConfigManager()
-     */
-    public ConfigManager getConfigManager() {
-        if (configManager == null) {
-            configManager = new HibernateConfigManagerImpl(strategy);
-        }
-        return configManager;
     }
     
     

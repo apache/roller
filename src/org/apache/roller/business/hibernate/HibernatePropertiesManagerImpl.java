@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * HibernatePropertiesManagerImpl.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 21, 2005, 10:40 AM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.business.hibernate;
@@ -50,7 +45,7 @@ import org.apache.roller.pojos.RollerPropertyData;
  */
 public class HibernatePropertiesManagerImpl implements PropertiesManager {
     
-    static final long serialVersionUID = -4326713177137796936L;
+    public static final long serialVersionUID = -4326713177137796936L;
     
     private static Log log = LogFactory.getLog(HibernatePropertiesManagerImpl.class);
     
@@ -146,14 +141,8 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
         try {
             props = this.getProperties();
             
-            if(props.size() < 1) {
-                // empty props table ... try migrating, then load defaults
-                props = migrateOldRollerConfig(props);
-                props = initializeMissingProps(props);
-            } else {
-                // found existing props ... check for new props
-                props = initializeMissingProps(props);
-            }
+            // check for new props
+            props = initializeMissingProps(props);
             
             // save our changes
             this.saveProperties(props);
@@ -163,80 +152,6 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
             throw new RuntimeException(e);
         }
         
-    }
-    
-    
-    /**
-     * Migrate data from the old roller config.
-     * This is called only if the existing runtime properties are empty.
-     */
-    private Map migrateOldRollerConfig(Map props) {
-        // try to get the old config
-        Roller roller = RollerFactory.getRoller();
-        RollerConfigData rollerConfig = null;
-        
-        try {
-            rollerConfig = roller.getConfigManager().getRollerConfig();
-        } catch (Exception e) {
-            // We currently treat any exception obtaining the roller config
-            // as if we had not found it.
-            log.error(e);
-        }
-        
-        if (rollerConfig != null) {
-            log.info("Found old roller config ... doing migration to new runtime properties.");
-            // copy over data
-            props.put("site.name",
-                    new RollerPropertyData("site.name", rollerConfig.getSiteName()));
-            props.put("site.description",
-                    new RollerPropertyData("site.description", rollerConfig.getSiteDescription()));
-            props.put("site.adminemail",
-                    new RollerPropertyData("site.adminemail", rollerConfig.getEmailAddress()));
-            props.put("site.absoluteurl",
-                    new RollerPropertyData("site.absoluteurl", rollerConfig.getAbsoluteURL()));
-            props.put("site.linkbacks.enabled",
-                    new RollerPropertyData("site.linkbacks.enabled", rollerConfig.getEnableLinkback().toString()));
-            props.put("users.registration.enabled",
-                    new RollerPropertyData("users.registration.enabled", rollerConfig.getNewUserAllowed().toString()));
-            props.put("users.themes.path",
-                    new RollerPropertyData("users.themes.path", rollerConfig.getUserThemes()));
-            props.put("users.editor.pages",
-                    new RollerPropertyData("users.editor.pages", rollerConfig.getEditorPages()));
-            props.put("users.comments.enabled",
-                    new RollerPropertyData("users.comments.enabled", "true"));
-            props.put("users.comments.autoformat",
-                    new RollerPropertyData("users.comments.autoformat", rollerConfig.getAutoformatComments().toString()));
-            props.put("users.comments.escapehtml",
-                    new RollerPropertyData("users.comments.escapehtml", rollerConfig.getEscapeCommentHtml().toString()));
-            props.put("users.comments.emailnotify",
-                    new RollerPropertyData("users.comments.emailnotify", rollerConfig.getEmailComments().toString()));
-            props.put("uploads.enabled",
-                    new RollerPropertyData("uploads.enabled", rollerConfig.getUploadEnabled().toString()));
-            props.put("uploads.types.allowed",
-                    new RollerPropertyData("uploads.types.allowed", rollerConfig.getUploadAllow()));
-            props.put("uploads.types.forbid",
-                    new RollerPropertyData("uploads.types.forbid", rollerConfig.getUploadForbid()));
-            props.put("uploads.file.maxsize",
-                    new RollerPropertyData("uploads.file.maxsize", rollerConfig.getUploadMaxFileMB().toString()));
-            props.put("uploads.dir.maxsize",
-                    new RollerPropertyData("uploads.dir.maxsize", rollerConfig.getUploadMaxDirMB().toString()));
-            /* no longer part of runtime config
-            props.put("aggregator.enabled",
-                new RollerPropertyData("aggregator.enabled", rollerConfig.getEnableAggregator().toString()));
-            props.put("aggregator.cache.enabled",
-                new RollerPropertyData("aggregator.cache.enabled", rollerConfig.getRssUseCache().toString()));
-            props.put("aggregator.cache.timeout",
-                new RollerPropertyData("aggregator.cache.timeout", rollerConfig.getRssCacheTime().toString()));
-            props.put("debug.memory.enabled",
-                new RollerPropertyData("debug.memory.enabled", rollerConfig.getMemDebug().toString()));
-             */
-            props.put("spam.blacklist",
-                    new RollerPropertyData("spam.blacklist", rollerConfig.getRefererSpamWords()));
-        } else {
-            log.info("Old roller config not found ... default values will be loaded");
-        }
-        
-        return props;
     }
     
     
