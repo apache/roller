@@ -41,8 +41,8 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.StaticTemplate;
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.StaticThemeTemplate;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
@@ -224,7 +224,7 @@ public class PageServlet extends HttpServlet {
         
         
         // figure out what template to use
-        Template page = null;
+        ThemeTemplate page = null;
         
         // If this is a popup request, then deal with it specially
         // TODO: do we really need to keep supporting this?
@@ -238,7 +238,7 @@ public class PageServlet extends HttpServlet {
             
             // User doesn't have one so return the default
             if(page == null) {
-                page = new StaticTemplate("templates/weblog/popupcomments.vm", null, "velocity");
+                page = new StaticThemeTemplate("templates/weblog/popupcomments.vm", "velocity");
             }
             
         // If request specified the page, then go with that
@@ -249,7 +249,7 @@ public class PageServlet extends HttpServlet {
         } else if("tags".equals(pageRequest.getContext()) &&
                 pageRequest.getTags() == null) {
             try {
-                page = weblog.getPageByAction(Template.ACTION_TAGSINDEX);
+                page = weblog.getPageByAction(ThemeTemplate.ACTION_TAGSINDEX);
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
@@ -265,7 +265,7 @@ public class PageServlet extends HttpServlet {
         // If this is a permalink then look for a permalink template
         } else if(pageRequest.getWeblogAnchor() != null) {
             try {
-                page = weblog.getPageByAction(Template.ACTION_PERMALINK);
+                page = weblog.getPageByAction(ThemeTemplate.ACTION_PERMALINK);
             } catch(Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
             }

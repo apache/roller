@@ -40,7 +40,7 @@ import org.apache.roller.RollerException;
  * @hibernate.class lazy="true" table="webpage"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogTemplate implements Serializable, Template {
+public class WeblogTemplate implements ThemeTemplate, Serializable {
     
     public static final long serialVersionUID = -613737191638263428L;
     public static final String DEFAULT_PAGE = "Weblog";
@@ -81,7 +81,7 @@ public class WeblogTemplate implements Serializable, Template {
     }
     
     
-    public Template getDecorator() {
+    public ThemeTemplate getDecorator() {
         if(decoratorName != null && !id.equals(decoratorName)) {
             try {
                 return weblog.getPageByName(decoratorName);

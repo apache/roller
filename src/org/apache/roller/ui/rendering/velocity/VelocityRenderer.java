@@ -24,12 +24,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RenderingException;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
@@ -62,12 +62,16 @@ public class VelocityRenderer implements Renderer {
             // if we can't then this will throw an exception
             velocityTemplate = RollerVelocity.getTemplate(template.getId(), "UTF-8");
             
-            // if there is a decorator then look that up too
-            Template decorator = renderTemplate.getDecorator();
-            if(decorator != null) {
-                velocityDecorator = RollerVelocity.getTemplate(decorator.getId());
+            // if this is a ThemeTemplate than look for a decorator too
+            if(template instanceof ThemeTemplate) {
+                ThemeTemplate templ = (ThemeTemplate) template;
+                
+                Template decorator = templ.getDecorator();
+                if(decorator != null) {
+                    velocityDecorator = RollerVelocity.getTemplate(decorator.getId(), "UTF-8");
+                }
             }
-            
+
         } catch(ResourceNotFoundException ex) {
             // velocity couldn't find the resource so lets log a warning
             log.warn("Error creating renderer for "+template.getId()+

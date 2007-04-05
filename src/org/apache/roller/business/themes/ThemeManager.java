@@ -21,6 +21,7 @@ package org.apache.roller.business.themes;
 import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -36,8 +37,19 @@ public interface ThemeManager {
      * @throws ThemeNotFoundException If the named theme cannot be found.
      * @throws RollerException If there is some kind of fatal backend error.
      **/
-    public Theme getTheme(String id)
+    public SharedTheme getTheme(String id)
         throws ThemeNotFoundException, RollerException;
+    
+    
+    /**
+     * Get the WeblogTheme for a given weblog.
+     *
+     * @param weblog The weblog to get the theme for.
+     * @return WeblogTheme The theme to be used for the given weblog.
+     * @throws RollerException If there is some kind of fatal backend error.
+     */
+    public WeblogTheme getTheme(WebsiteData weblog)
+        throws RollerException;
     
     
     /**
@@ -57,7 +69,7 @@ public interface ThemeManager {
      *
      * @throws RollerException If there is some kind of error in saving.
      */
-    public void importTheme(WebsiteData website, Theme theme) 
+    public void importTheme(WebsiteData website, SharedTheme theme) 
         throws RollerException;
     
 }

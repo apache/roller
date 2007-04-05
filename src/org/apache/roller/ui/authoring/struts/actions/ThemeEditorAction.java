@@ -18,6 +18,7 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -39,7 +40,11 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
+import org.apache.roller.business.themes.SharedTheme;
 import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.ThemeResource;
+import org.apache.roller.pojos.ThemeTemplate;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
@@ -109,16 +114,7 @@ public class ThemeEditorAction extends DispatchAction {
                 String username = rses.getAuthenticatedUser().getUserName();
                 List themes = themeMgr.getEnabledThemesList();
                 
-                // TODO: hack to make 'custom' an actual Theme object
-                // maybe there should be an actual Theme representing custom themes?
-                Theme currentTheme = null;
-                if(Theme.CUSTOM.equals(website.getEditorTheme())) {
-                    currentTheme = new Theme();
-                    currentTheme.setId(Theme.CUSTOM);
-                    currentTheme.setName(Theme.CUSTOM);
-                } else {
-                    currentTheme = website.getTheme();
-                }
+                Theme currentTheme = website.getTheme();
                 
                 // this checks if the website has a default page template
                 // if not then we don't allow for a custom theme
@@ -186,16 +182,7 @@ public class ThemeEditorAction extends DispatchAction {
                 String username = rses.getAuthenticatedUser().getUserName();
                 List themes = themeMgr.getEnabledThemesList();
                 
-                // TODO: hack to make 'custom' an actual Theme object
-                // maybe there should be an actual Theme representing custom themes?
-                Theme currentTheme = null;
-                if(Theme.CUSTOM.equals(website.getEditorTheme())) {
-                    currentTheme = new Theme();
-                    currentTheme.setId(Theme.CUSTOM);
-                    currentTheme.setName(Theme.CUSTOM);
-                } else {
-                    currentTheme = website.getTheme();
-                }
+                Theme currentTheme = website.getTheme();
                 
                 // this checks if the website has a default page template
                 // if not then we don't allow for a custom theme
@@ -232,11 +219,9 @@ public class ThemeEditorAction extends DispatchAction {
 
                 } catch(ThemeNotFoundException tnfe) {
                     // hmm ... maybe they chose "custom"?
-                    if(theme != null && theme.equals(Theme.CUSTOM)) {
+                    if(theme != null && theme.equals(WeblogTheme.CUSTOM)) {
                         // TODO: total hack, this needs fixing
-                        Theme customTheme = new Theme();
-                        customTheme.setId(Theme.CUSTOM);
-                        customTheme.setName(Theme.CUSTOM);
+                        Theme customTheme = new WorkaroundCustomTheme();
                         request.setAttribute("previewTheme", customTheme);
                     } else {
                         // we should never get here
@@ -303,8 +288,8 @@ public class ThemeEditorAction extends DispatchAction {
                     
                 } catch(ThemeNotFoundException tnfe) {
                     // possibly selected "custom"
-                    if(theme != null && theme.equals(Theme.CUSTOM)) {
-                        newTheme = Theme.CUSTOM;
+                    if(theme != null && theme.equals(WeblogTheme.CUSTOM)) {
+                        newTheme = WeblogTheme.CUSTOM;
                     } else {
                         // hmm ... that's weird
                         mLogger.warn(tnfe);
@@ -388,7 +373,7 @@ public class ThemeEditorAction extends DispatchAction {
                 String username = rses.getAuthenticatedUser().getUserName();
                 
                 try {
-                    Theme usersTheme = website.getTheme();
+                    SharedTheme usersTheme = themeMgr.getTheme(website.getEditorTheme());
                     
                     // only if custom themes are allowed
                     if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
@@ -434,4 +419,47 @@ public class ThemeEditorAction extends DispatchAction {
     }
     
     
+    class WorkaroundCustomTheme implements Theme {
+        
+        public String getId() {
+            return WeblogTheme.CUSTOM;
+        }
+        
+        public String getName() {
+            return WeblogTheme.CUSTOM;
+        }
+        
+        public String getDescription() {
+            return WeblogTheme.CUSTOM;
+        }
+        
+        public String getAuthor() {
+            return WeblogTheme.CUSTOM;
+        }
+        
+        public String getCustomStylesheet() {
+            return null;
+        }
+        
+        public Date getLastModified() {
+            return null;
+        }
+        
+        public boolean isEnabled() {
+            return true;
+        }
+        
+        public List getTemplates() throws RollerException { return null; }
+        
+        public ThemeTemplate getDefaultTemplate() throws RollerException { return null; }
+        
+        public ThemeTemplate getTemplateByAction(String action) throws RollerException { return null; }
+        
+        public ThemeTemplate getTemplateByName(String name) throws RollerException { return null; }
+        
+        public ThemeTemplate getTemplateByLink(String link) throws RollerException { return null; }
+        
+        public ThemeResource getResource(String path) { return null; }
+    }
+
 }

@@ -35,6 +35,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CachedContent;
@@ -107,8 +108,8 @@ public class PreviewServlet extends HttpServlet {
         tmpWebsite.setData(weblog);
         if(previewTheme != null && previewTheme.isEnabled()) {
             tmpWebsite.setEditorTheme(previewTheme.getId());
-        } else if(Theme.CUSTOM.equals(previewRequest.getThemeName())) {
-            tmpWebsite.setEditorTheme(Theme.CUSTOM);
+        } else if(WeblogTheme.CUSTOM.equals(previewRequest.getThemeName())) {
+            tmpWebsite.setEditorTheme(WeblogTheme.CUSTOM);
         }
         
         // we've got to set the weblog in our previewRequest because that's

@@ -36,7 +36,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.StatCount;
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
@@ -82,7 +82,7 @@ public class SiteModel implements Model {
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {
-            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            ThemeTemplate weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
             tags = ((WeblogPageRequest)weblogRequest).getTags();

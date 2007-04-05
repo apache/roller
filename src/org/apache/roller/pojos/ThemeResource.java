@@ -18,50 +18,36 @@
 
 package org.apache.roller.pojos;
 
-import java.util.Date;
-
 
 /**
- * The Template interface represents the abstract concept of a single unit
- * of templated or non-rendered content.  For Roller we mainly think of
- * templates as Velocity templates which are meant to be fed into the
- * Velocity rendering engine.
+ * A Resource that is attached to a Theme.
  */
-public interface Template {
+public interface ThemeResource extends Resource {
     
     /**
-     * The unique identifier for this Template.
+     * Does this resource represent a directory?  True if yes, False otherwise.
+     *
+     * @returns True if the resource is a directory, False otherwise.
      */
-    public String getId();
-    
-    
-    /**
-     * A simple name for this Template.
-     */
-    public String getName();
+    public boolean isDirectory();
     
     
     /**
-     * A description of the contents of this Template.
+     * Does this resource represent a file?  True if yes, False otherwise.
+     *
+     * @returns True if the resource is a file, False otherwise.
      */
-    public String getDescription();
+    public boolean isFile();
     
     
     /**
-     * The last time the template was modified.
+     * List child resources if this resource represents a directory.
+     *
+     * The children returned by this method should only be actual files.  No
+     * directories should be returned by this method.
+     *
+     * @returns null if resource is not a directory, otherwise a WeblogResource[].
      */
-    public Date getLastModified();
-    
-    
-    /**
-     * The templating language used by this template.
-     */
-    public String getTemplateLanguage();
-    
-    
-    /**
-     * Content-type of output or null if none defined.
-     */
-    public String getOutputContentType();
+    public ThemeResource[] getChildren();
     
 }

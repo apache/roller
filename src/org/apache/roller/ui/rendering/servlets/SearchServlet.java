@@ -35,7 +35,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
@@ -96,10 +96,10 @@ public class SearchServlet extends HttpServlet {
         }
         
         // lookup template to use for rendering
-        Template page = null;
+        ThemeTemplate page = null;
         try {
             // first try looking for a specific search page
-            page = weblog.getPageByAction(Template.ACTION_SEARCH);
+            page = weblog.getPageByAction(ThemeTemplate.ACTION_SEARCH);
             
             // if not found then fall back on default page
             if(page == null) {
