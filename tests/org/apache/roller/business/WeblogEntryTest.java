@@ -213,7 +213,7 @@ public class WeblogEntryTest extends TestCase {
         
         // get all (non-future) PUBLISHED entries only 
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, WeblogEntryData.PUBLISHED, null, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, WeblogEntryData.PUBLISHED, null, null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         
