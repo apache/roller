@@ -18,24 +18,24 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.pojos.Template
+ * Generated wrapper for class: org.apache.roller.pojos.ThemeTemplate
  */
 public class TemplateWrapper {
 
     // keep a reference to the wrapped pojo
-    private Template pojo = null;
+    private ThemeTemplate pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private TemplateWrapper(Template toWrap) {
+    private TemplateWrapper(ThemeTemplate toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static TemplateWrapper wrap(Template toWrap) {
+    public static TemplateWrapper wrap(ThemeTemplate toWrap) {
         if(toWrap != null)
             return new TemplateWrapper(toWrap);
 
@@ -128,7 +128,7 @@ public class TemplateWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.Template getPojo() {
+    public org.apache.roller.pojos.ThemeTemplate getPojo() {
         return this.pojo;
     }
 

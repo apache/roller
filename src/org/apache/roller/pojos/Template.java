@@ -29,95 +29,35 @@ import java.util.Date;
  */
 public interface Template {
     
-    public static final String ACTION_WEBLOG = "weblog";
-    public static final String ACTION_PERMALINK = "permalink";
-    public static final String ACTION_SEARCH = "search";
-    public static final String ACTION_TAGSINDEX = "tagsIndex";
-    public static final String ACTION_CUSTOM = "custom";
-    
-    // the full list of supported special actions, which purposely does not
-    // contain an entry for the 'custom' action
-    public static final String[] ACTIONS = {
-        ACTION_WEBLOG, 
-        ACTION_PERMALINK, 
-        ACTION_SEARCH, 
-        ACTION_TAGSINDEX
-    };
-    
-    
     /**
      * The unique identifier for this Template.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getId();
     
-    /**
-     * The action this template is defined for.
-     */
-    public String getAction();
     
     /**
      * A simple name for this Template.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getName();
     
+    
     /**
      * A description of the contents of this Template.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getDescription();
     
-    /**
-     * The contents or body of the Template.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getContents();
-    
-    /**
-     * The url link value for this Template.  If this template is not
-     * private this is the url that it can be accessed at.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getLink();
     
     /**
      * The last time the template was modified.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public Date getLastModified();
     
-    /**
-     * Is the Template hidden?  A hidden template cannot be accessed directly.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    
-    public boolean isHidden();
-    
-    /**
-     * Is the Template to be included in the navbar?
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public boolean isNavbar();
     
     /**
      * The templating language used by this template.
      */
     public String getTemplateLanguage();
     
-    /**
-     * The decorator Template to apply.  This returns null if no decorator
-     * should be applied.
-     */
-    public Template getDecorator();
     
     /**
      * Content-type of output or null if none defined.

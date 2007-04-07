@@ -133,8 +133,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             props = this.getProperties();
 
             if(props.size() < 1) {
-                // empty props table ... try migrating, then load defaults
-                props = migrateOldRollerConfig(props);
+                // empty props table ... load defaults
                 props = initializeMissingProps(props);
             } else {
                 // found existing props ... check for new props
@@ -150,104 +149,6 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         }
 
     }
-
-
-    /**
-     * Migrate data from the old roller config.
-     * This is called only if the existing runtime properties are empty.
-     */
-    private Map migrateOldRollerConfig(Map props) {
-        // try to get the old config
-        Roller roller = RollerFactory.getRoller();
-        RollerConfigData rollerConfig = null;
-
-        try {
-            rollerConfig = roller.getConfigManager().getRollerConfig();
-        } catch (Exception e) {
-            // We currently treat any exception obtaining the roller config
-            // as if we had not found it.
-            log.error(e);
-        }
-
-        if (rollerConfig != null) {
-            log.info("Found old roller config ... " + 
-                "doing migration to new runtime properties.");
-            // copy over data
-            props.put("site.name",
-                new RollerPropertyData("site.name", 
-                    rollerConfig.getSiteName()));
-            props.put("site.description",
-                new RollerPropertyData("site.description", 
-                    rollerConfig.getSiteDescription()));
-            props.put("site.adminemail",
-                new RollerPropertyData("site.adminemail", 
-                    rollerConfig.getEmailAddress()));
-            props.put("site.absoluteurl",
-                new RollerPropertyData("site.absoluteurl", 
-                    rollerConfig.getAbsoluteURL()));
-            props.put("site.linkbacks.enabled",
-                new RollerPropertyData("site.linkbacks.enabled", 
-                    rollerConfig.getEnableLinkback().toString()));
-            props.put("users.registration.enabled",
-                new RollerPropertyData("users.registration.enabled", 
-                    rollerConfig.getNewUserAllowed().toString()));
-            props.put("users.themes.path",
-                new RollerPropertyData("users.themes.path", 
-                    rollerConfig.getUserThemes()));
-            props.put("users.editor.pages",
-                new RollerPropertyData("users.editor.pages", 
-                    rollerConfig.getEditorPages()));
-            props.put("users.comments.enabled",
-                new RollerPropertyData("users.comments.enabled", "true"));
-            props.put("users.comments.autoformat",
-                new RollerPropertyData("users.comments.autoformat", 
-                    rollerConfig.getAutoformatComments().toString()));
-            props.put("users.comments.escapehtml",
-                new RollerPropertyData("users.comments.escapehtml", 
-                    rollerConfig.getEscapeCommentHtml().toString()));
-            props.put("users.comments.emailnotify",
-                new RollerPropertyData("users.comments.emailnotify", 
-                    rollerConfig.getEmailComments().toString()));
-            props.put("uploads.enabled",
-                new RollerPropertyData("uploads.enabled", 
-                    rollerConfig.getUploadEnabled().toString()));
-            props.put("uploads.types.allowed",
-                new RollerPropertyData("uploads.types.allowed", 
-                    rollerConfig.getUploadAllow()));
-            props.put("uploads.types.forbid",
-                new RollerPropertyData("uploads.types.forbid", 
-                    rollerConfig.getUploadForbid()));
-            props.put("uploads.file.maxsize",
-                new RollerPropertyData("uploads.file.maxsize", 
-                    rollerConfig.getUploadMaxFileMB().toString()));
-            props.put("uploads.dir.maxsize",
-                new RollerPropertyData("uploads.dir.maxsize", 
-                    rollerConfig.getUploadMaxDirMB().toString()));
-            /* no longer part of runtime config
-            props.put("aggregator.enabled",
-                new RollerPropertyData("aggregator.enabled", 
-                    rollerConfig.getEnableAggregator().toString()));
-            props.put("aggregator.cache.enabled",
-                new RollerPropertyData("aggregator.cache.enabled", 
-                    rollerConfig.getRssUseCache().toString()));
-            props.put("aggregator.cache.timeout",
-                new RollerPropertyData("aggregator.cache.timeout", 
-                    rollerConfig.getRssCacheTime().toString()));
-            props.put("debug.memory.enabled",
-                new RollerPropertyData("debug.memory.enabled", 
-                    rollerConfig.getMemDebug().toString()));
-             */
-            props.put("spam.blacklist",
-                new RollerPropertyData("spam.blacklist", 
-                    rollerConfig.getRefererSpamWords()));
-        } else {
-            log.info("Old roller config not found ... " + 
-                "default values will be loaded");
-        }
-
-        return props;
-    }
-
 
     /**
      * This method compares the property definitions in the RuntimeConfigDefs

@@ -18,6 +18,7 @@
 
 package org.apache.roller.planet.business.datamapper;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -214,7 +215,7 @@ public abstract class DatamapperPlanetManagerImpl extends AbstractManagerImpl im
     }
 
     public List getEntries(PlanetGroupData group, int offset, int len) throws RollerException {
-        return getEntries(group, null, null, offset, len);
+        return getEntries(Collections.singletonList(group), null, null, offset, len);
     }
 
 }

@@ -138,7 +138,7 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 // lookup Renderer we are going to use
                 Renderer renderer = null;
-                Template template = new StaticTemplate("templates/feeds/weblog-"+type+"-"+format+".vm", null, "velocity");
+                Template template = new StaticTemplate("templates/feeds/weblog-"+type+"-"+format+".vm", "velocity");
                 renderer = RendererManager.getRenderer(template);
                 
                 

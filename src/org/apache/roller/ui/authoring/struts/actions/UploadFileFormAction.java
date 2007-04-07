@@ -18,14 +18,12 @@
 
 package org.apache.roller.ui.authoring.struts.actions;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
@@ -47,14 +45,13 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.FileManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.UploadFileForm;
 import org.apache.roller.ui.core.RequestConstants;
-import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -447,7 +444,7 @@ public final class UploadFileFormAction extends DispatchAction {
             uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");
             
             // get files, add them to the list
-            WeblogResource[] resources = fmgr.getFiles(weblog, uploadsPath);
+            ThemeResource[] resources = fmgr.getFiles(weblog, uploadsPath);
             for (int i=0; i<resources.length; i++) {
                 totalSize += resources[i].getLength();
             }
@@ -455,7 +452,7 @@ public final class UploadFileFormAction extends DispatchAction {
             
             // get directories, only if we are at the default/root view
             if(showingRoot) {
-                WeblogResource[] dirs = fmgr.getDirectories(weblog);
+                ThemeResource[] dirs = fmgr.getDirectories(weblog);
                 files.addAll(Arrays.asList(dirs));
             }
             
@@ -502,8 +499,8 @@ public final class UploadFileFormAction extends DispatchAction {
     
     public class WeblogResourceComparator implements Comparator {
         public int compare(Object o1, Object o2) {
-            WeblogResource r1 = (WeblogResource)o1;
-            WeblogResource r2 = (WeblogResource)o2;
+            ThemeResource r1 = (ThemeResource)o1;
+            ThemeResource r2 = (ThemeResource)o2;
             
             // consider directories so they go to the top of the list
             if(r1.isDirectory() && r2.isDirectory()) {
@@ -521,8 +518,8 @@ public final class UploadFileFormAction extends DispatchAction {
             }
         }
         public boolean equals(Object o1, Object o2) {
-            WeblogResource r1 = (WeblogResource)o1;
-            WeblogResource r2 = (WeblogResource)o2;
+            ThemeResource r1 = (ThemeResource)o1;
+            ThemeResource r2 = (ThemeResource)o2;
             
             // need to be same type to be equals, i.e both files or directories
             if((r1.isDirectory() && !r2.isDirectory()) ||

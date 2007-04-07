@@ -1,0 +1,119 @@
+Fri Mar 16 16:11:49 EDT 2007  [debug] AvalonLogSystem initialized using logfile 'velocity.log'
+Fri Mar 16 16:11:49 EDT 2007   [info] ************************************************************** 
+Fri Mar 16 16:11:49 EDT 2007   [info] Starting Jakarta Velocity v1.4
+Fri Mar 16 16:11:49 EDT 2007   [info] RuntimeInstance initializing.
+Fri Mar 16 16:11:49 EDT 2007   [info] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+Fri Mar 16 16:11:49 EDT 2007   [info] Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Fri Mar 16 16:11:49 EDT 2007   [info] Using logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Fri Mar 16 16:11:49 EDT 2007   [info] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+Fri Mar 16 16:11:49 EDT 2007   [info] Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ClasspathResourceLoader : initialization starting.
+Fri Mar 16 16:11:49 EDT 2007   [info] ClasspathResourceLoader : initialization complete.
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+Fri Mar 16 16:11:49 EDT 2007   [info] Default ResourceManager initialization complete.
+Fri Mar 16 16:11:49 EDT 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+Fri Mar 16 16:11:49 EDT 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+Fri Mar 16 16:11:49 EDT 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+Fri Mar 16 16:11:49 EDT 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+Fri Mar 16 16:11:49 EDT 2007   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+Fri Mar 16 16:11:49 EDT 2007   [info] Created: 20 parsers.
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : initialization starting.
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : adding VMs from VM library template : VM_global_library.vm
+Fri Mar 16 16:11:49 EDT 2007  [error] ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro :  VM library template macro registration complete.
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : allowInline = true : VMs can be defined inline in templates
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : messages on  : VM system will output logging messages
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : autoload off  : VM system will not automatically reload global library macros
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : initialization complete.
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocity successfully started.
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : added new VM : #addColumnNull( table column type ) : source = macros.vm
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : added new VM : #addColumnNotNull( table column type default ) : source = macros.vm
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : added new VM : #dropNotNullFromTableId( table ) : source = macros.vm
+Fri Mar 16 16:11:49 EDT 2007   [info] Velocimacro : added new VM : #longtext( size ) : source = macros.vm
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Fri Mar 16 16:11:49 EDT 2007   [info] ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:53,384 - Log4JLogChute initialized using file 'velocity.log'
+2007-04-07 15:33:53,426 - The version of log4j being used does not support the "trace" level.
+2007-04-07 15:33:53,426 - *******************************************************************
+2007-04-07 15:33:53,426 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2007-04-07 15:33:53,426 - RuntimeInstance initializing.
+2007-04-07 15:33:53,426 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2007-04-07 15:33:53,426 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2007-04-07 15:33:53,429 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+	at org.apache.tools.ant.Task.perform(Task.java:364)
+	at org.apache.tools.ant.Target.execute(Target.java:341)
+	at org.apache.tools.ant.Target.performTasks(Target.java:369)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1216)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:37)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1068)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:382)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:107)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+	at org.apache.tools.ant.Task.perform(Task.java:364)
+	at org.apache.tools.ant.Target.execute(Target.java:341)
+	at org.apache.tools.ant.Target.performTasks(Target.java:369)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1216)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1185)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:40)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1068)
+	at org.apache.tools.ant.Main.runBuild(Main.java:668)
+	at org.apache.tools.ant.Main.startAnt(Main.java:187)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:246)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:67)
+2007-04-07 15:33:53,431 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2007-04-07 15:33:53,660 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2007-04-07 15:33:53,664 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2007-04-07 15:33:53,669 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:53,671 - ClasspathResourceLoader : initialization complete.
+2007-04-07 15:33:53,690 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2007-04-07 15:33:53,690 - Default ResourceManager initialization complete.
+2007-04-07 15:33:53,692 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2007-04-07 15:33:53,694 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2007-04-07 15:33:53,696 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2007-04-07 15:33:53,700 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2007-04-07 15:33:53,702 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2007-04-07 15:33:53,748 - Created '20' parsers.
+2007-04-07 15:33:53,761 - Velocimacro : initialization starting.
+2007-04-07 15:33:53,761 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2007-04-07 15:33:53,762 - Velocimacro : Default library not found.
+2007-04-07 15:33:53,762 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2007-04-07 15:33:53,762 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2007-04-07 15:33:53,762 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2007-04-07 15:33:53,762 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2007-04-07 15:33:53,762 - Velocimacro : Velocimacro : initialization complete.
+2007-04-07 15:33:53,762 - RuntimeInstance successfully initialized.
+2007-04-07 15:33:54,069 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,081 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2007-04-07 15:33:54,089 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2007-04-07 15:33:54,091 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2007-04-07 15:33:54,092 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2007-04-07 15:33:54,093 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,162 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,173 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,181 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,196 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,201 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,205 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2007-04-07 15:33:54,211 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader

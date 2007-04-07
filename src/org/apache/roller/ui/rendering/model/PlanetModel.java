@@ -25,11 +25,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.PlanetEntriesPager;
@@ -64,7 +65,7 @@ public class PlanetModel implements Model {
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {
-            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            ThemeTemplate weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  
@@ -165,7 +166,9 @@ public class PlanetModel implements Model {
         List list = new ArrayList();
         try {
             PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            List subs = planetManager.getTopSubscriptions(groupHandle, 0, length);
+            PlanetData defaultPlanet = planetManager.getPlanet("default");
+            PlanetGroupData planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
+            List subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {
                 PlanetSubscriptionData sub = (PlanetSubscriptionData) it.next();
                 // TODO needs pojo wrapping from planet

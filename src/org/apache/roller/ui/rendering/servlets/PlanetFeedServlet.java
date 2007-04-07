@@ -30,10 +30,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.RollerFactory;
+import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
@@ -131,7 +131,8 @@ public class PlanetFeedServlet extends HttpServlet {
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
-                model.put("group", planet.getGroup(request.getParameter("group")));
+                PlanetData planetObject = planet.getPlanet("default");
+                model.put("group", planet.getGroup(planetObject, request.getParameter("group")));
             }
             model.put("planet", planet);
             model.put("date", new Date());
@@ -167,7 +168,7 @@ public class PlanetFeedServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            Template template = new StaticTemplate("templates/planet/planetrss.vm", null, "velocity");
+            Template template = new StaticTemplate("templates/planet/planetrss.vm", "velocity");
             renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(

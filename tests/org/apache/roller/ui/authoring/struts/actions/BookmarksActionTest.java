@@ -92,7 +92,7 @@ public class BookmarksActionTest extends StrutsActionTestBase {
         UserData user = null;
         try {
             umgr = RollerFactory.getRoller().getUserManager();
-            user = (UserData)umgr.getUsers(testWeblog, null, null, null, 0, Integer.MAX_VALUE).get(0);
+            user = (UserData)umgr.getUsers(TestUtils.getManagedWebsite(testWeblog), null, null, null, 0, Integer.MAX_VALUE).get(0);
             doFilters();
             authenticateUser(user.getUserName(), "editor");
         } catch (RollerException e) {
@@ -113,7 +113,7 @@ public class BookmarksActionTest extends StrutsActionTestBase {
         
         try {
             RollerRequest rreq = new RollerRequest(strutsModule.getMockPageContext());
-            rreq.setWebsite(testWeblog);
+            rreq.setWebsite(TestUtils.getManagedWebsite(testWeblog));
             strutsModule.setRequestAttribute(RollerRequest.ROLLER_REQUEST, rreq);
             strutsModule.actionPerform(BookmarksAction.class, form);
         } catch (Throwable e) {

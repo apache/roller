@@ -21,6 +21,7 @@ package org.apache.roller.ui.rendering.velocity.deprecated;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,6 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
@@ -57,6 +57,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.ThemeTemplate;
 
 
 /**
@@ -131,11 +132,16 @@ public class OldWeblogPageModel {
         // Get the pages, put into context & load map
         if (mWebsite != null) {
             
-            // Get the pages, put into context & load map
-            List pages = mWebsite.getPages();
+            List pages = Collections.EMPTY_LIST;
+            try {
+                pages = mWebsite.getPages();
+            } catch (RollerException ex) {
+                mLogger.error("error getting weblog pages", ex);
+            }
+            
             Iterator pageIter = pages.iterator();
             while (pageIter.hasNext()) {
-                Template page = (Template) pageIter.next();
+                ThemeTemplate page = (ThemeTemplate) pageIter.next();
                 mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
             }
         }
@@ -286,7 +292,7 @@ public class OldWeblogPageModel {
         String template_id = null;
         
         try {
-            Template pd = mWebsite.getPageByName(pageName);
+            ThemeTemplate pd = mWebsite.getPageByName(pageName);
             if(pd != null) {
                 template_id = pd.getId();
             }

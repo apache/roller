@@ -279,8 +279,8 @@ public final class PlanetGroupsAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();            
             PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
-            PlanetGroupData externalGroup = pmgr.getGroup("external");
-            Iterator allgroups = pmgr.getGroups(defaultPlanet).iterator();
+            PlanetGroupData externalGroup = pmgr.getGroup(defaultPlanet, "external");
+            Iterator allgroups = defaultPlanet.getGroups().iterator();
             while (allgroups.hasNext()) 
             {
                 PlanetGroupData agroup = (PlanetGroupData)allgroups.next();

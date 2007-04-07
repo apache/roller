@@ -18,8 +18,6 @@
 
 package org.apache.roller.ui.rendering.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +27,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.business.PropertiesManager;
-import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
@@ -68,7 +64,7 @@ public class WeblogPageRequest extends WeblogRequest {
     
     // heavyweight attributes
     private WeblogEntryData weblogEntry = null;
-    private Template weblogPage = null;
+    private ThemeTemplate weblogPage = null;
     private WeblogCategoryData weblogCategory = null;
     
     
@@ -349,7 +345,7 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogEntry = weblogEntry;
     }
 
-    public Template getWeblogPage() {
+    public ThemeTemplate getWeblogPage() {
         
         if(weblogPage == null && weblogPageName != null) {
             try {

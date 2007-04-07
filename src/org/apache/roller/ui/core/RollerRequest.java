@@ -35,12 +35,11 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
@@ -81,7 +80,7 @@ public class RollerRequest
     private String             mDateString = null;
     private String             mPathInfo = null; 
     private String             mPageLink = null;
-    private Template           mPage;
+    private ThemeTemplate      mPage = null;
     private PageContext        mPageContext = null;
     private HttpServletRequest mRequest = null;
     private WebsiteData        mWebsite;
@@ -651,7 +650,7 @@ public class RollerRequest
      * Gets the WeblogTemplate specified by the request, or null.
      * @return WeblogTemplate
      */
-    public Template getPage()
+    public ThemeTemplate getPage()
     {
         if (mPage == null)
         {
@@ -675,7 +674,7 @@ public class RollerRequest
     /**
      * Allow comment servlet to inject page that it has chosen.
      */
-    public void setPage(org.apache.roller.pojos.Template page) 
+    public void setPage(org.apache.roller.pojos.ThemeTemplate page) 
     {
         mPage = page;
     }

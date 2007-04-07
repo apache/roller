@@ -4,8 +4,21 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+create table rag_planet (
+    id              varchar(48) not null primary key,
+    handle          varchar(32) not null,
+    title           varchar(255) not null,
+    description     varchar(255)
+);
+alter table rag_planet add constraint ragp_handle_uq unique ( handle );
+
+insert into rag_planet (id,title,handle) values ('default_planet','default_planet','default_planet');
+update rag_group set planet_id='default_planet';
+
+-- new column to support account activation by email
 #addColumnNull("rolleruser" "activationcode" "varchar(48)")
 
+-- new column to allow setting of page template content-type
 #addColumnNull("webpage" "outputtype" "varchar(48)")
 
 -- add new action column to webpage table, default value is custom

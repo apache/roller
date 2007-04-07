@@ -99,7 +99,7 @@ public class PlanetEntriesPager extends AbstractPager {
                         rawEntries = planetManager.getEntries(sub, offset, length+1);
                     }
                 } else if (group != null) {
-                    rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
+                    rawEntries = planetManager.getEntries(Collections.singletonList(group), startDate, null, offset, length+1);
                 } else {
                     //rawEntries = planetManager.getEntries(startDate, null, offset, length+1);
                     rawEntries = Collections.EMPTY_LIST;

@@ -3,3 +3,8 @@
         <servlet-name>action</servlet-name>
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>XmlRpcServlet</servlet-name>
+        <url-pattern>/roller-services/xmlrpc</url-pattern>
+    </servlet-mapping>

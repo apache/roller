@@ -82,7 +82,7 @@ public class WeblogEntryActionTest extends StrutsActionTestBase {
         UserData user = null;
         try {
             umgr = RollerFactory.getRoller().getUserManager();
-            user = (UserData)umgr.getUsers(testWeblog, null, null, null, 0, -1).get(0);
+            user = (UserData)umgr.getUsers(TestUtils.getManagedWebsite(testWeblog), null, null, null, 0, -1).get(0);
             authenticateUser(user.getUserName(), "editor");
         } catch (RollerException e) {
             e.printStackTrace();
@@ -105,7 +105,7 @@ public class WeblogEntryActionTest extends StrutsActionTestBase {
         
         try {
             RollerRequest rreq = new RollerRequest(strutsModule.getMockPageContext());
-            rreq.setWebsite(testWeblog);
+            rreq.setWebsite(TestUtils.getManagedWebsite(testWeblog));
             strutsModule.setRequestAttribute(RollerRequest.ROLLER_REQUEST, rreq);
             strutsModule.actionPerform(WeblogEntryFormAction.class, form);
         } catch (Throwable t) {

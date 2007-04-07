@@ -43,7 +43,7 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.business.FileManager;
-import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.ThemeResource;
 
 /**
  * TODO: revisit this class once Atom 1.0 support comes to Rome
@@ -84,7 +84,7 @@ public class ImportEntriesAction extends DispatchAction
 
                     // load selected file
                     FileManager fMgr = RollerFactory.getRoller().getFileManager();
-                    WeblogResource f = fMgr.getFile(website, form.getImportFileName());
+                    ThemeResource f = fMgr.getFile(website, form.getImportFileName());
 
                     //ArchiveParser archiveParser =
                         //new ArchiveParser(RollerFactory.getRoller(), rreq.getWebsite(), f);

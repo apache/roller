@@ -20,8 +20,6 @@ package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -39,9 +37,9 @@ import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogTemplateFormEx;
 import org.apache.roller.ui.core.BasePageModel;
@@ -235,7 +233,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             List availableActions = new ArrayList();
             availableActions.add(WeblogTemplate.ACTION_CUSTOM);
             
-            if(Theme.CUSTOM.equals(website.getEditorTheme())) {
+            if(WeblogTheme.CUSTOM.equals(website.getEditorTheme())) {
                 // if the weblog is using a custom theme then determine which
                 // action templates are still available to be created
                 availableActions.add(WeblogTemplate.ACTION_PERMALINK);

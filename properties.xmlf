@@ -91,6 +91,9 @@ in the "base.path" definition.
     <include name="commons-cache.jar" />
     <include name="commons-collections-3.2.jar" />
     <include name="commons-codec-1.3.jar" />
+    <include name="commons-logging-1.0.4.jar" />
+    <include name="commons-lang-2.1.jar" />
+    <include name="commons-collections-3.1.jar" />
     <include name="concurrent-1.3.2.jar"/>
     <include name="jaxen-full.jar" />
     <include name="saxpath.jar" />
@@ -99,9 +102,7 @@ in the "base.path" definition.
     <include name="log4j-1.2.11.jar"/>
     <include name="rome-0.9.jar"/>
     <include name="rome-fetcher-0.9.jar"/>
-    <include name="velocity-1.4.jar"/>
-    <include name="velocity-dep-1.4.jar"/>
-    <include name="xmlrpc-1.2-b1.jar"/>
+    <include name="velocity-1.5.jar"/>
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
@@ -161,6 +162,13 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
+<fileset id="xmlrpc.jars" dir="${ro.tools}/xmlrpc-3.0/lib">
+    <include name="ws-commons-util-1.0.1.jar"/>
+    <include name="xmlrpc-common-3.0.jar"/>
+    <include name="xmlrpc-client-3.0.jar"/>
+    <include name="xmlrpc-server-3.0.jar"/>
+</fileset>
+
 <fileset id="roller-core.jars" dir="${ro.tools}/roller-core">
     <include name="*.jar"/>
 </fileset>
@@ -180,6 +188,7 @@ in the "base.path" definition.
     <fileset refid="commons.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="roller-planet.jars" />
+    <fileset refid="xmlrpc.jars"/>
     <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
     <fileset refid="jpa.jars" />
 </path>
@@ -228,11 +237,11 @@ in the "base.path" definition.
     </fileset>
     <fileset refid="commons-httpclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
-    <pathelement location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
     <pathelement location="${ro.tools}/buildtime/derby.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
+    <pathelement location="${ro.tools}/roller-planet/roller-planet-business.jar"/>
 
     <!-- plus normal jars -->
     <path refid="business.path"/>

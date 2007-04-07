@@ -48,6 +48,8 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.MockRollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.RegexUtil;
+import org.apache.xmlrpc.webserver.XmlRpcServlet;
+
 
 /**
  * Makes calls to the RollerXmlRpcServer, which should handle a
@@ -160,7 +162,7 @@ public class RollerXmlRpcServerTest extends TestCase {
                     mockRequest, mockFactory.getMockServletContext());
             
             servletTestModule = new ServletTestModule(mockFactory);
-            servletTestModule.createServlet(RollerXMLRPCServlet.class);
+            servletTestModule.createServlet(XmlRpcServlet.class);
         
             testUser = TestUtils.setupUser("entryTestUser");
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);

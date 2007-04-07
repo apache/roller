@@ -67,12 +67,6 @@ public interface Roller {
     public ReferrerQueueManager getReferrerQueueManager();
     
     
-    /** 
-     * Get RefererManager associated with this Roller instance.
-     */
-    public ConfigManager getConfigManager();
-    
-    
     /**
      * Get the AutoPingManager associated with this Roller instance.
      */

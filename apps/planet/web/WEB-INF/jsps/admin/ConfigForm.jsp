@@ -44,8 +44,7 @@
             <%-- show a status message if needed --%>
             <%@include file="/WEB-INF/jsps/admin/statusMessage.jsp" %>
             
-            <s:url id="action" action="ConfigForm" method="save" />
-            <s:form name="ConfigForm" action="%{action}">
+            <s:form name="ConfigForm" action="ConfigForm!save">
                 
                 <table class="formtableNoDesc">
                     

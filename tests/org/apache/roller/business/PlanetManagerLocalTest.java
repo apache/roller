@@ -27,11 +27,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.RollerFactory;
+import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.planet.tasks.RefreshEntriesTask;
+import org.apache.roller.planet.tasks.RefreshPlanetTask;
 import org.apache.roller.planet.tasks.SyncWebsitesTask;
 
 
@@ -124,11 +125,12 @@ public class PlanetManagerLocalTest extends TestCase {
             syncTask.init();
             syncTask.run();           
             
-            RefreshEntriesTask refreshTask = new RefreshEntriesTask();
-            refreshTask.init();
+            RefreshPlanetTask refreshTask = new RefreshPlanetTask();
             refreshTask.run();
             
-            List agg = planet.getAggregation(null, null, 0, -1);
+            PlanetData planetObject = planet.getPlanet("default");
+            PlanetGroupData group = planet.getGroup(planetObject, "all");
+            List agg = planet.getEntries(group, 0, -1);
             assertEquals(3, agg.size());
         }
         catch (Exception e) {

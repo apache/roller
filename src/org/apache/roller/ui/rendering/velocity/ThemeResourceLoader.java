@@ -75,7 +75,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             // lookup the template from the proper theme
             ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
-            ThemeTemplate template = theme.getTemplate(split[1]);
+            ThemeTemplate template = theme.getTemplateByName(split[1]);
             
             if(template == null)
                 throw new ResourceNotFoundException("Template ["+split[1]+
@@ -128,7 +128,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             // lookup the template from the proper theme
             ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
-            ThemeTemplate template = theme.getTemplate(split[1]);
+            ThemeTemplate template = theme.getTemplateByName(split[1]);
             
             if(template == null)
                 return last_mod;

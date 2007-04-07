@@ -18,6 +18,8 @@
 package org.apache.roller.ui;
 
 
+import com.mockrunner.mock.jdbc.JDBCMockObjectFactory;
+import com.mockrunner.mock.jdbc.MockDataSource;
 import com.mockrunner.mock.web.ActionMockObjectFactory;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockServletContext;
@@ -25,6 +27,9 @@ import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import com.mockrunner.struts.ActionTestModule;
 import com.mockrunner.struts.MapMessageResources;
+import java.io.File;
+import java.io.FileInputStream;
+import javax.naming.InitialContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -35,9 +40,8 @@ import junit.framework.TestCase;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.ui.MockPrincipal;
-import org.apache.roller.ui.MockRollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.core.filters.PersistenceSessionFilter;
 import org.apache.roller.ui.core.filters.RequestFilter;
@@ -58,13 +62,25 @@ public class StrutsActionTestBase extends TestCase {
         strutsModule = new ActionTestModule(getStrutsMockFactory());
         servletModule = new ServletTestModule(getStrutsMockFactory());
         
-        // Setup mocks needed to run a Struts action 
+        // Setup mocks needed to run a Struts action
+                
         MapMessageResources resources = new MapMessageResources();
         resources.putMessages("WEB-INF/classes/ApplicationResources.properties");
         strutsModule.setResources(resources);
         
+        RollerRuntimeConfig.setAbsoluteContextURL("http://localhost:8080/roller");
+
         MockServletContext ctx = getMockFactory().getMockServletContext();
-        ctx.setRealPath("/", "");
+        ctx.setServletContextName("/roller"); 
+        ctx.setRealPath("/", ".");
+        
+        ctx.setInitParameter("contextConfigLocation", "WEB-INF/security.xml");
+        ctx.setResourceAsStream("/WEB-INF/security.xml", 
+            new FileInputStream("WEB-INF" + File.separator + "security.xml")); 
+        
+        ctx.setResourceAsStream("/WEB-INF/velocity.properties", 
+            new FileInputStream("WEB-INF" + File.separator + "velocity.properties")); 
+        
         rollerContext = new MockRollerContext();
         rollerContext.init(ctx);
     }

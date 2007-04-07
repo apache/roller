@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
-import org.apache.roller.business.ConfigManager;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerImpl;
@@ -298,17 +297,6 @@ public class JPARollerImpl extends RollerImpl {
         }
         return threadManager;
     }
-
-    /**
-     * This method is deprecated.
-     * @return null
-     * @see org.apache.roller.business.Roller#getConfigManager()
-     * @deprecated see JIRA issue ROL-1151
-     */
-    public ConfigManager getConfigManager() {
-        throw new RuntimeException("Deprecated method getConfigManager.");
-    }
-    
         
     /**
      * Loads properties from given resourceName using given class loader

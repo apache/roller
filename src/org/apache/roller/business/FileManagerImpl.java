@@ -31,11 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.business.FileIOException;
-import org.apache.roller.business.FilePathException;
-import org.apache.roller.business.FileManager;
-import org.apache.roller.business.FileNotFoundException;
-import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
@@ -74,7 +70,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getFile(weblog, java.lang.String)
      */
-    public WeblogResource getFile(WebsiteData weblog, String path) 
+    public ThemeResource getFile(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the file, checks that file exists & is readable
@@ -94,7 +90,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getFiles(weblog, java.lang.String)
      */
-    public WeblogResource[] getFiles(WebsiteData weblog, String path) 
+    public ThemeResource[] getFiles(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the dir, checks that dir exists & is readable
@@ -107,7 +103,7 @@ public class FileManagerImpl implements FileManager {
         }
         
         // everything looks good, list contents
-        WeblogResource dir = new WeblogResourceFile(weblog, path, dirFile);
+        ThemeResource dir = new WeblogResourceFile(weblog, path, dirFile);
         
         return dir.getChildren();
     }
@@ -116,7 +112,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getDirectories(weblog)
      */
-    public WeblogResource[] getDirectories(WebsiteData weblog)
+    public ThemeResource[] getDirectories(WebsiteData weblog)
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the root dir, checks that dir exists & is readable
@@ -129,8 +125,8 @@ public class FileManagerImpl implements FileManager {
             }
         });
         
-        // convert 'em to WeblogResource objects
-        WeblogResource[] resources = new WeblogResource[dirFiles.length];
+        // convert 'em to ThemeResource objects
+        ThemeResource[] resources = new ThemeResource[dirFiles.length];
         for(int i=0; i < dirFiles.length; i++) {
             String filePath = dirFiles[i].getName();
             resources[i] = new WeblogResourceFile(weblog, filePath, dirFiles[i]);
@@ -141,7 +137,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
- * @see org.apache.roller.model.FileManager#saveFile(weblog, java.lang.String, java.lang.String, long, java.io.InputStream)
+     * @see org.apache.roller.model.FileManager#saveFile(weblog, java.lang.String, java.lang.String, long, java.io.InputStream)
      */
     public void saveFile(WebsiteData weblog, 
                          String path, 
@@ -163,6 +159,19 @@ public class FileManagerImpl implements FileManager {
         
         // make sure uploads area exists for this weblog
         File dirPath = this.getRealFile(weblog, null);
+        
+        // if we are saving into a subfolder, make sure it exists
+        if(path.indexOf("/") != -1) {
+            String subDir = path.substring(0, path.indexOf("/"));
+            File subDirFile = new File(dirPath.getAbsolutePath() + File.separator + subDir);
+            if(!subDirFile.exists()) {
+                // directory doesn't exist yet, create it
+                log.debug("Creating directory ["+subDir+"] automatically");
+                subDirFile.mkdir();
+            }
+        }
+        
+        // create File that we are about to save
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator + savePath);
         
         byte[] buffer = new byte[8192];
@@ -336,20 +345,12 @@ public class FileManagerImpl implements FileManager {
         
         // fifth check, is save path viable?
         if(path.indexOf("/") != -1) {
-            // see if directory path exists already
-            String dirPath = path.substring(0, path.lastIndexOf("/"));
-            
-            try {
-                File parent = this.getRealFile(weblog, dirPath);
-                if(parent == null || !parent.exists()) {
-                    messages.addError("error.upload.badPath");
-                }
-            } catch (Exception ex) {
-                // this is okay, just means that parent dir doesn't exist
+            // just make sure there is only 1 directory, we don't allow multi
+            // level directory hierarchies right now
+            if(path.lastIndexOf("/") != path.indexOf("/")) {
                 messages.addError("error.upload.badPath");
                 return false;
             }
-            
         }
         
         return true;
@@ -546,16 +547,16 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * A FileManagerImpl specific implementation of a WeblogResource.
+     * A FileManagerImpl specific implementation of a ThemeResource.
      *
-     * WeblogResources from the FileManagerImpl are backed by a java.io.File
+     * ThemeResources from the FileManagerImpl are backed by a java.io.File
      * object which represents the resource on a filesystem.
      *
      * This class is internal to the FileManagerImpl class because there should 
      * not be any external classes which need to construct their own instances
      * of this class.
      */
-    class WeblogResourceFile implements WeblogResource {
+    class WeblogResourceFile implements ThemeResource {
         
         // the physical java.io.File backing this resource
         private File resourceFile = null;
@@ -577,11 +578,7 @@ public class FileManagerImpl implements FileManager {
             return weblog;
         }
         
-        public String getURL(boolean absolute) {
-            return URLUtilities.getWeblogResourceURL(weblog, relativePath, absolute);
-        }
-        
-        public WeblogResource[] getChildren() {
+        public ThemeResource[] getChildren() {
             
             if(!resourceFile.isDirectory()) {
                 return null;
@@ -594,8 +591,8 @@ public class FileManagerImpl implements FileManager {
                 }
             });
             
-            // convert Files into WeblogResources
-            WeblogResource[] resources = new WeblogResource[dirFiles.length];
+            // convert Files into ThemeResources
+            ThemeResource[] resources = new ThemeResource[dirFiles.length];
             for(int i=0; i < dirFiles.length; i++) {
                 String filePath = dirFiles[i].getName();
                 if(relativePath != null && !relativePath.trim().equals("")) {

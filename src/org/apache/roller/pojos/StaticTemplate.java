@@ -32,41 +32,26 @@ import java.util.Date;
 public class StaticTemplate implements Template, Serializable {
     
     private String id = null;
-    private String action = null;
     private String name = null;
     private String description = null;
-    private String contents = null;
-    private String link = null;
     private Date lastModified = new Date();
     private String templateLanguage = null;
-    private boolean hidden = false;
-    private boolean navbar = false;
     private String  outputContentType = null;
     
     
-    public StaticTemplate() {}
-    
-    public StaticTemplate(String id, String contents, String lang) {
+    public StaticTemplate(String id, String lang) {
         this.id = id;
         this.name = id;
         this.description = id;
-        this.contents = contents;
-        this.link = id;
         this.templateLanguage = lang;
     }
-
     
-    public Template getDecorator() {
-        return null;
-    }
     
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -86,22 +71,6 @@ public class StaticTemplate implements Template, Serializable {
         this.description = description;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public Date getLastModified() {
         return lastModified;
     }
@@ -117,22 +86,6 @@ public class StaticTemplate implements Template, Serializable {
     public void setTemplateLanguage(String templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    public void setNavbar(boolean navbar) {
-        this.navbar = navbar;
-    }
-    
-    public boolean isNavbar() {
-        return navbar; 
-    }
     
     public String getOutputContentType() {
         return outputContentType;
@@ -140,13 +93,6 @@ public class StaticTemplate implements Template, Serializable {
 
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
-    }    
-
-    public String getAction() {
-        return action;
     }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
+    
 }

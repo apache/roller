@@ -18,8 +18,6 @@
 package org.apache.roller.webservices.atomprotocol;
 
 import java.io.InputStream;
-import java.util.Date;
-
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
 
@@ -27,7 +25,7 @@ import com.sun.syndication.feed.atom.Feed;
  * Interface to be supported by an Atom server, expected lifetime: one request.
  * AtomServlet calls this generic interface instead of Roller specific APIs. 
  * <p />
- * Based on: draft-ietf-atompub-protocol-08.txt + PaceMediaEntries5
+ * Based on: draft-ietf-atompub-protocol-14.txt
  * <p />
  * Designed to be Roller independent.
  */

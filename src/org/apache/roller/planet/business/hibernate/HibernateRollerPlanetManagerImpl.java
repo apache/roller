@@ -58,15 +58,15 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
     private static Log log = LogFactory.getLog(HibernateRollerPlanetManagerImpl.class);
     
     
-    public HibernateRollerPlanetManagerImpl(HibernatePersistenceStrategy strat) {
-        
-        super(strat);
-        
+    public HibernateRollerPlanetManagerImpl(HibernatePersistenceStrategy strat) {        
+        super(strat);        
         log.info("Instantiating Hibernate Roller Planet Manager");
     }
     
     
-    protected Set getNewEntries(PlanetSubscriptionData sub,
+    /* TODO: update local feed fetching code to use 4.0 planet interfaces
+     
+     protected Set getNewEntries(PlanetSubscriptionData sub,
                                 FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
             throws RollerException {
@@ -78,7 +78,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
             
             log.debug("Feed is remote, letting parent handle it "+sub.getFeedURL());
             
-            return super.getNewEntries(sub, feedFetcher, feedInfoCache);
+            return super.getEntries(sub);
         }
         
         try {
@@ -182,6 +182,6 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
         
         // if there was an error then try normal planet method
         return super.getNewEntries(sub, feedFetcher, feedInfoCache);
-    }
+    }*/
     
 }
