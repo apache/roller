@@ -88,6 +88,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
         
+        // Return false if entry not found
+        if (entry == null) return false;
+        
         validate(entry.getWebsite().getHandle(), userid, password);
         
         try {

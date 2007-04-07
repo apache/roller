@@ -18,18 +18,23 @@
 
 package org.apache.roller.business.pings;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.xmlrpc.XmlRpcClient;
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import org.apache.commons.logging.Log;
 
 /**
  * Utility for sending a weblog update ping.
@@ -98,19 +103,22 @@ public class WeblogUpdatePinger {
         Set variantOptions = PingConfig.getVariantOptions(pingTargetUrl);
 
         // Set up the ping parameters.
-        Vector params = new Vector();
+        List params = new ArrayList();
         if (!variantOptions.contains("noname")) {
             // ping variant for icerocket and anyone with similar bug, where we must omit the blog name.
-            params.addElement(website.getName());
+            params.add(website.getName());
         }
-        params.addElement(websiteUrl);
+        params.add(websiteUrl);
         if (logger.isDebugEnabled()) {
             logger.debug("Executing ping to '" + pingTargetUrl + "' for website '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
         }
 
-        // Send the ping.
-        XmlRpcClient client = new XmlRpcClient(pingTargetUrl);
-        PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params));
+        // Send the ping.        
+        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+        config.setServerURL(new URL(pingTargetUrl));
+        XmlRpcClient client = new XmlRpcClient();
+        client.setConfig(config);
+        PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params.toArray()));
 
         if (logger.isDebugEnabled()) logger.debug("Ping result is: " + pingResult);
         return pingResult;
