@@ -421,6 +421,7 @@ ro.buildUser=${user.name}
         <fileset refid="struts.jars" />
         <fileset refid="spring.jars" /> 
         <fileset refid="jstl.jars" />
+        <fileset refid="xmlrpc.jars" />
         
         <fileset refid="roller-planet.jars" />
         
@@ -483,9 +484,14 @@ ro.buildUser=${user.name}
         <mkdir dir="${build.dbscripts}/oracle" />
         <mkdir dir="${build.dbscripts}/postgresql" />
         
+         <path id="texen.path">
+            <fileset refid="base.jars" />
+            <pathelement location="${basedir}/metadata/database/" />
+            <pathelement location="${basedir}/metadata/database/tmpls/" />
+        </path>
         <taskdef name="texen" 
                  classname="org.apache.velocity.texen.ant.TexenTask"
-                 classpath="${ro.tools}/lib/velocity-dep-1.4.jar:${basedir}/metadata/database/:${basedir}/metadata/database/tmpls/" />
+                 classpathref="texen.path" />
                  
         <texen
             controlTemplate="control.vm" 
@@ -838,7 +844,7 @@ ro.buildUser=${user.name}
 </target>
 
 
-<target name="build-tests" depends="build-web, gen-dbscripts" description="Build unit tests">
+<target name="build-tests" depends="all" description="Build unit tests">
     
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
@@ -876,11 +882,15 @@ ro.buildUser=${user.name}
 	    <exclude name="jsps/**" />
         </fileset>
     </copy>
+    <mkdir dir="${build.tests}/themes" />
+    <copy todir="${build.tests}/themes">
+        <fileset dir="${basedir}/web/themes" />
+    </copy>
 
     <!-- 
     Copy custom testing files which will overwrite some config files 
     -->
-    <copy todir="${build.tests}">
+    <copy todir="${build.tests}" overwrite="true">
         <fileset dir="${basedir}/testdata" />
     </copy>
     
@@ -973,20 +983,19 @@ ro.buildUser=${user.name}
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/presentation/xml">
             <fileset dir="${build.compile.tests}">
-		<include name="org/apache/roller/ui/UIPluginManagerTest.class"/>
-                <include name="org/apache/roller/ui/authoring/struts/actions/BookmarksActionTest.class"/>           
-                <include name="org/apache/roller/ui/authoring/struts/actions/WeblogEntryActionTest.class"/>           
-                <include name="org/apache/roller/webservices/xmlrpc/RollerXmlRpcServerTest.class"/>  
-                <include name="org/apache/roller/ui/rendering/velocity/plugins/smileys/SmileysTest.class"/>
+                
+                <!-- UI tests, some require mock web container -->
+                <include name="org/apache/roller/ui/UITestSuite.class"/>
+                
             </fileset>
         </batchtest>
     </junit>
     
     <junitreport todir="${build.reports}/presentation/xml">
-       <fileset dir="${build.reports}/presentation/xml">
-          <include name="TEST-*.xml"/>
-       </fileset>
-    <report format="noframes" toDir="${build.reports}/presentation/html"/>
+        <fileset dir="${build.reports}/presentation/xml">
+            <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="noframes" toDir="${build.reports}/presentation/html"/>
     </junitreport>
     
     <!-- allow for shutdown of test db -->
@@ -1003,9 +1012,12 @@ ro.buildUser=${user.name}
     
 	<junit fork="true" dir="${build.tests}"  showOutput="true">
         <batchtest toDir="${build.reports}/utils/xml">
-            <fileset dir="${build.tests}/WEB-INF/classes">
-                <include name="org/apache/roller/util/*Test.class"/>
-            </fileset>
+            <fileset dir="${build.compile.tests}">
+                
+                <!-- Utilitities that require no database or web container -->
+                <include name="org/apache/roller/util/UtilitiesTestSuite.class"/>
+                
+            </fileset>            
         </batchtest>
 		<!-- needed to satisfy ref in log4j.properties -->
         <jvmarg value="-Dcatalina.base=."/> 
@@ -1024,59 +1036,59 @@ ro.buildUser=${user.name}
 
 </target>
 
-    <target name="test-rap" depends="test-rap-sdk, test-rap-handler"/>
+<target name="test-rap" depends="test-rap-sdk, test-rap-handler"/>
    
-    <target name="test-rap-sdk">
-        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/xml"/>
-        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/html"/>
+<target name="test-rap-sdk">
+    <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/xml"/>
+    <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/html"/>
 
-        <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
-            <syspropertyset>
-                <propertyref builtin="commandline"/>
-            </syspropertyset>
-            <classpath>
-                <path refid="tests.run.path"/>
-            </classpath>
-            <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/webservices/protocol/sdk/xml">
-                <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/webservices/protocol/sdk/*EntryTest.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        <junitreport todir="${build.reports}/webservices/protocol/sdk/xml">
-            <fileset dir="${build.reports}/webservices/protocol/sdk/xml">
-                <include name="TEST-*.xml"/>
+    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
+        <syspropertyset>
+            <propertyref builtin="commandline"/>
+        </syspropertyset>
+        <classpath>
+            <path refid="tests.run.path"/>
+        </classpath>
+        <formatter type="xml"/>
+        <batchtest toDir="${build.reports}/webservices/protocol/sdk/xml">
+            <fileset dir="${build.tests}/WEB-INF/classes">
+                <include name="org/apache/roller/webservices/protocol/sdk/*EntryTest.class"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/webservices/protocol/sdk/html"/>
-        </junitreport>
-    </target>
-    
-    <target name="test-rap-handler">
-        <mkdir dir="${build.reports}/webservices/protocol/xml"/>
-        <mkdir dir="${build.reports}/webservices/protocol/html"/>
+        </batchtest>
+    </junit>
+    <junitreport todir="${build.reports}/webservices/protocol/sdk/xml">
+        <fileset dir="${build.reports}/webservices/protocol/sdk/xml">
+            <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="noframes" toDir="${build.reports}/webservices/protocol/sdk/html"/>
+    </junitreport>
+</target>
 
-        <junit fork="true" dir="${build.tests}" printsummary="on">
-            <syspropertyset>
-                <propertyref builtin="commandline"/>
-            </syspropertyset>
-            <classpath>
-                <path refid="tests.run.path"/>
-            </classpath>
-            <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/webservices/protocol/xml">
-                <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/webservices/protocol/*HandlerTest.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        <junitreport todir="${build.reports}/webservices/protocol/xml">
-            <fileset dir="${build.reports}/webservices/protocol/xml">
-                <include name="TEST-*.xml"/>
+<target name="test-rap-handler">
+    <mkdir dir="${build.reports}/webservices/protocol/xml"/>
+    <mkdir dir="${build.reports}/webservices/protocol/html"/>
+
+    <junit fork="true" dir="${build.tests}" printsummary="on">
+        <syspropertyset>
+            <propertyref builtin="commandline"/>
+        </syspropertyset>
+        <classpath>
+            <path refid="tests.run.path"/>
+        </classpath>
+        <formatter type="xml"/>
+        <batchtest toDir="${build.reports}/webservices/protocol/xml">
+            <fileset dir="${build.tests}/WEB-INF/classes">
+                <include name="org/apache/roller/webservices/protocol/*HandlerTest.class"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/webservices/protocol/html"/>
-        </junitreport>
-    </target>
+        </batchtest>
+    </junit>
+    <junitreport todir="${build.reports}/webservices/protocol/xml">
+        <fileset dir="${build.reports}/webservices/protocol/xml">
+            <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="noframes" toDir="${build.reports}/webservices/protocol/html"/>
+    </junitreport>
+</target>
 
 <!-- You can specify testClass using -DtestClass=foo -->
 <property name="testClass" value="org.apache.roller.business.TaskLockTest"/>

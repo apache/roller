@@ -201,10 +201,7 @@ public class PlanetSubscriptionForm
 
         dataHolder.setInboundblogs(this.inboundblogs);
 
-        dataHolder.setName(this.name);
-
-        dataHolder.setURL(this.URL);
-
+        dataHolder.setTitle(this.name);
     }
 
     /**

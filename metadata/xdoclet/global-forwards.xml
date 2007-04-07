@@ -68,7 +68,7 @@
 
 <!-- planet admin UI actions -->
 
-<forward name="planetConfig"             path="/roller-ui/admin/planetConfig.do?method=getConfig"/>
+<forward name="planetConfig"             path="/roller-ui/admin/planetConfig.do"/>
 <forward name="planetSubscriptions"      path="/roller-ui/admin/planetSubscriptions.do?method=getSubscriptions"/>
 <forward name="planetGroups"             path="/roller-ui/admin/planetGroups.do?method=getGroups"/>
 <forward name="planetGroupSubscriptions" path="/roller-ui/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>

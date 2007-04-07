@@ -35,11 +35,9 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.ui.admin.struts.forms.PlanetGroupForm;
 import org.apache.roller.ui.core.BasePageModel;
@@ -73,12 +71,13 @@ public final class PlanetGroupsAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (request.getParameter("groupHandle") != null)
                 {
-                    String feedUrl = request.getParameter("groupHandle");
-                    PlanetGroupData group = planet.getGroup(feedUrl);
+                    String handle = request.getParameter("groupHandle");
+                    PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                    PlanetGroupData group = pmgr.getGroup(defaultPlanet, handle);
                     form.copyFrom(group, request.getLocale());
                 }
                 else 
@@ -141,12 +140,13 @@ public final class PlanetGroupsAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (form.getHandle() != null)
                 {
-                    PlanetGroupData group = planet.getGroup(form.getHandle());
-                    planet.deleteGroup(group);
+                    PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                    PlanetGroupData group = pmgr.getGroup(defaultPlanet, form.getHandle());
+                    pmgr.deleteGroup(group);
                     PlanetFactory.getPlanet().flush();
                     // TODO: why release here?
                     PlanetFactory.getPlanet().release();
@@ -188,18 +188,20 @@ public final class PlanetGroupsAction extends DispatchAction
             if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
-                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
-                ActionErrors errors = validate(planet, form);
+                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                ActionErrors errors = validate(pmgr, form);
                 if (errors.isEmpty())
                 {
                     PlanetGroupData group = null;
                     if (form.getId() == null || form.getId().trim().length() == 0)
                     {
                         group = new PlanetGroupData();
+                        group.setPlanet(defaultPlanet);
                     }
                     else 
                     {
-                        group = planet.getGroupById(form.getId());
+                        group = pmgr.getGroupById(form.getId());
                     }                
                     form.copyTo(group, request.getLocale());
                     
@@ -210,7 +212,7 @@ public final class PlanetGroupsAction extends DispatchAction
                         group.setId(null);
                     }
                     
-                    planet.saveGroup(group);  
+                    pmgr.saveGroup(group);  
                     PlanetFactory.getPlanet().flush();
 
                     ActionMessages messages = new ActionMessages();
@@ -275,33 +277,23 @@ public final class PlanetGroupsAction extends DispatchAction
         {
             super("planetGroups.pagetitle", request, response, mapping);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();            
-            PlanetGroupData externalGroup = planet.getGroup("external");
-            if (externalGroup != null) 
+            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();            
+            PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+            PlanetGroupData externalGroup = pmgr.getGroup(defaultPlanet, "external");
+            Iterator allgroups = defaultPlanet.getGroups().iterator();
+            while (allgroups.hasNext()) 
             {
-                Iterator allgroups = planet.getGroups().iterator();
-                while (allgroups.hasNext()) 
-                {
-                    PlanetGroupData agroup = (PlanetGroupData)allgroups.next();
-                    if (    !agroup.getHandle().equals("external")
-                         && !agroup.getHandle().equals("all")) 
-                      {
-                          groups.add(agroup);
-                      }
-                }
-            }
-            else 
-            {
-                unconfigured = true;
+                PlanetGroupData agroup = (PlanetGroupData)allgroups.next();
+                if (    !agroup.getHandle().equals("external")
+                     && !agroup.getHandle().equals("all")) 
+                  {
+                      groups.add(agroup);
+                  }
             }
         }
         public List getGroups()
         {
             return groups;
-        }
-        public boolean isUnconfigured()
-        {
-            return unconfigured;
         }
     }
 }

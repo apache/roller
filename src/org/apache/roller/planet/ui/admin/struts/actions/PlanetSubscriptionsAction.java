@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.ui.admin.struts.forms.PlanetSubscriptionFormEx;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -37,15 +38,13 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.util.Technorati;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.PropertyData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerSession;
 
@@ -73,12 +72,12 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
-                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 if (request.getParameter("feedUrl") != null) {
                     String feedUrl = request.getParameter("feedUrl");
                     PlanetSubscriptionData sub =
-                            planet.getSubscription(feedUrl);
+                            pmgr.getSubscription(feedUrl);
                     form.copyFrom(sub, request.getLocale());
                 } else {
                     form.doReset(mapping, request);
@@ -88,7 +87,8 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
                 groupHandle = (groupHandle == null) ? "external" : groupHandle;
                 
-                PlanetGroupData targetGroup = planet.getGroup(groupHandle);
+                PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
                 form.setGroupHandle(groupHandle);
                 request.setAttribute("model",
                         new SubscriptionsPageModel(
@@ -110,7 +110,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
-                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 
                 form.doReset(mapping, request);
@@ -119,7 +119,8 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
                 groupHandle = (groupHandle == null) ? "external" : groupHandle;
                 
-                PlanetGroupData targetGroup = planet.getGroup(groupHandle);
+                PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
                 form.setGroupHandle(groupHandle);
                 request.setAttribute("model",
                         new SubscriptionsPageModel(
@@ -142,20 +143,21 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         try {
             //RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
-                PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 if (form.getId() != null) {
                     PlanetSubscriptionData sub =
-                            planet.getSubscriptionById(form.getId());
+                            pmgr.getSubscriptionById(form.getId());
                     
                     String groupHandle = request.getParameter("groupHandle");
                     groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
                     groupHandle = (groupHandle == null) ? "external" : groupHandle;
                     
-                    PlanetGroupData targetGroup = planet.getGroup(groupHandle);
+                    PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                    PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
                     
                     targetGroup.getSubscriptions().remove(sub);
-                    planet.deleteSubscription(sub);
+                    pmgr.deleteSubscription(sub);
                     PlanetFactory.getPlanet().flush();
                     // TODO: why release here?
                     PlanetFactory.getPlanet().release();
@@ -189,26 +191,27 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
             HttpServletResponse response) throws IOException, ServletException {
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
-            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
             PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
             
             String groupHandle = request.getParameter("groupHandle");
             groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
             groupHandle = (groupHandle == null) ? "external" : groupHandle;
             
-            PlanetGroupData targetGroup = planet.getGroup(groupHandle);
+            PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+            PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
             
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
                 
                 ActionMessages messages = new ActionMessages();
                 PlanetSubscriptionData sub = null;
-                ActionErrors errors = validate(planet, form);
+                ActionErrors errors = validate(pmgr, form);
                 if (errors.isEmpty()) {
                     if (form.getId() == null || form.getId().trim().length() == 0) {                        
                         // Adding new subscription to group                        
                         // But, does subscription to that feed already exist?
                         if (form.getFeedURL() != null) {
-                            sub = planet.getSubscription(form.getFeedURL()); 
+                            sub = pmgr.getSubscription(form.getFeedURL()); 
                         }
                         if (sub != null) {
                             // Yes, we'll use it instead
@@ -226,17 +229,17 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                                 sub.setId(null);
                             }
 
-                            planet.saveSubscription(sub);
+                            pmgr.saveSubscription(sub);
                         }                        
                         targetGroup.getSubscriptions().add(sub);
                         
                     } else {
                         // User editing an existing subscription within a group
-                        sub = planet.getSubscriptionById(form.getId());
+                        sub = pmgr.getSubscriptionById(form.getId());
                         form.copyTo(sub, request.getLocale());                        
                     }                    
                     form.setGroupHandle(groupHandle);
-                    planet.saveGroup(targetGroup);
+                    pmgr.saveGroup(targetGroup);
                     PlanetFactory.getPlanet().flush();
                     
                     messages.add(null,
@@ -252,29 +255,36 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
             request.setAttribute("model",
                     new SubscriptionsPageModel(
                     targetGroup, request, response, mapping, form));
-        } catch (RollerException e) {
+        } catch (RollerException re) {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError(
-                    "planetSubscriptions.error.duringSave",e.getRootCauseMessage()));
+                "planetSubscriptions.error.duringSave", re.getRootCauseMessage()));
             saveErrors(request, errors);
+        } catch (Exception e) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(null, new ActionError(
+                "planetSubscriptions.error.duringSave", e.getMessage()));
+            saveErrors(request, errors);
+            logger.error("Unexpected error saving subscription", e);
         }
         return forward;
     }
     
     /** Validate posted subscription, fill in blanks via Technorati */
     private ActionErrors validate(
-            PlanetManager planet, PlanetSubscriptionFormEx form) {
+            PlanetManager pmgr, PlanetSubscriptionFormEx form) {
         String technoratiTitle = null;
         String technoratiFeedUrl = null;
         int inboundlinks = -1;
         int inboundblogs = -1;
         if (form.getSiteURL()!=null && form.getSiteURL().trim().length() > 0) {
             try {
-                PlanetConfigData config = planet.getConfiguration();
+                PropertiesManager props = PlanetFactory.getPlanet().getPropertiesManager();
                 Technorati technorati = null;
-                if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
-                    technorati = new Technorati(
-                            config.getProxyHost(), config.getProxyPort());
+                PropertyData proxyHostProp = props.getProperty("proxyHost");
+                PropertyData proxyPortProp = props.getProperty("proxyPort");
+                if (proxyHostProp != null && proxyPortProp != null) {
+                    technorati = new Technorati(proxyHostProp.getValue(), Integer.parseInt(proxyPortProp.getValue())); 
                 } else {
                     technorati = new Technorati();
                 }
@@ -347,10 +357,6 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         
         public List getSubscriptions() {
             return subscriptions;
-        }
-        
-        public boolean isUnconfigured() {
-            return unconfigured;
         }
     }
 }

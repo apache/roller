@@ -84,7 +84,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
             
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
-            //System.out.println("# smileys: " + smileyDefs.size());
+            System.out.println("# smileys: " + smileyDefs.size());
             int count = 0;
             Enumeration enum1 = SmileysPlugin.smileyDefs.propertyNames();
             while(enum1.hasMoreElements()) {
@@ -97,7 +97,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
                         "\" class=\"smiley\"" +
                         " alt=\"" + smileyAlt + "\"" +
                         " title=\"" + smileyAlt +"\" />";
-                //System.out.println(smiley + "=" + tempS[count]);
+                System.out.println(smiley + "=" + tempS[count]);
                 count++;
             }
             SmileysPlugin.smileyPatterns = tempP;

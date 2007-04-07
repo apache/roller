@@ -105,7 +105,7 @@ public class PlanetData implements Comparable {
     
     
     /** 
-     * @hibernate.set lazy="true" invert="true" cascade="all" sort="natural"
+     * @hibernate.set lazy="true" inverse="true" cascade="all" sort="natural"
      * @hibernate.collection-key column="planet_id"
      * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetGroupData"
      */

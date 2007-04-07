@@ -42,7 +42,7 @@
             <p><s:a href="%{groupformurl}"><s:text name="PlanetSubscriptionForm.returnToGroup"/></s:a></p>
             
             <s:url id="action" action="PlanetSubscriptionForm" method="save" />
-            <s:form name="PlanetSubscriptionForm" action="%{action}">
+            <s:form name="PlanetSubscriptionForm" action="PlanetSubscriptionForm!save">
                 <s:hidden name="groupid" />
                 <s:hidden name="subid" value="%{subscription.id}" />
                 <s:textfield label="%{getText('PlanetSubscriptionForm.title')}" name="subscription.title" size="40" />

@@ -48,8 +48,7 @@
             </s:url>
             <p><s:a href="%{planetformurl}"><s:text name="PlanetGroupForm.returnToPlanet"/></s:a></p>
             
-            <s:url id="action" action="PlanetGroupForm" method="save" />
-            <s:form name="PlanetGroupForm" action="%{action}">
+            <s:form name="PlanetGroupForm" action="PlanetGroupForm!save">
                 <s:hidden name="planetid" value="%{group.planet.id}" />
                 <s:hidden name="groupid" value="%{group.id}" />
                 <s:textfield label="%{getText('PlanetGroupForm.handle')}" name="group.handle" size="40" />
