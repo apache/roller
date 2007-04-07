@@ -25,9 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.authoring.struts.actions.WeblogEntryActionTest;
 import org.apache.roller.ui.ServletTestBase;
-
+import org.apache.roller.ui.authoring.struts.actions.WeblogEntryActionTest;
 
 /**
  * Test smileys plugin.
