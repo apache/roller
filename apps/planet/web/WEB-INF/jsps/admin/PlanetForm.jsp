@@ -45,8 +45,7 @@
             
             <p><a href='<s:url action="PlanetsList" includeParams="get" />'><s:text name="PlanetForm.returnToList"/></a></p>
             
-            <s:url id="action" action="PlanetForm" method="save" />
-            <s:form name="PlanetForm" action="%{action}">
+            <s:form name="PlanetForm" action="PlanetForm!save">
                 <s:hidden name="planetid" />
                 <s:textfield label="%{getText('PlanetForm.handle')}" name="planet.handle" size="40" />
                 <s:textfield label="%{getText('PlanetForm.title')}" name="planet.title" size="40" />

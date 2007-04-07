@@ -28,12 +28,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WebsiteData;
@@ -41,7 +40,9 @@ import org.apache.roller.util.URLUtilities;
 
 
 /**
- * Ensure that every weblog has a subscription in Planet Roller database.
+ * This tasks is responsible for ensuring that the planet group 'all' contains
+ * a subscription for every weblogs in the Roller system. It also takes care 
+ * of deleting subsctiptions for weblogs that no longer exist.
  */
 public class SyncWebsitesTask extends RollerTaskWithLeasing {
     
@@ -139,7 +140,8 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             UserManager userManager = RollerFactory.getRoller().getUserManager();
             
             // first, make sure there is an "all" planet group
-            PlanetGroupData group = planet.getGroup("all");
+            PlanetData planetObject = planet.getPlanet("all");
+            PlanetGroupData group = planet.getGroup(planetObject, "all");
             if(group == null) {
                 group = new PlanetGroupData();
                 group.setHandle("all");

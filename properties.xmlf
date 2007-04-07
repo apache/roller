@@ -84,6 +84,9 @@ in the "base.path" definition.
     <include name="commons-betwixt-1.0-beta-1.jar" />
     <include name="commons-cache.jar" />
     <include name="commons-codec-1.3.jar" />
+    <include name="commons-logging-1.0.4.jar" />
+    <include name="commons-lang-2.1.jar" />
+    <include name="commons-collections-3.1.jar" />
     <include name="concurrent-1.3.2.jar"/>
     <include name="jaxen-full.jar" />
     <include name="saxpath.jar" />
@@ -92,9 +95,7 @@ in the "base.path" definition.
     <include name="log4j-1.2.11.jar"/>
     <include name="rome-0.9.jar"/>
     <include name="rome-fetcher-0.9.jar"/>
-    <include name="velocity-1.4.jar"/>
-    <include name="velocity-dep-1.4.jar"/>
-    <include name="xmlrpc-1.2-b1.jar"/>
+    <include name="velocity-1.5.jar"/>
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
@@ -110,7 +111,14 @@ in the "base.path" definition.
 </fileset>
 
 <fileset id="struts.jars" dir="${tools.struts}/lib">
-    <include name="*.jar"/>
+    <include name="antlr.jar"/>
+    <include name="commons-beanutils.jar"/>
+    <include name="commons-digester.jar"/>
+    <include name="commons-fileupload.jar"/>
+    <include name="commons-validator.jar"/>
+    <include name="jakarta-org.jar"/>
+    <include name="struts.jar"/>
+    <include name="struts-el.jar"/>
 </fileset>
 
 <fileset id="servlet.jars" dir="${tools.tomcat}">
@@ -141,6 +149,13 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
+<fileset id="xmlrpc.jars" dir="${ro.tools}/xmlrpc-3.0/lib">
+    <include name="ws-commons-util-1.0.1.jar"/>
+    <include name="xmlrpc-common-3.0.jar"/>
+    <include name="xmlrpc-client-3.0.jar"/>
+    <include name="xmlrpc-server-3.0.jar"/>
+</fileset>
+
 <fileset id="roller-planet.jars" dir="${ro.tools}/roller-planet">
     <include name="*.jar"/>
 </fileset>
@@ -155,6 +170,7 @@ in the "base.path" definition.
     <fileset refid="mail.jars"/>
     <fileset refid="commons.jars"/>
     <fileset refid="roller-planet.jars" />
+    <fileset refid="xmlrpc.jars"/>
 </path>
 
 <path id="business.path">
@@ -200,11 +216,11 @@ in the "base.path" definition.
     </fileset>
     <fileset refid="commons-httpclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
-    <pathelement location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
     <pathelement location="${ro.tools}/buildtime/derby.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
+    <pathelement location="${ro.tools}/roller-planet/roller-planet-business.jar"/>
 
     <!-- plus normal jars -->
     <path refid="business.path"/>

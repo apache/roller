@@ -73,8 +73,7 @@
         <include name="lib/jdom.jar"/>
         
         <!-- Velocity -->
-        <include name="lib/velocity-1.4.jar"/>
-        <include name="lib/velocity-dep-1.4.jar"/>
+        <include name="lib/velocity-1.5.jar"/>
     </fileset>
     
     <fileset id="web.tools" dir="${tools}">
@@ -86,6 +85,9 @@
         
         <!-- Struts 2 -->
         <include name="struts-2.0.5/lib/*.jar"/>
+        
+        <!-- Struts 2 depends on Spring -->
+        <include name="spring-1.2/spring.jar"/>
     </fileset>
     
     <path id="planet.business.path">
@@ -118,7 +120,6 @@
             <include name="*.jar"/>
         </fileset>
         <pathelement location="${tools}/buildtime/ant-1.6.2/ant.jar"/>
-        <pathelement location="${tools}/buildtime/strutstest-2.0.0.jar"/>
         <pathelement location="${tools}/buildtime/junit-3.8.1.jar"/>
         <pathelement location="${tools}/buildtime/derby.jar"/>
         <pathelement location="${tools}/buildtime/derbyclient.jar"/>
@@ -290,9 +291,14 @@
         <mkdir dir="${build.dbscripts}/oracle" />
         <mkdir dir="${build.dbscripts}/postgresql" />
         
+        <path id="texen.path">
+            <fileset refid="business.tools" />
+            <pathelement location="${root}/metadata/database/" />
+            <pathelement location="${sql}" />
+        </path>
         <taskdef name="texen" 
                  classname="org.apache.velocity.texen.ant.TexenTask"
-                 classpath="${tools}/lib/velocity-dep-1.4.jar:${root}/metadata/database/:${sql}" />
+                 classpathref="texen.path" />
                  
         <texen
             controlTemplate="control.vm" 
@@ -433,6 +439,71 @@
     <target name="nothing">
         <!-- this task does nothing and is here so that 
              dynamic task definitions have a no-op choice -->
+    </target>
+        
+    <!-- Netbeans-only: debug single class -->
+    <target name="debug-selected-files" if="netbeans.home" depends="build-tests" 
+            description="Debug a Single File">
+        <fail unless="classname">Must set property 'classname'</fail>
+        <antcall target="start-db" />
+        <antcall target="init-db" />
+        <nbjpdastart name="${classname}" addressproperty="jpda.address" transport="dt_socket">
+            <classpath>
+                <path refid="test.path"/>
+                <pathelement location="${build.compile.test}"/>
+                <pathelement location="${basedir}/testdata" />
+                <pathelement path="${test.db.cpath}" />
+            </classpath>
+        </nbjpdastart>
+        <java classname="${classname}" fork="true" dir="${build.test}">
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xnoagent"/>
+            <jvmarg value="-Djava.compiler=none"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+            <jvmarg value="-Dcatalina.base=${build.test}"/> 
+            <jvmarg value="-Dbuild=${build}"/>
+            <jvmarg value="-Droller.custom.config=${build.tests}/planet-custom.properties"/>
+            <classpath>
+                <path refid="test.path"/>
+                <pathelement location="${build.compile.test}"/>
+                <pathelement location="${basedir}/testdata" />
+                <pathelement path="${test.db.cpath}" />
+            </classpath>
+        </java>
+        <antcall target="stop-db" />
+    </target>
+    
+    <!-- Netbeans-only: debug single test class -->
+    <target name="test-selected-files" if="netbeans.home" depends="build-tests" 
+            description="Test/debug a Single File">
+        <fail unless="classname">Must set property 'classname'</fail>
+        <antcall target="start-db" />
+        <antcall target="init-db" />   
+        <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
+            <classpath>
+                <path refid="test.path"/>
+                <pathelement location="${build.compile.test}"/>
+                <pathelement location="${basedir}/testdata" />
+                <pathelement path="${test.db.cpath}" />
+            </classpath>
+        </nbjpdastart>
+        <java classname="junit.textui.TestRunner" fork="true" dir="${build.test}">
+            <arg value="${classname}" />
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xnoagent"/>
+            <jvmarg value="-Djava.compiler=none"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+            <jvmarg value="-Dcatalina.base=${build.test}"/> 
+            <jvmarg value="-Dbuild=${build}"/>
+            <jvmarg value="-Droller.custom.config=${build.tests}/planet-custom.properties"/>
+            <classpath>
+                <path refid="test.path"/>
+                <pathelement location="${build.compile.test}"/>
+                <pathelement location="${basedir}/testdata" />
+                <pathelement path="${test.db.cpath}" />
+            </classpath>
+        </java>
+        <antcall target="stop-db" />
     </target>
     
 </project>

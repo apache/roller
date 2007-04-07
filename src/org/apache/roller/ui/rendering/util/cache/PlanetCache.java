@@ -161,7 +161,8 @@ public class PlanetCache {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             
-            lastModified = PlanetFactory.getPlanet().getPlanetManager().getLastUpdated();
+            // TODO: ROLLER40 last updated for planet
+            lastModified = null; // PlanetFactory.getPlanet().getPlanetManager().getLastUpdated();
             
             if (lastModified == null) {
                 lastModified = new Date();

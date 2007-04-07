@@ -43,11 +43,11 @@ import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 
 
 /**
- * A FeedFetcher based on the 'Rome' subscription parsing library.
+ * A FeedFetcher based on the ROME RSS/Atom feed parser (http://rome.dev.java.net).
  */
 public class RomeFeedFetcher implements FeedFetcher {
     
-    private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);
+    private static Log log = LogFactory.getLog(RomeFeedFetcher.class);
     
     
     public RomeFeedFetcher() {}

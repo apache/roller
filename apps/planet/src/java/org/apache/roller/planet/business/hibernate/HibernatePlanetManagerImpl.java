@@ -310,20 +310,23 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     }
     
     
-    // lookup Entries from a specific Group
+    // Lookup Entries from a specific group
     public List getEntries(PlanetGroupData group, int offset, int len) 
             throws RollerException {
-        return getEntries(group, null, null, offset, len);
+        return getEntries(Collections.singletonList(group), null, null, offset, len);
     } 
     
-    
-    // lookup Entries from a specific Group
-    public List getEntries(PlanetGroupData group, Date startDate, 
+    // Lookup Entries from a specific list of groups
+    public List getEntries(List groups, Date startDate, 
                            Date endDate, int offset, int length)
             throws RollerException {
         
-        if(group == null) {
-            throw new RollerException("group cannot be null");
+        if (groups == null) {
+            throw new RollerException("groups cannot be null");
+        }
+        
+        if (groups.size() == 0) {
+            throw new RollerException("groups cannot be empty");
         }
         
         List ret = null;
@@ -335,7 +338,14 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             StringBuffer sb = new StringBuffer();
             sb.append("select e from PlanetEntryData e ");
             sb.append("join e.subscription.groups g ");
-            sb.append("where g=:group ");
+            
+            sb.append("where (");
+            for (int i=0; i<groups.size(); i++) {
+                if (i > 0) sb.append(" and ");
+                sb.append(" g=:group" + i);
+            }
+            sb.append(")");
+            
             if (startDate != null) {
                 sb.append("and e.pubTime > :startDate ");
             }
@@ -345,7 +355,10 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             sb.append("order by e.pubTime desc");
             
             Query query = session.createQuery(sb.toString());
-            query.setParameter("group", group);
+            for (int i=0; i<groups.size(); i++) {
+                PlanetGroupData group = (PlanetGroupData)groups.get(i);
+                query.setParameter("group" + i, group);
+            }
             if(offset > 0) {
                 query.setFirstResult(offset);
             }
@@ -360,27 +373,6 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             }
             
             ret = query.list();
-
-            // old logic used when group was null, this is hacky and weird!
-//            else {
-//                StringBuffer sb = new StringBuffer();
-//                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
-//                sb.append("join e.subscription.groups g ");
-//                sb.append("where (g.handle='external' or g.handle='all') ");
-//                sb.append("and e.pubTime < :endDate ");
-//                if (startDate != null) {
-//                    sb.append("and e.pubTime > :startDate ");
-//                }
-//                sb.append("order by e.pubTime desc");
-//                Query query = session.createQuery(sb.toString());
-//                query.setFirstResult(offset);
-//                if (length != -1) query.setMaxResults(length);
-//                query.setParameter("endDate", endDate);
-//                if (startDate != null) {
-//                    query.setParameter("startDate", startDate);
-//                }
-//                ret = query.list();
-//            }
             
             long endTime = System.currentTimeMillis();
             

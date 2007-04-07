@@ -20,16 +20,18 @@ package org.apache.roller.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 
 
 /**
@@ -94,12 +96,20 @@ public class PlanetEntriesPager extends AbstractPager {
                 
                 List rawEntries = null;
                 if (feedURL != null) {
-                    rawEntries = planetManager.getFeedEntries(feedURL, offset, length+1);
+                    PlanetSubscriptionData sub = planetManager.getSubscription(feedURL);
+                    rawEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
-                    PlanetGroupData group = planetManager.getGroup(groupHandle);
-                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length+1);
+                    PlanetData planet = planetManager.getPlanet("default");
+                    PlanetGroupData group = planetManager.getGroup(planet, groupHandle);
+                    rawEntries = planetManager.getEntries(Collections.singletonList(group), startDate, null, offset, length+1);
                 } else {
-                    rawEntries = planetManager.getAggregation(startDate, null, offset, length+1);
+                    PlanetData planet = planetManager.getPlanet("default");
+                    PlanetGroupData groupAll = planetManager.getGroup(planet, "all");
+                    PlanetGroupData groupDefault = planetManager.getGroup(planet, "default");
+                    List groups = new ArrayList();
+                    groups.add(groupAll);
+                    groups.add(groupDefault);
+                    rawEntries = planetManager.getEntries(groups, startDate, null, offset, length+1);
                 }
                 
                 // check if there are more results for paging

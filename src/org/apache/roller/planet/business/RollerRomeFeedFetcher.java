@@ -16,9 +16,8 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.business.hibernate;
+package org.apache.roller.planet.business;
 
-import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -28,57 +27,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
-import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.commons.lang.StringUtils;
-
-
 
 /**
- * An extended version of the base PlanetManager implementation.
- *
- * This is meant for use by Roller installations that are running the planet
- * aggregator in the same application instance and want to fetch feeds from
- * their local Roller blogs in a more efficient manner.
+ * Extends Roller Planet's feed fetcher to fetch local feeds directly from Roller.
  */
-public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl {
+public class RollerRomeFeedFetcher extends RomeFeedFetcher {
     
-    private static Log log = LogFactory.getLog(HibernateRollerPlanetManagerImpl.class);
+    private static Log log = LogFactory.getLog(RollerRomeFeedFetcher.class); 
     
     
-    public HibernateRollerPlanetManagerImpl(HibernatePersistenceStrategy strat) {        
-        super(strat);        
-        log.info("Instantiating Hibernate Roller Planet Manager");
+    /** Creates a new instance of RollerRomeFeedFetcher */
+    public RollerRomeFeedFetcher() {
     }
     
-    
-    /* TODO: update local feed fetching code to use 4.0 planet interfaces
-     
-     protected Set getNewEntries(PlanetSubscriptionData sub,
-                                FeedFetcher feedFetcher,
+    // get new Entries for a specific Subscription
+    protected Set getNewEntries(PlanetSubscriptionData sub,
+                                com.sun.syndication.fetcher.FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
             throws RollerException {
         
         String localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
         
         // if this is not a local url then let parent deal with it
-        if (StringUtils.isEmpty(localURL) || !sub.getFeedURL().startsWith(localURL)) {
-            
-            log.debug("Feed is remote, letting parent handle it "+sub.getFeedURL());
-            
-            return super.getEntries(sub);
+        if (StringUtils.isEmpty(localURL) || !sub.getFeedURL().startsWith(localURL)) {            
+            log.debug("Feed is remote, letting parent handle it "+sub.getFeedURL());            
+            return super.getNewEntries(sub, feedFetcher, feedInfoCache);
         }
         
         try {
@@ -98,6 +84,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                 
                 // figure website last update time
                 WeblogManager blogmgr = RollerFactory.getRoller().getWeblogManager();
+                PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
                 
                 Date siteUpdated = website.getLastModified();
                 if (siteUpdated == null) { // Site never updated, skip it
@@ -127,7 +114,8 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                             entryCount);                 
                     
                     sub.setLastUpdated(siteUpdated);
-                    saveSubscription(sub);
+                    planetManager.saveSubscription(sub);
+                    PlanetFactory.getPlanet().flush();
                     
                 } else {
                     if (log.isDebugEnabled()) {
@@ -165,8 +153,10 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                         entry.setPermalink(rollerEntry.getPermalink());
                         entry.setCategoriesString(rollerEntry.getCategory().getPath());
         
-                        saveEntry(entry);
+                        planetManager.saveEntry(entry);
+                        PlanetFactory.getPlanet().flush();
                         newEntries.add(entry);
+                        
                     } catch (Exception e) {
                         log.error("ERROR processing subscription entry", e);
                     }
@@ -182,6 +172,6 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
         
         // if there was an error then try normal planet method
         return super.getNewEntries(sub, feedFetcher, feedInfoCache);
-    }*/
-    
+    }
+        
 }
