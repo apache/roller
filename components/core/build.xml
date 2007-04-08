@@ -41,15 +41,15 @@
         <include name="lib/log4j-1.2.11.jar"/>
         <include name="lib/jaxen-full.jar"/>
         <include name="lib/saxpath.jar"/>
-        <include name="buildtime/activation.jar"/>
-        <include name="buildtime/mail.jar"/>
-        <include name="struts-1.2.4/lib/antlr.jar"/>
-        <include name="struts-1.2.4/lib/commons-lang-2.0.jar"/>
-        <include name="struts-1.2.4/lib/commons-logging.jar"/>
+        <include name="lib/commons-lang-2.1.jar"/>
+        <include name="lib/commons-logging-1.0.4.jar"/>
+        <include name="struts-2.0.5/lib/antlr-2.7.2.jar"/>
         <include name="struts-1.2.4/lib/commons-fileupload.jar"/>
         <include name="struts-1.2.4/lib/commons-validator.jar"/>
         <include name="struts-1.2.4/lib/commons-collections.jar"/>
         <include name="lib/commons-id-0.1-SNAPSHOT.jar"/>
+        <include name="buildtime/activation.jar"/>
+        <include name="buildtime/mail.jar"/>
         
         <!-- needed for Hibernate -->
         <include name="hibernate-3.1/hibernate3.jar"/>
