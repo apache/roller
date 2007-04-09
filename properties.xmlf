@@ -215,7 +215,6 @@ in the "base.path" definition.
        <include name="*.jar"/>
     </fileset>
     <fileset refid="commons-httpclient.jar"/>
-    <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
     <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
     <pathelement location="${ro.tools}/buildtime/derby.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>

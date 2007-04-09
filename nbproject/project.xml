@@ -24,34 +24,9 @@
                     <location>src</location>
                 </source-folder>
                 <source-folder>
-                    <label>sandbox/standalone/src</label>
-                    <type>java</type>
-                    <location>sandbox/standalone/src</location>
-                </source-folder>
-                <source-folder>
-                    <label>contrib/plugins/src</label>
-                    <type>java</type>
-                    <location>contrib/plugins/src</location>
-                </source-folder>
-                <source-folder>
                     <label>tests</label>
                     <type>java</type>
                     <location>tests</location>
-                </source-folder>
-                <source-folder>
-                    <label>generated/web</label>
-                    <type>java</type>
-                    <location>build/generated/web</location>
-                </source-folder>
-                <source-folder>
-                    <label>generated/business</label>
-                    <type>java</type>
-                    <location>build/generated/business</location>
-                </source-folder>
-                <source-folder>
-                    <label>sandbox/scripting/src</label>
-                    <type>java</type>
-                    <location>sandbox/scripting/src</location>
                 </source-folder>
                 <source-folder>
                     <label>apps/planet/src/java</label>
@@ -64,18 +39,47 @@
                     <location>apps/planet/test/java</location>
                 </source-folder>
                 <source-folder>
-                    <label>sandbox/jdobackend/src</label>
+                    <label>sandbox/standalone/src</label>
                     <type>java</type>
-                    <location>sandbox/jdobackend/src</location>
+                    <location>sandbox/standalone/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/bsf/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/bsf/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/groovy/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/groovy/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/jruby/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/jruby/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>generated/web</label>
+                    <type>java</type>
+                    <location>build/generated/web</location>
+                </source-folder>
+                <source-folder>
+                    <label>generated/business</label>
+                    <type>java</type>
+                    <location>build/generated/business</location>
+                </source-folder>
+                <source-folder>
+                    <label>custom/src</label>
+                    <type>java</type>
+                    <location>custom/src</location>
                 </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>build</target>
+                    <target>stage-webapp</target>
                 </action>
                 <action name="clean">
-                    <target>clean</target>
-                    <target>all</target>
+                    <target>rebuild</target>
                 </action>
                 <action name="javadoc">
                     <target>javadoc</target>
@@ -84,9 +88,8 @@
                     <target>tests</target>
                 </action>
                 <action name="rebuild">
-                    <target>clean</target>
-                    <target>all</target>
-                    <target>build</target>
+                    <target>rebuild</target>
+                    <target>stage-webapp</target>
                 </action>
                 <action name="debug.single">
                     <target>debug-selected-files</target>
@@ -116,6 +119,19 @@
                     <script>nbproject/ide-targets.xml</script>
                     <target>debug-nb</target>
                 </action>
+                <action name="debug.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-selected-file-in-tests</target>
+                    <context>
+                        <property>debug.class</property>
+                        <folder>tests</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <view>
                 <items>
@@ -128,28 +144,8 @@
                         <location>src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>sandbox/standalone/src</label>
-                        <location>sandbox/standalone/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>contrib/plugins/src</label>
-                        <location>contrib/plugins/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>tests</label>
                         <location>tests</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>generated/web</label>
-                        <location>build/generated/web</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>generated/business</label>
-                        <location>build/generated/business</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>sandbox/scripting/src</label>
-                        <location>sandbox/scripting/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>apps/planet/src/java</label>
@@ -160,8 +156,32 @@
                         <location>apps/planet/test/java</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>sandbox/jdobackend/src</label>
-                        <location>sandbox/jdobackend/src</location>
+                        <label>sandbox/standalone/src</label>
+                        <location>sandbox/standalone/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/bsf/src</label>
+                        <location>sandbox/scripting/bsf/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/groovy/src</label>
+                        <location>sandbox/scripting/groovy/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/jruby/src</label>
+                        <location>sandbox/scripting/jruby/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>generated/web</label>
+                        <location>build/generated/web</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>generated/business</label>
+                        <location>build/generated/business</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>custom/src</label>
+                        <location>custom/src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -182,15 +202,16 @@
             <compilation-unit>
                 <package-root>src</package-root>
                 <package-root>sandbox/standalone/src</package-root>
-                <package-root>contrib/plugins/src</package-root>
                 <package-root>tests</package-root>
                 <package-root>build/generated/web</package-root>
                 <package-root>build/generated/business</package-root>
-                <package-root>sandbox/scripting/src</package-root>
                 <package-root>apps/planet/src/java</package-root>
                 <package-root>apps/planet/test/java</package-root>
-                <package-root>sandbox/jdobackend/src</package-root>
-                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:tools/lib/jdom.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar:contrib/lib/textile4j-1.20.jar:tools/buildtime/derby.jar:tools/buildtime/ant-1.6.2/ant.jar:tools/buildtime/derbynet.jar:tools/lib/rome-0.9.jar:tools/lib/rome-fetcher-0.9.jar:tools/buildtime/activation.jar:tools/buildtime/mail.jar:tools/spring-1.2/acegi-security-1.0.1.jar:tools/spring-1.2/spring.jar:sandbox/jdobackend/lib/bcel-5.1.jar:sandbox/jdobackend/lib/jdo2-api-2.0.jar:sandbox/jdobackend/lib/jdom.jar:sandbox/jdobackend/lib/jpox-1.1.0-beta-5.jar:sandbox/jdobackend/lib/jpox-1.1.0.jar:sandbox/jdobackend/lib/jpox-enhancer-1.1.0-beta-5.jar:sandbox/jdobackend/lib/jpox-enhancer-1.1.0.jar:sandbox/jdobackend/lib/toplink-essentials.jar</classpath>
+                <package-root>sandbox/scripting/groovy/src</package-root>
+                <package-root>sandbox/scripting/bsf/src</package-root>
+                <package-root>custom/src</package-root>
+                <package-root>sandbox/scripting/jruby/src</package-root>
+                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/taglibs-string.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:tools/lib/jdom.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar:contrib/lib/textile4j-1.20.jar:tools/buildtime/derby.jar:tools/buildtime/ant-1.6.2/ant.jar:tools/buildtime/derbynet.jar:tools/lib/rome-0.9.jar:tools/lib/rome-fetcher-0.9.jar:tools/buildtime/activation.jar:tools/buildtime/mail.jar:tools/spring-1.2/spring.jar:sandbox/jdobackend/lib/bcel-5.1.jar:sandbox/jdobackend/lib/jdo2-api-2.0.jar:sandbox/jdobackend/lib/jdom.jar:sandbox/jdobackend/lib/jpox-1.1.0-beta-5.jar:sandbox/jdobackend/lib/jpox-1.1.0.jar:sandbox/jdobackend/lib/jpox-enhancer-1.1.0-beta-5.jar:sandbox/jdobackend/lib/jpox-enhancer-1.1.0.jar:sandbox/jdobackend/lib/toplink-essentials.jar:../../../../../../Applications/Java/groovy/embeddable/groovy-all-1.0.jar:sandbox/scripting/bsf/lib/bsf.jar:tools/lib/commons-collections-3.1.jar:tools/lib/commons-lang-2.1.jar:tools/lib/commons-logging-1.0.4.jar:tools/lib/velocity-1.5.jar:tools/lib/velocity-dep-1.5.jar:tools/xmlrpc-3.0/lib/ws-commons-util-1.0.1.jar:tools/xmlrpc-3.0/lib/xmlrpc-client-3.0.jar:tools/xmlrpc-3.0/lib/xmlrpc-common-3.0.jar:tools/xmlrpc-3.0/lib/xmlrpc-server-3.0.jar:tools/spring-1.2/acegi-security-1.0.3.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>
