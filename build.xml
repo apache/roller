@@ -890,6 +890,7 @@ ro.buildUser=${user.name}
         
         <classpath>
             <path refid="tests.path"/>
+            <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
             &custom-jars;
         </classpath>
     </javac>
