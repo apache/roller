@@ -61,12 +61,12 @@ public class JPAPlanetManagerImpl extends DatamapperPlanetManagerImpl {
             
             sb.append("WHERE (");
             for (int i=0; i<groups.size(); i++) {
-                if (i > 0) sb.append(" AND ");
+                if (i > 0) sb.append(" OR ");
                 PlanetGroupData group = (PlanetGroupData)groups.get(i);
                 params.add(size++, group);            
                 sb.append(" g = ?").append(size);
             }
-            sb.append(")");
+            sb.append(") ");
             
             if (startDate != null) {
                 params.add(size++, startDate);

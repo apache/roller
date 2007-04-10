@@ -24,8 +24,10 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
+import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.datamapper.jpa.JPAPlanetManagerImpl;
+import org.apache.roller.planet.config.PlanetConfig;
 
 /**
  * A Datamapper specific implementation of the Roller business layer.
@@ -46,6 +48,21 @@ public abstract class DatamapperPlanetImpl implements Planet {
 
     
     protected DatamapperPlanetImpl() throws RollerException {
+        try {
+            String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
+            if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
+                throw new RollerException("No FeedFetcher configured!!!");
+            }
+            
+            Class fetchClass = Class.forName(feedFetchClass);
+            FeedFetcher feedFetcher = (FeedFetcher) fetchClass.newInstance();
+            
+            // plug it in
+            setFeedFetcher(feedFetcher);
+            
+        } catch (Exception e) {
+            throw new RollerException("Error initializing feed fetcher", e);
+        }
     }
 
     
