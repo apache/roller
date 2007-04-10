@@ -75,10 +75,27 @@ public class HibernatePlanetImpl implements Planet {
                     PlanetConfig.getProperty("hibernate.configResource"),
                     PlanetConfig.getProperty("hibernate.dialect")); 
             }
+
         } catch(Throwable t) {
             // if this happens then we are screwed
             log.fatal("Error initializing Hibernate", t);
             throw new RollerException(t);
+        }
+        
+        try {
+            String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
+            if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
+                throw new RollerException("No FeedFetcher configured!!!");
+            }
+            
+            Class fetchClass = Class.forName(feedFetchClass);
+            FeedFetcher feedFetcher = (FeedFetcher) fetchClass.newInstance();
+            
+            // plug it in
+            setFeedFetcher(feedFetcher);
+            
+        } catch (Exception e) {
+            throw new RollerException("Error initializing feed fetcher", e);
         }
     }
     

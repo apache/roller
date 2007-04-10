@@ -135,9 +135,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                         WeblogEntryData rollerEntry =
                                 (WeblogEntryData)entryIter.next();
                         
-                        PlanetEntryData entry = new PlanetEntryData();
-                        entry.setSubscription(sub);
-                        
+                        PlanetEntryData entry = new PlanetEntryData();                        
                         String content = "";
                         if (!StringUtils.isEmpty(rollerEntry.getText())) {
                             content = rollerEntry.getText();
@@ -151,10 +149,8 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                         entry.setPubTime(rollerEntry.getPubTime());
                         entry.setText(content);
                         entry.setPermalink(rollerEntry.getPermalink());
-                        entry.setCategoriesString(rollerEntry.getCategory().getPath());
-        
-                        planetManager.saveEntry(entry);
-                        PlanetFactory.getPlanet().flush();
+                        entry.setCategoriesString(rollerEntry.getCategory().getPath());                        
+                        
                         newEntries.add(entry);
                         
                     } catch (Exception e) {

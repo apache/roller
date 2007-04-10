@@ -87,7 +87,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
                 groupHandle = (groupHandle == null) ? "external" : groupHandle;
                 
-                PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
                 PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
                 form.setGroupHandle(groupHandle);
                 request.setAttribute("model",
@@ -119,7 +119,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
                 groupHandle = (groupHandle == null) ? "external" : groupHandle;
                 
-                PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
                 PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
                 form.setGroupHandle(groupHandle);
                 request.setAttribute("model",
@@ -153,7 +153,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
                     groupHandle = (groupHandle == null) ? "external" : groupHandle;
                     
-                    PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                    PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
                     PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
                     
                     targetGroup.getSubscriptions().remove(sub);
@@ -198,7 +198,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
             groupHandle = (groupHandle == null) ? form.getGroupHandle() : groupHandle;
             groupHandle = (groupHandle == null) ? "external" : groupHandle;
             
-            PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+            PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
             PlanetGroupData targetGroup = pmgr.getGroup(defaultPlanet, groupHandle);
             
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {

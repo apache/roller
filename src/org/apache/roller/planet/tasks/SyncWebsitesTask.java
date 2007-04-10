@@ -140,10 +140,11 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             UserManager userManager = RollerFactory.getRoller().getUserManager();
             
             // first, make sure there is an "all" planet group
-            PlanetData planetObject = planet.getPlanet("all");
+            PlanetData planetObject = planet.getPlanet("zzz_default_planet_zzz");
             PlanetGroupData group = planet.getGroup(planetObject, "all");
             if(group == null) {
                 group = new PlanetGroupData();
+                group.setPlanet(planetObject);
                 group.setHandle("all");
                 group.setTitle("all");
                 planet.saveGroup(group);

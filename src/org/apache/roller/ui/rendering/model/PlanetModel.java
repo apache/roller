@@ -166,7 +166,7 @@ public class PlanetModel implements Model {
         List list = new ArrayList();
         try {
             PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            PlanetData defaultPlanet = planetManager.getPlanet("default");
+            PlanetData defaultPlanet = planetManager.getPlanet("zzz_default_planet_zzz");
             PlanetGroupData planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
             List subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {

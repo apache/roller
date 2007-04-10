@@ -51,9 +51,6 @@ public class RomeFeedFetcherTest extends TestCase {
         testSub.setFeedURL(feed_url);
         mgr.saveSubscription(testSub);
         PlanetFactory.getPlanet().flush();
-        
-        // use RomeFeedFetcher
-        PlanetFactory.getPlanet().setFeedFetcher(new RomeFeedFetcher());
     }
     
     

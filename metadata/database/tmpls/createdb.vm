@@ -422,6 +422,8 @@ create table entryattribute (
 create index ea_entryid_idx on entryattribute( entryid );
 alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!db.INDEXSIZE );
 
+
+
 create table rag_group_subscription (
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
@@ -484,6 +486,17 @@ create table rag_entry (
     updated          $db.TIMESTAMP_SQL_TYPE    
 );
 create index rage_sid_idx on rag_entry(subscription_id); 
+
+create table rag_planet (
+    id              varchar(48) not null primary key,
+    handle          varchar(32) not null,
+    title           varchar(255) not null,
+    description     varchar(255)
+);
+alter table rag_planet add constraint ragp_handle_uq unique ( handle );
+
+insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
+update rag_group set planet_id='zzz_default_planet_zzz';
 
 
 -- *****************************************************
