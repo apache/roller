@@ -131,7 +131,7 @@ public class PlanetFeedServlet extends HttpServlet {
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
-                PlanetData planetObject = planet.getPlanet("default");
+                PlanetData planetObject = planet.getPlanet("zzz_default_planet_zzz");
                 model.put("group", planet.getGroup(planetObject, request.getParameter("group")));
             }
             model.put("planet", planet);
