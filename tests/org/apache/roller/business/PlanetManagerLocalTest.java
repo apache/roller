@@ -32,7 +32,7 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.planet.tasks.RefreshPlanetTask;
+import org.apache.roller.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.planet.tasks.SyncWebsitesTask;
 
 
@@ -125,7 +125,7 @@ public class PlanetManagerLocalTest extends TestCase {
             syncTask.init();
             syncTask.run();           
             
-            RefreshPlanetTask refreshTask = new RefreshPlanetTask();
+            RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.run();
             
             PlanetData planetObject = planet.getPlanet("default");

@@ -12,8 +12,8 @@ create table rag_planet (
 );
 alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 
-insert into rag_planet (id,title,handle) values ('default_planet','default_planet','default_planet');
-update rag_group set planet_id='default_planet';
+insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
+update rag_group set planet_id='zzz_default_planet_zzz';
 
 -- new column to support account activation by email
 #addColumnNull("rolleruser" "activationcode" "varchar(48)")

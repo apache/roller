@@ -30,7 +30,7 @@
 <roller:StatusMessage/>
 
 <p class="subtitle"><fmt:message key="planetConfig.subtitle" /></a>
-<p><fmt:message key="configForm.prompt" /></a>
+<p><fmt:message key="planetConfig.prompt" /></a>
 
 <form action="planetConfig.do" method="post">
 

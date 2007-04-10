@@ -34,7 +34,6 @@ public abstract class PlanetTask implements Runnable {
      */
     public void initialize() throws Exception {
         setupURLStrategy();
-        setupFeedFetcher();
     }
     
     
@@ -55,26 +54,5 @@ public abstract class PlanetTask implements Runnable {
         
         // plug it in
         PlanetFactory.getPlanet().setURLStrategy(urlStrategy);
-    }
-    
-    
-    /**
-     * Lookup configured FeedFetcher from config and plug it in.
-     *
-     * If no FeedFetcher can be configured then we bail and spew errors.
-     */
-    protected void setupFeedFetcher() throws Exception {
-        
-        String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
-        if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
-            throw new Exception("No FeedFetcher configured!!!");
-        }
-        
-        Class fetchClass = Class.forName(feedFetchClass);
-        FeedFetcher feedFetcher = (FeedFetcher) fetchClass.newInstance();
-        
-        // plug it in
-        PlanetFactory.getPlanet().setFeedFetcher(feedFetcher);
-    }
-    
+    }        
 }

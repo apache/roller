@@ -341,10 +341,10 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             
             sb.append("where (");
             for (int i=0; i<groups.size(); i++) {
-                if (i > 0) sb.append(" and ");
+                if (i > 0) sb.append(" or ");
                 sb.append(" g=:group" + i);
             }
-            sb.append(")");
+            sb.append(") ");
             
             if (startDate != null) {
                 sb.append("and e.pubTime > :startDate ");

@@ -76,7 +76,7 @@ public final class PlanetGroupsAction extends DispatchAction
                 if (request.getParameter("groupHandle") != null)
                 {
                     String handle = request.getParameter("groupHandle");
-                    PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                    PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
                     PlanetGroupData group = pmgr.getGroup(defaultPlanet, handle);
                     form.copyFrom(group, request.getLocale());
                 }
@@ -144,7 +144,7 @@ public final class PlanetGroupsAction extends DispatchAction
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (form.getHandle() != null)
                 {
-                    PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                    PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
                     PlanetGroupData group = pmgr.getGroup(defaultPlanet, form.getHandle());
                     pmgr.deleteGroup(group);
                     PlanetFactory.getPlanet().flush();
@@ -189,7 +189,7 @@ public final class PlanetGroupsAction extends DispatchAction
             {
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-                PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+                PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
                 ActionErrors errors = validate(pmgr, form);
                 if (errors.isEmpty())
                 {
@@ -278,7 +278,7 @@ public final class PlanetGroupsAction extends DispatchAction
             super("planetGroups.pagetitle", request, response, mapping);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();            
-            PlanetData defaultPlanet = pmgr.getPlanet("default_planet");
+            PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
             PlanetGroupData externalGroup = pmgr.getGroup(defaultPlanet, "external");
             Iterator allgroups = defaultPlanet.getGroups().iterator();
             while (allgroups.hasNext()) 
