@@ -157,36 +157,28 @@ public interface PlanetManager extends Manager {
     /**
      * Get Entries for a Group in reverse chonological order.
      *
-     * Entries may be constrained to a certain timeframe and the offset and
-     * length parameters can be used to retrieve a specific segment of the 
-     * results.
-     *
-     * @param group Get entries from the subscriptions in the specified group.
-     * @param startDate The oldest date for entries to include.
-     * @param endDate The newest date for entries to include.
+     * @param group Restrict to entries from one group.
      * @param offset Offset into results (for paging)
-     * @param length Maximum number of results to return (for paging)
+     * @param len Maximum number of results to return (for paging)
      */
-    public List getEntries(PlanetGroupData group, 
-                           Date startDate, 
-                           Date endDate,
-                           int offset, 
-                           int length) throws RollerException;
+    public List getEntries(PlanetGroupData group, int offset, int len) 
+        throws RollerException;
     
     
     /**
      * Get Entries for a Group in reverse chonological order, optionally 
      * constrained to a certain timeframe.
      *
-     * @param groups Restrict to entries from these groups (list of PlanetGroupData objects)
+     * @param group Restrict to entries from one group.
      * @param startDate The oldest date for entries to include.
-     * @param endDate   The newest date for entries to include.
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
+     * @param endDate The newest date for entries to include.
+     * @param offset Offset into results (for paging)
+     * @param len Maximum number of results to return (for paging)
      */
-    public List getEntries(List groups, 
+    public List getEntries(PlanetGroupData group, 
                            Date startDate, 
                            Date endDate,
                            int offset, 
-                           int len) throws RollerException;    
+                           int len) throws RollerException;
+    
 }
