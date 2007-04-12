@@ -311,10 +311,12 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     
     // Lookup Entries from a specific group
-    public List getEntries(PlanetGroupData group, int offset, int len) 
+    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, 
+                           int offset, int length) 
             throws RollerException {
-        return getEntries(Collections.singletonList(group), null, null, offset, len);
+        return getEntries(Collections.singletonList(group), startDate, endDate, offset, length);
     } 
+    
     
     // Lookup Entries from a specific list of groups
     public List getEntries(List groups, Date startDate, 
