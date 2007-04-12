@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.planet.ui.admin.struts.actions;
 
 import java.io.IOException;
@@ -49,8 +50,6 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerSession;
 
 
-
-/////////////////////////////////////////////////////////////////////////////
 /**
  * Add, remove, and view existing subscriptions in a group.
  * If no group is specified via the groupHandle parameter, then uses "external".
@@ -62,13 +61,15 @@ import org.apache.roller.ui.core.RollerSession;
  *                        path=".PlanetSubscriptions"
  */
 public final class PlanetSubscriptionsAction extends DispatchAction {
-    private static Log logger = LogFactory.getFactory().getInstance(
-            PlanetSubscriptionsAction.class);
+    
+    private static Log logger = LogFactory.getLog(PlanetSubscriptionsAction.class);
+    
     
     /** Populate page model and forward to subscription page */
     public ActionForward getSubscriptions(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
@@ -103,10 +104,12 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         return forward;
     }
     
+    
     /** Cancel editing, reset form */
     public ActionForward cancelEditing(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
@@ -135,10 +138,12 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         return forward;
     }
     
+    
     /** Delete subscription, reset form  */
     public ActionForward deleteSubscription(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             //RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -185,10 +190,12 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         return forward;
     }
     
+    
     /** Save subscription, add to current group */
     public ActionForward saveSubscription(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try {
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -207,19 +214,19 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 PlanetSubscriptionData sub = null;
                 ActionErrors errors = validate(pmgr, form);
                 if (errors.isEmpty()) {
-                    if (form.getId() == null || form.getId().trim().length() == 0) {                        
-                        // Adding new subscription to group                        
+                    if (form.getId() == null || form.getId().trim().length() == 0) {
+                        // Adding new subscription to group
                         // But, does subscription to that feed already exist?
                         if (form.getFeedURL() != null) {
-                            sub = pmgr.getSubscription(form.getFeedURL()); 
+                            sub = pmgr.getSubscription(form.getFeedURL());
                         }
                         if (sub != null) {
                             // Yes, we'll use it instead
                             messages.add(null, new ActionMessage(
-                                "planetSubscription.foundExisting", sub.getTitle()));
+                                    "planetSubscription.foundExisting", sub.getTitle()));
                         } else {
                             // No, add new subscription
-                            sub = new PlanetSubscriptionData(); 
+                            sub = new PlanetSubscriptionData();
                             form.copyTo(sub, request.getLocale());
                             
                             // the form copy is a little dumb and will set the id value
@@ -228,16 +235,16 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                             if(sub.getId() != null && sub.getId().trim().equals("")) {
                                 sub.setId(null);
                             }
-
+                            
                             pmgr.saveSubscription(sub);
-                        }                        
+                        }
                         targetGroup.getSubscriptions().add(sub);
                         
                     } else {
                         // User editing an existing subscription within a group
                         sub = pmgr.getSubscriptionById(form.getId());
-                        form.copyTo(sub, request.getLocale());                        
-                    }                    
+                        form.copyTo(sub, request.getLocale());
+                    }
                     form.setGroupHandle(groupHandle);
                     pmgr.saveGroup(targetGroup);
                     PlanetFactory.getPlanet().flush();
@@ -258,21 +265,23 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         } catch (RollerException re) {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError(
-                "planetSubscriptions.error.duringSave", re.getRootCauseMessage()));
+                    "planetSubscriptions.error.duringSave", re.getRootCauseMessage()));
             saveErrors(request, errors);
         } catch (Exception e) {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError(
-                "planetSubscriptions.error.duringSave", e.getMessage()));
+                    "planetSubscriptions.error.duringSave", e.getMessage()));
             saveErrors(request, errors);
             logger.error("Unexpected error saving subscription", e);
         }
         return forward;
     }
     
+    
     /** Validate posted subscription, fill in blanks via Technorati */
     private ActionErrors validate(
             PlanetManager pmgr, PlanetSubscriptionFormEx form) {
+        
         String technoratiTitle = null;
         String technoratiFeedUrl = null;
         int inboundlinks = -1;
@@ -284,7 +293,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 PropertyData proxyHostProp = props.getProperty("proxyHost");
                 PropertyData proxyPortProp = props.getProperty("proxyPort");
                 if (proxyHostProp != null && proxyPortProp != null) {
-                    technorati = new Technorati(proxyHostProp.getValue(), Integer.parseInt(proxyPortProp.getValue())); 
+                    technorati = new Technorati(proxyHostProp.getValue(), Integer.parseInt(proxyPortProp.getValue()));
                 } else {
                     technorati = new Technorati();
                 }
@@ -323,6 +332,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         return errors;
     }
     
+    
     /** Page model, includes subscriptions in "external" group */
     public class SubscriptionsPageModel extends BasePageModel {
         private List subscriptions = null;
@@ -359,5 +369,5 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
             return subscriptions;
         }
     }
+    
 }
-
