@@ -16,6 +16,7 @@
 
 package org.apache.roller.planet.business;
 
+import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,6 +95,9 @@ public class EntryFunctionalTests extends TestCase {
         // by group
         PlanetGroupData group = mgr.getGroupById(testGroup1.getId());
         assertEquals(3, mgr.getEntries(group, null, null, 0, 10).size());
+        
+        // by group with timeframe constraint
+        assertEquals(0, mgr.getEntries(group, new Date(), null, 0, 10).size());
     }
     
     
