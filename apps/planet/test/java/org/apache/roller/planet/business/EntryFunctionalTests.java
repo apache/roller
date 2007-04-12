@@ -93,7 +93,7 @@ public class EntryFunctionalTests extends TestCase {
         
         // by group
         PlanetGroupData group = mgr.getGroupById(testGroup1.getId());
-        assertEquals(3, mgr.getEntries(group, 0, 10).size());
+        assertEquals(3, mgr.getEntries(group, null, null, 0, 10).size());
     }
     
     

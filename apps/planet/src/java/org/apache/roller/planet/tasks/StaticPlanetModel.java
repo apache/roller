@@ -81,7 +81,7 @@ public class StaticPlanetModel {
     
     public List getAggregation(
             PlanetGroupData group, int maxEntries) throws RollerException {
-        return planetManager.getEntries(group, 0, maxEntries);
+        return planetManager.getEntries(group, null, null, 0, maxEntries);
     }
     
     
