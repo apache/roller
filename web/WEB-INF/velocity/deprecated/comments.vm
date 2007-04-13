@@ -60,11 +60,11 @@
     <p class="comment-details">
     $text.get("macro.weblog.postedby")
     #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
-        <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+        <a rel="nofollow" href="$comment.url"><b>$utils.escapeHTML($comment.name)</b></a>
     #elseif (!$utils.isEmpty($comment.name))
-        <b>$comment.name</b>
+        <b>$utils.escapeHTML($comment.name)</b>
     #else
-        <b>$comment.remoteHost</b>
+        <b>$utils.escapeHTML($comment.remoteHost)</b>
     #end
 
     $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
@@ -96,10 +96,12 @@
     #foreach( $comment in $comments )
         #set($content = $utils.encodeEmail($comment.content))
         #if($config.commentEscapeHtml)
-            #set($content = $utils.escapeHTML($content))
+            #set($content = $utilities.escapeHTML($content))
+        #else 
+            #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($content)))
         #end
         #if($config.commentAutoFormat)
-            #set($content = $utils.replace($content,"\n","<br />"))
+            #set($content = $utilities.autoformat($content))
         #end
         #set($content = $utils.addNofollow($content))
         <div class="comment" style="border: 1px solid #dadada; padding-left: 3px; padding-right: 5px;" >
@@ -176,15 +178,15 @@
 
         <table cellspacing="0" cellpadding="1" border="0" width="95%">
         <tr><th>$text.get( "macro.weblog.name" )</th>
-            <td><input type="text" name="name" value="$cform.name" size="50" maxlength="255" /></td>
+            <td><input type="text" name="name" value="$utils.escapeHTML($cform.name)" size="50" maxlength="255" /></td>
         </tr>
 
         <tr><th>$text.get( "macro.weblog.email" )</th>
-            <td><input type="text" name="email" value="$cform.email" size="50" maxlength="255" /></td>
+            <td><input type="text" name="email" value="$utils.escapeHTML($cform.email)" size="50" maxlength="255" /></td>
         </tr>
 
         <tr><th>$text.get( "macro.weblog.url" )</th>
-            <td><input type="text" name="url" value="$cform.url" size="50" maxlength="255" /></td>
+            <td><input type="text" name="url" value="$utils.escapeHTML($cform.url)" size="50" maxlength="255" /></td>
         </tr>
 
         #if ($config.commentEmailNotify)
@@ -211,7 +213,7 @@
         <tr><th style="text-align: left">$text.get( "macro.weblog.yourcomment" )</th></tr>
         <tr>
             <td>
-            <textarea name="content" cols="50" rows="10">$cform.content</textarea><br />
+            <textarea name="content" cols="50" rows="10">$utils.escapeHTML($cform.content)</textarea><br />
             <span class="comments-syntax-indicator">
             $text.get( "macro.weblog.htmlsyntax" )
             #if($config.commentEscapeHtml)
