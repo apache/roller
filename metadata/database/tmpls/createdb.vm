@@ -424,45 +424,38 @@ alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!db.
 
 
 
-create table rag_group_subscription (
-    group_id         varchar(48) not null,
-    subscription_id  varchar(48) not null
+create table rag_properties (
+    name     varchar(255) not null primary key,
+    value    $db.TEXT_SQL_TYPE
 );
-create index raggs_gid_idx on rag_group_subscription(group_id); 
-create index raggs_sid_idx on rag_group_subscription(subscription_id); 
 
-create table rag_config (
-    id               varchar(48) not null primary key,
-    default_group_id varchar(48),
-    title            varchar(255) not null,
-    description      varchar(255),
-    site_url         varchar(255),
-    output_dir       varchar(255),
-    cache_dir        varchar(255) not null,
-    template_dir     varchar(255),
-    main_page        varchar(255),
-    admin_name       varchar(255),
-    admin_email      varchar(255) not null,
-    group_page       varchar(255),
-    proxy_host       varchar(255),
-    proxy_port       integer default -1
+
+create table rag_planet (
+    id              varchar(48) not null primary key,
+    handle          varchar(32) not null,
+    title           varchar(255) not null,
+    description     varchar(255)
 );
+alter table rag_planet add constraint ragp_handle_uq unique ( handle );
+
 
 create table rag_group (
     id               varchar(48) not null primary key,
-    handle           varchar(255) not null,
+    planet_id        varchar(48) not null,
+    handle           varchar(32) not null,
     title            varchar(255) not null,
     description      varchar(255),
-    cat_restriction  $db.TEXT_SQL_TYPE,
-    group_page       varchar(255),
     max_page_entries integer default 30,
-    max_feed_entries integer default 30
+    max_feed_entries integer default 30,
+    cat_restriction  $db.TEXT_SQL_TYPE,
+    group_page       varchar(255)
 );
-alter table rag_group add constraint ragg_handle_uq unique ( handle$!db.INDEXSIZE );
+alter table rag_group add constraint ragg_handle_uq unique ( planet_id, handle );
+
 
 create table rag_subscription (
     id               varchar(48) not null primary key,
-    title            varchar(255),
+    title            varchar(255) not null,
     feed_url         varchar(255) not null,
     site_url         varchar(255),
     author           varchar(255),
@@ -471,6 +464,15 @@ create table rag_subscription (
     inbound_blogs    integer default -1
 );
 alter table rag_subscription add constraint rags_feed_url_uq unique ( feed_url$!db.INDEXSIZE_LARGE );
+
+
+create table rag_group_subscription (
+    group_id         varchar(48) not null,
+    subscription_id  varchar(48) not null
+);
+create index raggs_gid_idx on rag_group_subscription(group_id); 
+create index raggs_sid_idx on rag_group_subscription(subscription_id); 
+
 
 create table rag_entry (
     id               varchar(48) not null primary key,
@@ -485,18 +487,11 @@ create table rag_entry (
     published        $db.TIMESTAMP_SQL_TYPE not null,
     updated          $db.TIMESTAMP_SQL_TYPE    
 );
-create index rage_sid_idx on rag_entry(subscription_id); 
+create index rage_sid_idx on rag_entry(subscription_id);
 
-create table rag_planet (
-    id              varchar(48) not null primary key,
-    handle          varchar(32) not null,
-    title           varchar(255) not null,
-    description     varchar(255)
-);
-alter table rag_planet add constraint ragp_handle_uq unique ( handle );
-
-insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
-update rag_group set planet_id='zzz_default_planet_zzz';
+-- create a default planet and group
+insert into rag_planet (id, handle, title) values ('zzz_default_planet_zzz', 'default', 'Default Planet');
+insert into rag_group (id, planet_id, handle, title) values ('zzz_all_group_zzz', 'zzz_default_planet_zzz', 'all', 'Default Group');
 
 
 -- *****************************************************

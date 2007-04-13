@@ -4,6 +4,11 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
+create table rag_properties (
+    name     varchar(255) not null primary key,
+    value    $db.TEXT_SQL_TYPE
+);
+
 create table rag_planet (
     id              varchar(48) not null primary key,
     handle          varchar(32) not null,
@@ -12,8 +17,18 @@ create table rag_planet (
 );
 alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 
+-- add new planet_id column to planet group table
+#addColumnNull("rag_group" "planet_id" "varchar(48)")
+
+-- upgrade old planet users to work with the new Roller Planet code
+-- all groups must have a planet now, so provide a default planet and
+-- put all existing groups in the new default planet
 insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
 update rag_group set planet_id='zzz_default_planet_zzz';
+
+-- drop old planet config table
+drop table if exists rag_config;
+
 
 -- new column to support account activation by email
 #addColumnNull("rolleruser" "activationcode" "varchar(48)")

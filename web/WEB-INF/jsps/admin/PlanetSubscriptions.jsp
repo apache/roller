@@ -20,38 +20,38 @@
 <!--
 function cancelEditing()
 {
-    document.planetSubscriptionFormEx.method.value = "cancelEditing";
-    document.planetSubscriptionFormEx.submit();
+    document.planetSubscriptionForm.method.value = "cancelEditing";
+    document.planetSubscriptionForm.submit();
 }
 function deleteSubscription()
 {
-    document.planetSubscriptionFormEx.method.value = "deleteSubscription";
-    document.planetSubscriptionFormEx.submit();
+    document.planetSubscriptionForm.method.value = "deleteSubscription";
+    document.planetSubscriptionForm.submit();
 }
 // -->
 </script>
 
 <h1>
     <fmt:message key="planetSubscriptions.title" />    
-    <c:if test='${planetSubscriptionFormEx.groupHandle != "external"}' >
-       &nbsp;[group: <c:out value="${planetSubscriptionFormEx.groupHandle}" />]
+    <c:if test='${planetSubscriptionForm.groupHandle != "all"}' >
+       &nbsp;[group: <c:out value="${planetSubscriptionForm.groupHandle}" />]
     </c:if>        
 </h1>
 
 <c:choose>
-    <c:when test='${empty planetSubscriptionFormEx.id && planetSubscriptionFormEx.groupHandle == "external"}' >
+    <c:when test='${empty planetSubscriptionForm.id && planetSubscriptionForm.groupHandle == "all"}' >
         <p class="subtitle"><fmt:message key="planetSubscriptions.subtitle.addMain" /></p>
         <p><fmt:message key="planetSubscriptions.prompt.addMain" /></p>
     </c:when>
-    <c:when test='${empty planetSubscriptionFormEx.id && planetSubscriptionFormEx.groupHandle != "external"}' >
+    <c:when test='${empty planetSubscriptionForm.id && planetSubscriptionForm.groupHandle != "all"}' >
         <p class="subtitle">
             <fmt:message key="planetSubscriptions.subtitle.add" >
-                <fmt:param value="${planetSubscriptionFormEx.groupHandle}" />
+                <fmt:param value="${planetSubscriptionForm.groupHandle}" />
             </fmt:message>
         </p>
         <p><fmt:message key="planetSubscriptions.prompt.add" /></p>
     </c:when>
-    <c:when test="${!empty planetSubscriptionFormEx.id}" >
+    <c:when test="${!empty planetSubscriptionForm.id}" >
         <p class="subtitle"><fmt:message key="planetSubscriptions.subtitle.edit" /></p>
         <p><fmt:message key="planetSubscriptions.prompt.edit" /></p>
     </c:when>
@@ -61,8 +61,6 @@ function deleteSubscription()
     <html:hidden property="method" value="saveSubscription" />
     <html:hidden property="id" />
     <html:hidden property="groupHandle" />
-    <html:hidden property="inboundlinks" />
-    <html:hidden property="inboundblogs" />
 
     <div class="formrow">
         <label for="title" class="formrow" />
@@ -97,7 +95,7 @@ function deleteSubscription()
         <input type="button" 
             value='<fmt:message key="planetSubscriptions.button.cancel" />' 
             onclick="cancelEditing()"/>
-        <c:if test="${!empty planetSubscriptionFormEx.id}" >
+        <c:if test="${!empty planetSubscriptionForm.id}" >
             &nbsp;&nbsp;
             <input type="button" 
                value='<fmt:message key="planetSubscriptions.button.delete" />' 
@@ -109,8 +107,8 @@ function deleteSubscription()
 
     <h2>
         <fmt:message key="planetSubscriptions.existingTitle" />
-        <c:if test='${planetSubscriptionFormEx.groupHandle != "external"}' >
-           &nbsp;[group: <c:out value="${planetSubscriptionFormEx.groupHandle}" />]
+        <c:if test='${planetSubscriptionForm.groupHandle != "all"}' >
+           &nbsp;[group: <c:out value="${planetSubscriptionForm.groupHandle}" />]
         </c:if>
     </h2>
     <p><i><fmt:message key="planetSubscriptions.existingPrompt" /></i></p>
@@ -146,7 +144,7 @@ function deleteSubscription()
                             id="method" value="getSubscriptions" />                   
                         <roller:linkparam 
                             id="groupHandle" 
-                            name="planetSubscriptionFormEx" 
+                            name="planetSubscriptionForm" 
                             property="groupHandle" />                   
                         <roller:linkparam 
                             id="feedUrl" name="subscription" property="feedURL" />                   
