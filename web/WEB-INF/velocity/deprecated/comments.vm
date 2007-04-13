@@ -97,9 +97,11 @@
         #set($content = $utils.encodeEmail($comment.content))
         #if($config.commentEscapeHtml)
             #set($content = $utilities.escapeHTML($content))
+        #else 
+            #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($content)))
         #end
         #if($config.commentAutoFormat)
-            #set($content = $utils.replace($utilities.escapeHTML($content),"\n","<br />"))
+            #set($content = $utilities.autoformat($content))
         #end
         #set($content = $utils.addNofollow($content))
         <div class="comment" style="border: 1px solid #dadada; padding-left: 3px; padding-right: 5px;" >
