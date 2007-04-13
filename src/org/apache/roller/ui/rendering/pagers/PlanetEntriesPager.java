@@ -93,23 +93,18 @@ public class PlanetEntriesPager extends AbstractPager {
             List results = new ArrayList();
             try {
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
+                PlanetData planet = planetManager.getPlanet("zzz_default_planet_zzz");
                 
                 List rawEntries = null;
                 if (feedURL != null) {
                     PlanetSubscriptionData sub = planetManager.getSubscription(feedURL);
                     rawEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
-                    PlanetData planet = planetManager.getPlanet("zzz_default_planet_zzz");
                     PlanetGroupData group = planetManager.getGroup(planet, groupHandle);
-                    rawEntries = planetManager.getEntries(Collections.singletonList(group), startDate, null, offset, length+1);
+                    rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 } else {
-                    PlanetData planet = planetManager.getPlanet("zzz_default_planet_zzz");
-                    PlanetGroupData groupAll = planetManager.getGroup(planet, "all");
-                    PlanetGroupData groupDefault = planetManager.getGroup(planet, "default");
-                    List groups = new ArrayList();
-                    groups.add(groupAll);
-                    groups.add(groupDefault);
-                    rawEntries = planetManager.getEntries(groups, startDate, null, offset, length+1);
+                    PlanetGroupData group = planetManager.getGroup(planet, "all");
+                    rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 }
                 
                 // check if there are more results for paging
