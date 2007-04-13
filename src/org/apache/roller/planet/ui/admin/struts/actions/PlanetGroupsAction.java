@@ -60,7 +60,9 @@ public final class PlanetGroupsAction extends DispatchAction {
     private static Log logger = LogFactory.getLog(PlanetGroupsAction.class);
     
     
-    /** Populate page model and forward to subscription page */
+    /** 
+     * Populate page model and forward to groups page 
+     */
     public ActionForward getGroups(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
@@ -92,7 +94,9 @@ public final class PlanetGroupsAction extends DispatchAction {
     }
     
     
-    /** Cancel editing, reset form */
+    /** 
+     * Cancel editing, reset form 
+     */
     public ActionForward cancelEditing(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
@@ -116,7 +120,9 @@ public final class PlanetGroupsAction extends DispatchAction {
     }
     
     
-    /** Delete subscription, reset form  */
+    /** 
+     * Delete group, reset form  
+     */
     public ActionForward deleteGroup(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
@@ -132,8 +138,6 @@ public final class PlanetGroupsAction extends DispatchAction {
                     PlanetGroupData group = pmgr.getGroup(defaultPlanet, form.getHandle());
                     pmgr.deleteGroup(group);
                     PlanetFactory.getPlanet().flush();
-                    // TODO: why release here?
-                    PlanetFactory.getPlanet().release();
                     
                     form.doReset(mapping, request);
                     
@@ -157,7 +161,9 @@ public final class PlanetGroupsAction extends DispatchAction {
     }
     
     
-    /** Save subscription, add to "external" group */
+    /** 
+     * Save group 
+     */
     public ActionForward saveGroup(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
@@ -214,7 +220,9 @@ public final class PlanetGroupsAction extends DispatchAction {
     }
     
     
-    /** Validate posted group */
+    /** 
+     * Validate posted group 
+     */
     private ActionErrors validate(
             PlanetManager planet, PlanetGroupForm form) {
         ActionErrors errors = new ActionErrors();
@@ -225,35 +233,42 @@ public final class PlanetGroupsAction extends DispatchAction {
             errors.add(null, new ActionError("planetGroups.error.handle"));
         }
         if (form.getHandle() != null &&
-                (form.getHandle().equals("all") || form.getHandle().equals("external"))) {
+                (form.getHandle().equals("all"))) {
             errors.add(null, new ActionError("planetGroups.error.nameReserved"));
         }
         return errors;
     }
     
     
-    /** Page model */
+    /** 
+     * Page model 
+     */
     public class GroupsPageModel extends BasePageModel {
+        
         private List groups = new ArrayList();
         private boolean unconfigured = false;
+        
         public GroupsPageModel(
                 HttpServletRequest request,
                 HttpServletResponse response,
                 ActionMapping mapping) throws RollerException {
+            
             super("planetGroups.pagetitle", request, response, mapping);
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
             PlanetData defaultPlanet = pmgr.getPlanet("zzz_default_planet_zzz");
-            PlanetGroupData externalGroup = pmgr.getGroup(defaultPlanet, "external");
             Iterator allgroups = defaultPlanet.getGroups().iterator();
             while (allgroups.hasNext()) {
                 PlanetGroupData agroup = (PlanetGroupData)allgroups.next();
-                if (    !agroup.getHandle().equals("external")
-                && !agroup.getHandle().equals("all")) {
+                
+                // The "all" group is considered a special group and cannot be
+                // managed independently
+                if (!agroup.getHandle().equals("all")) {
                     groups.add(agroup);
                 }
             }
         }
+        
         public List getGroups() {
             return groups;
         }

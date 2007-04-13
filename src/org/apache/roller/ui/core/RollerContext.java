@@ -47,6 +47,8 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.runnable.ThreadManager;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
 import org.apache.roller.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.ui.core.security.AutoProvision;
@@ -147,6 +149,22 @@ public class RollerContext extends ContextLoaderListener
         } catch (Throwable t) {
             log.fatal("Roller Weblogger initialization failed", t);
             throw new RuntimeException(t);
+        }
+        
+        // Initialize Planet if necessary
+        if(RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+            try {
+                Planet planet = PlanetFactory.getPlanet();
+                
+                setupPlanetProperties();
+                
+                planet.flush();
+                planet.release();
+                
+            } catch (Throwable t) {
+                log.fatal("Roller Planet initialization failed", t);
+                throw new RuntimeException(t);
+            }
         }
         
         log.info("Roller Weblogger Initialization Complete");
@@ -381,6 +399,15 @@ public class RollerContext extends ContextLoaderListener
             defmap.addSecureUrl("/**<!-- need to remove this when uncommenting -->/*.do*", insecureDef);
         }
         */
+    }
+    
+    
+    /**
+     * Initialize the Roller Planet runtime configuration.
+     */
+    private void setupPlanetProperties() throws Exception {
+        // Planet PropertiesManager initializes itself
+        PlanetFactory.getPlanet().getPropertiesManager();
     }
     
     

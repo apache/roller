@@ -190,7 +190,12 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             while(subs.hasNext()) {
                 PlanetSubscriptionData sub =
                         (PlanetSubscriptionData) subs.next();
-                if (!liveUserFeeds.contains(sub.getFeedURL())) {
+                
+                // only delete subs from the group if ...
+                // 1. they are local, meaning they use our absolute url
+                // 2. they are no longer listed as a weblog 
+                if (sub.getFeedURL().startsWith(absUrl) && 
+                        !liveUserFeeds.contains(sub.getFeedURL())) {
                     deleteSubs.add(sub);
                 }
             }
