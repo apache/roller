@@ -221,16 +221,16 @@ Show comments form for weblog entry.
         <ul>
             <li>
                 <label class="desc">$text.get( "macro.weblog.name" )</label>
-                <input type="text" name="name" class="text large" value="$utilities.escapeHTML($cform.name)" size="50" maxlength="255" />
+                <input type="text" name="name" class="text large" value="$utils.escapeHTML($cform.name)" size="50" maxlength="255" />
             </li>
 
 
             <li><label class="desc">$text.get( "macro.weblog.email" )</label>
-                <input type="text" name="email" class="text large" value="$utilities.escapeHTML($cform.email)" size="50" maxlength="255" />
+                <input type="text" name="email" class="text large" value="$utils.escapeHTML($cform.email)" size="50" maxlength="255" />
             </li>
 
             <li><label class="desc">$text.get( "macro.weblog.url" )</label>
-                <input type="text" name="url" class="text large" value="$utilities.escapeHTML($cform.url)" size="50" maxlength="255" />
+                <input type="text" name="url" class="text large" value="$utils.escapeHTML($cform.url)" size="50" maxlength="255" />
             </li>
 
         #if ($config.commentEmailNotify)
