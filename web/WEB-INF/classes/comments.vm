@@ -232,7 +232,7 @@
         <tr><th style="text-align: left">$text.get( "macro.weblog.yourcomment" )</th></tr>
         <tr>
             <td>
-            <textarea name="content" cols="50" rows="10">$commentForm.content</textarea><br />
+            <textarea name="content" cols="50" rows="10">$utilities.escapeHTML($commentForm.content)</textarea><br />
             <span class="comments-syntax-indicator">
             $text.get( "macro.weblog.htmlsyntax" )
             #if( $escapeHtml )
