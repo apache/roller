@@ -135,6 +135,10 @@ public class UpgradeDatabase {
             UpgradeDatabase.upgradeTo320(con);
             dbversion = 320;
         }
+        if(dbversion < 400) {
+            UpgradeDatabase.upgradeTo400(con);
+            dbversion = 400;
+        }
         
         // make sure the database version is the exact version
         // we are upgrading too.
@@ -650,6 +654,71 @@ public class UpgradeDatabase {
         
         // finally, upgrade db version string to 320
         UpgradeDatabase.updateDatabaseVersion(con, 320);
+    }
+    
+    
+    /**
+     * Upgrade database for Roller 4.0.0
+     */
+    private static void upgradeTo400(Connection con) throws RollerException {
+        
+        mLogger.info("Doing upgrade to 400 ...");
+        
+        try {    
+            mLogger.info("Merging planet groups 'all' and 'external'");
+            
+            // Move all subscriptions in the planet group 'external' to group 'all'
+            
+            String allGroupId = null;
+            PreparedStatement selectAllGroupId = con.prepareStatement(
+                "select id from rag_group where handle = 'all'");
+            ResultSet rs = selectAllGroupId.executeQuery();
+            if (rs.next()) {
+                allGroupId = rs.getString(1);
+            }
+            
+            String externalGroupId = null;
+            PreparedStatement selectExternalGroupId = con.prepareStatement(
+                "select id from rag_group where handle = 'external'");            
+            rs = selectExternalGroupId.executeQuery();
+            if (rs.next()) {
+                externalGroupId = rs.getString(1);
+            }
+            
+            // we only need to merge if both of those groups already existed
+            if(allGroupId != null && externalGroupId != null) {
+                PreparedStatement updateGroupSubs = con.prepareStatement(
+                        "update rag_group_subscription set group_id = ? where group_id = ?");
+                updateGroupSubs.clearParameters();
+                updateGroupSubs.setString( 1, allGroupId);
+                updateGroupSubs.setString( 2, externalGroupId);
+                updateGroupSubs.executeUpdate();
+                
+                // we no longer need the group 'external'
+                PreparedStatement deleteExternalGroup = con.prepareStatement(
+                        "delete from rag_group where handle = 'external'");
+                deleteExternalGroup.executeUpdate();
+                
+            // if we only have group 'external' then just rename it to 'all'
+            } else if(allGroupId == null && externalGroupId != null) {
+                
+                // rename 'external' to 'all'
+                PreparedStatement renameExternalGroup = con.prepareStatement(
+                        "update rag_group set handle = 'all' where handle = 'external'");
+                renameExternalGroup.executeUpdate();
+            }
+            
+            if (!con.getAutoCommit()) con.commit();
+           
+            mLogger.info("Planet group 'external' merged into group 'all'.");
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 400", e);
+            throw new RollerException("Problem upgrading database to version 400", e);
+        }
+        
+        // finally, upgrade db version string to 400
+        UpgradeDatabase.updateDatabaseVersion(con, 400);
     }
     
     

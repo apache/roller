@@ -271,14 +271,14 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
 
     public List getEntries(PlanetGroupData group, int offset, int len) throws RollerException {
-        return getEntries(Collections.singletonList(group), null, null, offset, len);
+        return getEntries(group, null, null, offset, len);
     }
 
-    public List getEntries(List groups, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, int offset, int len) throws RollerException {
         StringBuffer queryString = new StringBuffer();
                 
-        if(groups == null || groups.size() == 0) {
-            throw new RollerException("groups cannot be null or empty");
+        if(group == null) {
+            throw new RollerException("group cannot be null or empty");
         }
         
         List ret = null;
@@ -291,21 +291,15 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             sb.append("SELECT e FROM PlanetEntryData e ");
             sb.append("JOIN e.subscription.groups g ");
                         
-            sb.append("WHERE (");
-            for (int i=0; i<groups.size(); i++) {
-                if (i > 0) sb.append(" OR ");
-                PlanetGroupData group = (PlanetGroupData)groups.get(i);
-                params.add(size++, group.getHandle());            
-                sb.append(" g.handle = ?").append(size);
-            }
-            sb.append(") ");
+            params.add(size++, group.getHandle());
+            sb.append("WHERE g.handle = ?").append(size);
             
             if (startDate != null) {
-                params.add(size++, startDate);
+                params.add(size++, new Timestamp(startDate.getTime()));
                 sb.append(" AND e.pubTime > ?").append(size);
             }
             if (endDate != null) {
-                params.add(size++, endDate);
+                params.add(size++, new Timestamp(endDate.getTime()));
                 sb.append(" AND e.pubTime < :?").append(size);
             }
             sb.append(" ORDER BY e.pubTime DESC");

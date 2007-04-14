@@ -309,23 +309,20 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     }
     
     
-    // Lookup Entries from a specific group
+    // lookup Entries from a specific Group
     public List getEntries(PlanetGroupData group, int offset, int len) 
             throws RollerException {
-        return getEntries(Collections.singletonList(group), null, null, offset, len);
+        return getEntries(group, null, null, offset, len);
     } 
     
-    // Lookup Entries from a specific list of groups
-    public List getEntries(List groups, Date startDate, 
-                           Date endDate, int offset, int length)
+    
+    // Lookup Entries from a specific group
+    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, 
+                           int offset, int length) 
             throws RollerException {
         
-        if (groups == null) {
-            throw new RollerException("groups cannot be null");
-        }
-        
-        if (groups.size() == 0) {
-            throw new RollerException("groups cannot be empty");
+        if (group == null) {
+            throw new RollerException("group cannot be null");
         }
         
         List ret = null;
@@ -337,13 +334,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             StringBuffer sb = new StringBuffer();
             sb.append("select e from PlanetEntryData e ");
             sb.append("join e.subscription.groups g ");
-            
-            sb.append("where (");
-            for (int i=0; i<groups.size(); i++) {
-                if (i > 0) sb.append(" or ");
-                sb.append(" g=:group" + i);
-            }
-            sb.append(") ");
+            sb.append("where g=:group ");
             
             if (startDate != null) {
                 sb.append("and e.pubTime > :startDate ");
@@ -354,10 +345,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
             sb.append("order by e.pubTime desc");
             
             Query query = session.createQuery(sb.toString());
-            for (int i=0; i<groups.size(); i++) {
-                PlanetGroupData group = (PlanetGroupData)groups.get(i);
-                query.setParameter("group" + i, group);
-            }
+            query.setParameter("group", group);
             if(offset > 0) {
                 query.setFirstResult(offset);
             }

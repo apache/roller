@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.planet.ui.admin.struts.actions;
 
 import java.io.IOException;
@@ -43,21 +44,21 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 
-/////////////////////////////////////////////////////////////////////////////
+
 /**
  * Allows configuration of Planet Roller.
- * 
+ *
  * @struts.action name="planetConfigForm" path="/roller-ui/admin/planetConfig"
  *                scope="request" parameter="method"
- * 
- * @struts.action-forward name="planetConfig.page" 
+ *
+ * @struts.action-forward name="planetConfig.page"
  *                        path=".PlanetConfig"
  */
-public final class PlanetConfigAction extends DispatchAction
-{
-    private static Log logger = 
-        LogFactory.getFactory().getInstance(PlanetConfigAction.class);
-
+public final class PlanetConfigAction extends DispatchAction {
+    
+    private static Log logger = LogFactory.getLog(PlanetConfigAction.class);
+    
+    
     public ActionForward unspecified(
             ActionMapping       mapping,
             ActionForm          actionForm,
@@ -83,7 +84,7 @@ public final class PlanetConfigAction extends DispatchAction
         try {
             BasePageModel pageModel = new BasePageModel(
                     "planetConfig.title", request, response, mapping);
-            request.setAttribute("model",pageModel);                
+            request.setAttribute("model",pageModel);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if (rollerSession.isGlobalAdminUser() ) {
@@ -121,9 +122,9 @@ public final class PlanetConfigAction extends DispatchAction
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             BasePageModel pageModel = new BasePageModel(
                     "planetConfig.title", request, response, mapping);
-            request.setAttribute("model",pageModel);                
+            request.setAttribute("model",pageModel);
             if (rollerSession.isGlobalAdminUser()) {
-            
+                
                 // just grab our properties map and put it in the request
                 Planet planet = PlanetFactory.getPlanet();
                 PropertiesManager propsManager = planet.getPropertiesManager();
@@ -147,7 +148,7 @@ public final class PlanetConfigAction extends DispatchAction
                     // with a value of "true" or "false" is meant to be a boolean
                     // it may not always be the case, but we should be okay for now
                     if( updProp.getValue() != null // null check needed w/Oracle
-                        && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
+                            && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                         
                         if(incomingProp == null || !incomingProp.equals("on"))
                             incomingProp = "false";
@@ -191,79 +192,4 @@ public final class PlanetConfigAction extends DispatchAction
         return forward;
     }
     
-
-//    /** Refresh entries in backgrounded thread (for testing) */
-//    public ActionForward refreshEntries(ActionMapping mapping,
-//            ActionForm actionForm, HttpServletRequest request,
-//            HttpServletResponse response) throws IOException, ServletException
-//    {
-//        ActionForward forward = mapping.findForward("planetConfig.page");
-//        try
-//        {
-//            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-//            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
-//            {
-//                BasePageModel pageModel = new BasePageModel(
-//                    "planetConfig.pageTitle", request, response, mapping);
-//                request.setAttribute("model",pageModel);                
-//                Roller roller = RollerFactory.getRoller();
-//                RefreshEntriesTask task = new RefreshEntriesTask();
-//                roller.getThreadManager().executeInBackground(task);
-//                
-//                ActionMessages messages = new ActionMessages();
-//                messages.add(null, 
-//                        new ActionMessage("planetConfig.success.refreshed"));
-//                saveMessages(request, messages);
-//            }
-//            else
-//            {
-//                forward = mapping.findForward("access-denied");
-//            }
-//        }
-//        catch (Exception e)
-//        {
-//            request.getSession().getServletContext().log("ERROR", e);
-//            throw new ServletException(e);
-//        }
-//        return forward;
-//    }
-//
-//    /** Sync websites in backgrounded thread (for testing) */
-//    public ActionForward syncWebsites(ActionMapping mapping,
-//            ActionForm actionForm, HttpServletRequest request,
-//            HttpServletResponse response) throws IOException, ServletException
-//    {
-//        ActionForward forward = mapping.findForward("planetConfig.page");
-//        try
-//        {
-//            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-//            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
-//            {
-//                BasePageModel pageModel = new BasePageModel(
-//                    "planetConfig.pageTitle", request, response, mapping);
-//                request.setAttribute("model",pageModel);                
-//                Roller roller = (Roller)RollerFactory.getRoller();
-//                SyncWebsitesTask task = new SyncWebsitesTask();
-//                task.init();
-//                roller.getThreadManager().executeInBackground(task);
-//                ActionMessages messages = new ActionMessages();
-//                messages.add(null, 
-//                        new ActionMessage("planetConfig.success.synced"));
-//                saveMessages(request, messages);
-//            }
-//            else
-//            {
-//                forward = mapping.findForward("access-denied");
-//            }
-//        }
-//        catch (Exception e)
-//        {
-//            request.getSession().getServletContext().log("ERROR", e);
-//            throw new ServletException(e);
-//        }
-//        return forward;
-//    }
-    
-
 }
-

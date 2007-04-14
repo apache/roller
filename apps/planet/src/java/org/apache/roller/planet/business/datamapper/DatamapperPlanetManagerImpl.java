@@ -215,7 +215,7 @@ public abstract class DatamapperPlanetManagerImpl extends AbstractManagerImpl im
     }
 
     public List getEntries(PlanetGroupData group, int offset, int len) throws RollerException {
-        return getEntries(Collections.singletonList(group), null, null, offset, len);
+        return getEntries(group, null, null, offset, len);
     }
 
 }

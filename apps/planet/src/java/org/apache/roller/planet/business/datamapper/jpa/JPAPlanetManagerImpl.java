@@ -42,11 +42,11 @@ public class JPAPlanetManagerImpl extends DatamapperPlanetManagerImpl {
         super(strategy);
     }
     
-    public List getEntries(List groups, Date startDate, Date endDate, int offset, int len) throws RollerException {
+    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, int offset, int len) throws RollerException {
         StringBuffer queryString = new StringBuffer();
                 
-        if(groups == null || groups.size() == 0) {
-            throw new RollerException("groups cannot be null or empty");
+        if(group == null) {
+            throw new RollerException("group cannot be null or empty");
         }
         
         List ret = null;
@@ -59,14 +59,8 @@ public class JPAPlanetManagerImpl extends DatamapperPlanetManagerImpl {
             sb.append("SELECT e FROM PlanetEntryData e ");
             sb.append("JOIN e.subscription.groups g ");
             
-            sb.append("WHERE (");
-            for (int i=0; i<groups.size(); i++) {
-                if (i > 0) sb.append(" OR ");
-                PlanetGroupData group = (PlanetGroupData)groups.get(i);
-                params.add(size++, group);            
-                sb.append(" g = ?").append(size);
-            }
-            sb.append(") ");
+            params.add(size++, group);
+            sb.append("WHERE g = ?").append(size);
             
             if (startDate != null) {
                 params.add(size++, startDate);
