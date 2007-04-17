@@ -119,7 +119,7 @@ public class Workspace {
         title.setText(space.getTitle());
         element.addContent(title);
         if (space.getTitleType() != null && !space.getTitleType().equals("TEXT")) {
-            element.setAttribute("type", space.getTitleType(), AtomService.ATOM_FORMAT);
+            title.setAttribute("type", space.getTitleType()); //, AtomService.ATOM_FORMAT);
         }
         
         Iterator iter = space.getCollections().iterator();
