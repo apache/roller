@@ -1,0 +1,274 @@
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <!-- Weblogger default package -->
+    <package name="weblogger" namespace="/roller-ui" extends="struts-default">
+        
+        <!-- Define Tiles result type -->
+        <result-types>
+            <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
+        </result-types>
+        
+        <!-- define our own interceptors and a custom interceptor stack -->
+        <interceptors>
+            <interceptor name="UIActionInterceptor" 
+                         class="org.apache.roller.ui.core.util.struts2.UIActionInterceptor" />
+            <interceptor name="UISecurityInterceptor" 
+                         class="org.apache.roller.ui.core.util.struts2.UISecurityInterceptor" />
+            <interceptor-stack name="rollerStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="UIActionInterceptor"/>
+                <interceptor-ref name="UISecurityInterceptor"/>
+            </interceptor-stack>
+        </interceptors>
+        
+        <!-- use our own interceptor stack which extends the default stack -->
+        <default-interceptor-ref name="rollerStack"/>
+        
+        <global-results>
+            <result name="access-denied" type="tiles">.denied</result>
+            <result name="error">/error.jsp</result>
+        </global-results>
+        
+        
+        <!-- Simple actions which basically just replace the global-forwards from
+             the old struts 1 config.  this is the only way to do it in struts 2 -->
+        <action name="home">
+            <result type="redirect">/</result>
+        </action>
+        
+        <action name="login-redirect">
+            <result>/roller-ui/login-redirect.jsp</result>
+        </action>
+        
+        <action name="logout">
+            <result>/roller-ui/logout-redirect.jsp</result>
+        </action>
+        
+        
+        <action name="login"
+                class="org.apache.roller.ui.core.struts2.Login">
+            <result type="tiles">.Login</result>
+        </action>
+        
+        <action name="register!*" method="{1}"
+                class="org.apache.roller.ui.core.struts2.RegisterForm">
+            <result name="input" type="tiles">.RegisterForm</result>
+            <result name="cancel" type="redirect">/</result>
+            <result name="success" type="tiles">.Welcome</result>
+        </action>
+        
+        <action name="profile!*" method="{1}"
+                class="org.apache.roller.ui.core.struts2.ProfileForm">
+            <result name="input" type="tiles">.ProfileForm</result>
+            <result name="cancel" type="redirect-action">menu</result>
+            <result name="success" type="tiles">.ProfileForm</result>
+        </action>
+        
+        <action name="createWeblog!*" method="{1}"
+                class="org.apache.roller.ui.core.struts2.CreateWeblogForm">
+            <result name="input" type="tiles">.CreateWeblogForm</result>
+            <result name="cancel" type="redirect-action">menu</result>
+            <result name="success" type="chain">menu</result>
+        </action>
+        
+        <action name="menu!*" method="{1}"
+                class="org.apache.roller.ui.core.struts2.MainMenu">
+            <result type="tiles">.MainMenu</result>
+        </action>
+        
+    </package>
+    
+    
+    <!-- Weblogger Admin UI (includes planet) -->
+    <!--
+    <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger">
+        
+        <action name="rollerConfig!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.RollerPropertiesAction">
+            <result name="rollerProperties.page">.rollerProperties</result>
+        </action>
+        
+        <action name="user!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.UserAdminAction">
+            <result name="adminUser.page">.UserAdmin</result>
+        </action>
+        
+        <action name="commentManagement!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
+            <result name="commentManagement.page">.CommentManagement</result>
+            <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
+        </action>
+        
+        <action name="commentQuery!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
+            <result name="commentManagement.page">.CommentManagement</result>
+            <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
+        </action>
+        
+        <action name="commonPingTargets!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.CommonPingTargetsAction">
+            <result name="pingTargets.page">.CommonPingTargets</result>
+            <result name="pingTargetEdit.page">.CommonPingTargetEdit</result>
+            <result name="pingTargetDeleteOK.page">.CommonPingTargetDeleteOK</result>
+        </action>
+        
+        <action name="cacheInfo!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.CacheInfoAction">
+            <result name="cacheInfo.page">.cacheInfo</result>
+        </action>
+        
+        <action name="planetConfig!*" method="{1}"
+                class="org.apache.roller.planet.ui.admin.struts2.PlanetConfigAction">
+            <result name="planetConfig.page">.PlanetConfig</result>
+        </action>
+        
+        <action name="planetSubscriptions!*" method="{1}"
+                class="org.apache.roller.planet.ui.admin.struts2.PlanetSubscriptionsAction">
+            <result name="planetSubscriptions.page">.PlanetSubscriptions</result>
+        </action>
+        
+        <action name="planetGroups!*" method="{1}"
+                class="org.apache.roller.planet.ui.admin.struts2.PlanetGroupsAction">
+            <result name="planetGroups.page">.PlanetGroups</result>
+        </action>
+        
+    </package>
+    -->
+    
+    <!-- Weblogger Authoring UI -->
+    <!--
+    <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
+        
+        <action name="pingSetup!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.PingSetupAction">
+            <result name="pingSetup.page">.Pings</result>
+            <result name="pingResult.page">.PingResult</result>
+        </action>
+        <action name="customPingTargets!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CustomPingTargetsAction">
+            <result name="pingTargets.page">.CustomPingTargets</result>
+            <result name="pingTargetEdit.page">.CustomPingTargetEdit</result>
+            <result name="pingTargetDeleteOK.page">.CustomPingTargetDeleteOK</result>
+        </action>
+        <action name="categories!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategoriesAction">
+            <result name="CategoriesForm">.CategoriesForm</result>
+        </action>
+        <action name="importBookmarks!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.ImportBookmarksFormAction">
+            <result name="importBookmarks.page">.import</result>
+        </action>
+        <action name="importEntries!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.ImportEntriesAction">
+            <result name="importEntries.page">.import-entries</result>
+        </action>
+        
+        <action name="categoryDelete!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategoryDeleteAction">
+            <result name="CategoryDeleteOK">.CategoryDeleteOK</result>
+        </action>
+        <action name="categoryEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategoryEditAction">
+            <result name="CategoryForm">.CategoryForm</result>
+        </action>
+        <action name="maintenance!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.MaintenanceAction">
+            <result name="maintenance.page">.Maintenance</result>
+        </action>
+        <action name="bookmarkEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.BookmarkEditAction">
+            <result name="BookmarkForm">.BookmarkForm</result>
+        </action>
+        
+        <action name="bookmarks!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.BookmarksAction">
+            <result name="BookmarksForm">.BookmarksForm</result>
+        </action>
+        
+        <action name="categorySave!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategorySaveAction">
+        </action>
+        <action name="inviteMember!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.InviteMemberAction">
+            <result name="inviteMember.page">.InviteMember</result>
+        </action>
+        <action name="weblog!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.WeblogEntryFormAction">
+            <result name="weblogEdit.page">.WeblogEdit</result>
+            <result name="weblogEntryRemove.page">.WeblogEntryRemove</result>
+        </action>
+        
+        <action name="weblogEntryManagement!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.WeblogEntryManagementAction">
+            <result name="weblogEntryManagement.page">.WeblogEntryManagement</result>
+        </action>
+        <action name="themeEditor!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.ThemeEditorAction">
+            <result name="editTheme.page">.theme-editor</result>
+        </action>
+        
+        <action name="memberPermissions!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.MemberPermissionsAction">
+            <result name="memberPermissions.page">.MemberPermissions</result>
+        </action>
+        
+        <action name="referers!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.ReferersAction">
+            <result name="referers.page">.referers</result>
+        </action>
+        
+        <action name="folderEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.FolderEditAction">
+            <result name="FolderForm">.FolderForm</result>
+        </action>
+        <action name="page!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.WeblogTemplateFormAction">
+            <result name="removePage.page">.remove-page</result>
+            <result name="editPage.page">.edit-page</result>
+            <result name="editPages.page">.edit-pages</result>
+        </action>
+        
+        <action name="folderSave!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.FolderSaveAction">
+            <result name="Bookmarks" type="dispatcher">/roller-ui/authoring/bookmarks.action!selectFolder</result>
+        </action>
+        <action name="invitations!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.InvitationsAction">
+            <result name="invitations.page">.Invitations</result>
+        </action>
+        <action name="toggleLinkback!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.ToggleLinkbackDisplayAction">
+        </action>
+        <action name="bookmarkSave!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.BookmarkSaveAction">
+            <result name="Bookmarks" type="dispatcher">/roller-ui/authoring/bookmarks.action!selectFolder</result>
+            <result name="BookmarkEdit" type="dispatcher">/roller-ui/authoring/bookmarkEdit.action</result>
+        </action>
+        <action name="commentManagement!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
+            <result name="commentManagement.page">.CommentManagement</result>
+            <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
+        </action>
+        <action name="commentQuery!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
+            <result name="commentManagement.page">.CommentManagement</result>
+            <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
+        </action>
+        
+        <action name="website!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.WebsiteFormAction">
+            <result name="editWebsite.page">.edit-website</result>
+            <result name="removeWebsite.page">.WebsiteRemove</result>
+        </action>
+        <action name="uploadFiles!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.UploadFileFormAction">
+            <result name="uploadFiles.page">.upload-file</result>
+        </action>
+    </package>
+    -->
+    
+</struts>
+

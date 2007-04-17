@@ -50,6 +50,10 @@
                 /roller-ui/authoring/**=admin,editor
                 /roller-ui/admin/**=admin
                 /rewrite-status*=admin
+                /roller-ui/login-redirect=admin,editor
+                /roller-ui/profile**=admin,editor
+                /roller-ui/createWeblog**=admin,editor
+                /roller-ui/menu**=admin,editor
             </value>
                 <!-- Add this to above list for LDAP/SSO configuration -->
                 <!-- /roller-ui/user.do*=register -->

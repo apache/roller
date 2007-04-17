@@ -98,6 +98,14 @@ Note: this filter does nothing if an ip ban list is not configured. -->
 </filter-mapping>
 
 
+<!-- Struts2 -->
+<filter-mapping>
+    <filter-name>struts2</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
 <!-- Do we still need the RequestFilter? -->
 <filter-mapping>
     <filter-name>RequestFilter</filter-name>
