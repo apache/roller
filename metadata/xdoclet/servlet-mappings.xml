@@ -8,3 +8,7 @@
         <servlet-name>XmlRpcServlet</servlet-name>
         <url-pattern>/roller-services/xmlrpc</url-pattern>
     </servlet-mapping>
+
+    <listener>
+  <listener-class>org.apache.tiles.listener.TilesListener</listener-class>
+</listener>
