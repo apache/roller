@@ -406,8 +406,6 @@ public class RollerAtomHandler implements AtomHandler {
             if (!canView(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website");
             }
-            FileManager fmgr = roller.getFileManager();
-            ThemeResource[] files = fmgr.getFiles(website, path);
                         
             Feed feed = new Feed();
             feed.setId(URLUtilities.getAtomProtocolURL(true)
@@ -419,6 +417,9 @@ public class RollerAtomHandler implements AtomHandler {
             link.setRel("alternate");
             link.setType("text/html");
             feed.setAlternateLinks(Collections.singletonList(link));
+
+            FileManager fmgr = roller.getFileManager();
+            ThemeResource[] files = fmgr.getFiles(website, path);
 
             SortedSet sortedSet = new TreeSet(new Comparator() {
                 public int compare(Object o1, Object o2) {
@@ -433,12 +434,14 @@ public class RollerAtomHandler implements AtomHandler {
                 }               
             });
                                     
-            List atomEntries = new ArrayList();
-            if (files != null && start < files.length) {                   
+            if (files != null && start < files.length) {  
+                for (int j=0; j<files.length; j++) {
+                    sortedSet.add(files[j]);
+                }
                 int count = 0;
-                ThemeResource[] sortedArray = (ThemeResource[])sortedSet.toArray(new ThemeResource[sortedSet.size()]);
-                for (int i=start; i<(start + max) && i<(sortedArray.length); i++) {
-                    Entry entry = createAtomResourceEntry(website, sortedArray[i]);
+                List atomEntries = new ArrayList();
+                for (int i=start; i<(start + max) && i<(sortedSet.size()); i++) {
+                    Entry entry = createAtomResourceEntry(website, files[i]);
                     atomEntries.add(entry);
                     if (count == 0) {
                         // first entry is most recent

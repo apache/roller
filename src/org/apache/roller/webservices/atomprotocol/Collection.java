@@ -141,27 +141,27 @@ public class Collection {
         title.setText(collection.getTitle());
         element.addContent(title);
         if (collection.getTitleType() != null && !collection.getTitleType().equals("TEXT")) {
-            element.setAttribute("type", collection.getTitleType(), AtomService.ATOM_FORMAT);
+            element.setAttribute("type", collection.getTitleType()); //, AtomService.ATOM_FORMAT);
         }
                     
         // Loop to create <app:categories> elements            
         for (Iterator it = collection.getCategories().iterator(); it.hasNext();) {
             Categories cats = (Categories)it.next();
             Element catsElem = new Element("categories", AtomService.ATOM_PROTOCOL);
-            catsElem.setAttribute("fixed", cats.isFixed() ? "yes" : "no", AtomService.ATOM_PROTOCOL);
+            catsElem.setAttribute("fixed", cats.isFixed() ? "yes" : "no"); //, AtomService.ATOM_PROTOCOL);
             if (cats.getScheme() != null) {
-                catsElem.setAttribute("scheme", cats.getScheme(), AtomService.ATOM_PROTOCOL);
+                catsElem.setAttribute("scheme", cats.getScheme()); //, AtomService.ATOM_PROTOCOL);
             }
             // Loop to create <atom:category> elements
             for (Iterator catIter = cats.getCategories().iterator(); catIter.hasNext();) {
                 Category cat = (Category) catIter.next();
                 Element catElem = new Element("category", AtomService.ATOM_FORMAT);
-                catElem.setAttribute("term", cat.getTerm(), AtomService.ATOM_FORMAT);
+                catElem.setAttribute("term", cat.getTerm()); //, AtomService.ATOM_FORMAT);
                 if (cat.getScheme() != null) { // optional
-                    catElem.setAttribute("scheme", cat.getScheme(), AtomService.ATOM_FORMAT);
+                    catElem.setAttribute("scheme", cat.getScheme()); //, AtomService.ATOM_FORMAT);
                 }
                 if (cat.getLabel() != null) { // optional
-                    catElem.setAttribute("label", cat.getLabel(), AtomService.ATOM_FORMAT);
+                    catElem.setAttribute("label", cat.getLabel()); //, AtomService.ATOM_FORMAT);
                 }
                 catsElem.addContent(catElem);
             }
