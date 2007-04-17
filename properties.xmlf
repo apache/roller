@@ -121,6 +121,10 @@ in the "base.path" definition.
     <include name="struts-el.jar"/>
 </fileset>
 
+<fileset id="struts2.jars" dir="${ro.tools}/struts-2.0.5/lib">
+    <include name="*.jar"/>
+</fileset>
+
 <fileset id="servlet.jars" dir="${tools.tomcat}">
     <include name="servlet-api.jar"/>
     <include name="jsp-api.jar"/>
@@ -132,9 +136,7 @@ in the "base.path" definition.
 </fileset>
 
 <fileset id="jstl.jars" dir="${tools.jstl}/lib">
-    <include name="jstl.jar"/>
-    <include name="standard.jar"/>
-    <include name="xalan.jar"/>
+    <include name="*.jar"/>
 </fileset>
 
 <fileset id="hibernate.jar" dir="${tools.hibernate}">
@@ -183,6 +185,7 @@ in the "base.path" definition.
     <path refid="base.path"/>
     <fileset refid="presentation.jars"/>
     <fileset refid="struts.jars"/>
+    <fileset refid="struts2.jars"/>
     <fileset refid="servlet.jars"/>
     <fileset refid="mail.jars"/>
     <fileset refid="jstl.jars"/>
