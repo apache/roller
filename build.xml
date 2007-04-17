@@ -419,6 +419,7 @@ ro.buildUser=${user.name}
         <fileset refid="hibernate.jars" />
         <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
+        <fileset refid="struts2.jars" />
         <fileset refid="spring.jars" /> 
         <fileset refid="jstl.jars" />
         <fileset refid="xmlrpc.jars" />
