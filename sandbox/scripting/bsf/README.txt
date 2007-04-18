@@ -16,8 +16,8 @@ To use it in Roller:
 
 4) Restart Roller
 
-5) Create a page template and set Template Language to either "groovy", "jruby"
-   or "javascript" -- right now you'll have to do that via SQL.
+5) Create a new Weblog Template and set the Template Language to either 
+   "groovy", "jruby" or "javascript"
 
 6) In your page template you'll have access to all normal Roller models
    plus the name "out" will be bound to a Writer that you can use for output.
