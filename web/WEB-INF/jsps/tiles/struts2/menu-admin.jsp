@@ -18,6 +18,3 @@
 <%@ taglib uri="http://www.rollerweblogger.org/tags" prefix="roller" %>
 
 <roller:Menu model="admin-menu.xml" view="templates/menu/menu-tabbed.vm" />
-
-
-

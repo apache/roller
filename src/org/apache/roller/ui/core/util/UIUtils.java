@@ -19,68 +19,44 @@
 package org.apache.roller.ui.core.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import org.apache.roller.util.LocaleComparator;
 
-
 /**
  * A utilities class used by the Weblogger UI.
  */
 public class UIUtils {
     
-    public static Map allLocales = null;
-    public static Map allTimeZones = null;
+    private static List locales = null;
+    private static List timeZones = null;
     
     
-    // load up the locales and time zones maps
+    // load up the locales and time zones lists
     static {
-        // build locales Map
-        allLocales = new HashMap(); 
-        Locale[] localeArray = Locale.getAvailableLocales();
-        Arrays.sort(localeArray, new LocaleComparator());
-        for (int i=0; i < localeArray.length; i++) {
-            allLocales.put(localeArray[i].toString(),
-                           localeArray[i].getDisplayName());
-        }
+        // build locales list
+        locales = Arrays.asList(Locale.getAvailableLocales());
+        Collections.sort(locales, new LocaleComparator());
         
-        // build time zones Map
-        allTimeZones = new TreeMap();
-        String[] zoneArray = TimeZone.getAvailableIDs();
-        
-        Date today = new Date();
-        TimeZone zone = null;
-        for (int i=0; i < zoneArray.length; i++) {
-            zone = TimeZone.getTimeZone(zoneArray[i]);
-            
-            // build a display key
-            StringBuffer sb = new StringBuffer();
-            sb.append(zone.getDisplayName(zone.inDaylightTime(today), TimeZone.SHORT));
-            sb.append(" - ");
-            sb.append(zone.getID());
-            
-            allTimeZones.put(zone.getID(), sb.toString());
-        }
+        // build time zones list
+        timeZones = Arrays.asList(TimeZone.getAvailableIDs());
+        Collections.sort(timeZones);
     }
     
     
-    /**
-     * A Map of locales supported by Roller.
-     */
-    public static Map getLocalesMap() {
-        return allLocales;
+    public static List getLocales() {
+        return locales;
     }
     
     
-    /**
-     * A Map of time zones supported by Roller.
-     */
-    public static Map getTimeZonesMap() {
-        return allTimeZones;
+    public static List getTimeZones() {
+        return timeZones;
     }
     
 }

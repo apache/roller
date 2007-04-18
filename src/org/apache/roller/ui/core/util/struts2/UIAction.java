@@ -21,7 +21,9 @@ package org.apache.roller.ui.core.util.struts2;
 import com.opensymphony.xwork2.ActionSupport;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Map;
+import java.util.List;
+import org.apache.roller.config.RollerConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.util.UIUtils;
@@ -67,6 +69,37 @@ public abstract class UIAction extends ActionSupport
     // default action permissions, no weblog permissions required
     public short requiredWeblogPermissions() {
         return -1;
+    }
+    
+    
+    public String getProp(String key) {
+        // first try static config
+        String value = RollerConfig.getProperty(key);
+        if(value == null) {
+            value = RollerRuntimeConfig.getProperty(key);
+        }
+        
+        return (value == null) ? key : value;
+    }
+    
+    public boolean getBooleanProp(String key) {
+        // first try static config
+        String value = RollerConfig.getProperty(key);
+        if(value == null) {
+            value = RollerRuntimeConfig.getProperty(key);
+        }
+        
+        return (value == null) ? false : (new Boolean(value)).booleanValue();
+    }
+    
+    public int getIntProp(String key) {
+        // first try static config
+        String value = RollerConfig.getProperty(key);
+        if(value == null) {
+            value = RollerRuntimeConfig.getProperty(key);
+        }
+        
+        return (value == null) ? 0 : (new Integer(value)).intValue();
     }
     
     
@@ -149,12 +182,12 @@ public abstract class UIAction extends ActionSupport
         return "MMM dd, yyyy";
     }
     
-    public Map getLocalesMap() {
-        return UIUtils.getLocalesMap();
+    public List getLocalesList() {
+        return UIUtils.getLocales();
     }
     
-    public Map getTimeZonesMap() {
-        return UIUtils.getTimeZonesMap();
+    public List getTimeZonesList() {
+        return UIUtils.getTimeZones();
     }
     
 }

@@ -21,4 +21,3 @@
 #rightcontent_wrap {
     width: 29%;
 }
-

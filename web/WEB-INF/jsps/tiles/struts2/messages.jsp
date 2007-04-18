@@ -16,6 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+
 <script type="text/javascript">
 <!--
 function dirty() {

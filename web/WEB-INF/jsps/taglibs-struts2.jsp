@@ -18,21 +18,6 @@
 <% response.setContentType("text/html; charset=UTF-8"); %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 
-<%@ page import="org.apache.roller.business.Roller" %>
-<%@ page import="org.apache.roller.business.RollerFactory" %>
-
-<%@ page import="org.apache.roller.pojos.UserData" %>
-<%@ page import="org.apache.roller.pojos.WebsiteData" %>
-<%@ page import="org.apache.roller.pojos.RollerConfigData" %>
-
-<%@ page import="org.apache.roller.config.RollerConfig" %>
-<%@ page import="org.apache.roller.config.RollerRuntimeConfig" %>
-<%@ page import="org.apache.roller.config.RollerConfig" %>
-
-<%@ page import="org.apache.roller.ui.core.RequestConstants" %>
-<%@ page import="org.apache.roller.ui.core.BasePageModel" %>
-<%@ page import="org.apache.roller.ui.core.RollerSession" %>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles2" prefix="tiles" %>

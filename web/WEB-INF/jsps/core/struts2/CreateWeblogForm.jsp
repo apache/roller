@@ -16,16 +16,17 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+
 <script type="text/javascript">
 <!--
 function previewImage(theme) {
     document.preview.src="/themes/" + theme + "/sm-theme-" + theme + ".png";
 }
-function handlePreview() {
-	previewSpan = document.getElementById("handlePreview");
-	var n1 = previewSpan.childNodes[0];
-    var n2 = document.createTextNode(document.createWebsiteForm.handle.value);
-    if (n1 == null) {
+function handlePreview(handle) {
+    previewSpan = document.getElementById("handlePreview");
+    var n1 = previewSpan.childNodes[0];
+    var n2 = document.createTextNode(handle.value);
+    if (handle.value == null) {
 	    previewSpan.appendChild(n2);
     } else {
 	    previewSpan.replaceChild(n2, n1);
@@ -57,7 +58,7 @@ function handlePreview() {
 <tr>
     <td class="label"><label for="handle" /><s:text name="createWebsite.handle" /></label></td>
     <td class="field">
-        <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview()" /><br />
+        <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" /><br />
         <span style="text-size:70%">
             <s:text name="createWebsite.weblogUrl" />:&nbsp;
             <%-- <c:out value="${model.absoluteURL}" /> --%>/<span id="handlePreview" style="color:red">handle</span>
@@ -75,7 +76,7 @@ function handlePreview() {
 <tr>
     <td class="label"><label for="locale" /><s:text name="createWebsite.locale" /></label></td>
     <td class="field">
-       <s:select name="bean.locale" size="1" list="localesMap" />   
+       <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
     </td>
     <td class="description"><s:text name="createWebsite.tip.locale" /></td>
 </tr>
@@ -83,7 +84,7 @@ function handlePreview() {
 <tr>
     <td class="label"><label for="timeZone" /><s:text name="createWebsite.timeZone" /></label></td>
     <td class="field">
-       <s:select name="bean.timeZone" size="1" list="timeZonesMap" />
+       <s:select name="bean.timeZone" size="1" list="timeZonesList" />
     </td>
     <td class="description"><s:text name="createWebsite.tip.timezone" /></td>
 </tr>
