@@ -15,8 +15,3 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-
-<%-- empty tile --%>
-
-
-

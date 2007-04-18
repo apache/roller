@@ -31,10 +31,10 @@
     <td class="description"><s:text name="userRegister.tip.fullName" /></td>
 </tr>
 
-<s:if test="${fromSSO}">
+<s:if test="fromSSO">
 <tr>
     <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-    <td class="field"><strong><c:out value="${bean.userName}" /></strong></td>
+    <td class="field"><strong><s:property value="bean.userName" /></strong></td>
     <td class="description"><s:text name="userRegister.tip.userName" /></td>
 </tr>
 </s:if>
@@ -70,7 +70,7 @@
 <tr>
     <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
     <td class="field">
-       <s:select name="bean.locale" size="1" list="localesMap" />
+       <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
     </td>
     <td class="description"><s:text name="userRegister.tip.locale" /></td>
 </tr>
@@ -78,7 +78,7 @@
 <tr>
     <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
     <td class="field">
-       <s:select name="bean.timeZone" size="1" list="timeZonesMap" />
+       <s:select name="bean.timeZone" size="1" list="timeZonesList" />
     </td>
     <td class="description"><s:text name="userRegister.tip.timeZone" /></td>
 </tr>

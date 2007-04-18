@@ -16,13 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<%
-String absURL = RollerRuntimeConfig.getAbsoluteContextURL();
-boolean allowNewUsers = RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
-String customRegUrl = RollerRuntimeConfig.getProperty("users.registration.url");
-if(customRegUrl != null && customRegUrl.trim().equals(""))
-    customRegUrl = null;
-%>
+
 <div class="bannerStatusBox">
     
     <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
@@ -47,7 +41,7 @@ if(customRegUrl != null && customRegUrl.trim().equals(""))
             
             <td class="bannerRight">
                 
-                <a href="<s:url value="/"/>"><%= RollerRuntimeConfig.getProperty("site.shortName") %></a>
+                <a href="<s:url value="/"/>"><s:property value="getProp('site.shortName')"/></a>
                 
                 | <a href="<s:url action="menu"/>"><s:text name="mainPage.mainMenu" /></a>
                 
@@ -57,11 +51,12 @@ if(customRegUrl != null && customRegUrl.trim().equals(""))
                 <s:else>
                     | <a href="<s:url action="login-redirect"/>"><s:text name="navigationBar.login"/></a>
                     
-                    <% if(allowNewUsers) { %>
-                    | <a href="<s:url action="register"/>"><s:text name="navigationBar.register"/></a>
-                    <% } else if(customRegUrl != null) { %>
-                    | <a href="<%= customRegUrl %>"><s:text name="navigationBar.register"/></a>
-                    <% } %>
+                    <s:if test="getBooleanProp('users.registration.enabled')">
+                        | <a href="<s:url action="register"/>"><s:text name="navigationBar.register"/></a>
+                    </s:if>
+                    <s:elseif test="getProp('users.registration.url') != null">
+                        | <a href="<s:property value="getProp('users.registration.url')"/>"><s:text name="navigationBar.register"/></a>
+                    </s:elseif>
                 </s:else>
                 
             </td>

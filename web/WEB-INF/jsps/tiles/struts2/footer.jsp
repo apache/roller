@@ -28,6 +28,3 @@ Powered by <a href="http://www.rollerweblogger.org">Apache Roller</a>
 
 <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">
     <s:text name="footer.mailingLists" /></a>
-
-
-
