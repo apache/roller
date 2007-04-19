@@ -20,12 +20,13 @@
 <p class="subtitle"><s:text name="yourProfile.description" /></p>
 
 <s:form action="profile!save">
-           
+    <s:hidden name="bean.userName" />
+    
 <table class="formtable">
 
 <tr>
     <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-    <td class="field"><s:textfield name="bean.userName" readonly="true" /></td>
+    <td class="field"><span class="fixedAttr"><s:property value="bean.userName"/></span></td>
     <td class="description"><s:text name="yourProfile.tip.userName" /></td>
 </tr>
 

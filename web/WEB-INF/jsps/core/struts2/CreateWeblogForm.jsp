@@ -20,7 +20,7 @@
 <script type="text/javascript">
 <!--
 function previewImage(theme) {
-    document.preview.src="/themes/" + theme + "/sm-theme-" + theme + ".png";
+    document.preview.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
 }
 function handlePreview(handle) {
     previewSpan = document.getElementById("handlePreview");
@@ -61,7 +61,7 @@ function handlePreview(handle) {
         <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" /><br />
         <span style="text-size:70%">
             <s:text name="createWebsite.weblogUrl" />:&nbsp;
-            <%-- <c:out value="${model.absoluteURL}" /> --%>/<span id="handlePreview" style="color:red">handle</span>
+            <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red"><s:if test="bean.handle != null"><s:property value="bean.handle"/></s:if><s:else>handle</s:else></span>
         </span>
     </td>
     <td class="description"><s:text name="createWebsite.tip.handle" /></td>
@@ -95,7 +95,16 @@ function handlePreview(handle) {
         <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name" onchange="previewImage(this[selectedIndex].value)"/>
        <br />
        <br />
-       <img name="preview" src='/themes/<s:property value="themes[0].id"/>/sm-theme-<s:property value="themes[0].id"/>.png' />
+       <img name="preview" src='' />
+       <!-- initialize preview image at page load -->
+       <script type="text/javascript">
+           <s:if test="bean.theme == null">
+               previewImage('<s:property value="themes[0].id"/>');
+           </s:if>
+           <s:else>
+               previewImage('<s:property value="bean.theme"/>');
+           </s:else>
+       </script>
     </td>
     <td class="description"><s:text name="createWebsite.tip.theme" /></td>
 </tr>
@@ -107,3 +116,6 @@ function handlePreview(handle) {
 <s:submit key="createWebsite.button.cancel" action="createWeblog!cancel" />
     
 </s:form>
+
+
+    

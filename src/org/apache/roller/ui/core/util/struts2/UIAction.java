@@ -72,6 +72,14 @@ public abstract class UIAction extends ActionSupport
     }
     
     
+    public String getSiteURL() {
+        return RollerRuntimeConfig.getRelativeContextURL();
+    }
+    
+    public String getAbsoluteSiteURL() {
+        return RollerRuntimeConfig.getAbsoluteContextURL();
+    }
+    
     public String getProp(String key) {
         // first try static config
         String value = RollerConfig.getProperty(key);

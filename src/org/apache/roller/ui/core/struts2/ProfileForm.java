@@ -124,17 +124,6 @@ public class ProfileForm extends UIAction {
     
     // TODO: replace with struts2 validation
     private void myValidate() {
-        String allowed = RollerConfig.getProperty("username.allowedChars");
-        if(allowed == null || allowed.trim().length() == 0) {
-            allowed = RegisterForm.DEFAULT_ALLOWED_CHARS;
-        }
-        String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
-        
-        if (StringUtils.isEmpty(getBean().getUserName())) {
-            addError("error.add.user.missingUserName");
-        } else if (!safe.equals(getBean().getUserName()) ) {
-            addError("error.add.user.badUserName");
-        }
         
         if (StringUtils.isEmpty(getBean().getEmailAddress())) {
             addError("error.add.user.missingEmailAddress");
