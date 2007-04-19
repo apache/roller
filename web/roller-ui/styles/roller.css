@@ -289,6 +289,11 @@ table.rollertable tbody td {
 table.rollertable td.center {
     text-align: center;
 }
+td.field span.fixedAttr {
+  font-style: italic;
+  font-weight: bold;
+  color: red;
+}
 .rollertable_even td {
     border: 1px solid #ccc;
     background: #EEEEEE;
