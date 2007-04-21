@@ -1214,7 +1214,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                     (String)row[2], 
                     (String)row[3], 
                     "statCount.weblogEntryCommentCountType", 
-                    new Long(((Integer)row[0]).intValue()).longValue()));
+                    ((Number)row[0]).longValue()));
             }
             return results;
         } catch (Throwable pe) {
@@ -1337,7 +1337,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 Object[] row = (Object[]) iter.next();
                 TagStat t = new TagStat();
                 t.setName((String) row[0]);
-                t.setCount(((Number) row[1]).intValue());                
+                t.setCount(((Number) row[1]).intValue());
                 
                 min = Math.min(min, t.getCount());
                 max = Math.max(max, t.getCount());                
