@@ -1337,7 +1337,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 Object[] row = (Object[]) iter.next();
                 TagStat t = new TagStat();
                 t.setName((String) row[0]);
-                t.setCount(((Integer) row[1]).intValue());                
+                t.setCount(((Number) row[1]).intValue());                
                 
                 min = Math.min(min, t.getCount());
                 max = Math.max(max, t.getCount());                
@@ -1404,7 +1404,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 Object[] row = (Object[]) iter.next();
                 TagStat ce = new TagStat();
                 ce.setName((String) row[0]);
-                ce.setCount(((Integer) row[1]).intValue());
+                ce.setCount(((Number) row[1]).intValue());
                 results.add(ce);
             }
 
