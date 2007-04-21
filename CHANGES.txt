@@ -25,6 +25,9 @@ Fixed multiple XSS vulnerabilities. Changes were isoluated in these files:
 - roller-ui/widgets/date.jsp
   Now HTML-escapes value field of date widget
 
+*** Fixes in themes
+
+- Theme files no longer refer to legacy $entry variable
 
 
 -------------------------------------------------------------------------------
