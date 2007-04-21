@@ -39,6 +39,8 @@ Bug Fixes
     * Fix for in-use category deletion and duplicate named category issues
     * Fix for anchor creation when non-alpha characters are involved
     * Fix to invalidate session after new user registration 
+    * Theme files no longer refer to legacy $entry variable
+
 
 -------------------------------------------------------------------------------
 
