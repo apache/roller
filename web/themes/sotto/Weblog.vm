@@ -39,8 +39,8 @@
     #showWeblogEntriesPager($pager)
 
     #if ($model.permalink)
-       #showWeblogEntryComments($entry)
-       #showWeblogEntryCommentForm($entry)
+       #showWeblogEntryComments($model.weblogEntry)
+       #showWeblogEntryCommentForm($model.weblogEntry)
     #end
     </div>
 
