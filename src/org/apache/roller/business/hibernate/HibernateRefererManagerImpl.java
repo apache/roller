@@ -291,7 +291,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             Iterator rawResults = query.list().iterator();
             for (Iterator it = query.list().iterator(); it.hasNext();) {
                 Object[] row = (Object[])it.next();
-                Integer hits = (Integer)row[0];
+                Number hits = (Number)row[0];
                 String websiteId = (String)row[1];
                 String websiteName = (String)row[2];
                 String websiteHandle = (String)row[3];
@@ -340,7 +340,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             Iterator rawResults = query.list().iterator();
             for (Iterator it = query.list().iterator(); it.hasNext();) {
                 Object[] row = (Object[])it.next();
-                Integer hits = (Integer)row[0];
+                Number hits = (Number)row[0];
                 String websiteId = (String)row[1];
                 String websiteName = (String)row[2];
                 String websiteHandle = (String)row[3];
@@ -348,7 +348,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                     websiteId,
                     websiteName,
                     websiteHandle,
-                    hits));              
+                    new Integer(hits.intValue())));              
             }
             return result;
             
@@ -390,11 +390,11 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         if (resultsArray.length > 0 && type.equals(DAYHITS)) {
             if ( resultsArray[0] != null ) {
-                hits = ((Integer) resultsArray[0]).intValue();
+                hits = ((Number) resultsArray[0]).intValue();
             }
         } else if ( resultsArray.length > 0 ) {
             if ( resultsArray[0] != null ) {
-                hits = ((Integer) resultsArray[1]).intValue();
+                hits = ((Number) resultsArray[1]).intValue();
             }
         } else {
             hits = 0;
