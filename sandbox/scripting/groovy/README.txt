@@ -98,13 +98,12 @@ To use renderers (C) and (D) in Roller:
 
 4) Restart Roller
 
-5) Create a page template and set Template Language to either "groovlet" or
-   "gsp". Currently you'll have to do that via SQL.
+5) Create a new Weblog Page Template and set Template Language to either 
+   "groovlet" or "gsp". 
 
 6) In your page template you'll have access to all normal Roller models
    plus the name "out" will be bound to a Writer that you can use for output.
-   Also, the name "html" will be bound to a markup builder. Here's an 
-   example Groovy Roller page:
+   Also, the name "html" will be bound to a markup builder. 
 
 
 

@@ -126,7 +126,7 @@ in the "base.path" definition.
     <include name="commons-logging.jar"/>
 </fileset>
 
-<fileset id="struts2.jars" dir="${tools.struts2}/lib">
+<fileset id="struts2.jars" dir="${ro.tools}/struts-2.0.5/lib">
     <include name="*.jar"/>
 </fileset>
 
@@ -141,9 +141,7 @@ in the "base.path" definition.
 </fileset>
 
 <fileset id="jstl.jars" dir="${tools.jstl}/lib">
-    <include name="jstl.jar"/>
-    <include name="standard.jar"/>
-    <include name="xalan.jar"/>
+    <include name="*.jar"/>
 </fileset>
 
 <fileset id="hibernate.jar" dir="${tools.hibernate}">
@@ -237,6 +235,7 @@ in the "base.path" definition.
     </fileset>
     <fileset refid="commons-httpclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+    <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant-junit.jar"/>
     <pathelement location="${ro.tools}/buildtime/derby.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>

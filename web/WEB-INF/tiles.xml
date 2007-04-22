@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
+<!DOCTYPE tiles-definitions PUBLIC
+    "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+    
+    <definition name=".tiles-mainmenupage" template="/WEB-INF/jsps/tiles/struts2/tiles-mainmenupage.jsp">
+        <put name="bannerStatus" value="/WEB-INF/jsps/tiles/struts2/bannerStatus.jsp" />
+        <put name="head"         value="/WEB-INF/jsps/tiles/struts2/head.jsp" />
+        <put name="styles"       value="/WEB-INF/jsps/tiles/struts2/empty.jsp" />
+        <put name="messages"     value="/WEB-INF/jsps/tiles/struts2/messages.jsp" />
+        <put name="content"      value="${content}" />
+        <put name="sidebar"      value="/WEB-INF/jsps/tiles/struts2/empty.jsp" />
+        <put name="footer"       value="/WEB-INF/jsps/tiles/struts2/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/struts2/tiles-tabbedpage.jsp">
+        <put name="bannerStatus" value="/WEB-INF/jsps/tiles/struts2/bannerStatus.jsp" />
+        <put name="head"         value="/WEB-INF/jsps/tiles/struts2/head.jsp" />
+        <put name="styles"       value="/WEB-INF/jsps/tiles/struts2/empty.jsp" />
+        <put name="menu"         value="${menu}" />
+        <put name="messages"     value="/WEB-INF/jsps/tiles/struts2/messages.jsp" />
+        <put name="content"      value="${content}" />
+        <put name="sidebar"      value="/WEB-INF/jsps/tiles/struts2/empty.jsp" />
+        <put name="footer"       value="/WEB-INF/jsps/tiles/struts2/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/struts2/tiles-simplepage.jsp">
+        <put name="banner"       value="/WEB-INF/jsps/tiles/struts2/empty.jsp" />
+        <put name="bannerStatus" value="/WEB-INF/jsps/tiles/struts2/bannerStatus.jsp" />
+        <put name="head"         value="/WEB-INF/jsps/tiles/struts2/head.jsp" />
+        <put name="styles"       value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+        <put name="messages"     value="/WEB-INF/jsps/tiles/struts2/messages.jsp" />
+        <put name="content"      value="${content}" />
+        <put name="footer"       value="/WEB-INF/jsps/tiles/struts2/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-editorpage" extends=".tiles-tabbedpage" >
+        <put name="menu" value="/WEB-INF/jsps/tiles/struts2/menu-editor.jsp" />
+    </definition>
+    
+    <definition name=".tiles-adminpage" extends=".tiles-tabbedpage" >
+        <put name="menu" value="/WEB-INF/jsps/tiles/struts2/menu-admin.jsp" />
+    </definition>
+    
+    
+    <!-- core pages (and associates) -->
+    <definition name=".Login" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/Login.jsp" />
+    </definition>
+    
+    <definition name=".RegisterForm" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/RegisterForm.jsp" />
+    </definition>
+    
+    <definition name=".Welcome" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/Welcome.jsp" />
+    </definition>
+    
+    <definition name=".ProfileForm" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/ProfileForm.jsp" />
+    </definition>
+    
+    <definition name=".CreateWeblogForm" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/CreateWeblogForm.jsp" />
+    </definition>
+    
+    <definition name=".MainMenu" extends=".tiles-mainmenupage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/MainMenu.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/core/struts2/MainMenuSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    
+    
+    <!-- weblog editor pages (and associates) -->
+    <definition name=".WeblogEdit" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/WeblogEdit.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/WeblogEditSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".WeblogEntryManagement" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/WeblogEntryManagement.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/WeblogEntryManagementSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".CommentManagement" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CommentManagement.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/CommentManagementSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".CategoriesForm" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CategoriesForm.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/CategoriesSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".referers" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/referers.jsp" />
+    </definition>
+    <definition name=".BookmarksForm" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/BookmarksForm.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/BookmarksSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".upload-file" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/UploadFile.jsp" />
+    </definition>
+    
+    <!-- subpages -->
+    <definition name=".WeblogEntryRemove" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/WeblogEntryRemove.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".CategoryForm" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CategoryForm.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".CategoryDeleteOK" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CategoryDeleteOK.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".BookmarkForm" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/BookmarkForm.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".FolderForm" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/FolderForm.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".import" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/import.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    
+    <!-- weblog admin pages (and associates) -->
+    <definition name=".edit-website" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/edit-website.jsp" />
+    </definition>
+    <definition name=".theme-editor" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/theme-editor.jsp" />
+    </definition>
+    <definition name=".edit-pages" extends=".tiles-editorpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/edit-pages.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/edit-pages-sidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".CommentManagementGlobal" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CommentManagement.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/CommentManagementSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".MemberPermissions" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/MemberPermissions.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/MemberPermissionsSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    <definition name=".CustomPingTargets" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargets.jsp" />
+    </definition>
+    <definition name=".PingResult" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/PingResult.jsp" />
+    </definition>
+    <definition name=".Pings" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/Pings.jsp" />
+    </definition>
+    <definition name=".Maintenance" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/Maintenance.jsp" />
+    </definition>
+    
+    <!-- subpages -->
+    <definition name=".WebsiteRemove" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/WebsiteRemove.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".InviteMember" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/InviteMember.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".InviteMemberDone" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/InviteMemberDone.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".CustomPingTargetDeleteOK" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargetDeleteOK.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".CustomPingTargetEdit" extends=".tiles-editorpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargetEdit.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".edit-page" extends=".tiles-editorpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/edit-page.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".remove-page" extends=".tiles-editorpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/remove-page.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    <definition name=".Invitations" extends=".tiles-editorpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/Invitations.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    
+    
+    <!-- global admin pages (and associates) -->
+    <definition name=".rollerProperties" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/rollerProperties.jsp" />
+    </definition>
+    <definition name=".UserAdmin" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
+    </definition>
+    <definition name=".CommonPingTargets" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/CommonPingTargets.jsp" />
+    </definition>
+    <definition name=".cacheInfo" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/cacheInfo.jsp" />
+    </definition>
+    
+    <definition name=".CommonPingTargetDeleteOK" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/admin/CommonPingTargetDeleteOK.jsp" />
+    </definition>
+    <definition name=".CommonPingTargetEdit" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/admin/CommonPingTargetEdit.jsp" />
+    </definition>
+    
+    <definition name=".PlanetSubscriptions" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
+    </definition>
+    <definition name=".PlanetConfig" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/PlanetConfig.jsp" />
+    </definition>
+    <definition name=".PlanetGroups" extends=".tiles-adminpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/PlanetGroups.jsp" />
+    </definition>
+    
+    
+    <!-- error pages -->
+    <definition name=".denied" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/denied.jsp" />
+    </definition>
+    <definition name=".error" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/error.jsp" />
+    </definition>
+    <definition name=".error403" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/error403.jsp" />
+    </definition>
+    <definition name=".error404" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/error404.jsp" />
+    </definition>
+    
+</tiles-definitions>

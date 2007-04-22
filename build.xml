@@ -37,9 +37,10 @@
 <!-- ********************************************************************* -->
 <project name="roller" default="usage">
 
-<!-- Because we don't want to allow release builds to be done with Java 1.5 (yet) -->
+<!--No longer need java15 check
 <available classname="java.lang.ProcessBuilder" property="java15.present" />
-
+ -->
+ 
 <!-- Bring in properties.xml -->
 &properties;
 
@@ -609,7 +610,7 @@ ro.buildUser=${user.name}
 <!-- Create Binary Release -->
 <!-- ********************************************************************* -->
 
-<target name="stage-binary" depends="version-check" >
+<target name="stage-binary" >
     
     <!-- copy in release documents -->
     <copy todir="${build.dist.binary}">

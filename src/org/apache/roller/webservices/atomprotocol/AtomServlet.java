@@ -92,7 +92,7 @@ public class AtomServlet extends HttpServlet {
                     // return an Atom Service document
                     AtomService service = handler.getIntrospection();
                     Document doc = AtomService.serviceToDocument(service);
-                    res.setContentType("application/atomserv+xml; charset=utf-8");
+                    res.setContentType("application/atomsvc+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());

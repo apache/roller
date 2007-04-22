@@ -65,7 +65,9 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map resources = new HashMap();
     
     
-    public SharedThemeFromDir(String themeDirPath) {
+    public SharedThemeFromDir(String themeDirPath) 
+            throws ThemeInitializationException {
+        
         this.themeDir = themeDirPath;
         
         // load the theme elements and cache 'em
@@ -174,7 +176,7 @@ public class SharedThemeFromDir extends SharedTheme {
     /**
      * Load all the elements of this theme from disk and cache them.
      */
-    private void loadThemeFromDisk() {
+    private void loadThemeFromDisk() throws ThemeInitializationException {
         
         log.debug("Parsing theme descriptor for "+this.themeDir);
         
@@ -185,8 +187,7 @@ public class SharedThemeFromDir extends SharedTheme {
             InputStream is = new FileInputStream(this.themeDir + File.separator + "theme.xml");
             themeMetadata = parser.unmarshall(is);
         } catch (Exception ex) {
-            log.warn("Unable to parse theme descriptor for theme "+this.themeDir, ex);
-            return;
+            throw new ThemeInitializationException("Unable to parse theme descriptor for theme "+this.themeDir, ex);
         }
         
         log.debug("Loading Theme "+themeMetadata.getName());

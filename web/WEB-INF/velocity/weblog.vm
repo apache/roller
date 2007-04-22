@@ -665,7 +665,7 @@ Show search form for a weblog.
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat">
-            <option value="">- In Category -</option>
+            <option value="">- $text.get("mainPage.category") -</option>
             #foreach( $cat in $cats )
               <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
             #end
