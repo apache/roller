@@ -219,6 +219,7 @@ in the "base.path" definition.
     </fileset>
     <fileset refid="commons-httpclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+    <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant-junit.jar"/>
     <pathelement location="${ro.tools}/buildtime/derby.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
