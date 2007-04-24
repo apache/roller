@@ -54,7 +54,7 @@ public class UIActionInterceptor extends AbstractInterceptor
             theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
             
             // extract the work weblog and set it
-            String weblogHandle = request.getParameter(RequestConstants.WEBLOG_ID);
+            String weblogHandle = request.getParameter(RequestConstants.WEBLOG);
             if(!StringUtils.isEmpty(weblogHandle)) {
                 WebsiteData weblog = null;
                 try {
