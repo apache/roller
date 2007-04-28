@@ -1,0 +1,294 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
+package org.apache.roller.ui.core.util.menu;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.config.RollerConfig;
+import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WebsiteData;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+
+
+/**
+ * A helper class for dealing with UI menus.
+ */
+public class MenuHelper {
+    
+    private static Log log = LogFactory.getLog(MenuHelper.class);
+    
+    private static Hashtable menus = new Hashtable();
+    
+    
+    static {
+        try {
+            // parse menus and cache so we can efficiently reuse them
+            // TODO: there is probably a better way than putting the whole path
+            ParsedMenu editorMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/ui/authoring/struts2/editor-menu.xml"));
+            menus.put("editor", editorMenu);
+            
+            ParsedMenu adminMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/ui/admin/struts2/admin-menu.xml"));
+            menus.put("admin", adminMenu);
+            
+        } catch (Exception ex) {
+            log.error("Error parsing menu configs", ex);
+        }
+    }
+    
+    
+    public static Menu getMenu(String menuId, String currentAction,
+                               UserData user, WebsiteData weblog) {
+        
+        if(menuId == null) {
+            return null;
+        }
+        
+        Menu menu = null;
+        
+        // do we know the specified menu config?
+        ParsedMenu menuConfig = (ParsedMenu) menus.get(menuId);
+        if(menuConfig != null) {
+            menu = buildMenu(menuConfig, currentAction, user, weblog);
+        }
+        
+        return menu;
+    }
+    
+    
+    private static Menu buildMenu(ParsedMenu menuConfig, String currentAction, 
+                                  UserData user, WebsiteData weblog) {
+        
+        log.debug("creating menu for action - "+currentAction);
+        
+        Menu tabMenu = new Menu();
+        
+        // iterate over tabs from parsed config
+        ParsedTab configTab = null;
+        Iterator tabsIter = menuConfig.getTabs().iterator();
+        while(tabsIter.hasNext()) {
+            configTab = (ParsedTab) tabsIter.next();
+            
+            log.debug("config tab = "+configTab.getName());
+            
+            // does this tab have an enabledProperty?
+            boolean includeTab = true;
+            if(configTab.getEnabledProperty() != null) {
+                includeTab = RollerConfig.getBooleanProperty(configTab.getEnabledProperty());
+            }
+            
+            if(includeTab) {
+                // user roles check
+                if(configTab.getRole() != null) {
+                    if(!user.hasRole(configTab.getRole())) {
+                        includeTab = false;
+                    }
+                }
+            }
+            
+            if(includeTab) {
+                // weblog permissions check
+                includeTab = isPermitted(configTab.getPerm(), user, weblog);
+            }
+            
+            if(includeTab) {
+                log.debug("tab allowed - "+configTab.getName());
+                
+                // all checks passed, tab should be included
+                MenuTab tab = new MenuTab();
+                tab.setKey(configTab.getName());
+                
+                // setup tab items
+                boolean firstItem = true;
+                ParsedTabItem configTabItem = null;
+                Iterator itemsIter = configTab.getTabItems().iterator();
+                while(itemsIter.hasNext()) {
+                    configTabItem = (ParsedTabItem) itemsIter.next();
+                    
+                    log.debug("config tab item = "+configTabItem.getName());
+                    
+                    boolean includeItem = true;
+                    if(configTabItem.getEnabledProperty() != null) {
+                        includeItem = RollerConfig.getBooleanProperty(configTabItem.getEnabledProperty());
+                    }
+                    
+                    if(includeItem) {
+                        // user roles check
+                        if(configTabItem.getRole() != null) {
+                            if(!user.hasRole(configTabItem.getRole())) {
+                                includeItem = false;
+                            }
+                        }
+                    }
+                    
+                    if(includeItem) {
+                        // weblog permissions check
+                        includeItem = isPermitted(configTabItem.getPerm(), user, weblog);
+                    }
+                    
+                    if(includeItem) {
+                        log.debug("tab item allowed - "+configTabItem.getName());
+                        
+                        // all checks passed, item should be included
+                        MenuTabItem tabItem = new MenuTabItem();
+                        tabItem.setKey(configTabItem.getName());
+                        tabItem.setAction(configTabItem.getAction());
+                        
+                        // is this the selected item?
+                        if(isSelected(currentAction, configTabItem)) {
+                            tabItem.setSelected(true);
+                            tab.setSelected(true);
+                        }
+                        
+                        // the url for the tab is the url of the first item of the tab
+                        if(firstItem) {
+                            tab.setAction(tabItem.getAction());
+                            firstItem = false;
+                        }
+                        
+                        // add the item
+                        tab.addItem(tabItem);
+                    }
+                }
+                
+                // add the tab
+                tabMenu.addTab(tab);
+            }
+        }
+        
+        return tabMenu;
+    }
+    
+    
+    private static boolean isPermitted(String perm, UserData user, WebsiteData weblog) {
+        
+        // convert permissions string to short
+        short permMask = -1;
+        if(perm == null) {
+            return true;
+        } else if("limited".equals(perm)) {
+            permMask = PermissionsData.LIMITED;
+        } else if("author".equals(perm)) {
+            permMask = PermissionsData.AUTHOR;
+        } else if("admin".equals(perm)) {
+            permMask = PermissionsData.ADMIN;
+        } else {
+            // unknown perm
+            return false;
+        }
+        
+        return weblog.hasUserPermissions(user, permMask);
+    }
+    
+    
+    private static boolean isSelected(String currentAction, ParsedTabItem tabItem) {
+        
+        if(currentAction.equals(tabItem.getAction())) {
+            return true;
+        }
+        
+        // an item is also considered selected if it's subforwards are the current action
+        String[] subActions = tabItem.getSubActions();
+        if(subActions != null && subActions.length > 0) {
+            for(int i=0; i < subActions.length; i++) {
+                if(currentAction.equals(subActions[i])) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    /**
+     * Unmarshall the given input stream into our defined
+     * set of Java objects.
+     **/
+    private static ParsedMenu unmarshall(InputStream instream) 
+        throws IOException, JDOMException {
+        
+        if(instream == null)
+            throw new IOException("InputStream is null!");
+        
+        ParsedMenu config = new ParsedMenu();
+        
+        SAXBuilder builder = new SAXBuilder();
+        Document doc = builder.build(instream);
+        
+        Element root = doc.getRootElement();
+        List menus = root.getChildren("menu");
+        Iterator iter = menus.iterator();
+        while (iter.hasNext()) {
+            Element e = (Element) iter.next();
+            config.addTab(elementToConfigMenu(e));
+        }
+        
+        return config;
+    }
+    
+    
+    private static ParsedTab elementToConfigMenu(Element element) {
+        
+        ParsedTab menu = new ParsedTab();
+        
+        menu.setName(element.getAttributeValue("name"));
+        menu.setPerm(element.getAttributeValue("perms"));
+        menu.setRole(element.getAttributeValue("roles"));
+        menu.setEnabledProperty(element.getAttributeValue("enabledProperty"));
+        
+        List menuItems = element.getChildren("menu-item");
+        Iterator iter = menuItems.iterator();
+        while (iter.hasNext()) {
+            Element e = (Element) iter.next();
+            menu.addItem(elementToConfigMenuItem(e));
+        }
+        
+        return menu;
+    }
+    
+    
+    private static ParsedTabItem elementToConfigMenuItem(Element element) {
+        
+        ParsedTabItem menuItem = new ParsedTabItem();
+        
+        menuItem.setName(element.getAttributeValue("name"));
+        menuItem.setAction(element.getAttributeValue("action"));
+        
+        String subActions = element.getAttributeValue("subactions");
+        if(subActions != null) {
+            menuItem.setSubActions(subActions.split(","));
+        }
+        
+        menuItem.setPerm(element.getAttributeValue("perms"));
+        menuItem.setRole(element.getAttributeValue("roles"));
+        menuItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
+        
+        return menuItem;
+    }
+    
+}
