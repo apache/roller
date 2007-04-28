@@ -360,9 +360,9 @@ ro.buildUser=${user.name}
     <!-- Copy in resources -->
     <copy todir="${build.compile.web}">
         <fileset dir="${ro.src}">
-            <include name="**/*.properties"/>
-            <include name="**/*.tpl"/>
-            <include name="**/*.vm"/>
+            <exclude name="**/*.java"/>
+            <exclude name="**/*.html"/>
+            <exclude name="**/*.png"/>
         </fileset>
     </copy>
 	
