@@ -27,6 +27,8 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.util.UIUtils;
+import org.apache.roller.ui.core.util.menu.Menu;
+import org.apache.roller.ui.core.util.menu.MenuHelper;
 
 
 /**
@@ -39,7 +41,7 @@ import org.apache.roller.ui.core.util.UIUtils;
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class UIAction extends ActionSupport 
-        implements UISecurityEnforced {
+        implements UIActionPreparable, UISecurityEnforced {
     
     // the authenticated user accessing this action, or null if client is not logged in
     private UserData authenticatedUser = null;
@@ -47,8 +49,19 @@ public abstract class UIAction extends ActionSupport
     // the weblog this action is intended to work on, or null if no weblog specified
     private WebsiteData actionWeblog = null;
     
+    // action name (used by tabbed menu utility)
+    protected String actionName = null;
+    
+    // the name of the menu this action wants to show, or null for no menu
+    protected String desiredMenu = null;
+    
     // page title
     protected String pageTitle = null;
+    
+    
+    public void myPrepare() {
+        // no-op
+    }
     
     
     // default action permissions, user is required
@@ -169,6 +182,27 @@ public abstract class UIAction extends ActionSupport
 
     public void setPageTitle(String pageTitle) {
         this.pageTitle = pageTitle;
+    }
+    
+    
+    public String getActionName() {
+        return this.actionName;
+    }
+    
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
+    }
+
+    public String getDesiredMenu() {
+        return desiredMenu;
+    }
+
+    public void setDesiredMenu(String desiredMenu) {
+        this.desiredMenu = desiredMenu;
+    }
+    
+    public Menu getMenu() {
+        return MenuHelper.getMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(), getActionWeblog());
     }
     
     
