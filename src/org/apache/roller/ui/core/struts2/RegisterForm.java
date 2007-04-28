@@ -51,7 +51,7 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(RegisterForm.class);
     
-    protected static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
+    public static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
     
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
@@ -81,9 +81,11 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
     
     public String execute() {
         
+        if(!RollerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
+            return "disabled";
+        }
+        
         try {
-            getBean().setPasswordText(null);
-            getBean().setPasswordConfirm(null);
             getBean().setLocale(Locale.getDefault().toString());
             getBean().setTimeZone(TimeZone.getDefault().getID());
             
@@ -114,10 +116,7 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
     
     public String save() {
         
-        boolean reg_allowed =
-                RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
-        
-        if ( !reg_allowed ) {
+        if(!RollerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
             return "disabled";
         }
         
@@ -245,7 +244,7 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
     
     
     // TODO: replace with struts2 validation
-    private void myValidate() {
+    protected void myValidate() {
         
         // if usingSSO, we don't want to error on empty password/username from HTML form.
         setFromSS0(false);
