@@ -1,0 +1,110 @@
+<!-- 
+Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each 
+menu. See also, admin-menu.xml, which defines the Global Admin menu.
+Each menu or menu item is governed by four attrbibutes:
+
+    1) roles: these are the global roles the are allowed to view item
+       - admin:  the Roller site-wide admin role
+       - editor: the normal Roller user role
+       Default is roles="admin,editor"
+       Use "any" to indicate that role is not required to view ite
+       
+    2) perms: these are the website specific permissions required to view item
+       - editor:  author and allowed to manage current website
+       - author:  allowed to edit any part of the current website, except users
+       - limited: allowed only to post drafts in current website
+       Default is perms="admin,author"
+       Use "any" to indicate that website perms are not required to view item
+       
+    3) enable property: if true, show this menu
+
+    4) disable property: if true, don't show this menu
+-->
+<menu-bar>
+    
+    <menu name="tabbedmenu.weblog" perms="limited" roles="editor">
+        
+        <menu-item action="postEntry" 
+                   name="tabbedmenu.weblog.newEntry" 
+                   roles="editor"
+                   perms="limited" />
+        
+        <menu-item action="entries" 
+                   name="tabbedmenu.weblog.archives" 
+                   roles="editor"
+                   perms="limited" />
+        
+        <menu-item action="comments" 
+                   name="tabbedmenu.admin.commentManagement" 
+                   roles="editor"
+                   perms="admin" 
+                   subactions="commentQuery" />
+        
+        <menu-item action="categories"   
+                   name="tabbedmenu.weblog.categories" 
+                   roles="editor"
+                   perms="author"
+                   subactions="categoryEdit,categoryDelete" />
+        
+        <menu-item action="bookmarks"    
+                   name="tabbedmenu.bookmarks.allFolders" 
+                   roles="editor"
+                   perms="author"
+                   subactions="importBookmarks,bookmarkEdit,folderEdit" />
+        
+        <menu-item action="resources"  
+                   name="tabbedmenu.website.files" 
+                   roles="editor"
+                   perms="author"/>
+        
+        <menu-item action="referrers"     
+                   name="tabbedmenu.weblog.referers" 
+                   roles="editor"
+                   perms="author" 
+                   enabledProperty="referrers.processing.enabled" />
+    </menu>
+    
+    <menu name="tabbedmenu.website" perms="admin" roles="editor">
+        
+        <menu-item action="settings"       
+                   name="tabbedmenu.website.settings" 
+                   roles="editor"
+                   perms="admin" />
+        
+        <menu-item action="themeEdit"         
+                   name="tabbedmenu.website.themes" 
+                   roles="editor"
+                   perms="admin" />
+        
+        <menu-item action="templates"         
+                   name="tabbedmenu.website.pages" 
+                   roles="editor"
+                   perms="admin" 
+                   subactions="template" />
+        
+        <menu-item action="members" 
+                   name="tabbedmenu.website.members" 
+                   roles="editor"
+                   perms="admin" 
+                   subactions="inviteMember,invitations" 
+                   enabledProperty="groupblogging.enabled"/>
+        
+        <menu-item action="pingSetup"         
+                   name="tabbedmenu.weblog.pingSetup" 
+                   roles="editor"
+                   perms="admin" 
+                   disabledProperty="pings.disablePingUsage" />
+        
+        <menu-item action="pingTargets" 
+                   name="tabbedmenu.weblog.customPingTargets" 
+                   roles="editor"
+                   perms="admin" 
+                   disabledProperty="pings.disallowCustomTargets" />        
+        
+        <menu-item action="maintenance"      
+                   name="tabbedmenu.website.maintenance" 
+                   roles="editor"
+                   perms="admin" />
+    </menu>
+    
+</menu-bar>
