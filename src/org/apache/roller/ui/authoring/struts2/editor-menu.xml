@@ -95,10 +95,11 @@ Each menu or menu item is governed by four attrbibutes:
                    perms="admin" 
                    disabledProperty="pings.disablePingUsage" />
         
-        <menu-item action="pingTargets" 
+        <menu-item action="customPingTargets" 
                    name="tabbedmenu.weblog.customPingTargets" 
                    roles="editor"
                    perms="admin" 
+                   subactions="customPingTargetAdd,customPingTargetEdit"
                    disabledProperty="pings.disallowCustomTargets" />        
         
         <menu-item action="maintenance"      

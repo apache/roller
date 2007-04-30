@@ -24,7 +24,8 @@ See comments in editor-menu.xml for info about attributes.
         
         <menu-item action="commonPingTargets"  
                    name="tabbedmenu.admin.pingTargets"
-                   roles="admin" />
+                   roles="admin" 
+                   subactions="commonPingTargetAdd,commonPingTargetEdit" />
         
         <menu-item action="cacheInfo"          
                    name="tabbedmenu.admin.cacheInfo"
