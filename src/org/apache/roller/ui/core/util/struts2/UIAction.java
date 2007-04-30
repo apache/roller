@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.util.UIUtils;
@@ -42,6 +43,9 @@ import org.apache.roller.ui.core.util.menu.MenuHelper;
  */
 public abstract class UIAction extends ActionSupport 
         implements UIActionPreparable, UISecurityEnforced {
+    
+    // a common result name used to indicate the result should list some data
+    public static final String LIST = "list";
     
     // the authenticated user accessing this action, or null if client is not logged in
     private UserData authenticatedUser = null;
@@ -74,12 +78,12 @@ public abstract class UIAction extends ActionSupport
         return true;
     }
     
-    // default action permissions, no role required
+    // default action permissions, "editor" role required
     public String requiredUserRole() {
-        return null;
+        return "editor";
     }
     
-    // default action permissions, no weblog permissions required
+    // default action permissions, no perms required
     public short requiredWeblogPermissions() {
         return -1;
     }
