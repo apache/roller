@@ -116,6 +116,23 @@
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
         
+        <action name="commonPingTargets!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.CommonPingTargets">
+            <result name="list" type="tiles">.CommonPingTargets</result>
+            <result name="confirm" type="tiles">.CommonPingTargetConfirm</result>
+        </action>
+        
+        <action name="commonPingTargetAdd!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.CommonPingTargetAdd">
+            <result name="input" type="tiles">.CommonPingTargetAdd</result>
+            <result name="success" type="chain">commonPingTargets</result>
+        </action>
+        
+        <action name="commonPingTargetEdit!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.CommonPingTargetEdit">
+            <result name="input" type="tiles">.CommonPingTargetEdit</result>
+            <result name="error" type="chain">commonPingTargets</result>
+        </action>
         
         <!--
         <action name="commentManagement!*" method="{1}"
@@ -128,13 +145,6 @@
                 class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
             <result name="commentManagement.page">.CommentManagement</result>
             <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
-        </action>
-        
-        <action name="commonPingTargets!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CommonPingTargetsAction">
-            <result name="pingTargets.page">.CommonPingTargets</result>
-            <result name="pingTargetEdit.page">.CommonPingTargetEdit</result>
-            <result name="pingTargetDeleteOK.page">.CommonPingTargetDeleteOK</result>
         </action>
         
         <action name="planetConfig!*" method="{1}"
@@ -226,8 +236,22 @@
             <result>/roller-ui/authoring/pingSetup.do</result>
         </action>
         
-        <action name="pingTargets">
-            <result>/roller-ui/authoring/customPingTargets.do</result>
+        <action name="customPingTargets!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CustomPingTargets">
+            <result name="list" type="tiles">.CustomPingTargets</result>
+            <result name="confirm" type="tiles">.CustomPingTargetConfirm</result>
+        </action>
+        
+        <action name="customPingTargetAdd!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CustomPingTargetAdd">
+            <result name="input" type="tiles">.CustomPingTargetAdd</result>
+            <result name="success" type="chain">customPingTargets</result>
+        </action>
+        
+        <action name="customPingTargetEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CustomPingTargetEdit">
+            <result name="input" type="tiles">.CustomPingTargetEdit</result>
+            <result name="error" type="chain">customPingTargets</result>
         </action>
         
         <action name="maintenance">
@@ -240,12 +264,6 @@
                 class="org.apache.roller.ui.authoring.struts2.PingSetupAction">
             <result name="pingSetup.page">.Pings</result>
             <result name="pingResult.page">.PingResult</result>
-        </action>
-        <action name="customPingTargets!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CustomPingTargetsAction">
-            <result name="pingTargets.page">.CustomPingTargets</result>
-            <result name="pingTargetEdit.page">.CustomPingTargetEdit</result>
-            <result name="pingTargetDeleteOK.page">.CustomPingTargetDeleteOK</result>
         </action>
         
         <action name="importBookmarks!*" method="{1}"
