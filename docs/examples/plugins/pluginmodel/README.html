@@ -1,0 +1,52 @@
+
+README.html pluginmodel
+
+This directory contains a simple example of a Plugin Model class which allows
+Roller templates to access the user-object representing the currently 
+authenticated user using "$authenticated.user".
+
+To build the example, simply run the provided Ant buil.xml file.
+
+To use the example in Roller do these steps:
+
+1) Copy the jar dist/authusermodel.jar to the Roller WEB-INF/lib directory
+
+2) Override the Roller model properties to add the name of the new model class
+   to the list of models used by Roller's page, search and preview Servlets.
+   
+   That means you'll have to add the following to your roller-custom.properties
+   file:
+   
+# Set of models to be made available for weblog page rendering
+rendering.pageModels=\
+org.apache.roller.ui.rendering.model.PageModel,\
+org.apache.roller.ui.rendering.model.ConfigModel,\
+org.apache.roller.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.ui.rendering.model.URLModel,\
+org.apache.roller.ui.rendering.model.MessageModel,\
+org.apache.roller.ui.rendering.model.CalendarModel,\
+org.apache.roller.ui.rendering.model.MenuModel,\
+org.apache.roller.examples.plugins.pagemodel.AuthenticatedUserModel
+
+# Set of models to be made available for weblog search rendering
+rendering.searchModels=\
+org.apache.roller.ui.rendering.model.SearchResultsModel,\
+org.apache.roller.ui.rendering.model.ConfigModel,\
+org.apache.roller.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.ui.rendering.model.URLModel,\
+org.apache.roller.ui.rendering.model.MessageModel,\
+org.apache.roller.ui.rendering.model.CalendarModel,\
+org.apache.roller.ui.rendering.model.MenuModel,\
+org.apache.roller.examples.plugins.pagemodel.AuthenticatedUserModel
+
+# Set of models to be made available for weblog page *preview* rendering
+# NOTE: this *does* have some differences between the pageModels
+rendering.previewModels=\
+org.apache.roller.ui.rendering.model.PreviewPageModel,\
+org.apache.roller.ui.rendering.model.ConfigModel,\
+org.apache.roller.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.ui.rendering.model.PreviewURLModel,\
+org.apache.roller.ui.rendering.model.MessageModel,\
+org.apache.roller.ui.rendering.model.CalendarModel,\
+org.apache.roller.ui.rendering.model.MenuModel,\
+org.apache.roller.examples.plugins.pagemodel.AuthenticatedUserModel

@@ -1,0 +1,20 @@
+
+<project name="pluginmodel" default="dist">
+    
+    <property name="rollerdir" value="../../../.." />
+    
+    <target name="dist">
+        <mkdir dir="build" />
+        <mkdir dir="dist" />
+        <javac srcdir="src" destdir="build">
+            <classpath>
+                <pathelement path="${rollerdir}/build/lib/roller-business.jar" />
+                <pathelement path="${rollerdir}/build/lib/roller-web.jar" />
+                <pathelement path="${rollerdir}/tools/lib/commons-logging-1.0.4.jar" />
+                <pathelement path="${rollerdir}/tools/buildtime/tomcat-5.0.28/servlet-api.jar" />
+            </classpath>
+        </javac>
+        <jar basedir="build" destfile="dist/authusermodel.jar" />
+    </target>
+    
+</project>
