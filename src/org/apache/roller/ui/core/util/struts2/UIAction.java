@@ -136,6 +136,10 @@ public abstract class UIAction extends ActionSupport
         addActionError(getText(errorKey, errorKey, param));
     }
     
+    public void addError(String errorKey, List args) {
+        addActionError(getText(errorKey, args));
+    }
+    
     /**
      * This simply returns the result of hasActionErrors() but we need it
      * because without it you can't easily check if there were errors since
@@ -152,6 +156,10 @@ public abstract class UIAction extends ActionSupport
     
     public void addMessage(String msgKey, String param) {
         addActionMessage(getText(msgKey, msgKey, param));
+    }
+    
+    public void addMessage(String msgKey, List args) {
+        addActionMessage(getText(msgKey, args));
     }
     
     /**
