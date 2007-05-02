@@ -98,6 +98,12 @@
         <put name="content" value="/WEB-INF/jsps/admin/struts2/ModifyUser.jsp" />
     </definition>
     
+    <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/struts2/GlobalCommentManagement.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/admin/struts2/GlobalCommentManagementSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    
     <definition name=".CommonPingTargets" extends=".tiles-tabbedpage" >
         <put name="content" value="/WEB-INF/jsps/admin/struts2/CommonPingTargets.jsp" />
     </definition>
@@ -156,6 +162,7 @@
     </definition>
     
     <definition name=".CommentManagementGlobal" extends=".tiles-tabbedpage" >
+        <put name="head" value="/WEB-INF/jsps/tiles/struts2/head-ajax.jsp" />
         <put name="content" value="/WEB-INF/jsps/authoring/CommentManagement.jsp" />
         <put name="sidebar" value="/WEB-INF/jsps/authoring/CommentManagementSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
@@ -208,12 +215,12 @@
     
     
     <!-- weblog admin pages (and associates) -->
-    <definition name=".edit-website" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/edit-website.jsp" />
+    <definition name=".WeblogConfig" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/WeblogConfig.jsp" />
     </definition>
     
-    <definition name=".WebsiteRemove" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/WebsiteRemove.jsp" />
+    <definition name=".WeblogRemoveConfirm" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/WeblogRemoveConfirm.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
@@ -269,7 +276,7 @@
     </definition>
     
     <definition name=".Maintenance" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/Maintenance.jsp" />
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Maintenance.jsp" />
     </definition>
     
     

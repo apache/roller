@@ -111,9 +111,9 @@
             <result name="cancel" type="redirect-action">userAdmin</result>
         </action>
         
-        <action name="cacheInfo!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CacheInfo">
-            <result name="success" type="tiles">.CacheInfo</result>
+        <action name="globalCommentManagement!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.GlobalCommentManagement">
+            <result name="list" type="tiles">.GlobalCommentManagement</result>
         </action>
         
         <action name="commonPingTargets!*" method="{1}"
@@ -134,19 +134,13 @@
             <result name="error" type="chain">commonPingTargets</result>
         </action>
         
+        <action name="cacheInfo!*" method="{1}"
+                class="org.apache.roller.ui.admin.struts2.CacheInfo">
+            <result name="success" type="tiles">.CacheInfo</result>
+        </action>
+        
+        
         <!--
-        <action name="commentManagement!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
-            <result name="commentManagement.page">.CommentManagement</result>
-            <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
-        </action>
-        
-        <action name="commentQuery!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
-            <result name="commentManagement.page">.CommentManagement</result>
-            <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
-        </action>
-        
         <action name="planetConfig!*" method="{1}"
                 class="org.apache.roller.planet.ui.admin.struts2.PlanetConfigAction">
             <result name="planetConfig.page">.PlanetConfig</result>
@@ -167,28 +161,6 @@
     
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
-        
-        <action name="templates!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Templates">
-            <result name="success" type="tiles">.Templates</result>
-            <result name="list-ajax">/WEB-INF/jsps/authoring/struts2/Templates-list-ajax.jsp</result>
-            <result name="remove-success" type="tiles">.Templates</result>
-            <result name="remove-fail" type="tiles">.Templates</result>
-        </action>
-        
-        <action name="templateAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.TemplateAdd">
-            <result name="success">/WEB-INF/jsps/authoring/struts2/TemplateAdd-form-ajax.jsp</result>
-            <result name="addSuccess-ajax">/WEB-INF/jsps/authoring/struts2/TemplateAdd-success-ajax.jsp</result>
-        </action>
-        
-        <action name="template!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.TemplateEdit">
-            <result name="list" type="chain">templates</result>
-            <result name="success" type="tiles">.TemplateEditForm</result>
-            <result name="cancel" type="redirect-action">templates</result>
-        </action>
-        
         
         <action name="postEntry">
             <result>/roller-ui/authoring/weblog.do?method=create</result>
@@ -219,13 +191,41 @@
         </action>
         
         
-        <action name="settings">
-            <result>/roller-ui/authoring/website.do?method=edit</result>
+        <action name="weblogConfig!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.WeblogConfig">
+            <result name="input" type="tiles">.WeblogConfig</result>
+        </action>
+        
+        <action name="weblogRemove!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.WeblogRemove">
+            <result name="confirm" type="tiles">.WeblogRemoveConfirm</result>
+            <result name="success" type="chain">menu</result>
         </action>
         
         <action name="themeEdit!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.ThemeEdit">
             <result name="success" type="tiles">.ThemeEdit</result>
+        </action>
+        
+        <action name="templates!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Templates">
+            <result name="success" type="tiles">.Templates</result>
+            <result name="list-ajax">/WEB-INF/jsps/authoring/struts2/Templates-list-ajax.jsp</result>
+            <result name="remove-success" type="tiles">.Templates</result>
+            <result name="remove-fail" type="tiles">.Templates</result>
+        </action>
+        
+        <action name="templateAdd!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.TemplateAdd">
+            <result name="success">/WEB-INF/jsps/authoring/struts2/TemplateAdd-form-ajax.jsp</result>
+            <result name="addSuccess-ajax">/WEB-INF/jsps/authoring/struts2/TemplateAdd-success-ajax.jsp</result>
+        </action>
+        
+        <action name="template!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.TemplateEdit">
+            <result name="list" type="chain">templates</result>
+            <result name="success" type="tiles">.TemplateEditForm</result>
+            <result name="cancel" type="redirect-action">templates</result>
         </action>
         
         <action name="members">
@@ -254,8 +254,9 @@
             <result name="error" type="chain">customPingTargets</result>
         </action>
         
-        <action name="maintenance">
-            <result>/roller-ui/authoring/maintenance.do</result>
+        <action name="maintenance!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Maintenance">
+            <result name="success" type="tiles">.Maintenance</result>
         </action>
         
         
@@ -283,10 +284,7 @@
                 class="org.apache.roller.ui.authoring.struts2.CategoryEditAction">
             <result name="CategoryForm">.CategoryForm</result>
         </action>
-        <action name="maintenance!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.MaintenanceAction">
-            <result name="maintenance.page">.Maintenance</result>
-        </action>
+        
         <action name="bookmarkEdit!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.BookmarkEditAction">
             <result name="BookmarkForm">.BookmarkForm</result>
@@ -313,10 +311,6 @@
         <action name="weblogEntryManagement!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.WeblogEntryManagementAction">
             <result name="weblogEntryManagement.page">.WeblogEntryManagement</result>
-        </action>
-        <action name="themeEditor!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.ThemeEditorAction">
-            <result name="editTheme.page">.theme-editor</result>
         </action>
         
         <action name="memberPermissions!*" method="{1}"
@@ -361,11 +355,7 @@
             <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
         </action>
         
-        <action name="website!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.WebsiteFormAction">
-            <result name="editWebsite.page">.edit-website</result>
-            <result name="removeWebsite.page">.WebsiteRemove</result>
-        </action>
+        
         <action name="uploadFiles!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.UploadFileFormAction">
             <result name="uploadFiles.page">.upload-file</result>

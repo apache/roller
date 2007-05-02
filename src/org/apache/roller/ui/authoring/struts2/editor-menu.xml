@@ -66,10 +66,11 @@ Each menu or menu item is governed by four attrbibutes:
     
     <menu name="tabbedmenu.website" perms="admin" roles="editor">
         
-        <menu-item action="settings"       
+        <menu-item action="weblogConfig"       
                    name="tabbedmenu.website.settings" 
                    roles="editor"
-                   perms="admin" />
+                   perms="admin" 
+                   subactions="weblogRemove" />
         
         <menu-item action="themeEdit"         
                    name="tabbedmenu.website.themes" 
