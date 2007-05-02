@@ -257,12 +257,6 @@ Key Targets:
         
         &custom-gen-web;
         
-        <!-- web.xml config -->
-        <deploymentdescriptor servletspec="2.4"
-             destdir="${build.webapp}/WEB-INF"
-             sessiontimeout="30"
-             displayname="Roller Weblogger" />
-        
         <!-- jsp taglib descriptor config -->
         <jsptaglib jspversion="1.2" filename="roller.tld" shortname="roller"
             uri="http://www.rollerweblogger.org/tags"
@@ -397,7 +391,7 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts, copy-webapp, gen-web" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="gen-business, build-business, build-web, copy-webapp, gen-web" description="Stage webapp, including jars">
 </target>
     
 <target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
@@ -454,11 +448,6 @@ ro.buildUser=${user.name}
             <exclude name="installguide/**" />
             <exclude name="**/old/**" />
         </fileset>
-    </copy>
-    
-    <!-- copy database script files -->
-    <copy todir="${build.webapp}/WEB-INF/dbscripts">
-        <fileset dir="${build.dbscripts}" />
     </copy>
     
     <!-- apply custom web task -->
