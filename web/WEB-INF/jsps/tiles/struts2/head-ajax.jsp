@@ -23,4 +23,6 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <script type="text/javascript" 
     src='<s:url value="/roller-ui/scripts/overlib.js"/>'>
     <!-- overLIB (c) Erik Bosrup -->
-</script>
+</script>  
+
+<s:head theme="ajax"/>
