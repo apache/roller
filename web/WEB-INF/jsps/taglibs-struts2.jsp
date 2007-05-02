@@ -22,3 +22,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles2" prefix="tiles" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.0.1" prefix="str" %>
