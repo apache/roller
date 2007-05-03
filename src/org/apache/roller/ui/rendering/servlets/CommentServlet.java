@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.servlets;
+package org.apache.roller.ui.rendering.servlets;  
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -500,7 +500,7 @@ public class CommentServlet extends HttpServlet {
             for (Iterator it = messages.getMessages(); it.hasNext();) {
                 RollerMessage rollerMessage = (RollerMessage)it.next();
                 ownermsg.append((escapeHtml) ? "" : "<li>");
-                ownermsg.append(MessageFormat.format(resources.getString(rollerMessage.getKey()), rollerMessage.getArgs()) );
+                ownermsg.append(MessageFormat.format(resources.getString(rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
                 ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
             }
             if (messages.getMessageCount() > 0) {
@@ -517,7 +517,7 @@ public class CommentServlet extends HttpServlet {
             for (Iterator it = messages.getErrors(); it.hasNext();) {
                 RollerMessage rollerMessage = (RollerMessage)it.next();
                 ownermsg.append((escapeHtml) ? "" : "<li>");
-                ownermsg.append(MessageFormat.format(resources.getString(rollerMessage.getKey()), rollerMessage.getArgs()) );
+                ownermsg.append(MessageFormat.format(resources.getString(rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
                 ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
             }
             if (messages.getErrorCount() > 0) {
