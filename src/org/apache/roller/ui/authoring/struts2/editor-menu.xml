@@ -87,10 +87,10 @@ Each menu or menu item is governed by four attrbibutes:
                    name="tabbedmenu.website.members" 
                    roles="editor"
                    perms="admin" 
-                   subactions="inviteMember,invitations" 
+                   subactions="invite" 
                    enabledProperty="groupblogging.enabled"/>
         
-        <menu-item action="pingSetup"         
+        <menu-item action="pings"         
                    name="tabbedmenu.weblog.pingSetup" 
                    roles="editor"
                    perms="admin" 

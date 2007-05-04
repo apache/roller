@@ -99,6 +99,7 @@
     </definition>
     
     <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
+        <put name="head" value="/WEB-INF/jsps/tiles/struts2/head-ajax.jsp" />
         <put name="content" value="/WEB-INF/jsps/admin/struts2/GlobalCommentManagement.jsp" />
         <put name="sidebar" value="/WEB-INF/jsps/admin/struts2/GlobalCommentManagementSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
@@ -162,7 +163,6 @@
     </definition>
     
     <definition name=".CommentManagementGlobal" extends=".tiles-tabbedpage" >
-        <put name="head" value="/WEB-INF/jsps/tiles/struts2/head-ajax.jsp" />
         <put name="content" value="/WEB-INF/jsps/authoring/CommentManagement.jsp" />
         <put name="sidebar" value="/WEB-INF/jsps/authoring/CommentManagementSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
@@ -238,25 +238,19 @@
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".MemberPermissions" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/MemberPermissions.jsp" />
-        <put name="sidebar" value="/WEB-INF/jsps/authoring/MemberPermissionsSidebar.jsp" />
+    <definition name=".Members" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Members.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/struts2/MembersSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
     </definition>
     
-    <definition name=".Invitations" extends=".tiles-tabbedpage"  >
-        <put name="content" value="/WEB-INF/jsps/authoring/Invitations.jsp" />
+    <definition name=".MembersInvite" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/MembersInvite.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".InviteMember" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/InviteMember.jsp" />
-        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
-    </definition>
-    
-    <definition name=".InviteMemberDone" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/InviteMemberDone.jsp" />
-        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    <definition name=".Pings" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Pings.jsp" />
     </definition>
     
     <definition name=".CustomPingTargets" extends=".tiles-tabbedpage" >

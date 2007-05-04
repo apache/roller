@@ -18,6 +18,8 @@
 
 package org.apache.roller.util;
 
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import javax.mail.Message;
@@ -28,7 +30,16 @@ import javax.mail.Transport;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.RollerException;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WebsiteData;
 
 
 /**
@@ -37,6 +48,82 @@ import org.apache.commons.lang.StringUtils;
 public class MailUtil {
     
     private static Log log = LogFactory.getLog(MailUtil.class);
+    
+    
+    /**
+     * Lookup the configured mail Session if possible.
+     *
+     * @returns Mail Session if possible, otherwise null.
+     */
+    public static Session getMailSession() throws RollerException {
+        try {
+            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+            Session mailSession = (Session) ctx.lookup("mail/Session");
+            return mailSession;
+        } catch (NamingException ex) {
+            throw new RollerException("ERROR: Notification email(s) not sent, "
+                    + "Roller's mail session not properly configured", ex);
+        }
+    }
+    
+    
+    /**
+     * Send a weblog invitation email.
+     */
+    public static void sendWeblogInvitation(WebsiteData website, 
+                                            UserData user)
+            throws RollerException {
+        
+        Session mailSession = getMailSession();
+        if(mailSession == null) {
+            throw new RollerException("ERROR: Notification email(s) not sent, "
+                    + "Roller's mail session not properly configured");
+        }
+        
+        try {
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            
+            String userName = user.getUserName();
+            String from = website.getEmailAddress();
+            String cc[] = new String[] {from};
+            String bcc[] = new String[0];
+            String to[] = new String[] {user.getEmailAddress()};
+            String subject;
+            String content;
+            
+            // Figure URL to entry edit page
+            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
+            String url = rootURL + "/roller-ui/yourWebsites.do";
+            
+            ResourceBundle resources = ResourceBundle.getBundle(
+                    "ApplicationResources",
+                    website.getLocaleInstance());
+            StringBuffer sb = new StringBuffer();
+            sb.append(MessageFormat.format(
+                    resources.getString("inviteMember.notificationSubject"),
+                    new Object[] {
+                website.getName(),
+                website.getHandle()})
+                );
+            subject = sb.toString();
+            sb = new StringBuffer();
+            sb.append(MessageFormat.format(
+                    resources.getString("inviteMember.notificationContent"),
+                    new Object[] {
+                website.getName(),
+                website.getHandle(),
+                user.getUserName(),
+                url
+            }));
+            content = sb.toString();
+            MailUtil.sendTextMessage(
+                    mailSession, from, to, cc, bcc, subject, content);
+        } catch (MessagingException e) {
+            throw new RollerException("ERROR: Notification email(s) not sent, "
+                    + "due to Roller configuration or mail server problem.", e);
+        }
+    }
+    
     
     // agangolli: Incorporated suggested changes from Ken Blackler.
     
