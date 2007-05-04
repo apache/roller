@@ -228,12 +228,21 @@
             <result name="cancel" type="redirect-action">templates</result>
         </action>
         
-        <action name="members">
-            <result>/roller-ui/authoring/memberPermissions.do</result>
+        <action name="members!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Members">
+            <result name="list" type="tiles">.Members</result>
         </action>
         
-        <action name="pingSetup">
-            <result>/roller-ui/authoring/pingSetup.do</result>
+        <action name="invite!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.MembersInvite">
+            <result name="input" type="tiles">.MembersInvite</result>
+            <result name="disabled" type="tiles">.disabled</result>
+            <result name="success" type="chain">members</result>
+        </action>
+        
+        <action name="pings!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Pings">
+            <result name="list" type="tiles">.Pings</result>
         </action>
         
         <action name="customPingTargets!*" method="{1}"
@@ -261,11 +270,7 @@
         
         
         <!--
-        <action name="pingSetup!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.PingSetupAction">
-            <result name="pingSetup.page">.Pings</result>
-            <result name="pingResult.page">.PingResult</result>
-        </action>
+        
         
         <action name="importBookmarks!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.ImportBookmarksFormAction">
@@ -298,10 +303,7 @@
         <action name="categorySave!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.CategorySaveAction">
         </action>
-        <action name="inviteMember!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.InviteMemberAction">
-            <result name="inviteMember.page">.InviteMember</result>
-        </action>
+        
         <action name="weblog!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.WeblogEntryFormAction">
             <result name="weblogEdit.page">.WeblogEdit</result>
@@ -311,11 +313,6 @@
         <action name="weblogEntryManagement!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.WeblogEntryManagementAction">
             <result name="weblogEntryManagement.page">.WeblogEntryManagement</result>
-        </action>
-        
-        <action name="memberPermissions!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.MemberPermissionsAction">
-            <result name="memberPermissions.page">.MemberPermissions</result>
         </action>
         
         <action name="referers!*" method="{1}"
@@ -331,10 +328,6 @@
         <action name="folderSave!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.FolderSaveAction">
             <result name="Bookmarks" type="dispatcher">/roller-ui/authoring/bookmarks.action!selectFolder</result>
-        </action>
-        <action name="invitations!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.InvitationsAction">
-            <result name="invitations.page">.Invitations</result>
         </action>
         <action name="toggleLinkback!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.ToggleLinkbackDisplayAction">

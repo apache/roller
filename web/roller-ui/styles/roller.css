@@ -306,6 +306,12 @@ td.field span.fixedAttr {
     vertical-align: top;
     color: black;
 }
+.rollertable_pending td {
+    border: 1px solid #ccc;
+    background: #ffffcc;
+    color: black;
+    vertical-align: top;
+}
 td.rollertable_entry, div.rollertable_entry {
     border: 1px solid #ccc;
     background: inherit;
