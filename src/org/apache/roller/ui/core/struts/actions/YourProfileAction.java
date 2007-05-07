@@ -134,6 +134,7 @@ public class YourProfileAction extends UserBaseAction {
                 UserData data = rollerSession.getAuthenticatedUser();
                 
                 // We want to be VERY selective about what data gets updated
+                data.setScreenName(form.getScreenName());
                 data.setFullName(form.getFullName());
                 data.setEmailAddress(form.getEmailAddress());
                 data.setLocale(form.getLocale());

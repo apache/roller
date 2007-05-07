@@ -39,6 +39,7 @@ public class UserEntry extends Entry {
     static interface Tags {
         public static final String USER = "user";
         public static final String NAME = "name";
+        public static final String SCREEN_NAME = "screen-name";
         public static final String FULL_NAME = "full-name";
         public static final String PASSWORD = "password";
         public static final String EMAIL_ADDRESS = "email-address";
@@ -49,6 +50,7 @@ public class UserEntry extends Entry {
     }
     
     private String name;
+    private String screenName;
     private String fullName;
     private String password;
     private Locale locale;
@@ -154,7 +156,16 @@ public class UserEntry extends Entry {
             nameElement.addContent(nameText);
             userElement.addContent(nameElement);
         }
-        
+
+        // screen name
+        String screenName = getScreenName();
+        if (screenName != null) {
+            Element screenNameElement = new Element(Tags.SCREEN_NAME, NAMESPACE);
+            Text screenNameText = new Text(screenName);
+            screenNameElement.addContent(screenNameText);
+            userElement.addContent(screenNameElement);
+        }
+
         // full name
         String fullName = getFullName();
         if (fullName != null) {
@@ -230,7 +241,17 @@ public class UserEntry extends Entry {
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    /** Get the screen name of this user entry. */
+    public String getScreenName() {
+        return screenName;
+    }
+
+    /** Set the screen name of this user entry. */
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+
     /** Get the full name of this user entry. */
     public String getFullName() {
         return fullName;

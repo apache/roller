@@ -57,6 +57,16 @@ public class UserDataWrapper {
      *
      * Simply returns the same value that the pojo would have returned.
      */
+    public java.lang.String getScreenName()
+    {
+        return this.pojo.getScreenName();
+    }
+
+    /**
+     * pojo method tagged with @roller.wrapPojoMethod type="simple"
+     *
+     * Simply returns the same value that the pojo would have returned.
+     */
     public java.lang.String getFullName()
     {   
         return this.pojo.getFullName();

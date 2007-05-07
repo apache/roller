@@ -29,7 +29,7 @@
         
 
         <div class="entryInfo">
-            $text.get("macro.weblog.postedby") $entry.creator.userName
+            $text.get("macro.weblog.postedby") $entry.creator.screenName
             <em class="smallText">@ $utils.formatDate($entry.pubTime, "hh:mm aa z")</em>
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)

@@ -79,6 +79,12 @@ function cancel() {
         
     <table class="formtable">
     <tr>
+        <td class="label"><label for="screenName" /><fmt:message key="userSettings.screenname" /></label></td>
+        <td class="field"><html:text property="screenName" size="30" maxlength="30" /></td>
+        <td class="description"><fmt:message key="userAdmin.tip.screenName" /></td>
+    </tr>
+
+    <tr>
         <td class="label"><label for="fullName" /><fmt:message key="userSettings.fullname" /></label></td>
         <td class="field"><html:text property="fullName" size="30" maxlength="30" /></td>
         <td class="description"><fmt:message key="userAdmin.tip.fullName" /></td>
