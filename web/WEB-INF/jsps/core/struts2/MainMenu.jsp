@@ -134,8 +134,7 @@
                        <br />
                        
                        <s:if test="#perms.permissionMask == 3">
-                           <s:url action="websiteSettings" id="manageWeblog">
-                               <s:param name="method" value="edit" />
+                           <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
                                <s:param name="weblog" value="#perms.website.handle" />
                            </s:url>
                            <img src='<s:url value="/images/cog.png"/>' />
