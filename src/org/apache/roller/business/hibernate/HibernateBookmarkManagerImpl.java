@@ -134,35 +134,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         
         // the main work to be done for a category move is to update the 
         // path attribute of the category and all descendent categories
-        updatePathTree(srcFolder);
-    }
-    
-    
-    // updates the paths of all descendents of the given folder
-    private void updatePathTree(FolderData folder) throws RollerException {
-        
-        log.debug("Updating path tree for folder "+folder.getPath());
-        
-        FolderData childFolder = null;
-        Iterator childFolders = folder.getFolders().iterator();
-        while(childFolders.hasNext()) {
-            childFolder = (FolderData) childFolders.next();
-            
-            log.debug("OLD child folder path was "+childFolder.getPath());
-            
-            // update path and save
-            if("/".equals(folder.getPath())) {
-                childFolder.setPath("/" + childFolder.getName());
-            } else {
-                childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
-            }
-            saveFolder(childFolder);
-            
-            log.debug("NEW child folder path is "+ childFolder.getPath());
-            
-            // then make recursive call to update this folders children
-            updatePathTree(childFolder);
-        }
+        FolderData.updatePathTree(srcFolder);
     }
     
     
