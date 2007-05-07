@@ -43,7 +43,7 @@ public class CacheInfo extends UIAction {
     public CacheInfo() {
         this.actionName = "cacheInfo";
         this.desiredMenu = "admin";
-        this.pageTitle = "";
+        this.pageTitle = "cacheInfo.title";
     }
     
     
