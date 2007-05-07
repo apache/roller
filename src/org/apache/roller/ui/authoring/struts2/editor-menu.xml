@@ -44,7 +44,7 @@ Each menu or menu item is governed by four attrbibutes:
                    name="tabbedmenu.weblog.categories" 
                    roles="editor"
                    perms="author"
-                   subactions="categoryEdit,categoryDelete" />
+                   subactions="categoryAdd,categoryEdit,categoryRemove" />
         
         <menu-item action="bookmarks"    
                    name="tabbedmenu.bookmarks.allFolders" 
