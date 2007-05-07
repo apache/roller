@@ -68,6 +68,7 @@ public class UserTest extends TestCase {
         UserData testUser = new UserData();
         testUser.setUserName("testUser");
         testUser.setPassword("password");
+        testUser.setScreenName("Test User Screen Name");
         testUser.setFullName("Test User");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");
@@ -91,6 +92,7 @@ public class UserTest extends TestCase {
         assertEquals(testUser, user);
         
         // modify user and save
+        user.setScreenName("testtesttest");
         user.setFullName("testtesttest");
         mgr.saveUser(user);
         TestUtils.endSession(true);
@@ -99,8 +101,9 @@ public class UserTest extends TestCase {
         user = null;
         user = mgr.getUser(id);
         assertNotNull(user);
+        assertEquals("testtesttest", user.getScreenName());
         assertEquals("testtesttest", user.getFullName());
-        
+
         // remove test user
         mgr.removeUser(user);
         TestUtils.endSession(true);

@@ -237,7 +237,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 }
                 lastname += toker.nextToken();
             }
-            
+
+            // TODO: Should screen name be renamed nickname and used here?
             // populates user information to return as a result
             Hashtable result = new Hashtable();
             result.put("nickname", user.getUserName());

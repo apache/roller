@@ -82,6 +82,7 @@ public class ProfileForm extends UIAction {
             UserData existingUser = getAuthenticatedUser();
             
             // We want to be VERY selective about what data gets updated
+            existingUser.setScreenName(getBean().getScreenName());
             existingUser.setFullName(getBean().getFullName());
             existingUser.setEmailAddress(getBean().getEmailAddress());
             existingUser.setLocale(getBean().getLocale());

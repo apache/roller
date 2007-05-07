@@ -57,7 +57,7 @@
                                         <a href="$utils.escapeHTML($pinnedEntry.website.URL)">$pinnedEntry.website.name</a>
                                         #if($pinnedEntry.category.name)| $pinnedEntry.category.name #end
                                         #if($pinnedEntry.pubTime) | $utils.formatDate($pinnedEntry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
-                                        #if($pinnedEntry.creator.userName)| By $pinnedEntry.creator.userName #end
+                                        #if($pinnedEntry.creator.screenName)| By $pinnedEntry.creator.screenName #end
                                         <br/> 
                                     </p>
                                     <p class="entryDescription">                    
