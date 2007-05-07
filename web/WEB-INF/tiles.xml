@@ -168,19 +168,24 @@
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
     </definition>
     
-    <definition name=".CategoriesForm" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/CategoriesForm.jsp" />
-        <put name="sidebar" value="/WEB-INF/jsps/authoring/CategoriesSidebar.jsp" />
+    <definition name=".Categories" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Categories.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/struts2/CategoriesSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
     </definition>
     
-    <definition name=".CategoryForm" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/CategoryForm.jsp" />
+    <definition name=".CategoryAdd" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/CategoryAdd.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".CategoryDeleteOK" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/CategoryDeleteOK.jsp" />
+    <definition name=".CategoryEdit" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/CategoryEdit.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".CategoryRemove" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/CategoryRemove.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     

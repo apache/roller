@@ -174,8 +174,27 @@
             <result>/roller-ui/authoring/commentManagement.do?method=query</result>
         </action>
         
-        <action name="categories">
-            <result>/roller-ui/authoring/categories.do?method=selectCategory</result>
+        <action name="categories!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Categories">
+            <result name="list" type="tiles">.Categories</result>
+        </action>
+        
+        <action name="categoryAdd!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategoryAdd">
+            <result name="input" type="tiles">.CategoryAdd</result>
+            <result name="success" type="chain">categories</result>
+            <result name="error" type="chain">categories</result>
+        </action>
+        
+        <action name="categoryEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategoryEdit">
+            <result name="input" type="tiles">.CategoryEdit</result>
+        </action>
+        
+        <action name="categoryRemove!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.CategoryRemove">
+            <result name="input" type="tiles">.CategoryRemove</result>
+            <result name="success" type="chain">categories</result>
         </action>
         
         <action name="bookmarks!*" method="{1}"
