@@ -48,7 +48,7 @@ function onMove()
 //-->
 </script>
 
-<s:if test="model.folderPath">
+<s:if test="folderPath.isEmpty">
     <p class="subtitle">
         <s:text name="bookmarksForm.subtitle" >
             <s:param value="weblog" />
@@ -121,7 +121,6 @@ function onMove()
                 <td class="rollertable">
                     <input type="checkbox" name="selectedFolders" value="<s:property value="#folder.id"/>" />
                 </td>
-                
                 
                 <td class="rollertable" align="center"><img src='<s:url value="/images/folder.png"/>' alt="icon" /></td>
                 
