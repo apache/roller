@@ -63,16 +63,19 @@ public class UIActionInterceptor extends AbstractInterceptor
             theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
             
             // extract the work weblog and set it
-            String weblogHandle = request.getParameter(RequestConstants.WEBLOG);
+            String weblogHandle = theAction.getWeblog();
+            //String weblogHandle = request.getParameter(RequestConstants.WEBLOG);
             if(!StringUtils.isEmpty(weblogHandle)) {
                 WebsiteData weblog = null;
                 try {
                     UserManager mgr = RollerFactory.getRoller().getUserManager();
                     weblog = mgr.getWebsiteByHandle(weblogHandle);
+                    if(weblog != null) {
+                        theAction.setActionWeblog(weblog);
+                    }
                 } catch(Exception e) {
-                    
+                    log.error("Error looking up action weblog - "+weblogHandle, e);
                 }
-                theAction.setActionWeblog(weblog);
             }
         }
         

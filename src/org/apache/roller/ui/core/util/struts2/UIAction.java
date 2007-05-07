@@ -53,6 +53,9 @@ public abstract class UIAction extends ActionSupport
     // the weblog this action is intended to work on, or null if no weblog specified
     private WebsiteData actionWeblog = null;
     
+    // the weblog handle of the action weblog
+    private String weblog = null;
+    
     // action name (used by tabbed menu utility)
     protected String actionName = null;
     
@@ -188,6 +191,14 @@ public abstract class UIAction extends ActionSupport
         this.actionWeblog = workingWeblog;
     }
 
+    public String getWeblog() {
+        return weblog;
+    }
+
+    public void setWeblog(String weblog) {
+        this.weblog = weblog;
+    }
+    
     public String getPageTitle() {
         return getText(pageTitle);
     }
