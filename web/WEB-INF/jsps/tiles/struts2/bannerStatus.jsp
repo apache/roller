@@ -25,7 +25,7 @@
                 
                 <s:if test="authenticatedUser != null">
                     <s:text name="mainPage.loggedInAs" />
-                    <a href="<s:url action="profile"/>"><s:property value="authenticatedUser.userName"/></a>
+                    <a href="<s:url action="profile" namespace="/roller-ui" />"><s:property value="authenticatedUser.userName"/></a>
                 </s:if>
                 
                 
@@ -43,16 +43,16 @@
                 
                 <a href="<s:url value="/"/>"><s:property value="getProp('site.shortName')"/></a>
                 
-                | <a href="<s:url action="menu"/>"><s:text name="mainPage.mainMenu" /></a>
+                | <a href="<s:url action="menu" namespace="/roller-ui" />"><s:text name="mainPage.mainMenu" /></a>
                 
                 <s:if test="authenticatedUser != null">
-                    | <a href="<s:url action="logout"/>"><s:text name="navigationBar.logout"/></a>
+                    | <a href="<s:url action="logout" namespace="/roller-ui" />"><s:text name="navigationBar.logout"/></a>
                 </s:if>
                 <s:else>
-                    | <a href="<s:url action="login-redirect"/>"><s:text name="navigationBar.login"/></a>
+                    | <a href="<s:url action="login-redirect" namespace="/roller-ui" />"><s:text name="navigationBar.login"/></a>
                     
                     <s:if test="getBooleanProp('users.registration.enabled')">
-                        | <a href="<s:url action="register"/>"><s:text name="navigationBar.register"/></a>
+                        | <a href="<s:url action="register" namespace="/roller-ui" />"><s:text name="navigationBar.register"/></a>
                     </s:if>
                     <s:elseif test="getProp('users.registration.url') != null">
                         | <a href="<s:property value="getProp('users.registration.url')"/>"><s:text name="navigationBar.register"/></a>
