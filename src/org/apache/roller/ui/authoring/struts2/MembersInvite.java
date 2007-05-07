@@ -63,7 +63,9 @@ public class MembersInvite extends UIAction {
         
         // if group blogging is disabled then you can't change permissions
         if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
-            return "disabled";
+            // TODO: i18n
+            addError("invitations disabled");
+            return SUCCESS;
         }
         
         log.debug("Showing weblog inivitation form");
@@ -79,7 +81,9 @@ public class MembersInvite extends UIAction {
         
         // if group blogging is disabled then you can't change permissions
         if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
-            return "disabled";
+            // TODO: i18n
+            addError("invitations disabled");
+            return SUCCESS;
         }
         
         log.debug("Attempting to process weblog invitation");
@@ -131,7 +135,10 @@ public class MembersInvite extends UIAction {
             try {
                 MailUtil.sendWeblogInvitation(getActionWeblog(), user);
             } catch (RollerException e) {
-                addError("error.untranslated", e.getMessage());
+                // TODO: this should be an error except that struts2 misbehaves
+                // when we chain this action to the next one thinking that an error
+                // means that validation broke during the chain
+                addMessage("error.untranslated", e.getMessage());
             }
             
             log.debug("Invitation successfully recorded");
