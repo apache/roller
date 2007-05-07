@@ -281,15 +281,6 @@
         <br />
         
     </div>
-    
-    <script type="text/javascript">
-    <!--
-    function cancel() {
-        document.weblogTemplateFormEx.method.value="cancel"; 
-        document.weblogTemplateFormEx.submit();
-    }
-    -->
-    </script>
     <br />
     
 </s:form>
