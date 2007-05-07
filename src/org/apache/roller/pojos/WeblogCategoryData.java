@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
@@ -43,6 +45,9 @@ import org.apache.roller.business.WeblogManager;
 public class WeblogCategoryData implements Serializable {
     
     public static final long serialVersionUID = 1435782148712018954L;
+    
+    private static Log log = LogFactory.getLog(WeblogCategoryData.class);
+    
     
     // attributes
     private String id = null;
@@ -361,5 +366,54 @@ public class WeblogCategoryData implements Serializable {
     }
     /** TODO: fix form generation so this is not needed. */
     public void setInUse(boolean dummy) {}
+    
+    
+    // convenience method for updating the category name, which triggers a path tree rebuild
+    public void updateName(String newName) throws RollerException {
+        
+        // update name
+        setName(newName);
+        
+        // calculate path
+        if(getParent() == null) {
+            setPath("/");
+        } else if("/".equals(getParent().getPath())) {
+            setPath("/"+getName());
+        } else {
+            setPath(getParent().getPath() + "/" + getName());
+        }
+        
+        // update path tree for all children
+        updatePathTree(this);
+    }
+    
+    
+    // updates the paths of all descendents of the given category
+    public static void updatePathTree(WeblogCategoryData cat) 
+            throws RollerException {
+        
+        log.debug("Updating path tree for category "+cat.getPath());
+        
+        WeblogCategoryData childCat = null;
+        Iterator childCats = cat.getWeblogCategories().iterator();
+        while(childCats.hasNext()) {
+            childCat = (WeblogCategoryData) childCats.next();
+            
+            log.debug("OLD child category path was "+childCat.getPath());
+            
+            // update path and save
+            if("/".equals(cat.getPath())) {
+                childCat.setPath("/" + childCat.getName());
+            } else {
+                childCat.setPath(cat.getPath() + "/" + childCat.getName());
+            }
+            RollerFactory.getRoller().getWeblogManager().saveWeblogCategory(childCat);
+            
+            log.debug("NEW child category path is "+ childCat.getPath());
+            
+            // then make recursive call to update this cats children
+            updatePathTree(childCat);
+        }
+    }
     
 }
