@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
@@ -47,6 +49,9 @@ import org.apache.roller.business.RollerFactory;
 public class FolderData implements Serializable, Comparable {
     
     public static final long serialVersionUID = -6272468884763861944L;
+    
+    private static Log log = LogFactory.getLog(FolderData.class);
+    
     
     // attributes
     private String id = null;
@@ -359,6 +364,55 @@ public class FolderData implements Serializable, Comparable {
         } else {
             // if our path starts with our parents path then we are a descendent
             return this.path.startsWith(ancestor.getPath());
+        }
+    }
+    
+    
+    // convenience method for updating the folder name, which triggers a path tree rebuild
+    public void updateName(String newName) throws RollerException {
+        
+        // update name
+        setName(newName);
+        
+        // calculate path
+        if(getParent() == null) {
+            setPath("/");
+        } else if("/".equals(getParent().getPath())) {
+            setPath("/"+getName());
+        } else {
+            setPath(getParent().getPath() + "/" + getName());
+        }
+        
+        // update path tree for all children
+        updatePathTree(this);
+    }
+    
+    
+    // update the path tree for a given folder
+    public static void updatePathTree(FolderData folder) 
+            throws RollerException {
+        
+        log.debug("Updating path tree for folder "+folder.getPath());
+        
+        FolderData childFolder = null;
+        Iterator childFolders = folder.getFolders().iterator();
+        while(childFolders.hasNext()) {
+            childFolder = (FolderData) childFolders.next();
+            
+            log.debug("OLD child folder path was "+childFolder.getPath());
+            
+            // update path and save
+            if("/".equals(folder.getPath())) {
+                childFolder.setPath("/" + childFolder.getName());
+            } else {
+                childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
+            }
+            RollerFactory.getRoller().getBookmarkManager().saveFolder(childFolder);
+            
+            log.debug("NEW child folder path is "+ childFolder.getPath());
+            
+            // then make recursive call to update this folders children
+            updatePathTree(childFolder);
         }
     }
     
