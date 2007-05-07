@@ -18,25 +18,15 @@
 
 package org.apache.roller.ui.authoring.struts2;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.PermissionsData;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.util.menu.Menu;
-import org.apache.roller.ui.core.util.menu.MenuHelper;
 import org.apache.roller.ui.core.util.struts2.UIAction;
-import org.apache.roller.util.cache.CacheManager;
 
 
 /**
@@ -45,12 +35,6 @@ import org.apache.roller.util.cache.CacheManager;
 public class TemplateAdd extends UIAction {
     
     private static Log log = LogFactory.getLog(TemplateAdd.class);
-    
-    // list of actions available for creation
-    private List availableActions = Collections.EMPTY_LIST;
-    
-    // type of template being added, used by showAdd() method
-    private String addType = null;
     
     // name and action of new template if we are adding a template
     private String newTmplName = null;
@@ -71,93 +55,57 @@ public class TemplateAdd extends UIAction {
     
     
     /**
-     * Display the add template form.
-     */
-    public String execute() {
-        
-        try {
-            List actions = new ArrayList();
-            if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
-                // if the weblog is using a custom theme then determine which
-                // action templates are still available to be created
-                actions.add(WeblogTemplate.ACTION_PERMALINK);
-                actions.add(WeblogTemplate.ACTION_SEARCH);
-                actions.add(WeblogTemplate.ACTION_WEBLOG);
-                actions.add(WeblogTemplate.ACTION_TAGSINDEX);
-                
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
-                List<WeblogTemplate> templates = mgr.getPages(getActionWeblog());
-                for(WeblogTemplate tmpPage : templates) {
-                    if(!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage.getAction())) {
-                        actions.remove(tmpPage.getAction());
-                    }
-                }
-            }
-            
-            setAvailableActions(actions);
-        } catch (RollerException ex) {
-            log.error("Error accessing templates for weblog -"+getActionWeblog().getHandle(), ex);
-        }
-
-        return SUCCESS;
-    }
-    
-    
-    /**
      * Save a new template.
      */
     public String save() {
         
-        WebsiteData weblog = getActionWeblog();
-        
         // validation
         myValidate();
         
-        WeblogTemplate page = new WeblogTemplate();
-        page.setWebsite(weblog);
-        page.setAction(getNewTmplAction());
-        page.setName(getNewTmplName());
-        page.setDescription(page.getName());
-        page.setContents(getText("pageForm.newTemplateContent"));
-        page.setHidden(false);
-        page.setNavbar(false);
-        page.setLastModified( new Date() );
+        WeblogTemplate newTemplate = new WeblogTemplate();
+        newTemplate.setWebsite(getActionWeblog());
+        newTemplate.setAction(getNewTmplAction());
+        newTemplate.setName(getNewTmplName());
+        newTemplate.setDescription(newTemplate.getName());
+        newTemplate.setContents(getText("pageForm.newTemplateContent"));
+        newTemplate.setHidden(false);
+        newTemplate.setNavbar(false);
+        newTemplate.setLastModified( new Date() );
         
         // all templates start out as velocity templates
-        page.setTemplateLanguage("velocity");
+        newTemplate.setTemplateLanguage("velocity");
         
         // for now, all templates just use _decorator
-        if(!"_decorator".equals(page.getName())) {
-            page.setDecoratorName("_decorator");
+        if(!"_decorator".equals(newTemplate.getName())) {
+            newTemplate.setDecoratorName("_decorator");
         }
         
         try {
-            // save the page
+            // save the new Template
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            mgr.savePage( page );
+            mgr.savePage( newTemplate );
             
             // if this person happened to create a Weblog template from
             // scratch then make sure and set the defaultPageId
-            if(WeblogTemplate.DEFAULT_PAGE.equals(page.getName())) {
-                weblog.setDefaultPageId(page.getId());
-                mgr.saveWebsite(weblog);
+            if(WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
+                getActionWeblog().setDefaultPageId(newTemplate.getId());
+                mgr.saveWebsite(getActionWeblog());
             }
             
             // flush results to db
             RollerFactory.getRoller().flush();
             
-            return "addSuccess-ajax";
-            
         } catch (RollerException ex) {
-            log.error("Error adding new page for weblog - "+weblog.getHandle(), ex);
+            log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
-            addError("Error adding new page");
+            addError("Error adding new template");
         }
         
-        return "addForm-ajax";
+        return SUCCESS;
     }
     
     
+    // TODO: validation
     private void myValidate() {
         
         // make sure that we have an appropriate name value
@@ -174,14 +122,6 @@ public class TemplateAdd extends UIAction {
     }
     
 
-    public List getAvailableActions() {
-        return availableActions;
-    }
-
-    public void setAvailableActions(List availableActions) {
-        this.availableActions = availableActions;
-    }
-
     public String getNewTmplName() {
         return newTmplName;
     }
@@ -196,14 +136,6 @@ public class TemplateAdd extends UIAction {
 
     public void setNewTmplAction(String newTmplAction) {
         this.newTmplAction = newTmplAction;
-    }
-
-    public String getAddType() {
-        return addType;
-    }
-
-    public void setAddType(String addType) {
-        this.addType = addType;
     }
     
 }

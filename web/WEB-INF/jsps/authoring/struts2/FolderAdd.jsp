@@ -15,3 +15,33 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+
+<p class="subtitle">
+    <s:text name="folderForm.add.subtitle" >
+        <s:param value="folder.path" />
+    </s:text>
+</p>
+
+<s:form action="folderAdd!save">
+    <s:hidden name="weblog" />
+    <s:hidden name="folderId" />
+    
+    <table>
+        <tr>
+            <td><s:text name="folderForm.name" /></td>
+            <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
+        </tr>
+        
+        <tr>
+            <td><s:text name="folderForm.description" /></td>
+            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
+        </tr>
+    </table>
+    
+    <p>
+        <s:submit key="folderForm.save" />
+        <s:submit key="folderForm.cancel" action="bookmarks" />
+    </p>
+    
+</s:form>
