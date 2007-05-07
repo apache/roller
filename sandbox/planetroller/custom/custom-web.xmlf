@@ -1,6 +1,0 @@
-
-<!-- for example
-<copy todir="./build/webapp">
-    <fileset dir="./web" includes="**/**" />
-</copy> 
--->
