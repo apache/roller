@@ -184,29 +184,39 @@
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".BookmarksForm" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/BookmarksForm.jsp" />
-        <put name="sidebar" value="/WEB-INF/jsps/authoring/BookmarksSidebar.jsp" />
+    <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Bookmarks.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/struts2/BookmarksSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
     </definition>
     
-    <definition name=".BookmarkForm" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/BookmarkForm.jsp" />
+    <definition name=".BookmarkAdd" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/BookmarkAdd.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".FolderForm" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/FolderForm.jsp" />
+    <definition name=".BookmarkEdit" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/BookmarkEdit.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".import" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/import.jsp" />
+    <definition name=".BookmarksImport" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/BookmarksImport.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".upload-file" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/UploadFile.jsp" />
+    <definition name=".FolderAdd" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/FolderAdd.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".FolderEdit" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/FolderEdit.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Resources" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Resources.jsp" />
     </definition>
     
     <definition name=".referers" extends=".tiles-tabbedpage" >
@@ -230,6 +240,12 @@
     
     <definition name=".Templates" extends=".tiles-tabbedpage"  >
         <put name="content" value="/WEB-INF/jsps/authoring/struts2/Templates.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/struts2/TemplatesSidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".TemplateRemove" extends=".tiles-tabbedpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/TemplateRemove.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     

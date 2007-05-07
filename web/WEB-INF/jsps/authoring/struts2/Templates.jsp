@@ -30,29 +30,59 @@
     <p><s:text name="pagesForm.themesReminder"><s:param value="actionWeblog.editorTheme"/></s:text></p>
 </s:if>
 
-<%-- table of templates via ajax --%>
-<div class="tmplsHead">
-    <table cellpadding="0">
-        <tr>
-            <td><h2>Your Templates</h2> <img src="<s:url value="/images/help.png"/>"/></td>
-            <td align="right">
-                <s:url id="addTmpl" action="templateAdd">
-                    <s:param name="weblog" value="actionWeblog.handle"/>
+<%-- table of pages --%>
+<table class="rollertable">
+    <tr>
+        <th width="30%"><s:text name="pagesForm.name" /></th>
+        <th width="60%"><s:text name="pagesForm.description" /></th>
+        <th width="10"><s:text name="pagesForm.remove" /></th>
+    </tr>
+    <s:iterator id="p" value="templates" status="rowstatus">
+        <s:if test="#rowstatus.odd == true">
+            <tr class="rollertable_odd">
+        </s:if>
+        <s:else>
+            <tr class="rollertable_even">
+        </s:else>
+
+            <td style="vertical-align:middle">
+                <s:if test="! #p.hidden">
+                    <s:url id="editIcon" value="/images/page_white.png"/>
+                </s:if>
+                <s:else>
+                    <s:url id="editIcon" value="/images/page_white_gear.png"/>
+                </s:else>
+                <img src='<s:url value="%{editIcon}"/>' border="0" alt="icon" />
+                <s:url id="edit" action="template">
+                    <s:param name="weblog" value="actionWeblog.handle" />
+                    <s:param name="bean.id" value="#p.id" />
                 </s:url>
-                <img src="<s:url value="/images/add.png"/>"/> <s:a theme="ajax" href="%{addTmpl}" targets="addTmplForm">Add Template</s:a>
+                <s:a href="%{edit}"><s:property value="#p.name" /></s:a>
+            </td>
+            
+            <td style="vertical-align:middle"><s:property value="#p.description" /></td>
+                        
+            <td class="center" style="vertical-align:middle">
+                 <s:if test="!#p.required">
+                     <s:url id="removeUrl" action="templateRemove">
+                         <s:param name="weblog" value="actionWeblog.handle"/>
+                         <s:param name="removeId" value="#p.id"/>
+                     </s:url>
+                     <s:a href="%{removeUrl}"><img src='<s:url value="/images/delete.png"/>' /></s:a>
+                 </s:if>
+                 <s:else>
+                    <img src='<s:url value="/images/lock.png"/>' border="0" alt="icon" 
+                        title='<s:text name="pagesForm.required"/>' />
+                 </s:else>
+            </td>
+
+        </tr>
+    </s:iterator>
+    <s:if test="templates.isEmpty">
+        <tr class="rollertable_odd">
+            <td style="vertical-align:middle" colspan="3" >
+                no templates defined
             </td>
         </tr>
-    </table>
-</div>
-<script type="text/javascript" language="javascript">
-dojo.event.topic.subscribe("/refreshTmpls", function(nothing) {
-  // i don't need to do anything :/
-});
-</script>
-<s:url id="listTmpls" action="templates" method="list">
-    <s:param name="weblog" value="actionWeblog.handle"/>
-</s:url>
-<s:div theme="ajax" href="%{listTmpls}" listenTopics="/refreshTmpls" cssClass="tmplsList" />
-
-
-<div id="addTmplForm"></div>
+    </s:if>
+</table>

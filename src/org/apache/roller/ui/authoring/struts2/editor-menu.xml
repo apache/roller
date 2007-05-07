@@ -50,7 +50,7 @@ Each menu or menu item is governed by four attrbibutes:
                    name="tabbedmenu.bookmarks.allFolders" 
                    roles="editor"
                    perms="author"
-                   subactions="importBookmarks,bookmarkEdit,folderEdit" />
+                   subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
         
         <menu-item action="resources"  
                    name="tabbedmenu.website.files" 
@@ -81,7 +81,7 @@ Each menu or menu item is governed by four attrbibutes:
                    name="tabbedmenu.website.pages" 
                    roles="editor"
                    perms="admin" 
-                   subactions="template" />
+                   subactions="template,templateAdd,templateRemove" />
         
         <menu-item action="members" 
                    name="tabbedmenu.website.members" 

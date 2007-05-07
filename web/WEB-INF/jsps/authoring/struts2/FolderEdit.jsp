@@ -17,17 +17,34 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<s:form action="templateAdd!save" theme="ajax">
-    <s:hidden name="weblog" value="%{actionWeblog.handle}"/>
+<p class="subtitle">
+    <s:text name="folderForm.edit.subtitle" >
+        <s:param value="folder.path" />
+    </s:text>
+</p>
+
+<s:form action="folderEdit!save">
+    <s:hidden name="weblog" />
+    <s:hidden name="bean.id" />
     
-    <s:textfield name="newTmplName" />
+    <%-- if we cancel then we need this attribute --%>
+    <s:hidden name="folderId" value="%{folder.parent.id}" />
     
-    <s:if test="availableActions.isEmpty">
-        <s:hidden name="newTmplAction" value="custom"/>
-        <s:submit type="button" notifyTopics="/refreshCustom" targets="addTmplForm"/>
-    </s:if>
-    <s:else>
-        <s:select name="newTmplAction" list="availableActions" size="1"/>
-        <s:submit type="button" notifyTopics="/refreshTheme" targets="addTmplForm"/>
-    </s:else>
+    <table>
+        <tr>
+            <td><s:text name="folderForm.name" /></td>
+            <td><s:textfield name="bean.name" size="70" maxlength="255" /></td>
+        </tr>
+        
+        <tr>
+            <td><s:text name="folderForm.description" /></td>
+            <td><s:textarea name="bean.description" rows="5" cols="50" /></td>
+        </tr>
+    </table>
+    
+    <p>
+        <s:submit key="folderForm.save" />
+        <s:submit key="folderForm.cancel" action="bookmarks" />
+    </p>
+    
 </s:form>

@@ -178,12 +178,46 @@
             <result>/roller-ui/authoring/categories.do?method=selectCategory</result>
         </action>
         
-        <action name="bookmarks">
-            <result>/roller-ui/authoring/bookmarks.do?method=selectFolder</result>
+        <action name="bookmarks!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Bookmarks">
+            <result name="list" type="tiles">.Bookmarks</result>
         </action>
         
-        <action name="resources">
-            <result>/roller-ui/authoring/uploadFiles.do</result>
+        <action name="bookmarkAdd!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.BookmarkAdd">
+            <result name="input" type="tiles">.BookmarkAdd</result>
+            <result name="success" type="chain">bookmarks</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="bookmarkEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.BookmarkEdit">
+            <result name="input" type="tiles">.BookmarkEdit</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="bookmarksImport!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.BookmarksImport">
+            <result name="input" type="tiles">.BookmarksImport</result>
+            <result name="success" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="folderAdd!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.FolderAdd">
+            <result name="input" type="tiles">.FolderAdd</result>
+            <result name="success" type="chain">bookmarks</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="folderEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.FolderEdit">
+            <result name="input" type="tiles">.FolderEdit</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="resources!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Resources">
+            <result name="list" type="tiles">.Resources</result>
         </action>
         
         <action name="referrers">
@@ -209,16 +243,13 @@
         
         <action name="templates!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.Templates">
-            <result name="success" type="tiles">.Templates</result>
-            <result name="list-ajax">/WEB-INF/jsps/authoring/struts2/Templates-list-ajax.jsp</result>
-            <result name="remove-success" type="tiles">.Templates</result>
-            <result name="remove-fail" type="tiles">.Templates</result>
+            <result name="list" type="tiles">.Templates</result>
         </action>
         
-        <action name="templateAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.TemplateAdd">
-            <result name="success">/WEB-INF/jsps/authoring/struts2/TemplateAdd-form-ajax.jsp</result>
-            <result name="addSuccess-ajax">/WEB-INF/jsps/authoring/struts2/TemplateAdd-success-ajax.jsp</result>
+        <action name="templateRemove!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.TemplateRemove">
+            <result name="confirm" type="tiles">.TemplateRemove</result>
+            <result name="success" type="chain">templates</result>
         </action>
         
         <action name="template!*" method="{1}"
@@ -271,11 +302,6 @@
         
         <!--
         
-        
-        <action name="importBookmarks!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.ImportBookmarksFormAction">
-            <result name="importBookmarks.page">.import</result>
-        </action>
         <action name="importEntries!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.ImportEntriesAction">
             <result name="importEntries.page">.import-entries</result>
@@ -285,19 +311,10 @@
                 class="org.apache.roller.ui.authoring.struts2.CategoryDeleteAction">
             <result name="CategoryDeleteOK">.CategoryDeleteOK</result>
         </action>
+        
         <action name="categoryEdit!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.CategoryEditAction">
             <result name="CategoryForm">.CategoryForm</result>
-        </action>
-        
-        <action name="bookmarkEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.BookmarkEditAction">
-            <result name="BookmarkForm">.BookmarkForm</result>
-        </action>
-        
-        <action name="bookmarks!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.BookmarksAction">
-            <result name="BookmarksForm">.BookmarksForm</result>
         </action>
         
         <action name="categorySave!*" method="{1}"
@@ -320,23 +337,10 @@
             <result name="referers.page">.referers</result>
         </action>
         
-        <action name="folderEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.FolderEditAction">
-            <result name="FolderForm">.FolderForm</result>
-        </action>
-        
-        <action name="folderSave!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.FolderSaveAction">
-            <result name="Bookmarks" type="dispatcher">/roller-ui/authoring/bookmarks.action!selectFolder</result>
-        </action>
         <action name="toggleLinkback!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.ToggleLinkbackDisplayAction">
         </action>
-        <action name="bookmarkSave!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.BookmarkSaveAction">
-            <result name="Bookmarks" type="dispatcher">/roller-ui/authoring/bookmarks.action!selectFolder</result>
-            <result name="BookmarkEdit" type="dispatcher">/roller-ui/authoring/bookmarkEdit.action</result>
-        </action>
+        
         <action name="commentManagement!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
             <result name="commentManagement.page">.CommentManagement</result>
@@ -346,12 +350,6 @@
                 class="org.apache.roller.ui.authoring.struts2.CommentManagementAction">
             <result name="commentManagement.page">.CommentManagement</result>
             <result name="commentManagementGlobal.page">.CommentManagementGlobal</result>
-        </action>
-        
-        
-        <action name="uploadFiles!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.UploadFileFormAction">
-            <result name="uploadFiles.page">.upload-file</result>
         </action>
         -->
     </package>

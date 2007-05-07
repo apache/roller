@@ -20,8 +20,6 @@ package org.apache.roller.ui.authoring.struts2;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,14 +27,9 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.PermissionsData;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.util.menu.Menu;
-import org.apache.roller.ui.core.util.menu.MenuHelper;
 import org.apache.roller.ui.core.util.struts2.UIAction;
-import org.apache.roller.util.cache.CacheManager;
 
 
 /**
@@ -49,8 +42,8 @@ public class Templates extends UIAction {
     // list of templates to display
     private List templates = Collections.EMPTY_LIST;
     
-    // template id to remove
-    private String removeId = null;
+    // list of template action types user is allowed to create
+    private List availableActions = Collections.EMPTY_LIST;
     
     
     public Templates() {
@@ -67,58 +60,40 @@ public class Templates extends UIAction {
     
     
     public String execute() {
-        return SUCCESS;
-    }
-    
-    
-    /**
-     * This action method is called by an ajax enabled 'div' tag on the page
-     * and is used to list the templates available for the given weblog.
-     */
-    public String list() {
         
         // query for templates list
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             setTemplates(mgr.getPages(getActionWeblog()));
             
+            // build list of action types that may be added
+            List availableActions = new ArrayList();
+            availableActions.add(WeblogTemplate.ACTION_CUSTOM);
+            
+            if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+                // if the weblog is using a custom theme then determine which
+                // action templates are still available to be created
+                availableActions.add(WeblogTemplate.ACTION_PERMALINK);
+                availableActions.add(WeblogTemplate.ACTION_SEARCH);
+                availableActions.add(WeblogTemplate.ACTION_WEBLOG);
+                availableActions.add(WeblogTemplate.ACTION_TAGSINDEX);
+                
+                List<WeblogTemplate> pages = getTemplates();
+                for(WeblogTemplate tmpPage : pages) {
+                    if(!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage.getAction())) {
+                        availableActions.remove(tmpPage.getAction());
+                    }
+                }
+            }
+            setAvailableActions(availableActions);
+
         } catch (RollerException ex) {
-            log.error("Error getting pages for weblog - "+getActionWeblog().getHandle(), ex);
+            log.error("Error getting templates for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error getting template list");
         }
         
-        return "list-ajax";
-    }
-    
-    
-    public String remove() {
-        
-        try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WeblogTemplate template = mgr.getPage(getRemoveId());
-            
-            if(!template.isRequired()) {
-                
-                // remove it and flush
-                mgr.removePage(template);
-                RollerFactory.getRoller().flush();
-                
-                // notify cache
-                CacheManager.invalidate(template);
-                
-                return execute();
-            } else {
-                // TODO: i18n
-                addError("Cannot remove required template");
-            }
-            
-        } catch (RollerException e) {
-            log.error("Error removing template", e);
-            addError("error.internationalized", e.getRootCauseMessage());
-        }
-        
-        return "remove-fail";
+        return LIST;
     }
     
     
@@ -130,12 +105,12 @@ public class Templates extends UIAction {
         this.templates = templates;
     }
 
-    public String getRemoveId() {
-        return removeId;
+    public List getAvailableActions() {
+        return availableActions;
     }
 
-    public void setRemoveId(String removeId) {
-        this.removeId = removeId;
+    public void setAvailableActions(List availableActions) {
+        this.availableActions = availableActions;
     }
     
 }
