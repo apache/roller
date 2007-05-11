@@ -19,6 +19,9 @@
 package org.apache.roller.util;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +41,9 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -63,6 +68,76 @@ public class MailUtil {
         } catch (NamingException ex) {
             throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured", ex);
+        }
+    }
+    
+    
+    /**
+     * Send an email notice that a new pending entry has been submitted.
+     */
+    public static void sendPendingEntryNotice(WeblogEntryData entry) 
+            throws RollerException {
+        
+        Session mailSession = getMailSession();
+        if(mailSession == null) {
+            throw new RollerException("Couldn't get mail Session");
+        }
+        
+        try {
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            
+            String userName = entry.getCreator().getUserName();
+            String from = entry.getCreator().getEmailAddress();
+            String cc[] = new String[] {from};
+            String bcc[] = new String[0];
+            String to[];
+            String subject;
+            String content;
+            
+            // list of enabled website authors and admins
+            ArrayList reviewers = new ArrayList();
+            List websiteUsers = umgr.getUsers(
+                    entry.getWebsite(), Boolean.TRUE, null, null, 0, -1);
+            
+            // build list of reviewers (website users with author permission)
+            Iterator websiteUserIter = websiteUsers.iterator();
+            while (websiteUserIter.hasNext()) {
+                UserData websiteUser = (UserData)websiteUserIter.next();
+                if (entry.getWebsite().hasUserPermissions(
+                        websiteUser, PermissionsData.AUTHOR)
+                        && websiteUser.getEmailAddress() != null) {
+                    reviewers.add(websiteUser.getEmailAddress());
+                }
+            }
+            to = (String[])reviewers.toArray(new String[reviewers.size()]);
+            
+            // Figure URL to entry edit page
+            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
+            String editURL = rootURL
+                    + "/roller-ui/authoring/weblog.do?method=edit&entryId=" + entry.getId();
+            
+            ResourceBundle resources = ResourceBundle.getBundle(
+                    "ApplicationResources", entry.getWebsite().getLocaleInstance());
+            StringBuffer sb = new StringBuffer();
+            sb.append(
+                    MessageFormat.format(
+                    resources.getString("weblogEntry.pendingEntrySubject"),
+                    new Object[] {
+                entry.getWebsite().getName(),
+                entry.getWebsite().getHandle()
+            }));
+            subject = sb.toString();
+            sb = new StringBuffer();
+            sb.append(
+                    MessageFormat.format(
+                    resources.getString("weblogEntry.pendingEntryContent"),
+                    new Object[] { userName, userName, editURL })
+                    );
+            content = sb.toString();
+            MailUtil.sendTextMessage(
+                    mailSession, from, to, cc, bcc, subject, content);
+        } catch (MessagingException e) {
+            log.error("ERROR: Problem sending pending entry notification email.");
         }
     }
     
