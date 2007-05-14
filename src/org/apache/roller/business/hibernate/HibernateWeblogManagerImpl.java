@@ -1102,7 +1102,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
                     (String)row[2],                             // entry anchor
                     (String)row[3],                             // entry title
                     "statCount.weblogEntryCommentCountType",    // stat desc
-                    new Long(((Integer)row[0]).intValue()).longValue()); // count
+                    new Long(((Number)row[0]).longValue())); // count
                 
                 results.add(statCount);
             }
@@ -1563,7 +1563,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
                 query.setParameter(1, website);
             }
             List result = query.list();
-            ret = ((Integer)result.get(0)).intValue();
+            ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
         }
@@ -1598,7 +1598,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
                 query.setParameter(1, website);
             }
             List result = query.list();
-            ret = ((Integer)result.get(0)).intValue();
+            ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
         }
