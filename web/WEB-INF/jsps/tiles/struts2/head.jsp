@@ -5,13 +5,13 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <link rel="stylesheet" type="text/css" media="all" 
-    href='<c:url value="/roller-ui/styles/layout.css"/>'>
+    href='<s:url value="/roller-ui/styles/layout.css"/>'>
 <link rel="stylesheet" type="text/css" media="all" 
-    href='<c:url value="/roller-ui/styles/roller.css"/>'>   
+    href='<s:url value="/roller-ui/styles/roller.css"/>'>   
 <link rel="stylesheet" type="text/css" media="all" 
-    href='<c:url value="/roller-ui/styles/menu.css"/>'>
+    href='<s:url value="/roller-ui/styles/menu.css"/>'>
 <link rel="stylesheet" type="text/css" media="all" 
-    href='<c:url value="/roller-ui/styles/calendar.css"/>'>
+    href='<s:url value="/roller-ui/styles/calendar.css"/>'>
 
 <link rel="stylesheet" type="text/css" media="all" 
     href="<%= request.getContextPath() %>/roller-ui/theme/<s:property value="getProp('editor.theme')"/>/colors.css" />
@@ -19,11 +19,8 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <script type="text/javascript" 
     src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script>
 <script type="text/javascript" 
-    src='<c:url value="/roller-ui/scripts/calendar.js"/>'></script>
+    src='<s:url value="/roller-ui/scripts/calendar.js"/>'></script>
 <script type="text/javascript" 
-    src='<c:url value="/roller-ui/scripts/overlib.js"/>'>
+    src='<s:url value="/roller-ui/scripts/overlib.js"/>'>
     <!-- overLIB (c) Erik Bosrup -->
-</script>  
-
-
-
+</script>

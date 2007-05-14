@@ -857,7 +857,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 Query query = session.createQuery(
                     "select count(user) from UserData user where upper(user.userName) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
-                Integer count = (Integer)row.get(0);
+                Number count = (Number) row.get(0);
                 results.put(new String(new char[]{lc.charAt(i)}), count);
             }
             return results;
@@ -899,7 +899,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 Query query = session.createQuery(
                     "select count(website) from WebsiteData website where upper(website.handle) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
-                Integer count = (Integer)row.get(0);
+                Number count = (Number)row.get(0);
                 results.put(new String(new char[]{lc.charAt(i)}), count);
             }
             return results;
@@ -963,7 +963,7 @@ public class HibernateUserManagerImpl implements UserManager {
                     (String)row[2],                     // website handle
                     (String)row[3],                     // website name
                     "statCount.weblogCommentCountType", // stat type 
-                    new Long(((Integer)row[0]).intValue()).longValue()); // # comments
+                    new Long(((Number)row[0]).longValue())); // # comments
                 statCount.setWeblogHandle((String)row[2]);
                 results.add(statCount);
             }
@@ -984,7 +984,7 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             String query = "select count(distinct w) from WebsiteData w";
             List result = session.createQuery(query).list();
-            ret = ((Integer)result.get(0)).intValue();
+            ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
         }
@@ -1015,7 +1015,7 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             String query = "select count(distinct u) from UserData u where u.enabled=true";
             List result = session.createQuery(query).list();
-            ret = ((Integer)result.get(0)).intValue();
+            ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
         }

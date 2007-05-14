@@ -1,10 +1,19 @@
 /*
- * UIActionInterceptor.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 16, 2007, 5:30 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.ui.core.util.struts2;
@@ -20,6 +29,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
+
 
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
@@ -54,8 +64,8 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                 
                 // are we also enforcing a specific role?
                 if(theAction.requiredUserRole() != null) {
-                    log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
                     if(!authenticatedUser.hasRole(theAction.requiredUserRole())) {
+                        log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
                         return "access-denied";
                     }
                 }

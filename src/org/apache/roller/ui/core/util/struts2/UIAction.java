@@ -24,9 +24,12 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.util.UIUtils;
+import org.apache.roller.ui.core.util.menu.Menu;
+import org.apache.roller.ui.core.util.menu.MenuHelper;
 
 
 /**
@@ -39,7 +42,10 @@ import org.apache.roller.ui.core.util.UIUtils;
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class UIAction extends ActionSupport 
-        implements UISecurityEnforced {
+        implements UIActionPreparable, UISecurityEnforced {
+    
+    // a common result name used to indicate the result should list some data
+    public static final String LIST = "list";
     
     // the authenticated user accessing this action, or null if client is not logged in
     private UserData authenticatedUser = null;
@@ -47,8 +53,22 @@ public abstract class UIAction extends ActionSupport
     // the weblog this action is intended to work on, or null if no weblog specified
     private WebsiteData actionWeblog = null;
     
+    // the weblog handle of the action weblog
+    private String weblog = null;
+    
+    // action name (used by tabbed menu utility)
+    protected String actionName = null;
+    
+    // the name of the menu this action wants to show, or null for no menu
+    protected String desiredMenu = null;
+    
     // page title
     protected String pageTitle = null;
+    
+    
+    public void myPrepare() {
+        // no-op
+    }
     
     
     // default action permissions, user is required
@@ -61,12 +81,12 @@ public abstract class UIAction extends ActionSupport
         return true;
     }
     
-    // default action permissions, no role required
+    // default action permissions, "editor" role required
     public String requiredUserRole() {
-        return null;
+        return "editor";
     }
     
-    // default action permissions, no weblog permissions required
+    // default action permissions, no perms required
     public short requiredWeblogPermissions() {
         return -1;
     }
@@ -119,6 +139,10 @@ public abstract class UIAction extends ActionSupport
         addActionError(getText(errorKey, errorKey, param));
     }
     
+    public void addError(String errorKey, List args) {
+        addActionError(getText(errorKey, args));
+    }
+    
     /**
      * This simply returns the result of hasActionErrors() but we need it
      * because without it you can't easily check if there were errors since
@@ -135,6 +159,10 @@ public abstract class UIAction extends ActionSupport
     
     public void addMessage(String msgKey, String param) {
         addActionMessage(getText(msgKey, msgKey, param));
+    }
+    
+    public void addMessage(String msgKey, List args) {
+        addActionMessage(getText(msgKey, args));
     }
     
     /**
@@ -163,12 +191,41 @@ public abstract class UIAction extends ActionSupport
         this.actionWeblog = workingWeblog;
     }
 
+    public String getWeblog() {
+        return weblog;
+    }
+
+    public void setWeblog(String weblog) {
+        this.weblog = weblog;
+    }
+    
     public String getPageTitle() {
         return getText(pageTitle);
     }
 
     public void setPageTitle(String pageTitle) {
         this.pageTitle = pageTitle;
+    }
+    
+    
+    public String getActionName() {
+        return this.actionName;
+    }
+    
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
+    }
+
+    public String getDesiredMenu() {
+        return desiredMenu;
+    }
+
+    public void setDesiredMenu(String desiredMenu) {
+        this.desiredMenu = desiredMenu;
+    }
+    
+    public Menu getMenu() {
+        return MenuHelper.getMenu(getDesiredMenu(), getActionName(), getAuthenticatedUser(), getActionWeblog());
     }
     
     

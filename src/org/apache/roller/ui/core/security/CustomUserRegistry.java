@@ -41,11 +41,13 @@ public class CustomUserRegistry {
     
     private static Log log = LogFactory.getLog(CustomUserRegistry.class);
     
+    private static String DEFAULT_SNAME_LDAP_ATTRIBUTE = "screenname";
     private static String DEFAULT_NAME_LDAP_ATTRIBUTE = "cn";
     private static String DEFAULT_EMAIL_LDAP_ATTRIBUTE = "mail";
     private static String DEFAULT_LOCALE_LDAP_ATTRIBUTE = "locale";
     private static String DEFAULT_TIMEZONE_LDAP_ATTRIBUTE = "timezone";
     
+    private static String SNAME_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.screenname";
     private static String NAME_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.name";
     private static String EMAIL_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.email";
     private static String LOCALE_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.locale";
@@ -100,7 +102,11 @@ public class CustomUserRegistry {
         if(userDetails instanceof RollerUserDetails) {
             RollerUserDetails rollerDetails = (RollerUserDetails) userDetails;
             
+            ud.setScreenName(rollerDetails.getScreenName());
+            
             ud.setFullName(rollerDetails.getFullName());
+
+            //TODO: Bug here as setting email addy to a full name value?
             ud.setEmailAddress(rollerDetails.getFullName());
             if(rollerDetails.getTimeZone() != null) {
                 ud.setTimeZone(rollerDetails.getTimeZone());
@@ -113,9 +119,11 @@ public class CustomUserRegistry {
         } else if(userDetails instanceof LdapUserDetails) {
             LdapUserDetails ldapDetails = (LdapUserDetails) userDetails;
             Attributes attributes = ldapDetails.getAttributes();
+            String sname = getLdapAttribute(attributes, RollerConfig.getProperty(SNAME_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
             String name = getLdapAttribute(attributes, RollerConfig.getProperty(NAME_LDAP_PROPERTY, DEFAULT_NAME_LDAP_ATTRIBUTE));
             String email = getLdapAttribute(attributes, RollerConfig.getProperty(EMAIL_LDAP_PROPERTY, DEFAULT_EMAIL_LDAP_ATTRIBUTE));
-            
+
+            ud.setScreenName(sname);
             ud.setFullName(name);
             ud.setEmailAddress(email);
             

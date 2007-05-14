@@ -73,6 +73,7 @@ public final class TestUtils {
         UserData testUser = new UserData();
         testUser.setUserName(username);
         testUser.setPassword("password");
+        testUser.setScreenName("Test User Screen Name");
         testUser.setFullName("Test User");
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setLocale("en_US");

@@ -182,7 +182,10 @@ class RollerUserHandler extends Handler {
     
     private void updateUserData(UserData ud, UserEntry entry) throws HandlerException {
         // user name cannot be updated
-        
+
+        if (entry.getScreenName() != null) {
+            ud.setScreenName(entry.getScreenName());
+        }
         if (entry.getFullName() != null) {
             ud.setFullName(entry.getFullName());
         }
@@ -243,6 +246,7 @@ class RollerUserHandler extends Handler {
         // we never return password field
         
         UserEntry ue = new UserEntry(ud.getUserName(), getUrlPrefix());
+        ue.setScreenName(ud.getScreenName());
         ue.setFullName(ud.getFullName());
         ue.setLocale(ud.getLocale());
         ue.setTimezone(ud.getTimeZone());
@@ -282,7 +286,10 @@ class RollerUserHandler extends Handler {
         //
         UserData ud = new UserData();
         ud.setUserName(ue.getName());
-        
+
+        if (ue.getScreenName() != null) {
+            ud.setScreenName(ue.getScreenName());
+        }
         if (ue.getFullName() != null) {
             ud.setFullName(ue.getFullName());
         }

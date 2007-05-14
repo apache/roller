@@ -149,35 +149,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
         
         // the main work to be done for a category move is to update the 
         // path attribute of the category and all descendent categories
-        updatePathTree(srcCat);
-    }
-    
-    
-    // updates the paths of all descendents of the given category
-    private void updatePathTree(WeblogCategoryData cat) throws RollerException {
-        
-        log.debug("Updating path tree for category "+cat.getPath());
-        
-        WeblogCategoryData childCat = null;
-        Iterator childCats = cat.getWeblogCategories().iterator();
-        while(childCats.hasNext()) {
-            childCat = (WeblogCategoryData) childCats.next();
-            
-            log.debug("OLD child category path was "+childCat.getPath());
-            
-            // update path and save
-            if("/".equals(cat.getPath())) {
-                childCat.setPath("/" + childCat.getName());
-            } else {
-                childCat.setPath(cat.getPath() + "/" + childCat.getName());
-            }
-            saveWeblogCategory(childCat);
-            
-            log.debug("NEW child category path is "+ childCat.getPath());
-            
-            // then make recursive call to update this cats children
-            updatePathTree(childCat);
-        }
+        WeblogCategoryData.updatePathTree(srcCat);
     }
     
     
@@ -1130,7 +1102,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
                     (String)row[2],                             // entry anchor
                     (String)row[3],                             // entry title
                     "statCount.weblogEntryCommentCountType",    // stat desc
-                    new Long(((Integer)row[0]).intValue()).longValue()); // count
+                    new Long(((Number)row[0]).longValue())); // count
                 
                 results.add(statCount);
             }
@@ -1591,7 +1563,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
                 query.setParameter(1, website);
             }
             List result = query.list();
-            ret = ((Integer)result.get(0)).intValue();
+            ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
         }
@@ -1626,7 +1598,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
                 query.setParameter(1, website);
             }
             List result = query.list();
-            ret = ((Integer)result.get(0)).intValue();
+            ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
             throw new RollerException(e);
         }

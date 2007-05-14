@@ -10,7 +10,7 @@
         </tr>
         <tr>
             <td>Created by</td>
-            <td><$profileWeblog.creator.fullName/td>
+            <td>$profileWeblog.creator.screenName</td>
         </tr>
         <tr>
             <td>Last modified</td>
@@ -30,13 +30,11 @@
     #set($users = $site.getWeblogsUsers($profileWeblog.handle))
     <table width="70%">
         <tr>
-            <td width="25%">Username</td>
-            <td width="75%">Full name</td>
+            <td width="75%">Screen name</td>
         </tr>  
         #foreach($user in $users) 
         <tr>
-            <td>$user.userName</td>
-            <td>$user.fullName</td>
+            <td>$user.screenName</td>
         </tr>
         #end
     </table>
@@ -52,7 +50,7 @@
         </tr> 
         #foreach($entry in $entriesPager.items)
             <tr>
-                <td>$entry.creator.userName</td>
+                <td>$entry.creator.screenName</td>
                 <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
                 <td><a href="$utils.escapeHTML($entry.permaLink)">
                     $utils.removeHTML($entry.title)</a></td>

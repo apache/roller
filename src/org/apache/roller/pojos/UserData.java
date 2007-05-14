@@ -59,6 +59,7 @@ public class UserData
     private String  id = UUIDGenerator.generateUUID();
     private String  userName;
     private String  password;
+    private String  screenName;
     private String  fullName;
     private String  emailAddress;
     private Date    dateCreated;
@@ -171,7 +172,22 @@ public class UserData
     public void setPassword( String password ) {
         this.password = password;
     }
-    
+
+    /**
+     * Screen name of the user.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="screenname" non-null="true" unique="true"
+     */
+    public String getScreenName() {
+        return this.screenName;
+    }
+    /** @ejb:persistent-field */
+    public void setScreenName( String screenName ) {
+        this.screenName = screenName;
+    }
+
     /**
      * Full name of the user.
      *
@@ -273,6 +289,7 @@ public class UserData
         this.id =       other.getId();
         this.userName = other.getUserName();
         this.password = other.getPassword();
+        this.screenName = other.getScreenName();
         this.fullName = other.getFullName();
         this.emailAddress = other.getEmailAddress();
         this.locale = other.getLocale();

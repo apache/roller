@@ -57,8 +57,8 @@
          <default-value>Front Page</default-value>
       </property-def>
       <property-def  name="site.description"  key="configForm.siteDescription">
-         <type>string</type>
-	     <default-value>A default install of the Roller Weblogger open source blog server</default-value>
+         <type>text</type>
+	 <default-value>A default install of the Roller Weblogger open source blog server</default-value>
       </property-def>      
       <property-def  name="site.frontpage.weblog.handle"  key="configForm.frontpageWeblogHandle">
          <type>string</type>

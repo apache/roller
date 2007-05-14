@@ -37,10 +37,9 @@
 <!-- ********************************************************************* -->
 <project name="roller" default="usage">
 
-<!--No longer need java15 check
-<available classname="java.lang.ProcessBuilder" property="java15.present" />
- -->
- 
+<available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" 
+    property="dbscripts-exist" />
+
 <!-- Bring in properties.xml -->
 &properties;
 
@@ -257,12 +256,6 @@ Key Targets:
         
         &custom-gen-web;
         
-        <!-- web.xml config -->
-        <deploymentdescriptor servletspec="2.4"
-             destdir="${build.webapp}/WEB-INF"
-             sessiontimeout="30"
-             displayname="Roller Weblogger" />
-        
         <!-- jsp taglib descriptor config -->
         <jsptaglib jspversion="1.2" filename="roller.tld" shortname="roller"
             uri="http://www.rollerweblogger.org/tags"
@@ -385,9 +378,9 @@ ro.buildUser=${user.name}
     <!-- Copy in resources -->
     <copy todir="${build.compile.web}">
         <fileset dir="${ro.src}">
-            <include name="**/*.properties"/>
-            <include name="**/*.tpl"/>
-            <include name="**/*.vm"/>
+            <exclude name="**/*.java"/>
+            <exclude name="**/*.html"/>
+            <exclude name="**/*.png"/>
         </fileset>
     </copy>
 	
@@ -422,9 +415,9 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts, copy-webapp, gen-web" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts-conditional, copy-webapp, gen-web" description="Stage webapp, including jars">
 </target>
-    
+       
 <target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
 
     <mkdir dir="${build.webapp}/WEB-INF/lib"/>
@@ -485,11 +478,6 @@ ro.buildUser=${user.name}
         </fileset>
     </copy>
     
-    <!-- copy database script files -->
-    <copy todir="${build.webapp}/WEB-INF/dbscripts">
-        <fileset dir="${build.dbscripts}" />
-    </copy>
-    
     <!-- apply custom web task -->
     &custom-web;
 
@@ -501,6 +489,10 @@ ro.buildUser=${user.name}
     <!-- With this approach we won't have to expand the script all the time.   -->
     <!-- ********************************************************************* -->
     
+    <target name="gen-dbscripts-conditional" unless="dbscripts-exist">
+        <antcall target="gen-dbscripts" />
+    </target>
+
     <!-- generate database scripts -->
     <target name="gen-dbscripts">
         

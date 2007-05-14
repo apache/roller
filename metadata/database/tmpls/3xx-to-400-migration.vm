@@ -33,6 +33,10 @@ drop table if exists rag_config;
 -- new column to support account activation by email
 #addColumnNull("rolleruser" "activationcode" "varchar(48)")
 
+-- new column to support screen name and populate with user names
+#addColumnNotNull("rolleruser" "screenname" "varchar(255)" "'unspecified'")
+update rolleruser set screenname = username;
+
 -- new column to allow setting of page template content-type
 #addColumnNull("webpage" "outputtype" "varchar(48)")
 
