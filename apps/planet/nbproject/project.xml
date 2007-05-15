@@ -4,7 +4,7 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
-            <name>Roller Planet</name>
+            <name>roller_planet</name>
             <properties>
                 <property name="ant.script">build.xml</property>
             </properties>
@@ -43,6 +43,33 @@
                     <target>clean</target>
                     <target>dist</target>
                 </action>
+                
+                <action name="debug.single">
+                    <target>debug-selected-files</target>
+                    <context>
+                        <property>classname</property>
+                        <folder>./src/java</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug.test.single">
+                    <target>test-selected-files</target>
+                    <context>
+                        <property>classname</property>
+                        <folder>./test/java</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                
+                
             </ide-actions>
             <view>
                 <items>
@@ -74,14 +101,9 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/java</package-root>
-                <classpath mode="compile">../../tools/lib/log4j-1.2.11.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/commons-collections-3.1.jar:../../tools/lib/commons-digester-1.6.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/activation.jar:../../tools/lib/mail.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/jdom.jar:../../tools/lib/velocity-1.4.jar:../../tools/lib/velocity-dep-1.4.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../tools/struts-2.0.1/lib/antlr-2.7.2.jar:../../tools/struts-2.0.1/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.1/lib/commons-chain-1.1.jar:../../tools/struts-2.0.1/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.1/lib/freemarker-2.3.4.jar:../../tools/struts-2.0.1/lib/ognl-2.6.7.jar:../../tools/struts-2.0.1/lib/oro-2.0.8.jar:../../tools/struts-2.0.1/lib/spring-aop-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-beans-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-context-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-core-1.2.8.jar:../../tools/struts-2.0.1/lib/spring-web-1.2.8.jar:../../tools/struts-2.0.1/lib/struts2-api-2.0.1.jar:../../tools/struts-2.0.1/lib/struts2-core-2.0.1.jar:../../tools/struts-2.0.1/lib/xwork-2.0-beta-1.jar</classpath>
-                <source-level>1.4</source-level>
-            </compilation-unit>
-            <compilation-unit>
                 <package-root>test/java</package-root>
-                <unit-tests/>
-                <classpath mode="compile">../../tools/buildtime/junit-3.8.1.jar:../../tools/struts-1.2.4/lib/commons-lang-2.0.jar:../../tools/struts-1.2.4/lib/commons-logging.jar</classpath>
-                <source-level>1.4</source-level>
+                <classpath mode="compile">../../tools/lib/log4j-1.2.11.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/commons-collections-3.1.jar:../../tools/lib/commons-digester-1.6.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/activation.jar:../../tools/lib/mail.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/jdom.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../tools/struts-2.0.5/lib/commons-beanutils-1.7.0.jar:../../tools/struts-2.0.5/lib/commons-chain-1.1.jar:../../tools/struts-2.0.5/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.5/lib/ognl-2.6.9.jar:../../tools/struts-2.0.5/lib/oro-2.0.8.jar:../../tools/struts-2.0.5/lib/struts2-api-2.0.5.jar:../../tools/struts-2.0.5/lib/struts2-core-2.0.5.jar:../../tools/struts-2.0.5/lib/struts2-spring-plugin-2.0.5.jar:../../tools/struts-2.0.5/lib/xwork-2.0.0.jar:../../tools/lib/velocity-1.5.jar:../../tools/buildtime/junit-3.8.1.jar</classpath>
+                <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
         <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">
