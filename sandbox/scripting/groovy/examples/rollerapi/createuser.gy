@@ -31,6 +31,7 @@ timeZone = "America/New_York";
 
 user = new org.apache.roller.pojos.UserData();
 user.setUserName(username);
+user.setScreenName(username);
 user.setPassword(password);
 user.setFullName(fullName);
 user.setEmailAddress(email);
