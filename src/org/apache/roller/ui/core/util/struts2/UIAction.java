@@ -21,10 +21,10 @@ package org.apache.roller.ui.core.util.struts2;
 import com.opensymphony.xwork2.ActionSupport;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.util.UIUtils;
@@ -43,6 +43,9 @@ import org.apache.roller.ui.core.util.menu.MenuHelper;
  */
 public abstract class UIAction extends ActionSupport 
         implements UIActionPreparable, UISecurityEnforced {
+    
+    // a result that sends the user to an access denied warning
+    public static final String DENIED = "access-denied";
     
     // a common result name used to indicate the result should list some data
     public static final String LIST = "list";
@@ -253,6 +256,46 @@ public abstract class UIAction extends ActionSupport
     
     public List getTimeZonesList() {
         return UIUtils.getTimeZones();
+    }
+    
+    public List getHoursList() {
+        List ret = new ArrayList();
+        for (int i=0; i<24; i++) {
+            ret.add(i);
+        }
+        return ret;
+    }
+    
+    public List getMinutesList() {
+        List ret = new ArrayList();
+        for (int i=0; i<60; i++) {
+            ret.add(i);
+        }
+        return ret;
+    }
+    
+    public List getSecondsList() {
+        return getMinutesList();
+    }
+    
+    public List getCommentDaysList() {
+        
+        List opts = new ArrayList();
+        
+        opts.add(new KeyValueObject(new Integer(0), getText("weblogEdit.unlimitedCommentDays")));
+        opts.add(new KeyValueObject(new Integer(1), getText("weblogEdit.days1")));
+        opts.add(new KeyValueObject(new Integer(2), getText("weblogEdit.days2")));
+        opts.add(new KeyValueObject(new Integer(3), getText("weblogEdit.days3")));
+        opts.add(new KeyValueObject(new Integer(4), getText("weblogEdit.days4")));
+        opts.add(new KeyValueObject(new Integer(5), getText("weblogEdit.days5")));
+        opts.add(new KeyValueObject(new Integer(7), getText("weblogEdit.days7")));
+        opts.add(new KeyValueObject(new Integer(10), getText("weblogEdit.days10")));
+        opts.add(new KeyValueObject(new Integer(20), getText("weblogEdit.days20")));
+        opts.add(new KeyValueObject(new Integer(30), getText("weblogEdit.days30")));
+        opts.add(new KeyValueObject(new Integer(60), getText("weblogEdit.days60")));
+        opts.add(new KeyValueObject(new Integer(90), getText("weblogEdit.days90")));
+        
+        return opts;
     }
     
 }
