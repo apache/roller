@@ -158,9 +158,10 @@
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".WeblogEntryManagement" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/WeblogEntryManagement.jsp" />
-        <put name="sidebar" value="/WEB-INF/jsps/authoring/WeblogEntryManagementSidebar.jsp" />
+    <definition name=".Entries" extends=".tiles-tabbedpage" >
+        <put name="head" value="/WEB-INF/jsps/tiles/struts2/head-ajax.jsp" />
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Entries.jsp" />
+        <put name="sidebar" value="/WEB-INF/jsps/authoring/struts2/EntriesSidebar.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
     </definition>
     

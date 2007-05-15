@@ -213,8 +213,9 @@
             <result name="success" type="chain">entryAdd</result>
         </action>
         
-        <action name="entries">
-            <result>/roller-ui/authoring/weblogEntryManagement.do?method=query</result>
+        <action name="entries"
+                class="org.apache.roller.ui.authoring.struts2.Entries">
+            <result name="list" type="tiles">.Entries</result>
         </action>
         
         <action name="comments!*" method="{1}"
