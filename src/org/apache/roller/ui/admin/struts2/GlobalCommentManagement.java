@@ -102,7 +102,7 @@ public class GlobalCommentManagement extends UIAction {
                     getBean().getOffset(),
                     getBean().getCount() + 1);
             
-            if(comments != null) {
+            if(comments != null && comments.size() > 0) {
                 if(comments.size() > getBean().getCount()) {
                     comments.remove(comments.size()-1);
                     setMoreResults(true);
