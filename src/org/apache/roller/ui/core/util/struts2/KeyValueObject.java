@@ -24,30 +24,30 @@ package org.apache.roller.ui.core.util.struts2;
  */
 public class KeyValueObject {
     
-    private String key = null;
-    private String value = null;
+    private Object key = null;
+    private Object value = null;
     
     
     public KeyValueObject() {}
     
-    public KeyValueObject(String key, String value) {
+    public KeyValueObject(Object key, Object value) {
         this.setKey(key);
         this.setValue(value);
     }
 
-    public String getKey() {
+    public Object getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(Object key) {
         this.key = key;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
     
