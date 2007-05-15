@@ -16,5 +16,10 @@
         </javac>
         <jar basedir="build" destfile="dist/authusermodel.jar" />
     </target>
+
+    <target name="clean" >
+        <delete dir="build" />
+        <delete dir="clean" />
+    </target>
     
 </project>
