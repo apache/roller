@@ -43,7 +43,7 @@
 <property name="build.dist.apache"   value="${build.dist}/apache"/>
 <property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
 <property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
-<property name="build.dbscripts"     value="${ro.build}/dbscripts"/>
+<property name="build.dbscripts"     value="${build.webapp}/WEB-INF/dbscripts"/>
 <property name="build.tests"         value="${ro.build}/tests"/>
 <property name="build.reports"       value="${build.tests}/reports"/>
 <property name="build.docs"          value="${ro.build}/docs"/>
