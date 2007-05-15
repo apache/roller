@@ -81,6 +81,9 @@
             <basic name="userName">
                 <column name="username" insertable="true" updatable="true" unique="true"/>
             </basic>
+            <basic name="screenName">
+                <column name="screenname" insertable="true" updatable="true" unique="true"/>
+            </basic>
             <basic name="activationCode">
                 <column name="activationcode" insertable="true" updatable="true" unique="true"/>
             </basic>
