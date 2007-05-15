@@ -17,33 +17,32 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script type="text/javascript">
-<!--
-function dirty() {
-    messages = document.getElementById("messages");
-    if (messages != null) {
-	    messages.className = "warnings";
-	    var n1 = messages.childNodes[0];
-	    var n2 = document.createTextNode("Unsaved changes");
-	    messages.replaceChild(n2, n1);
-    }
-}
--->
-</script>
+<h2>
+    <s:text name="weblogEntryRemove.removeWeblogEntry" /> [<s:property value="removeEntry.title"/>]
+</h2>
 
-<%-- Success Messages --%>
-<s:if test="!actionMessages.isEmpty">
-    <div id="messages" class="messages">
-        <s:actionmessage />
-    </div>
-</s:if>
+<p><s:text name="weblogEntryRemove.areYouSure" /></p>
+<p>
+    <s:text name="weblogEntryRemove.entryTitle" /> = [<s:property value="removeEntry.title"/>]<br />
+    <s:text name="weblogEntryRemove.entryId" /> = [<s:property value="removeEntry.id"/>]
+</p>
 
-<%-- Error Messages --%>
-<s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-    <div id="errors" class="errors">
-        <s:actionerror />
-        <s:iterator id="key" value="fieldErrors">
-            <s:property value="#key.value" />
-        </s:iterator>
+<table>
+<tr>
+<td>
+    <s:form action="entryRemove!remove">
+        <s:hidden name="weblog" />
+        <s:hidden name="removeId" />
+        <s:submit key="weblogEntryRemove.yes" />
+    </s:form>
     </div>
-</s:if>
+</td>
+<td>
+    <s:form action="entryEdit">
+        <s:hidden name="weblog" />
+        <s:hidden name="bean.id" value="%{removeId}" />
+        <s:submit key="weblogEntryRemove.no" />
+    </s:form>
+</td>
+</tr>
+</table>
