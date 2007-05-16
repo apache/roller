@@ -30,6 +30,7 @@ public class ParsedTabItem {
     private String perm = null;
     private String role = null;
     private String enabledProperty = null;
+    private String disabledProperty = null;
     
     
     public String getName() {
@@ -78,6 +79,14 @@ public class ParsedTabItem {
 
     public void setEnabledProperty(String enabledProperty) {
         this.enabledProperty = enabledProperty;
+    }
+
+    public String getDisabledProperty() {
+        return disabledProperty;
+    }
+
+    public void setDisabledProperty(String disabledProperty) {
+        this.disabledProperty = disabledProperty;
     }
     
 }

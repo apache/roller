@@ -99,6 +99,8 @@ public class MenuHelper {
             boolean includeTab = true;
             if(configTab.getEnabledProperty() != null) {
                 includeTab = RollerConfig.getBooleanProperty(configTab.getEnabledProperty());
+            } else if(configTab.getDisabledProperty() != null) {
+                includeTab = ! RollerConfig.getBooleanProperty(configTab.getDisabledProperty());
             }
             
             if(includeTab) {
@@ -134,6 +136,8 @@ public class MenuHelper {
                     boolean includeItem = true;
                     if(configTabItem.getEnabledProperty() != null) {
                         includeItem = RollerConfig.getBooleanProperty(configTabItem.getEnabledProperty());
+                    } else if(configTabItem.getDisabledProperty() != null) {
+                        includeItem = ! RollerConfig.getBooleanProperty(configTabItem.getDisabledProperty());
                     }
                     
                     if(includeItem) {
@@ -245,50 +249,52 @@ public class MenuHelper {
         Iterator iter = menus.iterator();
         while (iter.hasNext()) {
             Element e = (Element) iter.next();
-            config.addTab(elementToConfigMenu(e));
+            config.addTab(elementToParsedTab(e));
         }
         
         return config;
     }
     
     
-    private static ParsedTab elementToConfigMenu(Element element) {
+    private static ParsedTab elementToParsedTab(Element element) {
         
-        ParsedTab menu = new ParsedTab();
+        ParsedTab tab = new ParsedTab();
         
-        menu.setName(element.getAttributeValue("name"));
-        menu.setPerm(element.getAttributeValue("perms"));
-        menu.setRole(element.getAttributeValue("roles"));
-        menu.setEnabledProperty(element.getAttributeValue("enabledProperty"));
+        tab.setName(element.getAttributeValue("name"));
+        tab.setPerm(element.getAttributeValue("perms"));
+        tab.setRole(element.getAttributeValue("roles"));
+        tab.setEnabledProperty(element.getAttributeValue("enabledProperty"));
+        tab.setDisabledProperty(element.getAttributeValue("disabledProperty"));
         
         List menuItems = element.getChildren("menu-item");
         Iterator iter = menuItems.iterator();
         while (iter.hasNext()) {
             Element e = (Element) iter.next();
-            menu.addItem(elementToConfigMenuItem(e));
+            tab.addItem(elementToParsedTabItem(e));
         }
         
-        return menu;
+        return tab;
     }
     
     
-    private static ParsedTabItem elementToConfigMenuItem(Element element) {
+    private static ParsedTabItem elementToParsedTabItem(Element element) {
         
-        ParsedTabItem menuItem = new ParsedTabItem();
+        ParsedTabItem tabItem = new ParsedTabItem();
         
-        menuItem.setName(element.getAttributeValue("name"));
-        menuItem.setAction(element.getAttributeValue("action"));
+        tabItem.setName(element.getAttributeValue("name"));
+        tabItem.setAction(element.getAttributeValue("action"));
         
         String subActions = element.getAttributeValue("subactions");
         if(subActions != null) {
-            menuItem.setSubActions(subActions.split(","));
+            tabItem.setSubActions(subActions.split(","));
         }
         
-        menuItem.setPerm(element.getAttributeValue("perms"));
-        menuItem.setRole(element.getAttributeValue("roles"));
-        menuItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
+        tabItem.setPerm(element.getAttributeValue("perms"));
+        tabItem.setRole(element.getAttributeValue("roles"));
+        tabItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
+        tabItem.setDisabledProperty(element.getAttributeValue("disabledProperty"));
         
-        return menuItem;
+        return tabItem;
     }
     
 }
