@@ -31,6 +31,7 @@ public class ParsedTab {
     private String perm = null;
     private String role = null;
     private String enabledProperty = null;
+    private String disabledProperty = null;
     
     private List tabItems = new ArrayList();
     
@@ -78,6 +79,14 @@ public class ParsedTab {
 
     public void setTabItems(List tabItems) {
         this.tabItems = tabItems;
+    }
+
+    public String getDisabledProperty() {
+        return disabledProperty;
+    }
+
+    public void setDisabledProperty(String disabledProperty) {
+        this.disabledProperty = disabledProperty;
     }
     
 }
