@@ -94,6 +94,11 @@ public abstract class UIAction extends ActionSupport
         return -1;
     }
     
+    // convenient way to tell if user being dealt with is an admin
+    public boolean isUserIsAdmin() {
+        return getAuthenticatedUser().hasRole("admin");
+    }
+    
     
     public String getSiteURL() {
         return RollerRuntimeConfig.getRelativeContextURL();
