@@ -43,7 +43,7 @@
 <property name="build.dist.apache"   value="${build.dist}/apache"/>
 <property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
 <property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
-<property name="build.dbscripts"     value="${ro.build}/dbscripts"/>
+<property name="build.dbscripts"     value="${build.webapp}/WEB-INF/dbscripts"/>
 <property name="build.tests"         value="${ro.build}/tests"/>
 <property name="build.reports"       value="${build.tests}/reports"/>
 <property name="build.docs"          value="${ro.build}/docs"/>
@@ -56,7 +56,7 @@
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.struts2"       value="${ro.tools}/struts-2.0.5" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
-<property name="tools.jpa"           value="${ro.tools}/openjpa-0.9.6" />
+<property name="tools.jpa"           value="${ro.tools}/openjpa-0.9.7" />
 <!-- 
 <property name="tools.jpa"           value="${ro.tools}/toplink-essentials-9.1" />
 -->
