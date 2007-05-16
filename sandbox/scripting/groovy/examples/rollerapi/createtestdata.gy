@@ -8,6 +8,8 @@ if (args[0] != "droptables") {
     return
 }
 
+// TODO: assumes database is Derby
+
 
 class RollerDatabaseGenerator {
 
