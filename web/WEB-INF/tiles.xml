@@ -228,8 +228,8 @@
         <put name="content" value="/WEB-INF/jsps/authoring/struts2/Resources.jsp" />
     </definition>
     
-    <definition name=".referers" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/authoring/referers.jsp" />
+    <definition name=".Referrers" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/Referrers.jsp" />
     </definition>
     
     
