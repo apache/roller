@@ -17,6 +17,9 @@
 		<named-query name="WebsiteData.getByHandleOrderByHandle">
 			<query>SELECT w FROM WebsiteData w WHERE w.handle = ?1 ORDER BY w.handle</query>
 		</named-query>
+		<named-query name="WebsiteData.getByLetterOrderByHandle">
+			<query>SELECT w FROM WebsiteData w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle</query>
+		</named-query>
 		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3  AND w.active = ?4

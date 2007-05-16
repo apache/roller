@@ -1058,7 +1058,7 @@ public class JPAUserManagerImpl implements UserManager {
     public List getWeblogsByLetter(char letter, int offset, int length)
     throws RollerException {
         Query query = strategy.getNamedQuery(
-                "WebsiteData.getByHandleOrderByHandle");
+                "WebsiteData.getByLetterOrderByHandle");
         query.setParameter(1, letter + "%");
         if (offset != 0) {
             query.setFirstResult(offset);
