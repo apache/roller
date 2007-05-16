@@ -288,8 +288,9 @@
             <result name="list" type="tiles">.Resources</result>
         </action>
         
-        <action name="referrers">
-            <result>/roller-ui/authoring/referers.do</result>
+        <action name="referrers!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.Referrers">
+            <result name="list" type="tiles">.Referrers</result>
         </action>
         
         
