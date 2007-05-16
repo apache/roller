@@ -25,7 +25,7 @@ import org.apache.roller.pojos.WebsiteData;
 /**
  * form bean use by CreateWeblogForm.
  */
-public class CreateWeblogFormBean {
+public class CreateWeblogBean {
     
     private String handle;
     private String name;
@@ -90,15 +90,6 @@ public class CreateWeblogFormBean {
     
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
-    }
-    
-    
-    public void copyTo(WebsiteData wd, Locale locale) {
-        wd.setHandle(handle);
-        wd.setName(name);
-        wd.setDescription(description);
-        wd.setLocale(this.locale);
-        wd.setTimeZone(timeZone);
     }
     
 }

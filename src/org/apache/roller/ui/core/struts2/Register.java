@@ -18,15 +18,9 @@
 
 package org.apache.roller.ui.core.struts2;
 
-import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.UUID;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.lang.StringUtils;
@@ -47,9 +41,9 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 /**
  * Actions for registering a new user.
  */
-public class RegisterForm extends UIAction implements ServletRequestAware {
+public class Register extends UIAction implements ServletRequestAware {
     
-    private static Log log = LogFactory.getLog(RegisterForm.class);
+    private static Log log = LogFactory.getLog(Register.class);
     
     public static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
     
@@ -60,10 +54,10 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
     private String activationStatus = null;
     
     private String activationCode = null;
-    private RegisterFormBean bean = new RegisterFormBean();
+    private ProfileBean bean = new ProfileBean();
     
     
-    public RegisterForm() {
+    public Register() {
         this.pageTitle = "newUser.addNewUser";
     }
     
@@ -85,24 +79,25 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
             return "disabled";
         }
         
-        try {
-            getBean().setLocale(Locale.getDefault().toString());
-            getBean().setTimeZone(TimeZone.getDefault().getID());
+        // set some defaults
+        getBean().setLocale(Locale.getDefault().toString());
+        getBean().setTimeZone(TimeZone.getDefault().getID());
             
+        try {
             // Let's see if there's any user-authentication available from Acegi
             // and retrieve custom user data to pre-populate form.
             boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
             if(usingSSO) {
                 UserData fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
                 if(fromSSO != null) {
-                    getBean().copyFrom(fromSSO, getLocale());
+                    getBean().copyFrom(fromSSO);
                     setFromSS0(true);
                 }
             }
             
-        } catch (Exception e) {
-            addError("error.editing.user", e.toString());
-            log.error("ERROR in newUser", e);
+        } catch (Exception ex) {
+            log.error("Error reading SSO user data", ex);
+            addError("error.editing.user", ex.toString());
         }
         
         return INPUT;
@@ -129,7 +124,7 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
             
             // copy form data into new user pojo
             UserData ud = new UserData();
-            getBean().copyTo(ud, getLocale()); // doesn't copy password
+            getBean().copyTo(ud); // doesn't copy password
             ud.setId(null);
             ud.setDateCreated(new java.util.Date());
             ud.setEnabled(Boolean.TRUE);
@@ -178,8 +173,12 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
             
             // now send activation email if necessary
             if (activationEnabled && ud.getActivationCode() != null) {
-                // send activation mail to the user
-                sendActivationMail(ud);
+                try {
+                    // send activation mail to the user
+                    MailUtil.sendUserActivationEmail(ud);
+                } catch (RollerException ex) {
+                    log.error("Error sending activation email to - "+ud.getEmailAddress(), ex);
+                }
                 
                 setActivationStatus("pending");
             }
@@ -194,9 +193,10 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
             
             return SUCCESS;
             
-        } catch (RollerException e) {
-            addError(e.getMessage());
-            log.error("ERROR in addUser", e);
+        } catch (RollerException ex) {
+            log.error("Error adding new user", ex);
+            // TODO: i18n
+            addError("Error adding new user");
         }
         
         return INPUT;
@@ -287,86 +287,6 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
     }
     
     
-    /**
-     * Send activation mail
-     */
-    private void sendActivationMail(UserData user) {
-        
-        try {
-            javax.naming.Context ctx = (javax.naming.Context)
-            new InitialContext().lookup("java:comp/env");
-            Session mailSession = (Session) ctx.lookup("mail/Session");
-            if (mailSession != null) {
-                ResourceBundle resources = ResourceBundle.getBundle(
-                        "ApplicationResources", getLocaleInstance(user.getLocale()));
-                
-                String from = RollerRuntimeConfig.getProperty(
-                        "user.account.activation.mail.from");
-                
-                String cc[] = new String[0];
-                String bcc[] = new String[0];
-                String to[] = new String[] { user.getEmailAddress() };
-                String subject = resources.getString(
-                        "user.account.activation.mail.subject");
-                String content;
-                
-                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                
-                StringBuffer sb = new StringBuffer();
-                
-                // activationURL=
-                String activationURL = rootURL
-                        + "/roller-ui/register!activate.rol?activationCode="
-                        + user.getActivationCode();
-                sb.append(MessageFormat.format(
-                        resources.getString("user.account.activation.mail.content"),
-                        new Object[] { user.getFullName(), user.getUserName(),
-                        activationURL }));
-                content = sb.toString();
-                
-                MailUtil.sendHTMLMessage(mailSession, from, to, cc, bcc, subject, content);
-            }
-            
-        } catch (MessagingException me) {
-            addError("error.add.user.mailSendException");
-            log.debug("ERROR sending email", me);
-        } catch (NamingException ne) {
-            addError("error.add.user.mailSetupException");
-            log.error("ERROR in mail setup?", ne);
-        }
-    }
-    
-    
-    /**
-     * Copied from WebsiteData.java by sedat
-     */
-    private Locale getLocaleInstance(String locale) {
-        if (locale != null) {
-            String[] localeStr = StringUtils.split(locale, "_");
-            if (localeStr.length == 1) {
-                if (localeStr[0] == null)
-                    localeStr[0] = "";
-                return new Locale(localeStr[0]);
-            } else if (localeStr.length == 2) {
-                if (localeStr[0] == null)
-                    localeStr[0] = "";
-                if (localeStr[1] == null)
-                    localeStr[1] = "";
-                return new Locale(localeStr[0], localeStr[1]);
-            } else if (localeStr.length == 3) {
-                if (localeStr[0] == null)
-                    localeStr[0] = "";
-                if (localeStr[1] == null)
-                    localeStr[1] = "";
-                if (localeStr[2] == null)
-                    localeStr[2] = "";
-                return new Locale(localeStr[0], localeStr[1], localeStr[2]);
-            }
-        }
-        return Locale.getDefault();
-    }
-    
-    
     public HttpServletRequest getServletRequest() {
         return servletRequest;
     }
@@ -375,11 +295,11 @@ public class RegisterForm extends UIAction implements ServletRequestAware {
         this.servletRequest = servletRequest;
     }
     
-    public RegisterFormBean getBean() {
+    public ProfileBean getBean() {
         return bean;
     }
 
-    public void setBean(RegisterFormBean bean) {
+    public void setBean(ProfileBean bean) {
         this.bean = bean;
     }
 

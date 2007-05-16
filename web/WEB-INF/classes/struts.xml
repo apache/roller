@@ -90,22 +90,22 @@
         </action>
         
         <action name="register!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.RegisterForm">
-            <result name="input" type="tiles">.RegisterForm</result>
+                class="org.apache.roller.ui.core.struts2.Register">
+            <result name="input" type="tiles">.Register</result>
             <result name="cancel" type="redirect">/</result>
             <result name="success" type="tiles">.Welcome</result>
         </action>
         
         <action name="profile!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.ProfileForm">
-            <result name="input" type="tiles">.ProfileForm</result>
+                class="org.apache.roller.ui.core.struts2.Profile">
+            <result name="input" type="tiles">.Profile</result>
             <result name="cancel" type="redirect-action">menu</result>
-            <result name="success" type="tiles">.ProfileForm</result>
+            <result name="success" type="tiles">.Profile</result>
         </action>
         
         <action name="createWeblog!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.CreateWeblogForm">
-            <result name="input" type="tiles">.CreateWeblogForm</result>
+                class="org.apache.roller.ui.core.struts2.CreateWeblog">
+            <result name="input" type="tiles">.CreateWeblog</result>
             <result name="cancel" type="redirect-action">menu</result>
             <result name="success" type="chain">menu</result>
         </action>

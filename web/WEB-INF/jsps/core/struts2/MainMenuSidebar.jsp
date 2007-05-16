@@ -26,7 +26,7 @@
                 
                 <hr size="1" noshade="noshade" />
                 
-                <s:if test="groupBloggingEnabled || (existingPermissions.isEmpty && pendingPermissions.isEmpty)">
+                <s:if test="getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty)">
                     <h3><a href="<s:url action="createWeblog" />"><s:text name="yourWebsites.createWeblog" /></a></h3>
                     <p><s:text name="yourWebsites.createWeblog.desc" /></p>
                 </s:if>
@@ -34,11 +34,11 @@
                 <h3><a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h3>
                 <p><s:text name="yourWebsites.editProfile.desc" /></p>
                 
-                <s:if test="userAdmin">               
+                <s:if test="userIsAdmin">               
                     <h3><a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h3>          
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>
                     
-                    <s:if test="planetAggregated">               
+                    <s:if test="getBooleanProp('planet.aggregator.enabled')">               
                         <h3><a href="<s:url action="planetConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.planetAdmin" /></a></h3>
                         <p><s:text name="yourWebsites.planetAdmin.desc" /></p>
                     </s:if>

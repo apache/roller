@@ -159,18 +159,6 @@ public class MainMenu extends UIAction {
         }
     }
     
-    public boolean isGroupBloggingEnabled() {
-        return RollerConfig.getBooleanProperty("groupblogging.enabled");
-    }
-    
-    public boolean isPlanetAggregated() {
-        return RollerConfig.getBooleanProperty("planet.aggregator.enabled");
-    }
-    
-    public boolean isUserAdmin() {
-        return getAuthenticatedUser().hasRole("admin");
-    }
-    
 
     public String getWebsiteId() {
         return websiteId;

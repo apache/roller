@@ -25,19 +25,7 @@
 
 <table class="formtable">
 
-<tr>
-    <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-    <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.screenName" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-    <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.fullName" /></td>
-</tr>
-
-<s:if test="fromSSO">
+    <s:if test="fromSSO">
 <tr>
     <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
     <td class="field"><strong><s:property value="bean.userName" /></strong></td>
@@ -66,6 +54,18 @@
     <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
 </tr>
 </s:else>
+
+<tr>
+    <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
+    <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
+    <td class="description"><s:text name="userRegister.tip.screenName" /></td>
+</tr>
+
+<tr>
+    <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
+    <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
+    <td class="description"><s:text name="userRegister.tip.fullName" /></td>
+</tr>
 
 <tr>
     <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>

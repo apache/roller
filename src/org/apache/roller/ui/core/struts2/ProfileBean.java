@@ -18,16 +18,13 @@
 
 package org.apache.roller.ui.core.struts2;
 
-import java.util.Date;
-import java.util.Locale;
-import org.apache.roller.RollerException;
 import org.apache.roller.pojos.UserData;
 
 
 /**
  * A simple bean for managing the form data used by the RegisterForm.
  */
-public class RegisterFormBean {
+public class ProfileBean {
     
     private String id = null;
     private String userName = null;
@@ -123,7 +120,7 @@ public class RegisterFormBean {
     }
     
     
-    public void copyTo(UserData dataHolder, Locale locale) {
+    public void copyTo(UserData dataHolder) {
         
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
@@ -133,7 +130,7 @@ public class RegisterFormBean {
     }
     
     
-    public void copyFrom(UserData dataHolder, Locale locale) {
+    public void copyFrom(UserData dataHolder) {
         
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();
