@@ -26,13 +26,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.struts.actions.CreateWebsiteAction.CreateWebsitePageModel;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.Utilities;
 
@@ -40,14 +38,14 @@ import org.apache.roller.util.Utilities;
 /**
  * Allows user to create a new website.
  */
-public class CreateWeblogForm extends UIAction {
+public class CreateWeblog extends UIAction {
     
-    private static Log log = LogFactory.getLog(CreateWeblogForm.class);
+    private static Log log = LogFactory.getLog(CreateWeblog.class);
     
-    private CreateWeblogFormBean bean = new CreateWeblogFormBean();
+    private CreateWeblogBean bean = new CreateWeblogBean();
     
 
-    public CreateWeblogForm() {
+    public CreateWeblog() {
         this.pageTitle = "createWebsite.title";
     }
     
@@ -138,16 +136,17 @@ public class CreateWeblogForm extends UIAction {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
                 mgr.addWebsite(wd);
                 RollerFactory.getRoller().flush();
+                
+                // tell the user their weblog was created
+                addMessage("createWebsite.created", getBean().getHandle());
+                
+                return SUCCESS;
+                
             } catch (RollerException e) {
                 log.error("ERROR adding weblog", e);
                 // TODO: error handling
                 addError(e.getMessage());
             }
-
-            // tell the user their weblog was created
-            addMessage("createWebsite.created", getBean().getHandle());
-            
-            return SUCCESS;
             
         }
         
@@ -160,7 +159,7 @@ public class CreateWeblogForm extends UIAction {
         
         String allowed = RollerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
-            allowed = RegisterForm.DEFAULT_ALLOWED_CHARS;
+            allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
         
@@ -178,7 +177,7 @@ public class CreateWeblogForm extends UIAction {
             addError("createWeblog.error.missingEmailAddress");
         }
         
-        try {
+        if(!StringUtils.isEmpty(getBean().getHandle())) try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             if (mgr.getWebsiteByHandle(getBean().getHandle()) != null) {
                 addError("createWeblog.error.handleExists");
@@ -199,11 +198,11 @@ public class CreateWeblogForm extends UIAction {
     }
     
     
-    public CreateWeblogFormBean getBean() {
+    public CreateWeblogBean getBean() {
         return bean;
     }
 
-    public void setBean(CreateWeblogFormBean bean) {
+    public void setBean(CreateWeblogBean bean) {
         this.bean = bean;
     }
     

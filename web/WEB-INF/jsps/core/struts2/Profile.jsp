@@ -31,18 +31,6 @@
 </tr>
 
 <tr>
-    <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-    <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.screenName" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-    <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.fullName" /></td>
-</tr>
-
-<tr>
     <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
     <td class="field">
         <s:password name="bean.passwordText" size="20" maxlength="20" />
@@ -54,6 +42,18 @@
     <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
     <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
     <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
+</tr>
+
+<tr>
+    <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
+    <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
+    <td class="description"><s:text name="userRegister.tip.screenName" /></td>
+</tr>
+
+<tr>
+    <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
+    <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
+    <td class="description"><s:text name="userRegister.tip.fullName" /></td>
 </tr>
     
 <tr>

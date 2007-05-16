@@ -20,7 +20,6 @@ package org.apache.roller.ui.admin.struts2;
 
 import java.util.Locale;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.ui.core.struts2.RegisterFormBean;
 
 
 /**

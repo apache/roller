@@ -58,20 +58,20 @@
         <put name="content" value="/WEB-INF/jsps/core/struts2/Login.jsp" />
     </definition>
     
-    <definition name=".RegisterForm" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/core/struts2/RegisterForm.jsp" />
+    <definition name=".Register" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/Register.jsp" />
     </definition>
     
     <definition name=".Welcome" extends=".tiles-simplepage" >
         <put name="content" value="/WEB-INF/jsps/core/struts2/Welcome.jsp" />
     </definition>
     
-    <definition name=".ProfileForm" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/core/struts2/ProfileForm.jsp" />
+    <definition name=".Profile" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/Profile.jsp" />
     </definition>
     
-    <definition name=".CreateWeblogForm" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/core/struts2/CreateWeblogForm.jsp" />
+    <definition name=".CreateWeblog" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/CreateWeblog.jsp" />
     </definition>
     
     <definition name=".MainMenu" extends=".tiles-mainmenupage" >
