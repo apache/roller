@@ -16,20 +16,20 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.admin.struts2;
+package org.apache.roller.ui.authoring.struts2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.util.struts2.KeyValueObject;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.core.util.struts2.UIAction;
@@ -37,14 +37,14 @@ import org.apache.roller.util.Utilities;
 
 
 /**
- * Action for managing global set of comments.
+ * Action for managing weblog comments.
  */
-public class GlobalCommentManagement extends UIAction {
+public class Comments extends UIAction {
     
-    private static Log log = LogFactory.getLog(GlobalCommentManagement.class);
+    private static Log log = LogFactory.getLog(Comments.class);
     
     // bean for managing submitted data
-    private GlobalCommentManagementBean bean = new GlobalCommentManagementBean();
+    private CommentsBean bean = new CommentsBean();
     
     // list of comments to display
     private List comments = Collections.EMPTY_LIST;
@@ -69,21 +69,16 @@ public class GlobalCommentManagement extends UIAction {
     private int bulkDeleteCount = 0;
     
     
-    public GlobalCommentManagement() {
-        this.actionName = "globalCommentManagement";
-        this.desiredMenu = "admin";
+    public Comments() {
+        this.actionName = "comments";
+        this.desiredMenu = "editor";
         this.pageTitle = "commentManagement.title";
     }
     
     
-    // admin role required
-    public String requiredUserRole() {
-        return "admin";
-    }
-    
-    // no weblog required
-    public boolean isWeblogRequired() {
-        return false;
+    @Override
+    public short requiredWeblogPermissions() {
+        return PermissionsData.AUTHOR;
     }
     
     
@@ -92,7 +87,7 @@ public class GlobalCommentManagement extends UIAction {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List comments = wmgr.getComments(
-                    null,
+                    getActionWeblog(),
                     null,
                     getBean().getSearchString(),
                     getBean().getStartDate(),
@@ -121,7 +116,6 @@ public class GlobalCommentManagement extends UIAction {
     }
 
     
-    // show comment management page
     public String execute() {
         
         // load list of comments from query
@@ -148,7 +142,7 @@ public class GlobalCommentManagement extends UIAction {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List allMatchingComments = wmgr.getComments(
-                    null,
+                    getActionWeblog(),
                     null,
                     getBean().getSearchString(),
                     getBean().getStartDate(),
@@ -180,7 +174,7 @@ public class GlobalCommentManagement extends UIAction {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             int deleted = wmgr.removeMatchingComments(
-                    null,
+                    getActionWeblog(),
                     null,
                     getBean().getSearchString(),
                     getBean().getStartDate(),
@@ -191,7 +185,7 @@ public class GlobalCommentManagement extends UIAction {
             addMessage("Successfully deleted "+deleted+" comments");
             
             // reset form and load fresh comments list
-            setBean(new GlobalCommentManagementBean());
+            setBean(new CommentsBean());
             
             return execute();
             
@@ -213,7 +207,7 @@ public class GlobalCommentManagement extends UIAction {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             
-            List flushList = new ArrayList();
+            List<CommentData> flushList = new ArrayList();
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
@@ -223,14 +217,22 @@ public class GlobalCommentManagement extends UIAction {
                 CommentData deleteComment = null;
                 for(String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
-                    wmgr.removeComment(deleteComment);
-                    flushList.add(deleteComment);
+                    
+                    // make sure comment is tied to action weblog
+                    if(getActionWeblog().equals(deleteComment.getWeblogEntry().getWebsite())) {
+                        wmgr.removeComment(deleteComment);
+                        flushList.add(deleteComment);
+                    }
                 }
             }
             
             // loop through IDs of all comments displayed on page
-            List spamIds = Arrays.asList(getBean().getSpamComments());
+            List<String> approvedIds = Arrays.asList(getBean().getApprovedComments());
+            List<String> spamIds = Arrays.asList(getBean().getSpamComments());
             log.debug(spamIds.size()+" comments marked as spam");
+            
+            // track comments approved via moderation
+            List<CommentData> approvedComments = new ArrayList();
             
             String[] ids = Utilities.stringToStringArray(getBean().getIds(),",");
             for (int i=0; i < ids.length; i++) {
@@ -244,34 +246,51 @@ public class GlobalCommentManagement extends UIAction {
                 
                 CommentData comment = wmgr.getComment(ids[i]);
                 
-                // mark/unmark spam
-                if (spamIds.contains(ids[i]) && 
-                        !CommentData.SPAM.equals(comment.getStatus())) {
-                    log.debug("Marking as spam - "+comment.getId());
-                    comment.setStatus(CommentData.SPAM);
-                    wmgr.saveComment(comment);
-                    
-                    flushList.add(comment);
-                } else if(CommentData.SPAM.equals(comment.getStatus())) {
-                    log.debug("Marking as approved - "+comment.getId());
-                    comment.setStatus(CommentData.APPROVED);
-                    wmgr.saveComment(comment);
-                    
-                    flushList.add(comment);
+                // make sure comment is tied to action weblog
+                if(getActionWeblog().equals(comment.getWeblogEntry().getWebsite())) {
+                    // comment approvals and mark/unmark spam
+                    if(approvedIds.contains(ids[i])) {
+                        // if a comment was previously PENDING then this is
+                        // it's first approval, so track it for notification
+                        if(CommentData.PENDING.equals(comment.getStatus())) {
+                            approvedComments.add(comment);
+                        }
+                        
+                        log.debug("Marking as approved - "+comment.getId());
+                        comment.setStatus(CommentData.APPROVED);
+                        wmgr.saveComment(comment);
+                        
+                        flushList.add(comment);
+                        
+                    } else if(spamIds.contains(ids[i])) {
+                        log.debug("Marking as spam - "+comment.getId());
+                        comment.setStatus(CommentData.SPAM);
+                        wmgr.saveComment(comment);
+                        
+                        flushList.add(comment);
+                    } else if(!CommentData.DISAPPROVED.equals(comment.getStatus())) {
+                        log.debug("Marking as disapproved - "+comment.getId());
+                        comment.setStatus(CommentData.DISAPPROVED);
+                        wmgr.saveComment(comment);
+                        
+                        flushList.add(comment);
+                    }
                 }
             }
             
             RollerFactory.getRoller().flush();
             
             // notify caches of changes
-            for (Iterator comments=flushList.iterator(); comments.hasNext();) {
-                CacheManager.invalidate((CommentData)comments.next());
+            for(CommentData comm : flushList) {
+                CacheManager.invalidate(comm);
             }
+            
+//            sendCommentNotifications(request, approvedComments);
             
             addMessage("commentManagement.updateSuccess");
             
             // reset form and load fresh comments list
-            setBean(new GlobalCommentManagementBean());
+            setBean(new CommentsBean());
             
             return execute();
             
@@ -313,11 +332,11 @@ public class GlobalCommentManagement extends UIAction {
     }
     
     
-    public GlobalCommentManagementBean getBean() {
+    public CommentsBean getBean() {
         return bean;
     }
 
-    public void setBean(GlobalCommentManagementBean bean) {
+    public void setBean(CommentsBean bean) {
         this.bean = bean;
     }
 

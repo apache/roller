@@ -24,10 +24,11 @@ Each menu or menu item is governed by four attrbibutes:
     
     <menu name="tabbedmenu.weblog" perms="limited" roles="editor">
         
-        <menu-item action="postEntry" 
+        <menu-item action="entryAdd" 
                    name="tabbedmenu.weblog.newEntry" 
                    roles="editor"
-                   perms="limited" />
+                   perms="limited" 
+                   subactions="entryEdit,entryRemove" />
         
         <menu-item action="entries" 
                    name="tabbedmenu.weblog.archives" 
@@ -37,8 +38,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item action="comments" 
                    name="tabbedmenu.admin.commentManagement" 
                    roles="editor"
-                   perms="admin" 
-                   subactions="commentQuery" />
+                   perms="admin" />
         
         <menu-item action="categories"   
                    name="tabbedmenu.weblog.categories" 

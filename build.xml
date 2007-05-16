@@ -318,12 +318,12 @@ ro.buildUser=${user.name}
     </copy>
     
     <mkdir dir="${build.compile.business}/META-INF" />
-    <copy todir="${build.compile.business}/META-INF" file="web/WEB-INF/classes/META-INF/persistence.xml" />
+    <copy todir="${build.compile.business}/META-INF" file="${ro.src}/META-INF/persistence.xml" />
 
     <!-- OpenJPA bytecode enhancement  -->
     <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
     <openjpac>
-        <config propertiesFile="web/WEB-INF/classes/META-INF/persistence.xml" />
+        <config propertiesFile="${ro.src}/META-INF/persistence.xml" />
         <classpath>
             <path refid="business.path"/>
             <pathelement location="${build.compile.business}" />
