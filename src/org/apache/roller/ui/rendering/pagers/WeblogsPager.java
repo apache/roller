@@ -142,12 +142,15 @@ public class WeblogsPager extends AbstractPager {
             try {
                 Roller roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
-                List weblogs = null;
+                List rawWeblogs = null;
                 if (letter == null) {
-                    weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
+                    rawWeblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
-                    weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
+                    rawWeblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
+                // Collections returned by backend are not writeable, so create copy
+                List weblogs = new ArrayList();
+                weblogs.addAll(rawWeblogs);
                 
                 // check if there are more results for paging
                 if(weblogs.size() > length) {
