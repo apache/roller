@@ -581,7 +581,7 @@ public class PageServlet extends HttpServlet {
                     if (lastSlash == -1) lastSlash = requestUrl.length();
                     String requestSite = requestUrl.substring(0, lastSlash);
                     
-                    if (referrerUrl.matches(requestSite + ".*\\.do.*")) {
+                    if (referrerUrl.matches(requestSite + ".*\\.rol.*")) {
                         referrerUrl = null;
                     } else if(BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
                         return true;

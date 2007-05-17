@@ -15,35 +15,33 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%-- This page is designed to be included in edit-weblog.jsp --%>
-<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script type="text/javascript">
 <!--
 function postWeblogEntry() {
-    document.weblogEntryFormEx.text.value =    xinha_editors.xe_content.getHTML().trim();
+    document.weblogEntryFormEx.text.value = xinha_editors.xe_content.getHTML().trim();
     document.weblogEntryFormEx.summary.value = xinha_editors.xe_summary.getHTML().trim();
-    document.weblogEntryFormEx.submit();
 }
 
 // (preferably absolute) URL (including trailing slash) where Xinha is installed
-_editor_url  = '<c:url value="/roller-ui/authoring/editors/xinha/" />' 
+_editor_url  = '<s:url value="/roller-ui/authoring/editors/xinha/" />' 
 
 // And the language we need to use in the editor.
 _editor_lang = "en"; 
 -->
 </script>
-<script type="text/javascript" src='<c:url value="/roller-ui/authoring/editors/xinha/htmlarea.js" />'></script>
-<script type="text/javascript" src='<c:url value="/roller-ui/authoring/editors/xinha/my_config.js" />'></script> 
+<script type="text/javascript" src='<s:url value="/roller-ui/authoring/editors/xinha/htmlarea.js" />'></script>
+<script type="text/javascript" src='<s:url value="/roller-ui/authoring/editors/xinha/my_config.js" />'></script> 
 <noscript><p><b>Javascript must be enabled to use this form.</b></p></noscript>
 
 <%-- ===================================================================== --%>
-<b><fmt:message key="weblogEdit.content" /></b><br />
-<html:textarea styleId="xe_content" property="text" rows="25" cols="50" style="width: 100%"></html:textarea>
+<b><s:text name="weblogEdit.content" /></b><br />
+<s:textarea id="xe_content" name="bean.text" rows="25" cols="50" cssStyle="width: 100%" />
 
 <%-- ===================================================================== --%>
-<b><fmt:message key="weblogEdit.summary" /></b><br />
-<html:textarea styleId="xe_summary" property="summary" rows="10" cols="50" style="width: 100%"></html:textarea>
+<b><s:text name="weblogEdit.summary" /></b><br />
+<s:textarea id="xe_summary" name="bean.summary" rows="10" cols="50" cssStyle="width: 100%" />
 
 
  

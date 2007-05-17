@@ -25,13 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.WeblogEntryPlugin;
@@ -51,6 +49,7 @@ import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.util.URLUtilities;
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -130,19 +129,7 @@ public class OldPageHelper {
     
     /** Build the URL for editing an WeblogEntry **/
     public String getEntryEditUrl(WeblogEntryDataWrapper entry) {
-        Hashtable params = new Hashtable();
-        params.put( RequestConstants.WEBLOGENTRY_ID, entry.getId());
-        params.put( RequestConstants.ANCHOR,        entry.getAnchor());
-        if (mWebsite != null) {
-            params.put( RequestConstants.USERNAME,  mWebsite.getHandle());
-        }
-        try {
-            return RequestUtils.computeURL( mPageContext,
-                    "weblogEdit", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            mLogger.warn("RollerRequest.editEntryUrl exception: ", mue);
-        }
-        return mRequest.getContextPath() + "edtior/weblog.do?method=edit";
+        return URLUtilities.getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), false);
     }
     
     

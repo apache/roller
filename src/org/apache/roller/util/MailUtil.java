@@ -113,9 +113,7 @@ public class MailUtil {
             to = (String[])reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
-            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-            String editURL = rootURL
-                    + "/roller-ui/authoring/weblog.do?method=edit&entryId=" + entry.getId();
+            String editURL = URLUtilities.getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", entry.getWebsite().getLocaleInstance());
@@ -169,7 +167,7 @@ public class MailUtil {
             
             // Figure URL to entry edit page
             String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-            String url = rootURL + "/roller-ui/yourWebsites.do";
+            String url = rootURL + "/roller-ui/menu.rol";
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources",
