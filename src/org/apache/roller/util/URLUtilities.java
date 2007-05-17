@@ -386,6 +386,67 @@ public final class URLUtilities {
     
     
     /**
+     * Url to login page.
+     */
+    public static final String getLoginURL(boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/login-redirect.rol");
+        
+        return url.toString();
+    }
+    
+    
+    /**
+     * Url to logout page.
+     */
+    public static final String getLogoutURL(boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/logout-redirect.rol");
+        
+        return url.toString();
+    }
+    
+    
+    /**
+     * Get a url to add a new weblog entry.
+     */
+    public static final String getEntryAddURL(String weblogHandle,
+                                              boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/authoring/entryAdd.rol");
+        
+        Map params = new HashMap();
+        params.put("weblog", weblogHandle);
+        
+        return url.toString() + getQueryString(params);
+    }
+    
+    
+    /**
      * Get a url to edit a specific weblog entry.
      */
     public static final String getEntryEditURL(String weblogHandle,
@@ -405,6 +466,29 @@ public final class URLUtilities {
         Map params = new HashMap();
         params.put("weblog", weblogHandle);
         params.put("bean.id", entryId);
+        
+        return url.toString() + getQueryString(params);
+    }
+    
+    
+    /**
+     * Get a url to weblog config page.
+     */
+    public static final String getWeblogConfigURL(String weblogHandle,
+                                                  boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/admin/weblogConfig.rol");
+        
+        Map params = new HashMap();
+        params.put("weblog", weblogHandle);
         
         return url.toString() + getQueryString(params);
     }
