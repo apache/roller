@@ -16,14 +16,12 @@
   directory of this distribution.
 --%>
 <%-- This page is designed to be included in edit-weblog.jsp --%>
-<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script type="text/javascript">
 <!--
-function postWeblogEntry(publish) {
-    if (publish)
-        document.weblogEntryFormEx.publishEntry.value = "true";
-    document.weblogEntryFormEx.submit();
+function postWeblogEntry() {
+    // no-op
 }
 function changeSize(e, num) {
     a = e.rows + num;
@@ -43,35 +41,35 @@ function changeSize1(e, num) {
 </script>
 
 <%-- ===================================================================== --%>
-<p class="toplabel"><fmt:message key="weblogEdit.content" /></p>
+<p class="toplabel"><s:text name="weblogEdit.content" /></p>
 
-<html:textarea property="text" cols="75" rows="25" style="width: 100%" tabindex="5"/>
+<s:textarea name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
 <script type="text/javascript">
     <!--
     if (getCookie("editorSize1") != null) {
-        document.weblogEntryFormEx.text.rows = getCookie("editorSize1");
+        document.getElementById('entry_bean_text').rows = getCookie("editorSize1");
     }
     -->
 </script>
 <table style="width:100%"><tr><td align="right">
   <!-- Add buttons to make this textarea taller or shorter -->
-  <input type="button" name="taller" value=" &darr; " onclick="changeSize1(document.weblogEntryFormEx.text, 5)" />
-  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(document.weblogEntryFormEx.text, -5)" />
+  <input type="button" name="taller" value=" &darr; " onclick="changeSize1(document.getElementById('entry_bean_text'), 5)" />
+  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(document.getElementById('entry_bean_text'), -5)" />
 </td></tr></table>
 
 <%-- ===================================================================== --%>
-<p class="toplabel"><fmt:message key="weblogEdit.summary" /></p>
+<p class="toplabel"><s:text name="weblogEdit.summary" /></p>
 
-<html:textarea property="summary" cols="75" rows="5" style="width: 100%" tabindex="6"/>
+<s:textarea name="bean.summary" cols="75" rows="5" cssStyle="width: 100%" tabindex="6"/>
 <script type="text/javascript">
     <!--
     if (getCookie("editorSize") != null) {
-        document.weblogEntryFormEx.summary.rows = getCookie("editorSize");
+        document.getElementById('entry_bean_summary').rows = getCookie("editorSize");
     }
     -->
 </script>
 <table style="width:100%"><tr><td align="right">
   <!-- Add buttons to make this textarea taller or shorter -->
-  <input type="button" name="taller" value=" &darr; " onclick="changeSize(document.weblogEntryFormEx.summary, 5)" />
-  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize(document.weblogEntryFormEx.summary, -5)" />
+  <input type="button" name="taller" value=" &darr; " onclick="changeSize(document.getElementById('entry_bean_summary'), 5)" />
+  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize(document.getElementById('entry_bean_summary'), -5)" />
 </td></tr></table>
