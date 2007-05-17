@@ -18,23 +18,20 @@
 
 package org.apache.roller.ui.rendering.model;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.URLUtilities;
-import org.apache.roller.util.Utilities;
-import org.apache.struts.util.RequestUtils;
-
 
 /**
  * Provides access to URL building functionality.
@@ -96,27 +93,13 @@ public class URLModel implements Model {
     
     /** URL for logging in */  
     public String getLogin() {
-        String returnURL = null;
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "login-redirect", null, null, null, null, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
+        return URLUtilities.getLoginURL(false);
     }
     
     
     /** URL for logging out */
     public String getLogout() {
-        String returnURL = null;
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "logout-redirect", null, null, null, null, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
+        return URLUtilities.getLogoutURL(false);
     }
     
     
@@ -270,47 +253,29 @@ public class URLModel implements Model {
     
     /** URL for editing a weblog entry */
     public String editEntry(String anchor) {
-        String ret = null;
-        Map params = new HashMap();
-        params.put(RequestConstants.ANCHOR, anchor);
-        params.put(RequestConstants.WEBLOG, weblog.getHandle());
         try {
-            ret = RequestUtils.computeURL(pageContext,
-                "weblogEdit", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
+            // need to determine entryId from anchor
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogEntryData entry = wmgr.getWeblogEntryByAnchor(weblog, anchor);
+            if(entry != null) {
+                return URLUtilities.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
+            }
+        } catch (RollerException ex) {
+            log.error("Error looking up entry by anchor - "+anchor, ex);
         }
-        return ret;
+        return null;
     } 
     
     
     /** URL for creating a new weblog entry */
     public String getCreateEntry() {
-        String returnURL = null;
-        Map params = new HashMap();
-        params.put(RequestConstants.WEBLOG, weblog.getHandle());
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "weblogCreate", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
+        return URLUtilities.getEntryAddURL(weblog.getHandle(), false);
     }
     
     
     /** URL for editing weblog settings */
     public String getEditSettings() {
-        String returnURL = null;
-        Map params = new HashMap();
-        params.put(RequestConstants.WEBLOG, weblog.getHandle());        
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "editWebsite", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
+        return URLUtilities.getWeblogConfigURL(weblog.getHandle(), false);
     }
     
     
