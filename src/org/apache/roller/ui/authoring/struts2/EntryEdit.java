@@ -239,6 +239,11 @@ public final class EntryEdit extends EntryBase {
     }
     
     
+    public String getPreviewURL() {
+        return getEntry().getPermalink();
+    }
+    
+    
     public EntryBean getBean() {
         return bean;
     }
