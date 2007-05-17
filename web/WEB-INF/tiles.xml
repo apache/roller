@@ -54,6 +54,10 @@
     
     
     <!-- core pages (and associates) -->
+    <definition name=".Setup" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/struts2/Setup.jsp" />
+    </definition>
+    
     <definition name=".Login" extends=".tiles-simplepage" >
         <put name="content" value="/WEB-INF/jsps/core/struts2/Login.jsp" />
     </definition>

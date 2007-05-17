@@ -84,6 +84,11 @@
         </action>
         
         
+        <action name="setup"
+                class="org.apache.roller.ui.core.struts2.Setup">
+            <result name="success" type="tiles">.Setup</result>
+        </action>
+            
         <action name="login"
                 class="org.apache.roller.ui.core.struts2.Login">
             <result type="tiles">.Login</result>
