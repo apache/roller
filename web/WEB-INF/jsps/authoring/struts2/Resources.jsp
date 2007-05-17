@@ -147,7 +147,7 @@ Table of files, each with link, size and checkbox
                 </td>
            </tr>
         </s:if>
-        <s:iterator id="file" value="files" status="rowstatus">
+        <s:iterator id="f" value="files" status="rowstatus">
             
             <s:if test="#rowstatus.odd == true">
                 <tr class="rollertable_odd">
@@ -156,23 +156,24 @@ Table of files, each with link, size and checkbox
                 <tr class="rollertable_even">
             </s:else>
             <td class="rollertable">
-                <s:if test="#file.directory">
+                <s:if test="#f.directory">
                     <s:url id="dirUrl" action="resources">
                         <s:param name="weblog" />
-                        <s:param name="path" value="#file.path" />
+                        <s:param name="path" value="#f.path" />
                     </s:url>
                     <img src='<c:url value="/images/folder.png"/>' style="padding:0px" />
-                    <s:a href="%{dirUrl}"><s:property value="#file.name" /></s:a>
+                    <s:a href="%{dirUrl}"><s:property value="#f.name" /></s:a>
                 </s:if>
                 <s:else>
                     <img src='<s:url value="/images/image.png"/>' style="padding:0px" />
-                    <a href='<c:out value="${model.resourcesBaseURL}" /><s:property value="#file.path" />'>
-                        <s:property value="#file.name" />
+                    <a href='<c:out value="${model.resourcesBaseURL}" /><s:property value="#f.path" />'>
+                        <s:property value="#f.name" />
                     </a>
                 </s:else>
             </td>
             <td class="rollertable" align="right">
-                <fmt:formatNumber value="${ffile.length / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB
+                <c:out value="${f.length}" />
+                <fmt:formatNumber value="${f.length / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB
             </td>
             <td class="rollertable" align="center">
                 <input type="checkbox" name="deleteIds" value="<s:property value="#file.path" />" />
@@ -184,7 +185,7 @@ Table of files, each with link, size and checkbox
        <tr>
            <td></td>
            <td></td>
-           <td><fmt:formatNumber value="${model.totalSize / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB</td>
+           <td><s:property value="totalSize" /><fmt:formatNumber value="${totalSize / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB</td>
        </tr>
     </table>
     
