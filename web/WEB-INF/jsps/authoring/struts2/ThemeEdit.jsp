@@ -39,8 +39,8 @@ function fullPreview() {
    <s:text name="themeEditor.tip" />
 </p>
 
-<s:form action="themes!save">
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+<s:form action="themeEdit!save">
+    <s:hidden name="weblog" />
     
     <p><s:text name="themeEditor.yourCurrentTheme" />: <b><s:property value="actionWeblog.theme.name"/></b></p>
     
@@ -52,7 +52,7 @@ function fullPreview() {
         <img name="preview" src="" />
         <!-- initialize preview image at page load -->
         <script type="text/javascript">
-                        previewImage('<s:property value="actionWeblog.theme.id"/>');
+            previewImage('<s:property value="actionWeblog.theme.id"/>');
         </script>
     </p>
     <p><s:submit key="themeEditor.save" /></p>
