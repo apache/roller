@@ -158,8 +158,8 @@ Table of files, each with link, size and checkbox
             <td class="rollertable">
                 <s:if test="#f.directory">
                     <s:url id="dirUrl" action="resources">
-                        <s:param name="weblog" />
-                        <s:param name="path" value="#f.path" />
+                        <s:param name="weblog" value="%{actionWeblog.handle}" />
+                        <s:param name="path" value="%{#f.path}" />
                     </s:url>
                     <img src='<c:url value="/images/folder.png"/>' style="padding:0px" />
                     <s:a href="%{dirUrl}"><s:property value="#f.name" /></s:a>
@@ -172,11 +172,10 @@ Table of files, each with link, size and checkbox
                 </s:else>
             </td>
             <td class="rollertable" align="right">
-                <c:out value="${f.length}" />
                 <fmt:formatNumber value="${f.length / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB
             </td>
             <td class="rollertable" align="center">
-                <input type="checkbox" name="deleteIds" value="<s:property value="#file.path" />" />
+                <input type="checkbox" name="deleteIds" value="<s:property value="#f.path" />" />
             </td>
             </tr>
             
@@ -185,7 +184,7 @@ Table of files, each with link, size and checkbox
        <tr>
            <td></td>
            <td></td>
-           <td><s:property value="totalSize" /><fmt:formatNumber value="${totalSize / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB</td>
+           <td><fmt:formatNumber value="${totalSize / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB</td>
        </tr>
     </table>
     
