@@ -49,7 +49,7 @@ public class WeblogConfig extends UIAction {
     private static Log log = LogFactory.getLog(WeblogConfig.class);
     
     // bean for managing submitted data
-    private WeblogConfigForm bean = new WeblogConfigForm();
+    private WeblogConfigBean bean = new WeblogConfigBean();
     
     // categories list
     private List weblogCategories = Collections.EMPTY_LIST;
@@ -216,11 +216,11 @@ public class WeblogConfig extends UIAction {
     }
     
     
-    public WeblogConfigForm getBean() {
+    public WeblogConfigBean getBean() {
         return bean;
     }
 
-    public void setBean(WeblogConfigForm bean) {
+    public void setBean(WeblogConfigBean bean) {
         this.bean = bean;
     }
 

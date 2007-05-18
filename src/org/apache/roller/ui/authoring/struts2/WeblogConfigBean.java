@@ -32,7 +32,7 @@ import org.apache.roller.util.DateUtil;
 /**
  * Bean used to manage data submitted to WeblogConfig action.
  */
-public class WeblogConfigForm {
+public class WeblogConfigBean {
     
     private String id = null;
     private String handle = null;
