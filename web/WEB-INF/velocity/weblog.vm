@@ -176,7 +176,7 @@ Show comments for weblog entry according to Roller configuration.
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
-                    <a rel="nofollow" href="$comment.url"><b>$utils.escapeHTML($comment.name)</b></a>
+                    <a rel="nofollow" href="$utils.escapeHTML($comment.url)"><b>$utils.escapeHTML($comment.name)</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
                     <b>$utils.escapeHTML($comment.name)</b>
                 #elseif ($comment.remoteHost)
