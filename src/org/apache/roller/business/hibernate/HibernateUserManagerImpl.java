@@ -840,7 +840,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 Query query = session.createQuery(
                     "select count(user) from UserData user where upper(user.userName) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
-                Integer count = (Integer)row.get(0);
+                Number count = (Number)row.get(0);
                 results.put(new String(new char[]{lc.charAt(i)}), count);
             }
             return results;
@@ -882,7 +882,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 Query query = session.createQuery(
                     "select count(website) from WebsiteData website where upper(website.handle) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
-                Integer count = (Integer)row.get(0);
+                Number count = (Number)row.get(0);
                 results.put(new String(new char[]{lc.charAt(i)}), count);
             }
             return results;
