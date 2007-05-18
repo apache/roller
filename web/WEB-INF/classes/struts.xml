@@ -63,9 +63,11 @@
         <!-- use our own interceptor stack which extends the default stack -->
         <default-interceptor-ref name="rollerStack"/>
         
+        
+        <!-- results made available to all actions -->
         <global-results>
             <result name="access-denied" type="tiles">.denied</result>
-            <result name="error">/error.jsp</result>
+            <result name="error" type="tiles">.error</result>
         </global-results>
         
         
@@ -83,6 +85,17 @@
             <result>/roller-ui/logout-redirect.jsp</result>
         </action>
         
+        <action name="error">
+            <result type="tiles">.error</result>
+        </action>
+        
+        <action name="403">
+            <result type="tiles">.403</result>
+        </action>
+        
+        <action name="404">
+            <result type="tiles">.404</result>
+        </action>
         
         <action name="setup"
                 class="org.apache.roller.ui.core.struts2.Setup">
@@ -373,22 +386,10 @@
             <result name="success" type="tiles">.Maintenance</result>
         </action>
         
-        
         <!--
-        
         <action name="importEntries!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.ImportEntriesAction">
             <result name="importEntries.page">.import-entries</result>
-        </action>
-        
-        <action name="weblogEntryManagement!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.WeblogEntryManagementAction">
-            <result name="weblogEntryManagement.page">.WeblogEntryManagement</result>
-        </action>
-        
-        <action name="referers!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.ReferersAction">
-            <result name="referers.page">.referers</result>
         </action>
         
         <action name="toggleLinkback!*" method="{1}"

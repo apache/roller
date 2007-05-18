@@ -499,22 +499,22 @@
     
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
-        <location>/WEB-INF/jsps/error.jsp</location>
+        <location>/roller-ui/error.rol</location>
     </error-page>
     
     <error-page>
         <error-code>403</error-code>
-        <location>/WEB-INF/jsps/403.jsp</location>
+        <location>/roller-ui/403.rol</location>
     </error-page>
     
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/jsps/404.jsp</location>
+        <location>/roller-ui/404.rol</location>
     </error-page>
     
     <error-page>
         <error-code>400</error-code>
-        <location>/login-redirect.jsp</location>
+        <location>/roller-ui/login-redirect.rol</location>
     </error-page>
     
 
