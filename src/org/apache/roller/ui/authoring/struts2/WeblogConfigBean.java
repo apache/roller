@@ -58,6 +58,9 @@ public class WeblogConfigBean {
     private boolean showAllLangs = true;
     private String pageModels = null;
     private String customStylesheetPath = null;
+    private String icon = null;
+    private String about = null;
+    
     private String bloggerCategoryId = null;
     private String defaultCategoryId = null;
     private String[] defaultPluginsArray = null;
@@ -236,6 +239,22 @@ public class WeblogConfigBean {
         this.customStylesheetPath = customStylesheetPath;
     }
     
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+    
     public String getBloggerCategoryId() {
         return bloggerCategoryId;
     }
@@ -297,12 +316,14 @@ public class WeblogConfigBean {
         this.timeZone = dataHolder.getTimeZone();
         this.defaultPlugins = dataHolder.getDefaultPlugins();
         this.entryDisplayCount = dataHolder.getEntryDisplayCount();
-        this.setActive(dataHolder.getActive());
+        setActive(dataHolder.getActive());
         this.commentModerationRequired = dataHolder.getCommentModerationRequired();
         this.enableMultiLang = dataHolder.isEnableMultiLang();
         this.showAllLangs = dataHolder.isShowAllLangs();
         this.pageModels = dataHolder.getPageModels();
         this.customStylesheetPath = dataHolder.getCustomStylesheetPath();
+        setIcon(dataHolder.getIconPath());
+        setAbout(dataHolder.getAbout());
         
         if (dataHolder.getDefaultCategory() != null) {
             defaultCategoryId = dataHolder.getDefaultCategory().getId();
@@ -339,6 +360,9 @@ public class WeblogConfigBean {
         dataHolder.setShowAllLangs(this.showAllLangs);
         dataHolder.setPageModels(this.pageModels);
         dataHolder.setCustomStylesheetPath(this.customStylesheetPath);
+        dataHolder.setIconPath(getIcon());
+        dataHolder.setAbout(getAbout());
+        
         dataHolder.setDefaultPlugins( StringUtils.join(this.defaultPluginsArray,",") );
         
         dataHolder.setDefaultCommentDays(Integer.parseInt(this.defaultCommentDays));
