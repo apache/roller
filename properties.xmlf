@@ -121,7 +121,7 @@ in the "base.path" definition.
     <include name="struts-el.jar"/>
 </fileset>
 
-<fileset id="struts2.jars" dir="${ro.tools}/struts-2.0.5/lib">
+<fileset id="struts2.jars" dir="${ro.tools}/struts-2.0.6/lib">
     <include name="*.jar"/>
 </fileset>
 
