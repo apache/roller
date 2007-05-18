@@ -15,71 +15,41 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-error.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title><c:out value="${model.title}" /></title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<tiles:insert page="/WEB-INF/jsps/tiles/head.jsp"  />
-</head>
-<body>
-    
-<div id="wrapper"> 
-    <div id="leftcontent_wrap">
-        <div id="leftcontent"> 
-        </div>
-    </div>
-    
-    <div id="centercontent_wrap">
-        <div id="centercontent">   
-            <h1><c:out value="${model.title}" /></h1>
-            
-            <%-- Success Messages --%>
-            <logic:messagesPresent message="true">
-                <div id="messages" class="messages">
-                    <html:messages id="message" message="true">
-                        <c:out value="${message}" escapeXml="false"/><br />
-                    </html:messages>
+    <head>
+        <title><s:text name="error" /></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <tiles:insertAttribute name="head" />
+    </head>
+    <body>
+        
+        <div id="wrapper"> 
+            <div id="leftcontent_wrap">
+                <div id="leftcontent"> 
                 </div>
-            </logic:messagesPresent>
+            </div>
             
-            <%-- Error Messages --%>
-            <logic:messagesPresent>
-                <div id="errors" class="errors">
-                    <html:messages id="error">
-                        <c:out value="${error}" /><br />
-                    </html:messages>
+            <div id="centercontent_wrap">
+                <div id="centercontent">
+                    <tiles:insertAttribute name="messages" />
+                    <tiles:insertAttribute name="content" />    
                 </div>
-            </logic:messagesPresent>
+            </div>
             
-            <tiles:insert attribute="content" />    
+            <div id="rightcontent_wrap">
+                <div id="rightcontent"> 
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <div id="rightcontent_wrap">
-        <div id="rightcontent"> 
+        
+        <div id="footer">
+            <tiles:insertAttribute name="footer" />
         </div>
-    </div>
-</div>
-
-<div id="footer">
-    Powered by <a href="http://www.rollerweblogger.org">Apache Roller (incubating)</a> 
-    <%= RollerFactory.getRoller().getVersion() %> |
-    
-    <a href="http://opensource2.atlassian.com/projects/roller/">
-    <s:text name="footer.reportIssue" /></a> | 
-    
-    <a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">
-    <s:text name="footer.userGuide" /></a> | 
-    
-    <a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=RollerMailingLists">
-    <s:text name="footer.mailingLists" /></a>
-    
-</div>
-
-<div id="datetagdiv" 
-   style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
-</div>
-</body>
+        
+        <div id="datetagdiv" 
+             style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
+        </div>
+    </body>
 </html>

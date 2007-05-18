@@ -52,6 +52,28 @@
         <put name="footer"       value="/WEB-INF/jsps/tiles/struts2/footer.jsp" />
     </definition>
     
+    <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/struts2/tiles-errorpage.jsp">
+        <put name="head"         value="/WEB-INF/jsps/tiles/struts2/head.jsp" />
+        <put name="messages"     value="/WEB-INF/jsps/tiles/struts2/messages.jsp" />
+        <put name="content"      value="${content}" />
+        <put name="footer"       value="/WEB-INF/jsps/tiles/struts2/footer.jsp" />
+    </definition>
+    
+    
+    <!-- error pages -->
+    <definition name=".denied" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/errors/denied.jsp" />
+    </definition>
+    <definition name=".error" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/errors/error.jsp" />
+    </definition>
+    <definition name=".403" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/errors/403.jsp" />
+    </definition>
+    <definition name=".404" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/errors/404.jsp" />
+    </definition>
+    
     
     <!-- core pages (and associates) -->
     <definition name=".Setup" extends=".tiles-simplepage" >
@@ -300,21 +322,6 @@
     
     <definition name=".Maintenance" extends=".tiles-tabbedpage" >
         <put name="content" value="/WEB-INF/jsps/authoring/struts2/Maintenance.jsp" />
-    </definition>
-    
-    
-    <!-- error pages -->
-    <definition name=".denied" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/denied.jsp" />
-    </definition>
-    <definition name=".error" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/error.jsp" />
-    </definition>
-    <definition name=".error403" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/error403.jsp" />
-    </definition>
-    <definition name=".error404" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/error404.jsp" />
     </definition>
     
 </tiles-definitions>
