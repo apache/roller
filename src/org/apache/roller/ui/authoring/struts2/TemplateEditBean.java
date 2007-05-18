@@ -1,10 +1,19 @@
 /*
- * TemplateEditBean.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 23, 2007, 3:24 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.ui.authoring.struts2;
@@ -25,15 +34,13 @@ public class TemplateEditBean {
     private String description;
     private String link;
     private String contents;
-    private java.util.Date lastModified;
     private String templateLanguage;
     private boolean navbar;
     private boolean hidden;
-    private String decoratorName;
     private String outputContentType;
+    
     private Boolean autoContentType = Boolean.TRUE;
     private String manualContentType = null;
-    private boolean required = false;
     
     
     public String getId() {
@@ -84,14 +91,6 @@ public class TemplateEditBean {
         this.contents = contents;
     }
     
-    public java.util.Date getLastModified() {
-        return this.lastModified;
-    }
-    
-    public void setLastModified( java.util.Date lastModified ) {
-        this.lastModified = lastModified;
-    }
-    
     public String getTemplateLanguage() {
         return this.templateLanguage;
     }
@@ -114,14 +113,6 @@ public class TemplateEditBean {
     
     public void setHidden( boolean hidden ) {
         this.hidden = hidden;
-    }
-    
-    public String getDecoratorName() {
-        return this.decoratorName;
-    }
-    
-    public void setDecoratorName( String decoratorName ) {
-        this.decoratorName = decoratorName;
     }
     
     public String getOutputContentType() {
@@ -148,18 +139,7 @@ public class TemplateEditBean {
         this.manualContentType = manualContentType;
     }
     
-    public boolean isRequired() {
-        return required;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
     
-    
-    /**
-     * Copy values from this form bean to the specified data object.
-     */
     public void copyTo(WeblogTemplate dataHolder) {
         
         // only custom templates get to modify name, description, and link
@@ -170,19 +150,13 @@ public class TemplateEditBean {
         }
         
         dataHolder.setContents(this.contents);
-        dataHolder.setLastModified(this.lastModified);
         dataHolder.setTemplateLanguage(this.templateLanguage);
         dataHolder.setNavbar(this.navbar);
         dataHolder.setHidden(this.hidden);
-        dataHolder.setDecoratorName(this.decoratorName);
         dataHolder.setOutputContentType(this.outputContentType);
     }
     
     
-    /**
-     * Copy values from specified data object to this form bean.
-     * Includes all types.
-     */
     public void copyFrom(WeblogTemplate dataHolder) {
         
         this.id = dataHolder.getId();
@@ -191,13 +165,10 @@ public class TemplateEditBean {
         this.description = dataHolder.getDescription();
         this.link = dataHolder.getLink();
         this.contents = dataHolder.getContents();
-        this.lastModified = dataHolder.getLastModified();
         this.templateLanguage = dataHolder.getTemplateLanguage();
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
-        this.decoratorName = dataHolder.getDecoratorName();
         this.outputContentType = dataHolder.getOutputContentType();
-        this.required = dataHolder.isRequired();
     }
     
 }

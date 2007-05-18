@@ -270,6 +270,7 @@
     </definition>
     
     <definition name=".ThemeEdit" extends=".tiles-tabbedpage" >
+        <put name="head" value="/WEB-INF/jsps/tiles/struts2/head-ajax.jsp" />
         <put name="content" value="/WEB-INF/jsps/authoring/struts2/ThemeEdit.jsp" />
     </definition>
     
@@ -279,13 +280,13 @@
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-sidebar.jsp" />
     </definition>
     
-    <definition name=".TemplateRemove" extends=".tiles-tabbedpage"  >
-        <put name="content" value="/WEB-INF/jsps/authoring/struts2/TemplateRemove.jsp" />
+    <definition name=".TemplateEdit" extends=".tiles-tabbedpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/TemplateEdit.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     
-    <definition name=".TemplateEditForm" extends=".tiles-tabbedpage"  >
-        <put name="content" value="/WEB-INF/jsps/authoring/struts2/TemplateEdit.jsp" />
+    <definition name=".TemplateRemove" extends=".tiles-tabbedpage"  >
+        <put name="content" value="/WEB-INF/jsps/authoring/struts2/TemplateRemove.jsp" />
         <put name="styles" value="/WEB-INF/jsps/tiles/struts2/css-nosidebar.jsp" />
     </definition>
     

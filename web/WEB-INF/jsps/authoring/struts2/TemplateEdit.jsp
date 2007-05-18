@@ -24,19 +24,17 @@
    </s:text>
 </p>
 
-<s:if test="bean.required">
+<s:if test="template.required">
     <p class="pagetip"><s:text name="pageForm.tip.required" /></p>
 </s:if>
 <s:else>
     <p class="pagetip"><s:text name="pageForm.tip" /></p>
 </s:else>
                 
-<s:form action="template!save" id="template">
+<s:form action="templateEdit!save" id="template">
+    <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
-    <s:hidden name="bean.decoratorName" />
-    <s:hidden name="bean.required" />
     <s:hidden name="bean.action" />
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <%-- ================================================================== --%>
     <%-- Name, link and desription: disabled when page is a required page --%>
@@ -45,7 +43,7 @@
         <tr>
             <td class="label"><s:text name="pageForm.name" />&nbsp;</td>
             <td class="field">
-                <s:if test="bean.required">
+                <s:if test="template.required">
                     <span class="fixedAttr"><s:property value="bean.name"/></span>
                     <s:hidden name="bean.name" />
                 </s:if>
@@ -92,11 +90,11 @@
         -->
         </script>
         
-        <s:if test="!bean.required">
+        <s:if test="!template.required">
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
-                    <s:if test="bean.required">
+                    <s:if test="template.required">
                         <span class="fixedAttr"><s:property value="bean.link"/></span>
                         <s:hidden name="bean.link" />
                     </s:if>
@@ -115,7 +113,7 @@
         <tr>
             <td class="label" valign="top" style="padding-top: 4px"><s:text name="pageForm.description" />&nbsp;</td>
             <td class="field">
-                <s:if test="bean.required">
+                <s:if test="template.required">
                     <span class="fixedAttr"><s:property value="bean.description"/></span>
                     <s:hidden name="bean.description" />
                 </s:if>
@@ -136,7 +134,7 @@
     
     <script type="text/javascript"><!--
         if (getCookie("editorSize1") != null) {
-            document.weblogTemplateFormEx.contents.rows = getCookie("editorSize1");
+            document.getElementById('template_bean_contents').rows = getCookie("editorSize1");
         }
         function changeSize(e, num) {
             a = e.rows + num;
@@ -162,9 +160,9 @@
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
                 <input type="button" name="taller" value=" &darr; " 
-                       onclick="changeSize1(document.template.template_bean_contents, 5)" />
+                       onclick="changeSize1(document.getElementById('template_bean_contents'), 5)" />
                 <input type="button" name="shorter" value=" &uarr; " 
-                       onclick="changeSize1(document.template.template_bean_contents, -5)" />
+                       onclick="changeSize1(document.getElementById('template_bean_contents'), -5)" />
             </td>
         </tr>
     </table>
@@ -187,12 +185,12 @@
             <tr>
                 <script type="text/javascript"><!--
                     function showContentTypeField() {
-                        if (document.weblogTemplateFormEx.autoContentType[0].checked) {
-                            document.weblogTemplateFormEx.manualContentType.readOnly = true;
-                            document.weblogTemplateFormEx.manualContentType.style.background = '#e5e5e5';
+                        if (document.getElementById('template_bean_autoContentType1').checked) {
+                            document.getElementById('template_bean_manualContentType').readOnly = true;
+                            document.getElementById('template_bean_manualContentType').style.background = '#e5e5e5';
                         } else {
-                            document.weblogTemplateFormEx.manualContentType.readOnly = false;
-                            document.weblogTemplateFormEx.manualContentType.style.background = '#ffffff';
+                            document.getElementById('template_bean_manualContentType').readOnly = false;
+                            document.getElementById('template_bean_manualContentType').style.background = '#ffffff';
                         }
                     }
                 // --></script> 
@@ -200,13 +198,22 @@
                     <tr>
                         <td class="label" valign="top"><s:text name="pageForm.outputContentType" />&nbsp;</td>
                         <td class="field">
-                                                        
-                            <s:radio name="autoContentType" list="{true}" onchange="showContentTypeField()" /> 
-                            <s:text name="pageForm.useAutoContentType" /><br />
-                            
-                            <s:radio name="autoContentType" list="{false}" onchange="showContentTypeField()" />
-                            <s:text name="pageForm.useManualContentType" />
-                            <s:textfield name="manualContentType" />   
+                            <s:if test="bean.autoContentType">
+                                <input type="radio" name="bean.autoContentType" value="true" checked="true" onchange="showContentTypeField()" id="template_bean_autoContentType1"/> 
+                                <s:text name="pageForm.useAutoContentType" /><br />
+                                
+                                <input type="radio" name="bean.autoContentType" value="false" onchange="showContentTypeField()" id="template_bean_autoContentType2"/>
+                                <s:text name="pageForm.useManualContentType" />
+                                <s:textfield name="bean.manualContentType" />
+                            </s:if>
+                            <s:else>
+                                <input type="radio" name="bean.autoContentType" value="true" onchange="showContentTypeField()" id="template_bean_autoContentType1"/> 
+                                <s:text name="pageForm.useAutoContentType" /><br />
+                                
+                                <input type="radio" name="bean.autoContentType" value="false" checked="true" onchange="showContentTypeField()" id="template_bean_autoContentType2"/>
+                                <s:text name="pageForm.useManualContentType" />
+                                <s:textfield name="bean.manualContentType" />
+                            </s:else>
                             
                             <br />
                             <br />
@@ -223,13 +230,13 @@
             
             <tr>
                 <td class="field">                
-                    <s:if test="bean.required">
-                        <s:hidden name="navbar" />
+                    <s:if test="template.required">
+                        <s:hidden name="bean.navbar" />
                     </s:if>
                     <s:else>
                         <tr>
                             <td class="label"><s:text name="pageForm.navbar" />&nbsp;</td>
-                            <td class="field"><s:checkbox name="navbar" /> 
+                            <td class="field"><s:checkbox name="bean.navbar" /> 
                                 <s:text name="pageForm.navbar.tip" />
                             </td>
                             <td class="description"></td>
@@ -240,13 +247,13 @@
             </tr>
             
             <td class="field">                
-                <s:if test="bean.required">
-                    <s:hidden name="hidden" />
+                <s:if test="template.required">
+                    <s:hidden name="bean.hidden" />
                 </s:if>
                 <s:else>
                     <tr>
                         <td class="label"><s:text name="pageForm.hidden" />&nbsp;</td>
-                        <td class="field"><s:checkbox name="hidden" />
+                        <td class="field"><s:checkbox name="bean.hidden" />
                             <s:text name="pageForm.hidden.tip" />
                         </td>
                         <td class="description"></td>                            
@@ -261,14 +268,14 @@
                         
             <tr>
                 <td class="field">                
-                    <s:if test="bean.required || !model.rollerSession.globalAdminUser}">
-                        <s:hidden name="templateLanguage" />
+                    <s:if test="template.required || !userIsAdmin}">
+                        <s:hidden name="bean.templateLanguage" />
                     </s:if>
                     <s:else>
                         <tr>
                             <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
                             <td class="field">
-                                <s:select name="templateLanguage" list="templateLanguages" size="1" />
+                                <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
                             </td>
                             <td class="description"></td>
                         </tr>
@@ -284,13 +291,3 @@
     <br />
     
 </s:form>
-
-<%--
-Added by Matt Raible since the focus javascript generated by Struts 
-doesn't seem to work for forms with duplicate named elements.
---%>
-<script type="text/javascript">
-<!--
-    document.forms[0].elements[0].focus();
-// -->
-</script>
