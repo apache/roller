@@ -44,10 +44,22 @@
 
     <tr>
         <td class="label"><s:text name="websiteSettings.websiteDescription" /></td>
-        <td class="field"><s:textarea name="bean.description" rows="3" cols="40"/></td>
+        <td class="field"><s:textfield name="bean.description" /></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
-
+    
+    <tr>
+        <td class="label"><s:text name="websiteSettings.icon" /></td>
+        <td class="field"><s:textfield name="bean.icon" /></td>
+        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><s:text name="websiteSettings.about" /></td>
+        <td class="field"><s:textarea name="bean.about" rows="3" cols="40"/></td>
+        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
+    </tr>
+    
     <tr>
         <td class="label"><s:text name="websiteSettings.emailAddress" />
         <td class="field"><s:textfield name="bean.emailAddress" size="40"/></td>
@@ -161,7 +173,7 @@
      <tr>
         <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
         <td class="field">
-            <s:select name="bean.defaultCommentDays" list="commentDaysOptions" size="1" listKey="key" listValue="value" />
+            <s:select name="bean.defaultCommentDays" list="commentDaysList" size="1" listKey="key" listValue="value" />
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     

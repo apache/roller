@@ -92,6 +92,8 @@ public class WebsiteData implements Serializable {
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
     private String customStylesheetPath = null;
+    private String iconPath = null;
+    private String about = null;
     
     
     // Associated objects
@@ -184,11 +186,17 @@ public class WebsiteData implements Serializable {
     /**
      * Get the Theme object in use by this weblog, or null if no theme selected.
      */
-    public WeblogTheme getTheme() throws RollerException {
+    public WeblogTheme getTheme() {
+        try {
+            // let the ThemeManager handle it
+            ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+            return themeMgr.getTheme(this);
+        } catch (RollerException ex) {
+            log.error("Error getting theme for weblog - "+getHandle(), ex);
+        }
         
-        // let the ThemeManager handle it
-        ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-        return themeMgr.getTheme(this);
+        // TODO: maybe we should return a default theme in this case?
+        return null;
     }
     
     
@@ -965,22 +973,37 @@ public class WebsiteData implements Serializable {
     }
     
     
-    public String getCustomStylesheet() {
-        try {
-            Theme weblogTheme = getTheme();
-            if(weblogTheme != null) {
-                return weblogTheme.getCustomStylesheet();
-            } else {
-                return getCustomStylesheetPath();
-            }
-        } catch(RollerException re) {
-            // hmmm, some exception getting theme
-            return null;
-        }
+    /**
+     * The path under the weblog's resources to an icon image.
+     *
+     * @hibernate.property column="icon" not-null="false"
+     */
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
+    }
+
+    
+    /**
+     * A short description about the weblog.
+     *
+     * This field difers from the 'description' attribute in the sense that the
+     * description is meant to hold more of a tagline, while this attribute is
+     * more of a full paragraph (or two) about section.
+     *
+     * @hibernate.property column="about" not-null="false"
+     */
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
     
-    // no-op to please xdoclet
-    public void setCustomStylesheet(String noop) {}
     
     /**
      * Get initialized plugins for use during rendering process.
