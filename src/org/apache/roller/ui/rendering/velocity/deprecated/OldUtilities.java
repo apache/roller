@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.Utilities;
-
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Utility methods needed by old Roller 2.X macros/templates.
@@ -487,9 +487,8 @@ public class OldUtilities {
      * @throws IOException
      */
     public static String encodeString(String str) throws IOException {
-        sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
-        String encodedStr = encoder.encodeBuffer(str.getBytes());
-        
+        Base64 base64 = new Base64();
+        String encodedStr = new String(base64.encodeBase64(str.getBytes()));        
         return (encodedStr.trim());
     }
     
@@ -501,9 +500,8 @@ public class OldUtilities {
      * @throws IOException
      */
     public static String decodeString(String str) throws IOException {
-        sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-        String value = new String(dec.decodeBuffer(str));
-        
+        Base64 base64 = new Base64();
+        String value = new String(base64.decodeBase64(str.getBytes()));        
         return (value);
     }
                
