@@ -95,6 +95,10 @@ public class TemplateAdd extends UIAction {
             // flush results to db
             RollerFactory.getRoller().flush();
             
+            // reset form fields
+            setNewTmplName(null);
+            setNewTmplAction(null);
+            
         } catch (RollerException ex) {
             log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n

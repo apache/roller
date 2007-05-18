@@ -53,7 +53,7 @@
                     <s:url id="editIcon" value="/images/page_white_gear.png"/>
                 </s:else>
                 <img src='<s:url value="%{editIcon}"/>' border="0" alt="icon" />
-                <s:url id="edit" action="template">
+                <s:url id="edit" action="templateEdit">
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="bean.id" value="#p.id" />
                 </s:url>
