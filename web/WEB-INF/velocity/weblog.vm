@@ -180,9 +180,9 @@ Show comments for weblog entry according to Roller configuration.
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
             #if($config.commentEscapeHtml)
-                #set($content = $utils.escapeHTML($comment.content))
+                #set($content = $comment.content))
             #else 
-                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($comment.content)))
+                #set($content = $utils.transformToHTMLSubset($comment.content))
             #end
             #if($config.commentAutoFormat)
                 #set($content = $utils.autoformat($content))
@@ -196,11 +196,11 @@ Show comments for weblog entry according to Roller configuration.
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
-                    <a rel="nofollow" href="$utils.escapeHTML($comment.url)"><b>$utils.escapeHTML($comment.name)</b></a>
+                    <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
-                    <b>$utils.escapeHTML($comment.name)</b>
+                    <b>$comment.name</b>
                 #elseif ($comment.remoteHost)
-                    <b>$utils.escapeHTML($comment.remoteHost)</b>
+                    <b>$comment.remoteHost</b>
                 #else
                     <b>$text.get("macro.weblog.comment.unknown")</b>
                 #end
