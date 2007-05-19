@@ -533,7 +533,7 @@ public class CommentServlet extends HttpServlet {
             ownermsg.append((escapeHtml) ? "\n" : "<br />");
             
             StringBuffer deleteURL = new StringBuffer(rootURL);
-            deleteURL.append("/roller-ui/authoring/commentManagement.do?method=query&entryId=" + entry.getId());
+            deleteURL.append("/roller-ui/authoring/comments.rol?entryId=" + entry.getId());
             
             if (escapeHtml) {
                 ownermsg.append(deleteURL.toString());

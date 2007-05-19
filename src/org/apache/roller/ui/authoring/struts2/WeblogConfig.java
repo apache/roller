@@ -49,7 +49,7 @@ public class WeblogConfig extends UIAction {
     private static Log log = LogFactory.getLog(WeblogConfig.class);
     
     // bean for managing submitted data
-    private WeblogConfigForm bean = new WeblogConfigForm();
+    private WeblogConfigBean bean = new WeblogConfigBean();
     
     // categories list
     private List weblogCategories = Collections.EMPTY_LIST;
@@ -194,33 +194,12 @@ public class WeblogConfig extends UIAction {
         }
     }
     
-
-    public List getCommentDaysOptions() {
-        
-        List opts = new ArrayList();
-        
-        opts.add(new KeyValueObject("0", getText("weblogEdit.unlimitedCommentDays")));
-        opts.add(new KeyValueObject("1", getText("weblogEdit.days1")));
-        opts.add(new KeyValueObject("2", getText("weblogEdit.days2")));
-        opts.add(new KeyValueObject("3", getText("weblogEdit.days3")));
-        opts.add(new KeyValueObject("4", getText("weblogEdit.days4")));
-        opts.add(new KeyValueObject("5", getText("weblogEdit.days5")));
-        opts.add(new KeyValueObject("7", getText("weblogEdit.days7")));
-        opts.add(new KeyValueObject("10", getText("weblogEdit.days10")));
-        opts.add(new KeyValueObject("20", getText("weblogEdit.days20")));
-        opts.add(new KeyValueObject("30", getText("weblogEdit.days30")));
-        opts.add(new KeyValueObject("60", getText("weblogEdit.days60")));
-        opts.add(new KeyValueObject("90", getText("weblogEdit.days90")));
-        
-        return opts;
-    }
     
-    
-    public WeblogConfigForm getBean() {
+    public WeblogConfigBean getBean() {
         return bean;
     }
 
-    public void setBean(WeblogConfigForm bean) {
+    public void setBean(WeblogConfigBean bean) {
         this.bean = bean;
     }
 

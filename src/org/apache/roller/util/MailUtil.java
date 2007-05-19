@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -112,9 +113,7 @@ public class MailUtil {
             to = (String[])reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
-            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-            String editURL = rootURL
-                    + "/roller-ui/authoring/weblog.do?method=edit&entryId=" + entry.getId();
+            String editURL = URLUtilities.getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", entry.getWebsite().getLocaleInstance());
@@ -168,7 +167,7 @@ public class MailUtil {
             
             // Figure URL to entry edit page
             String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-            String url = rootURL + "/roller-ui/yourWebsites.do";
+            String url = rootURL + "/roller-ui/menu.rol";
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources",
@@ -197,6 +196,81 @@ public class MailUtil {
             throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "due to Roller configuration or mail server problem.", e);
         }
+    }
+    
+    
+    /**
+     * Send a weblog invitation email.
+     */
+    public static void sendUserActivationEmail(UserData user)
+            throws RollerException {
+        
+        Session mailSession = getMailSession();
+        if(mailSession == null) {
+            throw new RollerException("ERROR: Notification email(s) not sent, "
+                    + "Roller's mail session not properly configured");
+        }
+        
+        try {
+            ResourceBundle resources = ResourceBundle.getBundle(
+                    "ApplicationResources", getLocaleInstance(user.getLocale()));
+            
+            String from = RollerRuntimeConfig.getProperty(
+                    "user.account.activation.mail.from");
+            
+            String cc[] = new String[0];
+            String bcc[] = new String[0];
+            String to[] = new String[] { user.getEmailAddress() };
+            String subject = resources.getString(
+                    "user.account.activation.mail.subject");
+            String content;
+            
+            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
+            
+            StringBuffer sb = new StringBuffer();
+            
+            // activationURL=
+            String activationURL = rootURL
+                    + "/roller-ui/register!activate.rol?activationCode="
+                    + user.getActivationCode();
+            sb.append(MessageFormat.format(
+                    resources.getString("user.account.activation.mail.content"),
+                    new Object[] { user.getFullName(), user.getUserName(),
+                    activationURL }));
+            content = sb.toString();
+            
+            sendHTMLMessage(mailSession, from, to, cc, bcc, subject, content);
+        } catch (MessagingException e) {
+            throw new RollerException("ERROR: Problem sending activation email.", e);
+        }
+    }
+    
+    
+    // TODO: there is a better place for this, but i am being lazy :/
+    private static Locale getLocaleInstance(String locale) {
+        if (locale != null) {
+            String[] localeStr = StringUtils.split(locale, "_");
+            if (localeStr.length == 1) {
+                if (localeStr[0] == null)
+                    localeStr[0] = "";
+                return new Locale(localeStr[0]);
+            } else if (localeStr.length == 2) {
+                if (localeStr[0] == null)
+                    localeStr[0] = "";
+                if (localeStr[1] == null)
+                    localeStr[1] = "";
+                return new Locale(localeStr[0], localeStr[1]);
+            } else if (localeStr.length == 3) {
+                if (localeStr[0] == null)
+                    localeStr[0] = "";
+                if (localeStr[1] == null)
+                    localeStr[1] = "";
+                if (localeStr[2] == null)
+                    localeStr[2] = "";
+                return new Locale(localeStr[0], localeStr[1], localeStr[2]);
+            }
+        }
+        return Locale.getDefault();
     }
     
     

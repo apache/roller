@@ -128,6 +128,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                         results.add(WeblogEntryDataWrapper.wrap(entry));
                     }
                 }
+                if (rawEntries.size() > length) more = true;
                 
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog entries list", e);

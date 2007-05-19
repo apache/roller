@@ -15,11 +15,16 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<% response.setContentType("text/html; charset=UTF-8"); %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ page isErrorPage="true" %>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.0.1" prefix="str" %>
+<h2><s:text name="error.permissionDenied.title" /></h2>
+
+<s:text name="error.permissionDenied.prompt" />
+
+<ul>
+    <li><s:text name="error.permissionDenied.reason0" /></li>
+    <li><s:text name="error.permissionDenied.reason1" /></li>
+    <li><s:text name="error.permissionDenied.reason2" /></li>
+    <li><s:text name="error.permissionDenied.reason3" /></li>
+</ul>

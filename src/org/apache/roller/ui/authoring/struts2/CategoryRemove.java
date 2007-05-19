@@ -58,7 +58,7 @@ public class CategoryRemove extends UIAction {
     public CategoryRemove() {
         this.actionName = "categoryRemove";
         this.desiredMenu = "editor";
-        this.pageTitle = "editPages.title.removeOK";
+        this.pageTitle = "categoriesForm.rootTitle";
     }
     
     

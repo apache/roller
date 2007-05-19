@@ -44,10 +44,13 @@ import org.apache.roller.util.cache.CacheManager;
  */
 public class TemplateEdit extends UIAction {
     
-    private static Log log = LogFactory.getLog(Templates.class);
+    private static Log log = LogFactory.getLog(TemplateEdit.class);
     
     // form bean for collection all template properties
     private TemplateEditBean bean = new TemplateEditBean();
+    
+    // the template we are working on
+    private WeblogTemplate template = null;
     
     
     public TemplateEdit() {
@@ -57,57 +60,67 @@ public class TemplateEdit extends UIAction {
     }
     
     
-    // must be a weblog admin to use this action
+    @Override
     public short requiredWeblogPermissions() {
         return PermissionsData.ADMIN;
     }
     
     
-    public String execute() {
-        
+    public void myPrepare() {
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WeblogTemplate page = mgr.getPage(getBean().getId());
-            if(page == null) {
-                throw new RollerException("page not found");
-            }
-            
-            getBean().copyFrom(page);
-            
-            // empty content-type indicates that page uses auto content-type detection
-            if (StringUtils.isEmpty(page.getOutputContentType())) {
-                getBean().setAutoContentType(Boolean.TRUE);
-            } else {
-                getBean().setAutoContentType(Boolean.FALSE);
-                getBean().setManualContentType(page.getOutputContentType());
-            }
-            
+            setTemplate(mgr.getPage(getBean().getId()));
         } catch (RollerException ex) {
-            log.error("Error loading page to edit - "+getBean().getId(), ex);
+            log.error("Error looking up template - "+getBean().getId(), ex);
+        }
+    }
+    
+    
+    /**
+     * Show template edit page.
+     */
+    public String execute() {
+        
+        if(getTemplate() == null) {
             // TODO: i18n
-            addError("Couldn't find specified page to edit");
-            return "list";
+            addError("Unable to locate specified template");
+            return LIST;
+        }
+        
+        WeblogTemplate page = getTemplate();
+        getBean().copyFrom(template);
+        
+        // empty content-type indicates that page uses auto content-type detection
+        if (StringUtils.isEmpty(page.getOutputContentType())) {
+            getBean().setAutoContentType(Boolean.TRUE);
+        } else {
+            getBean().setAutoContentType(Boolean.FALSE);
+            getBean().setManualContentType(page.getOutputContentType());
         }
         
         return SUCCESS;
     }
     
     
+    /**
+     * Save an existing template.
+     */
     public String save() {
+        
+        if(getTemplate() == null) {
+            // TODO: i18n
+            addError("Unable to locate specified template");
+            return LIST;
+        }
         
         // validation
         myValidate();
         
         if(!hasActionErrors()) try {
             
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WeblogTemplate page = mgr.getPage(getBean().getId());
-            if(page == null) {
-                throw new RollerException("page not found");
-            }
-            
+            WeblogTemplate page = getTemplate();
             getBean().copyTo(page);
-            page.setLastModified( new Date() );
+            page.setLastModified(new Date());
             
             if (getBean().getAutoContentType() == null ||
                     !getBean().getAutoContentType().booleanValue()) {
@@ -118,9 +131,11 @@ public class TemplateEdit extends UIAction {
             }
             
             // save template and flush
-            mgr.savePage( page );
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            mgr.savePage(page);
             RollerFactory.getRoller().flush();
             
+            // notify caches
             CacheManager.invalidate(page);
             
             // success message
@@ -170,6 +185,14 @@ public class TemplateEdit extends UIAction {
 
     public void setBean(TemplateEditBean bean) {
         this.bean = bean;
+    }
+
+    public WeblogTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(WeblogTemplate template) {
+        this.template = template;
     }
     
 }

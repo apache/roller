@@ -345,8 +345,6 @@ function handleCommentResponse() {
 <%-- ========================================================= --%>
             
 <s:submit key="commentManagement.update" />
-&nbsp;
-<s:submit key="application.cancel" action="comments" />
 
 </s:form>
 

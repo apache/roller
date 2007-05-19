@@ -19,6 +19,7 @@
 package org.apache.roller.pojos.wrapper;
 
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -419,10 +420,34 @@ public class WebsiteDataWrapper {
     {   
         return this.pojo.isShowAllLangs();
     }
-
+    
     
     public String getCustomStylesheet() {
-        return this.pojo.getCustomStylesheet();
+        // custom stylesheet comes from the weblog theme
+        return this.pojo.getTheme().getCustomStylesheet();
+    }
+    
+    
+    public String getIcon() {
+        
+        String iconPath = this.pojo.getIconPath();
+        if(iconPath == null) {
+            return null;
+        }
+        
+        if(iconPath.startsWith("http") || iconPath.startsWith("/")) {
+            // if icon path is a relative path then assume it's a weblog resource
+            return iconPath;
+        } else {
+            // otherwise it's just a plain old url
+            return URLUtilities.getWeblogResourceURL(this.pojo, iconPath, true);
+        }
+        
+    }
+    
+    
+    public String getAbout() {
+        return this.pojo.getAbout();
     }
     
     

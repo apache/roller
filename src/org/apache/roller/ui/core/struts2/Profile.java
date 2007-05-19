@@ -18,14 +18,12 @@
 
 package org.apache.roller.ui.core.struts2;
 
-import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 
@@ -35,14 +33,14 @@ import org.apache.roller.ui.core.util.struts2.UIAction;
  *
  * TODO: check on the impact of deleting that cookieLogin stuff
  */
-public class ProfileForm extends UIAction {
+public class Profile extends UIAction {
     
-    private static Log log = LogFactory.getLog(ProfileForm.class);
+    private static Log log = LogFactory.getLog(Profile.class);
     
-    private RegisterFormBean bean = new RegisterFormBean();
+    private ProfileBean bean = new ProfileBean();
     
     
-    public ProfileForm() {
+    public Profile() {
         this.pageTitle = "yourProfile.title";
     }
     
@@ -57,7 +55,7 @@ public class ProfileForm extends UIAction {
         UserData ud = getAuthenticatedUser();
         
         // load up the form from the users existing profile data
-        getBean().copyFrom(ud, getLocale());
+        getBean().copyFrom(ud);
         getBean().setPasswordText(null);
         getBean().setPasswordConfirm(null);
         getBean().setLocale(ud.getLocale());
@@ -132,11 +130,11 @@ public class ProfileForm extends UIAction {
     }
     
     
-    public RegisterFormBean getBean() {
+    public ProfileBean getBean() {
         return bean;
     }
 
-    public void setBean(RegisterFormBean bean) {
+    public void setBean(ProfileBean bean) {
         this.bean = bean;
     }
     

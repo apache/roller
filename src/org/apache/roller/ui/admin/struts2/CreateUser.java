@@ -29,7 +29,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.ui.core.struts2.RegisterForm;
+import org.apache.roller.ui.core.struts2.Register;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 
 
@@ -131,7 +131,7 @@ public class CreateUser extends UIAction {
         
         String allowed = RollerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
-            allowed = RegisterForm.DEFAULT_ALLOWED_CHARS;
+            allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
         String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
         

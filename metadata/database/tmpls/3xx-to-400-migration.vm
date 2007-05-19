@@ -38,6 +38,12 @@ drop table if exists rag_config;
 update rolleruser set screenname = username;
 
 -- new column to allow setting of page template content-type
+#addColumnNull("website" "icon" "varchar(255)")
+
+-- new column to allow setting of page template content-type
+#addColumnNull("website" "about" "varchar(255)")
+
+-- new column to allow setting of page template content-type
 #addColumnNull("webpage" "outputtype" "varchar(48)")
 
 -- add new action column to webpage table, default value is custom
