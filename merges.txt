@@ -4,6 +4,7 @@ merges.txt
 Temporary file to track merges from trunk into the roller_4.0_newbackend branch. 
 
 May 18, 2007: merging latest from trunk
+svn merge -r 539671:539679  https://svn.apache.org/repos/asf/roller/trunk
 svn merge -r 539636:539671  https://svn.apache.org/repos/asf/roller/trunk
 svn merge -r 539068:539636  https://svn.apache.org/repos/asf/roller/trunk
 

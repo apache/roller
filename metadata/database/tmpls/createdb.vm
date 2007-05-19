@@ -120,7 +120,10 @@ create table website (
     pagemodels           varchar(255) default null,
     enablemultilang   $db.BOOLEAN_SQL_TYPE_FALSE not null,
     showalllangs      $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    customstylesheet  varchar(128)
+    customstylesheet  varchar(128),
+    about             varchar(255),
+    icon              varchar(255)
+
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
