@@ -37,10 +37,10 @@ drop table if exists rag_config;
 #addColumnNotNull("rolleruser" "screenname" "varchar(255)" "'unspecified'")
 update rolleruser set screenname = username;
 
--- new column to allow setting of page template content-type
+-- new column to allow setting of path to icon for website
 #addColumnNull("website" "icon" "varchar(255)")
 
--- new column to allow setting of page template content-type
+-- new column to allow setting of short website about text
 #addColumnNull("website" "about" "varchar(255)")
 
 -- new column to allow setting of page template content-type
