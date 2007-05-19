@@ -141,6 +141,12 @@
 			<basic name="handle">
 				<column name="handle" insertable="true" updatable="true" unique="true"/>
 			</basic>
+			<basic name="about">
+				<column name="about" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="iconPath">
+				<column name="icon" insertable="true" updatable="true" unique="false"/>
+			</basic>
 			<basic name="name">
 				<column name="name" insertable="true" updatable="true" unique="false"/>
 			</basic>
@@ -239,7 +245,6 @@
 			<transient name="adminUserCount"/>
 			<transient name="commentCount"/>
 			<transient name="commentModerationRequired"/>
-            <transient name="customStylesheet" />
 			<transient name="todaysHits"/>
 			<transient name="todaysReferrers"/>
 			<transient name="uRL"/>
