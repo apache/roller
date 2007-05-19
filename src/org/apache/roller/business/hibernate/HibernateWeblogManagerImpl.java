@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManagerImpl;
 import org.apache.roller.pojos.CommentData;
@@ -72,6 +74,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
     private static Log log = LogFactory.getLog(HibernateWeblogManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller = null;
     
     // cached mapping of entryAnchors -> entryIds
     private Hashtable entryAnchorToIdMap = new Hashtable();
@@ -81,7 +84,9 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl {
     
     private Comparator tagStatComparator = new TagStatComparator();
     
-    public HibernateWeblogManagerImpl(HibernatePersistenceStrategy strat) {
+    
+    @Inject
+    public HibernateWeblogManagerImpl(HibernatePersistenceStrategy strat, Roller roller) {
         log.debug("Instantiating Hibernate Weblog Manager");
         
         this.strategy = strat;

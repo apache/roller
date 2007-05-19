@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import java.io.StringReader;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -28,7 +29,6 @@ import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,14 +36,14 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.apache.roller.business.BookmarkManager;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.util.Utilities;
-
+import org.apache.roller.business.Roller;
 
 /**
  * Hibernate implementation of the BookmarkManager.
  */
 public class HibernateBookmarkManagerImpl implements BookmarkManager {
+    
+    private Roller roller;
     
     static final long serialVersionUID = 5286654557062382772L;
     
@@ -51,12 +51,8 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     private HibernatePersistenceStrategy strategy = null;
     
-    
-    /**
-     * @param pstrategy
-     * @param roller
-     */
-    public HibernateBookmarkManagerImpl(HibernatePersistenceStrategy strat) {
+    @Inject
+    public HibernateBookmarkManagerImpl(HibernatePersistenceStrategy strat, Roller roller) {
         log.debug("Instantiating Hibernate Bookmark Manager");
         
         this.strategy = strat;
@@ -67,7 +63,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
+        roller.getUserManager().saveWebsite(bookmark.getWebsite());
     }
     
     
@@ -86,7 +82,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         //Now remove it from database
         this.strategy.remove(bookmark);
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager()
+        roller.getUserManager()
                 .saveWebsite(bookmark.getWebsite());
     }
     
@@ -100,7 +96,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        roller.getUserManager().saveWebsite(folder.getWebsite());
     }
     
     
@@ -109,7 +105,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.remove(folder);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        roller.getUserManager().saveWebsite(folder.getWebsite());
     }
     
     

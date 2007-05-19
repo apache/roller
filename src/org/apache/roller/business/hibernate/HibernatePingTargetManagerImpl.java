@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,9 +36,9 @@ import java.util.List;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.business.Roller;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingQueueEntryData;
 
@@ -48,6 +49,7 @@ import org.apache.roller.pojos.PingQueueEntryData;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class HibernatePingTargetManagerImpl implements PingTargetManager {
+    private Roller roller = null;
     
     static final long serialVersionUID = 121008492583382718L;
     
@@ -56,7 +58,8 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     private HibernatePersistenceStrategy strategy = null;
     
     
-    public HibernatePingTargetManagerImpl(HibernatePersistenceStrategy strat) {
+    @Inject
+    public HibernatePingTargetManagerImpl(HibernatePersistenceStrategy strat, Roller roller) {
         this.strategy = strat;
     }
     
@@ -87,7 +90,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         }
         
         // Remove the website's auto ping configurations
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = roller.getAutopingManager();
         List autopings = autoPingMgr.getAutoPingsByTarget(ping);
         Iterator it = autopings.iterator();
         while(it.hasNext()) {

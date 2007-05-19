@@ -18,6 +18,10 @@
 
 package org.apache.roller.business;
 
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
@@ -26,76 +30,35 @@ import org.apache.roller.config.RollerConfig;
 /**
  * Provides access to the Roller instance.
  */
-public abstract class RollerFactory {
-    
+public abstract class RollerFactory implements Module {
     private static Log log = LogFactory.getLog(RollerFactory.class);
-    
-    private static final String DEFAULT_IMPL =
-            "org.apache.roller.business.hibernate.HibernateRollerImpl";
-    
-    private static Roller rollerInstance = null;
-    
-    
+    private static Injector injector = null;
+       
     
     // non-instantiable
     private RollerFactory() {
         // hello all you beautiful people
     }
     
-    
-    /**
-     * Static accessor for the instance of Roller.
-     */
-    public static Roller getRoller() {
-        
-        // check to see if we need to instantiate
-        if(rollerInstance == null) {
-            
-            // lookup value for the roller classname to use
-            String roller_classname =
-                    RollerConfig.getProperty("persistence.roller.classname");
-            if(roller_classname == null || roller_classname.trim().length() < 1)
-                roller_classname = DEFAULT_IMPL;
-            
-            try {
-                Class rollerClass = Class.forName(roller_classname);
-                java.lang.reflect.Method instanceMethod =
-                        rollerClass.getMethod("instantiate", (Class[])null);
-                
-                // do the invocation
-                rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
-                
-                log.info("Using Roller Impl: " + roller_classname);
-                
-            } catch (Throwable e) {
-                
-                // uh oh
-                log.error("Error instantiating " + roller_classname, e);
-                
-                try {
-                    // if we didn't already try DEFAULT_IMPL then try it now
-                    if( ! DEFAULT_IMPL.equals(roller_classname)) {
-                        
-                        log.info("** Trying DEFAULT_IMPL "+DEFAULT_IMPL+" **");
-                        
-                        Class rollerClass = Class.forName(DEFAULT_IMPL);
-                        java.lang.reflect.Method instanceMethod =
-                                rollerClass.getMethod("instantiate", (Class[])null);
-                        
-                        // do the invocation
-                        rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
-                    } else {
-                        // we just do this so that the logger gets the message
-                        throw new Exception("Doh! Couldn't instantiate a roller class");
-                    }
-                    
-                } catch (Exception re) {
-                    log.fatal("Failed to instantiate fallback roller impl", re);
-                }
-            }
+
+    static { 
+        String moduleClassname = RollerConfig.getProperty("guice.backend.module");
+        try {
+            Class moduleClass = Class.forName(moduleClassname);
+            Module module = (Module)moduleClass.newInstance();
+            injector = Guice.createInjector(module);
+        } catch (Throwable e) {                
+            // Fatal misconfiguration, cannot recover
+            throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
         }
-        
-        return rollerInstance;
     }
     
+    
+    /**
+     * Static accessor for the instance of Roller
+     */
+    public static Roller getRoller() {
+        return injector.getInstance(Roller.class);
+    }    
 }
+

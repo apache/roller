@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,9 +35,6 @@ import org.apache.roller.config.runtime.DisplayGroup;
 import org.apache.roller.config.runtime.PropertyDef;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.business.PropertiesManager;
-import org.apache.roller.business.Roller;
-import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.RollerConfigData;
 import org.apache.roller.pojos.RollerPropertyData;
 
 
@@ -55,6 +53,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     /** 
      * Creates a new instance of HibernatePropertiesManagerImpl
      */
+    @Inject
     public HibernatePropertiesManagerImpl(HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Properties Manager");

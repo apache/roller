@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +47,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     private HibernatePersistenceStrategy strategy = null;
     
     
+    @Inject
     public HibernateThreadManagerImpl(HibernatePersistenceStrategy strat) {
         super();
         
@@ -67,7 +69,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             
             if(taskLock == null) {
                 // insert an empty record, then we will actually acquire the
-                // lease below using an update statement 
+                // lease below using an update statement
                 taskLock = new TaskLockData();
                 taskLock.setName(task.getName());
                 taskLock.setTimeAquired(new Date(0));

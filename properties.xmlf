@@ -96,6 +96,7 @@ in the "base.path" definition.
     <include name="rome-0.9.jar"/>
     <include name="rome-fetcher-0.9.jar"/>
     <include name="velocity-1.5.jar"/>
+    <include name="guice-1.0.jar"/>
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">

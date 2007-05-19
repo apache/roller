@@ -44,9 +44,8 @@ import org.apache.roller.pojos.WebsiteData;
 
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
+import com.google.inject.Inject;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.business.RollerFactory;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Lucene implementation of IndexManager. This is the central entry point 
@@ -55,6 +54,9 @@ import org.apache.commons.lang.StringUtils;
  * @author mraible (formatting and making indexDir configurable)
  */
 public class IndexManagerImpl implements IndexManager {
+    private Roller roller; 
+    
+    
     //~ Static fields/initializers
     // =============================================
     
@@ -92,7 +94,13 @@ public class IndexManagerImpl implements IndexManager {
      * @param indexDir -
      *            the path to the index directory
      */
-    public IndexManagerImpl() {
+    @Inject
+    public IndexManagerImpl(Roller roller) {
+        this.roller = roller;
+    }
+    
+    public void init() {
+        
         // check config to see if the internal search is enabled
         String enabled = RollerConfig.getProperty("search.enabled");
         if("false".equalsIgnoreCase(enabled))
@@ -221,7 +229,7 @@ public class IndexManagerImpl implements IndexManager {
             // only if search is enabled
             if(this.searchEnabled) {
                 mLogger.debug("Starting scheduled index operation: "+op.getClass().getName());
-                RollerFactory.getRoller().getThreadManager().executeInBackground(op);
+                roller.getThreadManager().executeInBackground(op);
             }
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);
@@ -236,7 +244,7 @@ public class IndexManagerImpl implements IndexManager {
             // only if search is enabled
             if(this.searchEnabled) {
                 mLogger.debug("Executing index operation now: "+op.getClass().getName());
-                RollerFactory.getRoller().getThreadManager().executeInForeground(op);
+                roller.getThreadManager().executeInForeground(op);
             }
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);

@@ -16,41 +16,48 @@
  * directory of this distribution.
  */
 
+
 package org.apache.roller.business;
 
+import com.google.inject.Inject;
 import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingQueueManager;
+import org.apache.roller.business.pings.PingTargetManager;
+import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
-import org.apache.roller.business.referrers.ReferrerQueueManagerImpl;
-import org.apache.roller.business.runnable.ThreadManagerImpl;
-import org.apache.roller.business.search.IndexManagerImpl;
-import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.runnable.ThreadManager;
+import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.themes.ThemeManager;
-import org.apache.roller.business.themes.ThemeManagerImpl;
-
 
 /**
- * The abstract version of the Roller implementation.
- *
- * Here we put code that pertains to *all* implementations of the Roller
- * interface, regardless of their persistence strategy.
+ * Roller implementation designed for Dependency Injection
  */
 public abstract class RollerImpl implements Roller {
-    
-    private static Log mLogger = LogFactory.getLog(RollerImpl.class);
-    
-    private FileManager   fileManager = null;
-    private IndexManager  indexManager = null;
-    private ThreadManager threadManager = null;
-    private ThemeManager  themeManager = null;
-    private PluginManager pluginManager = null;
-            
+    private static Log log = LogFactory.getLog(RollerImpl.class);
+
     private String version = null;
     private String buildTime = null;
     private String buildUser = null;
+    
+    private AutoPingManager      autopingManager;
+    private BookmarkManager      bookmarkManager;
+    private FileManager          fileManager;
+    private IndexManager         indexManager;
+    private PluginManager        pagePluginManager;
+    private PingQueueManager     pingQueueManager;
+    private PingTargetManager    pingTargetManager;
+    private PropertiesManager    propertiesManager;
+    private RefererManager       refererManager;
+    private ReferrerQueueManager referrerQueueManager;
+    private ThemeManager         themeManager;
+    private ThreadManager        threadManager;
+    private UserManager          userManager;
+    private WeblogManager        weblogManager;
+    
     
     public RollerImpl() {
                 
@@ -58,7 +65,7 @@ public abstract class RollerImpl implements Roller {
         try {
             props.load(getClass().getResourceAsStream("/version.properties"));
         } catch (IOException e) {
-            mLogger.error("version.properties not found", e);
+            log.error("version.properties not found", e);
         }
         
         version = props.getProperty("ro.version", "UNKNOWN");
@@ -66,107 +73,149 @@ public abstract class RollerImpl implements Roller {
         buildUser = props.getProperty("ro.buildUser", "UNKNOWN");
     }
     
+    public AutoPingManager getAutopingManager() {
+        return autopingManager;
+    }
     
-    /**
-     * @see org.apache.roller.model.Roller#getFileManager()
-     */
+    @Inject
+    public void setAutopingManager(AutoPingManager autopingManager) {
+        this.autopingManager = autopingManager;
+    }
+    
+    public BookmarkManager getBookmarkManager() {
+        return bookmarkManager;
+    }
+    
+    @Inject
+    public void setBookmarkManager(BookmarkManager bookmarkManager) {
+        this.bookmarkManager = bookmarkManager;
+    }
+    
     public FileManager getFileManager() {
-        if (fileManager == null) {
-            fileManager = new FileManagerImpl();
-        }
         return fileManager;
     }
     
-    
-    /**
-     * @see org.apache.roller.model.Roller#getThreadManager()
-     */
-    public ThreadManager getThreadManager() {
-        if (threadManager == null) {
-            threadManager = new ThreadManagerImpl();
-        }
-        return threadManager;
+    @Inject
+    public void setFileManager(FileManager fileManager) {
+        this.fileManager = fileManager;
     }
     
-    
-    /**
-     * @see org.apache.roller.model.Roller#getIndexManager()
-     */
     public IndexManager getIndexManager() {
-        if (indexManager == null) {
-            indexManager = new IndexManagerImpl();
-        }
         return indexManager;
     }
     
+    @Inject
+    public void setIndexManager(IndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
     
-    /**
-     * @see org.apache.roller.model.Roller#getThemeManager()
-     */
+    public PluginManager getPagePluginManager() {
+        return pagePluginManager;
+    }
+    
+    @Inject
+    public void setPagePluginManager(PluginManager pagePluginManager) {
+        this.pagePluginManager = pagePluginManager;
+    }
+    
+    public PingQueueManager getPingQueueManager() {
+        return pingQueueManager;
+    }
+        
+    @Inject
+    public void setPingQueueManager(PingQueueManager pingQueueManager) {
+        this.pingQueueManager = pingQueueManager;
+    }
+    
+    public PingTargetManager getPingTargetManager() {
+        return pingTargetManager;
+    }
+
+    @Inject
+    public void setPingTargetManager(PingTargetManager pingTargetManager) {
+        this.pingTargetManager = pingTargetManager;
+    }
+
+    public PropertiesManager getPropertiesManager() {
+        return propertiesManager;
+    }
+    
+    @Inject
+    public void setPropertiesManager(PropertiesManager propertiesManager) {
+        this.propertiesManager = propertiesManager;
+    }
+    
+    public RefererManager getRefererManager() {
+        return refererManager;
+    }
+    
+    @Inject
+    public void setRefererManager(RefererManager refererManager) {
+        this.refererManager = refererManager;
+    }
+    
+    public ReferrerQueueManager getReferrerQueueManager() {
+        return referrerQueueManager;
+    }
+    
+    @Inject
+    public void setReferrerQueueManager(ReferrerQueueManager referrerQueueManager) {
+        this.referrerQueueManager = referrerQueueManager;
+    }
+    
     public ThemeManager getThemeManager() {
-        if (themeManager == null) {
-            themeManager = new ThemeManagerImpl();
-        }
         return themeManager;
     }
     
-    
-    /**
-     * @see org.apache.roller.business.referrers.ReferrerQueueManager
-     */
-    public ReferrerQueueManager getReferrerQueueManager() {
-        return ReferrerQueueManagerImpl.getInstance();
+    @Inject
+    public void setThemeManager(ThemeManager themeManager) {
+        this.themeManager = themeManager;
     }
     
-    
-    /**
-     * @see org.apache.roller.model.Roller#getPluginManager()
-     */
-    public PluginManager getPagePluginManager() {
-        if (pluginManager == null) {
-            pluginManager = new PluginManagerImpl();
-        }
-        return pluginManager;
+    public ThreadManager getThreadManager() {
+        return threadManager;
     }
     
-    
-    public void release() {
-        try {
-            if (fileManager != null) fileManager.release();
-            if (threadManager != null) threadManager.release();
-            if (pluginManager != null) pluginManager.release();
-        } catch(Throwable e) {
-            mLogger.error("Error calling Roller.release()", e);
-        }
+    @Inject
+    public void setThreadManager(ThreadManager threadManager) {
+        this.threadManager = threadManager;
     }
     
-    
-    public void shutdown() {
-        try {
-            HitCountQueue.getInstance().shutdown();
-            if (getReferrerQueueManager() != null) getReferrerQueueManager().shutdown();
-            if (indexManager != null) indexManager.shutdown();
-            if (threadManager != null) threadManager.shutdown();
-        } catch(Throwable e) {
-            mLogger.error("Error calling Roller.shutdown()", e);
-        }
+    public UserManager getUserManager() {
+        return userManager;
     }
     
+    @Inject
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+        
+    public WeblogManager getWeblogManager() {
+        return weblogManager;
+    }
+
+    @Inject
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+    
+    public void init() {
+        this.indexManager.init();
+    }
+
     /** Roller version */
     public String getVersion() {
         return version;
     }
     
-    
     /** Roller build time */
     public String getBuildTime() {
         return buildTime;
-    }
-    
+    }    
     
     /** Get username that built Roller */
     public String getBuildUser() {
         return buildUser;
     }
-    
+
 }

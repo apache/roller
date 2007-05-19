@@ -18,10 +18,12 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Singleton;
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -30,6 +32,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -47,6 +50,7 @@ import org.xml.sax.InputSource;
  * that can be easily reused.
  *
  */
+@Singleton
 public class HibernatePersistenceStrategy {
     
     static final long serialVersionUID = 2561090040518169098L;
@@ -61,9 +65,29 @@ public class HibernatePersistenceStrategy {
             return new InputSource(new StringBufferInputStream(""));
         }
     };
-    
-    
-    public HibernatePersistenceStrategy() {
+        
+    public HibernatePersistenceStrategy() throws RollerException {
+        try {
+            if (StringUtils.isNotEmpty(RollerConfig.getProperty("jdbc.driverClass"))) {
+                // create and configure for JDBC access
+                initViaJDBCProperties(
+                    RollerConfig.getProperty("hibernate.configResource"),
+                    RollerConfig.getProperty("hibernate.dialect"),
+                    RollerConfig.getProperty("jdbc.driverClass"),
+                    RollerConfig.getProperty("jdbc.connectionURL"),
+                    RollerConfig.getProperty("jdbc.username"),
+                    RollerConfig.getProperty("jdbc.password"));
+            } else {
+                // create an configure via config resource only
+                initViaDataSource(
+                    RollerConfig.getProperty("hibernate.configResource"),
+                    RollerConfig.getProperty("hibernate.dialect"));
+            }
+        } catch(Throwable t) {
+            // if this happens then we are screwed
+            log.fatal("Error initializing Hibernate", t);
+            throw new RollerException(t);
+        }
     }   
 
     /** 
@@ -71,7 +95,7 @@ public class HibernatePersistenceStrategy {
      * @param configResouce Classpath-based path to Hibernate config file (e.g. "/hibernate.cgf.xml")
      * @parma dialect Classname of Hibernate dialect to be used (overriding any specified in the configResource)
      */
-    public HibernatePersistenceStrategy(
+    private void initViaDataSource(
             String configResource,
             String dialect) throws Exception {
 
@@ -118,7 +142,7 @@ public class HibernatePersistenceStrategy {
      * @param configResouce Classpath-based path to Hibernate config file (e.g. "/hibernate.cgf.xml")
      * @parma dialect Classname of Hibernate dialect to be used (or null to use one specified in configResource)
      */
-    public HibernatePersistenceStrategy(
+    private void initViaJDBCProperties(
             String configResource,
             String dialect,
             String driverClass,

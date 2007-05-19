@@ -122,6 +122,12 @@ public interface Roller {
     
     
     /**
+     * Prepare all managers for first use.
+     */
+    public void init() throws RollerException;
+    
+    
+    /**
      * Flush object states.
      */
     public void flush() throws RollerException;
@@ -138,13 +144,22 @@ public interface Roller {
      */
     public void shutdown();
     
-    /** Roller version */
-    public String getVersion();    
     
-    /** Roller build time */
+    /** 
+     * Roller version 
+     */
+    public String getVersion();
+    
+    
+    /** 
+     * Roller build time 
+     */
     public String getBuildTime();
+    
         
-    /** Get username that built Roller */
+    /** 
+     * Get username that built Roller 
+     */
     public String getBuildUser();
 }
 

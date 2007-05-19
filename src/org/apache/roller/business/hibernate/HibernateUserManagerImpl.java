@@ -18,9 +18,9 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -79,6 +79,7 @@ public class HibernateUserManagerImpl implements UserManager {
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
         
+    @Inject
     public HibernateUserManagerImpl(HibernatePersistenceStrategy strat) {
         log.debug("Instantiating Hibernate User Manager");
         

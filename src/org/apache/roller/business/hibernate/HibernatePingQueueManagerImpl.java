@@ -19,6 +19,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import com.google.inject.Inject;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -47,7 +48,7 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     
     private HibernatePersistenceStrategy strategy = null;
     
-    
+    @Inject    
     public HibernatePingQueueManagerImpl(HibernatePersistenceStrategy strat) {
         this.strategy = strat;
     }
