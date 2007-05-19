@@ -97,7 +97,7 @@ public class ThemeEdit extends UIAction {
         try {
             // set theme to current value
             setThemeId(getActionWeblog().getTheme().getId());
-        } catch (RollerException ex) {
+        } catch (Exception ex) {
             log.error("Error getting theme for weblog - "+getActionWeblog().getHandle(), ex);
         }
         
