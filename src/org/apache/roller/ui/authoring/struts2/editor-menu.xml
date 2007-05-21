@@ -81,7 +81,7 @@ Each menu or menu item is governed by four attrbibutes:
                    name="tabbedmenu.website.pages" 
                    roles="editor"
                    perms="admin" 
-                   subactions="template,templateAdd,templateRemove" />
+                   subactions="templateAdd,templateEdit,templateRemove" />
         
         <menu-item action="members" 
                    name="tabbedmenu.website.members" 
