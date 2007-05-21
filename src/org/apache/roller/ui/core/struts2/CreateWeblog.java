@@ -33,6 +33,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.Utilities;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -56,6 +57,7 @@ public class CreateWeblog extends UIAction {
     }
     
     
+    @SkipValidation
     public String execute() {
         
         UserData user = getAuthenticatedUser();
@@ -85,6 +87,7 @@ public class CreateWeblog extends UIAction {
     }
     
     
+    @SkipValidation
     public String cancel() {
         return "cancel";
     }
@@ -93,7 +96,6 @@ public class CreateWeblog extends UIAction {
     public String save() {
         
         UserData user = getAuthenticatedUser();
-        
         try {
             if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -110,7 +112,6 @@ public class CreateWeblog extends UIAction {
             log.error("error checking for existing weblogs count", ex);
         }
         
-        // custom validation
         myValidate();
         
         if(!hasActionErrors()) {
@@ -154,29 +155,22 @@ public class CreateWeblog extends UIAction {
     }
     
     
-    // TODO: replace with struts2 validation
-    private void myValidate()  {
+    public void myValidate()  {
         
         String allowed = RollerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
+        
+        // make sure handle only contains safe characters
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
-        
-        if (StringUtils.isEmpty(getBean().getName())) {
-            addError("createWeblog.error.missingName");
-        }
-        
-        if (StringUtils.isEmpty(getBean().getHandle())) {
-            addError("createWeblog.error.missingHandle");
-        } else if (!safe.equals(getBean().getHandle()) ) {
+        if (!safe.equals(getBean().getHandle()) ) {
             addError("createWeblog.error.invalidHandle");
         }
         
-        if (StringUtils.isEmpty(getBean().getEmailAddress())) {
-            addError("createWeblog.error.missingEmailAddress");
-        }
+        // make sure theme was specified and is a valid value
         
+        // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             if (mgr.getWebsiteByHandle(getBean().getHandle()) != null) {
