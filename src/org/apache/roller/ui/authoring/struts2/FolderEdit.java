@@ -28,6 +28,7 @@ import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -73,6 +74,7 @@ public class FolderEdit extends UIAction {
     /**
      * Show folder edit page.
      */
+    @SkipValidation
     public String execute() {
         
         if(getFolder() == null) {
@@ -134,9 +136,11 @@ public class FolderEdit extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing folder
-        FolderData parent = getFolder().getParent();
-        if(parent != null && parent.hasFolder(getBean().getName())) {
-            addError("folderForm.error.duplicateName", getBean().getName());
+        if(!getFolder().getName().equals(getBean().getName())) {
+            FolderData parent = getFolder().getParent();
+            if(parent != null && parent.hasFolder(getBean().getName())) {
+                addError("folderForm.error.duplicateName", getBean().getName());
+            }
         }
     }
     

@@ -54,7 +54,7 @@ public class TemplateEdit extends UIAction {
     
     
     public TemplateEdit() {
-        this.actionName = "template";
+        this.actionName = "templateEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "pagesForm.title";
     }

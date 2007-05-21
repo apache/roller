@@ -28,6 +28,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -72,6 +73,7 @@ public class CategoryEdit extends UIAction {
     /**
      * Show category form.
      */
+    @SkipValidation
     public String execute() {
         
         if(getCategory() == null) {
@@ -133,9 +135,11 @@ public class CategoryEdit extends UIAction {
         // name is required, has max length, no html
         
         // make sure new name is not a duplicate of an existing category
-        WeblogCategoryData parent = getCategory().getParent();
-        if(parent != null && parent.hasCategory(getBean().getName())) {
-            addError("categoryForm.error.duplicateName", getBean().getName());
+        if(!getCategory().getName().equals(getBean().getName())) {
+            WeblogCategoryData parent = getCategory().getParent();
+            if(parent != null && parent.hasCategory(getBean().getName())) {
+                addError("categoryForm.error.duplicateName", getBean().getName());
+            }
         }
     }
 

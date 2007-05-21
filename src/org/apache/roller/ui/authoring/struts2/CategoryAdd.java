@@ -22,13 +22,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -76,6 +76,7 @@ public class CategoryAdd extends UIAction {
     /**
      * Show category form.
      */
+    @SkipValidation
     public String execute() {
         
         if(getCategory() == null) {
