@@ -36,6 +36,7 @@ import org.apache.roller.ui.core.security.CustomUserRegistry;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.MailUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -73,6 +74,7 @@ public class Register extends UIAction implements ServletRequestAware {
     }
     
     
+    @SkipValidation
     public String execute() {
         
         if(!RollerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
@@ -104,6 +106,7 @@ public class Register extends UIAction implements ServletRequestAware {
     }
     
     
+    @SkipValidation
     public String cancel() {
         return "cancel";
     }
@@ -115,7 +118,6 @@ public class Register extends UIAction implements ServletRequestAware {
             return "disabled";
         }
         
-        // run some validation
         myValidate();
         
         if (!hasActionErrors()) try {
@@ -244,8 +246,7 @@ public class Register extends UIAction implements ServletRequestAware {
     }
     
     
-    // TODO: replace with struts2 validation
-    protected void myValidate() {
+    public void myValidate() {
         
         // if usingSSO, we don't want to error on empty password/username from HTML form.
         setFromSS0(false);
@@ -269,21 +270,30 @@ public class Register extends UIAction implements ServletRequestAware {
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }
-        String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
         
-        if (StringUtils.isEmpty(getBean().getUserName())) {
-            addError("error.add.user.missingUserName");
-        } else if (!safe.equals(getBean().getUserName()) ) {
+        // check that username only contains safe characters
+        String safe = CharSetUtils.keep(getBean().getUserName(), allowed);
+        if (!safe.equals(getBean().getUserName()) ) {
             addError("error.add.user.badUserName");
         }
         
-        if (StringUtils.isEmpty(getBean().getEmailAddress())) {
-            addError("error.add.user.missingEmailAddress");
+        // check that passwords match
+        if(!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+            addError("Register.error.passowordMismatch");
         }
         
-        if (StringUtils.isEmpty(getBean().getPasswordText()) && 
-                StringUtils.isEmpty(getBean().getPasswordConfirm())) {
-            addError("error.add.user.missingPassword");
+        // check that username is not taken
+        if(!StringUtils.isEmpty(getBean().getUserName())) try {
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            if(mgr.getUserByUserName(getBean().getUserName(), null) != null) {
+                addError("error.add.user.userNameInUse");
+                // reset user name
+                getBean().setUserName(null);
+            }
+        } catch (RollerException ex) {
+            log.error("error checking for user", ex);
+            // TODO: i18n
+            addError("unexpected error");
         }
     }
     

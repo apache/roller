@@ -26,6 +26,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -50,6 +51,7 @@ public class Profile extends UIAction {
     }
     
     
+    @SkipValidation
     public String execute() {
         
         UserData ud = getAuthenticatedUser();
@@ -65,6 +67,7 @@ public class Profile extends UIAction {
     }
     
     
+    @SkipValidation
     public String cancel() {
         return "cancel";
     }
@@ -72,7 +75,6 @@ public class Profile extends UIAction {
     
     public String save() {
         
-        // custom validation
         myValidate();
         
         if (!hasActionErrors()) {
@@ -121,11 +123,13 @@ public class Profile extends UIAction {
     }
     
     
-    // TODO: replace with struts2 validation
-    private void myValidate() {
+    public void myValidate() {
         
-        if (StringUtils.isEmpty(getBean().getEmailAddress())) {
-            addError("error.add.user.missingEmailAddress");
+        // check that passwords match if they were specified
+        if(!StringUtils.isEmpty(getBean().getPasswordText())) {
+            if(!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+                addError("Register.error.passowordMismatch");
+            }
         }
     }
     
