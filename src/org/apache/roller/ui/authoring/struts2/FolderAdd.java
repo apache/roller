@@ -28,6 +28,7 @@ import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -71,6 +72,7 @@ public class FolderAdd extends UIAction {
     }
     
     
+    @SkipValidation
     public String execute() {
         
         if(getFolder() == null) {

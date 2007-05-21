@@ -30,6 +30,7 @@ import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -70,6 +71,7 @@ public class BookmarkEdit extends UIAction {
     }
     
     
+    @SkipValidation
     public String execute() {
         
         if(getBookmark() == null) {

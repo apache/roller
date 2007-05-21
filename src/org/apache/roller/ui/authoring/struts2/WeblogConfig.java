@@ -35,10 +35,10 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
-import org.apache.roller.ui.core.util.struts2.KeyValueObject;
 import org.apache.roller.ui.core.util.struts2.UIAction;
 import org.apache.roller.util.Blacklist;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -106,6 +106,7 @@ public class WeblogConfig extends UIAction {
     }
     
     
+    @SkipValidation
     public String execute() {
         
         // load bean with data from weblog
