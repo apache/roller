@@ -20,46 +20,4 @@
         </field-validator>
     </field>
     
-    <field name="bean.url">
-        <field-validator type="requiredstring">
-            <message key="WeblogConfig.error.urlNull">unspecified key</message>
-        </field-validator>
-        
-        <field-validator type="url">
-            <message key="WeblogConfig.error.urlBad">unspecified key</message>
-        </field-validator>
-    </field>
-    
-    <field name="bean.weight">
-        <field-validator type="required">
-            <message key="WeblogConfig.error.weightNull">unspecified key</message>
-        </field-validator>
-        
-        <field-validator type="int">
-            <message key="WeblogConfig.error.weightNotInt">unspecified key</message>
-        </field-validator>
-    </field>
-    
-    <field name="bean.priority">
-        <field-validator type="required">
-            <message key="WeblogConfig.error.priorityNull">unspecified key</message>
-        </field-validator>
-        
-        <field-validator type="int">
-            <message key="WeblogConfig.error.priorityNotInt">unspecified key</message>
-        </field-validator>
-    </field>
-    
-    <field name="bean.image">
-        <field-validator type="url">
-            <message key="WeblogConfig.error.imageBad">unspecified key</message>
-        </field-validator>
-    </field>
-    
-    <field name="bean.feedUrl">
-        <field-validator type="url">
-            <message key="WeblogConfig.error.feedUrlBad">unspecified key</message>
-        </field-validator>
-    </field>
-    
 </validators>
