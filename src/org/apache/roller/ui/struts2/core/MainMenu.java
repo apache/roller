@@ -16,20 +16,18 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.struts2;
+package org.apache.roller.ui.struts2.core;
 
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.struts.actions.YourWebsitesAction.YourWebsitesPageModel;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 

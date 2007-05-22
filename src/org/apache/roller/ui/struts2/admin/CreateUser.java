@@ -29,7 +29,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.ui.core.struts2.Register;
+import org.apache.roller.ui.struts2.core.Register;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 

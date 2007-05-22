@@ -16,10 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.struts2;
-
-import java.util.Locale;
-import org.apache.roller.pojos.WebsiteData;
+package org.apache.roller.ui.struts2.core;
 
 
 /**
