@@ -19,13 +19,19 @@
 
 <script type="text/javascript">
 <!--
-function previewImage(theme) {
-    document.preview.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
+function previewImage(element, theme) {
+    element.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
 }
 
 function fullPreview() {
-    selected=document.themes.themeId.selectedIndex;
-    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+document.themes.themeId.options[selected].value, '_preview', '');
+    selected=document.getElementById('themeEdit_themeId').selectedIndex;
+    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+document.getElementById('themeEdit_themeId').options[selected].value, '_preview', '');
+}
+
+function toggleThemeOptioner() {
+    // just call toggle on both theme optioner choices
+    new Effect.toggle('sharedThemeOptioner', 'appear');
+    new Effect.toggle('customThemeOptioner', 'appear');
 }
 -->
 </script>
@@ -44,17 +50,78 @@ function fullPreview() {
     
     <p><s:text name="themeEditor.yourCurrentTheme" />: <b><s:property value="actionWeblog.theme.name"/></b></p>
     
-    <p>
-        <s:select name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(this[selectedIndex].value)"/>
-        <input type="button" value="<s:text name="weblogEdit.fullPreviewMode" />" onclick="fullPreview()" />
-    </p>
-    <p>
-        <img name="preview" src="" />
-        <!-- initialize preview image at page load -->
-        <script type="text/javascript">
-            previewImage('<s:property value="actionWeblog.theme.id"/>');
-        </script>
-    </p>
-    <p><s:submit key="themeEditor.save" /></p>
+    <table width="85%">
+        <tr>
+            <td>
+                <s:if test="actionWeblog.theme.id == 'custom'">
+                    <input type="radio" name="themeType" value="shared" onchange="toggleThemeOptioner()" />Shared Theme<br/>
+                </s:if>
+                <s:else>
+                    <input type="radio" name="themeType" value="shared" checked="true" onchange="toggleThemeOptioner()" />Shared Theme<br/>
+                </s:else>
+                This option is for users who don't want to fuss with designing their weblog on their own and prefer the easier option of using a predefined theme.
+            </td>
+            <td align="right">
+                <input type="radio" name="themeType" value="custom" onchange="toggleThemeOptioner()" />Custom Theme<br/>
+                This option is for the creative bloggers who want to be able to create a blog design of their own.  Beware though, managing a blog design of your own takes a bit of effort.
+            </td>
+        </tr>
+    </table>
+    
+    <s:if test="actionWeblog.theme.id == 'custom'">
+        <div id="sharedThemeOptioner" style="display:none;">
+    </s:if>
+    <s:else>
+        <div id="sharedThemeOptioner">
+    </s:else>
+    <div>
+        <p>
+            <s:select name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('previewImg'), this[selectedIndex].value)"/>
+        </p>
+        <p>
+            <img id="previewImg" src="" />
+            <!-- initialize preview image at page load -->
+            <script type="text/javascript">
+            previewImage(document.getElementById('previewImg'), '<s:property value="themeId"/>');
+            </script>
+        </p>
+        <p>
+            &raquo; <a href="#" onclick="fullPreview()">See how your blog will look with this theme.</a><br/>
+            How can you know if this is really the theme for you until you see it on your blog right?  Click the link above to launch a full page preview of how your blog will look with the selected theme.
+        </p>
+        <s:if test="actionWeblog.theme.customStylesheet != null">
+            <p>
+                <s:url action="stylesheetEdit" id="stylesheetEdit" >
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+                &raquo; <s:a href="%{stylesheetEdit}">Modify the styling of your selected theme.</s:a><br/>
+                If you are happy with your theme but want to make a few styling choices of your own such as choosing different fonts, colors, etc, then try making your own stylesheet or borrow one from someoone else using your theme.
+            </p>
+        </s:if>
+        <p><s:submit key="themeEditor.save" /></p>
+    </div>
+    </div>
+    
+    <s:if test="actionWeblog.theme.id == 'custom'">
+        <div id="customThemeOptioner">
+    </s:if>
+    <s:else>
+        <div id="customThemeOptioner" style="display:none;">
+    </s:else>
+    <div>
+        <p>
+            <s:select name="customizeThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('customizePreviewImg'), this[selectedIndex].value)"/>
+            <input type="button" value="<s:text name="weblogEdit.fullPreviewMode" />" onclick="fullPreview()" />
+        </p>
+        <p>
+            <img id="customizePreviewImg" src="" />
+            <!-- initialize preview image at page load -->
+            <script type="text/javascript">
+            previewImage(document.getElementById('customizePreviewImg'), '<s:property value="actionWeblog.theme.id"/>');
+            </script>
+        </p>
+        <p><s:submit key="themeEditor.save" /></p>
+    </div>
+    </div>
     
 </s:form>
