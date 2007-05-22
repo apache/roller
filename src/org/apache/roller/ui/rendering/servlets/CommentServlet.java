@@ -65,7 +65,6 @@ import org.apache.roller.util.RollerMessages.RollerMessage;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.CacheManager;
-import org.apache.struts.util.RequestUtils;
 
 
 /**
@@ -311,9 +310,6 @@ public class CommentServlet extends HttpServlet {
                     // Send email notifications, but only to subscribers if comment is 100% valid
                     boolean notifySubscribers = (validationScore == 100);
                     String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                    if (rootURL == null || rootURL.trim().length()==0) {
-                        rootURL = RequestUtils.serverURL(request) + request.getContextPath();
-                    }
                     sendEmailNotification(comment, notifySubscribers, messages, rootURL);
                     
                     // only re-index/invalidate the cache if comment isn't moderated
