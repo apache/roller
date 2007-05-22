@@ -64,6 +64,28 @@ Each menu or menu item is governed by four attrbibutes:
                    enabledProperty="referrers.processing.enabled" />
     </menu>
     
+    
+    <menu name="tabbedmenu.design" perms="admin" roles="editor">
+        
+        <menu-item action="themeEdit"         
+                   name="tabbedmenu.website.themes" 
+                   roles="editor"
+                   perms="admin" />
+        
+        <menu-item action="stylesheetEdit"         
+                   name="tabbedmenu.design.stylesheet" 
+                   roles="editor"
+                   perms="admin" />
+                   
+        <menu-item action="templates"         
+                   name="tabbedmenu.website.pages" 
+                   roles="editor"
+                   perms="admin" 
+                   subactions="templateAdd,templateEdit,templateRemove" />
+                   
+    </menu>
+    
+    
     <menu name="tabbedmenu.website" perms="admin" roles="editor">
         
         <menu-item action="weblogConfig"       
@@ -71,17 +93,6 @@ Each menu or menu item is governed by four attrbibutes:
                    roles="editor"
                    perms="admin" 
                    subactions="weblogRemove" />
-        
-        <menu-item action="themeEdit"         
-                   name="tabbedmenu.website.themes" 
-                   roles="editor"
-                   perms="admin" />
-        
-        <menu-item action="templates"         
-                   name="tabbedmenu.website.pages" 
-                   roles="editor"
-                   perms="admin" 
-                   subactions="templateAdd,templateEdit,templateRemove" />
         
         <menu-item action="members" 
                    name="tabbedmenu.website.members" 
