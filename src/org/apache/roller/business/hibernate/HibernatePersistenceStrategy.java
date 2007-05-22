@@ -19,9 +19,7 @@
 package org.apache.roller.business.hibernate;
 
 import java.io.StringBufferInputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -30,11 +28,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.RollerException;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.DOMOutputter;
+import org.apache.roller.config.RollerConfig;
+import org.hibernate.cfg.Environment;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -45,7 +40,6 @@ import org.xml.sax.InputSource;
  * This class serves as a helper/util class for all of the Hibernate
  * manager implementations by providing a set of basic persistence methods
  * that can be easily reused.
- *
  */
 public class HibernatePersistenceStrategy {
     
@@ -62,133 +56,27 @@ public class HibernatePersistenceStrategy {
         }
     };
     
-    
+    /**
+     * Persistence strategy configures itself by using Roller properties:
+     * 'hibernate.configResource' - the resource name of Roller's Hibernate XML configuration file, 
+     * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
+     * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
+     */
     public HibernatePersistenceStrategy() {
-    }   
-
-    /** 
-     * Construct self using Hibernate config resource and optional dialect.
-     * @param configResouce Classpath-based path to Hibernate config file (e.g. "/hibernate.cgf.xml")
-     * @parma dialect Classname of Hibernate dialect to be used (overriding any specified in the configResource)
-     */
-    public HibernatePersistenceStrategy(
-            String configResource,
-            String dialect) throws Exception {
-
-        log.info("configResource: " + configResource);
-        log.info("dialect:        " + dialect);
         
-        // read configResource into DOM form
-        SAXBuilder builder = new SAXBuilder();
-        builder.setEntityResolver(noOpEntityResolver); 
-        Document configDoc = builder.build(
-            getClass().getResourceAsStream(configResource));
-        Element root = configDoc.getRootElement();
-        Element sessionFactoryElem = root.getChild("session-factory");
-        
-        // remove any existing connection.datasource and dialect properties
-        List propertyElems = sessionFactoryElem.getChildren("property");
-        List removeList = new ArrayList();
-        for (Iterator it = propertyElems.iterator(); it.hasNext();) {
-            Element elem = (Element) it.next();
-            if (elem.getAttribute("name") != null 
-                && elem.getAttribute("name").getValue().equals("dialect")) {
-                removeList.add(elem);           
-            }
-        }
-        for (Iterator it = removeList.iterator(); it.hasNext();) {
-            Element elem = (Element) it.next();
-            sessionFactoryElem.removeContent(elem); 
-        }
-        
-        // add Roller dialect property      
-        Element prop = new Element("property").setAttribute(
-            new Attribute("name","dialect"));
-        prop.addContent(dialect);
-        sessionFactoryElem.addContent(prop);
-        
+        // Read Hibernate config file specified by Roller config
         Configuration config = new Configuration();
-        DOMOutputter outputter = new DOMOutputter();
-        config.configure(outputter.output(configDoc));
+        config.configure(RollerConfig.getProperty("hibernate.configResource"));
+
+        // Add dialect specified by Roller config and our connection provider
+        Properties props = new Properties();
+        props.put(Environment.DIALECT, 
+                RollerConfig.getProperty("hibernate.dialect"));
+        props.put(Environment.CONNECTION_PROVIDER, 
+                RollerConfig.getProperty("hibernate.connectionProvider"));
+        config.mergeProperties(props);
+        
         this.sessionFactory = config.buildSessionFactory(); 
-    }
-    
-    /** 
-     * Construct self using Hibernate config resource and optional dialect.
-     * @param configResouce Classpath-based path to Hibernate config file (e.g. "/hibernate.cgf.xml")
-     * @parma dialect Classname of Hibernate dialect to be used (or null to use one specified in configResource)
-     */
-    public HibernatePersistenceStrategy(
-            String configResource,
-            String dialect,
-            String driverClass,
-            String connectionURL,
-            String username,
-            String password) throws Exception {
-        
-        log.info("configResource: " + configResource);
-        log.info("dialect:        " + dialect);
-        log.info("driverClass:    " + driverClass);
-        log.info("connectionURL:  " + connectionURL);
-        log.info("username:       " + username);
-
-        // read configResource into DOM form
-        SAXBuilder builder = new SAXBuilder();
-        builder.setEntityResolver(noOpEntityResolver); 
-        Document configDoc = builder.build(
-            getClass().getResourceAsStream(configResource));
-        Element root = configDoc.getRootElement();
-        Element sessionFactoryElem = root.getChild("session-factory");
-        
-        // remove any existing connection.datasource and dialect properties
-        List propertyElems = sessionFactoryElem.getChildren("property");
-        List removeList = new ArrayList();
-        for (Iterator it = propertyElems.iterator(); it.hasNext();) {
-            Element elem = (Element) it.next();
-            if (elem.getAttribute("name") != null 
-                && elem.getAttribute("name").getValue().equals("connection.datasource")) {
-                removeList.add(elem);
-            }
-            if (elem.getAttribute("name") != null 
-                && elem.getAttribute("name").getValue().equals("dialect")) {
-                removeList.add(elem);
-            }
-        }
-        for (Iterator it = removeList.iterator(); it.hasNext();) {
-            Element elem = (Element) it.next();
-            sessionFactoryElem.removeContent(elem); 
-        }
-                                       
-        // add JDBC connection params instead
-        Element prop = new Element("property").setAttribute(
-            new Attribute("name","hibernate.connection.driver_class"));
-        prop.addContent(driverClass);
-        sessionFactoryElem.addContent(prop);
-
-        prop = new Element("property").setAttribute(
-            new Attribute("name","hibernate.connection.url"));
-        prop.addContent(connectionURL);
-        sessionFactoryElem.addContent(prop);
-        
-        prop = new Element("property").setAttribute(
-            new Attribute("name","hibernate.connection.username"));
-        prop.addContent(username);
-        sessionFactoryElem.addContent(prop);
-        
-        prop = new Element("property").setAttribute(
-            new Attribute("name","hibernate.connection.password"));
-        prop.addContent(password);
-        sessionFactoryElem.addContent(prop);
-        
-        prop = new Element("property").setAttribute(
-            new Attribute("name","dialect"));
-        prop.addContent(dialect);
-        sessionFactoryElem.addContent(prop);
-        
-        Configuration config = new Configuration();
-        DOMOutputter outputter = new DOMOutputter();
-        config.configure(outputter.output(configDoc));
-        this.sessionFactory = config.buildSessionFactory();
     }
     
     
