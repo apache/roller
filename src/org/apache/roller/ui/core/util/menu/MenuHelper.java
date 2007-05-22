@@ -49,10 +49,10 @@ public class MenuHelper {
         try {
             // parse menus and cache so we can efficiently reuse them
             // TODO: there is probably a better way than putting the whole path
-            ParsedMenu editorMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/ui/authoring/struts2/editor-menu.xml"));
+            ParsedMenu editorMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/ui/struts2/editor/editor-menu.xml"));
             menus.put("editor", editorMenu);
             
-            ParsedMenu adminMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/ui/admin/struts2/admin-menu.xml"));
+            ParsedMenu adminMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/ui/struts2/admin/admin-menu.xml"));
             menus.put("admin", adminMenu);
             
         } catch (Exception ex) {

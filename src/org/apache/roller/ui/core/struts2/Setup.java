@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.ui.core.util.struts2.UIAction;
+import org.apache.roller.ui.struts2.util.UIAction;
 
 
 /**

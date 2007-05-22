@@ -16,52 +16,40 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.struts2;
+package org.apache.roller.ui.struts2.admin;
 
 import org.apache.roller.ui.struts2.util.UIAction;
 
 
 /**
- * Handle user logins.
+ * Action which displays user admin search page.
  */
-public class Login extends UIAction {
-    
-    private String error = null;
+public class UserAdmin extends UIAction {
     
     
-    public Login() {
-        this.pageTitle = "loginPage.title";
+    public UserAdmin() {
+        this.actionName = "userAdmin";
+        this.desiredMenu = "admin";
+        this.pageTitle = "userAdmin.title.searchUser";
     }
     
     
-    // override default security, we do not require an authenticated user
-    public boolean isUserRequired() {
-        return false;
+    // admin role required
+    public String requiredUserRole() {
+        return "admin";
     }
     
-    // override default security, we do not require an action weblog
+    // no weblog required
     public boolean isWeblogRequired() {
         return false;
     }
     
     
+    /**
+     * Show user admin search page.
+     */
     public String execute() {
-        
-        // set action error message if there was login error
-        if(getError() != null) {
-            addError("error.password.mismatch");
-        }
-        
         return SUCCESS;
-    }
-
-    
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
     
 }

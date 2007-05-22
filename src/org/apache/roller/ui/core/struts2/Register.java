@@ -33,7 +33,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.core.security.CustomUserRegistry;
-import org.apache.roller.ui.core.util.struts2.UIAction;
+import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.MailUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
