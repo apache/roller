@@ -51,6 +51,9 @@ public class ThemeEdit extends UIAction {
     // list of available themes
     private List themes = Collections.EMPTY_LIST;
     
+    // type of theme desired, either 'shared' or 'custom'
+    private String themeType = null;
+    
     // the chosen theme on a save() or customize()
     private String themeId = null;
     
@@ -62,7 +65,6 @@ public class ThemeEdit extends UIAction {
     }
     
     
-    // must be a weblog admin to use this action
     public short requiredWeblogPermissions() {
         return PermissionsData.ADMIN;
     }
@@ -94,12 +96,8 @@ public class ThemeEdit extends UIAction {
     
     
     public String execute() {
-        try {
-            // set theme to current value
-            setThemeId(getActionWeblog().getTheme().getId());
-        } catch (Exception ex) {
-            log.error("Error getting theme for weblog - "+getActionWeblog().getHandle(), ex);
-        }
+        // set theme to current value
+        setThemeId(getActionWeblog().getTheme().getId());
         
         return SUCCESS;
     }
@@ -118,13 +116,19 @@ public class ThemeEdit extends UIAction {
             try {
                 WebsiteData weblog = getActionWeblog();
                 
-                weblog.setEditorTheme(getThemeId());
+                if(WeblogTheme.CUSTOM.equals(getThemeType())) {
+                    weblog.setEditorTheme(WeblogTheme.CUSTOM);
+                    
+                    log.debug("Saving custom theme for weblog "+weblog.getHandle());
+                } else if("shared".equals(getThemeType())) {
+                    weblog.setEditorTheme(getThemeId());
+                    
+                    log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
+                }
                 
                 UserManager userMgr = RollerFactory.getRoller().getUserManager();
                 userMgr.saveWebsite(weblog);
                 RollerFactory.getRoller().flush();
-                
-                log.debug("Saved theme "+getThemeId()+" for weblog "+weblog.getHandle());
                 
                 // make sure to flush the page cache so ppl can see the change
                 CacheManager.invalidate(weblog);
@@ -226,6 +230,14 @@ public class ThemeEdit extends UIAction {
         this.themes = themes;
     }
 
+    public String getThemeType() {
+        return themeType;
+    }
+
+    public void setThemeType(String themeType) {
+        this.themeType = themeType;
+    }
+    
     public String getThemeId() {
         return themeId;
     }
