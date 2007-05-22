@@ -38,11 +38,8 @@ import org.apache.roller.business.RollerFactory;
  * set of Folders (there is no one root folder) and each Folder may contain
  * Folders or Bookmarks. Don't construct one of these yourself, instead use
  * the create method in your BookmarkManager implementation.</p>
- *
- * @struts.form include-all="true"
- *    extends="org.apache.struts.validator.ValidatorForm"
+ * 
  * @ejb:bean name="FolderData"
- *
  * @hibernate.class lazy="true" table="folder"
  * @hibernate.cache usage="read-write"
  */

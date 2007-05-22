@@ -77,10 +77,10 @@ Key Targets:
 <!-- ================================================ -->
 <!-- Meta targets -->
 <!-- ================================================ -->
-<target name="all" depends="generate,stage-webapp" description="Build all">
+<target name="all" depends="stage-webapp" description="Build all">
 </target>
 
-<target name="build" depends="copy-webapp" description="Compile code and copy files, no code generation">
+<target name="build" depends="stage-webapp" description="Compile code and copy files">
 </target>
 
 <target name="rebuild" depends="clean,all" description="Clean and build all">
@@ -92,12 +92,6 @@ Key Targets:
     <delete dir="${ro.dist}" />
 </target>
 
-<!-- ********************************************************************* -->
-<!-- XDoclet code generation -->
-<!-- ********************************************************************* -->
-
-<target name="generate" depends="gen-forms" >
-</target>
 
 <!-- ============================================== -->
 <!-- generate code/files for the business layer -->
@@ -128,106 +122,13 @@ Key Targets:
     
 </target>
 
-
-<!-- ============================================== -->
-<!-- Generate pojo wrappers -->
-<target name="gen-wrappers" description="XDoclet generate pojo wrappers">
-
-    <!-- Define the XDoclet task -->
-    <taskdef  name="xdoclet" classname="xdoclet.DocletTask"
-        classpathref="xdoclet.path" />
-    
-    <xdoclet destdir="${build.generated.business}">
-        
-        <packageSubstitution packages="pojos" substituteWith="pojos.wrapper"/>
-        
-        <fileset dir="${ro.src}">
-            <!-- 
-                it may be easier to glob using *Data.java at some point, but
-                for now that will generate a lot of unneeded classes.
-                
-                maybe we can extend the process to only wrap classes that have
-                methods tagged with @roller.wrapPojoMethod ??
-            -->
-            <include name="org/apache/roller/pojos/BookmarkData.java"/>
-            <include name="org/apache/roller/pojos/CommentData.java"/>
-            <include name="org/apache/roller/pojos/EntryAttributeData.java"/>
-            <include name="org/apache/roller/pojos/FolderData.java"/>
-            <include name="org/apache/roller/pojos/RefererData.java"/>
-            <include name="org/apache/roller/pojos/Template.java"/>
-            <include name="org/apache/roller/pojos/UserData.java"/>
-            <include name="org/apache/roller/pojos/WeblogEntryData.java"/>
-            <include name="org/apache/roller/pojos/WeblogEntryTagData.java"/>        	
-            <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
-            <include name="org/apache/roller/pojos/SiteTagAggregateData.java"/>          	
-            <include name="org/apache/roller/pojos/WebsiteData.java"/>
-        </fileset>
-
-        <template 
-            destinationFile="{0}Wrapper.java"
-            templateFile="metadata/xdoclet/pojo_wrapper.xdt"
-            subTaskName="Pojo Wrappers" />
-    </xdoclet>
-        
-</target>
-
-
-<!-- ============================================== -->
-<!-- generate Struts forms -->
-<target name="gen-forms" description="XDoclet generate form beans">
-
-    <!-- Define the XDoclet xdoclet task -->
-    <taskdef  name="ejbdoclet" classname="xdoclet.modules.ejb.EjbDocletTask"
-        classpathref="xdoclet.path" />
-        
-    <mkdir dir="${build.generated.web}"/>
-
-    <!-- Use EJBDoclet to generate Struts forms -->
-    <ejbdoclet destdir="${build.generated}/unused" excludedtags="@version,@author">
-        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
-
-        &custom-gen-web;
-     
-        <!-- Generate Struts forms -->
-        <strutsform destdir="${build.generated.web}"
-            prefixWithPackageStructure="no"
-            templateFile="./metadata/xdoclet/struts_form.xdt">
-
-            <!-- into the org.apache.roller.ui.authoring.struts.forms package -->
-            <packageSubstitution packages="pojos"
-                substituteWith="ui.authoring.struts.forms"/>
-        </strutsform>
-
-        <!-- We are not actually generating data objects, but using the
-             dataobject subtask allows the strutsform subtask to add nice
-             constructors and setData methods to Struts forms -->
-        <dataobject destdir="${ro.build}/unused" pattern="{0}" />
-
-    </ejbdoclet>
-
-    <!-- Change Struts form names from *DataForm.java to *Form.java  -->
-    <replace dir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms"
-        token="DataForm" value="Form"/>
-    <move      todir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms">
-        <fileset dir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms" >
-            <include name="*DataForm.java"/>
-            <include name="*ConfigForm.java" />
-        </fileset>
-        <mapper type="glob" from="*DataForm.java" to="*Form.java"/>
-    </move>
-    
-</target>
-
         
 <!-- ********************************************************************* -->
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
 
-
-<target name="build-business">
+<target name="build-business" depends="gen-business">
     
-    <mkdir dir="${build.generated.business}"/>
     <mkdir dir="${build.compile.business}"/>
     <mkdir dir="${build.lib}"/>
     
@@ -249,7 +150,6 @@ ro.buildUser=${user.name}
         deprecation="${build.deprecation}">
         
         <src path="${ro.src}" />
-        <src path="${build.generated.business}"/>
         
         <classpath>
             <path refid="business.path"/>
@@ -261,7 +161,6 @@ ro.buildUser=${user.name}
     <copy todir="${build.compile.business}">
         <fileset dir="${ro.src}" 
             excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" />
-        <fileset dir="${build.generated.business}" excludes="**/*.java" />
     </copy>
     
     <!-- allow for custom build work -->
@@ -288,7 +187,6 @@ ro.buildUser=${user.name}
         includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" >
         
         <src path="${ro.src}"  />
-        <src path="${build.generated.web}"/>
         &custom-src-web;
         <classpath>
             <path refid="presentation.path"/>
@@ -305,8 +203,8 @@ ro.buildUser=${user.name}
             <exclude name="**/*.png"/>
         </fileset>
     </copy>
-	
-	&custom-build-web;
+
+    &custom-build-web;
     
     <!-- Jar up web classes -->
     <jar jarfile="${build.lib}/roller-web.jar">
@@ -314,6 +212,7 @@ ro.buildUser=${user.name}
     </jar>
     
 </target>
+
 
     <!-- ============================================== -->
     <!-- create distributable components -->
@@ -336,19 +235,11 @@ ro.buildUser=${user.name}
 <!-- ********************************************************************* -->
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
-	
-<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts-conditional, copy-webapp" description="Stage webapp, including jars">
-</target>
-       
-<target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
+
+<target name="stage-webapp" depends="build-web, gen-dbscripts-conditional" description="Stage webapp, including jars">
 
     <mkdir dir="${build.webapp}/WEB-INF/lib"/>
     <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
-
-    <!-- Copy WEB-INF contents to staging -->
-    <copy todir="${build.webapp}/WEB-INF">
-        <fileset dir="${tools.struts}/lib" includes="validator-rules.xml"/>
-    </copy>
 
     <!-- Copy other jars -->
     <copy todir="${build.webapp}/WEB-INF/lib">
@@ -358,7 +249,6 @@ ro.buildUser=${user.name}
         <fileset refid="presentation.jars" />
         <fileset refid="hibernate.jar" />
         <fileset refid="hibernate.jars" />
-        <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
         <fileset refid="struts2.jars" />
         <fileset refid="spring.jars" /> 
@@ -472,15 +362,12 @@ ro.buildUser=${user.name}
         windowtitle="Javadocs: Apache Roller - Weblogger ${ro.version}">
         <sourcepath>
             <pathelement path="./src"/>
-            <pathelement path="${ro.build}/generated/business"/>
-            <pathelement path="${ro.build}/generated/presentation"/>
         </sourcepath>
         <packageset dir="src" defaultexcludes="yes">
           <include name="org/apache/roller/**" />
         </packageset>
         <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
         <link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
-        <link href="http://jakarta.apache.org/struts/doc-1.0.2/api"/>
     </javadoc>
     <copy todir="${build.javadoc}">
         <fileset dir="${basedir}/src">
