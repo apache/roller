@@ -1,0 +1,1012 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+  <!-- ========== Data Sources Definitions =================================== -->
+  <!--
+    Define your Struts data sources in a file called struts-data-sources.xml and place
+    it in your merge directory.
+  -->
+
+  <!-- ========== Form Bean Definitions =================================== -->
+  <form-beans>
+
+    <form-bean
+      name="bookmarkFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.BookmarkFormEx"
+    />
+    <form-bean
+      name="websiteFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.WebsiteFormEx"
+    />
+    <form-bean
+      name="commentForm"
+      type="org.apache.roller.ui.authoring.struts.forms.CommentForm"
+    />
+    <form-bean
+      name="rollerConfigForm"
+      type="org.apache.roller.ui.authoring.struts.forms.RollerConfigForm"
+    />
+    <form-bean
+      name="weblogEntryManagementForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryManagementForm"
+    />
+    <form-bean
+      name="bookmarkForm"
+      type="org.apache.roller.ui.authoring.struts.forms.BookmarkForm"
+    />
+    <form-bean
+      name="weblogEntryTagAggregateForm"
+      type="org.apache.roller.ui.authoring.struts.forms.WeblogEntryTagAggregateForm"
+    />
+    <form-bean
+      name="weblogTemplateForm"
+      type="org.apache.roller.ui.authoring.struts.forms.WeblogTemplateForm"
+    />
+    <form-bean
+      name="objectAuditForm"
+      type="org.apache.roller.ui.authoring.struts.forms.ObjectAuditForm"
+    />
+    <form-bean
+      name="bookmarksForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.BookmarksForm"
+    />
+    <form-bean
+      name="refererForm"
+      type="org.apache.roller.ui.authoring.struts.forms.RefererForm"
+    />
+    <form-bean
+      name="websiteForm"
+      type="org.apache.roller.ui.authoring.struts.forms.WebsiteForm"
+    />
+    <form-bean
+      name="memberPermissionsForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.MemberPermissionsForm"
+    />
+    <form-bean
+      name="yourWebsitesForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.YourWebsitesForm"
+    />
+    <form-bean
+      name="planetGroupForm"
+      type="org.apache.roller.planet.ui.admin.struts.forms.PlanetGroupForm"
+    />
+    <form-bean
+      name="weblogEntryQueryForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryQueryForm"
+    />
+    <form-bean
+      name="importEntries"
+      type="org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm"
+    />
+    <form-bean
+      name="commentManagementForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.CommentManagementForm"
+    />
+    <form-bean
+      name="userFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.UserFormEx"
+    />
+    <form-bean
+      name="trackbackForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.TrackbackForm"
+    />
+    <form-bean
+      name="weblogEntryTagForm"
+      type="org.apache.roller.ui.authoring.struts.forms.WeblogEntryTagForm"
+    />
+    <form-bean
+      name="themeEditorForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.ThemeEditorForm"
+    />
+    <form-bean
+      name="roleForm"
+      type="org.apache.roller.ui.authoring.struts.forms.RoleForm"
+    />
+    <form-bean
+      name="userForm"
+      type="org.apache.roller.ui.authoring.struts.forms.UserForm"
+    />
+    <form-bean
+      name="categoriesForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.CategoriesForm"
+    />
+    <form-bean
+      name="pingTargetForm"
+      type="org.apache.roller.ui.authoring.struts.forms.PingTargetForm"
+    />
+    <form-bean
+      name="bakeWeblogForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.BakeWeblogForm"
+    />
+    <form-bean
+      name="weblogCategoryForm"
+      type="org.apache.roller.ui.authoring.struts.forms.WeblogCategoryForm"
+    />
+    <form-bean
+      name="categoryDeleteForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.CategoryDeleteForm"
+    />
+    <form-bean
+      name="folderFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx"
+    />
+    <form-bean
+      name="weblogEntryForm"
+      type="org.apache.roller.ui.authoring.struts.forms.WeblogEntryForm"
+    />
+    <form-bean
+      name="invitationsForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.InvitationsForm"
+    />
+    <form-bean
+      name="commentQueryForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.CommentQueryForm"
+    />
+    <form-bean
+      name="rollerConfigFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.RollerConfigFormEx"
+    />
+    <form-bean
+      name="weblogEntryFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx"
+    />
+    <form-bean
+      name="inviteMemberForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.InviteMemberForm"
+    />
+    <form-bean
+      name="folderForm"
+      type="org.apache.roller.ui.authoring.struts.forms.FolderForm"
+    />
+    <form-bean
+      name="weblogCategoryFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx"
+    />
+    <form-bean
+      name="maintenanceForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.MaintenanceForm"
+    />
+    <form-bean
+      name="permissionsForm"
+      type="org.apache.roller.ui.authoring.struts.forms.PermissionsForm"
+    />
+    <form-bean
+      name="uploadFiles"
+      type="org.apache.roller.ui.authoring.struts.formbeans.UploadFileForm"
+    />
+    <form-bean
+      name="createWebsiteForm"
+      type="org.apache.roller.ui.authoring.struts.formbeans.CreateWebsiteForm"
+    />
+    <form-bean
+      name="userAdminForm"
+      type="org.apache.roller.ui.admin.struts.formbeans.UserAdminForm"
+    />
+    <form-bean
+      name="weblogTemplateFormEx"
+      type="org.apache.roller.ui.authoring.struts.formbeans.WeblogTemplateFormEx"
+    />
+    <form-bean
+      name="planetSubscriptionForm"
+      type="org.apache.roller.planet.ui.admin.struts.forms.PlanetSubscriptionForm"
+    />
+
+    <!--
+         If you have non XDoclet forms, define them in a file called struts-forms.xml and
+         place it in your merge directory.
+    -->
+  </form-beans>
+
+  <!-- ========== Global Exceptions Definitions =================================== -->
+  <!--
+    Define your exceptions in a file called global-exceptions.xml and place
+    it in your merge directory.
+  -->
+
+  <!-- ========== Global Forward Definitions =================================== -->
+  <global-forwards>
+<forward name="access-denied"          path=".denied"/>
+<forward name="error"                  path="/error.jsp"/>
+
+<!-- unprotected actions -->
+
+<forward name="page"                   path="/page"/>
+<forward name="main"                   path="/"/>
+<forward name="home.page"              path="/"/>
+<forward name="planet"                 path="/planet.do"/>
+
+<!--  core UI actions -->
+
+<forward name="login-redirect"         path="/roller-ui/login-redirect.jsp"/>
+<forward name="logout-redirect"        path="/roller-ui/logout-redirect.jsp"/>
+<forward name="createUser"             path="/roller-ui/user.do?method=createUser"/>
+<forward name="registerUser"           path="/roller-ui/user.do?method=registerUser"/>
+<forward name="yourProfile"            path="/roller-ui/yourProfile.do?method=edit" />
+<forward name="createWebsite"          path="/roller-ui/createWebsite.do?method=create" />
+<forward name="yourWebsites"           path="/roller-ui/yourWebsites.do?method=edit" />
+<forward name="activateUser"           path="/rollerui/user.do?method=activateUser"/>
+
+<!--  LIMITED/AUTHOR weblog UI actions -->
+
+<forward name="weblogEdit"             path="/roller-ui/authoring/weblog.do?method=edit"/>
+<forward name="weblogCreate"           path="/roller-ui/authoring/weblog.do?method=create"/>
+<forward name="weblogEntryManagement"  path="/roller-ui/authoring/weblogEntryManagement.do?method=query"/>
+<forward name="commentManagement"      path="/roller-ui/authoring/commentManagement.do?method=query"/>
+<forward name="commentQuery"           path="/roller-ui/authoring/commentQuery.do?method=query"/>
+<forward name="categories"             path="/roller-ui/authoring/categories.do?method=selectCategory"/>
+<forward name="categoryEdit"           path="/roller-ui/authoring/categoryEdit.do"/>
+<forward name="categoryDelete"         path="/roller-ui/authoring/categoryDelete.do"/>
+<forward name="bookmarks"              path="/roller-ui/authoring/bookmarks.do?method=selectFolder"/>
+<forward name="folderEdit"             path="/roller-ui/authoring/folderEdit.do"/>
+<forward name="bookmarkEdit"           path="/roller-ui/authoring/bookmarkEdit"/>
+<forward name="importBookmarks"        path="/roller-ui/authoring/importBookmarks.do"/>
+<forward name="uploadFiles"            path="/roller-ui/authoring/uploadFiles.do"/>
+<forward name="referers"               path="/roller-ui/authoring/referers.do"/>
+
+<!-- ADMIN weblog UI actions -->
+
+<forward name="editWebsite"            path="/roller-ui/authoring/website.do?method=edit"/>
+<forward name="editTheme"              path="/roller-ui/authoring/themeEditor.do?method=edit"/>
+<forward name="editPages"              path="/roller-ui/authoring/page.do?method=editPages"/>
+<forward name="editPage"               path="/roller-ui/authoring/page.do?method=edit"/>
+<forward name="removePage"             path="/roller-ui/authoring/page.do?method=remove"/>
+<forward name="removePage.ok"          path="/roller-ui/authoring/page.do?method=removeOk"/>
+<forward name="memberPermissions"      path="/roller-ui/authoring/memberPermissions.do" />
+<forward name="inviteMember"           path="/roller-ui/authoring/inviteMember.do" />
+<forward name="invitations"            path="/roller-ui/authoring/invitations.do" />
+<forward name="pingSetup"              path="/roller-ui/authoring/pingSetup.do" />
+<forward name="customPingTargets"      path="/roller-ui/authoring/customPingTargets.do" />
+<forward name="maintenance"            path="/roller-ui/authoring/maintenance.do" />
+
+<forward name="trackback"              path="/roller-ui/authoring/trackback.do?method=send"/>
+<forward name="toggleLinkback"         path="/roller-ui/authoring/toggleLinkback.do"/>
+
+<!-- global admin UI actions -->
+
+<forward name="rollerConfig"            path="/roller-ui/admin/rollerConfig.do?method=edit"/>
+<forward name="adminUser"               path="/roller-ui/admin/user.do?method=edit"/>
+<forward name="commentManagementGlobal" path="/roller-ui/admin/commentManagement.do?method=query"/>
+<forward name="commentQueryGlobal"      path="/roller-ui/admin/commentQuery.do?method=query"/>
+<forward name="addUser"                 path="/roller-ui/admin/user.do?method=add"/>
+<forward name="commonPingTargets"       path="/roller-ui/admin/commonPingTargets.do"/>
+<forward name="cacheInfo"		path="/roller-ui/admin/cacheInfo.do"/>
+
+<!-- planet admin UI actions -->
+
+<forward name="planetConfig"             path="/roller-ui/admin/planetConfig.do"/>
+<forward name="planetSubscriptions"      path="/roller-ui/admin/planetSubscriptions.do?method=getSubscriptions"/>
+<forward name="planetGroups"             path="/roller-ui/admin/planetGroups.do?method=getGroups"/>
+<forward name="planetGroupSubscriptions" path="/roller-ui/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>
+
+</global-forwards>
+
+  <!-- ========== Action Mapping Definitions =================================== -->
+   <action-mappings>
+    <action
+      path="/roller-ui/admin/user"
+      type="org.apache.roller.ui.admin.struts.actions.UserAdminAction"
+      name="userAdminForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="adminUser.page"
+        path=".UserAdmin"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/pingSetup"
+      type="org.apache.roller.ui.authoring.struts.actions.PingSetupAction"
+      name="pingSetupForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="pingSetup.page"
+        path=".Pings"
+        redirect="false"
+      />
+      <forward
+        name="pingResult.page"
+        path=".PingResult"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/customPingTargets"
+      type="org.apache.roller.ui.authoring.struts.actions.CustomPingTargetsAction"
+      name="pingTargetForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="pingTargets.page"
+        path=".CustomPingTargets"
+        redirect="false"
+      />
+      <forward
+        name="pingTargetEdit.page"
+        path=".CustomPingTargetEdit"
+        redirect="false"
+      />
+      <forward
+        name="pingTargetDeleteOK.page"
+        path=".CustomPingTargetDeleteOK"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/categories"
+      type="org.apache.roller.ui.authoring.struts.actions.CategoriesAction"
+      name="categoriesForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="CategoriesForm"
+        path=".CategoriesForm"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/importBookmarks"
+      type="org.apache.roller.ui.authoring.struts.actions.ImportBookmarksFormAction"
+      name="folderFormEx"
+      scope="request"
+      input=".import"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="importBookmarks.page"
+        path=".import"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/importEntries"
+      type="org.apache.roller.ui.authoring.struts.actions.ImportEntriesAction"
+      name="importEntries"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="importEntries.page"
+        path=".import-entries"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/rollerConfig"
+      type="org.apache.roller.ui.admin.struts.actions.RollerPropertiesAction"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="rollerProperties.page"
+        path=".rollerProperties"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/categoryDelete"
+      type="org.apache.roller.ui.authoring.struts.actions.CategoryDeleteAction"
+      name="categoryDeleteForm"
+      scope="request"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="CategoryDeleteOK"
+        path=".CategoryDeleteOK"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/categoryEdit"
+      type="org.apache.roller.ui.authoring.struts.actions.CategoryEditAction"
+      name="weblogCategoryFormEx"
+      scope="request"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="CategoryForm"
+        path=".CategoryForm"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/maintenance"
+      type="org.apache.roller.ui.authoring.struts.actions.MaintenanceAction"
+      name="maintenanceForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="maintenance.page"
+        path=".Maintenance"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/bookmarkEdit"
+      type="org.apache.roller.ui.authoring.struts.actions.BookmarkEditAction"
+      name="bookmarkFormEx"
+      scope="request"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="BookmarkForm"
+        path=".BookmarkForm"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/planetSubscriptions"
+      type="org.apache.roller.planet.ui.admin.struts.actions.PlanetSubscriptionsAction"
+      name="planetSubscriptionForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="planetSubscriptions.page"
+        path=".PlanetSubscriptions"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/bookmarks"
+      type="org.apache.roller.ui.authoring.struts.actions.BookmarksAction"
+      name="bookmarksForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="BookmarksForm"
+        path=".BookmarksForm"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/commonPingTargets"
+      type="org.apache.roller.ui.admin.struts.actions.CommonPingTargetsAction"
+      name="pingTargetForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="pingTargets.page"
+        path=".CommonPingTargets"
+        redirect="false"
+      />
+      <forward
+        name="pingTargetEdit.page"
+        path=".CommonPingTargetEdit"
+        redirect="false"
+      />
+      <forward
+        name="pingTargetDeleteOK.page"
+        path=".CommonPingTargetDeleteOK"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/categorySave"
+      type="org.apache.roller.ui.authoring.struts.actions.CategorySaveAction"
+      name="weblogCategoryFormEx"
+      scope="request"
+      input="/roller-ui/authoring/categoryEdit.do"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/roller-ui/authoring/inviteMember"
+      type="org.apache.roller.ui.authoring.struts.actions.InviteMemberAction"
+      name="inviteMemberForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="inviteMember.page"
+        path=".InviteMember"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/weblog"
+      type="org.apache.roller.ui.authoring.struts.actions.WeblogEntryFormAction"
+      name="weblogEntryFormEx"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="weblogEdit.page"
+        path=".WeblogEdit"
+        redirect="false"
+      />
+      <forward
+        name="weblogEntryRemove.page"
+        path=".WeblogEntryRemove"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/planet"
+      type="org.apache.roller.ui.core.struts.actions.PlanetPageAction"
+      name="planet"
+      scope="request"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="planet.page"
+        path="/WEB-INF/jsps/core/planet.jsp"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/weblogEntryManagement"
+      type="org.apache.roller.ui.authoring.struts.actions.WeblogEntryManagementAction"
+      name="weblogEntryManagementForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="weblogEntryManagement.page"
+        path=".WeblogEntryManagement"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/themeEditor"
+      type="org.apache.roller.ui.authoring.struts.actions.ThemeEditorAction"
+      name="themeEditorForm"
+      scope="session"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="editTheme.page"
+        path=".theme-editor"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/yourWebsites"
+      type="org.apache.roller.ui.core.struts.actions.YourWebsitesAction"
+      name="yourWebsitesForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="yourWebsites.page"
+        path=".YourWebsites"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/memberPermissions"
+      type="org.apache.roller.ui.authoring.struts.actions.MemberPermissionsAction"
+      name="memberPermissionsForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="memberPermissions.page"
+        path=".MemberPermissions"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/login"
+      type="org.apache.roller.ui.core.struts.actions.LoginAction"
+      name="LoginAction"
+      scope="request"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="login.page"
+        path=".login"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/referers"
+      type="org.apache.roller.ui.authoring.struts.actions.ReferersAction"
+      name="refererForm"
+      scope="session"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="referers.page"
+        path=".referers"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/user"
+      type="org.apache.roller.ui.core.struts.actions.UserNewAction"
+      name="userFormEx"
+      scope="session"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="registerUser.page"
+        path=".UserNew"
+        redirect="false"
+      />
+      <forward
+        name="welcome.page"
+        path=".welcome"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/cacheInfo"
+      type="org.apache.roller.ui.admin.struts.actions.CacheInfoAction"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="cacheInfo.page"
+        path=".cacheInfo"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/folderEdit"
+      type="org.apache.roller.ui.authoring.struts.actions.FolderEditAction"
+      name="folderFormEx"
+      scope="request"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="FolderForm"
+        path=".FolderForm"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/page"
+      type="org.apache.roller.ui.authoring.struts.actions.WeblogTemplateFormAction"
+      name="weblogTemplateFormEx"
+      scope="session"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="removePage.page"
+        path=".remove-page"
+        redirect="false"
+      />
+      <forward
+        name="editPage.page"
+        path=".edit-page"
+        redirect="false"
+      />
+      <forward
+        name="editPages.page"
+        path=".edit-pages"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/planetGroups"
+      type="org.apache.roller.planet.ui.admin.struts.actions.PlanetGroupsAction"
+      name="planetGroupForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="planetGroups.page"
+        path=".PlanetGroups"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/createWebsite"
+      type="org.apache.roller.ui.core.struts.actions.CreateWebsiteAction"
+      name="createWebsiteForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="createWebsite.page"
+        path=".CreateWebsite"
+        redirect="false"
+      />
+      <forward
+        name="createWebsiteDone.page"
+        path=".CreateWebsiteDone"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/main"
+      type="org.apache.roller.ui.core.struts.actions.MainPageAction"
+      name="main"
+      scope="request"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/roller-ui/admin/planetConfig"
+      type="org.apache.roller.planet.ui.admin.struts.actions.PlanetConfigAction"
+      name="planetConfigForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="planetConfig.page"
+        path=".PlanetConfig"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/folderSave"
+      type="org.apache.roller.ui.authoring.struts.actions.FolderSaveAction"
+      name="folderFormEx"
+      scope="request"
+      input="/roller-ui/authoring/folderEdit.do"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="Bookmarks"
+        path="/roller-ui/authoring/bookmarks.do?method=selectFolder"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/invitations"
+      type="org.apache.roller.ui.authoring.struts.actions.InvitationsAction"
+      name="invitationsForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="invitations.page"
+        path=".Invitations"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/toggleLinkback"
+      type="org.apache.roller.ui.authoring.struts.actions.ToggleLinkbackDisplayAction"
+      name="toggleLinkback"
+      scope="request"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/roller-ui/authoring/bookmarkSave"
+      type="org.apache.roller.ui.authoring.struts.actions.BookmarkSaveAction"
+      name="bookmarkFormEx"
+      scope="request"
+      input="/roller-ui/authoring/bookmarkEdit.do"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="Bookmarks"
+        path="/roller-ui/authoring/bookmarks.do?method=selectFolder"
+        redirect="false"
+      />
+      <forward
+        name="BookmarkEdit"
+        path="/roller-ui/authoring/bookmarkEdit.do"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/commentManagement"
+      type="org.apache.roller.ui.authoring.struts.actions.CommentManagementAction"
+      name="commentManagementForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="commentManagement.page"
+        path=".CommentManagement"
+        redirect="false"
+      />
+      <forward
+        name="commentManagementGlobal.page"
+        path=".CommentManagementGlobal"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/commentQuery"
+      type="org.apache.roller.ui.authoring.struts.actions.CommentManagementAction"
+      name="commentQueryForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="commentManagement.page"
+        path=".CommentManagement"
+        redirect="false"
+      />
+      <forward
+        name="commentManagementGlobal.page"
+        path=".CommentManagementGlobal"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/commentManagement"
+      type="org.apache.roller.ui.authoring.struts.actions.CommentManagementAction"
+      name="commentManagementForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="commentManagement.page"
+        path=".CommentManagement"
+        redirect="false"
+      />
+      <forward
+        name="commentManagementGlobal.page"
+        path=".CommentManagementGlobal"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/admin/commentQuery"
+      type="org.apache.roller.ui.authoring.struts.actions.CommentManagementAction"
+      name="commentQueryForm"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="commentManagement.page"
+        path=".CommentManagement"
+        redirect="false"
+      />
+      <forward
+        name="commentManagementGlobal.page"
+        path=".CommentManagementGlobal"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/yourProfile"
+      type="org.apache.roller.ui.core.struts.actions.YourProfileAction"
+      name="userFormEx"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="yourProfile.page"
+        path=".YourProfile"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/website"
+      type="org.apache.roller.ui.authoring.struts.actions.WebsiteFormAction"
+      name="websiteFormEx"
+      scope="session"
+      parameter="method"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="editWebsite.page"
+        path=".edit-website"
+        redirect="false"
+      />
+      <forward
+        name="removeWebsite.page"
+        path=".WebsiteRemove"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/roller-ui/authoring/uploadFiles"
+      type="org.apache.roller.ui.authoring.struts.actions.UploadFileFormAction"
+      name="uploadFiles"
+      scope="request"
+      parameter="method"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="uploadFiles.page"
+        path=".upload-file"
+        redirect="false"
+      />
+    </action>
+
+   <!-- 
+<action path="/jcaptcha"
+type="com.octo.captcha.module.struts.image.RenderImageCaptchaAction" />
+-->
+  </action-mappings>
+
+   <!-- Define your Struts controller in a file called struts-controller.xml and place it in your merge directory. -->
+
+      <message-resources parameter="ApplicationResources"/>
+
+<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+    <set-property 
+        property="pathnames" 
+        value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+</plug-in>
+
+<plug-in className="org.apache.struts.tiles.TilesPlugin">
+    <set-property 
+        property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+</plug-in>
+
+<!-- 
+<plug-in className="com.octo.captcha.module.struts.CaptchaServicePlugin"/>
+-->
+
+</struts-config>

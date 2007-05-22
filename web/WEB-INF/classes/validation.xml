@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE form-validation PUBLIC "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+     <global>
+      <constant>
+        <!-- noslashes: no '/' slash characters. -->
+        <constant-name>noslashes</constant-name>
+        <constant-value>^[^/]*$</constant-value>
+      </constant>
+   </global>
+  <formset>
+  <!--
+    Define form validation config in validation-forms.xml
+  -->
+
+      <form name="bookmarkFormEx">
+              <field property="name"
+                     depends="required">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+
+                  <arg0
+                    key="bookmarkForm.name"
+                  />
+              </field>
+              <field property="weight"
+                     depends="required,integer">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+                  <msg
+                    name="integer"
+                    key="errors.integer"/>
+
+                  <arg0
+                    key="bookmarkForm.weight"
+                  />
+              </field>
+              <field property="priority"
+                     depends="required,integer">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+                  <msg
+                    name="integer"
+                    key="errors.integer"/>
+
+                  <arg0
+                    key="bookmarkForm.priority"
+                  />
+              </field>
+      </form>
+      <form name="bookmarkForm">
+              <field property="name"
+                     depends="required">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+
+                  <arg0
+                    key="bookmarkForm.name"
+                  />
+              </field>
+              <field property="weight"
+                     depends="required,integer">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+                  <msg
+                    name="integer"
+                    key="errors.integer"/>
+
+                  <arg0
+                    key="bookmarkForm.weight"
+                  />
+              </field>
+              <field property="priority"
+                     depends="required,integer">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+                  <msg
+                    name="integer"
+                    key="errors.integer"/>
+
+                  <arg0
+                    key="bookmarkForm.priority"
+                  />
+              </field>
+      </form>
+      <form name="folderFormEx">
+              <field property="name"
+                     depends="required,mask">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+                  <msg
+                    name="mask"
+                    key="errors.noslashes"/>
+
+                  <arg0
+                    key="folderForm.name"
+                  />
+                  <var>
+                    <var-name>mask</var-name>
+                    <var-value>${noslashes}</var-value>
+                  </var>
+              </field>
+      </form>
+      <form name="folderForm">
+              <field property="name"
+                     depends="required,mask">
+                  <msg
+                    name="required"
+                    key="errors.required"/>
+                  <msg
+                    name="mask"
+                    key="errors.noslashes"/>
+
+                  <arg0
+                    key="folderForm.name"
+                  />
+                  <var>
+                    <var-name>mask</var-name>
+                    <var-value>${noslashes}</var-value>
+                  </var>
+              </field>
+      </form>
+  </formset>
+</form-validation>

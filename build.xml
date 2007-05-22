@@ -218,60 +218,6 @@ Key Targets:
     
 </target>
 
-
-<!-- ============================================== -->
-<!-- Generate web deployment descriptors -->
-<target name="gen-web" description="XDoclet generate web depoyment descriptors">
-
-    <!-- Define the XDoclet webdoclet task -->
-    <taskdef  name="webdoclet" classname="xdoclet.modules.web.WebDocletTask"
-        classpathref="xdoclet.path" />
-
-    <!-- Use WebDoclet to web.xml, struts-config.xml, and TLDs -->
-    <mkdir dir="${build.webapp}/WEB-INF"/>
-    <mkdir dir="${build.compile.web}/META-INF/tlds"/>
-
-    <webdoclet force="true"
-        destdir="${build.webapp}/WEB-INF"
-        mergedir="./metadata/xdoclet"
-        excludedtags="@version,@author">
-        
-        <fileset dir="${ro.src}">
-            <!-- Speed up XDoclet by limiting number of files it has to process -->
-            <include name="**/*Action.java" />
-            <include name="**/*Filter.java" />
-            <include name="**/*Form.java" />
-            <include name="**/*FormEx.java" />
-            <include name="**/*Servlet.java" />
-            <include name="**/*Tag.java" />
-            <include name="org/apache/roller/ui/**/actions/*.java" />
-            <include name="org/apache/roller/ui/core/RollerContext.java" />
-            <include name="org/apache/roller/ui/core/RollerSession.java" />
-            <exclude name="**/LinkTag**" />
-            <exclude name="**/LinkParamTag**" />
-        </fileset>
-        <fileset dir="${build.generated.web}">
-            <include name="**/*Form.java" />
-        </fileset>
-        
-        &custom-gen-web;
-        
-        <!-- jsp taglib descriptor config -->
-        <jsptaglib jspversion="1.2" filename="roller.tld" shortname="roller"
-            uri="http://www.rollerweblogger.org/tags"
-            destdir="${build.webapp}/WEB-INF/classes/META-INF/tlds" />
-            
-        <!-- struts struts-config.xml -->
-        <strutsconfigxml destdir="${build.webapp}/WEB-INF"
-            validatexml="true" mergedir="./metadata/xdoclet" version="1.1" />
-        
-        <!-- struts validation.xml -->
-        <strutsvalidationxml/>
-
-    </webdoclet>
-
-</target>
-
         
 <!-- ********************************************************************* -->
 <!-- Compile and jar Business Tier classes -->
@@ -390,7 +336,7 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts-conditional, copy-webapp, gen-web" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts-conditional, copy-webapp" description="Stage webapp, including jars">
 </target>
        
 <target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
