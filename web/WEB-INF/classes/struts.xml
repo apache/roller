@@ -98,38 +98,38 @@
         </action>
         
         <action name="setup"
-                class="org.apache.roller.ui.core.struts2.Setup">
+                class="org.apache.roller.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
         </action>
             
         <action name="login"
-                class="org.apache.roller.ui.core.struts2.Login">
+                class="org.apache.roller.ui.struts2.core.Login">
             <result type="tiles">.Login</result>
         </action>
         
         <action name="register!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.Register">
+                class="org.apache.roller.ui.struts2.core.Register">
             <result name="input" type="tiles">.Register</result>
             <result name="cancel" type="redirect">/</result>
             <result name="success" type="tiles">.Welcome</result>
         </action>
         
         <action name="profile!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.Profile">
+                class="org.apache.roller.ui.struts2.core.Profile">
             <result name="input" type="tiles">.Profile</result>
             <result name="cancel" type="redirect-action">menu</result>
             <result name="success" type="tiles">.Profile</result>
         </action>
         
         <action name="createWeblog!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.CreateWeblog">
+                class="org.apache.roller.ui.struts2.core.CreateWeblog">
             <result name="input" type="tiles">.CreateWeblog</result>
             <result name="cancel" type="redirect-action">menu</result>
             <result name="success" type="chain">menu</result>
         </action>
         
         <action name="menu!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.MainMenu">
+                class="org.apache.roller.ui.struts2.core.MainMenu">
             <result type="tiles">.MainMenu</result>
         </action>
         

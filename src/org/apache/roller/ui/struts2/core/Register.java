@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.struts2;
+package org.apache.roller.ui.struts2.core;
 
 import java.util.Locale;
 import java.util.TimeZone;
