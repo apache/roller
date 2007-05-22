@@ -36,7 +36,6 @@ import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
-import org.apache.struts.action.ActionMessage;
 
 
 /**

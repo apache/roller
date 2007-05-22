@@ -119,8 +119,7 @@ public final class BookmarksImport extends UIAction {
                         +" and has not been written to stream."
                         +" File Size: "+getOpmlFile().length()+" bytes. "
                         +" This is a limitation of this particular "
-                        +" web application, hard-coded in "
-                        +" org.apache.struts.webapp.upload.UploadAction";
+                        +" web application";
                 addError("bookmarksImport.error", data);
             }
             

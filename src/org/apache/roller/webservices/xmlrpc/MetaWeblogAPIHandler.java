@@ -25,9 +25,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,8 +41,8 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
-import org.apache.struts.util.RequestUtils;
 import org.apache.xmlrpc.XmlRpcException;
+
 
 /**
  * Roller XML-RPC Handler for the MetaWeblog API.
