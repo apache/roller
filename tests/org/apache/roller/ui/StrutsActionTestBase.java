@@ -29,7 +29,6 @@ import com.mockrunner.struts.ActionTestModule;
 import com.mockrunner.struts.MapMessageResources;
 import java.io.File;
 import java.io.FileInputStream;
-import javax.naming.InitialContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
