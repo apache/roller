@@ -30,7 +30,7 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.struts.actions.YourWebsitesAction.YourWebsitesPageModel;
-import org.apache.roller.ui.core.util.struts2.UIAction;
+import org.apache.roller.ui.struts2.util.UIAction;
 
 
 /**

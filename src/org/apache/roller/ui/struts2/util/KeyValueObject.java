@@ -16,52 +16,39 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.struts2;
-
-import org.apache.roller.ui.struts2.util.UIAction;
+package org.apache.roller.ui.struts2.util;
 
 
 /**
- * Handle user logins.
+ * A simple object to maintain a key/value pair.
  */
-public class Login extends UIAction {
+public class KeyValueObject {
     
-    private String error = null;
-    
-    
-    public Login() {
-        this.pageTitle = "loginPage.title";
-    }
+    private Object key = null;
+    private Object value = null;
     
     
-    // override default security, we do not require an authenticated user
-    public boolean isUserRequired() {
-        return false;
-    }
+    public KeyValueObject() {}
     
-    // override default security, we do not require an action weblog
-    public boolean isWeblogRequired() {
-        return false;
-    }
-    
-    
-    public String execute() {
-        
-        // set action error message if there was login error
-        if(getError() != null) {
-            addError("error.password.mismatch");
-        }
-        
-        return SUCCESS;
+    public KeyValueObject(Object key, Object value) {
+        this.setKey(key);
+        this.setValue(value);
     }
 
-    
-    public String getError() {
-        return error;
+    public Object getKey() {
+        return key;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setKey(Object key) {
+        this.key = key;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
     
 }
