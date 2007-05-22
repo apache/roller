@@ -93,8 +93,9 @@
     </target>
     
     
-    <!-- ============================================== -->
-    <!-- generate code/files for the business layer -->
+    <!-- ********************************************************************* -->
+    <!-- Generate files for the business layer -->
+    <!-- ********************************************************************* -->
     <target name="gen-business" description="Generate business layer resources">
         
         <taskdef name="hibernatedoclet"
@@ -126,7 +127,6 @@
     <!-- ********************************************************************* -->
     <!-- Compile and jar Business Tier classes -->
     <!-- ********************************************************************* -->
-    
     <target name="build-business" depends="gen-business">
         
         <mkdir dir="${build.compile.business}"/>
@@ -176,11 +176,10 @@
     <!-- ********************************************************************* -->
     <!-- Compile and jar Presentation Tier classes -->
     <!-- ********************************************************************* -->
-    
     <target name="build-web" depends="build-business" >
         
+        <!-- compile web source code -->
         <mkdir dir="${build.compile.web}" />
-        
         <javac debug="${build.debug}" 
                source="${build.sourcelevel}"
                destdir="${build.compile.web}"
@@ -217,13 +216,10 @@
     <!-- ********************************************************************* -->
     <!-- Stage web application -->
     <!-- ********************************************************************* -->
-    
     <target name="stage-webapp" depends="build-web, gen-dbscripts-conditional" description="Stage webapp, including jars">
         
+        <!-- Copy jars -->
         <mkdir dir="${build.webapp}/WEB-INF/lib"/>
-        <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
-        
-        <!-- Copy other jars -->
         <copy todir="${build.webapp}/WEB-INF/lib">
             <fileset dir="${build.lib}" />
             <fileset dir="./contrib/lib" />
@@ -243,12 +239,7 @@
             &custom-jars;
         </copy>
         
-        <!-- Copy DTDs and TLDs  -->
-        <copy todir="${build.webapp}/WEB-INF/tlds">
-            <fileset dir="${ro.tools}/lib" includes="*.tld"/>
-        </copy>
-        
-        <!-- Copy web contents to staging, plus README files. -->
+        <!-- Copy web contents -->
         <copy todir="${build.webapp}">
             <fileset dir="./web">
                 <include name="**/*"/>
@@ -258,7 +249,7 @@
             </fileset>
         </copy>
         
-        <!-- Copy docs to staging -->
+        <!-- Copy documentation -->
         <copy todir="${build.webapp}/roller-ui/docs">
             <fileset dir="${basedir}/docs">
                 <include name="examples/**" />
@@ -274,8 +265,9 @@
     </target>
     
     
-    <!-- ============================================== -->
-    <!-- create distributable components -->
+    <!-- ********************************************************************* -->
+    <!-- Create distributables -->
+    <!-- ********************************************************************* -->
     <target name="dist" depends="stage-webapp" description="Create Roller Weblogger distributables">
         
         <!-- distributable libraries -->
