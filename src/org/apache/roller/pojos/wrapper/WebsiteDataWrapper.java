@@ -424,7 +424,7 @@ public class WebsiteDataWrapper {
     
     public String getCustomStylesheet() {
         // custom stylesheet comes from the weblog theme
-        return this.pojo.getTheme().getCustomStylesheet();
+        return URLUtilities.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getCustomStylesheet(), null, null, null, null, 0, false);
     }
     
     
@@ -440,7 +440,7 @@ public class WebsiteDataWrapper {
             return iconPath;
         } else {
             // otherwise it's just a plain old url
-            return URLUtilities.getWeblogResourceURL(this.pojo, iconPath, true);
+            return URLUtilities.getWeblogResourceURL(this.pojo, iconPath, false);
         }
         
     }

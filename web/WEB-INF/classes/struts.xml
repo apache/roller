@@ -328,6 +328,12 @@
             <result name="success" type="tiles">.ThemeEdit</result>
         </action>
         
+        <action name="stylesheetEdit!*" method="{1}"
+                class="org.apache.roller.ui.authoring.struts2.StylesheetEdit">
+            <result name="success" type="tiles">.StylesheetEdit</result>
+            <result name="error" type="tiles">.StylesheetEditError</result>
+        </action>
+        
         <action name="templates!*" method="{1}"
                 class="org.apache.roller.ui.authoring.struts2.Templates">
             <result name="list" type="tiles">.Templates</result>
