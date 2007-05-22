@@ -65,21 +65,7 @@ public class HibernateRollerImpl extends RollerImpl {
     
     protected HibernateRollerImpl() throws RollerException {
         try {
-            if (StringUtils.isNotEmpty(RollerConfig.getProperty("jdbc.driverClass"))) {
-                // create and configure for JDBC access
-                strategy = new HibernatePersistenceStrategy(
-                    RollerConfig.getProperty("hibernate.configResource"),
-                    RollerConfig.getProperty("hibernate.dialect"),
-                    RollerConfig.getProperty("jdbc.driverClass"),
-                    RollerConfig.getProperty("jdbc.connectionURL"),
-                    RollerConfig.getProperty("jdbc.username"),
-                    RollerConfig.getProperty("jdbc.password"));
-            } else {
-                // create an configure via config resource only
-                strategy = new HibernatePersistenceStrategy(
-                    RollerConfig.getProperty("hibernate.configResource"),
-                    RollerConfig.getProperty("hibernate.dialect"));
-            }
+            strategy = new HibernatePersistenceStrategy();
         } catch(Throwable t) {
             // if this happens then we are screwed
             mLogger.fatal("Error initializing Hibernate", t);

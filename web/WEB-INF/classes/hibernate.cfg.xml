@@ -21,12 +21,11 @@
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        
-        <!-- You can override this via the jdbc.XXX properties in roller-custom.properties -->
-        <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
                         
-        <!-- You can override this via the hibernate.dialect property in roller-custom.properties -->
-        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- 
+            Specify your Roller database configuration parameters
+            in your roller-custom.properties override file, not here.
+         -->
                        
         <property name="show_sql">false</property>
 
