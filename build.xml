@@ -37,8 +37,8 @@
 <!-- ********************************************************************* -->
 <project name="roller" default="usage">
 
-<available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" 
-    property="dbscripts-exist" />
+<!-- Only gen dbscripts if they do not already exist -->
+<available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" property="dbscripts-exist" />
 
 <!-- Bring in properties.xml -->
 &properties;
@@ -84,6 +84,7 @@ Key Targets:
 </target>
 
 <target name="rebuild" depends="clean,all" description="Clean and build all">
+    <antcall target="gen-dbscripts" />
 </target>
 
 <target name="clean" description="Clean out build and dist directory">
