@@ -20,12 +20,13 @@ package org.apache.roller.ui.core.tags.menu;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.VelocityContext;
 import org.apache.roller.ui.core.tags.VelocityTag;
-import org.apache.roller.ui.rendering.model.MessageModel;
+import org.apache.roller.util.I18nMessages;
 
 /**
  * @jsp.tag name="Menu"
@@ -49,7 +50,8 @@ public class MenuTag extends VelocityTag {
         ctx.put("req", req );
         ctx.put("res", res );
         
-        MessageModel messageModel = new MessageModel();
+        // TODO: this doesn't support proper i18n
+        I18nMessages messageModel = I18nMessages.getMessages(Locale.getDefault());
         ctx.put("text", messageModel);
                 
         Map mapCtx = new HashMap();

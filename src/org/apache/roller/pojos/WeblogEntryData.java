@@ -50,7 +50,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.MessageUtilities;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 
@@ -1195,7 +1195,9 @@ public class WeblogEntryData implements Serializable {
                     // add read more
                     List args = new ArrayList();
                     args.add(readMoreLink);
-                    String readMore = MessageUtilities.getString("macro.weblog.readMoreLink", args);
+                    
+                    // TODO: we need a more appropriate way to get the view locale here
+                    String readMore = I18nMessages.getMessages(getWebsite().getLocaleInstance()).getString("macro.weblog.readMoreLink", args);
                     
                     displayContent += readMore;
                 }
