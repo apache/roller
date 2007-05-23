@@ -34,7 +34,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.MessageUtilities;
+import org.apache.roller.util.I18nMessages;
 
 
 /**
@@ -44,8 +44,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesMonthPager.class);
     
-    private SimpleDateFormat monthFormat = new SimpleDateFormat(
-            MessageUtilities.getString("weblogEntriesPager.month.dateFormat"));
+    private SimpleDateFormat monthFormat = new SimpleDateFormat();
     
     private Date month;
     private Date nextMonth;
@@ -69,6 +68,9 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             int                page) {
         
         super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        
+        monthFormat = new SimpleDateFormat(
+            messageUtils.getString("weblogEntriesPager.month.dateFormat"));
         
         getEntries();
         
@@ -155,7 +157,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeName() {
-        return MessageUtilities.getString("weblogEntriesPager.month.home");
+        return messageUtils.getString("weblogEntriesPager.month.home");
     }
     
     
@@ -169,7 +171,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getNextName() {
         if (getNextLink() != null) {
-            return MessageUtilities.getString("weblogEntriesPager.month.next", new Object[] {monthFormat.format(month)});
+            return messageUtils.getString("weblogEntriesPager.month.next", new Object[] {monthFormat.format(month)});
         }
         return null;
     }
@@ -185,7 +187,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getPrevName() {
         if (getPrevLink() != null) {
-            return MessageUtilities.getString("weblogEntriesPager.month.prev", new Object[] {monthFormat.format(month)});
+            return messageUtils.getString("weblogEntriesPager.month.prev", new Object[] {monthFormat.format(month)});
         }
         return null;
     }
@@ -202,7 +204,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getNextCollectionName() {
         if (nextMonth != null) {
-            return MessageUtilities.getString("weblogEntriesPager.month.nextCollection", new Object[] {monthFormat.format(nextMonth)});
+            return messageUtils.getString("weblogEntriesPager.month.nextCollection", new Object[] {monthFormat.format(nextMonth)});
         }
         return null;
     }
@@ -219,7 +221,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getPrevCollectionName() {
         if (prevMonth != null) {
-            return MessageUtilities.getString("weblogEntriesPager.month.prevCollection", new Object[] {monthFormat.format(prevMonth)});
+            return messageUtils.getString("weblogEntriesPager.month.prevCollection", new Object[] {monthFormat.format(prevMonth)});
         }
         return null;
     }

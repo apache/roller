@@ -18,10 +18,11 @@
 
 package org.apache.roller.ui.rendering.pagers;
 
+import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -29,6 +30,9 @@ import org.apache.roller.util.URLUtilities;
  * Pager for navigating through search results.
  */
 public class SearchResultsPager implements WeblogEntriesPager {
+    
+    // message utils for doing i18n messages
+    I18nMessages messageUtils = null;
     
     private Map entries = null;
     
@@ -38,9 +42,6 @@ public class SearchResultsPager implements WeblogEntriesPager {
     private String      category = null;
     private int         page = 0;
     private boolean     moreResults = false;
-    
-    private static ResourceBundle bundle =
-            ResourceBundle.getBundle("ApplicationResources");
     
     
     public SearchResultsPager() {}
@@ -59,6 +60,20 @@ public class SearchResultsPager implements WeblogEntriesPager {
         
         // does this pager have more results?
         this.moreResults = more;
+        
+        // get a message utils instance to handle i18n of messages
+        Locale viewLocale = null;
+        if(locale != null) {
+            String[] langCountry = locale.split("_");
+            if(langCountry.length == 1) {
+                viewLocale = new Locale(langCountry[0]);
+            } else if(langCountry.length == 2) {
+                viewLocale = new Locale(langCountry[0], langCountry[1]);
+            }
+        } else {
+            viewLocale = weblog.getLocaleInstance();
+        }
+        this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
     
@@ -72,7 +87,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     }
 
     public String getHomeName() {
-        return bundle.getString("searchPager.home");
+        return messageUtils.getString("searchPager.home");
     }
 
     
@@ -85,7 +100,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getNextName() {
         if (getNextLink() != null) {
-            return bundle.getString("searchPager.next");
+            return messageUtils.getString("searchPager.next");
         }
         return null;
     }
@@ -99,7 +114,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getPrevName() {
         if (getPrevLink() != null) {
-            return bundle.getString("searchPager.prev");
+            return messageUtils.getString("searchPager.prev");
         }
         return null;
     }

@@ -18,7 +18,8 @@
 
 package org.apache.roller.ui.core.plugins;
 
-import org.apache.roller.util.MessageUtilities;
+import java.util.Locale;
+import org.apache.roller.util.I18nMessages;
 
 
 /**
@@ -35,7 +36,7 @@ public class TextEditor implements WeblogEntryEditor {
     }
     
     public String getName() {
-        return MessageUtilities.getString("editor.text.name");
+        return "editor.text.name";
     }
     
     public String getJspPage() {

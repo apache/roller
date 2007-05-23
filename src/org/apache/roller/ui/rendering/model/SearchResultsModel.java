@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -38,7 +37,6 @@ import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryWrapperComparator;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
@@ -47,6 +45,7 @@ import org.apache.roller.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.I18nMessages;
 
 
 /**
@@ -55,9 +54,6 @@ import org.apache.roller.util.DateUtil;
  * Also adds some new methods which are specific only to search results.
  */
 public class SearchResultsModel extends PageModel {
-    
-    private static final ResourceBundle bundle = 
-            ResourceBundle.getBundle("ApplicationResources");
     
     public static final int RESULTS_PER_PAGE = 10;
     
@@ -117,7 +113,7 @@ public class SearchResultsModel extends PageModel {
         
         if (search.getResultsCount() == -1) {
             // this means there has been a parsing (or IO) error
-            this.errorMessage = bundle.getString("error.searchProblem");
+            this.errorMessage = I18nMessages.getMessages(searchRequest.getLocaleInstance()).getString("error.searchProblem");
         } else {
             Hits hits = search.getResults();
             this.hits = search.getResultsCount();

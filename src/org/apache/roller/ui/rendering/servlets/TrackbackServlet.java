@@ -40,6 +40,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.CommentValidationManager;
 import org.apache.roller.ui.rendering.util.TrackbackLinkbackCommentValidator;
 import org.apache.roller.ui.rendering.util.WeblogTrackbackRequest;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -191,7 +192,8 @@ public class TrackbackServlet extends HttpServlet {
                     
                     // Send email notifications
                     String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                    CommentServlet.sendEmailNotification(comment, validationScore == 100, messages, rootURL);
+                    CommentServlet.sendEmailNotification(comment, validationScore == 100, messages, rootURL, 
+                            I18nMessages.getMessages(trackbackRequest.getLocaleInstance()));
                     
                     if(CommentData.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));

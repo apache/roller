@@ -23,7 +23,6 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.mail.MessagingException;
@@ -60,6 +59,7 @@ import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.util.GenericThrottle;
 import org.apache.roller.util.IPBanList;
 import org.apache.roller.util.MailUtil;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.RollerMessages.RollerMessage;
 import org.apache.roller.util.URLUtilities;
@@ -85,7 +85,6 @@ import org.apache.roller.util.cache.CacheManager;
 public class CommentServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(CommentServlet.class);
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
     
@@ -260,14 +259,16 @@ public class CommentServlet extends HttpServlet {
             cf.setPreview(comment);
         }
         
+        I18nMessages messageUtils = I18nMessages.getMessages(commentRequest.getLocaleInstance());
+        
         // check if comments are allowed for this entry
         // this checks site-wide settings, weblog settings, and entry settings
         if(!entry.getCommentsStillAllowed() || !entry.isPublished()) {
-            error = bundle.getString("comments.disabled");
+            error = messageUtils.getString("comments.disabled");
             
             // if this is a real comment post then authenticate request
         } else if(!preview && !this.authenticator.authenticate(request)) {
-            error = bundle.getString("error.commentAuthFailed");
+            error = messageUtils.getString("error.commentAuthFailed");
             log.debug("Comment failed authentication");
         }
         
@@ -288,14 +289,14 @@ public class CommentServlet extends HttpServlet {
             if (validationScore == 100 && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
                 comment.setStatus(CommentData.PENDING);
-                message = bundle.getString("commentServlet.submittedToModerator");
+                message = messageUtils.getString("commentServlet.submittedToModerator");
             } else if (validationScore == 100) {
                 // else they're approved
                 comment.setStatus(CommentData.APPROVED);
             } else {
                 // Invalid comments are marked as spam
                 comment.setStatus(CommentData.SPAM);
-                error = bundle.getString("commentServlet.commentMarkedAsSpam");
+                error = messageUtils.getString("commentServlet.commentMarkedAsSpam");
                 log.debug("Comment marked as spam");
             }
             
@@ -310,7 +311,7 @@ public class CommentServlet extends HttpServlet {
                     // Send email notifications, but only to subscribers if comment is 100% valid
                     boolean notifySubscribers = (validationScore == 100);
                     String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                    sendEmailNotification(comment, notifySubscribers, messages, rootURL);
+                    sendEmailNotification(comment, notifySubscribers, messages, rootURL, messageUtils);
                     
                     // only re-index/invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {
@@ -378,10 +379,7 @@ public class CommentServlet extends HttpServlet {
      */
     public static void sendEmailNotification(
             CommentData commentObject, boolean notifySubscribers,
-            RollerMessages messages, String rootURL) {
-        
-        // Send commment notifications in locale of server
-        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+            RollerMessages messages, String rootURL, I18nMessages resources) {
         
         WeblogEntryData entry = commentObject.getWeblogEntry();
         WebsiteData site = entry.getWebsite();
@@ -587,10 +585,7 @@ public class CommentServlet extends HttpServlet {
      *
      * TODO: Make the addressing options configurable on a per-website basis.
      */
-    public static void sendEmailApprovalNotification(CommentData cd, String rootURL) {
-        
-        // Send commment notifications in locale of server
-        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+    public static void sendEmailApprovalNotification(CommentData cd, String rootURL, I18nMessages resources) {
         
         WeblogEntryData entry = cd.getWeblogEntry();
         WebsiteData site = entry.getWebsite();
@@ -669,4 +664,3 @@ public class CommentServlet extends HttpServlet {
     }
     
 }
-

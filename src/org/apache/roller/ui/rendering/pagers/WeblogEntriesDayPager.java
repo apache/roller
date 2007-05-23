@@ -36,7 +36,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.MessageUtilities;
+import org.apache.roller.util.I18nMessages;
 
 
 /**
@@ -46,8 +46,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesDayPager.class);
     
-    private SimpleDateFormat dayFormat = new SimpleDateFormat(
-            MessageUtilities.getString("weblogEntriesPager.day.dateFormat"));
+    private SimpleDateFormat dayFormat = new SimpleDateFormat();
     
     private Date day;
     private Date nextDay;
@@ -71,6 +70,9 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             int                page) {
         
         super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        
+        dayFormat = new SimpleDateFormat(
+            messageUtils.getString("weblogEntriesPager.day.dateFormat"));
         
         getEntries();
         
@@ -165,7 +167,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeName() {
-        return MessageUtilities.getString("weblogEntriesPager.day.home");
+        return messageUtils.getString("weblogEntriesPager.day.home");
     }
     
     
@@ -179,7 +181,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getNextName() {
         if (getNextLink() != null) {
-            return MessageUtilities.getString("weblogEntriesPager.day.next", new Object[] {dayFormat.format(day)});
+            return messageUtils.getString("weblogEntriesPager.day.next", new Object[] {dayFormat.format(day)});
         }
         return null;
     }
@@ -195,7 +197,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getPrevName() {
         if (getPrevLink() != null) {
-            return MessageUtilities.getString("weblogEntriesPager.day.prev", new Object[] {dayFormat.format(day)});
+            return messageUtils.getString("weblogEntriesPager.day.prev", new Object[] {dayFormat.format(day)});
         }
         return null;
     }
@@ -212,7 +214,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getNextCollectionName() {
         if (nextDay != null) {
-            return MessageUtilities.getString("weblogEntriesPager.day.nextCollection", new Object[] {dayFormat.format(nextDay)});
+            return messageUtils.getString("weblogEntriesPager.day.nextCollection", new Object[] {dayFormat.format(nextDay)});
         }
         return null;
     }
@@ -229,7 +231,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getPrevCollectionName() {
         if (prevDay != null) {
-            return MessageUtilities.getString("weblogEntriesPager.day.prevCollection", new Object[] {dayFormat.format(prevDay)});
+            return messageUtils.getString("weblogEntriesPager.day.prevCollection", new Object[] {dayFormat.format(prevDay)});
         }
         return null;
     }
