@@ -60,11 +60,12 @@ public class UIActionInterceptor extends AbstractInterceptor
             
             // extract the authenticated user and set it
             RollerSession rses = RollerSession.getRollerSession(request);
-            theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
+            if(rses != null) {
+                theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
+            }
             
             // extract the work weblog and set it
             String weblogHandle = theAction.getWeblog();
-            //String weblogHandle = request.getParameter(RequestConstants.WEBLOG);
             if(!StringUtils.isEmpty(weblogHandle)) {
                 WebsiteData weblog = null;
                 try {
