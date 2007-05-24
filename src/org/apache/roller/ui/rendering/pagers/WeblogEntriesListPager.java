@@ -119,17 +119,14 @@ public class WeblogEntriesListPager extends AbstractPager {
                         locale,
                         offset,
                         length + 1);
-                
-                // check if there are more results for paging
-                if(rawEntries.size() > length) {
-                    more = true;
-                    rawEntries.remove(rawEntries.size() - 1);
-                }
-                
+                                
                 // wrap the results
+                int count = 0;
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     WeblogEntryData entry = (WeblogEntryData) it.next();
-                    results.add(WeblogEntryDataWrapper.wrap(entry));
+                    if (count++ < length) {
+                        results.add(WeblogEntryDataWrapper.wrap(entry));
+                    }
                 }
                 if (rawEntries.size() > length) more = true;
                 
