@@ -32,7 +32,7 @@ import org.apache.roller.planet.config.PlanetConfig;
  */
 public class DatabaseProvider  {
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
-    private enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
+    public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
     
     private static DatabaseProvider singletonInstance = null;
     
@@ -117,5 +117,29 @@ public class DatabaseProvider  {
         } else {
             return dataSource.getConnection();
         }
-    } 
+    }
+    
+    public ConfigurationType getType() {
+        return type;
+    }
+
+    public String getJndiName() {
+        return jndiName;
+    }
+
+    public String getJdbcDriverClass() {
+        return jdbcDriverClass;
+    }
+
+    public String getJdbcConnectionURL() {
+        return jdbcConnectionURL;
+    }
+
+    public String getJdbcPassword() {
+        return jdbcPassword;
+    }
+
+    public String getJdbcUsername() {
+        return jdbcUsername;
+    }
 }

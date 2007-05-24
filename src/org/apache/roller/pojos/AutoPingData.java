@@ -21,6 +21,7 @@ package org.apache.roller.pojos;
 import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -35,7 +36,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @hibernate.cache usage="read-write"
  */
 public class AutoPingData implements Serializable {
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private PingTargetData pingTarget = null;
     private WebsiteData website = null;
 
@@ -55,7 +56,7 @@ public class AutoPingData implements Serializable {
      * @param website    website to which this configuration applies
      */
     public AutoPingData(String id, PingTargetData pingtarget, WebsiteData website) {
-        this.id = id;
+        //this.id = id;
         this.website = website;
         this.pingTarget = pingtarget;
     }
@@ -74,7 +75,7 @@ public class AutoPingData implements Serializable {
      *
      * @return the unique id of this object. -- struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

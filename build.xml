@@ -163,6 +163,31 @@
                      excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" />
         </copy>
         
+        <mkdir dir="${build.compile.business}/META-INF" />
+        <copy todir="${build.compile.business}/META-INF" file="${ro.src}/META-INF/persistence.xml" />
+
+        <!-- OpenJPA bytecode enhancement  -->
+        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
+        <openjpac>
+            <config propertiesFile="${ro.src}/META-INF/persistence.xml" />
+            <classpath>
+                <path refid="business.path"/>
+                <pathelement location="${build.compile.business}" />
+                <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
+                &custom-jars;
+            </classpath>
+        </openjpac>
+
+        <!-- JPA/Toplink bytecode enhancement
+        <taskdef name="weave" classname="oracle.toplink.essentials.weaving.StaticWeaveAntTask" classpathref="business.path"/>
+        <weave  source="${build.compile.business}" target="${build.compile.business}">
+            <classpath>
+                <path refid="business.path"/>
+                <pathelement location="${build.compile.business}" />
+                <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
+            </classpath>
+        </weave> -->  
+    
         <!-- allow for custom build work -->
         &custom-build-business;
         
@@ -227,12 +252,14 @@
             <fileset refid="presentation.jars" />
             <fileset refid="hibernate.jar" />
             <fileset refid="hibernate.jars" />
+            <fileset refid="jpa.jars" />
             <fileset refid="struts.jars" />
             <fileset refid="struts2.jars" />
             <fileset refid="spring.jars" /> 
             <fileset refid="jstl.jars" />
             <fileset refid="xmlrpc.jars" />
             
+            <fileset refid="roller-core.jars" />
             <fileset refid="roller-planet.jars" />
             
             <!-- include custom jars -->

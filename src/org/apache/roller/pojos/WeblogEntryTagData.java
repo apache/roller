@@ -23,6 +23,7 @@ package org.apache.roller.pojos;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Tag bean.
@@ -37,7 +38,7 @@ public class WeblogEntryTagData
     implements java.io.Serializable
 {
     private static final long serialVersionUID = -2602052289337573384L;
-    private java.lang.String id = null;
+    private java.lang.String id = UUIDGenerator.generateUUID();
     private WebsiteData website = null;
     private WeblogEntryData weblogEntry = null;
     private UserData user = null;
@@ -54,7 +55,7 @@ public class WeblogEntryTagData
                        UserData user, java.lang.String name,
                        Timestamp time)
     {
-        this.id = id;
+        //this.id = id;
         this.website = website;
         this.weblogEntry = weblogEntry;
         this.user = user;
@@ -73,7 +74,7 @@ public class WeblogEntryTagData
      * Unique ID and primary key of this Referer.
      *
      * @roller.wrapPojoMethod type="simple"
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public java.lang.String getId()
     {

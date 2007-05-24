@@ -20,6 +20,7 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Represents hit count data for a weblog.
@@ -30,7 +31,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class HitCountData implements Serializable {
     
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private WebsiteData weblog = null;
     private int dailyHits = 0;
     
@@ -77,7 +78,7 @@ public class HitCountData implements Serializable {
     
     /**
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

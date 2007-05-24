@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -31,10 +32,12 @@ import java.util.Set;
  *
  * @hibernate.class lazy="true" table="rag_subscription"
  */
-public class PlanetSubscriptionData implements Serializable, Comparable {
+public class PlanetSubscriptionData implements Serializable, Comparable
+{
+    /** Database ID */
+    protected String id = UUIDGenerator.generateUUID();
     
     // attributes
-    protected String id;
     protected String title;
     protected String author;
     protected String feedUrl;

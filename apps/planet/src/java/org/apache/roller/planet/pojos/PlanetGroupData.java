@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -31,8 +32,10 @@ public class PlanetGroupData implements Serializable, Comparable {
     
     transient private String[] catArray = null;
     
+    /** Database ID */
+    private String id = UUIDGenerator.generateUUID();
+    
     // attributes
-    private String id = null;
     private String handle = null;
     private String title = null;
     private String description = null;
