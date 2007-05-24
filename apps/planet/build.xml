@@ -33,6 +33,7 @@
     <property name="src"              value="${basedir}/src/java" />
     <property name="tools"            value="${basedir}/../../tools" />
     <property name="test"             value="${basedir}/test/java" />
+    <property name="testcontext"      value="${basedir}/build/test/testcontext" />
     <property name="web"              value="${basedir}/web" />
     
     <!-- build properties -->
@@ -332,7 +333,13 @@
                 <pathelement location="${tools}/buildtime/ant-1.6.2/ant.jar"/>
             </classpath>
         </javac>
-                
+
+        <mkdir dir="${testcontext}" />
+        <copy todir="${testcontext}">
+            <fileset dir="${web}" excludes="**/jsps/**,**/velocity/**" />
+            <fileset dir="${basedir}/testdata" />
+        </copy>
+        
         <!-- Copy test resources -->
         <copy todir="${build.compile.test}">
             <fileset dir="${test}" excludes="**/*.java, **/*.html, **/*.png" />
@@ -368,8 +375,9 @@
                 <!-- plus our compiled test classes -->
                 <pathelement location="${build.compile.test}"/>
         
-                <!-- testdata.  the equivalent of /WEB-INF/classes in a webapp -->
-                <pathelement location="${basedir}/testdata" />
+                <!-- testdata. the equivalent of /WEB-INF/classes in a webapp -->
+                <pathelement location="${basedir}/build/test/testcontext" />
+                <pathelement location="${basedir}/build/test/testcontext/WEB-INF/classes" />
                 
                 <!-- plus the classpath for jars needed to talk to the test db -->
                 <pathelement path="${test.db.cpath}" />
