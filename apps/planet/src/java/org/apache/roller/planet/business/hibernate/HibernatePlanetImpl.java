@@ -18,7 +18,6 @@
 
 package org.apache.roller.planet.business.hibernate;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -38,7 +37,7 @@ public class HibernatePlanetImpl implements Planet {
     private static Log log = LogFactory.getLog(HibernatePlanetImpl.class);
     
     // our singleton instance
-    private static HibernatePlanetImpl me = null;
+    protected static HibernatePlanetImpl me = null;
     
     // a persistence utility class
     protected HibernatePersistenceStrategy strategy = null;
@@ -59,28 +58,8 @@ public class HibernatePlanetImpl implements Planet {
      * file plus JDBC overrides from planet-custom.properties.
      */
     protected HibernatePlanetImpl() throws RollerException {
-        try {
-            if (StringUtils.isNotEmpty(PlanetConfig.getProperty("jdbc.driverClass"))) {
-                // create and configure for JDBC access
-                strategy = new HibernatePersistenceStrategy(
-                    PlanetConfig.getProperty("hibernate.configResource"),
-                    PlanetConfig.getProperty("hibernate.dialect"),
-                    PlanetConfig.getProperty("jdbc.driverClass"),
-                    PlanetConfig.getProperty("jdbc.connectionURL"),
-                    PlanetConfig.getProperty("jdbc.username"),
-                    PlanetConfig.getProperty("jdbc.password"));
-            } else {
-                // create an configure via config resource only
-                strategy = new HibernatePersistenceStrategy(
-                    PlanetConfig.getProperty("hibernate.configResource"),
-                    PlanetConfig.getProperty("hibernate.dialect")); 
-            }
-
-        } catch(Throwable t) {
-            // if this happens then we are screwed
-            log.fatal("Error initializing Hibernate", t);
-            throw new RollerException(t);
-        }
+        
+        strategy = getStrategy();
         
         try {
             String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
@@ -97,6 +76,22 @@ public class HibernatePlanetImpl implements Planet {
         } catch (Exception e) {
             throw new RollerException("Error initializing feed fetcher", e);
         }
+    }
+    
+    protected HibernatePersistenceStrategy getStrategy() throws RollerException {
+        try {
+            String dialect =  
+                PlanetConfig.getProperty("hibernate.dialect");
+            String connectionProvider = 
+                PlanetConfig.getProperty("hibernate.connectionProvider");
+            return new HibernatePersistenceStrategy(
+                "/hibernate.cfg.xml", dialect, connectionProvider);
+
+        } catch(Throwable t) {
+            // if this happens then we are screwed
+            log.fatal("Error initializing Hibernate", t);
+            throw new RollerException(t);
+        }        
     }
     
     
