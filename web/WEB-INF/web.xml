@@ -253,12 +253,12 @@
     
     <servlet>
         <servlet-name>CommentDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.authoring.ajax.CommentDataServlet</servlet-class>
+        <servlet-class>org.apache.roller.ui.struts2.ajax.CommentDataServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>UserDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.authoring.ajax.UserDataServlet</servlet-class>
+        <servlet-class>org.apache.roller.ui.struts2.ajax.UserDataServlet</servlet-class>
     </servlet>
     
     <servlet>
