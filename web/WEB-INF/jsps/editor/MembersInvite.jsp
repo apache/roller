@@ -61,3 +61,10 @@
     <s:submit key="application.cancel" action="members" />
 
 </s:form>
+
+<%-- this forces focus to the userName field --%>
+<script type="text/javascript">
+<!--
+    document.getElementById('userName').focus();
+// -->
+</script>
