@@ -29,14 +29,11 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.PermissionsData;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.util.menu.Menu;
-import org.apache.roller.ui.core.util.menu.MenuHelper;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
@@ -79,6 +76,7 @@ public class TemplateEdit extends UIAction {
     /**
      * Show template edit page.
      */
+    @SkipValidation
     public String execute() {
         
         if(getTemplate() == null) {
@@ -98,7 +96,7 @@ public class TemplateEdit extends UIAction {
             getBean().setManualContentType(page.getOutputContentType());
         }
         
-        return SUCCESS;
+        return INPUT;
     }
     
     
@@ -118,28 +116,28 @@ public class TemplateEdit extends UIAction {
         
         if(!hasActionErrors()) try {
             
-            WeblogTemplate page = getTemplate();
-            getBean().copyTo(page);
-            page.setLastModified(new Date());
+            WeblogTemplate template = getTemplate();
+            getBean().copyTo(template);
+            template.setLastModified(new Date());
             
             if (getBean().getAutoContentType() == null ||
                     !getBean().getAutoContentType().booleanValue()) {
-                page.setOutputContentType(getBean().getManualContentType());
+                template.setOutputContentType(getBean().getManualContentType());
             } else {
-                // empty content-type indicates that page uses auto content-type detection
-                page.setOutputContentType(null);
+                // empty content-type indicates that template uses auto content-type detection
+                template.setOutputContentType(null);
             }
             
             // save template and flush
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            mgr.savePage(page);
+            mgr.savePage(template);
             RollerFactory.getRoller().flush();
             
             // notify caches
-            CacheManager.invalidate(page);
+            CacheManager.invalidate(template);
             
             // success message
-            addMessage("pageForm.save.success", page.getName());
+            addMessage("pageForm.save.success", template.getName());
             
         } catch (RollerException ex) {
             log.error("Error updating page - "+getBean().getId(), ex);
@@ -147,7 +145,7 @@ public class TemplateEdit extends UIAction {
             addError("Error saving template");
         }
         
-        return SUCCESS;
+        return INPUT;
     }
     
     
@@ -158,17 +156,30 @@ public class TemplateEdit extends UIAction {
     
     private void myValidate() {
         
-        // make sure that we have an appropriate name value
+        // if name changed make sure there isn't a conflict
+        if(!getTemplate().getName().equals(getBean().getName())) {
+            try {
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                if(umgr.getPageByName(getActionWeblog(), getBean().getName()) != null) {
+                    addError("pagesForm.error.alreadyExists", getBean().getName());
+                }
+            } catch (RollerException ex) {
+                log.error("Error checking page name uniqueness", ex);
+            }
+        }
         
-        // make sure that we have an appropriate action value
-        
-        // first off, check if template already exists
-//        WeblogTemplate existingPage = mgr.getPageByName(website, getNewTmplName());
-//        if(existingPage != null) {
-//            addError("pagesForm.error.alreadyExists", getNewTmplName());
-//            return INPUT;
-//        }
-        
+        // if link changed make sure there isn't a conflict
+        if(!StringUtils.isEmpty(getBean().getLink()) &&
+                !getBean().getLink().equals(getTemplate().getLink())) {
+            try {
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                if(umgr.getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
+                    addError("pagesForm.error.alreadyExists", getBean().getLink());
+                }
+            } catch (RollerException ex) {
+                log.error("Error checking page link uniqueness", ex);
+            }
+        }
     }
     
     
