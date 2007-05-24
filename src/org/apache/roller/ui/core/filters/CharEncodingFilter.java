@@ -20,19 +20,15 @@ package org.apache.roller.ui.core.filters;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Locale;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
+
 
 /**
  * Entry point filter for all requests. This filter ensures that the request 
@@ -41,9 +37,9 @@ import org.apache.struts.Globals;
  * This filter should normally be first and last in the chain.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @web.filter name="CharEncodingFilter"
  */
 public class CharEncodingFilter implements Filter {
+    
     private FilterConfig mFilterConfig = null;
     private static Log mLogger =
             LogFactory.getFactory().getInstance(CharEncodingFilter.class);

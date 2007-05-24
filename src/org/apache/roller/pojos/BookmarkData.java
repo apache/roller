@@ -32,10 +32,6 @@ import org.apache.roller.util.UUIDGenerator;
  * the your BookmarkManager implementation.</p>
  *
  * @ejb:bean name="BookmarkData"
- * 
- * @struts.form include-all="true"
- *    extends="org.apache.struts.validator.ValidatorForm"
- * 
  * @hibernate.class lazy="true" table="bookmark"
  * @hibernate.cache usage="read-write"
  */

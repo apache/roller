@@ -33,7 +33,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.util.MessageUtilities;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.Utilities;
 
 
@@ -92,7 +92,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeName() {
-        return MessageUtilities.getString("weblogEntriesPager.single.home");
+        return messageUtils.getString("weblogEntriesPager.single.home");
     }
     
     
@@ -107,7 +107,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     public String getNextName() {
         if (getNextEntry() != null) {
             String title = Utilities.truncateNicely(getNextEntry().getTitle(), 15, 20, "...");
-            return MessageUtilities.getString("weblogEntriesPager.single.next", new Object[] {title});
+            return messageUtils.getString("weblogEntriesPager.single.next", new Object[] {title});
         }
         return null;
     }
@@ -124,7 +124,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     public String getPrevName() {
         if (getPrevEntry() != null) {
             String title = Utilities.truncateNicely(getPrevEntry().getTitle(), 15, 20, "...");
-            return MessageUtilities.getString("weblogEntriesPager.single.prev", new Object[] {title});
+            return messageUtils.getString("weblogEntriesPager.single.prev", new Object[] {title});
         }
         return null;
     }
