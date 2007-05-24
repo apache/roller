@@ -59,7 +59,7 @@
             <br />
         </label> 
         <div>
-            <s:radio name="approvedString" list="commentStatusOptions" listKey="key" listValue="value" />
+            <s:radio theme="roller" name="approvedString" list="commentStatusOptions" listKey="key" listValue="value" />
         </div>
     </div> 
     <br />
@@ -73,7 +73,7 @@
             <br />
         </label>
         <div>
-            <s:radio name="spamString" list="spamStatusOptions" listKey="key" listValue="value" />
+            <s:radio theme="roller" name="spamString" list="spamStatusOptions" listKey="key" listValue="value" />
         </div>
     </div>
     <br />
