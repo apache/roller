@@ -83,6 +83,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         WeblogCategoryData testCat = new WeblogCategoryData(testWeblog, null, "root", "root", null);
@@ -107,13 +108,14 @@ public class WeblogCategoryCRUDTest extends TestCase {
         List cats = null;
         
         // root category is always available
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         // make sure we are starting with 0 categories (beneath root)
         assertEquals(0, root.getWeblogCategories().size());
         
         // add a new category
-        WeblogCategoryData newCat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "catTestCategory", null, null);
+        WeblogCategoryData newCat = new WeblogCategoryData(testWeblog, root, "catTestCategory", null, null);
         mgr.saveWeblogCategory(newCat);
         TestUtils.endSession(true);
         
@@ -124,6 +126,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         assertEquals(newCat, cat);
         
         // make sure category count increased
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = mgr.getRootWeblogCategory(testWeblog);
         assertEquals(1, root.getWeblogCategories().size());
         
@@ -148,6 +151,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         assertNull(cat);
         
         // make sure category count decreased
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = mgr.getRootWeblogCategory(testWeblog);
         assertEquals(0, root.getWeblogCategories().size());
         
@@ -165,6 +169,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         // root category is always available
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
         
         // add a small category tree /subcat/subcat2
@@ -177,6 +182,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         TestUtils.endSession(true);
         
         // check that subcat tree can be navigated
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = mgr.getRootWeblogCategory(testWeblog);
         assertEquals(1, root.getWeblogCategories().size());
         subcat = (WeblogCategoryData) root.getWeblogCategories().iterator().next();
@@ -190,6 +196,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         TestUtils.endSession(true);
         
         // verify cascading delete succeeded
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = mgr.getRootWeblogCategory(testWeblog);
         assertEquals(0, root.getWeblogCategories().size());
         assertNull(mgr.getWeblogCategoryByPath(TestUtils.getManagedWebsite(testWeblog), "/subcatTest1/subcatTest2"));
