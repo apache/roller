@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.authoring.ajax;
+package org.apache.roller.ui.struts2.ajax;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
