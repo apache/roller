@@ -109,10 +109,6 @@ in the "base.path" definition.
     <include name="taglibs-string.jar"/>
 </fileset>
 
-<fileset id="commons.jars" dir="${tools.struts}/lib">
-    <include name="commons-*.jar"/>
-</fileset>
-
 <fileset id="commons-httpclient.jar" dir="${ro.tools}/lib">
     <include name="commons-httpclient*.jar"/>
 </fileset>
@@ -183,7 +179,6 @@ in the "base.path" definition.
 <path id="base.path">
     <fileset refid="base.jars"/>
     <fileset refid="mail.jars"/>
-    <fileset refid="commons.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="roller-planet.jars" />
     <fileset refid="xmlrpc.jars"/>

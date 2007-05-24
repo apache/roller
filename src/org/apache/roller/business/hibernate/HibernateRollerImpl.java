@@ -33,7 +33,7 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.runnable.ThreadManager;
-
+import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 
 /**
  * A Hibernate specific implementation of the Roller business layer.

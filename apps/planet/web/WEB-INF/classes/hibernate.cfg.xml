@@ -22,11 +22,10 @@
 <hibernate-configuration>
     <session-factory>
     
-        <!-- you can override with JDBC connection via planet-custom.properties -->
-        <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
-                        
-        <!-- you can override the dialect via planet-custom.properties -->
-        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- 
+            Specify your Planet database configuration parameters
+            in your planet-custom.properties override file, not here.
+         -->
         
         <property name="show_sql">false</property>
         
