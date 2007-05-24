@@ -28,7 +28,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.hibernate.cfg.Environment;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -62,18 +61,16 @@ public class HibernatePersistenceStrategy {
      * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
      * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
      */
-    public HibernatePersistenceStrategy() {
+    public HibernatePersistenceStrategy(String configResource, String dialect, String connectionProvider) {
         
         // Read Hibernate config file specified by Roller config
         Configuration config = new Configuration();
-        config.configure(RollerConfig.getProperty("hibernate.configResource"));
+        config.configure(configResource);
 
         // Add dialect specified by Roller config and our connection provider
         Properties props = new Properties();
-        props.put(Environment.DIALECT, 
-                RollerConfig.getProperty("hibernate.dialect"));
-        props.put(Environment.CONNECTION_PROVIDER, 
-                RollerConfig.getProperty("hibernate.connectionProvider"));
+        props.put(Environment.DIALECT, dialect);
+        props.put(Environment.CONNECTION_PROVIDER, connectionProvider);
         config.mergeProperties(props);
         
         this.sessionFactory = config.buildSessionFactory(); 
