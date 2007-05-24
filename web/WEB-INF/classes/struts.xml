@@ -14,11 +14,11 @@
         <!-- define our own interceptors and a custom interceptor stack -->
         <interceptors>
             <interceptor name="UIActionInterceptor" 
-                         class="org.apache.roller.ui.core.util.struts2.UIActionInterceptor" />
+                         class="org.apache.roller.ui.struts2.util.UIActionInterceptor" />
             <interceptor name="UISecurityInterceptor" 
-                         class="org.apache.roller.ui.core.util.struts2.UISecurityInterceptor" />
+                         class="org.apache.roller.ui.struts2.util.UISecurityInterceptor" />
             <interceptor name="UIActionPrepareInterceptor" 
-                         class="org.apache.roller.ui.core.util.struts2.UIActionPrepareInterceptor" />
+                         class="org.apache.roller.ui.struts2.util.UIActionPrepareInterceptor" />
                          
             <!-- Define a custom interceptor stack for Roller so that we can 
                  add in our own custom interceptors.  We basically copy the 
@@ -98,38 +98,38 @@
         </action>
         
         <action name="setup"
-                class="org.apache.roller.ui.core.struts2.Setup">
+                class="org.apache.roller.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
         </action>
             
         <action name="login"
-                class="org.apache.roller.ui.core.struts2.Login">
+                class="org.apache.roller.ui.struts2.core.Login">
             <result type="tiles">.Login</result>
         </action>
         
         <action name="register!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.Register">
+                class="org.apache.roller.ui.struts2.core.Register">
             <result name="input" type="tiles">.Register</result>
             <result name="cancel" type="redirect">/</result>
             <result name="success" type="tiles">.Welcome</result>
         </action>
         
         <action name="profile!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.Profile">
+                class="org.apache.roller.ui.struts2.core.Profile">
             <result name="input" type="tiles">.Profile</result>
             <result name="cancel" type="redirect-action">menu</result>
             <result name="success" type="tiles">.Profile</result>
         </action>
         
         <action name="createWeblog!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.CreateWeblog">
+                class="org.apache.roller.ui.struts2.core.CreateWeblog">
             <result name="input" type="tiles">.CreateWeblog</result>
             <result name="cancel" type="redirect-action">menu</result>
             <result name="success" type="chain">menu</result>
         </action>
         
         <action name="menu!*" method="{1}"
-                class="org.apache.roller.ui.core.struts2.MainMenu">
+                class="org.apache.roller.ui.struts2.core.MainMenu">
             <result type="tiles">.MainMenu</result>
         </action>
         
@@ -140,69 +140,69 @@
     <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger">
         
         <action name="globalConfig!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.GlobalConfig">
+                class="org.apache.roller.ui.struts2.admin.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
         
         <action name="userAdmin"
-                class="org.apache.roller.ui.admin.struts2.UserAdmin">
+                class="org.apache.roller.ui.struts2.admin.UserAdmin">
             <result name="success" type="tiles">.UserAdmin</result>
         </action>
         
         <action name="createUser!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CreateUser">
+                class="org.apache.roller.ui.struts2.admin.CreateUser">
             <result name="input" type="tiles">.CreateUser</result>
             <result name="cancel" type="redirect-action">userAdmin</result>
         </action>
         
         <action name="modifyUser!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.ModifyUser">
+                class="org.apache.roller.ui.struts2.admin.ModifyUser">
             <result name="input" type="tiles">.ModifyUser</result>
             <result name="cancel" type="redirect-action">userAdmin</result>
         </action>
         
         <action name="globalCommentManagement!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.GlobalCommentManagement">
+                class="org.apache.roller.ui.struts2.admin.GlobalCommentManagement">
             <result name="list" type="tiles">.GlobalCommentManagement</result>
         </action>
         
         <action name="commonPingTargets!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CommonPingTargets">
+                class="org.apache.roller.ui.struts2.admin.CommonPingTargets">
             <result name="list" type="tiles">.CommonPingTargets</result>
             <result name="confirm" type="tiles">.CommonPingTargetConfirm</result>
         </action>
         
         <action name="commonPingTargetAdd!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CommonPingTargetAdd">
+                class="org.apache.roller.ui.struts2.admin.CommonPingTargetAdd">
             <result name="input" type="tiles">.CommonPingTargetAdd</result>
             <result name="success" type="chain">commonPingTargets</result>
         </action>
         
         <action name="commonPingTargetEdit!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CommonPingTargetEdit">
+                class="org.apache.roller.ui.struts2.admin.CommonPingTargetEdit">
             <result name="input" type="tiles">.CommonPingTargetEdit</result>
             <result name="error" type="chain">commonPingTargets</result>
         </action>
         
         <action name="cacheInfo!*" method="{1}"
-                class="org.apache.roller.ui.admin.struts2.CacheInfo">
+                class="org.apache.roller.ui.struts2.admin.CacheInfo">
             <result name="success" type="tiles">.CacheInfo</result>
         </action>
         
         
         <!--
         <action name="planetConfig!*" method="{1}"
-                class="org.apache.roller.planet.ui.admin.struts2.PlanetConfigAction">
+                class="org.apache.roller.planet.ui.struts2.admin.PlanetConfigAction">
             <result name="planetConfig.page">.PlanetConfig</result>
         </action>
         
         <action name="planetSubscriptions!*" method="{1}"
-                class="org.apache.roller.planet.ui.admin.struts2.PlanetSubscriptionsAction">
+                class="org.apache.roller.planet.ui.struts2.admin.PlanetSubscriptionsAction">
             <result name="planetSubscriptions.page">.PlanetSubscriptions</result>
         </action>
         
         <action name="planetGroups!*" method="{1}"
-                class="org.apache.roller.planet.ui.admin.struts2.PlanetGroupsAction">
+                class="org.apache.roller.planet.ui.struts2.admin.PlanetGroupsAction">
             <result name="planetGroups.page">.PlanetGroups</result>
         </action>
         -->
@@ -213,192 +213,198 @@
     <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
         
         <action name="entryAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.EntryAdd">
+                class="org.apache.roller.ui.struts2.editor.EntryAdd">
             <result name="input" type="tiles">.EntryAdd</result>
             <result name="success" type="chain">entryEdit</result>
         </action>
         
         <action name="entryEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.EntryEdit">
+                class="org.apache.roller.ui.struts2.editor.EntryEdit">
             <result name="input" type="tiles">.EntryEdit</result>
             <result name="error" type="chain">menu</result>
         </action>
         
         <action name="entryRemove!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.EntryRemove">
+                class="org.apache.roller.ui.struts2.editor.EntryRemove">
             <result name="input" type="tiles">.EntryRemove</result>
             <result name="error" type="chain">menu</result>
             <result name="success" type="chain">entryAdd</result>
         </action>
         
         <action name="entries"
-                class="org.apache.roller.ui.authoring.struts2.Entries">
+                class="org.apache.roller.ui.struts2.editor.Entries">
             <result name="list" type="tiles">.Entries</result>
         </action>
         
         <action name="comments!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Comments">
+                class="org.apache.roller.ui.struts2.editor.Comments">
             <result name="list" type="tiles">.Comments</result>
         </action>
         
         <action name="categories!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Categories">
+                class="org.apache.roller.ui.struts2.editor.Categories">
             <result name="list" type="tiles">.Categories</result>
         </action>
         
         <action name="categoryAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CategoryAdd">
+                class="org.apache.roller.ui.struts2.editor.CategoryAdd">
             <result name="input" type="tiles">.CategoryAdd</result>
             <result name="success" type="chain">categories</result>
             <result name="error" type="chain">categories</result>
         </action>
         
         <action name="categoryEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CategoryEdit">
+                class="org.apache.roller.ui.struts2.editor.CategoryEdit">
             <result name="input" type="tiles">.CategoryEdit</result>
         </action>
         
         <action name="categoryRemove!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CategoryRemove">
+                class="org.apache.roller.ui.struts2.editor.CategoryRemove">
             <result name="input" type="tiles">.CategoryRemove</result>
             <result name="success" type="chain">categories</result>
         </action>
         
         <action name="bookmarks!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Bookmarks">
+                class="org.apache.roller.ui.struts2.editor.Bookmarks">
             <result name="list" type="tiles">.Bookmarks</result>
         </action>
         
         <action name="bookmarkAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.BookmarkAdd">
+                class="org.apache.roller.ui.struts2.editor.BookmarkAdd">
             <result name="input" type="tiles">.BookmarkAdd</result>
             <result name="success" type="chain">bookmarks</result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="bookmarkEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.BookmarkEdit">
+                class="org.apache.roller.ui.struts2.editor.BookmarkEdit">
             <result name="input" type="tiles">.BookmarkEdit</result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="bookmarksImport!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.BookmarksImport">
+                class="org.apache.roller.ui.struts2.editor.BookmarksImport">
             <result name="input" type="tiles">.BookmarksImport</result>
             <result name="success" type="chain">bookmarks</result>
         </action>
         
         <action name="folderAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.FolderAdd">
+                class="org.apache.roller.ui.struts2.editor.FolderAdd">
             <result name="input" type="tiles">.FolderAdd</result>
             <result name="success" type="chain">bookmarks</result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="folderEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.FolderEdit">
+                class="org.apache.roller.ui.struts2.editor.FolderEdit">
             <result name="input" type="tiles">.FolderEdit</result>
             <result name="error" type="chain">bookmarks</result>
         </action>
         
         <action name="resources!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Resources">
+                class="org.apache.roller.ui.struts2.editor.Resources">
             <result name="list" type="tiles">.Resources</result>
         </action>
         
         <action name="referrers!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Referrers">
+                class="org.apache.roller.ui.struts2.editor.Referrers">
             <result name="list" type="tiles">.Referrers</result>
         </action>
         
         
         <action name="weblogConfig!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.WeblogConfig">
+                class="org.apache.roller.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>
         </action>
         
         <action name="weblogRemove!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.WeblogRemove">
+                class="org.apache.roller.ui.struts2.editor.WeblogRemove">
             <result name="confirm" type="tiles">.WeblogRemoveConfirm</result>
             <result name="success" type="chain">menu</result>
         </action>
         
         <action name="themeEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.ThemeEdit">
+                class="org.apache.roller.ui.struts2.editor.ThemeEdit">
             <result name="success" type="tiles">.ThemeEdit</result>
         </action>
         
+        <action name="stylesheetEdit!*" method="{1}"
+                class="org.apache.roller.ui.struts2.editor.StylesheetEdit">
+            <result name="success" type="tiles">.StylesheetEdit</result>
+            <result name="error" type="tiles">.StylesheetEditError</result>
+        </action>
+        
         <action name="templates!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Templates">
+                class="org.apache.roller.ui.struts2.editor.Templates">
             <result name="list" type="tiles">.Templates</result>
         </action>
         
         <action name="templateAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.TemplateAdd">
+                class="org.apache.roller.ui.struts2.editor.TemplateAdd">
             <result name="success" type="chain">templates</result>
         </action>
         
         <action name="templateEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.TemplateEdit">
+                class="org.apache.roller.ui.struts2.editor.TemplateEdit">
             <result name="list" type="chain">templates</result>
-            <result name="success" type="tiles">.TemplateEdit</result>
+            <result name="input" type="tiles">.TemplateEdit</result>
             <result name="cancel" type="redirect-action">templates</result>
         </action>
         
         <action name="templateRemove!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.TemplateRemove">
+                class="org.apache.roller.ui.struts2.editor.TemplateRemove">
             <result name="confirm" type="tiles">.TemplateRemove</result>
             <result name="success" type="chain">templates</result>
         </action>
         
         <action name="members!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Members">
+                class="org.apache.roller.ui.struts2.editor.Members">
             <result name="list" type="tiles">.Members</result>
         </action>
         
         <action name="invite!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.MembersInvite">
+                class="org.apache.roller.ui.struts2.editor.MembersInvite">
             <result name="input" type="tiles">.MembersInvite</result>
             <result name="disabled" type="tiles">.disabled</result>
             <result name="success" type="chain">members</result>
         </action>
         
         <action name="pings!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Pings">
+                class="org.apache.roller.ui.struts2.editor.Pings">
             <result name="list" type="tiles">.Pings</result>
         </action>
         
         <action name="customPingTargets!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CustomPingTargets">
+                class="org.apache.roller.ui.struts2.editor.CustomPingTargets">
             <result name="list" type="tiles">.CustomPingTargets</result>
             <result name="confirm" type="tiles">.CustomPingTargetConfirm</result>
         </action>
         
         <action name="customPingTargetAdd!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CustomPingTargetAdd">
+                class="org.apache.roller.ui.struts2.editor.CustomPingTargetAdd">
             <result name="input" type="tiles">.CustomPingTargetAdd</result>
             <result name="success" type="chain">customPingTargets</result>
         </action>
         
         <action name="customPingTargetEdit!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.CustomPingTargetEdit">
+                class="org.apache.roller.ui.struts2.editor.CustomPingTargetEdit">
             <result name="input" type="tiles">.CustomPingTargetEdit</result>
             <result name="error" type="chain">customPingTargets</result>
         </action>
         
         <action name="maintenance!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.Maintenance">
+                class="org.apache.roller.ui.struts2.editor.Maintenance">
             <result name="success" type="tiles">.Maintenance</result>
         </action>
         
         <!--
         <action name="importEntries!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.ImportEntriesAction">
+                class="org.apache.roller.ui.struts2.editor.ImportEntriesAction">
             <result name="importEntries.page">.import-entries</result>
         </action>
         
         <action name="toggleLinkback!*" method="{1}"
-                class="org.apache.roller.ui.authoring.struts2.ToggleLinkbackDisplayAction">
+                class="org.apache.roller.ui.struts2.editor.ToggleLinkbackDisplayAction">
         </action>
         -->
     </package>

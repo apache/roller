@@ -26,7 +26,7 @@ List websites = RollerFactory.getRoller().getUserManager().getWebsites(user, Boo
 
 if (websites.size() == 1) {
     WebsiteData website = (WebsiteData) websites.get(0);
-    response.sendRedirect(request.getContextPath()+"/roller-ui/authoring/entryAdd.rol&weblog="+website.getHandle());
+    response.sendRedirect(request.getContextPath()+"/roller-ui/authoring/entryAdd.rol?weblog="+website.getHandle());
 } else {
     response.sendRedirect(request.getContextPath()+"/roller-ui/menu.rol");
 }

@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,38 +14,37 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
-<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
+--%>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle"><fmt:message key="cacheInfo.subtitle" />
-<p><fmt:message key="cacheInfo.prompt" />
+<p class="subtitle"><s:text name="cacheInfo.subtitle" />
+<p><s:text name="cacheInfo.prompt" />
 
-<c:forEach var="cache" items="${cacheStats}">
-    <c:if test="${!empty cache.value}">
+<s:iterator id="cache" value="stats">
+    <s:if test="#cache != null && !#cache.value.isEmpty">
         <table cellspacing="3" border="1">
             <tr>
-                <th colspan="2"><c:out value="${cache.key}"/></th>
+                <th colspan="2"><s:property value="#cache.key"/></th>
             </tr>
 
-            <c:forEach var="prop" items="${cache.value}">
+            <s:iterator id="prop" value="#cache.value">
                 <tr>
-                    <td><c:out value="${prop.key}"/></td>
-                    <td><c:out value="${prop.value}"/></td>
+                    <td><s:property value="#prop.key"/></td>
+                    <td><s:property value="#prop.value"/></td>
                 </tr>
-            </c:forEach>
+            </s:iterator>
 
             <tr>
                 <td colspan="2">
-                    <form action="cacheInfo.do" method="POST">
-                        <input type="hidden" name="cache" value="<c:out value='${cache.key}'/>" />
-                        <input type="hidden" name="method" value="clear" />
-                        <input type="submit" value="<fmt:message key='cacheInfo.clear' />" />
-                    </form>
+                    <s:form action="cacheInfo!clear">
+                        <s:hidden name="cache" value="%{#cache.key}" />
+                        <s:submit key="cacheInfo.clear" />
+                    </s:form>
                 </td>
             </tr>
             
         </table>
         
         <br>
-    </c:if>
-</c:forEach>
+    </s:if>
+</s:iterator>

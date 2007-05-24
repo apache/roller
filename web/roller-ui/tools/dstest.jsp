@@ -19,12 +19,11 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
 <%-- simple test page to test your Roller datasource setup --%>
-<%@ page import="javax.naming.InitialContext" %>
-<%@ page import="javax.sql.DataSource" %>
+<%@ page import="org.apache.roller.business.DatabaseProvider" %>
 <%@ page import="java.sql.Connection" %>
 <html>
 <head>
-<title>Roller DataSource test</title>
+<title>Roller database configuration check</title>
 </head>
 <body>
 <p>
@@ -33,10 +32,8 @@ String msg = null;
 Connection con = null;
 try
 {
-    InitialContext ic = new InitialContext();
-    DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
-    con = ds.getConnection();
-    msg = "SUCCESS: Got datasource and connection, class is "+ds.getClass().getName();
+    con = DatabaseProvider.getDatabaseProvider().getConnection();
+    msg = "SUCCESS: Able to get database connection";
 }
 catch (Exception e)
 {
@@ -47,7 +44,6 @@ finally
 {
     if (con != null) con.close();
 }
-
 %>
 <%= msg %>
 </p>

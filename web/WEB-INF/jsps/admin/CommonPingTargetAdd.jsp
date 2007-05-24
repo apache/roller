@@ -15,6 +15,28 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ taglib uri="http://www.rollerweblogger.org/tags" prefix="roller" %>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<roller:Menu model="admin-menu.xml" view="templates/menu/menu-tabbed.vm" />
+<p class="subtitle">
+<s:text name="commonPingTarget.subtitle"/>
+</p>
+
+<s:form action="commonPingTargetAdd!save" >
+
+    <div class="formrow">
+       <label for="name" class="formrow"><s:text name="pingTarget.name" /></label>
+       <s:textfield name="bean.name" size="30" maxlength="30" />
+    </div>
+
+    <div class="formrow">
+       <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl" /></label>
+       <s:textfield name="bean.pingUrl" size="100" maxlength="255" />
+    </div>
+
+    <p/>
+    <div class="formrow">
+       <label for="" class="formrow">&nbsp;</label>
+       <s:submit key="pingTarget.save" />
+    </div>
+
+</s:form>

@@ -15,6 +15,29 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-#centercontent_wrap {
-    width: 100%;
-}
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+
+<br />
+<h1><s:text name="" /></h1>
+
+<p/>
+<s:text name="pingTarget.confirmCommonRemove" />
+<p/>
+
+<table>
+    <tr><td><s:text name="pingTarget.name" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.name" /></b></td></tr>
+    <tr><td><s:text name="pingTarget.pingUrl" />&nbsp;&nbsp;</td><td><b><s:property value="pingTarget.pingUrl" /></b></td></tr>
+</table>
+
+<br/>
+
+<div class="control">
+    <s:form action="commonPingTargets!delete">
+        <s:hidden name="pingTargetId" />
+        <s:submit key="pingTarget.removeOK" />
+    </s:form>
+    &nbsp;
+    <s:form action="commonPingTargets">
+        <s:submit key="pingTarget.cancel" />
+    </s:form>
+</div>
