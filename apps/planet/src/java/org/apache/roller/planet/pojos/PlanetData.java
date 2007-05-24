@@ -19,6 +19,7 @@
 package org.apache.roller.planet.pojos;
 
 import java.util.Set;
+import org.apache.roller.util.UUIDGenerator;
 import java.util.TreeSet;
 
 
@@ -29,7 +30,7 @@ import java.util.TreeSet;
  */
 public class PlanetData implements Comparable {
     
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String handle = null;
     private String title = null;
     private String description = null;
@@ -79,7 +80,7 @@ public class PlanetData implements Comparable {
         this.handle = handle;
     }
     
-    
+       
     /**
      * @hibernate.property column="title" non-null="true" unique="false"
      */
@@ -102,8 +103,7 @@ public class PlanetData implements Comparable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
+
     /** 
      * @hibernate.set lazy="true" inverse="true" cascade="all" sort="natural"
      * @hibernate.collection-key column="planet_id"

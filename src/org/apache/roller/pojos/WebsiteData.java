@@ -44,6 +44,7 @@ import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.util.I18nUtils;
 
 /**
@@ -64,7 +65,7 @@ public class WebsiteData implements Serializable {
     private static Log log = LogFactory.getLog(WebsiteData.class);
     
     // Simple properties
-    private String  id               = null;
+    private String  id               = UUIDGenerator.generateUUID();
     private String  handle           = null;
     private String  name             = null;
     private String  description      = null;
@@ -296,7 +297,7 @@ public class WebsiteData implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public String getId() {
         return this.id;

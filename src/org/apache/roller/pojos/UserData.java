@@ -31,6 +31,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
+import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.util.Utilities;
 
 
@@ -55,7 +56,7 @@ public class UserData
     
     static final long serialVersionUID = -6354583200913127874L;
     
-    private String  id;
+    private String  id = UUIDGenerator.generateUUID();
     private String  userName;
     private String  password;
     private String  screenName;
@@ -80,7 +81,7 @@ public class UserData
             String locale, String timeZone,
             Date dateCreated,
             Boolean isEnabled) {
-        this.id = id;
+        //this.id = id;
         this.userName = userName;
         this.password = password;
         this.fullName = fullName;
@@ -127,7 +128,7 @@ public class UserData
      * @struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public String getId() {
         return this.id;
@@ -313,9 +314,9 @@ public class UserData
         String encrypt = RollerConfig.getProperty("passwds.encryption.enabled");
         String algorithm = RollerConfig.getProperty("passwds.encryption.algorithm");
         if (new Boolean(encrypt).booleanValue()) {
-            password = Utilities.encodePassword(new1, algorithm);
+            setPassword(Utilities.encodePassword(new1, algorithm));
         } else {
-            password = new1;
+            setPassword(new1);
         }
     }
     
@@ -341,7 +342,7 @@ public class UserData
      * Returns true if user has role specified.
      */
     public boolean hasRole(String roleName) {
-        Iterator iter = roles.iterator();
+        Iterator iter = getRoles().iterator();
         while (iter.hasNext()) {
             RoleData role = (RoleData) iter.next();
             if (role.getRole().equals(roleName)) {
@@ -357,7 +358,7 @@ public class UserData
     public void grantRole(String roleName) throws RollerException {
         if (!hasRole(roleName)) {
             RoleData role = new RoleData(null, this, roleName);
-            roles.add(role);
+            getRoles().add(role);
             role.setUser(this);
         }
     }

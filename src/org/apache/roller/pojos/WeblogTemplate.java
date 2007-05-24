@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -48,7 +49,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private static Log log = LogFactory.getLog(WeblogTemplate.class);
     private static Set requiredTemplates = null;
     
-    private String  id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String  action = null;
     private String  name = null;
     private String  description = null;
@@ -97,7 +98,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     /**
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public java.lang.String getId() {
         return this.id;
@@ -200,16 +201,19 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
      * @hibernate.property column="updatetime" non-null="true" unique="false"
      */
     public java.util.Date getLastModified() {
-        return (Date)this.lastModified.clone();
+        // don't modify fields directly
+        //return (Date)this.lastModified.clone();
+        return lastModified;
     }
     
     /** @ejb:persistent-field */
     public void setLastModified(final java.util.Date newtime ) {
-        if (newtime != null) {
-            lastModified = (Date)newtime.clone();
-        } else {
-            lastModified = null;
-        }
+        //if (newtime != null) {
+        //    lastModified = (Date)newtime.clone();
+        //} else {
+        //    lastModified = null;
+        //}
+        lastModified = newtime;
     }
     
     

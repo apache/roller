@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
@@ -34,7 +35,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @hibernate.cache usage="read-write"
  */
 public class PingQueueEntryData implements Serializable {
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private Timestamp entryTime = null;
     private PingTargetData pingTarget = null;
     private WebsiteData website = null;
@@ -58,7 +59,7 @@ public class PingQueueEntryData implements Serializable {
      * @param attempts   number of prior ping attempts
      */
     public PingQueueEntryData(String id, Timestamp entryTime, PingTargetData pingTarget, WebsiteData website, int attempts) {
-        this.id = id;
+        //this.id = id;
         this.entryTime = entryTime;
         this.pingTarget = pingTarget;
         this.website = website;
@@ -81,7 +82,7 @@ public class PingQueueEntryData implements Serializable {
      *
      * @return the unique id of this object.
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

@@ -20,6 +20,7 @@ package org.apache.roller.pojos;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Role bean.
@@ -35,7 +36,7 @@ public class RoleData
 {
    static final long serialVersionUID = -4254083071697970972L;
 
-   private java.lang.String id;
+   private java.lang.String id = UUIDGenerator.generateUUID();
    private java.lang.String userName;
    private UserData user;
    private java.lang.String role;
@@ -46,7 +47,7 @@ public class RoleData
 
    public RoleData(String id, UserData user, String role)
    {
-      this.id = id;
+      //this.id = id;
       this.userName = user.getUserName();
       this.user = user;
       this.role = role;
@@ -61,7 +62,7 @@ public class RoleData
     * @ejb:pk-field
     * @ejb:persistent-field 
     * @hibernate.id column="id"
-    *  generator-class="uuid.hex" unsaved-value="null"
+    *  generator-class="assigned"  
     */
    public java.lang.String getId()
    {

@@ -21,6 +21,7 @@ package org.apache.roller.pojos;
 import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Ping Category Restriction.  An instance of this class relates an auto ping configuration {@link AutoPingData} to a
@@ -35,7 +36,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @hibernate.cache usage="read-write"
  */
 public class PingCategoryRestrictionData implements Serializable {
-    private String id;
+    private String id = UUIDGenerator.generateUUID();
     private AutoPingData autoPing;
     private WeblogCategoryData weblogCategory;
 
@@ -55,7 +56,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @param weblogCategory weblog category to which this auto ping configuration is restricted
      */
     public PingCategoryRestrictionData(String id, AutoPingData autoPing, WeblogCategoryData weblogCategory) {
-        this.id = id;
+        //this.id = id;
         this.autoPing = autoPing;
         this.weblogCategory = weblogCategory;
     }
@@ -74,7 +75,7 @@ public class PingCategoryRestrictionData implements Serializable {
      *
      * @return the unique id of this object. -- struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

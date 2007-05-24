@@ -32,7 +32,7 @@ import org.apache.roller.config.RollerConfig;
  */
 public class DatabaseProvider  {
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
-    private enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
+    public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
     
     private static DatabaseProvider singletonInstance = null;
     
@@ -65,22 +65,22 @@ public class DatabaseProvider  {
         jdbcPassword =      RollerConfig.getProperty("database.jdbc.password");
         
         // init now so we fail early
-        if (type == ConfigurationType.JDBC_PROPERTIES) {
+        if (getType() == ConfigurationType.JDBC_PROPERTIES) {
             log.info("Using 'jdbc' properties based configuration");
             try {
-                Class.forName(jdbcDriverClass);
+                Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
                 throw new RollerException(
-                   "Cannot load specified JDBC driver class [" +jdbcDriverClass+ "]", ex);
+                   "Cannot load specified JDBC driver class [" +getJdbcDriverClass()+ "]", ex);
             }
-            if (jdbcUsername != null || jdbcPassword != null) {
+            if (getJdbcUsername() != null || getJdbcPassword() != null) {
                 props = new Properties();
-                if (jdbcUsername != null) props.put("user", jdbcUsername);
-                if (jdbcPassword != null) props.put("password", jdbcPassword);
+                if (getJdbcUsername() != null) props.put("user", getJdbcUsername());
+                if (getJdbcPassword() != null) props.put("password", getJdbcPassword());
             }
         } else {
             log.info("Using 'jndi' based configuration");
-            String name = "java:comp/env/" + jndiName;
+            String name = "java:comp/env/" + getJndiName();
             try {
                 InitialContext ic = new InitialContext();
                 dataSource = (DataSource)ic.lookup(name);
@@ -112,10 +112,34 @@ public class DatabaseProvider  {
      * on which is configured.
      */
     public Connection getConnection() throws SQLException {
-        if (type == ConfigurationType.JDBC_PROPERTIES) {
-            return DriverManager.getConnection(jdbcConnectionURL, props);
+        if (getType() == ConfigurationType.JDBC_PROPERTIES) {
+            return DriverManager.getConnection(getJdbcConnectionURL(), props);
         } else {
             return dataSource.getConnection();
         }
     } 
+
+    public ConfigurationType getType() {
+        return type;
+    }
+
+    public String getJndiName() {
+        return jndiName;
+    }
+
+    public String getJdbcDriverClass() {
+        return jdbcDriverClass;
+    }
+
+    public String getJdbcConnectionURL() {
+        return jdbcConnectionURL;
+    }
+
+    public String getJdbcPassword() {
+        return jdbcPassword;
+    }
+
+    public String getJdbcUsername() {
+        return jdbcUsername;
+    }
 }
