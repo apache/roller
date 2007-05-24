@@ -88,18 +88,28 @@ public class SubscriptionFunctionalTests extends TestCase {
         
         // add
         group.getSubscriptions().add(sub1);
+        sub1.getGroups().add(group);
+
         group.getSubscriptions().add(sub2);
+        sub2.getGroups().add(group);
+        
         planet.saveGroup(group);
         TestUtils.endSession(true);
         
         // verify
         group = null;
         group = planet.getGroupById(testGroup1.getId());
+        sub1 = planet.getSubscriptionById(testSub1.getId());
+        sub2 = planet.getSubscriptionById(testSub2.getId());
         assertEquals(2, group.getSubscriptions().size());
         
         // remove
         group.getSubscriptions().remove(sub1);
+        sub1.getGroups().remove(group);
+        
         group.getSubscriptions().remove(sub2);
+        sub2.getGroups().remove(group);
+
         planet.saveGroup(group);
         TestUtils.endSession(true);
         

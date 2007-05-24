@@ -56,7 +56,11 @@ public class EntryFunctionalTests extends TestCase {
         
         // now associate both subscriptions with the test group
         testGroup1.getSubscriptions().add(testSub1);
+        testSub1.getGroups().add(testGroup1);
+        
         testGroup1.getSubscriptions().add(testSub2);
+        testSub2.getGroups().add(testGroup1);
+        
         PlanetFactory.getPlanet().getPlanetManager().saveGroup(testGroup1);
         PlanetFactory.getPlanet().flush();
         

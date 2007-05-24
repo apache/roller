@@ -18,19 +18,18 @@
 
 package org.apache.roller.business;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.Utilities;
-
 
 /**
  * Test folder business functions and lookups.
@@ -150,6 +149,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // check that root has folder
@@ -165,23 +165,32 @@ public class FolderFunctionalityTest extends TestCase {
     public void testUniquenessOfFolderNames() throws Exception {
         
         log.info("BEGIN");
-        
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        
-        FolderData root = bmgr.getRootFolder(testWeblog);
-        
-        boolean exception = false;
         try {
-            // child folder with same name as first
-            FolderData dupeFolder = new FolderData(root, testFolder.getName(), null, TestUtils.getManagedWebsite(testWeblog));
-            bmgr.saveFolder(dupeFolder);
-            TestUtils.endSession(true);
-        } catch (RollerException e) {
-            exception = true;
-        }
-        
-        assertTrue(exception);
-        
+            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            FolderData root = bmgr.getRootFolder(testWeblog);
+
+            boolean exception = false;
+            try {
+                // child folder with same name as first
+                FolderData dupeFolder = new FolderData(root, testFolder.getName(), null, testWeblog);
+                bmgr.saveFolder(dupeFolder);
+                TestUtils.endSession(true);
+            } catch (Throwable e) {
+                exception = true;
+            }
+
+            assertTrue(exception);
+            
+        } catch (Throwable t) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw); 
+            t.printStackTrace(pw);
+            log.info(sw.toString());
+        }        
+        TestUtils.endSession(true);
+
         log.info("END");
     }
     
@@ -213,6 +222,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData folder = bmgr.getFolder(testWeblog, "/folderFuncTest-f1");
         assertNotNull(folder);
         assertEquals(f1, folder);
@@ -242,6 +252,7 @@ public class FolderFunctionalityTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         // get all folders, including root
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List allFolders = bmgr.getAllFolders(testWeblog);
         assertNotNull(allFolders);
         assertEquals(5, allFolders.size());

@@ -72,7 +72,7 @@ public class BookmarkTest extends TestCase {
             TestUtils.teardownUser(testUser.getId());
             TestUtils.endSession(true);
         } catch (Exception ex) {
-            log.error(ex);
+            log.error("ERROR in tearDown", ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
@@ -86,6 +86,7 @@ public class BookmarkTest extends TestCase {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         FolderData folder = new FolderData(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
@@ -157,6 +158,7 @@ public class BookmarkTest extends TestCase {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // add some folders
@@ -224,90 +226,97 @@ public class BookmarkTest extends TestCase {
      * our minds.
      */
     public void testMoveFolderContents() throws Exception {
-        
         BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
-        FolderData root = bmgr.getRootFolder(testWeblog);
-        
-        FolderData dest = new FolderData(root, "dest", null, TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(dest);
-        
-        // create source folder f1
-        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(f1);
-        
-        // create bookmark b1 inside source folder f1
-        BookmarkData b1 = new BookmarkData(
-                f1, "b1", "testbookmark",
-                "http://example.com", "http://example.com/rss",
-                new Integer(1), new Integer(1), "image.gif");
-        f1.addBookmark(b1);
-        
-        // create folder f2 inside f1
-        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(f2);
-        
-        // create bookmark b2 inside folder f2
-        BookmarkData b2 = new BookmarkData(
-                f2, "b2", "testbookmark",
-                "http://example.com", "http://example.com/rss",
-                new Integer(1), new Integer(1), "image.gif");
-        f2.addBookmark(b2);
-        
-        // create folder f3 inside folder f2
-        FolderData f3 = new FolderData(f2, "f3", null, TestUtils.getManagedWebsite(testWeblog));
-        bmgr.saveFolder(f3);
-        
-        // crete bookmark b3 inside folder f3
-        BookmarkData b3 = new BookmarkData(
-                f3, "b3", "testbookmark",
-                "http://example.com", "http://example.com/rss",
-                new Integer(1), new Integer(1), "image.gif");
-        f3.addBookmark(b3);
-        
-        TestUtils.endSession(true);
-        
-        // verify our new tree
-        dest = bmgr.getFolder(dest.getId());
-        f1 = bmgr.getFolder(f1.getId());
-        f2 = bmgr.getFolder(f2.getId());
-        f3 = bmgr.getFolder(f3.getId());
-        assertEquals(0, dest.getBookmarks().size());
-        assertEquals(1, f1.getBookmarks().size());
-        assertEquals(1, f2.getBookmarks().size());
-        assertEquals(1, f3.getBookmarks().size());
-        assertEquals(0, dest.retrieveBookmarks(true).size());
-        assertEquals(3, f1.retrieveBookmarks(true).size());
-        
-        // test that parent cannot be moved into child
-        boolean safe = false;
-        try {
-            // Move folder into one of it's children
-            bmgr.moveFolder(f1, f3);
+        try {        
+
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            FolderData root = bmgr.getRootFolder(testWeblog);
+
+            FolderData dest = new FolderData(root, "dest", null, testWeblog);
+            bmgr.saveFolder(dest);
+
+            // create source folder f1
+            FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+            bmgr.saveFolder(f1);
+
+            // create bookmark b1 inside source folder f1
+            BookmarkData b1 = new BookmarkData(
+                    f1, "b1", "testbookmark",
+                    "http://example.com", "http://example.com/rss",
+                    new Integer(1), new Integer(1), "image.gif");
+            f1.addBookmark(b1);
+
+            // create folder f2 inside f1
+            FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+            bmgr.saveFolder(f2);
+
+            // create bookmark b2 inside folder f2
+            BookmarkData b2 = new BookmarkData(
+                    f2, "b2", "testbookmark",
+                    "http://example.com", "http://example.com/rss",
+                    new Integer(1), new Integer(1), "image.gif");
+            f2.addBookmark(b2);
+
+            // create folder f3 inside folder f2
+            FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
+            bmgr.saveFolder(f3);
+
+            // crete bookmark b3 inside folder f3
+            BookmarkData b3 = new BookmarkData(
+                    f3, "b3", "testbookmark",
+                    "http://example.com", "http://example.com/rss",
+                    new Integer(1), new Integer(1), "image.gif");
+            f3.addBookmark(b3);
+
             TestUtils.endSession(true);
-        } catch (RollerException e) {
-            safe = true;
+
+            // verify our new tree
+            dest = bmgr.getFolder(dest.getId());
+            f1 = bmgr.getFolder(f1.getId());
+            f2 = bmgr.getFolder(f2.getId());
+            f3 = bmgr.getFolder(f3.getId());
+            assertEquals(0, dest.getBookmarks().size());
+            assertEquals(1, f1.getBookmarks().size());
+            assertEquals(1, f2.getBookmarks().size());
+            assertEquals(1, f3.getBookmarks().size());
+            assertEquals(0, dest.retrieveBookmarks(true).size());
+            assertEquals(3, f1.retrieveBookmarks(true).size());
+
+            // test that parent cannot be moved into child
+            boolean safe = false;
+            try {
+                // Move folder into one of it's children
+                bmgr.moveFolder(f1, f3);
+                TestUtils.endSession(true);
+            } catch (RollerException e) {
+                safe = true;
+            }
+            assertTrue(safe);
+
+            // move f1 to dest
+            f1   = bmgr.getFolder( f1.getId());   //Get managed copy
+            dest = bmgr.getFolder( dest.getId()); //Get managed copy
+            bmgr.moveFolder(f1, dest);
+            TestUtils.endSession(true);
+
+            // after move, verify number of entries in eacch folder
+            dest = bmgr.getFolder(dest.getId());
+            f1 = bmgr.getFolder(f1.getId());
+            assertEquals(3, dest.retrieveBookmarks(true).size());
+
+            // check that paths and child folders are correct
+            assertEquals("/dest/f1", f1.getPath());
+            assertEquals(1, dest.getFolders().size());
+        
+            bmgr.removeFolder(f1);
+            bmgr.removeFolder(dest);
+
+        } catch(Throwable t) {
+            log.error("Exception running test", t);
+            throw (Exception) t;
+        } finally {
+            TestUtils.endSession(true);
         }
-        assertTrue(safe);
-        
-        // move f1 to dest
-        f1   = bmgr.getFolder( f1.getId());   //Get managed copy
-        dest = bmgr.getFolder( dest.getId()); //Get managed copy
-        bmgr.moveFolder(f1, dest);
-        TestUtils.endSession(true);
-        
-        // after move, verify number of entries in eacch folder
-        dest = bmgr.getFolder(dest.getId());
-        f1 = bmgr.getFolder(f1.getId());
-        assertEquals(3, dest.retrieveBookmarks(true).size());
-        
-        // check that paths and child folders are correct
-        assertEquals("/dest/f1", f1.getPath());
-        assertEquals(1, dest.getFolders().size());
-        
-        bmgr.removeFolder(f1);
-        bmgr.removeFolder(dest);
-        TestUtils.endSession(true);
     }
     
     
@@ -320,6 +329,7 @@ public class BookmarkTest extends TestCase {
         
         FolderData fd = null;
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");
         assertTrue(fd.retrieveBookmarks(true).size() > 0 );
         getRoller().getBookmarkManager().removeFolder(fd);
