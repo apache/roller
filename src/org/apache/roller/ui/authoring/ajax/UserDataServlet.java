@@ -1,36 +1,36 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.authoring.ajax;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.roller.RollerException;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
+
 
 /**
  * Return list of users matching a startsWith strings. <br />
@@ -44,15 +44,14 @@ import org.apache.roller.pojos.UserData;
  *     username1, emailaddress1 <br/>
  *     username2, emailaddress2 <br/>
  *     usernameN, emailaddressN <br/>
- * 
- * @web.servlet name="UserDataServlet" 
- * @web.servlet-mapping url-pattern="/roller-ui/authoring/userdata/*"
- * @author David M Johnson
  */
 public class UserDataServlet extends HttpServlet {
-    private final int MAX_LENGTH = 50;   
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {    
+    
+    private final int MAX_LENGTH = 50;
+    
+    public void doGet(HttpServletRequest request, 
+                      HttpServletResponse response)
+            throws ServletException, IOException {
         
         String startsWith = request.getParameter("startsWith");
         Boolean enabledOnly = null;
@@ -61,20 +60,20 @@ public class UserDataServlet extends HttpServlet {
         if ("true".equals(request.getParameter("enabled"))) enabledOnly = Boolean.TRUE;
         if ("false".equals(request.getParameter("enabled"))) enabledOnly = Boolean.FALSE;
         try { offset = Integer.parseInt(request.getParameter("offset"));
-        } catch (Throwable ignored) {}             
+        } catch (Throwable ignored) {}
         try { length = Integer.parseInt(request.getParameter("length"));
         } catch (Throwable ignored) {}
         
         Roller roller = RollerFactory.getRoller();
         try {
             UserManager umgr = roller.getUserManager();
-            List users = 
-             umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length);
+            List users =
+                    umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length);
             Iterator userIter = users.iterator();
             while (userIter.hasNext()) {
                 UserData user = (UserData)userIter.next();
-                response.getWriter().print(user.getUserName());   
-                response.getWriter().print(",");   
+                response.getWriter().print(user.getUserName());
+                response.getWriter().print(",");
                 response.getWriter().println(user.getEmailAddress());
             }
             response.flushBuffer();
@@ -82,4 +81,5 @@ public class UserDataServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
     }
+    
 }
