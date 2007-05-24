@@ -8,6 +8,9 @@
     <!-- theme preview image -->
     <preview-image path="sm-theme-basic.jpg" />
     
+    <!-- custom stylesheet -->
+    <custom-stylesheet path="basic-custom.css" />
+    
     <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
