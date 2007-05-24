@@ -347,7 +347,7 @@
         <action name="templateEdit!*" method="{1}"
                 class="org.apache.roller.ui.struts2.editor.TemplateEdit">
             <result name="list" type="chain">templates</result>
-            <result name="success" type="tiles">.TemplateEdit</result>
+            <result name="input" type="tiles">.TemplateEdit</result>
             <result name="cancel" type="redirect-action">templates</result>
         </action>
         

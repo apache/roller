@@ -28,17 +28,14 @@ import org.apache.roller.pojos.WeblogTemplate;
  */
 public class TemplateEditBean {
     
-    private String id;
-    private String action;
-    private String name;
-    private String description;
-    private String link;
-    private String contents;
-    private String templateLanguage;
-    private boolean navbar;
-    private boolean hidden;
-    private String outputContentType;
-    
+    private String id = null;
+    private String name = null;
+    private String description = null;
+    private String link = null;
+    private String contents = null;
+    private String templateLanguage = null;
+    private boolean navbar= false;
+    private boolean hidden = false;
     private Boolean autoContentType = Boolean.TRUE;
     private String manualContentType = null;
     
@@ -49,14 +46,6 @@ public class TemplateEditBean {
     
     public void setId( String id ) {
         this.id = id;
-    }
-    
-    public String getAction() {
-        return this.action;
-    }
-    
-    public void setAction( String action ) {
-        this.action = action;
     }
     
     public String getName() {
@@ -115,14 +104,6 @@ public class TemplateEditBean {
         this.hidden = hidden;
     }
     
-    public String getOutputContentType() {
-        return this.outputContentType;
-    }
-    
-    public void setOutputContentType( String outputContentType ) {
-        this.outputContentType = outputContentType;
-    }
-    
     public Boolean getAutoContentType() {
         return autoContentType;
     }
@@ -142,33 +123,36 @@ public class TemplateEditBean {
     
     public void copyTo(WeblogTemplate dataHolder) {
         
-        // only custom templates get to modify name, description, and link
-        if(WeblogTemplate.ACTION_CUSTOM.equals(dataHolder.getAction())) {
-            dataHolder.setName(this.name);
-            dataHolder.setDescription(this.description);
-            dataHolder.setLink(this.link);
-        }
+        dataHolder.setContents(getContents());
         
-        dataHolder.setContents(this.contents);
-        dataHolder.setTemplateLanguage(this.templateLanguage);
-        dataHolder.setNavbar(this.navbar);
-        dataHolder.setHidden(this.hidden);
-        dataHolder.setOutputContentType(this.outputContentType);
+        // the rest of the template properties can only be modified when
+        // dealing with a CUSTOM weblog template
+        if(dataHolder.isCustom()) {
+            dataHolder.setName(getName());
+            dataHolder.setDescription(getDescription());
+            dataHolder.setLink(getLink());
+            dataHolder.setNavbar(isNavbar());
+            dataHolder.setHidden(isHidden());
+            dataHolder.setTemplateLanguage(getTemplateLanguage());
+        }
     }
     
     
     public void copyFrom(WeblogTemplate dataHolder) {
         
         this.id = dataHolder.getId();
-        this.action = dataHolder.getAction();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();
         this.link = dataHolder.getLink();
         this.contents = dataHolder.getContents();
-        this.templateLanguage = dataHolder.getTemplateLanguage();
         this.navbar = dataHolder.isNavbar();
         this.hidden = dataHolder.isHidden();
-        this.outputContentType = dataHolder.getOutputContentType();
+        this.templateLanguage = dataHolder.getTemplateLanguage();
+        
+        setManualContentType(dataHolder.getOutputContentType());
+        if(getManualContentType() != null) {
+            setAutoContentType(Boolean.FALSE);
+        }
     }
     
 }

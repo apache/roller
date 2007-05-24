@@ -34,7 +34,6 @@
 <s:form action="templateEdit!save" id="template">
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
-    <s:hidden name="bean.action" />
     
     <%-- ================================================================== --%>
     <%-- Name, link and desription: disabled when page is a required page --%>
@@ -61,9 +60,9 @@
         
         // Update page URL when user changes link
         function updatePageURLDisplay() {
-            var previewSpan = document.getElementById("handlePreview");
+            var previewSpan = document.getElementById('linkPreview');
             var n1 = previewSpan.firstChild;
-            var n2 = document.createTextNode(document.weblogTemplateFormEx.link.value);
+            var n2 = document.createTextNode(document.getElementById('template_bean_link').value);
             if (n1 == null) {
                 previewSpan.appendChild(n2);
             } else {
@@ -72,25 +71,16 @@
         }
         // Don't launch page if user has changed link, it'll be a 404
         function launchPage() {
-            if (originalLink != document.weblogTemplateFormEx.link.value) {
+            if (originalLink != document.getElementById('template_bean_link').value) {
                 window.alert("Link changed, not launching page");
             } else {
                 window.open(weblogURL + '/page/' + originalLink, '_blank');
             }
         }
-        // Only highlight launch link user hasn't changed link
-        function highlightLaunchLink() {
-            if (originalLink == document.weblogTemplateFormEx.link.value) {
-                document.getElementById('launchLink').style.textDecoration = 'underline';
-            }
-        }
-        function unhighlightLaunchLink() {
-                document.getElementById('launchLink').style.textDecoration = 'none';
-        }
         -->
         </script>
         
-        <s:if test="!template.required">
+        <s:if test="!template.required && template.custom">
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
@@ -102,9 +92,8 @@
                         <s:textfield name="bean.link" size="50" onkeyup="updatePageURLDisplay()" />
                     </s:else>
                     <br />
-                    <s:property value="actionWeblog.absoluteURL" />/page/<span id="handlePreview" style="color:red"><s:property value="bean.link" /></span>
-                    [<span id="launchLink" class="fakelink" 
-                           onClick="launchPage()" onMouseOver="highlightLaunchLink()" onMouseOut="unhighlightLaunchLink()"><s:text name="pageForm.launch" /></span>]
+                    <s:property value="actionWeblog.absoluteURL" />/page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
+                    <s:if test="template.link != null">[<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]</s:if>
                 </td>
                 <td class="description"></td>
             </tr>
@@ -171,123 +160,86 @@
     <%-- ================================================================== --%>
     <%-- Advanced settings inside a control toggle --%>
     
-    <br />
-    <br />
-    <div id="advancedControlToggle" class="controlToggle">
-        <span id="iadvancedControl">+</span>
-        <a class="controlToggle" onclick="javascript:toggleControl('advancedControlToggle','advancedControl')">
-        <s:text name="pageForm.advancedSettings" /></a>
-    </div>
-    <div id="advancedControl" class="advancedControl" style="display:none">
-        
-        <table cellspacing="0">
-            
-            <tr>
-                <script type="text/javascript"><!--
-                    function showContentTypeField() {
-                        if (document.getElementById('template_bean_autoContentType1').checked) {
-                            document.getElementById('template_bean_manualContentType').readOnly = true;
-                            document.getElementById('template_bean_manualContentType').style.background = '#e5e5e5';
-                        } else {
-                            document.getElementById('template_bean_manualContentType').readOnly = false;
-                            document.getElementById('template_bean_manualContentType').style.background = '#ffffff';
-                        }
-                    }
-                // --></script> 
-                <td class="field">                
-                    <tr>
-                        <td class="label" valign="top"><s:text name="pageForm.outputContentType" />&nbsp;</td>
-                        <td class="field">
-                            <s:if test="bean.autoContentType">
-                                <input type="radio" name="bean.autoContentType" value="true" checked="true" onchange="showContentTypeField()" id="template_bean_autoContentType1"/> 
-                                <s:text name="pageForm.useAutoContentType" /><br />
-                                
-                                <input type="radio" name="bean.autoContentType" value="false" onchange="showContentTypeField()" id="template_bean_autoContentType2"/>
-                                <s:text name="pageForm.useManualContentType" />
-                                <s:textfield name="bean.manualContentType" />
-                            </s:if>
-                            <s:else>
-                                <input type="radio" name="bean.autoContentType" value="true" onchange="showContentTypeField()" id="template_bean_autoContentType1"/> 
-                                <s:text name="pageForm.useAutoContentType" /><br />
-                                
-                                <input type="radio" name="bean.autoContentType" value="false" checked="true" onchange="showContentTypeField()" id="template_bean_autoContentType2"/>
-                                <s:text name="pageForm.useManualContentType" />
-                                <s:textfield name="bean.manualContentType" />
-                            </s:else>
-                            
-                            <br />
-                            <br />
-                                               
-                        </td>
-                        <td class="description"></td>
-                    </tr>
-                </td>
-                <td class="description"></td>
-                <script type="text/javascript"><!--
-                    showContentTypeField();
-                // --></script> 
-            </tr>
-            
-            <tr>
-                <td class="field">                
-                    <s:if test="template.required">
-                        <s:hidden name="bean.navbar" />
-                    </s:if>
-                    <s:else>
-                        <tr>
-                            <td class="label"><s:text name="pageForm.navbar" />&nbsp;</td>
-                            <td class="field"><s:checkbox name="bean.navbar" /> 
-                                <s:text name="pageForm.navbar.tip" />
-                            </td>
-                            <td class="description"></td>
-                        </tr>
-                    </s:else>
-                </td>
-                <td class="description"></td>
-            </tr>
-            
-            <td class="field">                
-                <s:if test="template.required">
-                    <s:hidden name="bean.hidden" />
-                </s:if>
-                <s:else>
-                    <tr>
-                        <td class="label"><s:text name="pageForm.hidden" />&nbsp;</td>
-                        <td class="field"><s:checkbox name="bean.hidden" />
-                            <s:text name="pageForm.hidden.tip" />
-                        </td>
-                        <td class="description"></td>                            
-                    </tr>
-                </s:else>
-                <br />
-                <br />
-
-            </td>
-            <td class="description"></td> 
-            </tr>
-                        
-            <tr>
-                <td class="field">                
-                    <s:if test="template.required || !userIsAdmin}">
-                        <s:hidden name="bean.templateLanguage" />
-                    </s:if>
-                    <s:else>
-                        <tr>
-                            <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
-                            <td class="field">
-                                <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
-                            </td>
-                            <td class="description"></td>
-                        </tr>
-                    </s:else>
-                </td>
-                <td class="description"></td>
-            </tr>
-                        
-        </table>
+    <s:if test="template.custom">
         <br />
+        <div id="advancedControlToggle" class="controlToggle">
+            <span id="iadvancedControl">+</span>
+            <a class="controlToggle" onclick="javascript:toggleControl('advancedControlToggle','advancedControl')">
+            <s:text name="pageForm.advancedSettings" /></a>
+        </div>
         
-    </div>
-    <br />
+        <div id="advancedControl" class="advancedControl" style="display:none">
+            
+            <table cellspacing="6">
+                <tr>
+                    <td class="label" valign="top"><s:text name="pageForm.outputContentType" />&nbsp;</td>
+                    <td class="field">
+                        <script type="text/javascript"><!--
+                        function showContentTypeField() {
+                            if (document.getElementById('template_bean_autoContentType1').checked) {
+                                document.getElementById('template_bean_manualContentType').readOnly = true;
+                                document.getElementById('template_bean_manualContentType').style.background = '#e5e5e5';
+                            } else {
+                                document.getElementById('template_bean_manualContentType').readOnly = false;
+                                document.getElementById('template_bean_manualContentType').style.background = '#ffffff';
+                            }
+                        }
+                        // --></script>
+                        <s:if test="bean.autoContentType">
+                            <input type="radio" name="bean.autoContentType" value="true" checked="true" onchange="showContentTypeField()" id="template_bean_autoContentType1"/> 
+                            <s:text name="pageForm.useAutoContentType" /><br />
+                            
+                            <input type="radio" name="bean.autoContentType" value="false" onchange="showContentTypeField()" id="template_bean_autoContentType2"/>
+                            <s:text name="pageForm.useManualContentType" />
+                            <s:textfield name="bean.manualContentType" />
+                        </s:if>
+                        <s:else>
+                            <input type="radio" name="bean.autoContentType" value="true" onchange="showContentTypeField()" id="template_bean_autoContentType1"/> 
+                            <s:text name="pageForm.useAutoContentType" /><br />
+                            
+                            <input type="radio" name="bean.autoContentType" value="false" checked="true" onchange="showContentTypeField()" id="template_bean_autoContentType2"/>
+                            <s:text name="pageForm.useManualContentType" />
+                            <s:textfield name="bean.manualContentType" />
+                        </s:else>
+                        
+                        <br />
+                        <br />
+                        
+                        <script type="text/javascript"><!--
+                            showContentTypeField();
+                        // --></script> 
+                        
+                    </td>
+                    <td class="description"></td>
+                </tr>
+                
+                <tr>
+                    <td class="label"><s:text name="pageForm.navbar" />&nbsp;</td>
+                    <td class="field"><s:checkbox name="bean.navbar" /> 
+                        <s:text name="pageForm.navbar.tip" />
+                    </td>
+                    <td class="description"></td>
+                </tr>
+                
+                <tr>
+                    <td class="label"><s:text name="pageForm.hidden" />&nbsp;</td>
+                    <td class="field"><s:checkbox name="bean.hidden" />
+                        <s:text name="pageForm.hidden.tip" />
+                    </td>
+                    <td class="description"></td>                            
+                </tr>
+                
+                <tr>
+                    <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
+                    <td class="field">
+                        <s:select name="bean.templateLanguage" list="templateLanguages" size="1" />
+                    </td>
+                    <td class="description"></td>
+                </tr>
+                
+            </table>
+            
+        </div>
+    </s:if>
     
 </s:form>
