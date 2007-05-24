@@ -1,0 +1,65 @@
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN"
+       "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+<validators>
+    
+    <field name="bean.name">
+        <field-validator type="requiredstring">
+            <message key="Bookmark.error.nameNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Bookmark.error.nameSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.description">
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Bookmark.error.descriptionSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.url">
+        <field-validator type="requiredstring">
+            <message key="Bookmark.error.urlNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="url">
+            <message key="Bookmark.error.urlBad">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.weight">
+        <field-validator type="required">
+            <message key="Bookmark.error.weightNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="int">
+            <message key="Bookmark.error.weightNotInt">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.priority">
+        <field-validator type="required">
+            <message key="Bookmark.error.priorityNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="int">
+            <message key="Bookmark.error.priorityNotInt">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.image">
+        <field-validator type="url">
+            <message key="Bookmark.error.imageBad">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.feedUrl">
+        <field-validator type="url">
+            <message key="Bookmark.error.feedUrlBad">unspecified key</message>
+        </field-validator>
+    </field>
+    
+</validators>
