@@ -300,8 +300,12 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
     
     
-    public void setRequired(boolean req) {
-        // this is an absurd workaround for our struts formbean generation stuff
+    /**
+     * A convenience method for testing if this template represents a 'custom'
+     * template, meaning a template with action = ACTION_CUSTOM.
+     */
+    public boolean isCustom() {
+        return ACTION_CUSTOM.equals(getAction()) && !isRequired();
     }
     
     
