@@ -18,7 +18,6 @@
 
 package org.apache.roller.business.hibernate;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -52,20 +51,25 @@ public class HibernateRollerImpl extends RollerImpl {
     private HibernatePersistenceStrategy strategy = null;
     
     // references to the managers we maintain
-    private BookmarkManager bookmarkManager = null;
+    private BookmarkManager   bookmarkManager = null;
     private PropertiesManager propertiesManager = null;
-    private RefererManager refererManager = null;
-    private UserManager userManager = null;
-    private WeblogManager weblogManager = null;
-    private PingQueueManager pingQueueManager = null;
-    private AutoPingManager autoPingManager = null;
+    private RefererManager    refererManager = null;
+    private UserManager       userManager = null;
+    private WeblogManager     weblogManager = null;
+    private PingQueueManager  pingQueueManager = null;
+    private AutoPingManager   autoPingManager = null;
     private PingTargetManager pingTargetManager = null;
-    private ThreadManager threadManager = null;
+    private ThreadManager     threadManager = null;
     
     
     protected HibernateRollerImpl() throws RollerException {
         try {
-            strategy = new HibernatePersistenceStrategy();
+            String dialect =  
+                RollerConfig.getProperty("hibernate.dialect");
+            String connectionProvider = 
+                RollerConfig.getProperty("hibernate.connectionProvider");
+            strategy = new HibernatePersistenceStrategy(
+                "/hibernate.cfg.xml", dialect, connectionProvider);
         } catch(Throwable t) {
             // if this happens then we are screwed
             mLogger.fatal("Error initializing Hibernate", t);
@@ -81,6 +85,11 @@ public class HibernateRollerImpl extends RollerImpl {
         if (me == null) {
             mLogger.debug("Instantiating HibernateRollerImpl");
             me = new HibernateRollerImpl();
+                                
+            // Now that Roller has been instantiated, initialize individual managers
+            me.getPropertiesManager();
+            me.getIndexManager();
+            me.getThemeManager();          
         }
         
         return me;
