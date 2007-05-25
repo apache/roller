@@ -1,6 +1,11 @@
 merges.txt
 ==========
 
+This branch has been merged back into Roller trunk and no further development
+will be done here. We'll keep it around for easy reference/archival purposes 
+for a month or so and then remove it.
+
+
 Temporary file to track merges from trunk into the roller_4.0_newbackend branch. 
 
 May 24, 2007: final merge from trunk before merge back to trunk
