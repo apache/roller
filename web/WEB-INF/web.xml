@@ -26,11 +26,6 @@
             <param-value>org.acegisecurity.util.FilterChainProxy</param-value>
         </init-param>
     </filter>
-
-    <filter>
-        <filter-name>RequestFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.RequestFilter</filter-class>
-    </filter>
     
     <filter>
         <filter-name>DebugFilter</filter-name>
@@ -72,11 +67,6 @@
         <filter-class>org.apache.roller.ui.core.filters.CharEncodingFilter</filter-class>
     </filter>
     
-    <filter>
-        <filter-name>StrutsCharEncodingFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.StrutsCharEncodingFilter</filter-class>
-    </filter>
-    
     
     <!-- ******************************************
          Filter mappings - order IS important here.  
@@ -94,14 +84,6 @@
     <filter-mapping>
         <filter-name>CharEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    
-    <!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.  -->
-    <filter-mapping>
-        <filter-name>StrutsCharEncodingFilter</filter-name>
-        <url-pattern>/roller-ui/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
@@ -172,14 +154,6 @@
     <filter-mapping>
         <filter-name>struts2</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    
-    <!-- Do we still need the RequestFilter? -->
-    <filter-mapping>
-        <filter-name>RequestFilter</filter-name>
-        <url-pattern>*.do</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
@@ -279,12 +253,12 @@
     
     <servlet>
         <servlet-name>CommentDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.authoring.ajax.CommentDataServlet</servlet-class>
+        <servlet-class>org.apache.roller.ui.struts2.ajax.CommentDataServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>UserDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.authoring.ajax.UserDataServlet</servlet-class>
+        <servlet-class>org.apache.roller.ui.struts2.ajax.UserDataServlet</servlet-class>
     </servlet>
     
     <servlet>
@@ -298,21 +272,6 @@
     </servlet>
     
     
-    <!-- The Struts Servlet -->
-    <servlet>
-        <servlet-name>action</servlet-name>
-        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-        <init-param>
-            <param-name>config</param-name>
-            <param-value>/WEB-INF/struts-config.xml</param-value>
-        </init-param>
-        <init-param>
-            <param-name>validate</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
         <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
@@ -324,13 +283,6 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
-    
-    
-    <!-- Struts1 support -->
-    <servlet-mapping>
-        <servlet-name>action</servlet-name>
-        <url-pattern>*.do</url-pattern>
-    </servlet-mapping>
     
     
     <!-- Rendering Servlets -->

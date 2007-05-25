@@ -132,20 +132,8 @@
          <property name="userCache" ref="userCache"/>
     </bean>
     
-    <!-- Read users from database -->
-    <bean id="jdbcAuthenticationDao" class="org.acegisecurity.userdetails.jdbc.JdbcDaoImpl">
-        <property name="dataSource">
-            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
-                <property name="jndiName" value="java:comp/env/jdbc/rollerdb"/>
-            </bean>
-        </property>
-        <property name="usersByUsernameQuery">
-            <value>SELECT username,passphrase,isenabled FROM rolleruser WHERE username = ?</value>
-        </property>
-        <property name="authoritiesByUsernameQuery">
-            <value>SELECT username,rolename FROM userrole WHERE username = ?</value>
-        </property>
-    </bean>
+    <!-- Read users from Roller API -->
+    <bean id="jdbcAuthenticationDao" class="org.apache.roller.ui.core.security.RollerUserDetailsService"/>
 
     <bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
         <property name="cache">
