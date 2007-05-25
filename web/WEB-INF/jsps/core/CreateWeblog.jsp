@@ -117,5 +117,7 @@ function handlePreview(handle) {
     
 </s:form>
 
-
+<script type="text/javascript">
+    document.forms[0].elements[0].focus();
+</script>
     
