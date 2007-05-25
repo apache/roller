@@ -17,359 +17,284 @@
   directory of this distribution.-
 -->
 <!DOCTYPE project [
-    <!ENTITY properties            SYSTEM "properties.xmlf"> 
-    <!ENTITY custom-ant            SYSTEM "custom/custom-ant.xmlf">
-    <!ENTITY custom-jars           SYSTEM "custom/custom-jars.xmlf">
-    <!ENTITY custom-gen-business   SYSTEM "custom/custom-gen-business.xmlf">
-    <!ENTITY custom-build-business SYSTEM "custom/custom-build-business.xmlf">
-    <!ENTITY custom-build-web      SYSTEM "custom/custom-build-web.xmlf">
-    <!ENTITY custom-gen-web        SYSTEM "custom/custom-gen-web.xmlf">
-    <!ENTITY custom-src-web        SYSTEM "custom/custom-src-web.xmlf">
-    <!ENTITY custom-web            SYSTEM "custom/custom-web.xmlf">
-    <!ENTITY custom-src-tests      SYSTEM "custom/custom-src-tests.xmlf">
-    <!ENTITY custom-dbscripts      SYSTEM "custom/custom-dbscripts.xmlf">
-    <!ENTITY custom-pre-dbtest     SYSTEM "custom/custom-pre-dbtest.xmlf">
-    <!ENTITY custom-post-dbtest    SYSTEM "custom/custom-post-dbtest.xmlf">
+<!ENTITY properties            SYSTEM "properties.xmlf"> 
+<!ENTITY custom-ant            SYSTEM "custom/custom-ant.xmlf">
+<!ENTITY custom-jars           SYSTEM "custom/custom-jars.xmlf">
+<!ENTITY custom-gen-business   SYSTEM "custom/custom-gen-business.xmlf">
+<!ENTITY custom-build-business SYSTEM "custom/custom-build-business.xmlf">
+<!ENTITY custom-build-web      SYSTEM "custom/custom-build-web.xmlf">
+<!ENTITY custom-gen-web        SYSTEM "custom/custom-gen-web.xmlf">
+<!ENTITY custom-src-web        SYSTEM "custom/custom-src-web.xmlf">
+<!ENTITY custom-web            SYSTEM "custom/custom-web.xmlf">
+<!ENTITY custom-src-tests      SYSTEM "custom/custom-src-tests.xmlf">
+<!ENTITY custom-dbscripts      SYSTEM "custom/custom-dbscripts.xmlf">
+<!ENTITY custom-pre-dbtest     SYSTEM "custom/custom-pre-dbtest.xmlf">
+<!ENTITY custom-post-dbtest    SYSTEM "custom/custom-post-dbtest.xmlf">
 ]>
 <!-- ********************************************************************* -->
 <!-- Ant build script for Roller main branch -->
 <!-- Author: David M Johnson -->
 <!-- ********************************************************************* -->
 <project name="roller" default="usage">
-
-<available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" 
-    property="dbscripts-exist" />
-
-<!-- Bring in properties.xml -->
-&properties;
-
-<!-- Bring in custom properties and targets -->
-&custom-ant;
-
-<target name="usage" description="Print usage for key targets">
-<echo>
-Key Targets:
-                all - Build all: gen wrappers/forms, compile, gen web, gen O/R mappings, stage webapp
-              build - Same as 'all' but NO code gen
-       stage-webapp - Build almost all: compile, gen web, gen O/R mappings, stage webapp
-     apache-release - Build binary and source release files
-              clean - Blow away all generated code and all byte code
+    
+    <!-- Only gen dbscripts if they do not already exist -->
+    <available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" property="dbscripts-exist" />
+    
+    <!-- Bring in properties.xml -->
+    &properties;
+    
+    <!-- Bring in custom properties and targets -->
+    &custom-ant;
+    
+    <target name="usage" description="Print usage for key targets">
+        <echo>
+            Key Targets:
+            all - Build all: gen wrappers/forms, compile, gen web, gen O/R mappings, stage webapp
+            build - Same as 'all' but NO code gen
+            stage-webapp - Build almost all: compile, gen web, gen O/R mappings, stage webapp
+            apache-release - Build binary and source release files
+            clean - Blow away all generated code and all byte code
             rebuild - Clean and build all
-
-              tests - Build and run all JUnit tests
-        build-tests - Build all JUnit tests
-      test-business - Start DB, run business layer tests, stop DB 
-  test-presentation - Run presentation layer tests 
-         test-utils - Run utility tests 
-
-           start-db - Start test DB
+            
+            tests - Build and run all JUnit tests
+            build-tests - Build all JUnit tests
+            test-business - Start DB, run business layer tests, stop DB 
+            test-presentation - Run presentation layer tests 
+            test-utils - Run utility tests 
+            
+            start-db - Start test DB
             init-db - Initialize a running test DB
             stop-db - Stop test DB
-
-               docs - Build all docs 
-            javadoc - Build javadocs 
-         velocidocs - Build velocidocs 
-
-              usage - Print this help text...
-</echo>
-</target>
-
-<!-- ================================================ -->
-<!-- Meta targets -->
-<!-- ================================================ -->
-<target name="all" depends="generate,stage-webapp" description="Build all">
-</target>
-
-<target name="build" depends="copy-webapp" description="Compile code and copy files, no code generation">
-</target>
-
-<target name="rebuild" depends="clean,all" description="Clean and build all">
-</target>
-
-<target name="clean" description="Clean out build and dist directory">
-    <delete dir="${ro.build}" />
-    <delete dir="${ro.dist}" />
-</target>
-
-<!-- ********************************************************************* -->
-<!-- XDoclet code generation -->
-<!-- ********************************************************************* -->
-
-<target name="generate" depends="gen-forms" >
-</target>
-
-<!-- ============================================== -->
-<!-- generate code/files for the business layer -->
-<target name="gen-business" description="Generate business layer resources">
-
-    <taskdef name="hibernatedoclet"
-        classname="xdoclet.modules.hibernate.HibernateDocletTask"
-        classpathref="xdoclet.path" />
-
-    <!-- generate hibernate files -->
-    <hibernatedoclet
-        destdir="${build.compile.business}"
-        mergedir="./metadata/xdoclet"
-        excludedtags="@version,@author"
-        addedtags="@xdoclet-generated at ${TODAY}"
-        force="true">
-        
-	<fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
-        
-        <hibernate validatexml="true" version="3.0"/>
-        
-    </hibernatedoclet>
-    
-    <!-- allow for custom generation work -->
-    &custom-gen-business;
-    
-</target>
-
-
-<!-- ============================================== -->
-<!-- Generate pojo wrappers -->
-<target name="gen-wrappers" description="XDoclet generate pojo wrappers">
-
-    <!-- Define the XDoclet task -->
-    <taskdef  name="xdoclet" classname="xdoclet.DocletTask"
-        classpathref="xdoclet.path" />
-    
-    <xdoclet destdir="${build.generated.business}">
-        
-        <packageSubstitution packages="pojos" substituteWith="pojos.wrapper"/>
-        
-        <fileset dir="${ro.src}">
-            <!-- 
-                it may be easier to glob using *Data.java at some point, but
-                for now that will generate a lot of unneeded classes.
-                
-                maybe we can extend the process to only wrap classes that have
-                methods tagged with @roller.wrapPojoMethod ??
-            -->
-            <include name="org/apache/roller/pojos/BookmarkData.java"/>
-            <include name="org/apache/roller/pojos/CommentData.java"/>
-            <include name="org/apache/roller/pojos/EntryAttributeData.java"/>
-            <include name="org/apache/roller/pojos/FolderData.java"/>
-            <include name="org/apache/roller/pojos/RefererData.java"/>
-            <include name="org/apache/roller/pojos/Template.java"/>
-            <include name="org/apache/roller/pojos/UserData.java"/>
-            <include name="org/apache/roller/pojos/WeblogEntryData.java"/>
-            <include name="org/apache/roller/pojos/WeblogEntryTagData.java"/>        	
-            <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
-            <include name="org/apache/roller/pojos/SiteTagAggregateData.java"/>          	
-            <include name="org/apache/roller/pojos/WebsiteData.java"/>
-        </fileset>
-
-        <template 
-            destinationFile="{0}Wrapper.java"
-            templateFile="metadata/xdoclet/pojo_wrapper.xdt"
-            subTaskName="Pojo Wrappers" />
-    </xdoclet>
-        
-</target>
-
-
-<!-- ============================================== -->
-<!-- generate Struts forms -->
-<target name="gen-forms" description="XDoclet generate form beans">
-
-    <!-- Define the XDoclet xdoclet task -->
-    <taskdef  name="ejbdoclet" classname="xdoclet.modules.ejb.EjbDocletTask"
-        classpathref="xdoclet.path" />
-        
-    <mkdir dir="${build.generated.web}"/>
-
-    <!-- Use EJBDoclet to generate Struts forms -->
-    <ejbdoclet destdir="${build.generated}/unused" excludedtags="@version,@author">
-        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
-
-        &custom-gen-web;
-     
-        <!-- Generate Struts forms -->
-        <strutsform destdir="${build.generated.web}"
-            prefixWithPackageStructure="no"
-            templateFile="./metadata/xdoclet/struts_form.xdt">
-
-            <!-- into the org.apache.roller.ui.authoring.struts.forms package -->
-            <packageSubstitution packages="pojos"
-                substituteWith="ui.authoring.struts.forms"/>
-        </strutsform>
-
-        <!-- We are not actually generating data objects, but using the
-             dataobject subtask allows the strutsform subtask to add nice
-             constructors and setData methods to Struts forms -->
-        <dataobject destdir="${ro.build}/unused" pattern="{0}" />
-
-    </ejbdoclet>
-
-    <!-- Change Struts form names from *DataForm.java to *Form.java  -->
-    <replace dir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms"
-        token="DataForm" value="Form"/>
-    <move      todir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms">
-        <fileset dir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms" >
-            <include name="*DataForm.java"/>
-            <include name="*ConfigForm.java" />
-        </fileset>
-        <mapper type="glob" from="*DataForm.java" to="*Form.java"/>
-    </move>
-    
-</target>
-
-
-<!-- ============================================== -->
-<!-- Generate web deployment descriptors -->
-<target name="gen-web" description="XDoclet generate web depoyment descriptors">
-
-    <!-- Define the XDoclet webdoclet task -->
-    <taskdef  name="webdoclet" classname="xdoclet.modules.web.WebDocletTask"
-        classpathref="xdoclet.path" />
-
-    <!-- Use WebDoclet to web.xml, struts-config.xml, and TLDs -->
-    <mkdir dir="${build.webapp}/WEB-INF"/>
-    <mkdir dir="${build.compile.web}/META-INF/tlds"/>
-
-    <webdoclet force="true"
-        destdir="${build.webapp}/WEB-INF"
-        mergedir="./metadata/xdoclet"
-        excludedtags="@version,@author">
-        
-        <fileset dir="${ro.src}">
-            <!-- Speed up XDoclet by limiting number of files it has to process -->
-            <include name="**/*Action.java" />
-            <include name="**/*Filter.java" />
-            <include name="**/*Form.java" />
-            <include name="**/*FormEx.java" />
-            <include name="**/*Servlet.java" />
-            <include name="**/*Tag.java" />
-            <include name="org/apache/roller/ui/**/actions/*.java" />
-            <include name="org/apache/roller/ui/core/RollerContext.java" />
-            <include name="org/apache/roller/ui/core/RollerSession.java" />
-            <exclude name="**/LinkTag**" />
-            <exclude name="**/LinkParamTag**" />
-        </fileset>
-        <fileset dir="${build.generated.web}">
-            <include name="**/*Form.java" />
-        </fileset>
-        
-        &custom-gen-web;
-        
-        <!-- jsp taglib descriptor config -->
-        <jsptaglib jspversion="1.2" filename="roller.tld" shortname="roller"
-            uri="http://www.rollerweblogger.org/tags"
-            destdir="${build.webapp}/WEB-INF/classes/META-INF/tlds" />
             
-        <!-- struts struts-config.xml -->
-        <strutsconfigxml destdir="${build.webapp}/WEB-INF"
-            validatexml="true" mergedir="./metadata/xdoclet" version="1.1" />
-        
-        <!-- struts validation.xml -->
-        <strutsvalidationxml/>
-
-    </webdoclet>
-
-</target>
-
-        
-<!-- ********************************************************************* -->
-<!-- Compile and jar Business Tier classes -->
-<!-- ********************************************************************* -->
-
-
-<target name="build-business">
+            docs - Build all docs 
+            javadoc - Build javadocs 
+            velocidocs - Build velocidocs 
+            
+            usage - Print this help text...
+        </echo>
+    </target>
     
-    <mkdir dir="${build.generated.business}"/>
-    <mkdir dir="${build.compile.business}"/>
-    <mkdir dir="${build.lib}"/>
+    <!-- ================================================ -->
+    <!-- Meta targets -->
+    <!-- ================================================ -->
+    <target name="all" depends="stage-webapp" description="Build all">
+    </target>
     
-    <tstamp>
-        <format property="ro.buildTime" pattern="yyyyMMddhhmmss" />
-    </tstamp>
+    <target name="build" depends="stage-webapp" description="Compile code and copy files">
+    </target>
+    
+    <target name="rebuild" depends="clean,all" description="Clean and build all">
+        <antcall target="gen-dbscripts" />
+    </target>
+    
+    <target name="clean" description="Clean out build and dist directory">
+        <delete dir="${ro.build}" />
+        <delete dir="${ro.dist}" />
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Generate files for the business layer -->
+    <!-- ********************************************************************* -->
+    <target name="gen-business" description="Generate business layer resources">
+        
+        <taskdef name="hibernatedoclet"
+                 classname="xdoclet.modules.hibernate.HibernateDocletTask"
+                 classpathref="xdoclet.path" />
+        
+        <!-- generate hibernate files -->
+        <hibernatedoclet
+            destdir="${build.compile.business}"
+            mergedir="./metadata/xdoclet"
+            excludedtags="@version,@author"
+            addedtags="@xdoclet-generated at ${TODAY}"
+            force="true">
+            
+            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
+            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
+            
+            <hibernate validatexml="true" version="3.0"/>
+            
+        </hibernatedoclet>
+        
+        <!-- allow for custom generation work -->
+        &custom-gen-business;
+        
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Compile and jar Business Tier classes -->
+    <!-- ********************************************************************* -->
+    <target name="build-business" depends="gen-business">
+        
+        <mkdir dir="${build.compile.business}"/>
+        <mkdir dir="${build.lib}"/>
+        
+        <tstamp>
+            <format property="ro.buildTime" pattern="yyyyMMddhhmmss" />
+        </tstamp>
+        
+        <echo file="${build.compile.business}/version.properties">
+            ro.version=${ro.version}
+            ro.buildTime=${ro.buildTime}
+            ro.buildUser=${user.name}
+        </echo>
+        
+        <!-- compile roller business classes -->
+        <javac destdir="${build.compile.business}"
+               excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**"
+               debug="${build.debug}" 
+               source="${build.sourcelevel}"
+               deprecation="${build.deprecation}">
+            
+            <src path="${ro.src}" />
+            
+            <classpath>
+                <path refid="business.path"/>
+                &custom-jars;
+            </classpath>
+        </javac>
+        
+        <!-- Copy resources -->
+        <copy todir="${build.compile.business}">
+            <fileset dir="${ro.src}" 
+                     excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" />
+        </copy>
+        
+        <mkdir dir="${build.compile.business}/META-INF" />
+        <copy todir="${build.compile.business}/META-INF" file="${ro.src}/META-INF/persistence.xml" />
 
-    <echo file="${build.compile.business}/version.properties">
-ro.version=${ro.version}
-ro.buildTime=${ro.buildTime}
-ro.buildUser=${user.name}
-    </echo>
+        <!-- OpenJPA bytecode enhancement  -->
+        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
+        <openjpac>
+            <config propertiesFile="${ro.src}/META-INF/persistence.xml" />
+            <classpath>
+                <path refid="business.path"/>
+                <pathelement location="${build.compile.business}" />
+                <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
+                &custom-jars;
+            </classpath>
+        </openjpac>
+
+        <!-- JPA/Toplink bytecode enhancement
+        <taskdef name="weave" classname="oracle.toplink.essentials.weaving.StaticWeaveAntTask" classpathref="business.path"/>
+        <weave  source="${build.compile.business}" target="${build.compile.business}">
+            <classpath>
+                <path refid="business.path"/>
+                <pathelement location="${build.compile.business}" />
+                <pathelement location="${build.compile.business}/org/apache/roller/pojos" />
+            </classpath>
+        </weave> -->  
     
-    <!-- compile roller business classes -->
-    <javac destdir="${build.compile.business}"
-        excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**"
-        debug="${build.debug}" 
-        source="${build.sourcelevel}"
-        deprecation="${build.deprecation}">
+        <!-- allow for custom build work -->
+        &custom-build-business;
         
-        <src path="${ro.src}" />
-        <src path="${build.generated.business}"/>
+        <!-- Jar up the business layer -->
+        <jar basedir="${build.compile.business}"
+             jarfile="${build.lib}/roller-business.jar"/>
         
-        <classpath>
-            <path refid="business.path"/>
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Compile and jar Presentation Tier classes -->
+    <!-- ********************************************************************* -->
+    <target name="build-web" depends="build-business" >
+        
+        <!-- compile web source code -->
+        <mkdir dir="${build.compile.web}" />
+        <javac debug="${build.debug}" 
+               source="${build.sourcelevel}"
+               destdir="${build.compile.web}"
+               includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" >
+            
+            <src path="${ro.src}"  />
+            &custom-src-web;
+            <classpath>
+                <path refid="presentation.path"/>
+                <fileset dir="${build.lib}" includes="*.jar" />
+                &custom-jars;
+            </classpath>
+        </javac>
+        
+        <!-- Copy in resources -->
+        <copy todir="${build.compile.web}">
+            <fileset dir="${ro.src}">
+                <exclude name="**/*.java"/>
+                <exclude name="**/*.html"/>
+                <exclude name="**/*.png"/>
+            </fileset>
+        </copy>
+        
+        &custom-build-web;
+        
+        <!-- Jar up web classes -->
+        <jar jarfile="${build.lib}/roller-web.jar">
+            <fileset dir="${build.compile.web}" excludes="**/tomcat/**"/>
+        </jar>
+        
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Stage web application -->
+    <!-- ********************************************************************* -->
+    <target name="stage-webapp" depends="build-web, gen-dbscripts-conditional" description="Stage webapp, including jars">
+        
+        <!-- Copy jars -->
+        <mkdir dir="${build.webapp}/WEB-INF/lib"/>
+        <copy todir="${build.webapp}/WEB-INF/lib">
+            <fileset dir="${build.lib}" />
+            <fileset dir="./contrib/lib" />
+            <fileset refid="base.jars" />
+            <fileset refid="presentation.jars" />
+            <fileset refid="hibernate.jar" />
+            <fileset refid="hibernate.jars" />
+            <fileset refid="jpa.jars" />
+            <fileset refid="struts.jars" />
+            <fileset refid="struts2.jars" />
+            <fileset refid="spring.jars" /> 
+            <fileset refid="jstl.jars" />
+            <fileset refid="xmlrpc.jars" />
+            
+            <fileset refid="roller-core.jars" />
+            <fileset refid="roller-planet.jars" />
+            
+            <!-- include custom jars -->
             &custom-jars;
-        </classpath>
-    </javac>
-    
-    <!-- Copy resources -->
-    <copy todir="${build.compile.business}">
-        <fileset dir="${ro.src}" 
-            excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" />
-        <fileset dir="${build.generated.business}" excludes="**/*.java" />
-    </copy>
-    
-    <!-- allow for custom build work -->
-    &custom-build-business;
-    
-    <!-- Jar up the business layer -->
-    <jar basedir="${build.compile.business}"
-        jarfile="${build.lib}/roller-business.jar"/>
-
-</target>
-
-
-<!-- ********************************************************************* -->
-<!-- Compile and jar Presentation Tier classes -->
-<!-- ********************************************************************* -->
-
-<target name="build-web" depends="build-business" >
-
-    <mkdir dir="${build.compile.web}" />
-    
-    <javac debug="${build.debug}" 
-        source="${build.sourcelevel}"
-        destdir="${build.compile.web}"
-        includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/planet/**" >
+        </copy>
         
-        <src path="${ro.src}"  />
-        <src path="${build.generated.web}"/>
-        &custom-src-web;
-        <classpath>
-            <path refid="presentation.path"/>
-            <fileset dir="${build.lib}" includes="*.jar" />
-            &custom-jars;
-        </classpath>
-    </javac>
+        <!-- Copy web contents -->
+        <copy todir="${build.webapp}">
+            <fileset dir="./web">
+                <include name="**/*"/>
+                <exclude name="**/codewright*/**"/>
+                <exclude name="**/*.bak"/>
+                <exclude name="**/*~"/>
+            </fileset>
+        </copy>
+        
+        <!-- Copy documentation -->
+        <copy todir="${build.webapp}/roller-ui/docs">
+            <fileset dir="${basedir}/docs">
+                <include name="examples/**" />
+                <include name="userguide/**" />
+                <exclude name="installguide/**" />
+                <exclude name="**/old/**" />
+            </fileset>
+        </copy>
+        
+        <!-- apply custom web task -->
+        &custom-web;
+        
+    </target>
     
-    <!-- Copy in resources -->
-    <copy todir="${build.compile.web}">
-        <fileset dir="${ro.src}">
-            <exclude name="**/*.java"/>
-            <exclude name="**/*.html"/>
-            <exclude name="**/*.png"/>
-        </fileset>
-    </copy>
-	
-	&custom-build-web;
     
-    <!-- Jar up web classes -->
-    <jar jarfile="${build.lib}/roller-web.jar">
-        <fileset dir="${build.compile.web}" excludes="**/tomcat/**"/>
-    </jar>
-    
-</target>
-
-    <!-- ============================================== -->
-    <!-- create distributable components -->
+    <!-- ********************************************************************* -->
+    <!-- Create distributables -->
+    <!-- ********************************************************************* -->
     <target name="dist" depends="stage-webapp" description="Create Roller Weblogger distributables">
         
         <!-- distributable libraries -->
@@ -382,79 +307,10 @@ ro.buildUser=${user.name}
         <mkdir dir="${ro.dist}/webapp" />
         <jar destfile="${ro.dist}/webapp/roller-weblogger.war"
              basedir="${build.webapp}" />
-             
+        
     </target>
     
     
-<!-- ********************************************************************* -->
-<!-- Stage web application -->
-<!-- ********************************************************************* -->
-	
-<target name="stage-webapp" depends="gen-business, build-business, build-web, gen-dbscripts-conditional, copy-webapp, gen-web" description="Stage webapp, including jars">
-</target>
-       
-<target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
-
-    <mkdir dir="${build.webapp}/WEB-INF/lib"/>
-    <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
-
-    <!-- Copy WEB-INF contents to staging -->
-    <copy todir="${build.webapp}/WEB-INF">
-        <fileset dir="${tools.struts}/lib" includes="validator-rules.xml"/>
-    </copy>
-
-    <!-- Copy other jars -->
-    <copy todir="${build.webapp}/WEB-INF/lib">
-        <fileset dir="${build.lib}" />
-        <fileset dir="./contrib/lib" />
-        <fileset refid="base.jars" />
-        <fileset refid="presentation.jars" />
-        <fileset refid="hibernate.jar" />
-        <fileset refid="hibernate.jars" />
-        <fileset refid="commons.jars" />
-        <fileset refid="struts.jars" />
-        <fileset refid="struts2.jars" />
-        <fileset refid="spring.jars" /> 
-        <fileset refid="jstl.jars" />
-        <fileset refid="xmlrpc.jars" />
-        
-        <fileset refid="roller-planet.jars" />
-        
-        <!-- include custom jars -->
-        &custom-jars;
-    </copy>
-
-    <!-- Copy DTDs and TLDs  -->
-    <copy todir="${build.webapp}/WEB-INF/tlds">
-        <fileset dir="${ro.tools}/lib" includes="*.tld"/>
-    </copy>
-
-    <!-- Copy web contents to staging, plus README files. -->
-    <copy todir="${build.webapp}">
-        <fileset dir="./web">
-            <include name="**/*"/>
-            <exclude name="**/codewright*/**"/>
-            <exclude name="**/*.bak"/>
-            <exclude name="**/*~"/>
-        </fileset>
-    </copy>
-    
-    <!-- Copy docs to staging -->
-    <copy todir="${build.webapp}/roller-ui/docs">
-        <fileset dir="${basedir}/docs">
-            <include name="examples/**" />
-            <include name="userguide/**" />
-            <exclude name="installguide/**" />
-            <exclude name="**/old/**" />
-        </fileset>
-    </copy>
-    
-    <!-- apply custom web task -->
-    &custom-web;
-
-</target>
-
-
     <!-- ********************************************************************* -->
     <!-- Create different versions of database setup script                    -->
     <!-- With this approach we won't have to expand the script all the time.   -->
@@ -463,7 +319,7 @@ ro.buildUser=${user.name}
     <target name="gen-dbscripts-conditional" unless="dbscripts-exist">
         <antcall target="gen-dbscripts" />
     </target>
-
+    
     <!-- generate database scripts -->
     <target name="gen-dbscripts">
         
@@ -478,7 +334,7 @@ ro.buildUser=${user.name}
         <mkdir dir="${build.dbscripts}/oracle" />
         <mkdir dir="${build.dbscripts}/postgresql" />
         
-         <path id="texen.path">
+        <path id="texen.path">
             <fileset refid="base.jars" />
             <pathelement location="${basedir}/metadata/database/" />
             <pathelement location="${basedir}/metadata/database/tmpls/" />
@@ -486,661 +342,658 @@ ro.buildUser=${user.name}
         <taskdef name="texen" 
                  classname="org.apache.velocity.texen.ant.TexenTask"
                  classpathref="texen.path" />
-                 
+        
         <texen
             controlTemplate="control.vm" 
             contextProperties="${basedir}/metadata/database/dbscripts.properties"
             useClasspath="true"
             outputDirectory="${build.dbscripts}" 
             outputFile="README.txt" />
-            
+        
         <!-- just copy over the droptables script -->
         <copy todir="${build.dbscripts}" file="${basedir}/metadata/database/droptables.sql" />
         
     </target>
-
-
-<!-- ********************************************************************* -->
-<!-- Generate Javadocs and Velocidocs -->
-<!-- ********************************************************************* -->
-	
-<target name="docs" depends="javadoc,velocidoc" >
-    <copy todir="${build.javadoc}">
-        <fileset dir="${build.velocidoc}/docs">
-            <include name="*.css"/>
-        </fileset>
-    </copy>
-</target>
-
-<target name="javadoc">
-    <mkdir dir="${build.javadoc}"/>
-    <javadoc
-        doctitle="Javadocs: Apache Roller ${ro.version}"        
-        bottom="Copyright 2007 Apache Software Foundation"
-        classpathref="javadoc.path"
-        destdir="${build.javadoc}"
-        private="false"
-        version="false"
-        verbose="false"
-        windowtitle="Javadocs: Apache Roller - Weblogger ${ro.version}">
-        <sourcepath>
-            <pathelement path="./src"/>
-            <pathelement path="${ro.build}/generated/business"/>
-            <pathelement path="${ro.build}/generated/presentation"/>
-        </sourcepath>
-        <packageset dir="src" defaultexcludes="yes">
-          <include name="org/apache/roller/**" />
-        </packageset>
-        <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
-        <link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
-        <link href="http://jakarta.apache.org/struts/doc-1.0.2/api"/>
-    </javadoc>
-    <copy todir="${build.javadoc}">
-        <fileset dir="${basedir}/src">
-            <include name="**/roller*.png"/>
-        </fileset>
-    </copy>
-</target>
-	
-<target name="velocidoc">
-    <mkdir dir="${build.velocidoc}/temp"/>
-    <copy todir="${build.velocidoc}/temp">
-        <fileset dir="./web/WEB-INF/velocity/">
-            <include name="weblog.vm" />
-            <include name="feeds.vm" />
-        </fileset>
-    </copy>
-    <mkdir dir="${build.velocidoc}/docs"/>
-    <java fork="true" jar="${ro.tools}/buildtime/velocidoc-app.jar">
-        <arg line="-s ${build.velocidoc}/temp \
-           -d ${build.velocidoc}/docs \
-           -t ${ro.tools}/buildtime/velocidoc-templates/ \
-           -c ${ro.tools}/buildtime/velocidoc-templates/control.vm "/>
-    </java>
-</target>
-
-
-<!-- ********************************************************************* -->
-<!-- Create Binary Releases -->
-<!-- ********************************************************************* -->
-
-
-<target name="apache-release" depends="apache-binary,apache-sources">
-</target>
-
-
-<!-- ********************************************************************* -->
-<!-- Create Binary Release -->
-<!-- ********************************************************************* -->
-
-<target name="stage-binary" >
     
-    <!-- copy in release documents -->
-    <copy todir="${build.dist.binary}">
-        <fileset dir="${basedir}">
-            <include name="docs/**" />
-            <include name="CHANGES.txt" />
-            <include name="LICENSE.txt" />
-            <include name="NOTICE.txt" />
-            <include name="README.txt" />
-            
-            <exclude name="**/codewright*/**"/>
-            <exclude name="docs/installguide/old/**"/>
-            <exclude name="docs/userguide/old/**"/>
-            <exclude name="docs/testing/**"/>
-            <exclude name="**/CVS/**"/>
-            <exclude name="**/*.bak"/>
-            <exclude name="**/*-hide"/>
-            <exclude name="**/*.diff"/>
-            <exclude name="**/*.patch"/>
-            <exclude name="**/*~"/>
-            <exclude name="**/*.#*"/>
-            <exclude name="**/WS_FTP.LOG"/>
-            <exclude name="**/.nbattrs"/>
-        </fileset>
-    </copy>
     
-    <!-- and of course we'll want the webapp too -->
-    <copy todir="${build.dist.binary}/webapp/roller">
-        <fileset dir="${build.webapp}" />
-    </copy>
-
-</target>
-
-
-<target name="dist-binary" depends="stage-binary">
+    <!-- ********************************************************************* -->
+    <!-- Generate Javadocs and Velocidocs -->
+    <!-- ********************************************************************* -->
     
-    <mkdir dir="${ro.dist}" />
+    <target name="docs" depends="javadoc,velocidoc" >
+        <copy todir="${build.javadoc}">
+            <fileset dir="${build.velocidoc}/docs">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
+    </target>
     
-    <!-- Tar and GZip the binary release -->
-    <tar destfile="${ro.dist}/roller-${ro.version}.tar.gz"
-         longfile="gnu"
-         compression="gzip">
+    <target name="javadoc">
+        <mkdir dir="${build.javadoc}"/>
+        <javadoc
+            doctitle="Javadocs: Apache Roller ${ro.version}"        
+            bottom="Copyright 2007 Apache Software Foundation"
+            classpathref="javadoc.path"
+            destdir="${build.javadoc}"
+            private="false"
+            version="false"
+            verbose="false"
+            windowtitle="Javadocs: Apache Roller - Weblogger ${ro.version}">
+            <sourcepath>
+                <pathelement path="./src"/>
+            </sourcepath>
+            <packageset dir="src" defaultexcludes="yes">
+                <include name="org/apache/roller/**" />
+            </packageset>
+            <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
+            <link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
+        </javadoc>
+        <copy todir="${build.javadoc}">
+            <fileset dir="${basedir}/src">
+                <include name="**/roller*.png"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="velocidoc">
+        <mkdir dir="${build.velocidoc}/temp"/>
+        <copy todir="${build.velocidoc}/temp">
+            <fileset dir="./web/WEB-INF/velocity/">
+                <include name="weblog.vm" />
+                <include name="feeds.vm" />
+            </fileset>
+        </copy>
+        <mkdir dir="${build.velocidoc}/docs"/>
+        <java fork="true" jar="${ro.tools}/buildtime/velocidoc-app.jar">
+            <arg line="-s ${build.velocidoc}/temp \
+                 -d ${build.velocidoc}/docs \
+                 -t ${ro.tools}/buildtime/velocidoc-templates/ \
+            -c ${ro.tools}/buildtime/velocidoc-templates/control.vm "/>
+        </java>
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Create Binary Releases -->
+    <!-- ********************************************************************* -->
+
+    
+    <target name="apache-release" depends="apache-binary,apache-sources">
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Create Binary Release -->
+    <!-- ********************************************************************* -->
+    
+    <target name="stage-binary" >
         
-        <tarfileset dir="${build.dist.binary}" prefix="apache-roller-${ro.version}" />
-    </tar>
-    
-</target>
-
-
-<target name="apache-binary" depends="stage-binary">
-    
-    <mkdir dir="${ro.dist}" />
-    
-    <!-- Tar and GZip the apache sources release -->
-    <tar destfile="${ro.dist}/apache-roller-${ro.version}.tar.gz"
-         longfile="gnu"
-         compression="gzip">
-        
-        <!-- don't include unshippables in apache release -->
-        <tarfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
-            <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/jta.jar" />
-        </tarfileset>
-    </tar>
-    
-    <zip destfile="${ro.dist}/apache-roller-${ro.version}.zip">        
-        <!-- don't include unshippables in apache release -->
-        <zipfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
-            <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
-            <exclude name="webapp/roller/WEB-INF/lib/jta.jar" />
-        </zipfileset>
-    </zip>
-    
-    <!-- Tar and GZip the apache binary unshippables -->
-    <tar destfile="${ro.dist}/required-jars-roller-${ro.version}.tar.gz"
-         longfile="gnu"
-         compression="gzip">
-        
-        <!-- only include unshippables -->
-        <tarfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
-            <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
-            <include name="webapp/roller/WEB-INF/lib/asm.jar" />
-            <include name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
-            <include name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
-            <include name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
-            <include name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
-            <include name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
-            <include name="webapp/roller/WEB-INF/lib/jta.jar" />
-        </tarfileset>
-    </tar>
-    
-    <zip destfile="${ro.dist}/required-jars-roller-${ro.version}.zip" >
-        <zipfileset dir="${build.dist.binary}"
-                    prefix="apache-roller-${ro.version}">
-            <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
-            <include name="webapp/roller/WEB-INF/lib/asm.jar" />
-            <include name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
-            <include name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
-            <include name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
-            <include name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
-            <include name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
-            <include name="webapp/roller/WEB-INF/lib/jta.jar" />  
-        </zipfileset>
-    </zip>
-    
-</target>
-
-
-<!-- ********************************************************************* -->
-<!-- Create Source Release -->
-<!-- ********************************************************************* -->
-	
-<target name="stage-sources" depends="version-check">
-
-    <copy todir="${build.dist.sources}">
-        <fileset dir="${basedir}">
-            <include name="src/**" />
-            <include name="tests/**" />
-            <include name="testdata/**" />
-            <include name="metadata/**" />
-            <include name="personal/**" />
-            <include name="custom/**" />
-            <include name="contrib/**" />
-            <include name="web/**" />
-            <include name="docs/**" />
-            <include name="tools/**" />
-            <include name="ant.properties" />
-            <include name="build.bat" />
-            <include name="build.sh" />
-            <include name="build.xml" />
-            <include name="properties.xmlf" />
-            <include name="CHANGES.txt" />
-            <include name="LICENSE.txt" />
-            <include name="NOTICE.txt" />
-            <include name="README.txt" />
-            
-            <exclude name="**/codewright*/**"/>
-            <exclude name="docs/installguide/old/**"/>
-            <exclude name="docs/userguide/old/**"/>
-            <exclude name="**/CVS/**"/>
-            <exclude name="**/*.bak"/>
-            <exclude name="**/*-hide"/>
-            <exclude name="**/*.diff"/>
-            <exclude name="**/*.patch"/>
-            <exclude name="**/*~"/>
-            <exclude name="**/*.#*"/>
-            <exclude name="**/WS_FTP.LOG"/>
-            <exclude name="**/.nbattrs"/>
-        </fileset>
-    </copy>
-    
-</target>
-
-
-<target name="dist-sources" depends="stage-sources">
-    
-    <mkdir dir="${ro.dist}" />
-    
-    <!-- Tar and GZip the sources release -->
-    <tar destfile="${ro.dist}/roller-src-${ro.version}.tar.gz"
-         longfile="gnu"
-         compression="gzip">
-        
-        <tarfileset dir="${build.dist.sources}" prefix="apache-roller-src-${ro.version}" />
-    </tar>
-
-</target>
-
-
-<target name="apache-sources" depends="stage-sources">
-    
-    <mkdir dir="${ro.dist}" />
-    
-    <!-- Tar and GZip the apache binary release -->
-    <tar destfile="${ro.dist}/apache-roller-src-${ro.version}.tar.gz"
-         longfile="gnu"
-         compression="gzip">
-        
-        <!-- don't include unshippables in apache release -->
-        <tarfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
-            <exclude name="**/hibernate-3.1/**" />
-            <exclude name="**/activation.jar" />
-            <exclude name="**/mail.jar" />
-            <exclude name="**/ejb-1.1.jar" />
-        </tarfileset>
-    </tar>
-    
-    <zip destfile="${ro.dist}/apache-roller-src-${ro.version}.zip">
-        
-        <!-- don't include unshippables in apache release -->
-        <zipfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
-            <exclude name="**/hibernate-3.1/**" />
-            <exclude name="**/activation.jar" />
-            <exclude name="**/mail.jar" />
-            <exclude name="**/ejb-1.1.jar" />
-        </zipfileset>
-    </zip>
-    
-    <!-- Tar and GZip the apache sources unshippables -->
-    <tar destfile="${ro.dist}/required-jars-roller-src-${ro.version}.tar.gz"
-         longfile="gnu"
-         compression="gzip">
-        
-        <!-- only include unshippables -->
-        <tarfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
-            <include name="**/hibernate-3.1/**" />
-            <include name="**/activation.jar" />
-            <include name="**/mail.jar" />
-            <include name="**/ejb-1.1.jar" />
-        </tarfileset>
-    </tar>
-    
-    <zip destfile="${ro.dist}/required-jars-roller-src-${ro.version}.zip">
-        
-        <!-- only include unshippables -->
-        <zipfileset dir="${build.dist.sources}"
-                    prefix="apache-roller-src-${ro.version}">
-            <include name="**/hibernate-3.1/**" />
-            <include name="**/activation.jar" />
-            <include name="**/mail.jar" />
-            <include name="**/ejb-1.1.jar" />
-        </zipfileset>
-    </zip>
-    
-</target>
-
-
-<target name="version-check" if="java15.present" >
-    <fail message="ERROR: DON'T BUILD RELEASES WITH JAVA 1.5 (yet)" />
-</target>
-
-
-<!-- ********************************************************************* -->
-<!-- TEST targets -->
-<!-- ********************************************************************* -->
-	
-<target name="tests" depends="build-tests,test-business,test-presentation,test-utils" description="All unit tests" >
-</target>
-
-
-<target name="clean-tests" description="Removes test build and result artifacts and reports">
-  <delete dir="${build.tests}"/>
-  <delete dir="${ro.build}/build/reports"/>
-</target>
-
-
-<target name="build-tests" depends="all" description="Build unit tests">
-    
-    <mkdir dir="${build.tests}" />
-    <mkdir dir="${build.tests}/logs" />
-    <mkdir dir="${build.compile.tests}" />
-    
-    <!-- compile all test classes -->
-    <javac destdir="${build.compile.tests}"
-        includeantruntime="false"
-        debug="${build.debug}" 
-        source="${build.sourcelevel}"
-        deprecation="${build.deprecation}">        
-        <src path="${ro.tests}" />
-        
-        &custom-src-tests;
-        
-        <classpath>
-            <path refid="tests.path"/>
-            <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
-            &custom-jars;
-        </classpath>
-    </javac>
+        <!-- copy in release documents -->
+        <copy todir="${build.dist.binary}">
+            <fileset dir="${basedir}">
+                <include name="docs/**" />
+                <include name="CHANGES.txt" />
+                <include name="LICENSE.txt" />
+                <include name="NOTICE.txt" />
+                <include name="README.txt" />
                 
-    <!-- Copy test resources -->
-    <copy todir="${build.compile.tests}">
-        <fileset dir="${ro.tests}" 
-            excludes="**/*.java, **/*.html, **/*.png" />
-    </copy>
+                <exclude name="**/codewright*/**"/>
+                <exclude name="docs/installguide/old/**"/>
+                <exclude name="docs/userguide/old/**"/>
+                <exclude name="docs/testing/**"/>
+                <exclude name="**/CVS/**"/>
+                <exclude name="**/*.bak"/>
+                <exclude name="**/*-hide"/>
+                <exclude name="**/*.diff"/>
+                <exclude name="**/*.patch"/>
+                <exclude name="**/*~"/>
+                <exclude name="**/*.#*"/>
+                <exclude name="**/WS_FTP.LOG"/>
+                <exclude name="**/.nbattrs"/>
+            </fileset>
+        </copy>
+        
+        <!-- and of course we'll want the webapp too -->
+        <copy todir="${build.dist.binary}/webapp/roller">
+            <fileset dir="${build.webapp}" />
+        </copy>
+        
+    </target>
     
-    <!-- 
+    
+    <target name="dist-binary" depends="stage-binary">
+        
+        <mkdir dir="${ro.dist}" />
+        
+        <!-- Tar and GZip the binary release -->
+        <tar destfile="${ro.dist}/roller-${ro.version}.tar.gz"
+             longfile="gnu"
+             compression="gzip">
+            
+            <tarfileset dir="${build.dist.binary}" prefix="apache-roller-${ro.version}" />
+        </tar>
+        
+    </target>
+    
+    
+    <target name="apache-binary" depends="stage-binary">
+        
+        <mkdir dir="${ro.dist}" />
+        
+        <!-- Tar and GZip the apache sources release -->
+        <tar destfile="${ro.dist}/apache-roller-${ro.version}.tar.gz"
+             longfile="gnu"
+             compression="gzip">
+            
+            <!-- don't include unshippables in apache release -->
+            <tarfileset dir="${build.dist.binary}"
+                        prefix="apache-roller-${ro.version}">
+                <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/jta.jar" />
+            </tarfileset>
+        </tar>
+        
+        <zip destfile="${ro.dist}/apache-roller-${ro.version}.zip">        
+            <!-- don't include unshippables in apache release -->
+            <zipfileset dir="${build.dist.binary}"
+                        prefix="apache-roller-${ro.version}">
+                <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
+                <exclude name="webapp/roller/WEB-INF/lib/jta.jar" />
+            </zipfileset>
+        </zip>
+        
+        <!-- Tar and GZip the apache binary unshippables -->
+        <tar destfile="${ro.dist}/required-jars-roller-${ro.version}.tar.gz"
+             longfile="gnu"
+             compression="gzip">
+            
+            <!-- only include unshippables -->
+            <tarfileset dir="${build.dist.binary}"
+                        prefix="apache-roller-${ro.version}">
+                <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
+                <include name="webapp/roller/WEB-INF/lib/asm.jar" />
+                <include name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
+                <include name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
+                <include name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
+                <include name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
+                <include name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
+                <include name="webapp/roller/WEB-INF/lib/jta.jar" />
+            </tarfileset>
+        </tar>
+        
+        <zip destfile="${ro.dist}/required-jars-roller-${ro.version}.zip" >
+            <zipfileset dir="${build.dist.binary}"
+                        prefix="apache-roller-${ro.version}">
+                <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
+                <include name="webapp/roller/WEB-INF/lib/asm.jar" />
+                <include name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
+                <include name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
+                <include name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
+                <include name="webapp/roller/WEB-INF/lib/ehcache-1.1.jar" />
+                <include name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
+                <include name="webapp/roller/WEB-INF/lib/jta.jar" />  
+            </zipfileset>
+        </zip>
+        
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- Create Source Release -->
+    <!-- ********************************************************************* -->
+    
+    <target name="stage-sources" depends="version-check">
+        
+        <copy todir="${build.dist.sources}">
+            <fileset dir="${basedir}">
+                <include name="src/**" />
+                <include name="tests/**" />
+                <include name="testdata/**" />
+                <include name="metadata/**" />
+                <include name="personal/**" />
+                <include name="custom/**" />
+                <include name="contrib/**" />
+                <include name="web/**" />
+                <include name="docs/**" />
+                <include name="tools/**" />
+                <include name="ant.properties" />
+                <include name="build.bat" />
+                <include name="build.sh" />
+                <include name="build.xml" />
+                <include name="properties.xmlf" />
+                <include name="CHANGES.txt" />
+                <include name="LICENSE.txt" />
+                <include name="NOTICE.txt" />
+                <include name="README.txt" />
+                
+                <exclude name="**/codewright*/**"/>
+                <exclude name="docs/installguide/old/**"/>
+                <exclude name="docs/userguide/old/**"/>
+                <exclude name="**/CVS/**"/>
+                <exclude name="**/*.bak"/>
+                <exclude name="**/*-hide"/>
+                <exclude name="**/*.diff"/>
+                <exclude name="**/*.patch"/>
+                <exclude name="**/*~"/>
+                <exclude name="**/*.#*"/>
+                <exclude name="**/WS_FTP.LOG"/>
+                <exclude name="**/.nbattrs"/>
+            </fileset>
+        </copy>
+        
+    </target>
+    
+    
+    <target name="dist-sources" depends="stage-sources">
+        
+        <mkdir dir="${ro.dist}" />
+        
+        <!-- Tar and GZip the sources release -->
+        <tar destfile="${ro.dist}/roller-src-${ro.version}.tar.gz"
+             longfile="gnu"
+             compression="gzip">
+            
+            <tarfileset dir="${build.dist.sources}" prefix="apache-roller-src-${ro.version}" />
+        </tar>
+        
+    </target>
+    
+    
+    <target name="apache-sources" depends="stage-sources">
+        
+        <mkdir dir="${ro.dist}" />
+        
+        <!-- Tar and GZip the apache binary release -->
+        <tar destfile="${ro.dist}/apache-roller-src-${ro.version}.tar.gz"
+             longfile="gnu"
+             compression="gzip">
+            
+            <!-- don't include unshippables in apache release -->
+            <tarfileset dir="${build.dist.sources}"
+                        prefix="apache-roller-src-${ro.version}">
+                <exclude name="**/hibernate-3.1/**" />
+                <exclude name="**/activation.jar" />
+                <exclude name="**/mail.jar" />
+                <exclude name="**/ejb-1.1.jar" />
+            </tarfileset>
+        </tar>
+        
+        <zip destfile="${ro.dist}/apache-roller-src-${ro.version}.zip">
+            
+            <!-- don't include unshippables in apache release -->
+            <zipfileset dir="${build.dist.sources}"
+                        prefix="apache-roller-src-${ro.version}">
+                <exclude name="**/hibernate-3.1/**" />
+                <exclude name="**/activation.jar" />
+                <exclude name="**/mail.jar" />
+                <exclude name="**/ejb-1.1.jar" />
+            </zipfileset>
+        </zip>
+        
+        <!-- Tar and GZip the apache sources unshippables -->
+        <tar destfile="${ro.dist}/required-jars-roller-src-${ro.version}.tar.gz"
+             longfile="gnu"
+             compression="gzip">
+            
+            <!-- only include unshippables -->
+            <tarfileset dir="${build.dist.sources}"
+                        prefix="apache-roller-src-${ro.version}">
+                <include name="**/hibernate-3.1/**" />
+                <include name="**/activation.jar" />
+                <include name="**/mail.jar" />
+                <include name="**/ejb-1.1.jar" />
+            </tarfileset>
+        </tar>
+        
+        <zip destfile="${ro.dist}/required-jars-roller-src-${ro.version}.zip">
+            
+            <!-- only include unshippables -->
+            <zipfileset dir="${build.dist.sources}"
+                        prefix="apache-roller-src-${ro.version}">
+                <include name="**/hibernate-3.1/**" />
+                <include name="**/activation.jar" />
+                <include name="**/mail.jar" />
+                <include name="**/ejb-1.1.jar" />
+            </zipfileset>
+        </zip>
+        
+    </target>
+    
+    
+    <target name="version-check" if="java15.present" >
+        <fail message="ERROR: DON'T BUILD RELEASES WITH JAVA 1.5 (yet)" />
+    </target>
+    
+    
+    <!-- ********************************************************************* -->
+    <!-- TEST targets -->
+    <!-- ********************************************************************* -->
+    
+    <target name="tests" depends="build-tests,test-business,test-presentation,test-utils" description="All unit tests" >
+    </target>
+    
+    
+    <target name="clean-tests" description="Removes test build and result artifacts and reports">
+        <delete dir="${build.tests}"/>
+        <delete dir="${ro.build}/build/reports"/>
+    </target>
+    
+    
+    <target name="build-tests" depends="all" description="Build unit tests">
+        
+        <mkdir dir="${build.tests}" />
+        <mkdir dir="${build.tests}/logs" />
+        <mkdir dir="${build.compile.tests}" />
+        
+        <!-- compile all test classes -->
+        <javac destdir="${build.compile.tests}"
+               includeantruntime="false"
+               debug="${build.debug}" 
+               source="${build.sourcelevel}"
+               deprecation="${build.deprecation}">        
+            <src path="${ro.tests}" />
+            
+            &custom-src-tests;
+            
+            <classpath>
+                <path refid="tests.path"/>
+                <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
+                &custom-jars;
+            </classpath>
+        </javac>
+        
+        <!-- Copy test resources -->
+        <copy todir="${build.compile.tests}">
+            <fileset dir="${ro.tests}" 
+                     excludes="**/*.java, **/*.html, **/*.png" />
+        </copy>
+        
+        <!-- 
     Copy web config files to ${build.tests} to make them available for testing.
     This includes the WEB-INF directory, minus jsps
     -->
-    <mkdir dir="${build.tests}/WEB-INF" />
-    <copy todir="${build.tests}/WEB-INF">
-        <fileset dir="${basedir}/web/WEB-INF">
-	    <exclude name="jsps/**" />
-        </fileset>
-    </copy>
-    <mkdir dir="${build.tests}/themes" />
-    <copy todir="${build.tests}/themes">
-        <fileset dir="${basedir}/web/themes" />
-    </copy>
-
-    <!-- 
+        <mkdir dir="${build.tests}/WEB-INF" />
+        <copy todir="${build.tests}/WEB-INF">
+            <fileset dir="${basedir}/web/WEB-INF">
+                <exclude name="jsps/**" />
+            </fileset>
+        </copy>
+        <mkdir dir="${build.tests}/themes" />
+        <copy todir="${build.tests}/themes">
+            <fileset dir="${basedir}/web/themes" />
+        </copy>
+        
+        <!-- 
     Copy custom testing files which will overwrite some config files 
     -->
-    <copy todir="${build.tests}" overwrite="true">
-        <fileset dir="${basedir}/testdata" />
-    </copy>
-    
-    <!-- allow for custom build work -->
-    
-</target>
-
-<!-- ===================================== -->
-<!-- test business -->
-	
-<target name="test-business" depends="build-tests" description="Back-end tests">
-
-    <mkdir dir="${build.reports}/business/xml"/>
-    <mkdir dir="${build.reports}/business/html"/>
-
-    <!-- allow for startup and initialization of test db -->
-    <antcall target="${test.db.startTask}" />
-    <antcall target="${test.db.initTask}" />
-	
-    &custom-pre-dbtest;
-    
-    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
-        <classpath>
-            <path refid="tests.run.path"/>
-            
-            <!-- plus the classpath for jars needed to talk to the test db -->
-            <pathelement path="${test.db.cpath}" />
-        </classpath>
+        <copy todir="${build.tests}" overwrite="true">
+            <fileset dir="${basedir}/testdata" />
+        </copy>
         
-        <!-- needed to satisfy ref in log4j.properties -->
-        <jvmarg value="-Dcatalina.base=${build.tests}"/> 
-        <jvmarg value="-Dro.build=${ro.build}"/>
-        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
-        <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/business/xml" haltonerror="${junit.haltonerror}">
-            <fileset dir="${build.compile.tests}">
-                
-                <!-- core services.  no reliance on users or weblogs -->
-                <include name="org/apache/roller/business/CoreBusinessServicesTestSuite.class"/>
-                
-                <!-- core platform services.  users & weblogs -->
-                <include name="org/apache/roller/business/CoreWeblogPlatformTestSuite.class"/>
-                
-                <!-- core weblog services.  entries, templates, categories, etc -->
-                <include name="org/apache/roller/business/CoreWeblogServicesTestSuite.class"/>
-                
-                <!-- supplemental weblog services.  files, bookmarks, pings, etc -->
-                <include name="org/apache/roller/business/SupplementalWeblogServicesTestSuite.class"/>
-                
-            </fileset>
-        </batchtest>
-    </junit>
-    <junitreport todir="${build.reports}/business/xml">
-        <fileset dir="${build.reports}/business/xml">
-            <include name="TEST-*.xml"/>
-        </fileset>
-        <report format="noframes" toDir="${build.reports}/business/html"/>
-    </junitreport>
-	
-    &custom-post-dbtest;
-    
-    <!-- allow for shutdown of test db -->
-    <antcall target="${test.db.stopTask}" />
-    
-</target>
-
-<!-- ===================================== -->
-<!-- test presentation -->
-		
-<target name="test-presentation" depends="build-tests">
-    <mkdir dir="${build.reports}/presentation/xml"/>
-    <mkdir dir="${build.reports}/presentation/html"/>
-    
-    <!-- allow for startup and initialization of test db -->
-    <antcall target="${test.db.startTask}" />
-    <antcall target="${test.db.initTask}" />
-
-    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="false">
-        <classpath>
-            <path refid="tests.run.path"/>
-            
-            <!-- plus the classpath for jars needed to talk to the test db -->
-            <pathelement path="${test.db.cpath}" />
-        </classpath>
+        <!-- allow for custom build work -->
         
-        <!-- needed to satisfy ref in log4j.properties -->
-        <jvmarg value="-Dcatalina.base=${build.tests}"/>
-        <jvmarg value="-Dro.build=${ro.build}"/>
-        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
-        <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/presentation/xml">
-            <fileset dir="${build.compile.tests}">
+    </target>
+    
+    <!-- ===================================== -->
+    <!-- test business -->
+    
+    <target name="test-business" depends="build-tests" description="Back-end tests">
+        
+        <mkdir dir="${build.reports}/business/xml"/>
+        <mkdir dir="${build.reports}/business/html"/>
+        
+        <!-- allow for startup and initialization of test db -->
+        <antcall target="${test.db.startTask}" />
+        <antcall target="${test.db.initTask}" />
+        
+        &custom-pre-dbtest;
+        
+        <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
+            <classpath>
+                <path refid="tests.run.path"/>
                 
-                <!-- UI tests, some require mock web container -->
-                <include name="org/apache/roller/ui/UITestSuite.class"/>
-                
+                <!-- plus the classpath for jars needed to talk to the test db -->
+                <pathelement path="${test.db.cpath}" />
+            </classpath>
+            
+            <!-- needed to satisfy ref in log4j.properties -->
+            <jvmarg value="-Dcatalina.base=${build.tests}"/> 
+            <jvmarg value="-Dro.build=${ro.build}"/>
+            <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.reports}/business/xml" haltonerror="${junit.haltonerror}">
+                <fileset dir="${build.compile.tests}">
+                    
+                    <!-- core services.  no reliance on users or weblogs -->
+                    <include name="org/apache/roller/business/CoreBusinessServicesTestSuite.class"/>
+                    
+                    <!-- core platform services.  users & weblogs -->
+                    <include name="org/apache/roller/business/CoreWeblogPlatformTestSuite.class"/>
+                    
+                    <!-- core weblog services.  entries, templates, categories, etc -->
+                    <include name="org/apache/roller/business/CoreWeblogServicesTestSuite.class"/>
+                    
+                    <!-- supplemental weblog services.  files, bookmarks, pings, etc -->
+                    <include name="org/apache/roller/business/SupplementalWeblogServicesTestSuite.class"/>
+                    
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${build.reports}/business/xml">
+            <fileset dir="${build.reports}/business/xml">
+                <include name="TEST-*.xml"/>
             </fileset>
-        </batchtest>
-    </junit>
+            <report format="noframes" toDir="${build.reports}/business/html"/>
+        </junitreport>
+        
+        &custom-post-dbtest;
+        
+        <!-- allow for shutdown of test db -->
+        <antcall target="${test.db.stopTask}" />
+        
+    </target>
     
-    <junitreport todir="${build.reports}/presentation/xml">
-        <fileset dir="${build.reports}/presentation/xml">
-            <include name="TEST-*.xml"/>
-        </fileset>
-        <report format="noframes" toDir="${build.reports}/presentation/html"/>
-    </junitreport>
+    <!-- ===================================== -->
+    <!-- test presentation -->
     
-    <!-- allow for shutdown of test db -->
-    <antcall target="${test.db.stopTask}" />
-    
-</target>
-
-<!-- ===================================== -->
-<!-- test utils -->
-
-<target name="test-utils" depends="build-tests" >
-    <mkdir dir="${build.reports}/utils/xml"/>
-    <mkdir dir="${build.reports}/utils/html"/>
-    
-	<junit fork="true" dir="${build.tests}"  showOutput="true">
-        <batchtest toDir="${build.reports}/utils/xml">
-            <fileset dir="${build.compile.tests}">
+    <target name="test-presentation" depends="build-tests">
+        <mkdir dir="${build.reports}/presentation/xml"/>
+        <mkdir dir="${build.reports}/presentation/html"/>
+        
+        <!-- allow for startup and initialization of test db -->
+        <antcall target="${test.db.startTask}" />
+        <antcall target="${test.db.initTask}" />
+        
+        <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="false">
+            <classpath>
+                <path refid="tests.run.path"/>
                 
-                <!-- Utilitities that require no database or web container -->
-                <include name="org/apache/roller/util/UtilitiesTestSuite.class"/>
-                
-            </fileset>            
-        </batchtest>
-		<!-- needed to satisfy ref in log4j.properties -->
-        <jvmarg value="-Dcatalina.base=."/> 
-        <formatter type="xml"/>
-        <classpath>
-            <path refid="tests.run.path"/>
-        </classpath>
-    </junit>
-
-	<junitreport todir="${build.reports}/utils/xml">
-      <fileset dir="${build.reports}/utils/xml">
-        <include name="TEST-*.xml"/>
-      </fileset>
-      <report format="noframes" toDir="${build.reports}/utils/html"/>
-    </junitreport>
-
-</target>
-
-<target name="test-rap" depends="test-rap-sdk, test-rap-handler"/>
-   
-<target name="test-rap-sdk">
-    <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/xml"/>
-    <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/html"/>
-
-    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
-        <syspropertyset>
-            <propertyref builtin="commandline"/>
-        </syspropertyset>
-        <classpath>
-            <path refid="tests.run.path"/>
-        </classpath>
-        <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/webservices/protocol/sdk/xml">
-            <fileset dir="${build.tests}/WEB-INF/classes">
-                <include name="org/apache/roller/webservices/protocol/sdk/*EntryTest.class"/>
+                <!-- plus the classpath for jars needed to talk to the test db -->
+                <pathelement path="${test.db.cpath}" />
+            </classpath>
+            
+            <!-- needed to satisfy ref in log4j.properties -->
+            <jvmarg value="-Dcatalina.base=${build.tests}"/>
+            <jvmarg value="-Dro.build=${ro.build}"/>
+            <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.reports}/presentation/xml">
+                <fileset dir="${build.compile.tests}">
+                    
+                    <!-- UI tests, some require mock web container -->
+                    <include name="org/apache/roller/ui/UITestSuite.class"/>
+                    
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <junitreport todir="${build.reports}/presentation/xml">
+            <fileset dir="${build.reports}/presentation/xml">
+                <include name="TEST-*.xml"/>
             </fileset>
-        </batchtest>
-    </junit>
-    <junitreport todir="${build.reports}/webservices/protocol/sdk/xml">
-        <fileset dir="${build.reports}/webservices/protocol/sdk/xml">
-            <include name="TEST-*.xml"/>
-        </fileset>
-        <report format="noframes" toDir="${build.reports}/webservices/protocol/sdk/html"/>
-    </junitreport>
-</target>
-
-<target name="test-rap-handler">
-    <mkdir dir="${build.reports}/webservices/protocol/xml"/>
-    <mkdir dir="${build.reports}/webservices/protocol/html"/>
-
-    <junit fork="true" dir="${build.tests}" printsummary="on">
-        <syspropertyset>
-            <propertyref builtin="commandline"/>
-        </syspropertyset>
-        <classpath>
-            <path refid="tests.run.path"/>
-        </classpath>
-        <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/webservices/protocol/xml">
-            <fileset dir="${build.tests}/WEB-INF/classes">
-                <include name="org/apache/roller/webservices/protocol/*HandlerTest.class"/>
+            <report format="noframes" toDir="${build.reports}/presentation/html"/>
+        </junitreport>
+        
+        <!-- allow for shutdown of test db -->
+        <antcall target="${test.db.stopTask}" />
+        
+    </target>
+    
+    <!-- ===================================== -->
+    <!-- test utils -->
+    
+    <target name="test-utils" depends="build-tests" >
+        <mkdir dir="${build.reports}/utils/xml"/>
+        <mkdir dir="${build.reports}/utils/html"/>
+        
+        <junit fork="true" dir="${build.tests}"  showOutput="true">
+            <batchtest toDir="${build.reports}/utils/xml">
+                <fileset dir="${build.compile.tests}">
+                    
+                    <!-- Utilitities that require no database or web container -->
+                    <include name="org/apache/roller/util/UtilitiesTestSuite.class"/>
+                    
+                </fileset>            
+            </batchtest>
+            <!-- needed to satisfy ref in log4j.properties -->
+            <jvmarg value="-Dcatalina.base=."/> 
+            <formatter type="xml"/>
+            <classpath>
+                <path refid="tests.run.path"/>
+            </classpath>
+        </junit>
+        
+        <junitreport todir="${build.reports}/utils/xml">
+            <fileset dir="${build.reports}/utils/xml">
+                <include name="TEST-*.xml"/>
             </fileset>
-        </batchtest>
-    </junit>
-    <junitreport todir="${build.reports}/webservices/protocol/xml">
-        <fileset dir="${build.reports}/webservices/protocol/xml">
-            <include name="TEST-*.xml"/>
-        </fileset>
-        <report format="noframes" toDir="${build.reports}/webservices/protocol/html"/>
-    </junitreport>
-</target>
-
-<!-- You can specify testClass using -DtestClass=foo -->
-<property name="testClass" value="org.apache.roller.business.TaskLockTest"/>
-<target name="test-one" depends="build-tests">
-    <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
-        <arg value="${testClass}"/>
-        <classpath>
-            <path refid="tests.run.path"/>
-        </classpath>
-    </java>
-</target>
-
-<!-- ********************************************************************* -->
-<!-- EXPERIMENTAL targets -->
-<!-- ********************************************************************* -->
-	
-<!-- EXPERIMENTAL: Run ConsistencyCheck. -->
-<target name="consistency-check">
-<echo>Use -Ddelete=1 to delete all orphans.
-Use -Dverbose=1 to get verbose output.
-'delete' and 'verbose' are exclusive, 'delete' wins.
-</echo>
-    <condition property="command" value="-v">
-        <isset property="verbose" />
-    </condition>
-    <condition property="command" value="-purge">
-        <isset property="delete" />
-    </condition>
-    <java classname="org.apache.roller.business.utils.ConsistencyCheck" fork="yes">
-        <arg value="${command}"/>
-        <jvmarg value="-Dusername=roller"/>
-        <jvmarg value="-Dpassword=tiger"/>
-        <classpath>
-            <path refid="base.path"/>
-            <path location="${ro.build}/lib/rollerbeans.jar"/>
-            <path location="${ro.tools}/lib/mm.mysql-2.0.14-bin.jar"/>
-        </classpath>
-    </java>
-</target>
-	
-<target name="compile-jsps" depends="stage-webapp">
-   <mkdir dir="${ro.build}/jspc"/>	
-    <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
-    	   <classpath refid="jasper.path"/> 
-    </taskdef> 
-    <jasper2 validateXml="false" 
-        uriroot="${build.webapp}" 
-        webXmlFragment="${build.webapp}/WEB-INF/generated_web.xml" 
-        outputDir="${ro.build}/jspc" /> 		
-    <mkdir dir="${ro.build}/jspc.classes"/>
-    <javac source="${build.sourcelevel}" debug="true" srcdir="${ro.build}/jspc" excludes="**/header_jsp.*"
-       destdir="${ro.build}/jspc.classes" fork="true">
-       <classpath refid="jsp.compile.path"/>
-    </javac>
-</target>
-	    
-
+            <report format="noframes" toDir="${build.reports}/utils/html"/>
+        </junitreport>
+        
+    </target>
+    
+    <target name="test-rap" depends="test-rap-sdk, test-rap-handler"/>
+    
+    <target name="test-rap-sdk">
+        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/xml"/>
+        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/html"/>
+        
+        <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <classpath>
+                <path refid="tests.run.path"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.reports}/webservices/protocol/sdk/xml">
+                <fileset dir="${build.tests}/WEB-INF/classes">
+                    <include name="org/apache/roller/webservices/protocol/sdk/*EntryTest.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${build.reports}/webservices/protocol/sdk/xml">
+            <fileset dir="${build.reports}/webservices/protocol/sdk/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" toDir="${build.reports}/webservices/protocol/sdk/html"/>
+        </junitreport>
+    </target>
+    
+    <target name="test-rap-handler">
+        <mkdir dir="${build.reports}/webservices/protocol/xml"/>
+        <mkdir dir="${build.reports}/webservices/protocol/html"/>
+        
+        <junit fork="true" dir="${build.tests}" printsummary="on">
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <classpath>
+                <path refid="tests.run.path"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.reports}/webservices/protocol/xml">
+                <fileset dir="${build.tests}/WEB-INF/classes">
+                    <include name="org/apache/roller/webservices/protocol/*HandlerTest.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${build.reports}/webservices/protocol/xml">
+            <fileset dir="${build.reports}/webservices/protocol/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" toDir="${build.reports}/webservices/protocol/html"/>
+        </junitreport>
+    </target>
+    
+    <!-- You can specify testClass using -DtestClass=foo -->
+    <property name="testClass" value="org.apache.roller.business.TaskLockTest"/>
+    <target name="test-one" depends="build-tests">
+        <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
+            <arg value="${testClass}"/>
+            <classpath>
+                <path refid="tests.run.path"/>
+            </classpath>
+        </java>
+    </target>
+    
+    <!-- ********************************************************************* -->
+    <!-- EXPERIMENTAL targets -->
+    <!-- ********************************************************************* -->
+    
+    <!-- EXPERIMENTAL: Run ConsistencyCheck. -->
+    <target name="consistency-check">
+        <echo>Use -Ddelete=1 to delete all orphans.
+            Use -Dverbose=1 to get verbose output.
+            'delete' and 'verbose' are exclusive, 'delete' wins.
+        </echo>
+        <condition property="command" value="-v">
+            <isset property="verbose" />
+        </condition>
+        <condition property="command" value="-purge">
+            <isset property="delete" />
+        </condition>
+        <java classname="org.apache.roller.business.utils.ConsistencyCheck" fork="yes">
+            <arg value="${command}"/>
+            <jvmarg value="-Dusername=roller"/>
+            <jvmarg value="-Dpassword=tiger"/>
+            <classpath>
+                <path refid="base.path"/>
+                <path location="${ro.build}/lib/rollerbeans.jar"/>
+                <path location="${ro.tools}/lib/mm.mysql-2.0.14-bin.jar"/>
+            </classpath>
+        </java>
+    </target>
+    
+    <target name="compile-jsps" depends="stage-webapp">
+        <mkdir dir="${ro.build}/jspc"/>	
+        <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
+            <classpath refid="jasper.path"/> 
+        </taskdef> 
+        <jasper2 validateXml="false" 
+                 uriroot="${build.webapp}" 
+                 webXmlFragment="${build.webapp}/WEB-INF/generated_web.xml" 
+                 outputDir="${ro.build}/jspc" /> 		
+        <mkdir dir="${ro.build}/jspc.classes"/>
+        <javac source="${build.sourcelevel}" debug="true" srcdir="${ro.build}/jspc" excludes="**/header_jsp.*"
+               destdir="${ro.build}/jspc.classes" fork="true">
+            <classpath refid="jsp.compile.path"/>
+        </javac>
+    </target>
+    
+    
     <!-- *********************************************************** -->
     <!-- Test db start, init and stop targets -->
     <!-- *********************************************************** -->
@@ -1168,7 +1021,7 @@ Use -Dverbose=1 to get verbose output.
         
         &custom-pre-dbtest;
     </target>
-
+    
     <target name="start-db" description="Starts built-in database">  
         <taskdef name="startdb" classname="org.apache.roller.ant.StartDerbyTask" 
                  classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
@@ -1180,27 +1033,27 @@ Use -Dverbose=1 to get verbose output.
                  classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
         <stopdb port="3219"/>
     </target>
-
-<!-- ********************************************************************* -->
-<!-- Experimental Admin API SDK -->
-<!-- ********************************************************************* -->
-
-<!-- build standalone rap-sdk.jar, for external consumption -->
-<target name="rap-sdk" depends="build">
-    <mkdir dir="${build.lib}"/>
-    <jar destfile="${build.lib}/roller-rap-sdk.jar">
-        <manifest>
-            <attribute name="Manifest-Version" value="${ro.version}"/>
-        </manifest>
-        <fileset dir="${build.compile.web}">
-            <include name="org/apache/roller/webservices/adminprotocol/sdk/*"/>
-        </fileset>        
-    </jar>
-</target>
-
+    
+    <!-- ********************************************************************* -->
+    <!-- Experimental Admin API SDK -->
+    <!-- ********************************************************************* -->
+    
+    <!-- build standalone rap-sdk.jar, for external consumption -->
+    <target name="rap-sdk" depends="build">
+        <mkdir dir="${build.lib}"/>
+        <jar destfile="${build.lib}/roller-rap-sdk.jar">
+            <manifest>
+                <attribute name="Manifest-Version" value="${ro.version}"/>
+            </manifest>
+            <fileset dir="${build.compile.web}">
+                <include name="org/apache/roller/webservices/adminprotocol/sdk/*"/>
+            </fileset>        
+        </jar>
+    </target>
+    
     <target name="nothing">
         <!-- this task does nothing and is here so that 
              dynamic task definitions have a no-op choice -->
     </target>
-
+    
 </project>

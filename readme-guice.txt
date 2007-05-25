@@ -66,7 +66,7 @@ so I've added a Roller.init() method. I'd like create a Manager interface as
 we have in Planet to standardize manager lifecycle.
 
 
-Notes on Guice
+** Notes on Guice
 
 - Simple small API that is very easy to understand
 - Documentation is short and to the point

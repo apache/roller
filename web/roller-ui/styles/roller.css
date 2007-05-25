@@ -711,3 +711,16 @@ div.autocomplete ul li {
   cursor:pointer;
 }
 
+
+.chooser {
+  margin: 10px;
+  padding: 10px 20px 20px 20px;
+}
+
+.chooser h2 {
+  letter-spacing: 0.0em;
+}
+
+.optioner {
+  margin: 0px 30px 30px 30px;
+}
