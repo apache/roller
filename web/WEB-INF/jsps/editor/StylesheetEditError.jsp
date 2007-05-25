@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,30 +14,9 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
-<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
+--%>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            
-<div class="sidebarInner">
-            <h3><fmt:message key="mainPage.actions" /></h3>
-            <hr size="1" noshade="noshade" />
-            
-			<%-- Add Category link --%>
-			<p>
-            <img src='<c:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-			<roller:link page="/roller-ui/authoring/categoryEdit.do">
-			    <roller:linkparam id="<%= RequestConstants.PARENT_ID %>"
-			         name="category" property="id" />
-			    <fmt:message key="categoriesForm.addCategory" />
-			</roller:link>
-			</p>
-			
-			<br />
-</div>
-			
-        </div>
-    </div>
-</div>			
+<p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
+
+<p class="pagetip"><s:text name="stylesheetEdit.noStylesheetOverride" /></p>

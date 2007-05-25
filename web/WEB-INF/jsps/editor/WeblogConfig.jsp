@@ -69,7 +69,7 @@
     <tr>
         <td class="label"><s:text name="websiteSettings.editor" /></td>
         <td class="field">
-            <s:select name="bean.editorPage" size="1" list="editorsList" listKey="id" listValue="name" />
+            <s:select name="bean.editorPage" size="1" list="editorsList" listKey="id" listValue="getText(name)" />
        </td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
@@ -213,7 +213,7 @@
         <tr>
             <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
             <td class="field">
-                <s:checkboxlist list="pluginsList" name="bean.defaultPluginsArray" listKey="name" listValue="name" />
+                <s:checkboxlist theme="roller" list="pluginsList" name="bean.defaultPluginsArray" listKey="name" listValue="name" />
             
             </td>
             <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>

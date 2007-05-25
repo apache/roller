@@ -146,7 +146,7 @@ function fullPreviewMode() {
             <s:text name="weblogEdit.pluginsToApply" /></a>
         </div>
         <div id="pluginControl" class="miscControl" style="display:none">
-            <s:checkboxlist name="bean.plugins" list="entryPlugins" listKey="name" listValue="name" />
+            <s:checkboxlist theme="roller" name="bean.plugins" list="entryPlugins" listKey="name" listValue="name" />
         </div>
     </s:if>
 
@@ -213,8 +213,11 @@ function fullPreviewMode() {
         
         <s:submit key="weblogEdit.save" onclick="document.getElementById('entryAdd_bean_status').value='DRAFT';" />
         
-        <s:submit key="weblogEdit.deleteEntry" action="entryRemove" />
-        <s:hidden name="removeId" value="%{entry.id}" />
+        <s:url id="removeUrl" action="entryRemove">
+            <s:param name="weblog" value="actionWeblog.handle" />
+            <s:param name="removeId" value="%{entry.id}" />
+        </s:url>
+        <input type="button" value="<s:text name="weblogEdit.deleteEntry"/>" onclick="window.location='<s:property value="removeUrl" escape="false" />'" />
         
         <input type="button" name="fullPreview"
                             value='<s:text name="weblogEdit.fullPreviewMode" />'

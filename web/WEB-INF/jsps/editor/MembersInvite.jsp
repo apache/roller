@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,29 +14,24 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
-<%@ include file="/WEB-INF/jsps/taglibs.jsp" %>
+--%>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script type="text/javascript">
 // <!--
-function cancel() {
-    document.inviteMemberForm.method.value="cancel"; 
-    document.inviteMemberForm.submit();
-}
 <%@ include file="/roller-ui/scripts/ajax-user.js" %>
 // -->
 </script> 
 
-<p class="subtitle"><fmt:message key="inviteMember.subtitle" /></p>
-<p><fmt:message key="inviteMember.prompt" /></p>
+<p class="subtitle"><s:text name="inviteMember.subtitle" /></p>
+<p><s:text name="inviteMember.prompt" /></p>
 
-<html:form action="/roller-ui/authoring/inviteMember" method="post" focus="userName">
-    <html:hidden property="websiteId" />
-    <input name="method" type="hidden" value="send" />
+<s:form action="invite!save">
+    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <div class="formrow">
        <label for="userName" class="formrow" />
-           <fmt:message key="inviteMember.userName" /></label>
+           <s:text name="inviteMember.userName" /></label>
        <div>
            <input name="userName" id="userName" size="30" maxlength="30" 
                onfocus="onUserNameFocus(true)" onkeyup="onUserNameChange(true)" /><br />
@@ -52,21 +47,24 @@ function cancel() {
     
     <div style="clear:left">
        <label for="userName" class="formrow" />
-           <fmt:message key="inviteMember.permissions" /></label>
+           <s:text name="inviteMember.permissions" /></label>
        <input type="radio" name="permissionsMask" value="3"  />
-       <fmt:message key="inviteMember.administrator" />
+       <s:text name="inviteMember.administrator" />
        <input type="radio" name="permissionsMask" value="1" checked />
-       <fmt:message key="inviteMember.author" />
+       <s:text name="inviteMember.author" />
        <input type="radio" name="permissionsMask" value="0" />
-       <fmt:message key="inviteMember.limited" />
+       <s:text name="inviteMember.limited" />
     </div>  
          
     <br />      
-    <input type="submit" value='<fmt:message key="inviteMember.button.save" />'></input>
-    <input type="button" value='<fmt:message key="application.cancel" />' onclick="cancel()"></input>
+    <s:submit key="inviteMember.button.save" />
+    <s:submit key="application.cancel" action="members" />
 
-</html:form>
+</s:form>
 
-
-
-
+<%-- this forces focus to the userName field --%>
+<script type="text/javascript">
+<!--
+    document.getElementById('userName').focus();
+// -->
+</script>

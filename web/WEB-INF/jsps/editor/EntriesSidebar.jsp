@@ -99,7 +99,7 @@
                             <br />
                         </label> 
                         <div>
-                            <s:radio name="bean.status" list="statusOptions" listKey="key" listValue="value" />
+                            <s:radio theme="roller" name="bean.status" list="statusOptions" listKey="key" listValue="value" />
                         </div>
                     </div>
                     
@@ -113,7 +113,7 @@
                             <br />
                         </label> 
                         <div>
-                            <s:radio name="bean.sortBy" list="sortByOptions" listKey="key" listValue="value" />
+                            <s:radio theme="roller" name="bean.sortBy" list="sortByOptions" listKey="key" listValue="value" />
                         </div>
                     </div>
                     
