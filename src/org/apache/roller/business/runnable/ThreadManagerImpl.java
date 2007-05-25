@@ -18,68 +18,48 @@
 
 package org.apache.roller.business.runnable;
 
-import EDU.oswego.cs.dl.util.concurrent.BoundedBuffer;
-import EDU.oswego.cs.dl.util.concurrent.DirectExecutor;
-import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
-import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
 /**
  * Manage Roller's thread use.
- *
- * TODO: when Roller starts requiring Java 5 then switch impl to make use of
- * the java.util.concurrent tools for this class.  in specific we should be
- * able to use the ScheduledExecutorService class for task scheduling.
  */
 public class ThreadManagerImpl implements ThreadManager {
     
-    private static Log log = LogFactory.getLog(ThreadManagerImpl.class);
+    private static final Log log = LogFactory.getLog(ThreadManagerImpl.class);
     
-    private PooledExecutor backgroundExecutor = null;
-    private DirectExecutor nodelayExecutor = null;
-    private Timer scheduler = null;
+    // background task scheduler
+    private final ScheduledExecutorService serviceScheduler;
     
     
     public ThreadManagerImpl() {
         
         log.info("Intializing Thread Manager");
         
-        backgroundExecutor = new PooledExecutor(new BoundedBuffer(10), 25);
-        backgroundExecutor.setMinimumPoolSize(4);
-        backgroundExecutor.setKeepAliveTime(1000 * 60 * 5);
-        backgroundExecutor.waitWhenBlocked();
-        backgroundExecutor.createThreads(9);
-        
-        backgroundExecutor.setThreadFactory(new ThreadFactory() {
-            public Thread newThread(Runnable command) {
-                Thread t = new Thread(command);
-                t.setDaemon(false);
-                t.setName("Background Execution Threads");
-                t.setPriority(Thread.NORM_PRIORITY);
-                
-                return t;
-            }
-        });
-        
-        nodelayExecutor = new DirectExecutor();
-        scheduler = new Timer(true);
+        serviceScheduler = Executors.newScheduledThreadPool(10);
     }
     
     
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
-        backgroundExecutor.execute(runnable);
+        ScheduledFuture scheduledTask = serviceScheduler.schedule(runnable, 0, TimeUnit.SECONDS);
     }
     
     
     public void executeInForeground(Runnable runnable)
             throws InterruptedException {
-        nodelayExecutor.execute(runnable);
+        ScheduledFuture scheduledTask = serviceScheduler.schedule(runnable, 0, TimeUnit.SECONDS);
+        
+        // if this task is really meant to be executed within this calling thread
+        // then we can add a little code here to loop until it realizes the task is done
+        // while(!scheduledTask.isDone())
     }
     
     
@@ -90,8 +70,13 @@ public class ThreadManagerImpl implements ThreadManager {
                     ") shorter than minimum allowed (" + MIN_RATE_INTERVAL_MINS + ")");
         }
         
-        //scheduler.scheduleAtFixedRate(task, startTime, intervalMins * 60 * 1000);
-        scheduler.scheduleAtFixedRate(new TaskExecutor(task), startTime, intervalMins * 60 * 1000);
+        ScheduledFuture scheduledTask = serviceScheduler.scheduleAtFixedRate(
+                task, 
+                startTime.getTime() - System.currentTimeMillis(), 
+                intervalMins * 60 * 1000, 
+                TimeUnit.MILLISECONDS);
+        
+        log.debug("Scheduled "+task.getClass().getName()+" at "+new Date(System.currentTimeMillis()+scheduledTask.getDelay(TimeUnit.MILLISECONDS)));
     }
     
     
@@ -100,12 +85,7 @@ public class ThreadManagerImpl implements ThreadManager {
         log.debug("starting shutdown sequence");
         
         // trigger an immediate shutdown of any backgrounded tasks
-        backgroundExecutor.shutdownNow();
-        
-        // TODO: it appears that this doesn't affect tasks which may be running
-        //   when this is called and that may not be what we want.  It would be
-        //   nice if shutdown() meant shutdown immediately.
-        scheduler.cancel();
+        serviceScheduler.shutdownNow();
     }
     
     
@@ -119,25 +99,6 @@ public class ThreadManagerImpl implements ThreadManager {
     
     public boolean unregisterLease(RollerTask task) {
         return true;
-    }
-    
-    
-    private class TaskExecutor extends TimerTask {
-        
-        private RollerTask task = null;
-        
-        public TaskExecutor(RollerTask task) {
-            this.task = task;
-        }
-        
-        public void run() {
-            try {
-                log.debug("Executing task"+task.getName());
-                executeInBackground(task);
-            } catch (InterruptedException ex) {
-                log.info("Interrupted - "+task.getName());
-            }
-        }
     }
     
 }
