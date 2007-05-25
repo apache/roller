@@ -85,6 +85,7 @@ public class FolderParentDeletesTest extends TestCase {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
         FolderData root = bmgr.getRootFolder(testWeblog);
         
         // add a small tree /parentDelete-fold1/parentDelete-fold2

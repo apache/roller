@@ -20,12 +20,11 @@ package org.apache.roller.ui.rendering.pagers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
-import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -33,6 +32,9 @@ import org.apache.roller.util.URLUtilities;
  * Pager for navigating through search results feeds.
  */
 public class SearchResultsFeedPager extends AbstractPager {
+    
+    // message utils for doing i18n messages
+    I18nMessages messageUtils = null;
     
     private List entries = null;
     
@@ -43,8 +45,6 @@ public class SearchResultsFeedPager extends AbstractPager {
     
     private String url = null;
     
-    private static ResourceBundle bundle =
-            ResourceBundle.getBundle("ApplicationResources");
             
     public SearchResultsFeedPager(String baseUrl, int pageNum,
             WeblogFeedRequest feedRequest, List entries, boolean more) {
@@ -63,6 +63,20 @@ public class SearchResultsFeedPager extends AbstractPager {
         
         // does this pager have more results?
         this.moreResults = more;
+        
+        // get a message utils instance to handle i18n of messages
+        Locale viewLocale = null;
+        if(feedRequest.getLocale() != null) {
+            String[] langCountry = feedRequest.getLocale().split("_");
+            if(langCountry.length == 1) {
+                viewLocale = new Locale(langCountry[0]);
+            } else if(langCountry.length == 2) {
+                viewLocale = new Locale(langCountry[0], langCountry[1]);
+            }
+        } else {
+            viewLocale = weblog.getLocaleInstance();
+        }
+        this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
     public List getItems() {
@@ -78,7 +92,7 @@ public class SearchResultsFeedPager extends AbstractPager {
     }
 
     public String getHomeName() {
-        return bundle.getString("searchPager.home");
+        return messageUtils.getString("searchPager.home");
     }  
     
     protected String createURL(String url, Map params) {

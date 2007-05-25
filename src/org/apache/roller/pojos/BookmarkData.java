@@ -23,6 +23,7 @@ import org.apache.roller.business.BookmarkManager;
 import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -31,10 +32,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * the your BookmarkManager implementation.</p>
  *
  * @ejb:bean name="BookmarkData"
- * 
- * @struts.form include-all="true"
- *    extends="org.apache.struts.validator.ValidatorForm"
- * 
  * @hibernate.class lazy="true" table="bookmark"
  * @hibernate.cache usage="read-write"
  */
@@ -45,7 +42,7 @@ public class BookmarkData
     
     private FolderData folder;
 
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name;
     private String description;
     private String url;
@@ -97,7 +94,7 @@ public class BookmarkData
      * @ejb:persistent-field 
      * 
      * @hibernate.id column="id"
-     *     generator-class="uuid.hex" unsaved-value="null"
+     *     generator-class="assigned"  
      */
     public String getId()
     {

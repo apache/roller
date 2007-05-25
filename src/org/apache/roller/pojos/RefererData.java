@@ -23,6 +23,7 @@ package org.apache.roller.pojos;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Referer bean.
@@ -37,7 +38,7 @@ public class RefererData
     implements java.io.Serializable
 {
     static final long serialVersionUID = -1817992900602131316L;
-    private java.lang.String id = null;
+    private java.lang.String id = UUIDGenerator.generateUUID();
     private org.apache.roller.pojos.WebsiteData website = null;
     private org.apache.roller.pojos.WeblogEntryData weblogEntry = null;
     private java.lang.String dateString = null;
@@ -65,7 +66,7 @@ public class RefererData
                        java.lang.Boolean duplicate, java.lang.Integer dayHits, 
                        java.lang.Integer totalHits)
     {
-        this.id = id;
+        //this.id = id;
         this.website = website;
         this.weblogEntry = weblogEntry;
         this.dateString = dateString;
@@ -92,7 +93,7 @@ public class RefererData
      *
      * @roller.wrapPojoMethod type="simple"
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public java.lang.String getId()
     {

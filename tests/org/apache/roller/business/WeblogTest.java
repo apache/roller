@@ -94,58 +94,65 @@ public class WeblogTest extends TestCase {
         
         log.info("BEGIN");
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
-        WebsiteData weblog = null;
+        try {
         
-        WebsiteData testWeblog = new WebsiteData();
-        testWeblog.setName("Test Weblog");
-        testWeblog.setDescription("Test Weblog");
-        testWeblog.setHandle("testweblog");
-        testWeblog.setEmailAddress("testweblog@dev.null");
-        testWeblog.setEditorPage("editor-text.jsp");
-        testWeblog.setBlacklist("");
-        testWeblog.setEmailFromAddress("");
-        testWeblog.setEditorTheme("basic");
-        testWeblog.setLocale("en_US");
-        testWeblog.setTimeZone("America/Los_Angeles");
-        testWeblog.setDateCreated(new java.util.Date());
-        testWeblog.setCreator(testUser);
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            WebsiteData weblog = null;
+
+            WebsiteData testWeblog = new WebsiteData();
+            testUser = TestUtils.getManagedUser(testUser);
+            testWeblog.setName("Test Weblog");
+            testWeblog.setDescription("Test Weblog");
+            testWeblog.setHandle("testweblog");
+            testWeblog.setEmailAddress("testweblog@dev.null");
+            testWeblog.setEditorPage("editor-text.jsp");
+            testWeblog.setBlacklist("");
+            testWeblog.setEmailFromAddress("");
+            testWeblog.setEditorTheme("basic");
+            testWeblog.setLocale("en_US");
+            testWeblog.setTimeZone("America/Los_Angeles");
+            testWeblog.setDateCreated(new java.util.Date());
+            testWeblog.setCreator(testUser);
+
+            // make sure test weblog does not exist
+            weblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
+            assertNull(weblog);
+
+            // add test weblog
+            mgr.addWebsite(testWeblog);
+            String id = testWeblog.getId();
+            TestUtils.endSession(true);
+
+            // make sure test weblog exists
+            weblog = null;
+            weblog = mgr.getWebsite(id);
+            assertNotNull(weblog);
+            assertEquals(testWeblog, weblog);
+
+            // modify weblog and save
+            weblog.setName("testtesttest");
+            mgr.saveWebsite(weblog);
+            TestUtils.endSession(true);
+
+            // make sure changes were saved
+            weblog = null;
+            weblog = mgr.getWebsite(id);
+            assertNotNull(weblog);
+            assertEquals("testtesttest", weblog.getName());
+
+            // remove test weblog
+            mgr.removeWebsite(weblog);
+            TestUtils.endSession(true);
+
+            // make sure weblog no longer exists
+            weblog = null;
+            weblog = mgr.getWebsite(id);
+            assertNull(weblog);
         
-        // make sure test weblog does not exist
-        weblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
-        assertNull(weblog);
-        
-        // add test weblog
-        mgr.addWebsite(testWeblog);
-        String id = testWeblog.getId();
-        TestUtils.endSession(true);
-        
-        // make sure test weblog exists
-        weblog = null;
-        weblog = mgr.getWebsite(id);
-        assertNotNull(weblog);
-        assertEquals(testWeblog, weblog);
-        
-        // modify weblog and save
-        weblog.setName("testtesttest");
-        mgr.saveWebsite(weblog);
-        TestUtils.endSession(true);
-        
-        // make sure changes were saved
-        weblog = null;
-        weblog = mgr.getWebsite(id);
-        assertNotNull(weblog);
-        assertEquals("testtesttest", weblog.getName());
-        
-        // remove test weblog
-        mgr.removeWebsite(weblog);
-        TestUtils.endSession(true);
-        
-        // make sure weblog no longer exists
-        weblog = null;
-        weblog = mgr.getWebsite(id);
-        assertNull(weblog);
-        
+        } catch(Throwable t) {
+            log.error("Exception running test", t);
+            throw (Exception) t;
+        }
         log.info("END");
     }
     
@@ -156,14 +163,15 @@ public class WeblogTest extends TestCase {
     public void testWeblogLookups() throws Exception {
         
         log.info("BEGIN");
-        
+        WebsiteData testWeblog1 = null;
+        WebsiteData testWeblog2 = null;
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             WebsiteData weblog = null;
             
             // add test weblogs
-            WebsiteData testWeblog1 = TestUtils.setupWeblog("testWeblog1", TestUtils.getManagedUser(testUser));
-            WebsiteData testWeblog2 = TestUtils.setupWeblog("testWeblog2", TestUtils.getManagedUser(testUser));
+            testWeblog1 = TestUtils.setupWeblog("testWeblog1", testUser);
+            testWeblog2 = TestUtils.setupWeblog("testWeblog2", testUser);
             TestUtils.endSession(true);
             
             // lookup by id
@@ -205,7 +213,7 @@ public class WeblogTest extends TestCase {
             List weblogs11 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, 1);
             assertEquals(1, weblogs11.size());
             List weblogs12 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 1, 1);
-            assertEquals(1, weblogs11.size());
+            assertEquals(1, weblogs12.size());
             
             // make sure disabled weblogs are not returned
             weblog.setEnabled(Boolean.FALSE);
@@ -223,13 +231,13 @@ public class WeblogTest extends TestCase {
             List weblogs3 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             assertEquals(0, weblogs3.size());
             
-            // remove test weblogs
-            TestUtils.teardownWeblog(testWeblog1.getId());
-            TestUtils.teardownWeblog(testWeblog2.getId());
-            TestUtils.endSession(true);
         } catch(Throwable t) {
             log.error("Exception running test", t);
             throw (Exception) t;
+        } finally {
+            TestUtils.teardownWeblog(testWeblog1.getId());
+            TestUtils.teardownWeblog(testWeblog2.getId());
+            TestUtils.endSession(true);
         }
         
         log.info("END");

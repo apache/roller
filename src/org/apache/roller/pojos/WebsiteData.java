@@ -44,6 +44,8 @@ import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.util.I18nUtils;
 
 /**
  * Website has many-to-many association with users. Website has one-to-many and
@@ -63,7 +65,7 @@ public class WebsiteData implements Serializable {
     private static Log log = LogFactory.getLog(WebsiteData.class);
     
     // Simple properties
-    private String  id               = null;
+    private String  id               = UUIDGenerator.generateUUID();
     private String  handle           = null;
     private String  name             = null;
     private String  description      = null;
@@ -295,7 +297,7 @@ public class WebsiteData implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     *  generator-class="assigned"  
      */
     public String getId() {
         return this.id;
@@ -695,32 +697,17 @@ public class WebsiteData implements Serializable {
         this.lastModified = other.getLastModified();
     }
     
+    
     /**
      * Parse locale value and instantiate a Locale object,
      * otherwise return default Locale.
      *
-     * @roller.wrapPojoMethod type="simple"
      * @return Locale
      */
     public Locale getLocaleInstance() {
-        if (locale != null) {
-            String[] localeStr = StringUtils.split(locale,"_");
-            if (localeStr.length == 1) {
-                if (localeStr[0] == null) localeStr[0] = "";
-                return new Locale(localeStr[0]);
-            } else if (localeStr.length == 2) {
-                if (localeStr[0] == null) localeStr[0] = "";
-                if (localeStr[1] == null) localeStr[1] = "";
-                return new Locale(localeStr[0], localeStr[1]);
-            } else if (localeStr.length == 3) {
-                if (localeStr[0] == null) localeStr[0] = "";
-                if (localeStr[1] == null) localeStr[1] = "";
-                if (localeStr[2] == null) localeStr[2] = "";
-                return new Locale(localeStr[0], localeStr[1], localeStr[2]);
-            }
-        }
-        return Locale.getDefault();
+        return I18nUtils.toLocale(getLocale());
     }
+    
     
     /**
      * Return TimeZone instance for value of timeZone,

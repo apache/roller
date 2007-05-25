@@ -29,6 +29,7 @@ import org.hibernate.criterion.Order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -57,8 +58,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     public void savePlanet(PlanetData planet) throws RollerException {
         strategy.store(planet);
     }
-    
-    
+        
     // delete a Planet
     public void deletePlanet(PlanetData planet) throws RollerException {
         strategy.remove(planet);
@@ -255,8 +255,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         }
         return ret;
     }
-    
-    
+        
     // save an Entry
     public void saveEntry(PlanetEntryData entry) throws RollerException {
         strategy.store(entry);
@@ -373,5 +372,6 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
         
         return ret;
     }
+
 
 }

@@ -19,6 +19,7 @@ package org.apache.roller.pojos;
 import java.util.Date;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Records change that a user has made to an object.
@@ -30,7 +31,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class ObjectAuditData
 {
-    private String id;          // primary key
+    private String id = UUIDGenerator.generateUUID();          // primary key
     private String userId;      // user that made change
     private String objectId;    // id of associated object, if any
     private String objectClass; // name of associated object class (e.g. WeblogEntryData)
@@ -40,7 +41,7 @@ public class ObjectAuditData
     /**
      * @ejb:persistent-field
      * @hibernate.id column="id"
-     *     generator-class="uuid.hex" unsaved-value="null"
+     *     generator-class="assigned"  
      */
     public String getId()
     {

@@ -21,15 +21,11 @@ package org.apache.roller.ui.core;
 import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.sql.DataSource;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
@@ -40,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.DatabaseProvider;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.config.PingConfig;
@@ -186,19 +183,10 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Trigger any database upgrade work that needs to be done.
      */
-    private void upgradeDatabaseIfNeeded() throws Exception {
-        
-        try {
-            InitialContext ic = new InitialContext();
-            DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
-            Connection con = ds.getConnection();
-            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
-            con.close();
-        } catch (NamingException e) {
-            log.warn("Unable to access DataSource", e);
-        } catch (SQLException e) {
-            log.warn(e);
-        }
+    private void upgradeDatabaseIfNeeded() throws Exception {        
+        Connection con = DatabaseProvider.getDatabaseProvider().getConnection();
+        UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
+        con.close();
     }
     
     

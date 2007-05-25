@@ -21,10 +21,6 @@ package org.apache.roller.ui.core.tags.calendar;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
-import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.util.MessageResources;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.ui.core.tags.HybridTag;
 import org.apache.roller.util.DateUtil;
 
@@ -33,13 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
-import org.apache.roller.ui.core.RollerContext;
 
 
 /**
@@ -156,7 +151,7 @@ public class CalendarTag extends HybridTag {
                     (HttpServletRequest)pageContext.getRequest();
             
             // get Resource Bundle
-            MessageResources resources = getResources(request);
+            ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", mLocale);
             
             // go back to first day in month
             cal = model.getCalendar();
@@ -178,7 +173,7 @@ public class CalendarTag extends HybridTag {
             // -------------------------
             pw.print("<table cellspacing=\"0\" border=\"0\" ");
             pw.print(" summary=\""
-                    +resources.getMessage(mLocale, "calendar.summary")
+                    +bundle.getString("calendar.summary")
                     +"\" class=\"hCalendarTable"
                     +mClassSuffix+"\">");
             pw.print("<tr>");
@@ -186,13 +181,13 @@ public class CalendarTag extends HybridTag {
                     "class=\"hCalendarMonthYearRow"+mClassSuffix+"\">");
             if (model.getPrevMonth() != null) {
                 pw.print("<a href=\"" + model.computePrevMonthUrl()
-                        + "\" title=\"" + resources.getMessage(mLocale, "calendar.prev")
+                        + "\" title=\"" + bundle.getString("calendar.prev")
                         + "\" class=\"hCalendarNavBar\">&laquo;</a> ");
             }
             pw.print( formatTitle.format(day) );
             if (model.getNextMonth() != null) {
                 pw.print(" <a href=\"" + model.computeNextMonthUrl()
-                + "\" title=\"" + resources.getMessage(mLocale, "calendar.next")
+                + "\" title=\"" + bundle.getString("calendar.next")
                 + "\" class=\"hCalendarNavBar\">&raquo;</a>");
             }
             pw.print("</td></tr>");
@@ -246,7 +241,7 @@ public class CalendarTag extends HybridTag {
             
             pw.print("<a href=\""+model.computeTodayMonthUrl()
             +"\" class=\"hCalendarNavBar\">"
-                    +resources.getMessage(mLocale, "calendar.today")
+                    +bundle.getString("calendar.today")
                     +"</a>");
             
             pw.print("</td>");
@@ -317,12 +312,6 @@ public class CalendarTag extends HybridTag {
             pw.print(cal.get(Calendar.DAY_OF_MONTH));
             pw.print("</div></td>");
         }
-    }
-    private MessageResources getResources(HttpServletRequest request) {
-        ServletContext app = RollerContext.getServletContext();
-        ModuleConfig moduleConfig = RequestUtils.getModuleConfig(request, app);
-        return (MessageResources)app.getAttribute(Globals.MESSAGES_KEY +
-                moduleConfig.getPrefix());
     }
     
     /**

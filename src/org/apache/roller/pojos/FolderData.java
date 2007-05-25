@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -38,11 +39,8 @@ import org.apache.roller.business.RollerFactory;
  * set of Folders (there is no one root folder) and each Folder may contain
  * Folders or Bookmarks. Don't construct one of these yourself, instead use
  * the create method in your BookmarkManager implementation.</p>
- *
- * @struts.form include-all="true"
- *    extends="org.apache.struts.validator.ValidatorForm"
+ * 
  * @ejb:bean name="FolderData"
- *
  * @hibernate.class lazy="true" table="folder"
  * @hibernate.cache usage="read-write"
  */
@@ -54,7 +52,7 @@ public class FolderData implements Serializable, Comparable {
     
     
     // attributes
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String description = null;
     private String path = null;
@@ -154,7 +152,7 @@ public class FolderData implements Serializable, Comparable {
      * @roller.wrapPojoMethod type="simple"
      *
      * @hibernate.id column="id"
-     *     generator-class="uuid.hex" unsaved-value="null"
+     *     generator-class="assigned"  
      */
     public String getId() {
         return this.id;

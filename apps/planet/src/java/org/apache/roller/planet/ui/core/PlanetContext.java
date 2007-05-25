@@ -133,9 +133,7 @@ public class PlanetContext extends ContextLoaderListener
     private void upgradeDatabaseIfNeeded() throws RollerException {
         
 //        try {
-//            InitialContext ic = new InitialContext();
-//            DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
-//            Connection con = ds.getConnection();
+//            Connection con = // get connection somehow
 //            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
 //            con.close();
 //        } catch (NamingException e) {

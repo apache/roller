@@ -30,7 +30,9 @@ import org.apache.commons.lang.StringUtils;
 public abstract class PlanetFactory {
     
     private static final String DEFAULT_IMPL =
-        "org.apache.roller.planet.business.hibernate.HibernatePlanetImpl";
+        "org.apache.roller.planet.business.jpa.JPAPlanetImpl";
+        //"org.apache.roller.planet.business.hibernate.HibernatePlanetImpl";
+        //"org.apache.roller.planet.business.datamapper.jpa.JPAPlanetImpl";
     
     private static Planet planetInstance = null;
     

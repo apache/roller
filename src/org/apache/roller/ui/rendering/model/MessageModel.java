@@ -21,7 +21,8 @@ package org.apache.roller.ui.rendering.model;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.util.MessageUtilities;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.util.I18nMessages;
 
 
 /**
@@ -29,6 +30,8 @@ import org.apache.roller.util.MessageUtilities;
  * Uses model name 'text' because that's what the Velocity Tools did.
  */
 public class MessageModel implements Model {  
+    
+    I18nMessages messages = null;
     
     
     /** Template context name to be used for model */
@@ -39,19 +42,27 @@ public class MessageModel implements Model {
     
     /** Init page model based on request */
     public void init(Map initData) throws RollerException {
-        // no-op
+        
+        // we expect the init data to contain a weblogRequest object
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        if(weblogRequest == null) {
+            throw new RollerException("expected weblogRequest from init data");
+        }
+        
+        // get messages util based on desired locale
+        this.messages = I18nMessages.getMessages(weblogRequest.getLocaleInstance());
     }
     
     
     /** Return message string */
     public String get(String key) {
-        return MessageUtilities.getString(key);
+        return messages.getString(key);
     }
     
     
     /** Return parameterized message string */
     public String get(String key, List args) {
-        return MessageUtilities.getString(key, args);
+        return messages.getString(key, args);
     }
 
 }

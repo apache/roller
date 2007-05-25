@@ -21,6 +21,7 @@ package org.apache.roller.pojos;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Represents locking information about a specific RollerTask.
@@ -31,7 +32,7 @@ import java.util.Date;
  */
 public class TaskLockData implements Serializable {
     
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private boolean locked = false;
     private Date timeAquired = null;
@@ -121,7 +122,7 @@ public class TaskLockData implements Serializable {
     
     /**
      * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;

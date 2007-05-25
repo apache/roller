@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.MessageUtilities;
+import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -44,6 +45,9 @@ import org.apache.roller.util.URLUtilities;
 public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     private static Log log = LogFactory.getLog(AbstractWeblogEntriesPager.class);
+    
+    // message utils for doing i18n messages
+    I18nMessages messageUtils = null;
     
     WebsiteData weblog = null;
     String locale = null;
@@ -88,6 +92,20 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             this.page = page;
         }
         this.offset = length * page;
+        
+        // get a message utils instance to handle i18n of messages
+        Locale viewLocale = null;
+        if(locale != null) {
+            String[] langCountry = locale.split("_");
+            if(langCountry.length == 1) {
+                viewLocale = new Locale(langCountry[0]);
+            } else if(langCountry.length == 2) {
+                viewLocale = new Locale(langCountry[0], langCountry[1]);
+            }
+        } else {
+            viewLocale = weblog.getLocaleInstance();
+        }
+        this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
     
@@ -102,7 +120,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     
     public String getHomeName() {
-        return MessageUtilities.getString("weblogEntriesPager.latest.home");
+        return messageUtils.getString("weblogEntriesPager.latest.home");
     }
     
     
@@ -116,7 +134,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     public String getNextName() {
         if (hasMoreEntries()) {
-            return MessageUtilities.getString("weblogEntriesPager.latest.next");
+            return messageUtils.getString("weblogEntriesPager.latest.next");
         }
         return null;
     }
@@ -132,7 +150,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     public String getPrevName() {
         if (page > 0) {
-            return MessageUtilities.getString("weblogEntriesPager.latest.prev");
+            return messageUtils.getString("weblogEntriesPager.latest.prev");
         }
         return null;
     }
