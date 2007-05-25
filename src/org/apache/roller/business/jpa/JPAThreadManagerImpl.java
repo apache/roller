@@ -22,7 +22,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -30,6 +29,7 @@ import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.TaskLockData;
+
 
 /**
  * JPA implementation of the TaskLockManager interface.
@@ -39,10 +39,9 @@ import org.apache.roller.pojos.TaskLockData;
  */
 public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
-    private static Log log = LogFactory.getLog(
-        JPAThreadManagerImpl.class);
+    private static final Log log = LogFactory.getLog(JPAThreadManagerImpl.class);
 
-    protected JPAPersistenceStrategy strategy;
+    private final JPAPersistenceStrategy strategy;
 
 
     public JPAThreadManagerImpl(JPAPersistenceStrategy strat) {
@@ -89,8 +88,18 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             long leaseExpireTime = taskLock.getTimeAquired().getTime()+
                     (60000*taskLock.getTimeLeased())-1000;
 
-            if (acquireLeaseInDatabase(task, taskLock, leaseExpireTime))
+            Query q = strategy.getNamedUpdate(
+                    "TaskLockData.updateClient&Timeacquired&TimeleasedByName&Timeacquired");
+            q.setParameter(1, task.getClientId());
+            q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
+            q.setParameter(3, task.getName());
+            q.setParameter(4, taskLock.getTimeAquired());
+            q.setParameter(5, new Timestamp(leaseExpireTime));
+            int result = q.executeUpdate();
+            
+            if(result == 1) {
                 return true;
+            }
 
         } catch (Exception e) {
             log.warn("Error obtaining lease, assuming race condition.", e);
@@ -99,20 +108,6 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
         return false;
     }
-
-    protected boolean acquireLeaseInDatabase(RollerTask task, TaskLockData taskLock,
-            long leaseExpireTime) throws RollerException {
-        Query q = strategy.getNamedUpdate(
-            "TaskLockData.updateClient&Timeacquired&TimeleasedByName&Timeacquired");
-        q.setParameter(1, task.getClientId());
-        q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
-        q.setParameter(3, task.getName());
-        q.setParameter(4, taskLock.getTimeAquired());
-        q.setParameter(5, new Timestamp(leaseExpireTime));
-        int rowsUpdated = q.executeUpdate();
-        return rowsUpdated == 1;
-    }
-
 
 
     /**
@@ -136,8 +131,16 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
         // try to release lease, just set lease time to 0
         try {
-            if (releaseLeaseInDatabase(task))
+            Query q = strategy.getNamedUpdate(
+                    "TaskLockData.updateTimeLeasedByName&Client");
+            q.setParameter(1, Integer.valueOf(task.getInterval()));
+            q.setParameter(2, task.getName());
+            q.setParameter(3, task.getClientId());
+            int result = q.executeUpdate();
+            
+            if(result == 1) {
                 return true;
+            }
 
         } catch (Exception e) {
             log.warn("Error releasing lease.", e);
@@ -147,17 +150,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         return false;
 
     }
-
-    protected boolean releaseLeaseInDatabase(RollerTask task)
-            throws RollerException {
-        Query q = strategy.getNamedUpdate(
-            "TaskLockData.updateTimeLeasedByName&Client");
-        q.setParameter(1, Integer.valueOf(task.getInterval()));
-        q.setParameter(2, task.getName());
-        q.setParameter(3, task.getClientId());
-        int rowsUpdated = q.executeUpdate(); 
-        return rowsUpdated == 1;
-    }
+    
 
     private TaskLockData getTaskLockByName(String name) throws RollerException {
         // do lookup
@@ -170,6 +163,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         }
     }
 
+    
     private void saveTaskLock(TaskLockData data) throws RollerException {
         this.strategy.store(data);
     }
