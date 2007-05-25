@@ -63,8 +63,8 @@
         <include name="hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
 
         <!-- needed for JPA -->
-        <include name="toplink-essentials-9.1/toplink-essentials.jar"/>                
-        
+        <include name="openjpa-0.9.7/*.jar" />
+
     </fileset>
     
     <path id="core.path">
