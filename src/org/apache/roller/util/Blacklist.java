@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.commons.lang.StringUtils;
 
@@ -310,7 +311,7 @@ public class Blacklist {
     public boolean isBlacklisted(
          String str, List moreStringRules, List moreRegexRules) {
         if (str == null || StringUtils.isEmpty(str)) return false;
-        
+
         // First iterate over blacklist, doing indexOf.
         // Then iterate over blacklistRegex and test.
         // As soon as there is a hit in either case return true
@@ -369,24 +370,62 @@ public class Blacklist {
             }
         }
         return hit;
-    }    
-    
-    /** Test the String against the String rules, using simple indexOf. */
-    private static boolean testStringRules(String str, List stringRules) {
-        String test;
-        Iterator iter = stringRules.iterator();
-        boolean hit = false;
-        while (iter.hasNext()) {
-            test = (String)iter.next();
-            if (str.indexOf(test) > -1) {
-                // want to see what it is matching on, but only in debug mode
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug("matched:" + test + ":");
+    }
+
+    /**
+     * Tests the source text against the String rules. Each String rule is
+     * first treated as a word-boundary, case insensitive regular expression.
+     * If a PatternSyntaxException is encountered, a simple contains test
+     * is performed.
+     *
+     * @param source The text in which to apply the matching rules.
+     * @param rules A list a simple matching rules.
+     *
+     * @return true if a match was found, otherwise false
+     */
+    private static boolean testStringRules(String source, List rules) {
+        boolean matches = false;
+        
+        for (Object ruleObj : rules) {
+            String rule;
+            rule = (String) ruleObj;
+
+            try {
+                StringBuilder patternBuilder;
+                patternBuilder = new StringBuilder();
+                patternBuilder.append("\\b(");
+                patternBuilder.append(rule);
+                patternBuilder.append(")\\b");
+
+                Pattern pattern;
+                pattern = Pattern.compile(patternBuilder.toString(),
+                        Pattern.CASE_INSENSITIVE);
+
+                Matcher matcher;
+                matcher = pattern.matcher(source);
+
+                matches = matcher.find();
+                if (matches) {
+                    break;
                 }
-                return true;
+            }
+            catch (PatternSyntaxException e) {
+                matches = source.contains(rule);
+                if (matches) {
+                    break;
+                }
+            }
+            finally {
+                if (matches) {
+                    // Log the matched rule in debug mode
+                    if (mLogger.isDebugEnabled()) {
+                        mLogger.debug("matched:" + rule + ":");
+                    }
+                }
             }
         }
-        return hit;
+        
+        return matches;
     }   
     
     /** Utility method to populate lists based a blacklist in string form */
