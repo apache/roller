@@ -20,15 +20,14 @@ package org.apache.roller.ui.struts2.editor;
 
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.themes.SharedTheme;
 import org.apache.roller.business.themes.ThemeManager;
-import org.apache.roller.business.themes.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.Theme;
@@ -45,16 +44,20 @@ public class ThemeEdit extends UIAction {
     
     private static Log log = LogFactory.getLog(Templates.class);
     
-    private static TmpCustomTheme customThemeOption = new TmpCustomTheme();
-    
     // list of available themes
     private List themes = Collections.EMPTY_LIST;
     
     // type of theme desired, either 'shared' or 'custom'
     private String themeType = null;
     
-    // the chosen theme on a save() or customize()
+    // the chosen shared theme id
     private String themeId = null;
+    
+    // import the selected theme to the action weblog
+    private boolean importTheme = false;
+    
+    // the chosen import theme id
+    private String importThemeId = null;
     
     
     public ThemeEdit() {
@@ -69,62 +72,79 @@ public class ThemeEdit extends UIAction {
     }
     
     
-    // prepare list of themes based on action weblog
     public void myPrepare() {
-        
         ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-        List themes = themeMgr.getEnabledThemesList();
-        
-        // should we also include the CUSTOM theme?
-        boolean allowCustomTheme = false;
-        if(getActionWeblog().getDefaultPageId() != null
-                && !getActionWeblog().getDefaultPageId().equals("dummy")
-                && !getActionWeblog().getDefaultPageId().trim().equals("")) {
-            allowCustomTheme = true;
-        }
-        
-        // if we allow custom themes then add it to the end of the list
-        if(allowCustomTheme &&
-                RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
-            
-            themes.add(customThemeOption);
-        }
-        
-        setThemes(themes);
+        setThemes(themeMgr.getEnabledThemesList());
     }
     
     
     public String execute() {
         // set theme to current value
-        setThemeId(getActionWeblog().getTheme().getId());
+        if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+            setThemeId(null);
+        } else {
+            setThemeId(getActionWeblog().getTheme().getId());
+        }
         
-        return SUCCESS;
+        if(!RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+            return "input-sharedonly";
+        } else {
+            return INPUT;
+        }
     }
-
     
+
     /**
-     * Update chosen theme.
+     * Save new theme configuration.
      */
     public String save() {
         
-        // validation
-        myValidate();
+        WebsiteData weblog = getActionWeblog();
         
-        // update theme for weblog and save
-        if(!hasActionErrors()) {
-            try {
-                WebsiteData weblog = getActionWeblog();
-                
-                if(WeblogTheme.CUSTOM.equals(getThemeType())) {
-                    weblog.setEditorTheme(WeblogTheme.CUSTOM);
-                    
-                    log.debug("Saving custom theme for weblog "+weblog.getHandle());
-                } else if("shared".equals(getThemeType())) {
-                    weblog.setEditorTheme(getThemeId());
-                    
-                    log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
+        if(WeblogTheme.CUSTOM.equals(getThemeType())) {
+            
+            // only continue if custom themes are allowed
+            if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+                // do theme import if necessary
+                if(isImportTheme() && !StringUtils.isEmpty(getImportThemeId())) try {
+                    ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                    SharedTheme importTheme = themeMgr.getTheme(getImportThemeId());
+                    themeMgr.importTheme(getActionWeblog(), importTheme);
+                } catch(RollerException re) {
+                    log.error("Error customizing theme for weblog - "+getActionWeblog().getHandle(), re);
+                    // TODO: i18n
+                    addError("Error importing theme");
                 }
                 
+                if(!hasActionErrors()) {
+                    weblog.setEditorTheme(WeblogTheme.CUSTOM);
+                    log.debug("Saving custom theme for weblog "+weblog.getHandle());
+                    
+                    // reset import theme checkbox
+                    setImportTheme(false);
+                }
+            } else {
+                // TODO: i18n
+                addError("Sorry, custom themes are not allowed");
+            }
+            
+        } else if("shared".equals(getThemeType())) {
+            // validation
+            myValidate();
+            
+            if(!hasActionErrors()) {
+                weblog.setEditorTheme(getThemeId());
+                log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
+            }
+        } else {
+            // invalid theme type
+            // TODO: i18n
+            addError("no valid theme type submitted");
+        }
+        
+        if(!hasActionErrors()) {
+            try {
+                // save updated weblog and flush
                 UserManager userMgr = RollerFactory.getRoller().getUserManager();
                 userMgr.saveWebsite(weblog);
                 RollerFactory.getRoller().flush();
@@ -132,56 +152,16 @@ public class ThemeEdit extends UIAction {
                 // make sure to flush the page cache so ppl can see the change
                 CacheManager.invalidate(weblog);
                 
+                // TODO: i18n
+                addMessage("Successfully updated theme");
+                
             } catch(RollerException re) {
                 log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
                 addError("Error setting theme");
             }
         }
         
-        return SUCCESS;
-    }
-    
-    
-    /**
-     * Customize a theme by copying it's templates.
-     */
-    public String customize() {
-        
-        ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-        
-        // only if custom themes are allowed
-        if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
-            try {
-                SharedTheme usersTheme = themeMgr.getTheme(getActionWeblog().getEditorTheme());
-                themeMgr.importTheme(getActionWeblog(), usersTheme);
-                RollerFactory.getRoller().flush();
-                
-                // make sure to flush the page cache so ppl can see the change
-                //PageCacheFilter.removeFromCache(request, weblog);
-                CacheManager.invalidate(getActionWeblog());
-                
-            } catch(ThemeNotFoundException tnfe) {
-                // this catches the potential case where someone customizes
-                // a theme and has their theme as "custom" but then hits the
-                // browser back button and presses the button again, so
-                // they are basically trying to customize a "custom" theme
-                
-                // log this as a warning just in case
-                log.warn(tnfe);
-                
-                // TODO: i18n
-                addError("Oops!  You already have a custom theme.");
-            } catch(RollerException re) {
-                log.error("Error customizing theme for weblog - "+getActionWeblog().getHandle(), re);
-                // TODO: i18n
-                addError("Error customizing theme");
-            }
-        } else {
-            // TODO: i18n
-            addError("Sorry, custom themes are not allowed");
-        }
-            
-        return SUCCESS;
+        return execute();
     }
     
     
@@ -195,16 +175,9 @@ public class ThemeEdit extends UIAction {
             // TODO: i18n
             addError("No theme specified");
             
-        } else if(WeblogTheme.CUSTOM.equals(newTheme)) {
-            if(!RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
-                // TODO: i18n
-                addError("Sorry, custom themes are not allowed");
-            }
-            
         } else {
             try {
-                Roller roller = RollerFactory.getRoller();
-                ThemeManager themeMgr = roller.getThemeManager();
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
                 Theme newThemeObj = themeMgr.getTheme(getThemeId());
                 
                 if(!newThemeObj.isEnabled()) {
@@ -218,6 +191,11 @@ public class ThemeEdit extends UIAction {
                 addError("Theme not found");
             }
         }
+    }
+    
+    
+    public boolean isCustomTheme() {
+        return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
     }
     
     
@@ -244,11 +222,21 @@ public class ThemeEdit extends UIAction {
     public void setThemeId(String theme) {
         this.themeId = theme;
     }
-    
-    
-    static class TmpCustomTheme {
-        public String getId() { return WeblogTheme.CUSTOM; }
-        public String getName() { return WeblogTheme.CUSTOM; }
+
+    public boolean isImportTheme() {
+        return importTheme;
+    }
+
+    public void setImportTheme(boolean importTheme) {
+        this.importTheme = importTheme;
+    }
+
+    public String getImportThemeId() {
+        return importThemeId;
+    }
+
+    public void setImportThemeId(String importThemeId) {
+        this.importThemeId = importThemeId;
     }
     
 }

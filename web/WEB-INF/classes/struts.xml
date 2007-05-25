@@ -325,7 +325,8 @@
         
         <action name="themeEdit!*" method="{1}"
                 class="org.apache.roller.ui.struts2.editor.ThemeEdit">
-            <result name="success" type="tiles">.ThemeEdit</result>
+            <result name="input" type="tiles">.ThemeEdit</result>
+            <result name="input-sharedonly" type="tiles">.ThemeEditSharedThemesOnly</result>
         </action>
         
         <action name="stylesheetEdit!*" method="{1}"
