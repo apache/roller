@@ -39,7 +39,8 @@ import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.referrers.RefererManager;
-import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.config.RollerConfig;
+
 
 /**
  * A JPA specific implementation of the Roller business layer.
@@ -75,11 +76,11 @@ public class JPARollerImpl extends RollerImpl {
         
         // Add OpenJPA, Toplink and Hibernate properties to Roller config.
         Properties props = new Properties();
-        Enumeration keys = PlanetConfig.keys();
+        Enumeration keys = RollerConfig.keys();
         while (keys.hasMoreElements()) {
             String key = (String)keys.nextElement();
             if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = PlanetConfig.getProperty(key);
+                String value = RollerConfig.getProperty(key);
                 logger.info(key + ": " + value);
                 props.setProperty(key, value);
             }
