@@ -35,6 +35,8 @@ import org.apache.roller.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.RollerMessages.RollerMessage;
+import org.apache.roller.util.Trackback;
+import org.apache.roller.util.TrackbackNotAllowedException;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -211,28 +213,42 @@ public final class EntryEdit extends EntryBase {
             return DENIED;
         }
         
-        if(!StringUtils.isEmpty(getTrackbackUrl())) try {
-            
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            RollerMessages messages = wmgr.sendTrackback(getEntry(), getTrackbackUrl());
-            
-            for (Iterator mit = messages.getMessages(); mit.hasNext();) {
-                RollerMessage msg = (RollerMessage) mit.next();
-                addMessage(msg.getKey(), Arrays.asList(msg.getArgs()));
+        if(!StringUtils.isEmpty(getTrackbackUrl())) {
+            RollerMessages results = null;
+            try {
+                Trackback trackback = new Trackback(getEntry(), getTrackbackUrl());
+                results = trackback.send();
+            } catch(TrackbackNotAllowedException ex) {
+                addError("error.trackbackNotAllowed");
+            } catch(Throwable t) {
+                log.error("Error sending trackback", t);
+                // TODO: error handling
+                addError("error.general", t.getMessage());
             }
             
-            for (Iterator eit = messages.getErrors(); eit.hasNext();) {
-                RollerMessage err = (RollerMessage) eit.next();
-                addError(err.getKey(), Arrays.asList(err.getArgs()));
+            if(results != null) {
+                for (Iterator mit = results.getMessages(); mit.hasNext();) {
+                    RollerMessage msg = (RollerMessage) mit.next();
+                    if(msg.getArgs() == null) {
+                        addMessage(msg.getKey());
+                    } else {
+                        addMessage(msg.getKey(), Arrays.asList(msg.getArgs()));
+                    }
+                }
+                
+                for (Iterator eit = results.getErrors(); eit.hasNext();) {
+                    RollerMessage err = (RollerMessage) eit.next();
+                    if(err.getArgs() == null) {
+                        addError(err.getKey());
+                    } else {
+                        addError(err.getKey(), Arrays.asList(err.getArgs()));
+                    }
+                }
             }
-            
+
             // reset trackback url
             setTrackbackUrl(null);
             
-        } catch(Exception ex) {
-            log.error("Error sending trackback", ex);
-            // TODO: error handling
-            addError("error.general", ex.getMessage());
         }
         
         return INPUT;

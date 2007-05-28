@@ -32,7 +32,6 @@ import java.util.TreeMap;
 import java.sql.Timestamp;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.WeblogManagerImpl;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.RefererData;
@@ -65,7 +64,7 @@ import org.apache.roller.util.DateUtil;
  * Created on May 31, 2006, 4:08 PM
  *
  */
-public class JPAWeblogManagerImpl extends WeblogManagerImpl {
+public class JPAWeblogManagerImpl implements WeblogManager {
     
     protected static Log log = LogFactory.getLog(
             JPAWeblogManagerImpl.class);
