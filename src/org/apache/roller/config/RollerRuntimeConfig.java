@@ -27,15 +27,15 @@ import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 
 
 /**
  * This class acts as a convenience gateway for getting property values
  * via the PropertiesManager.  We do this because most calls to the
  * PropertiesManager are just to get the value of a specific property and
- * thus the caller doesn't need the full RollerPropertyData object.
- *
+ * thus the caller doesn't need the full RuntimeConfigProperty object.
+ * 
  * We also provide some methods for converting to different data types.
  */
 public class RollerRuntimeConfig {
@@ -64,7 +64,7 @@ public class RollerRuntimeConfig {
         
         try {
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-            RollerPropertyData prop = pmgr.getProperty(name);
+            RuntimeConfigProperty prop = pmgr.getProperty(name);
             if(prop != null) {
                 value = prop.getValue();
             }

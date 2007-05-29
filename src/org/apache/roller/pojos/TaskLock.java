@@ -25,12 +25,12 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Represents locking information about a specific RollerTask.
- *
- * @ejb:bean name="TaskLockData"
- * @hibernate.class lazy="true" table="roller_tasklock"
+ * 
+ * @ejb:bean name="TaskLock"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="roller_tasklock"
  */
-public class TaskLockData implements Serializable {
+public class TaskLock implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
@@ -41,7 +41,7 @@ public class TaskLockData implements Serializable {
     private String clientId = null;
     
     
-    public TaskLockData() {}
+    public TaskLock() {}
     
     
     /**
@@ -83,7 +83,7 @@ public class TaskLockData implements Serializable {
     }
     
     
-    public void setData(TaskLockData other) {
+    public void setData(TaskLock other) {
         this.id = other.getId();
         this.name = other.getName();
         this.locked = other.isLocked();
@@ -108,10 +108,10 @@ public class TaskLockData implements Serializable {
     public boolean equals(Object other) {
         
         if(this == other) return true;
-        if( !(other instanceof TaskLockData) ) return false;
+        if( !(other instanceof TaskLock) ) return false;
         
         // our natural key, or business key, is our name
-        final TaskLockData that = (TaskLockData) other;
+        final TaskLock that = (TaskLock) other;
         return this.getName().equals(that.getName());
     }
     

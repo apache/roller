@@ -20,7 +20,7 @@ package org.apache.roller.business.pings;
 
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -38,7 +38,7 @@ public interface PingTargetManager {
      * @param pingTarget ping target data object.
      * @throws RollerException
      */
-    public void savePingTarget(PingTargetData pingTarget) throws RollerException;
+    public void savePingTarget(PingTarget pingTarget) throws RollerException;
     
     
     /**
@@ -47,7 +47,7 @@ public interface PingTargetManager {
      * @param id id of the ping target to be removed
      * @throws RollerException
      */
-    public void removePingTarget(PingTargetData pingTarget) throws RollerException;
+    public void removePingTarget(PingTarget pingTarget) throws RollerException;
     
     
     /**
@@ -63,13 +63,13 @@ public interface PingTargetManager {
      * @return the ping target whose id is specified.
      * @throws RollerException
      */
-    public PingTargetData getPingTarget(String id) throws RollerException;
+    public PingTarget getPingTarget(String id) throws RollerException;
     
     
     /**
      * Get a list of the common (shared) ping targets.
-     *
-     * @return the list of common ping targets as a <code>List</code> of {@link PingTargetData} objects
+     * 
+     * @return the list of common ping targets as a <code>List</code> of {@link PPingTarget objects
      * @throws RollerException
      */
     public List getCommonPingTargets() throws RollerException;
@@ -77,10 +77,9 @@ public interface PingTargetManager {
     
     /**
      * Get a list of the custom ping targets for the given website.
-     *
+     * 
      * @param website the website whose custom targets should be returned.
-     * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PingTargetData}
-     *         objects
+     * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PiPingTarget         objects
      * @throws RollerException
      */
     public List getCustomPingTargets(Weblog website) throws RollerException;
@@ -96,7 +95,7 @@ public interface PingTargetManager {
      * @return true if the name is unique in the appropriate set (custom or common) ping targets.
      * @throws RollerException
      */
-    public boolean isNameUnique(PingTargetData pingTarget) throws RollerException;
+    public boolean isNameUnique(PingTarget pingTarget) throws RollerException;
     
     
     /**
@@ -107,7 +106,7 @@ public interface PingTargetManager {
      * @return true if the <code>pingUrl</code> property of the ping target is a well-formed url.
      * @throws RollerException
      */
-    public boolean isUrlWellFormed(PingTargetData pingTarget) throws RollerException;
+    public boolean isUrlWellFormed(PingTarget pingTarget) throws RollerException;
     
     
     /**
@@ -120,7 +119,7 @@ public interface PingTargetManager {
      *         ping target is a valid IP address or a hostname that can be resolved on the server.
      * @throws RollerException
      */
-    public boolean isHostnameKnown(PingTargetData pingTarget) throws RollerException;
+    public boolean isHostnameKnown(PingTarget pingTarget) throws RollerException;
     
     
     /**

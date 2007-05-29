@@ -33,7 +33,7 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogReferrer;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
@@ -77,7 +77,7 @@ public class RefererTest extends TestCase {
             
             // add "spamtest" to refererSpamWords
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-            RollerPropertyData spamprop = pmgr.getProperty("spam.blacklist");
+            RuntimeConfigProperty spamprop = pmgr.getProperty("spam.blacklist");
             this.origSpamWords = spamprop.getValue();
             spamprop.setValue(spamprop.getValue() + ", spamtest");
             pmgr.saveProperty(spamprop);
@@ -112,7 +112,7 @@ public class RefererTest extends TestCase {
         try {
             // reset refererSpamWords to original value
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-            RollerPropertyData spamprop = pmgr.getProperty("spam.blacklist");
+            RuntimeConfigProperty spamprop = pmgr.getProperty("spam.blacklist");
             spamprop.setValue(this.origSpamWords);
             pmgr.saveProperty(spamprop);
             
@@ -218,7 +218,7 @@ public class RefererTest extends TestCase {
         assertEquals(count, refs.size());
         
         PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-        RollerPropertyData spamprop = pmgr.getProperty("spam.blacklist");
+        RuntimeConfigProperty spamprop = pmgr.getProperty("spam.blacklist");
         String origWords = spamprop.getValue();
         spamprop.setValue(spamprop.getValue() + ", test");
         pmgr.saveProperty(spamprop);

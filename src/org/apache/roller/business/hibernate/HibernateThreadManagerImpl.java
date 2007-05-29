@@ -25,7 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.TaskLockData;
+import org.apache.roller.pojos.TaskLock;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -61,14 +61,14 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     public boolean registerLease(RollerTask task) {
         
         // query for existing lease record first
-        TaskLockData taskLock = null;
+        TaskLock taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
             
             if(taskLock == null) {
                 // insert an empty record, then we will actually acquire the
                 // lease below using an update statement 
-                taskLock = new TaskLockData();
+                taskLock = new TaskLock();
                 taskLock.setName(task.getName());
                 taskLock.setTimeAquired(new Date(0));
                 taskLock.setTimeLeased(0);
@@ -79,7 +79,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             }
             
         } catch (RollerException ex) {
-            log.warn("Error getting or inserting TaskLockData", ex);
+            log.warn("Error getting or inserting TaskLock", ex);
             return false;
         }
         
@@ -92,7 +92,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
                     (60000*taskLock.getTimeLeased())-1000;
             
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            String queryHQL = "update TaskLockData "+
+            String queryHQL = "update TaskLock "+
                     "set client=:client, timeacquired=current_timestamp(), timeleased=:timeleased "+
                     "where name=:name and timeacquired=:timeacquired "+
                     "and :leaseends < current_timestamp()";
@@ -126,7 +126,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     public boolean unregisterLease(RollerTask task) {
         
         // query for existing lease record first
-        TaskLockData taskLock = null;
+        TaskLock taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
             
@@ -135,14 +135,14 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             }
             
         } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
+            log.warn("Error getting TaskLock", ex);
             return false;
         }
         
         // try to release lease, just set lease time to 0
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            String queryHQL = "update TaskLockData set timeLeased=:interval "+
+            String queryHQL = "update TaskLock set timeLeased=:interval "+
                     "where name=:name and client=:client";
             Query query = session.createQuery(queryHQL);
             query.setInteger("interval", task.getInterval());
@@ -166,15 +166,15 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     }
     
     
-    private TaskLockData getTaskLockByName(String name) throws RollerException {
+    private TaskLock getTaskLockByName(String name) throws RollerException {
         
         // do lookup
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(TaskLockData.class);
+            Criteria criteria = session.createCriteria(TaskLock.class);
             
             criteria.add(Expression.eq("name", name));
-            TaskLockData taskLock = (TaskLockData) criteria.uniqueResult();
+            TaskLock taskLock = (TaskLock) criteria.uniqueResult();
             
             return taskLock;
         } catch (HibernateException e) {
@@ -183,7 +183,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     }
     
     
-    private void saveTaskLock(TaskLockData data) throws RollerException {
+    private void saveTaskLock(TaskLock data) throws RollerException {
         this.strategy.store(data);
     }
     

@@ -29,15 +29,15 @@ import org.apache.roller.util.UUIDGenerator;
  * ping target should be pinged when the corresponding website is changed.  Pinging can be restricted to changes to
  * specific categories on the website by instances of the {@link PingCategoryRestrictionData} object.  In the absence of
  * any category restrictions, the ping target is pinged whenever the corresponding website changes.
- *
+ * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="AutoPingData"
- * @hibernate.class lazy="true" table="autoping"
+ * @ejb:bean name="AutoPing"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="autoping"
  */
-public class AutoPingData implements Serializable {
+public class AutoPing implements Serializable {
     private String id = UUIDGenerator.generateUUID();
-    private PingTargetData pingTarget = null;
+    private PingTarget pingTarget = null;
     private Weblog website = null;
 
     public static final long serialVersionUID = -9105985454111986435L;
@@ -45,7 +45,7 @@ public class AutoPingData implements Serializable {
     /**
      * Default constructor.  Leaves all fields null.  Required for bean compliance.
      */
-    public AutoPingData() {
+    public AutoPing() {
     }
 
     /**
@@ -55,7 +55,7 @@ public class AutoPingData implements Serializable {
      * @param pingtarget ping target that should be pinged
      * @param website    website to which this configuration applies
      */
-    public AutoPingData(String id, PingTargetData pingtarget, Weblog website) {
+    public AutoPing(String id, PingTarget pingtarget, Weblog website) {
         //this.id = id;
         this.website = website;
         this.pingTarget = pingtarget;
@@ -64,7 +64,7 @@ public class AutoPingData implements Serializable {
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(AutoPingData other) {
+    public void setData(AutoPing other) {
         id = other.getId();
         website = other.getWebsite();
         pingTarget = other.getPingTarget();
@@ -123,7 +123,7 @@ public class AutoPingData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="pingtargetid" cascade="none" not-null="false"
      */
-    public PingTargetData getPingTarget() {
+    public PingTarget getPingTarget() {
         return pingTarget;
     }
 
@@ -133,7 +133,7 @@ public class AutoPingData implements Serializable {
      * @param pingtarget the target to be pinged.
      * @ejb:persistent-field
      */
-    public void setPingTarget(PingTargetData pingtarget) {
+    public void setPingTarget(PingTarget pingtarget) {
         this.pingTarget = pingtarget;
     }
 
@@ -149,8 +149,8 @@ public class AutoPingData implements Serializable {
     
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof AutoPingData != true) return false;
-        AutoPingData o = (AutoPingData)other;
+        if (other instanceof AutoPing != true) return false;
+        AutoPing o = (AutoPing)other;
         return new EqualsBuilder()
             .append(getId(), o.getId())
             .append(getPingTarget(), o.getPingTarget()) 

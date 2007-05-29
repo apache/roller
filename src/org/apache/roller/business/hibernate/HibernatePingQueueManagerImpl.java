@@ -27,8 +27,8 @@ import org.hibernate.criterion.Order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingQueueEntryData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingQueueEntry;
 import java.sql.Timestamp;
 import java.util.List;
 import org.apache.roller.business.pings.PingQueueManager;
@@ -53,24 +53,24 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     }
     
     
-    public PingQueueEntryData getQueueEntry(String id) throws RollerException {
-        return (PingQueueEntryData) strategy.load(id, PingQueueEntryData.class);
+    public PingQueueEntry getQueueEntry(String id) throws RollerException {
+        return (PingQueueEntry) strategy.load(id, PingQueueEntry.class);
     }
     
     
-    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException {
         log.debug("Storing ping queue entry: " + pingQueueEntry);
         strategy.store(pingQueueEntry);
     }
     
     
-    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException {
         log.debug("Removing ping queue entry: " + pingQueueEntry);
         strategy.remove(pingQueueEntry);
     }
     
     
-    public void addQueueEntry(AutoPingData autoPing) throws RollerException {
+    public void addQueueEntry(AutoPing autoPing) throws RollerException {
         log.debug("Creating new ping queue entry for auto ping configuration: " + autoPing);
         
         // First check if there is an existing ping queue entry for the same target and website
@@ -80,8 +80,8 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
         }
         
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        PingQueueEntryData pingQueueEntry =
-                new PingQueueEntryData(null, now, autoPing.getPingTarget(), autoPing.getWebsite(), 0);
+        PingQueueEntry pingQueueEntry =
+                new PingQueueEntry(null, now, autoPing.getPingTarget(), autoPing.getWebsite(), 0);
         this.saveQueueEntry(pingQueueEntry);
     }
     
@@ -89,7 +89,7 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     public List getAllQueueEntries() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(PingQueueEntryData.class);
+            Criteria criteria = session.createCriteria(PingQueueEntry.class);
             criteria.addOrder(Order.asc("entryTime"));
             
             return criteria.list();
@@ -100,10 +100,10 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     
     
     // private helper to determine if an has already been queued for the same website and ping target.
-    private boolean isAlreadyQueued(AutoPingData autoPing) throws RollerException {
+    private boolean isAlreadyQueued(AutoPing autoPing) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(PingQueueEntryData.class);
+            Criteria criteria = session.createCriteria(PingQueueEntry.class);
             criteria.add(Expression.eq("pingTarget", autoPing.getPingTarget()));
             criteria.add(Expression.eq("website", autoPing.getWebsite()));
             return !criteria.list().isEmpty();

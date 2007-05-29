@@ -36,7 +36,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.WeblogEntry;
@@ -230,11 +230,11 @@ public class ContextLoader {
         ctx.put("timeZone", weblog.getTimeZoneInstance());
         ctx.put("website", WebsiteDataWrapper.wrap(weblog) );
         
-        String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
+        String siteName = ((RuntimeConfigProperty)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
         ctx.put("siteName", siteName);
         
-        String siteShortName = ((RollerPropertyData)props.get("site.shortName")).getValue();
+        String siteShortName = ((RuntimeConfigProperty)props.get("site.shortName")).getValue();
         ctx.put("siteShortName", siteShortName);
         
         // add language of the session (using locale specified by request)

@@ -12,19 +12,19 @@
     
     <package>org.apache.roller.pojos</package>
     
-    <entity metadata-complete="true" name="TaskLockData" class="org.apache.roller.pojos.TaskLockData">
+    <entity metadata-complete="true" name="TaskLock" class="org.apache.roller.pojos.TaskLock">
         <table name="roller_tasklock"/>
         
-        <named-query name="TaskLockData.getByName">
-            <query>SELECT t FROM TaskLockData t WHERE t.name = ?1</query>
+        <named-query name="TaskLock.getByName">
+            <query>SELECT t FROM TaskLock t WHERE t.name = ?1</query>
         </named-query>
         
-        <named-query name="TaskLockData.updateClient&amp;Timeacquired&amp;TimeleasedByName&amp;Timeacquired">
-            <query> UPDATE TaskLockData t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2 WHERE t.name=?3 AND t.timeAquired=?4 AND ?5 &lt; CURRENT_TIMESTAMP</query>
+        <named-query name="TaskLock.updateClient&amp;Timeacquired&amp;TimeleasedByName&amp;Timeacquired">
+            <query> UPDATE TaskLock t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2 WHERE t.name=?3 AND t.timeAquired=?4 AND ?5 &lt; CURRENT_TIMESTAMP</query>
         </named-query>
         
-        <named-query name="TaskLockData.updateTimeLeasedByName&amp;Client">
-            <query>UPDATE TaskLockData t SET t.timeLeased=?1 WHERE t.name=?2 AND t.clientId=?3</query>
+        <named-query name="TaskLock.updateTimeLeasedByName&amp;Client">
+            <query>UPDATE TaskLock t SET t.timeLeased=?1 WHERE t.name=?2 AND t.clientId=?3</query>
         </named-query>
         
         <attributes>

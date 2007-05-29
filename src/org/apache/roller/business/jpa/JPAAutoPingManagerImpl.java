@@ -25,8 +25,8 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.config.PingConfig;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
@@ -60,21 +60,21 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         this.strategy = strategy;
     }
 
-    public AutoPingData getAutoPing(String id) throws RollerException {
-        return (AutoPingData)strategy.load(AutoPingData.class, id);
+    public AutoPing getAutoPing(String id) throws RollerException {
+        return (AutoPing)strategy.load(AutoPing.class, id);
     }
 
-    public void saveAutoPing(AutoPingData autoPing) throws RollerException {
+    public void saveAutoPing(AutoPing autoPing) throws RollerException {
         strategy.store(autoPing);
     }
 
-    public void removeAutoPing(AutoPingData autoPing) throws RollerException {
+    public void removeAutoPing(AutoPing autoPing) throws RollerException {
         strategy.remove(autoPing);
     }
 
-    public void removeAutoPing(PingTargetData pingTarget, Weblog website)
+    public void removeAutoPing(PingTarget pingTarget, Weblog website)
             throws RollerException {
-        Query q = strategy.getNamedUpdate("AutoPingData.removeByPingTarget&Website");
+        Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Website");
         q.setParameter(1, pingTarget);
         q.setParameter(2, website);
         q.executeUpdate();
@@ -87,7 +87,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     public void removeAllAutoPings() 
             throws RollerException {
-        Query q = strategy.getNamedUpdate("AutoPingData.getAll");
+        Query q = strategy.getNamedUpdate("AutoPing.getAll");
         removeAutoPings(q.getResultList());
     }
 
@@ -104,21 +104,21 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
             getPingQueueManager();
         List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
         for (Iterator i = applicableAutopings.iterator(); i.hasNext(); ) {
-            AutoPingData autoPing = (AutoPingData) i.next();
+            AutoPing autoPing = (AutoPing) i.next();
             pingQueueMgr.addQueueEntry(autoPing);
         }
     }
 
     public List getAutoPingsByWebsite(Weblog website)
             throws RollerException {
-        Query q = strategy.getNamedQuery("AutoPingData.getByWebsite");
+        Query q = strategy.getNamedQuery("AutoPing.getByWebsite");
         q.setParameter(1, website);
         return q.getResultList();
     }
 
-    public List getAutoPingsByTarget(PingTargetData pingTarget) 
+    public List getAutoPingsByTarget(PingTarget pingTarget) 
             throws RollerException {
-        Query q = strategy.getNamedQuery("AutoPingData.getByPingTarget");
+        Query q = strategy.getNamedQuery("AutoPing.getByPingTarget");
         q.setParameter(1, pingTarget);
         return q.getResultList();
     }
@@ -126,17 +126,17 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) 
             throws RollerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
-        //        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByWebsite")
+        //        return (List)strategy.newQuery(AutoPing.class, "AutoPing.getByWebsite")
         //            .execute(changedWeblogEntry.getWebsite());
     }
 
-    public List getCategoryRestrictions(AutoPingData autoPing)
+    public List getCategoryRestrictions(AutoPing autoPing)
             throws RollerException {
         return Collections.EMPTY_LIST;
     }
 
     public void setCategoryRestrictions
-            (AutoPingData autoPing, Collection newCategories) {
+            (AutoPing autoPing, Collection newCategories) {
         // NOT YET IMPLEMENTED
     }
 

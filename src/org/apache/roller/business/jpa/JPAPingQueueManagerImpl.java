@@ -28,8 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 import org.apache.roller.business.pings.PingQueueManager;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingQueueEntryData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingQueueEntry;
 
 /*
  * JPAPingQueueManagerImpl.java
@@ -53,26 +53,26 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         this.strategy =  strategy;
     }
 
-    public PingQueueEntryData getQueueEntry(String id) 
+    public PingQueueEntry getQueueEntry(String id) 
             throws RollerException {
-        return (PingQueueEntryData)strategy.load(
-            PingQueueEntryData.class, id);
+        return (PingQueueEntry)strategy.load(
+            PingQueueEntry.class, id);
     }
 
-    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) 
+    public void saveQueueEntry(PingQueueEntry pingQueueEntry) 
             throws RollerException {
         log.debug("Storing ping queue entry: " + pingQueueEntry);
         strategy.store(pingQueueEntry);
     }
 
-    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) 
+    public void removeQueueEntry(PingQueueEntry pingQueueEntry) 
             throws RollerException {
         log.debug("Removing ping queue entry: " + pingQueueEntry);
         strategy.remove(pingQueueEntry);
     }
 
     
-    public void addQueueEntry(AutoPingData autoPing) throws RollerException {
+    public void addQueueEntry(AutoPing autoPing) throws RollerException {
         log.debug("Creating new ping queue entry for auto ping configuration: " 
             + autoPing);
         
@@ -85,8 +85,8 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         }
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        PingQueueEntryData pingQueueEntry =
-                new PingQueueEntryData(
+        PingQueueEntry pingQueueEntry =
+                new PingQueueEntry(
                     null, now, autoPing.getPingTarget(), 
                     autoPing.getWebsite(), 0);
         this.saveQueueEntry(pingQueueEntry);
@@ -95,15 +95,15 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     public List getAllQueueEntries() 
             throws RollerException {
         return (List)strategy.getNamedQuery(
-                "PingQueueEntryData.getAllOrderByEntryTime").getResultList();
+                "PingQueueEntry.getAllOrderByEntryTime").getResultList();
     }
 
     // private helper to determine if an has already been queued 
     // for the same website and ping target.
-    private boolean isAlreadyQueued(AutoPingData autoPing) 
+    private boolean isAlreadyQueued(AutoPing autoPing) 
         throws RollerException {
         // first, determine if an entry already exists
-        Query q = strategy.getNamedQuery("PingQueueEntryData.getByPingTarget&Website");
+        Query q = strategy.getNamedQuery("PingQueueEntry.getByPingTarget&Website");
         q.setParameter(1, autoPing.getPingTarget());
         q.setParameter(2, autoPing.getWebsite());
         return q.getResultList().size() > 0;

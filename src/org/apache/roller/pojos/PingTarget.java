@@ -28,14 +28,14 @@ import org.apache.roller.util.UUIDGenerator;
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
  * either common (defined centrally by an administrator and used by any website), or custom (defined by the user of a
  * specific website) for update pings issued for that website.
- *
+ * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="PingTargetData"
- * @struts.form include-all="true"
- * @hibernate.class lazy="true" table="pingtarget"
+ * @ejb:bean name="PingTarget"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="pingtarget"
+ * @struts.form include-all="true"
  */
-public class PingTargetData implements Serializable {
+public class PingTarget implements Serializable {
 
     public static final long serialVersionUID = -6354583200913127874L;
 
@@ -55,7 +55,7 @@ public class PingTargetData implements Serializable {
     /**
      * Default empty constructor.
      */
-    public PingTargetData() {
+    public PingTarget() {
     }
 
 
@@ -67,7 +67,7 @@ public class PingTargetData implements Serializable {
      * @param pingUrl the URL to which to send the ping
      * @param website the website (on this server) for which this is a custom ping target (may be null)
      */
-    public PingTargetData(String id, String name, String pingUrl, Weblog website, boolean autoEnable) {
+    public PingTarget(String id, String name, String pingUrl, Weblog website, boolean autoEnable) {
         //this.id = id;
         this.name = name;
         this.pingUrl = pingUrl;
@@ -81,7 +81,7 @@ public class PingTargetData implements Serializable {
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(PingTargetData other) {
+    public void setData(PingTarget other) {
 
         id = other.getId();
         name = other.getName();
@@ -281,8 +281,8 @@ public class PingTargetData implements Serializable {
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof PingTargetData != true) return false;
-        PingTargetData o = (PingTargetData)other;
+        if (other instanceof PingTarget != true) return false;
+        PingTarget o = (PingTarget)other;
         return new EqualsBuilder()
             .append(getId(), o.getId()) 
             .isEquals();

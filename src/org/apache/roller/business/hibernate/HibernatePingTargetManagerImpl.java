@@ -28,7 +28,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.Weblog;
 import java.util.Iterator;
 import java.util.List;
@@ -38,8 +38,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingQueueEntryData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingQueueEntry;
 
 
 /**
@@ -61,7 +61,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public void removePingTarget(PingTargetData pingTarget) throws RollerException {
+    public void removePingTarget(PingTarget pingTarget) throws RollerException {
         // remove contents and then target
         this.removePingTargetContents(pingTarget);
         this.strategy.remove(pingTarget);
@@ -72,18 +72,18 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
      * Convenience method which removes any queued pings or auto pings that
      * reference the given ping target.
      */
-    private void removePingTargetContents(PingTargetData ping) 
+    private void removePingTargetContents(PingTarget ping) 
             throws RollerException {
         
         Session session = this.strategy.getSession();
         
         // Remove the website's ping queue entries
-        Criteria criteria = session.createCriteria(PingQueueEntryData.class);
+        Criteria criteria = session.createCriteria(PingQueueEntry.class);
         criteria.add(Expression.eq("pingTarget", ping));
         List queueEntries = criteria.list();
         Iterator qIT = queueEntries.iterator();
         while(qIT.hasNext()) {
-            this.strategy.remove((PingQueueEntryData) qIT.next());
+            this.strategy.remove((PingQueueEntry) qIT.next());
         }
         
         // Remove the website's auto ping configurations
@@ -91,7 +91,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         List autopings = autoPingMgr.getAutoPingsByTarget(ping);
         Iterator it = autopings.iterator();
         while(it.hasNext()) {
-            this.strategy.remove((AutoPingData) it.next());
+            this.strategy.remove((AutoPing) it.next());
         }
     }
     
@@ -103,7 +103,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         
         try {
             Session session = strategy.getSession();
-            Criteria criteria = session.createCriteria(PingTargetData.class);
+            Criteria criteria = session.createCriteria(PingTarget.class);
             criteria.add(Expression.isNotNull("website"));
             List allCustomTargets = criteria.list();
             removeTargets(allCustomTargets);
@@ -119,22 +119,22 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         // just go through the list and remove each auto ping
         Iterator targets = customTargets.iterator();
         while (targets.hasNext()) {
-            this.strategy.remove((PingTargetData) targets.next());
+            this.strategy.remove((PingTarget) targets.next());
         }
     }
     
     
-    public void savePingTarget(PingTargetData pingTarget) throws RollerException {
+    public void savePingTarget(PingTarget pingTarget) throws RollerException {
         strategy.store(pingTarget);
     }
     
     
-    public PingTargetData getPingTarget(String id) throws RollerException {
-        return (PingTargetData) strategy.load(id, PingTargetData.class);
+    public PingTarget getPingTarget(String id) throws RollerException {
+        return (PingTarget) strategy.load(id, PingTarget.class);
     }
 
     
-    public boolean isNameUnique(PingTargetData pingTarget) throws RollerException {
+    public boolean isNameUnique(PingTarget pingTarget) throws RollerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
         
@@ -152,7 +152,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         // Within that set of targets, fail if there is a target with the same name and that target doesn't
         // have the same id.
         for (Iterator i = brotherTargets.iterator(); i.hasNext();) {
-            PingTargetData brother = (PingTargetData) i.next();
+            PingTarget brother = (PingTarget) i.next();
             // Fail if it has the same name but not the same id.
             if (brother.getName().equals(name) && (id == null || !brother.getId().equals(id))) {
                 return false;
@@ -163,7 +163,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public boolean isUrlWellFormed(PingTargetData pingTarget) throws RollerException {
+    public boolean isUrlWellFormed(PingTarget pingTarget) throws RollerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
@@ -178,7 +178,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public boolean isHostnameKnown(PingTargetData pingTarget) throws RollerException {
+    public boolean isHostnameKnown(PingTarget pingTarget) throws RollerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
@@ -201,7 +201,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     public List getCommonPingTargets() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(PingTargetData.class);
+            Criteria criteria = session.createCriteria(PingTarget.class);
             criteria.add(Expression.isNull("website"));
             criteria.addOrder(Order.asc("name"));
             return criteria.list();
@@ -218,7 +218,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     public List getCustomPingTargets(Weblog website) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(PingTargetData.class);
+            Criteria criteria = session.createCriteria(PingTarget.class);
             criteria.add(Expression.eq("website", website));
             criteria.addOrder(Order.asc("name"));
             return criteria.list();

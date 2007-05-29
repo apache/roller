@@ -29,12 +29,12 @@ import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.AutoPingData;
+import org.apache.roller.pojos.AutoPing;
 import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.WeblogEntry;
@@ -341,10 +341,10 @@ public final class TestUtils {
     /**
      * Convenience method for creating a ping target.
      */
-    public static PingTargetData setupPingTarget(String name, String url) 
+    public static PingTarget setupPingTarget(String name, String url) 
             throws Exception {
         
-        PingTargetData testPing = new PingTargetData();
+        PingTarget testPing = new PingTarget();
         testPing.setName("testCommonPing");
         testPing.setPingUrl("http://localhost/testCommonPing");
         
@@ -356,7 +356,7 @@ public final class TestUtils {
         RollerFactory.getRoller().flush();
         
         // query for it
-        PingTargetData ping = pingMgr.getPingTarget(testPing.getId());
+        PingTarget ping = pingMgr.getPingTarget(testPing.getId());
         
         if(ping == null)
             throw new RollerException("error setting up ping target");
@@ -372,7 +372,7 @@ public final class TestUtils {
         
         // query for it
         PingTargetManager pingMgr = RollerFactory.getRoller().getPingTargetManager();
-        PingTargetData ping = pingMgr.getPingTarget(id);
+        PingTarget ping = pingMgr.getPingTarget(id);
         
         // remove the ping
         pingMgr.removePingTarget(ping);
@@ -385,13 +385,13 @@ public final class TestUtils {
     /**
      * Convenience method for creating an auto ping.
      */
-    public static AutoPingData setupAutoPing(PingTargetData ping, Weblog weblog)
+    public static AutoPing setupAutoPing(PingTarget ping, Weblog weblog)
             throws Exception {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
         
         // store auto ping
-        AutoPingData autoPing = new AutoPingData(null, ping, getManagedWebsite(weblog) );
+        AutoPing autoPing = new AutoPing(null, ping, getManagedWebsite(weblog) );
         mgr.saveAutoPing(autoPing);
         
         // flush to db
@@ -414,7 +414,7 @@ public final class TestUtils {
         
         // query for it
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
-        AutoPingData autoPing = mgr.getAutoPing(id);
+        AutoPing autoPing = mgr.getAutoPing(id);
         
         // remove the auto ping
         mgr.removeAutoPing(autoPing);

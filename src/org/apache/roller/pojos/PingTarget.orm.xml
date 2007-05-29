@@ -9,20 +9,20 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="PingTargetData"
-            class="org.apache.roller.pojos.PingTargetData">
+    <entity metadata-complete="true" name="PingTarget"
+            class="org.apache.roller.pojos.PingTarget">
         <table name="pingtarget"/>
-        <named-query name="PingTargetData.getByWebsiteNullOrderByName">
-            <query>SELECT p FROM PingTargetData p WHERE p.website IS NULL ORDER BY p.name</query>
+        <named-query name="PingTarget.getByWebsiteNullOrderByName">
+            <query>SELECT p FROM PingTarget p WHERE p.website IS NULL ORDER BY p.name</query>
         </named-query>
-        <named-query name="PingTargetData.getByWebsiteOrderByName">
-            <query>SELECT p FROM PingTargetData p WHERE p.website = ?1 ORDER BY p.name</query>
+        <named-query name="PingTarget.getByWebsiteOrderByName">
+            <query>SELECT p FROM PingTarget p WHERE p.website = ?1 ORDER BY p.name</query>
         </named-query>
-        <named-query name="PingTargetData.removeByPingTarget">
-            <query>DELETE FROM PingTargetData p WHERE p.website IS NOT NULL</query>
+        <named-query name="PingTarget.removeByPingTarget">
+            <query>DELETE FROM PingTarget p WHERE p.website IS NOT NULL</query>
         </named-query>
-        <named-query name="PingTargetData.removeByWebsiteNotNull">
-            <query>DELETE FROM PingTargetData p WHERE p.website IS NOT NULL</query>
+        <named-query name="PingTarget.removeByWebsiteNotNull">
+            <query>DELETE FROM PingTarget p WHERE p.website IS NOT NULL</query>
         </named-query>
         <attributes>
             <id name="id">

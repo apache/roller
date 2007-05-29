@@ -28,14 +28,13 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * This POJO represents a single property of the roller system.
- *
+ * 
  * @author Allen Gilliland
- *
- * @ejb:bean name="RollerPropertyData"
- * @hibernate.class lazy="true" table="roller_properties"
+ * @ejb:bean name="RuntimeConfigProperty"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="roller_properties"
  */
-public class RollerPropertyData 
+public class RuntimeConfigProperty 
     implements java.io.Serializable
 {
     
@@ -53,20 +52,20 @@ public class RollerPropertyData
     private String value;
 
     
-    public RollerPropertyData() {}
+    public RuntimeConfigProperty() {}
     
     
-    public RollerPropertyData(String name, String value) {
+    public RuntimeConfigProperty(String name, String value) {
         this.name = name;
         this.value = value;
     }
     
     
-    public void setData(RollerPropertyData object)
+    public void setData(RuntimeConfigProperty object)
     {
-        if (object instanceof RollerPropertyData)
+        if (object instanceof RuntimeConfigProperty)
         {
-            RollerPropertyData prop = (RollerPropertyData) object;
+            RuntimeConfigProperty prop = (RuntimeConfigProperty) object;
             this.name = prop.getName();
             this.value = prop.getValue();
         }
@@ -135,8 +134,8 @@ public class RollerPropertyData
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof RollerPropertyData != true) return false;
-        RollerPropertyData o = (RollerPropertyData)other;
+        if (other instanceof RuntimeConfigProperty != true) return false;
+        RuntimeConfigProperty o = (RuntimeConfigProperty)other;
         return new EqualsBuilder()
             .append(getName(), o.getName())  
             .isEquals();

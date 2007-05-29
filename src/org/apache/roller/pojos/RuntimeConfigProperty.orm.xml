@@ -9,11 +9,11 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="RollerPropertyData"
-            class="org.apache.roller.pojos.RollerPropertyData">
+    <entity metadata-complete="true" name="RuntimeConfigProperty"
+            class="org.apache.roller.pojos.RuntimeConfigProperty">
         <table name="roller_properties"/>
-        <named-query name="RollerPropertyData.getAll">
-            <query>SELECT r FROM RollerPropertyData r</query>
+        <named-query name="RuntimeConfigProperty.getAll">
+            <query>SELECT r FROM RuntimeConfigProperty r</query>
         </named-query>
         <attributes>
             <id name="name">

@@ -25,8 +25,8 @@ import org.apache.roller.config.PingConfig;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.business.pings.WeblogUpdatePinger;
 import org.apache.xmlrpc.XmlRpcException;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class Pings extends UIAction {
     private String pingTargetId = null;
     
     // ping target object we are working on, if available
-    private PingTargetData pingTarget = null;
+    private PingTarget pingTarget = null;
     
     // commong ping targets list
     private List commonPingTargets = Collections.EMPTY_LIST;
@@ -124,7 +124,7 @@ public class Pings extends UIAction {
         
         if(getPingTarget() != null) try {
             AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
-            AutoPingData autoPing = new AutoPingData(null, getPingTarget(), getActionWeblog());
+            AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
             autoPingMgr.saveAutoPing(autoPing);
             RollerFactory.getRoller().flush();
         } catch(Exception ex) {
@@ -223,14 +223,14 @@ public class Pings extends UIAction {
         
         // Add the enabled auto ping configs with TRUE
         for (Iterator i = autopings.iterator(); i.hasNext();) {
-            AutoPingData autoPing = (AutoPingData) i.next();
+            AutoPing autoPing = (AutoPing) i.next();
             isEnabled.put(autoPing.getPingTarget().getId(), Boolean.TRUE);
         }
         
         // Somewhat awkward, but the two loops save building a separate combined list.
         // Add disabled common ones with FALSE
         for (Iterator i = getCommonPingTargets().iterator(); i.hasNext();) {
-            PingTargetData pingTarget = (PingTargetData) i.next();
+            PingTarget pingTarget = (PingTarget) i.next();
             if (isEnabled.get(pingTarget.getId()) == null) {
                 isEnabled.put(pingTarget.getId(), Boolean.FALSE);
             }
@@ -238,7 +238,7 @@ public class Pings extends UIAction {
         
         // Add disabled custom ones with FALSE
         for (Iterator i = getCustomPingTargets().iterator(); i.hasNext();) {
-            PingTargetData pingTarget = (PingTargetData) i.next();
+            PingTarget pingTarget = (PingTarget) i.next();
             if (isEnabled.get(pingTarget.getId()) == null) {
                 isEnabled.put(pingTarget.getId(), Boolean.FALSE);
             }
@@ -258,11 +258,11 @@ public class Pings extends UIAction {
         this.pingTargetId = pingTargetId;
     }
 
-    public PingTargetData getPingTarget() {
+    public PingTarget getPingTarget() {
         return pingTarget;
     }
 
-    public void setPingTarget(PingTargetData pingTarget) {
+    public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
 

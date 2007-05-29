@@ -34,8 +34,8 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 
@@ -49,8 +49,8 @@ public class PingsTest extends TestCase {
     
     User testUser = null;
     Weblog testWeblog = null;
-    PingTargetData testCommonPing = null;
-    PingTargetData testCustomPing = null;
+    PingTarget testCommonPing = null;
+    PingTarget testCustomPing = null;
     
     
     public PingsTest(String name) {
@@ -77,11 +77,11 @@ public class PingsTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
         
-        testCommonPing = new PingTargetData();
+        testCommonPing = new PingTarget();
         testCommonPing.setName("testCommonPing");
         testCommonPing.setPingUrl("http://localhost/testCommonPing");
         
-        testCustomPing = new PingTargetData();
+        testCustomPing = new PingTarget();
         testCustomPing.setName("testCommonPing");
         testCustomPing.setPingUrl("http://localhost/testCommonPing");
     }
@@ -108,7 +108,7 @@ public class PingsTest extends TestCase {
     public void testPingTargetCRUD() throws Exception {
         
         PingTargetManager mgr = RollerFactory.getRoller().getPingTargetManager();
-        PingTargetData ping = null;
+        PingTarget ping = null;
         
         // create common ping
         mgr.savePingTarget(testCommonPing);
@@ -189,7 +189,7 @@ public class PingsTest extends TestCase {
     public void testPingTargetLookups() throws Exception {
         
         PingTargetManager mgr = RollerFactory.getRoller().getPingTargetManager();
-        PingTargetData ping = null;
+        PingTarget ping = null;
         
         // create common ping
         mgr.savePingTarget(testCommonPing);
@@ -240,15 +240,15 @@ public class PingsTest extends TestCase {
     public void testAutoPingCRUD() throws Exception {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
-        AutoPingData autoPing = null;
+        AutoPing autoPing = null;
         
         // create ping target to use for tests
-        PingTargetData pingTarget = TestUtils.setupPingTarget("fooPing", "http://foo/null");
-        PingTargetData pingTarget2 = TestUtils.setupPingTarget("blahPing", "http://blah/null");
+        PingTarget pingTarget = TestUtils.setupPingTarget("fooPing", "http://foo/null");
+        PingTarget pingTarget2 = TestUtils.setupPingTarget("blahPing", "http://blah/null");
         TestUtils.endSession(true);
         
         // create autoPing
-        autoPing = new AutoPingData(null, pingTarget, testWeblog);
+        autoPing = new AutoPing(null, pingTarget, testWeblog);
         mgr.saveAutoPing(autoPing);
         String id = autoPing.getId();
         TestUtils.endSession(true);
@@ -293,20 +293,20 @@ public class PingsTest extends TestCase {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
         PingTargetManager ptmgr = RollerFactory.getRoller().getPingTargetManager();
-        AutoPingData testAutoPing = null;
+        AutoPing testAutoPing = null;
         
         // create ping target to use for tests
-        PingTargetData pingTarget = TestUtils.setupPingTarget("fooPing", "http://foo/null");
-        PingTargetData pingTarget2 = TestUtils.setupPingTarget("blahPing", "http://blah/null");
-        PingTargetData pingTarget3 = TestUtils.setupPingTarget("gahPing", "http://gah/null");
+        PingTarget pingTarget = TestUtils.setupPingTarget("fooPing", "http://foo/null");
+        PingTarget pingTarget2 = TestUtils.setupPingTarget("blahPing", "http://blah/null");
+        PingTarget pingTarget3 = TestUtils.setupPingTarget("gahPing", "http://gah/null");
         
         try {
         
             // create auto pings for test
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            AutoPingData autoPing = TestUtils.setupAutoPing(pingTarget, testWeblog);
-            AutoPingData autoPing2 = TestUtils.setupAutoPing(pingTarget2, testWeblog);
-            AutoPingData autoPing3 = TestUtils.setupAutoPing(pingTarget3, testWeblog);
+            AutoPing autoPing = TestUtils.setupAutoPing(pingTarget, testWeblog);
+            AutoPing autoPing2 = TestUtils.setupAutoPing(pingTarget2, testWeblog);
+            AutoPing autoPing3 = TestUtils.setupAutoPing(pingTarget3, testWeblog);
             TestUtils.endSession(true);
 
             // remove by weblog/target
@@ -367,16 +367,16 @@ public class PingsTest extends TestCase {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
         PingTargetManager ptmgr = RollerFactory.getRoller().getPingTargetManager();
-        AutoPingData autoPing = null;
+        AutoPing autoPing = null;
         
         // create autoPing target to use for tests
-        PingTargetData pingTarget = TestUtils.setupPingTarget("fooPing", "http://foo/null");
+        PingTarget pingTarget = TestUtils.setupPingTarget("fooPing", "http://foo/null");
         TestUtils.endSession(true);
         
         // create autoPing
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         pingTarget = ptmgr.getPingTarget(pingTarget.getId());
-        autoPing = new AutoPingData(null, pingTarget, testWeblog);
+        autoPing = new AutoPing(null, pingTarget, testWeblog);
         mgr.saveAutoPing(autoPing);
         String id = autoPing.getId();
         TestUtils.endSession(true);

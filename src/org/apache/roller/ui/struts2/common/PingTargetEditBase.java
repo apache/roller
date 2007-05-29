@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 
@@ -33,7 +33,7 @@ import org.apache.roller.ui.struts2.util.UIAction;
 public abstract class PingTargetEditBase extends UIAction {
     
     // ping target we are working on, if any
-    private PingTargetData pingTarget = null;
+    private PingTarget pingTarget = null;
     
     // a bean for managing submitted data
     private PingTargetFormBean bean = new PingTargetFormBean();
@@ -123,7 +123,7 @@ public abstract class PingTargetEditBase extends UIAction {
     /**
      * Private helper to validate a ping target.
      */
-    protected void myValidate(PingTargetData pingTarget) {
+    protected void myValidate(PingTarget pingTarget) {
         
         try {
             PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
@@ -144,11 +144,11 @@ public abstract class PingTargetEditBase extends UIAction {
     }
     
     
-    public PingTargetData getPingTarget() {
+    public PingTarget getPingTarget() {
         return pingTarget;
     }
 
-    public void setPingTarget(PingTargetData pingTarget) {
+    public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
     

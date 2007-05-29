@@ -130,12 +130,12 @@ public class JPAUserManagerImpl implements UserManager {
         
         
         // Remove the website's ping queue entries
-        Query q = strategy.getNamedQuery("PingQueueEntryData.getByWebsite");
+        Query q = strategy.getNamedQuery("PingQueueEntry.getByWebsite");
         q.setParameter(1, website);
         List queueEntries = q.getResultList();
         Iterator it = queueEntries.iterator();
         while(it.hasNext()) {
-            this.strategy.remove((PingQueueEntryData) it.next());
+            this.strategy.remove((PingQueueEntry) it.next());
         }
         
         // Remove the website's auto ping configurations
@@ -144,7 +144,7 @@ public class JPAUserManagerImpl implements UserManager {
         List autopings = autoPingMgr.getAutoPingsByWebsite(website);
         it = autopings.iterator();
         while(it.hasNext()) {
-            this.strategy.remove((AutoPingData) it.next());
+            this.strategy.remove((AutoPing) it.next());
         }
         
         // Remove the website's custom ping targets
@@ -152,7 +152,7 @@ public class JPAUserManagerImpl implements UserManager {
         List pingtargets = pingTargetMgr.getCustomPingTargets(website);
         it = pingtargets.iterator();
         while(it.hasNext()) {
-            this.strategy.remove((PingTargetData) it.next());
+            this.strategy.remove((PingTarget) it.next());
         }
         
         // remove associated referers
@@ -413,12 +413,12 @@ public class JPAUserManagerImpl implements UserManager {
         .getAutopingManager();
         
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
-        PingTargetData pingTarget = null;
+        PingTarget pingTarget = null;
         while(pingTargets.hasNext()) {
-            pingTarget = (PingTargetData) pingTargets.next();
+            pingTarget = (PingTarget) pingTargets.next();
             
             if(pingTarget.isAutoEnabled()) {
-                AutoPingData autoPing = new AutoPingData(
+                AutoPing autoPing = new AutoPing(
                         null, pingTarget, newWeblog);
                 autoPingMgr.saveAutoPing(autoPing);
             }

@@ -37,7 +37,7 @@ import org.apache.roller.config.runtime.DisplayGroup;
 import org.apache.roller.config.runtime.PropertyDef;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.pojos.RollerConfigData;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 import org.apache.roller.business.jpa.JPAPersistenceStrategy;
 
 
@@ -71,33 +71,33 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Retrieve a single property by name.
      */
-    public RollerPropertyData getProperty(String name) throws RollerException {
-        return (RollerPropertyData) strategy
-            .load(RollerPropertyData.class,name);
+    public RuntimeConfigProperty getProperty(String name) throws RollerException {
+        return (RuntimeConfigProperty) strategy
+            .load(RuntimeConfigProperty.class,name);
     }
 
 
     /**
      * Retrieve all properties.
-     *
+     * 
      * Properties are returned in a Map to make them easy to lookup.  The Map
-     * uses the property name as the key and the RollerPropertyData object
+     * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
     public Map getProperties() throws RollerException {
 
         HashMap props = new HashMap();
-        List list = (List) strategy.getNamedQuery("RollerPropertyData.getAll").getResultList();
+        List list = (List) strategy.getNamedQuery("RuntimeConfigProperty.getAll").getResultList();
         /*
          * for convenience sake we are going to put the list of props
          * into a map for users to access it.  The value element of the
-         * hash still needs to be the RollerPropertyData object so that
+         * hash still needs to be the RuntimeConfigProperty object so that
          * we can save the elements again after they have been updated
          */
-        RollerPropertyData prop = null;
+        RuntimeConfigProperty prop = null;
         Iterator it = list.iterator();
         while(it.hasNext()) {
-            prop = (RollerPropertyData) it.next();
+            prop = (RuntimeConfigProperty) it.next();
             props.put(prop.getName(), prop);
         }
 
@@ -108,7 +108,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Save a single property.
      */
-    public void saveProperty(RollerPropertyData property) 
+    public void saveProperty(RuntimeConfigProperty property) 
             throws RollerException {
         this.strategy.store(property);
     }
@@ -122,7 +122,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         // just go through the list and saveProperties each property
         Iterator props = properties.values().iterator();
         while (props.hasNext()) {
-            this.strategy.store((RollerPropertyData) props.next());
+            this.strategy.store((RuntimeConfigProperty) props.next());
         }
     }
 
@@ -189,8 +189,8 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
 
                     // do we already have this prop?  if not then add it
                     if(!props.containsKey(propDef.getName())) {
-                        RollerPropertyData newprop =
-                            new RollerPropertyData(
+                        RuntimeConfigProperty newprop =
+                            new RuntimeConfigProperty(
                                 propDef.getName(), propDef.getDefaultValue());
 
                         props.put(propDef.getName(), newprop);
