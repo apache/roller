@@ -20,8 +20,8 @@ package org.apache.roller.business.pings;
 
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingQueueEntryData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingQueueEntry;
 
 
 /**
@@ -38,7 +38,7 @@ public interface PingQueueManager {
      *
      * @param autoPing auto ping configuration for the ping request to be queued.
      */
-    public void addQueueEntry(AutoPingData autoPing) throws RollerException;
+    public void addQueueEntry(AutoPing autoPing) throws RollerException;
     
     
     /**
@@ -47,7 +47,7 @@ public interface PingQueueManager {
      * @param pingQueueEntry update the given queue entry
      * @throws RollerException
      */
-    public void saveQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException;
+    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException;
     
     
     /**
@@ -56,7 +56,7 @@ public interface PingQueueManager {
      * @param pingQueueEntry the entry to be removed.
      * @throws RollerException
      */
-    public void removeQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException;
+    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException;
     
     
     /**
@@ -66,13 +66,13 @@ public interface PingQueueManager {
      * @return the queue entry with the specified id.
      * @throws RollerException
      */
-    public PingQueueEntryData getQueueEntry(String id) throws RollerException;
+    public PingQueueEntry getQueueEntry(String id) throws RollerException;
     
     
     /**
      * Get all of the queue entries.
-     *
-     * @return the queue as a <code>List</code> of {@link PingQueueEntryData} objects.
+     * 
+     * @return the queue as a <code>List</code> of {@link PPingQueueEntry objects.
      * @throws RollerException
      */
     public List getAllQueueEntries() throws RollerException;

@@ -31,7 +31,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.config.runtime.ConfigDef;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
 
@@ -109,12 +109,12 @@ public class GlobalConfig extends UIAction implements ParameterAware {
         
         // only set values for properties that are already defined
         String propName = null;
-        RollerPropertyData updProp = null;
+        RuntimeConfigProperty updProp = null;
         String incomingProp = null;
         Iterator propsIT = getProperties().keySet().iterator();
         while(propsIT.hasNext()) {
             propName = (String) propsIT.next();
-            updProp = (RollerPropertyData) getProperties().get(propName);
+            updProp = (RuntimeConfigProperty) getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
             
             log.debug("Checking property ["+propName+"]");

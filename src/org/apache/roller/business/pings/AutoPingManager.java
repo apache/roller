@@ -21,8 +21,8 @@ package org.apache.roller.business.pings;
 import java.util.Collection;
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
@@ -39,7 +39,7 @@ public interface AutoPingManager {
      * @param autoPing the auto ping configuration
      * @throws RollerException
      */
-    public void saveAutoPing(AutoPingData autoPing) throws RollerException;
+    public void saveAutoPing(AutoPing autoPing) throws RollerException;
     
     
     /**
@@ -48,7 +48,7 @@ public interface AutoPingManager {
      * @param autoPing the auto ping configuration to remove
      * @throws RollerException
      */
-    public void removeAutoPing(AutoPingData autoPing) throws RollerException;
+    public void removeAutoPing(AutoPing autoPing) throws RollerException;
     
     
     /**
@@ -59,13 +59,13 @@ public interface AutoPingManager {
      * @param website    the website
      * @throws RollerException
      */
-    public void removeAutoPing(PingTargetData pingTarget, Weblog website) throws RollerException;
+    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws RollerException;
     
     
     /**
      * Remove a collection of auto ping configurations.
-     *
-     * @param autopings a <code>Collection</code> of <code>AutoPingData</code> objects
+     * 
+     * @param autopings a <code>Collection</code> of <code>AAutoPing/code> objects
      * @throws RollerException
      */
     public void removeAutoPings(Collection autopings) throws RollerException;
@@ -86,25 +86,25 @@ public interface AutoPingManager {
      * @return the auto ping configuration with specified id or null if not found
      * @throws RollerException
      */
-    public AutoPingData getAutoPing(String id) throws RollerException;
+    public AutoPing getAutoPing(String id) throws RollerException;
     
     
     /**
      * Get all of the auto ping configurations for the given website.
-     *
+     * 
      * @param website
-     * @return a list of auto ping configurations for the given website as <code>AutoPingData</code> objects.
+     * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
      */
     public List getAutoPingsByWebsite(Weblog website) throws RollerException;
     
     
     /**
      * Get all of the auto ping configurations for a given target (across all websites).
-     *
+     * 
      * @param pingTarget
-     * @return a list of auto ping configurations for the given target as <code>AutoPingData</code> objects.
+     * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
-    public List getAutoPingsByTarget(PingTargetData pingTarget) throws RollerException;
+    public List getAutoPingsByTarget(PingTarget pingTarget) throws RollerException;
     
     
     /**
@@ -134,7 +134,7 @@ public interface AutoPingManager {
      *         will be empty if there are no restrictions (meaning that the auto ping configuration applies to changes
      *         in any category of the website).
      */
-    public List getCategoryRestrictions(AutoPingData autoPing) throws RollerException;
+    public List getCategoryRestrictions(AutoPing autoPing) throws RollerException;
     
     
     /**
@@ -144,7 +144,7 @@ public interface AutoPingManager {
      * @param autoPing      auto ping configuration to change
      * @param newCategories a collection of <code>WeblogCategoryData</code> objects for the new category restrictions
      */
-    public void setCategoryRestrictions(AutoPingData autoPing,
+    public void setCategoryRestrictions(AutoPing autoPing,
             Collection newCategories);
     
     

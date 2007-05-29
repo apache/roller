@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -232,7 +232,7 @@ public class PingConfig {
                 String name = m.group(1).trim();
                 String url = m.group(2).trim();
                 logger.info("Creating common ping target '" + name + "' from configuration properties.");
-                PingTargetData pingTarget = new PingTargetData(null, name, url, null, false);
+                PingTarget pingTarget = new PingTarget(null, name, url, null, false);
                 pingTargetMgr.savePingTarget(pingTarget);
             } else {
                 logger.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);

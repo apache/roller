@@ -64,7 +64,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 import org.apache.roller.pojos.WeblogEntryTag;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.util.URLUtilities;
@@ -249,7 +249,7 @@ public class RollerAtomHandler implements AtomHandler {
         StringBuffer sb = new StringBuffer();
         Roller roller = RollerFactory.getRoller();
         Map config = roller.getPropertiesManager().getProperties();        
-        String allows = ((RollerPropertyData)config.get("uploads.types.allowed")).getValue();
+        String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         for (int i=0; i<rules.length; i++) {
             if (rules[i].indexOf("/") == -1) continue;

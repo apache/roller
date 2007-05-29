@@ -26,8 +26,8 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.PingQueueEntryData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingQueueEntry;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -99,7 +99,7 @@ public class PingQueueProcessor {
             
             // Process each entry
             for (Iterator i = entries.iterator(); i.hasNext();) {
-                PingQueueEntryData pingQueueEntry = (PingQueueEntryData) i.next();
+                PingQueueEntry pingQueueEntry = (PingQueueEntry) i.next();
                 processQueueEntry(pingQueueEntry);
             }
             if (logger.isDebugEnabled()) logger.debug("Finished processing ping queue.");
@@ -116,10 +116,10 @@ public class PingQueueProcessor {
      * @throws RollerException only if there are problems processing the queue.  Exceptions from sending pings are
      *                         handled, not thrown.
      */
-    private void processQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
+    private void processQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException {
         if (logger.isDebugEnabled()) logger.debug("Processing ping queue entry: " + pingQueueEntry);
         
-        PingTargetData pingTarget = pingQueueEntry.getPingTarget();
+        PingTarget pingTarget = pingQueueEntry.getPingTarget();
         Weblog website = pingQueueEntry.getWebsite();
         boolean pingSucceeded = false;
         if (PingConfig.getLogPingsOnly()) {
@@ -154,7 +154,7 @@ public class PingQueueProcessor {
      * @param ex             the exception that occurred on the ping attempt
      * @throws RollerException
      */
-    private void handlePingError(PingQueueEntryData pingQueueEntry, Exception ex)
+    private void handlePingError(PingQueueEntry pingQueueEntry, Exception ex)
             throws RollerException {
         
         if ((pingQueueEntry.incrementAttempts() < PingConfig.getMaxPingAttempts()) && WeblogUpdatePinger.shouldRetry(ex)) {

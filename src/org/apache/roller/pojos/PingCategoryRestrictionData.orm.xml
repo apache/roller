@@ -16,7 +16,7 @@
             <id name="id">
                 <column name="id"/>
             </id>
-            <many-to-one name="autoping" target-entity="org.apache.roller.pojos.AutoPingData">
+            <many-to-one name="autoping" target-entity="org.apache.roller.pojos.AutoPing">
                 <join-column name="autopingid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <many-to-one name="weblogCategory"

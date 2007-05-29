@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.TaskLockData;
+import org.apache.roller.pojos.TaskLock;
 
 
 /**
@@ -58,14 +58,14 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
      */
     public boolean registerLease(RollerTask task) {
         // query for existing lease record first
-        TaskLockData taskLock = null;
+        TaskLock taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
 
             if(taskLock == null) {
                 // insert an empty record, then we will actually acquire the
                 // lease below using an update statement
-                taskLock = new TaskLockData();
+                taskLock = new TaskLock();
                 taskLock.setName(task.getName());
                 taskLock.setTimeAquired(new Date(0));
                 taskLock.setTimeLeased(0);
@@ -76,7 +76,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             }
 
         } catch (RollerException ex) {
-            log.warn("Error getting or inserting TaskLockData", ex);
+            log.warn("Error getting or inserting TaskLock", ex);
             return false;
         }
 
@@ -89,7 +89,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                     (60000*taskLock.getTimeLeased())-1000;
 
             Query q = strategy.getNamedUpdate(
-                    "TaskLockData.updateClient&Timeacquired&TimeleasedByName&Timeacquired");
+                    "TaskLock.updateClient&Timeacquired&TimeleasedByName&Timeacquired");
             q.setParameter(1, task.getClientId());
             q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
             q.setParameter(3, task.getName());
@@ -116,7 +116,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     public boolean unregisterLease(RollerTask task) {
 
         // query for existing lease record first
-        TaskLockData taskLock = null;
+        TaskLock taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
 
@@ -125,14 +125,14 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             }
 
         } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
+            log.warn("Error getting TaskLock", ex);
             return false;
         }
 
         // try to release lease, just set lease time to 0
         try {
             Query q = strategy.getNamedUpdate(
-                    "TaskLockData.updateTimeLeasedByName&Client");
+                    "TaskLock.updateTimeLeasedByName&Client");
             q.setParameter(1, Integer.valueOf(task.getInterval()));
             q.setParameter(2, task.getName());
             q.setParameter(3, task.getClientId());
@@ -152,19 +152,19 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     }
     
 
-    private TaskLockData getTaskLockByName(String name) throws RollerException {
+    private TaskLock getTaskLockByName(String name) throws RollerException {
         // do lookup
-        Query q = strategy.getNamedQuery("TaskLockData.getByName");
+        Query q = strategy.getNamedQuery("TaskLock.getByName");
         q.setParameter(1, name);
         try {
-            return (TaskLockData)q.getSingleResult();
+            return (TaskLock)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     
-    private void saveTaskLock(TaskLockData data) throws RollerException {
+    private void saveTaskLock(TaskLock data) throws RollerException {
         this.strategy.store(data);
     }
 

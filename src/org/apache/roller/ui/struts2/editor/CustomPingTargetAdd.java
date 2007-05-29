@@ -12,7 +12,7 @@ package org.apache.roller.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.ui.struts2.common.PingTargetAddBase;
 
 
@@ -42,9 +42,9 @@ public class CustomPingTargetAdd extends PingTargetAddBase {
     }
     
     
-    protected PingTargetData createPingTarget() {
+    protected PingTarget createPingTarget() {
         
-        return new PingTargetData(
+        return new PingTarget(
                 null, 
                 getBean().getName(), 
                 getBean().getPingUrl(), 

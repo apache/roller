@@ -18,7 +18,7 @@
 
 package org.apache.roller.ui.struts2.common;
 
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 
 
 /**
@@ -56,14 +56,14 @@ public class PingTargetFormBean {
     }
     
     
-    public void copyTo(PingTargetData dataHolder) {
+    public void copyTo(PingTarget dataHolder) {
         
         dataHolder.setName(this.name);
         dataHolder.setPingUrl(this.pingUrl);
     }
     
     
-    public void copyFrom(PingTargetData dataHolder) {
+    public void copyFrom(PingTarget dataHolder) {
         
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();

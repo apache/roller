@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
@@ -83,9 +83,9 @@ public class FileManagerTest extends TestCase {
         // update roller properties to prepare for test
         PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
         Map config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
-        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("opml");
-        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
+        ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("opml");
+        ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("1.00");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
@@ -120,9 +120,9 @@ public class FileManagerTest extends TestCase {
         // update roller properties to prepare for test
         PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
         Map config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
-        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("opml");
-        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
+        ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("opml");
+        ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("1.00");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
@@ -156,9 +156,9 @@ public class FileManagerTest extends TestCase {
         // update roller properties to prepare for test
         PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
         Map config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
-        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("opml");
-        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
+        ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("opml");
+        ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("1.00");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
@@ -206,10 +206,10 @@ public class FileManagerTest extends TestCase {
         FileManager fmgr = RollerFactory.getRoller().getFileManager();
         PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
         Map config = config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
-        ((RollerPropertyData)config.get("uploads.types.forbid")).setValue("");
-        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("");
-        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
+        ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("1.00");
+        ((RuntimeConfigProperty)config.get("uploads.types.forbid")).setValue("");
+        ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("");
+        ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
@@ -227,7 +227,7 @@ public class FileManagerTest extends TestCase {
         exception = null;
         
         config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("1.00");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
@@ -243,7 +243,7 @@ public class FileManagerTest extends TestCase {
         
         
         config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.types.forbid")).setValue("gif");
+        ((RuntimeConfigProperty)config.get("uploads.types.forbid")).setValue("gif");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
@@ -259,7 +259,7 @@ public class FileManagerTest extends TestCase {
         
         
         config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.enabled")).setValue("false");
+        ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("false");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         

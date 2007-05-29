@@ -24,20 +24,21 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 /**
- * Ping Category Restriction.  An instance of this class relates an auto ping configuration {@link AutoPingData} to a
+ * Ping Category Restriction.  An instance of this class relates an auto ping configuration {@link AutoPing} to a
  * specific weblog category {@link WeblogCategory}.  When one or more instances of this class are present for a
  * given auto ping configuration, it means that pings should only go out for changes to the categories specified by those
  * instances.  If no instances of this class are present for a given auto ping configuration, it means that the ping
  * configuration is not restricted by category, so pings should go out for changes in any category.
  * 
+ * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="AutoPingData"
+ * @ejb:bean name="AAutoPing
  * @hibernate.cache usage="read-write"
  * @hibernate.class lazy="true" table="pingcategory"
  */
 public class PingCategoryRestrictionData implements Serializable {
     private String id = UUIDGenerator.generateUUID();
-    private AutoPingData autoPing;
+    private AutoPing autoPing;
     private WeblogCategory weblogCategory;
 
     static final long serialVersionUID = 2261280579491859418L;
@@ -55,7 +56,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @param autoPing       auto ping configuration being restricted
      * @param weblogCategory weblog category to which this auto ping configuration is restricted
      */
-    public PingCategoryRestrictionData(String id, AutoPingData autoPing, WeblogCategory weblogCategory) {
+    public PingCategoryRestrictionData(String id, AutoPing autoPing, WeblogCategory weblogCategory) {
         //this.id = id;
         this.autoPing = autoPing;
         this.weblogCategory = weblogCategory;
@@ -100,7 +101,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="autopingid" cascade="none" not-null="true"
      */
-    public AutoPingData getAutoping() {
+    public AutoPing getAutoping() {
         return autoPing;
     }
 
@@ -110,7 +111,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @param autoPing the auto ping configuration to which this category restriction applies.
      * @ejb:persistent-field
      */
-    public void setAutoping(AutoPingData autoPing) {
+    public void setAutoping(AutoPing autoPing) {
         this.autoPing = autoPing;
     }
 

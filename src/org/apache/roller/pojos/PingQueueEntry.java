@@ -28,16 +28,16 @@ import org.apache.roller.util.UUIDGenerator;
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
  * added to the queue, which configuration to apply for the ping, and the number of ping attempts that have been made
  * for this entry so far.
- *
+ * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="PingQueueEntryData"
- * @hibernate.class lazy="true" table="pingqueueentry"
+ * @ejb:bean name="PingQueueEntry"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="pingqueueentry"
  */
-public class PingQueueEntryData implements Serializable {
+public class PingQueueEntry implements Serializable {
     private String id = UUIDGenerator.generateUUID();
     private Timestamp entryTime = null;
-    private PingTargetData pingTarget = null;
+    private PingTarget pingTarget = null;
     private Weblog website = null;
     private int attempts = 0;
 
@@ -46,7 +46,7 @@ public class PingQueueEntryData implements Serializable {
     /**
      * Default constructor.  Leaves all fields at Java-specified default values.
      */
-    public PingQueueEntryData() {
+    public PingQueueEntry() {
     }
 
     /**
@@ -58,7 +58,7 @@ public class PingQueueEntryData implements Serializable {
      * @param website    website originating the ping
      * @param attempts   number of prior ping attempts
      */
-    public PingQueueEntryData(String id, Timestamp entryTime, PingTargetData pingTarget, Weblog website, int attempts) {
+    public PingQueueEntry(String id, Timestamp entryTime, PingTarget pingTarget, Weblog website, int attempts) {
         //this.id = id;
         this.entryTime = entryTime;
         this.pingTarget = pingTarget;
@@ -69,7 +69,7 @@ public class PingQueueEntryData implements Serializable {
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(PingQueueEntryData other) {
+    public void setData(PingQueueEntry other) {
         id = other.getId();
         entryTime = other.getEntryTime();
         pingTarget = other.getPingTarget();
@@ -128,7 +128,7 @@ public class PingQueueEntryData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="pingtargetid" cascade="none" not-null="true"
      */
-    public PingTargetData getPingTarget() {
+    public PingTarget getPingTarget() {
         return pingTarget;
     }
 
@@ -138,7 +138,7 @@ public class PingQueueEntryData implements Serializable {
      * @param pingTarget target to ping.
      * @ejb:persistent-field
      */
-    public void setPingTarget(PingTargetData pingTarget) {
+    public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
 
@@ -207,8 +207,8 @@ public class PingQueueEntryData implements Serializable {
     
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof PingQueueEntryData != true) return false;
-        PingQueueEntryData o = (PingQueueEntryData)other;
+        if (other instanceof PingQueueEntry != true) return false;
+        PingQueueEntry o = (PingQueueEntry)other;
         return new EqualsBuilder()
             .append(getEntryTime(), o.getEntryTime()) 
             .append(getWebsite(), o.getWebsite()) 

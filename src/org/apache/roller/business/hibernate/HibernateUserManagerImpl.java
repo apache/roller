@@ -46,15 +46,15 @@ import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.AutoPingData;
+import org.apache.roller.pojos.AutoPing;
 import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.WeblogEntryTag;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.PingQueueEntryData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingQueueEntry;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.WeblogCategory;
@@ -142,7 +142,7 @@ public class HibernateUserManagerImpl implements UserManager {
         session.createQuery("delete from WeblogEntryTagAggregate where total <= 0").executeUpdate();       
                 
         // Remove the website's ping queue entries
-        Criteria criteria = session.createCriteria(PingQueueEntryData.class);
+        Criteria criteria = session.createCriteria(PingQueueEntry.class);
         criteria.add(Expression.eq("website", website));
         List queueEntries = criteria.list();
         
@@ -151,7 +151,7 @@ public class HibernateUserManagerImpl implements UserManager {
         List autopings = autoPingMgr.getAutoPingsByWebsite(website);
         Iterator it = autopings.iterator();
         while(it.hasNext()) {
-            this.strategy.remove((AutoPingData) it.next());
+            this.strategy.remove((AutoPing) it.next());
         }
         
         // Remove the website's custom ping targets
@@ -159,7 +159,7 @@ public class HibernateUserManagerImpl implements UserManager {
         List pingtargets = pingTargetMgr.getCustomPingTargets(website);
         it = pingtargets.iterator();
         while(it.hasNext()) {
-            this.strategy.remove((PingTargetData) it.next());
+            this.strategy.remove((PingTarget) it.next());
         }
         
         // remove entries
@@ -357,12 +357,12 @@ public class HibernateUserManagerImpl implements UserManager {
         AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
         
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
-        PingTargetData pingTarget = null;
+        PingTarget pingTarget = null;
         while(pingTargets.hasNext()) {
-            pingTarget = (PingTargetData) pingTargets.next();
+            pingTarget = (PingTarget) pingTargets.next();
             
             if(pingTarget.isAutoEnabled()) {
-                AutoPingData autoPing = new AutoPingData(null, pingTarget, newWeblog);
+                AutoPing autoPing = new AutoPing(null, pingTarget, newWeblog);
                 autoPingMgr.saveAutoPing(autoPing);
             }
         }

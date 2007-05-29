@@ -25,7 +25,7 @@ package org.apache.roller.business;
 
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -42,7 +42,7 @@ public interface PropertiesManager {
     /** 
      * Save a single property 
      */
-    public void saveProperty(RollerPropertyData property) throws RollerException;
+    public void saveProperty(RuntimeConfigProperty property) throws RollerException;
     
     
     /** 
@@ -54,7 +54,7 @@ public interface PropertiesManager {
     /** 
      * Retrieve a single property by name 
      */
-    public RollerPropertyData getProperty(String name) throws RollerException;
+    public RuntimeConfigProperty getProperty(String name) throws RollerException;
     
     
     /** 

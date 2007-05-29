@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 
@@ -39,7 +39,7 @@ public abstract class PingTargetsBase extends UIAction {
     private List pingTargets = Collections.EMPTY_LIST;
     
     // ping target we are working on, if any
-    private PingTargetData pingTarget = null;
+    private PingTarget pingTarget = null;
     
     // id of the ping target to work on
     private String pingTargetId = null;
@@ -136,11 +136,11 @@ public abstract class PingTargetsBase extends UIAction {
         this.pingTargets = pingTargets;
     }
 
-    public PingTargetData getPingTarget() {
+    public PingTarget getPingTarget() {
         return pingTarget;
     }
 
-    public void setPingTarget(PingTargetData pingTarget) {
+    public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
     

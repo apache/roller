@@ -32,8 +32,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.Weblog;
 
 /*
@@ -55,7 +55,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         this.strategy = strategy;
     }
 
-    public void removePingTarget(PingTargetData pingTarget) 
+    public void removePingTarget(PingTarget pingTarget) 
             throws RollerException {
         // remove contents and then target
         this.removePingTargetContents(pingTarget);
@@ -66,15 +66,15 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      * Convenience method which removes any queued pings or auto pings that
      * reference the given ping target.
      */
-    private void removePingTargetContents(PingTargetData ping) 
+    private void removePingTargetContents(PingTarget ping) 
             throws RollerException {
         // Remove the website's ping queue entries
-        Query q = strategy.getNamedUpdate("PingQueueEntryData.removeByPingTarget");
+        Query q = strategy.getNamedUpdate("PingQueueEntry.removeByPingTarget");
         q.setParameter(1, ping);
         q.executeUpdate();
         
         // Remove the website's auto ping configurations
-        q = strategy.getNamedUpdate("AutoPingData.removeByPingTarget");
+        q = strategy.getNamedUpdate("AutoPing.removeByPingTarget");
         q.setParameter(1, ping);
         q.executeUpdate();
     }
@@ -82,21 +82,21 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public void removeAllCustomPingTargets()
             throws RollerException {
         Query q = strategy.getNamedUpdate(
-            "PingTargetData.removeByWebsiteNotNull");
+            "PingTarget.removeByWebsiteNotNull");
         q.executeUpdate();
     }
 
-    public void savePingTarget(PingTargetData pingTarget)
+    public void savePingTarget(PingTarget pingTarget)
             throws RollerException {
         strategy.store(pingTarget);
     }
 
-    public PingTargetData getPingTarget(String id)
+    public PingTarget getPingTarget(String id)
             throws RollerException {
-        return (PingTargetData)strategy.load(PingTargetData.class, id);
+        return (PingTarget)strategy.load(PingTarget.class, id);
     }
 
-    public boolean isNameUnique(PingTargetData pingTarget) 
+    public boolean isNameUnique(PingTarget pingTarget) 
             throws RollerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
@@ -117,7 +117,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         // with the same name and that target doesn't
         // have the same id.
         for (Iterator i = brotherTargets.iterator(); i.hasNext();) {
-            PingTargetData brother = (PingTargetData) i.next();
+            PingTarget brother = (PingTarget) i.next();
             // Fail if it has the same name but not the same id.
             if (brother.getName().equals(name) && 
                 (id == null || !brother.getId().equals(id))) {
@@ -129,7 +129,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
-    public boolean isUrlWellFormed(PingTargetData pingTarget) 
+    public boolean isUrlWellFormed(PingTarget pingTarget) 
             throws RollerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
@@ -147,7 +147,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
-    public boolean isHostnameKnown(PingTargetData pingTarget) 
+    public boolean isHostnameKnown(PingTarget pingTarget) 
             throws RollerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
@@ -167,14 +167,14 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public List getCommonPingTargets()
             throws RollerException {
         Query q = strategy.getNamedQuery(
-                "PingTargetData.getByWebsiteNullOrderByName");
+                "PingTarget.getByWebsiteNullOrderByName");
         return q.getResultList();
     }
 
     public List getCustomPingTargets(Weblog website)
             throws RollerException {
         Query q = strategy.getNamedQuery(
-                "PingTargetData.getByWebsiteOrderByName");
+                "PingTarget.getByWebsiteOrderByName");
         q.setParameter(1, website);
         return q.getResultList();
     }

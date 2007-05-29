@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 
@@ -39,7 +39,7 @@ public abstract class PingTargetAddBase extends UIAction {
     protected abstract Log getLogger();
     
     // create a new ping target
-    protected abstract PingTargetData createPingTarget();
+    protected abstract PingTarget createPingTarget();
     
     
     public String execute() {
@@ -52,7 +52,7 @@ public abstract class PingTargetAddBase extends UIAction {
      */
     public String save() {
         
-        PingTargetData pingTarget = createPingTarget();
+        PingTarget pingTarget = createPingTarget();
         
         // Call private helper to validate ping target
         // If there are errors, go back to the target edit page.
@@ -81,7 +81,7 @@ public abstract class PingTargetAddBase extends UIAction {
     /**
      * Private helper to validate a ping target.
      */
-    protected void myValidate(PingTargetData pingTarget) {
+    protected void myValidate(PingTarget pingTarget) {
         
         try {
             PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();

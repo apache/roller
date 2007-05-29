@@ -20,7 +20,7 @@ package org.apache.roller.business.pings;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.PingConfig;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.Weblog;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -97,7 +97,7 @@ public class WeblogUpdatePinger {
      * @throws IOException
      * @throws XmlRpcException
      */
-    public static PingResult sendPing(PingTargetData pingTarget, Weblog website) throws IOException, XmlRpcException {
+    public static PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
         String websiteUrl = website.getAbsoluteURL();
         String pingTargetUrl = pingTarget.getPingUrl();
         Set variantOptions = PingConfig.getVariantOptions(pingTargetUrl);

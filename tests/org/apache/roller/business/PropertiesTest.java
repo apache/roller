@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -63,7 +63,7 @@ public class PropertiesTest extends TestCase {
         PropertiesManager mgr = RollerFactory.getRoller().getPropertiesManager();
         TestUtils.endSession(true);
         
-        RollerPropertyData prop = null;
+        RuntimeConfigProperty prop = null;
         
         // get a property by name
         prop = mgr.getProperty("site.name");
@@ -86,9 +86,9 @@ public class PropertiesTest extends TestCase {
         assertTrue(props.containsKey("site.name"));
         
         // update multiple properties
-        prop = (RollerPropertyData) props.get("site.name");
+        prop = (RuntimeConfigProperty) props.get("site.name");
         prop.setValue("foofoo");
-        prop = (RollerPropertyData) props.get("site.description");
+        prop = (RuntimeConfigProperty) props.get("site.description");
         prop.setValue("blahblah");
         mgr.saveProperties(props);
         TestUtils.endSession(true);
@@ -96,8 +96,8 @@ public class PropertiesTest extends TestCase {
         // make sure all properties were updated
         props = mgr.getProperties();
         assertNotNull(props);
-        assertEquals("foofoo", ((RollerPropertyData)props.get("site.name")).getValue());
-        assertEquals("blahblah", ((RollerPropertyData)props.get("site.description")).getValue());
+        assertEquals("foofoo", ((RuntimeConfigProperty)props.get("site.name")).getValue());
+        assertEquals("blahblah", ((RuntimeConfigProperty)props.get("site.description")).getValue());
     }
     
 }

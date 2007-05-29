@@ -23,8 +23,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.PingTargetData;
+import org.apache.roller.pojos.AutoPing;
+import org.apache.roller.pojos.PingTarget;
 import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import java.util.Collection;
@@ -58,26 +58,26 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public AutoPingData getAutoPing(String id) throws RollerException {
-        return (AutoPingData) strategy.load(id, AutoPingData.class);
+    public AutoPing getAutoPing(String id) throws RollerException {
+        return (AutoPing) strategy.load(id, AutoPing.class);
     }
     
     
-    public void saveAutoPing(AutoPingData autoPing) throws RollerException {
+    public void saveAutoPing(AutoPing autoPing) throws RollerException {
         strategy.store(autoPing);
     }
     
     
-    public void removeAutoPing(AutoPingData autoPing)  throws RollerException {
+    public void removeAutoPing(AutoPing autoPing)  throws RollerException {
         //TODO: first remove all related category restrictions (category restrictions are not yet implemented)
         strategy.remove(autoPing);
     }
     
     
-    public void removeAutoPing(PingTargetData pingTarget, Weblog website) throws RollerException {
+    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws RollerException {
         try {
             Session session = strategy.getSession();
-            Criteria criteria = session.createCriteria(AutoPingData.class);
+            Criteria criteria = session.createCriteria(AutoPing.class);
             
             // Currently category restrictions are not yet implemented, so we 
             // return all auto ping configs for the website.
@@ -98,7 +98,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
         // just go through the list and remove each auto ping
         Iterator pings = autopings.iterator();
         while (pings.hasNext()) {
-            this.strategy.remove((AutoPingData) pings.next());
+            this.strategy.remove((AutoPing) pings.next());
         }
     }
     
@@ -106,7 +106,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     public void removeAllAutoPings() throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(AutoPingData.class);
+            Criteria criteria = session.createCriteria(AutoPing.class);
             List allAutoPings = criteria.list();
             this.removeAutoPings(allAutoPings);
         } catch (HibernateException e) {
@@ -125,7 +125,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
         PingQueueManager pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
         List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
         for (Iterator i = applicableAutopings.iterator(); i.hasNext(); ) {
-            AutoPingData autoPing = (AutoPingData) i.next();
+            AutoPing autoPing = (AutoPing) i.next();
             pingQueueMgr.addQueueEntry(autoPing);
         }
     }
@@ -134,7 +134,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     public List getAutoPingsByWebsite(Weblog website) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(AutoPingData.class);
+            Criteria criteria = session.createCriteria(AutoPing.class);
             // Currently category restrictions are not yet implemented, so we return all auto ping configs for the
             // website.
             criteria.add(Expression.eq("website", website));
@@ -145,10 +145,10 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public List getAutoPingsByTarget(PingTargetData pingTarget) throws RollerException {
+    public List getAutoPingsByTarget(PingTarget pingTarget) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(AutoPingData.class);
+            Criteria criteria = session.createCriteria(AutoPing.class);
             // Currently category restrictions are not yet implemented, so we return all auto ping configs for the
             // website.
             criteria.add(Expression.eq("pingTarget", pingTarget));
@@ -162,7 +162,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(AutoPingData.class);
+            Criteria criteria = session.createCriteria(AutoPing.class);
             // Currently category restrictions are not yet implemented, so we return all auto ping configs for the
             // website.
             criteria.add(Expression.eq("website", changedWeblogEntry.getWebsite()));
@@ -173,12 +173,12 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public List getCategoryRestrictions(AutoPingData autoPing) throws RollerException {
+    public List getCategoryRestrictions(AutoPing autoPing) throws RollerException {
         return Collections.EMPTY_LIST;
     }
     
     
-    public void setCategoryRestrictions(AutoPingData autoPing, Collection newCategories) {
+    public void setCategoryRestrictions(AutoPing autoPing, Collection newCategories) {
         // NOT YET IMPLEMENTED
         return;
     }
