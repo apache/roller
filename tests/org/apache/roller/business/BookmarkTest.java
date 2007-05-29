@@ -34,7 +34,7 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
 
@@ -46,7 +46,7 @@ public class BookmarkTest extends TestCase {
     
     public static Log log = LogFactory.getLog(BookmarkTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     
     

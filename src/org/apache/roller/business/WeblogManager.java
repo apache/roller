@@ -24,9 +24,9 @@ import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogHitCount;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RollerMessages;
 
@@ -42,22 +42,22 @@ public interface WeblogManager {
     /**
      * Save weblog entry.
      */
-    public void saveWeblogEntry(WeblogEntryData entry) throws RollerException;
+    public void saveWeblogEntry(WeblogEntry entry) throws RollerException;
        
     /**
      * Remove weblog entry.
      */
-    public void removeWeblogEntry(WeblogEntryData entry) throws RollerException;    
+    public void removeWeblogEntry(WeblogEntry entry) throws RollerException;    
     
     /**
      * Get weblog entry by id.
      */
-    public WeblogEntryData getWeblogEntry(String id) throws RollerException;
+    public WeblogEntry getWeblogEntry(String id) throws RollerException;
     
     /** 
      * Get weblog entry by anchor. 
      */
-    public WeblogEntryData getWeblogEntryByAnchor(Weblog website, String anchor) 
+    public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor) 
             throws RollerException;
         
     /**
@@ -79,7 +79,7 @@ public interface WeblogManager {
      */
     public List getWeblogEntries(
             Weblog website,
-            UserData    user,
+            User    user,
             Date        startDate,
             Date        endDate,
             String      catName,
@@ -152,7 +152,7 @@ public interface WeblogManager {
      * @param subcats True if sub-categories are to be fetched
      * @return        List of weblog entries in category
      */
-    public List getWeblogEntries(WeblogCategoryData cat, boolean subcats) 
+    public List getWeblogEntries(WeblogCategory cat, boolean subcats) 
             throws RollerException; 
     
     /** 
@@ -178,7 +178,7 @@ public interface WeblogManager {
      * @param current The "current" WeblogEntryData
      * @param catName The value of the requested Category Name
      */
-    public WeblogEntryData getNextEntry(WeblogEntryData current, 
+    public WeblogEntry getNextEntry(WeblogEntry current, 
             String catName, String locale) throws RollerException;    
     
     /**
@@ -187,7 +187,7 @@ public interface WeblogManager {
      * @param current The "current" WeblogEntryData.
      * @param catName The value of the requested Category Name.
      */
-    public WeblogEntryData getPreviousEntry(WeblogEntryData current, 
+    public WeblogEntry getPreviousEntry(WeblogEntry current, 
             String catName, String locale) throws RollerException;
       
     
@@ -202,30 +202,30 @@ public interface WeblogManager {
      * Remove attribute with given name from given WeblogEntryData
      * @param name Name of attribute to be removed
      */
-    public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
+    public void removeWeblogEntryAttribute(String name,WeblogEntry entry)
             throws RollerException;
 
     /**
      * Remove tag with given name from given WeblogEntryData
      * @param name Name of tag to be removed
      */
-    public void removeWeblogEntryTag(String name, WeblogEntryData entry)
+    public void removeWeblogEntryTag(String name,WeblogEntry entry)
             throws RollerException;
 
     /**
      * Save weblog category.
      */
-    public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException;
+    public void saveWeblogCategory(WeblogCategory cat) throws RollerException;
     
     /**
      * Remove weblog category.
      */
-    public void removeWeblogCategory(WeblogCategoryData cat) throws RollerException;
+    public void removeWeblogCategory(WeblogCategory cat) throws RollerException;
         
     /**
      * Get category by id.
      */
-    public WeblogCategoryData getWeblogCategory(String id) throws RollerException;
+    public WeblogCategory getWeblogCategory(String id) throws RollerException;
     
     
     /**
@@ -233,21 +233,21 @@ public interface WeblogManager {
      *
      * This moves the src category itself and all children and associated entries.
      */
-    public void moveWeblogCategory(WeblogCategoryData src, WeblogCategoryData dest)
+    public void moveWeblogCategory(WeblogCategory src, WeblogCategory dest)
             throws RollerException;
     
     
     /**
      * Recategorize all entries with one category to another.
      */
-    public void moveWeblogCategoryContents(WeblogCategoryData srcCat, WeblogCategoryData destCat) 
+    public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat) 
             throws RollerException;
     
     /**
      * Get top level categories for a website.
      * @param website Website.
      */
-    public WeblogCategoryData getRootWeblogCategory(Weblog website) throws RollerException;
+    public WeblogCategory getRootWeblogCategory(Weblog website) throws RollerException;
     
     
     /**
@@ -255,7 +255,7 @@ public interface WeblogManager {
      * @param website      Website of WeblogCategory.
      * @param categoryPath Path of WeblogCategory, relative to category root.
      */
-    public WeblogCategoryData getWeblogCategoryByPath(Weblog website, 
+    public WeblogCategory getWeblogCategoryByPath(Weblog website, 
             String categoryPath) throws RollerException;
     
     
@@ -293,8 +293,8 @@ public interface WeblogManager {
      * @param length     Max comments to return (or -1 for no limit)
      */
     public List getComments(
-            Weblog     website,
-            WeblogEntryData entry,
+            
+            Weblog     website,WeblogEntry entry,
             String          searchString,
             Date            startDate,
             Date            endDate,
@@ -302,6 +302,7 @@ public interface WeblogManager {
             boolean         reverseChrono,
             int             offset,
             int             length
+            
             ) throws RollerException;
 
     /**
@@ -314,29 +315,30 @@ public interface WeblogManager {
      * @return Number of comments deleted
      */
     public int removeMatchingComments(
-            Weblog     website,
-            WeblogEntryData entry,
+            
+            Weblog     website,WeblogEntry entry,
             String          searchString,
             Date            startDate,
             Date            endDate,
             String          status
+            
             ) throws RollerException;
         
     /**
      * Create unique anchor for weblog entry.
      */
-    public String createAnchor(WeblogEntryData data) throws RollerException;    
+    public String createAnchor(WeblogEntry data) throws RollerException;    
     
     /**
      * Check for duplicate category name.
      */
-    public boolean isDuplicateWeblogCategoryName(WeblogCategoryData data)
+    public boolean isDuplicateWeblogCategoryName(WeblogCategory data)
             throws RollerException;  
     
     /**
      * Check if weblog category is in use.
      */
-    public boolean isWeblogCategoryInUse(WeblogCategoryData data)
+    public boolean isWeblogCategoryInUse(WeblogCategory data)
             throws RollerException;    
     
     

@@ -15,7 +15,7 @@
         eternal="false"
         overflowToDisk="false" />
         
-    <cache name="org.apache.roller.pojos.UserData"
+    <cache name="org.apache.roller.pojos.User"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />

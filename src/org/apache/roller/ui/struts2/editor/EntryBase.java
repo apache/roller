@@ -30,7 +30,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
 import org.apache.roller.ui.core.plugins.WeblogEntryEditor;
@@ -49,7 +49,7 @@ public abstract class EntryBase extends UIAction {
     /**
      * Trigger reindexing of modified entry.
      */
-    protected void reindexEntry(WeblogEntryData entry) {
+    protected void reindexEntry(WeblogEntry entry) {
         IndexManager manager = RollerFactory.getRoller().getIndexManager();
         
         // if published, index the entry
@@ -69,17 +69,17 @@ public abstract class EntryBase extends UIAction {
      * @return List of WeblogEntryData objects.
      * @throws RollerException
      */
-    public List<WeblogEntryData> getRecentPublishedEntries() {
-        List<WeblogEntryData> entries = Collections.EMPTY_LIST;
+    public List<WeblogEntry> getRecentPublishedEntries() {
+        List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+                    
                     getActionWeblog(), // userName
                     null,
                     null,              // startDate
                     null,              // endDate
                     null,              // catName
-                    null,              // tags
-                    WeblogEntryData.PUBLISHED, // status
+                    null,WeblogEntry.PUBLISHED, // status
                     null,              // text
                     null,              // sortby (null for pubTime)
                     null,
@@ -98,17 +98,17 @@ public abstract class EntryBase extends UIAction {
      * @return List of WeblogEntryData objects.
      * @throws RollerException
      */
-    public List<WeblogEntryData> getRecentScheduledEntries() {
-        List<WeblogEntryData> entries = Collections.EMPTY_LIST;
+    public List<WeblogEntry> getRecentScheduledEntries() {
+        List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+                    
                     getActionWeblog(), // userName
                     null,
                     null,              // startDate
                     null,              // endDate
                     null,              // catName
-                    null,              // tags
-                    WeblogEntryData.SCHEDULED, // status
+                    null,WeblogEntry.SCHEDULED, // status
                     null,              // text
                     null,              // sortby (null for pubTime)
                     null,
@@ -126,17 +126,17 @@ public abstract class EntryBase extends UIAction {
      * @return List of WeblogEntryData objects.
      * @throws RollerException
      */
-    public List<WeblogEntryData> getRecentDraftEntries() {
-        List<WeblogEntryData> entries = Collections.EMPTY_LIST;
+    public List<WeblogEntry> getRecentDraftEntries() {
+        List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+                    
                     getActionWeblog(),
                     null,
                     null,              // startDate
                     null,              // endDate
                     null,              // catName
-                    null,              // tags
-                    WeblogEntryData.DRAFT, // status
+                    null,WeblogEntry.DRAFT, // status
                     null,              // text
                     "updateTime",      // sortby
                     null,
@@ -154,17 +154,17 @@ public abstract class EntryBase extends UIAction {
      * @return List of WeblogEntryData objects.
      * @throws RollerException
      */
-    public List<WeblogEntryData> getRecentPendingEntries() {
-        List<WeblogEntryData> entries = Collections.EMPTY_LIST;
+    public List<WeblogEntry> getRecentPendingEntries() {
+        List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+                    
                     getActionWeblog(),
                     null,
                     null,              // startDate
                     null,              // endDate
                     null,              // catName
-                    null,              // tags
-                    WeblogEntryData.PENDING, // status
+                    null,WeblogEntry.PENDING, // status
                     null,              // text
                     "updateTime",      // sortby
                     null,

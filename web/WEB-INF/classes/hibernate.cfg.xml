@@ -42,7 +42,7 @@
         
         <!-- Map Roller pojo classes -->
         <mapping resource="org/apache/roller/pojos/RollerPropertyData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/UserData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/User.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/UserRole.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/RollerConfigData.hbm.xml" />
 
@@ -60,11 +60,11 @@
         <mapping resource="org/apache/roller/pojos/TaskLockData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogHitCount.hbm.xml" />
 
-        <mapping resource="org/apache/roller/pojos/WeblogEntryData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogEntryTagData.hbm.xml" />        
-        <mapping resource="org/apache/roller/pojos/WeblogEntryTagAggregateData.hbm.xml" />                       
+        <mapping resource="org/apache/roller/pojos/WeblogEntry.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogEntryTag.hbm.xml" />        
+        <mapping resource="org/apache/roller/pojos/WeblogEntryTagAggregate.hbm.xml" />                       
         <mapping resource="org/apache/roller/pojos/WeblogEntryAttribute.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogCategoryData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogCategory.hbm.xml" />
         
     </session-factory>
 </hibernate-configuration>

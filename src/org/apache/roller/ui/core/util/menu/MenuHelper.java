@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -62,7 +62,7 @@ public class MenuHelper {
     
     
     public static Menu getMenu(String menuId, String currentAction,
-                               UserData user, Weblog weblog) {
+                               User user, Weblog weblog) {
         
         if(menuId == null) {
             return null;
@@ -81,7 +81,7 @@ public class MenuHelper {
     
     
     private static Menu buildMenu(ParsedMenu menuConfig, String currentAction, 
-                                  UserData user, Weblog weblog) {
+                                  User user, Weblog weblog) {
         
         log.debug("creating menu for action - "+currentAction);
         
@@ -188,7 +188,7 @@ public class MenuHelper {
     }
     
     
-    private static boolean isPermitted(String perm, UserData user, Weblog weblog) {
+    private static boolean isPermitted(String perm, User user, Weblog weblog) {
         
         // convert permissions string to short
         short permMask = -1;

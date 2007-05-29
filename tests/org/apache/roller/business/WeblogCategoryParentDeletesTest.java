@@ -23,8 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -35,7 +35,7 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
     
     public static Log log = LogFactory.getLog(WeblogCategoryParentDeletesTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     
     
@@ -82,13 +82,13 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         // root category is always available
-        WeblogCategoryData root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
+        WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
         // add a small category tree /subcat/subcat2
-        WeblogCategoryData subcat = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), root, "categoryParentDeletes1", null, null);
+        WeblogCategory subcat = new WeblogCategory(TestUtils.getManagedWebsite(testWeblog), root, "categoryParentDeletes1", null, null);
         root.addCategory(subcat);
         mgr.saveWeblogCategory(subcat);
-        WeblogCategoryData subcat2 = new WeblogCategoryData(TestUtils.getManagedWebsite(testWeblog), subcat, "categoryParentDeletes2", null, null);
+        WeblogCategory subcat2 = new WeblogCategory(TestUtils.getManagedWebsite(testWeblog), subcat, "categoryParentDeletes2", null, null);
         subcat.addCategory(subcat2);
         mgr.saveWeblogCategory(subcat2);
         TestUtils.endSession(true);

@@ -31,8 +31,8 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
@@ -63,9 +63,9 @@ public class WeblogPageRequest extends WeblogRequest {
     private Map customParams = new HashMap();
     
     // heavyweight attributes
-    private WeblogEntryData weblogEntry = null;
+    private WeblogEntry weblogEntry = null;
     private ThemeTemplate weblogPage = null;
-    private WeblogCategoryData weblogCategory = null;
+    private WeblogCategory weblogCategory = null;
     
     
     public WeblogPageRequest() {}
@@ -327,7 +327,7 @@ public class WeblogPageRequest extends WeblogRequest {
       this.tags = tags;
     }
     
-    public WeblogEntryData getWeblogEntry() {
+    public WeblogEntry getWeblogEntry() {
         
         if(weblogEntry == null && weblogAnchor != null) {
             try {
@@ -341,7 +341,7 @@ public class WeblogPageRequest extends WeblogRequest {
         return weblogEntry;
     }
 
-    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+    public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
 
@@ -363,7 +363,7 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogPage = weblogPage;
     }
 
-    public WeblogCategoryData getWeblogCategory() {
+    public WeblogCategory getWeblogCategory() {
         
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
@@ -377,7 +377,7 @@ public class WeblogPageRequest extends WeblogRequest {
         return weblogCategory;
     }
 
-    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
+    public void setWeblogCategory(WeblogCategory weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
     

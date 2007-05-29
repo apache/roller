@@ -38,8 +38,8 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -105,8 +105,8 @@ public class ContextLoader {
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
         Weblog weblog = null;
-        WeblogEntryData entry = null;
-        WeblogCategoryData category = null;
+        WeblogEntry entry = null;
+        WeblogCategory category = null;
         ThemeTemplate page = null;
         WeblogBookmarkFolder folder = null;  // don't even know how this is involved :/
         Date date = null;
@@ -269,9 +269,9 @@ public class ContextLoader {
      * Load comments for one weblog entry and related objects.
      */
     private static void loadCommentValues(
+            
             Map ctx,
-            HttpServletRequest request,
-            WeblogEntryData entry) throws RollerException {
+            HttpServletRequest request,WeblogEntry entry) throws RollerException {
         
         mLogger.debug("Loading comment values");
         
@@ -304,7 +304,7 @@ public class ContextLoader {
             ctx.put("previewComments", list);
         }
         
-        if (entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
+        if (entry.getStatus().equals(WeblogEntry.PUBLISHED)) {
             ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));
         }
     }
@@ -317,7 +317,7 @@ public class ContextLoader {
             Map ctx,
             HttpServletRequest request,
             Weblog website,
-            WeblogCategoryData category)
+            WeblogCategory category)
             throws RollerException {
         
         mLogger.debug("Loading rss values");

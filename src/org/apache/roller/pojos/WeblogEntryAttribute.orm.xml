@@ -22,7 +22,7 @@
             <basic name="value">
                 <column name="value" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="entry" target-entity="org.apache.roller.pojos.WeblogEntryData">
+            <many-to-one name="entry" target-entity="org.apache.roller.pojos.WeblogEntry">
                 <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
         </attributes>

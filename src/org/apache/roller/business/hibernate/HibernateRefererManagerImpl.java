@@ -39,7 +39,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.pojos.WeblogReferrer;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.SQLServerDialect;
@@ -523,7 +523,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         String selfSiteFragment = "/"+weblogHandle;
         Weblog weblog = null;
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
         
         // lookup the weblog now
         try {

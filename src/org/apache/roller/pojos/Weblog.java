@@ -99,10 +99,10 @@ public class Weblog implements Serializable {
     
     
     // Associated objects
-    private UserData           creator = null; 
+    private User           creator = null; 
     private List               permissions = new ArrayList();
-    private WeblogCategoryData bloggerCategory = null;
-    private WeblogCategoryData defaultCategory = null;
+    private WeblogCategory bloggerCategory = null;
+    private WeblogCategory defaultCategory = null;
     
     private Map initializedPlugins = null;
     
@@ -111,7 +111,7 @@ public class Weblog implements Serializable {
     
     public Weblog(
             String handle,
-            UserData creator,
+            User creator,
             String name,
             String desc,
             String email,
@@ -364,12 +364,12 @@ public class Weblog implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.UserData getCreator() {
+    public org.apache.roller.pojos.User getCreator() {
         return creator;
     }
     
     /** @ejb:persistent-field */
-    public void setCreator( org.apache.roller.pojos.UserData ud ) {
+    public void setCreator( org.apache.roller.pojos.User ud ) {
         creator = ud;
     }
     
@@ -426,12 +426,12 @@ public class Weblog implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="bloggercatid" non-null="false" cascade="none"
      */
-    public WeblogCategoryData getBloggerCategory() {
+    public WeblogCategory getBloggerCategory() {
         return bloggerCategory;
     }
     
     /** @ejb:persistent-field */
-    public void setBloggerCategory(WeblogCategoryData bloggerCategory) {
+    public void setBloggerCategory(WeblogCategory bloggerCategory) {
         this.bloggerCategory = bloggerCategory;
     }
     
@@ -444,12 +444,12 @@ public class Weblog implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="defaultcatid" non-null="false" cascade="none"
      */
-    public WeblogCategoryData getDefaultCategory() {
+    public WeblogCategory getDefaultCategory() {
         return defaultCategory;
     }
     
     /** @ejb:persistent-field */
-    public void setDefaultCategory(WeblogCategoryData defaultCategory) {
+    public void setDefaultCategory(WeblogCategory defaultCategory) {
         this.defaultCategory = defaultCategory;
     }
     
@@ -731,7 +731,7 @@ public class Weblog implements Serializable {
     /**
      * Returns true if user has all permissions specified by mask.
      */
-    public boolean hasUserPermissions(UserData user, short mask) {
+    public boolean hasUserPermissions(User user, short mask) {
         // look for user in website's permissions
         WeblogPermission userPerms = null;
         Iterator iter = getPermissions().iterator();
@@ -1014,8 +1014,8 @@ public class Weblog implements Serializable {
      * @return Weblog entry specified by anchor
      * @roller.wrapPojoMethod type="simple"
      */
-    public WeblogEntryData getWeblogEntry(String anchor) {
-        WeblogEntryData entry = null;
+    public WeblogEntry getWeblogEntry(String anchor) {
+        WeblogEntry entry = null;
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
@@ -1028,12 +1028,13 @@ public class Weblog implements Serializable {
     
     /**
      * Returns categories under the default category of the weblog.
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     * 
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategory"
      */
     public Set getWeblogCategories() {
         Set ret = new HashSet();
 //        try {           
-            WeblogCategoryData category = this.getDefaultCategory();
+            WeblogCategory category = this.getDefaultCategory();
             ret = category.getWeblogCategories();
 //        } catch (RollerException e) {
 //            log.error("ERROR: fetching categories", e);
@@ -1043,14 +1044,16 @@ public class Weblog implements Serializable {
     
     
     /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     * 
+     * 
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojosWeblogCategorya"
      */
     public Set getWeblogCategories(String categoryPath) {
         Set ret = new HashSet();
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();            
-            WeblogCategoryData category = null;
+            WeblogCategory category = null;
             if (categoryPath != null && !categoryPath.equals("nil")) {
                 category = wmgr.getWeblogCategoryByPath(this, categoryPath);
             } else {
@@ -1065,10 +1068,12 @@ public class Weblog implements Serializable {
 
     
     /**
-     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.WeblogCategoryData"
+     * 
+     * 
+     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojosWeblogCategorya"
      */
-    public WeblogCategoryData getWeblogCategory(String categoryPath) {
-        WeblogCategoryData category = null;
+    public WeblogCategory getWeblogCategory(String categoryPath) {
+        WeblogCategory category = null;
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
@@ -1100,13 +1105,13 @@ public class Weblog implements Serializable {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             recentEntries = wmgr.getWeblogEntries(
+                    
                     this, 
                     null,       // user
                     null,       // startDate
                     null,       // endDate
                     cat,        // cat or null
-                    null, 
-                    WeblogEntryData.PUBLISHED, 
+                    null,WeblogEntry.PUBLISHED, 
                     null,       // text
                     "pubTime",  // sortby
                     null,
@@ -1139,13 +1144,13 @@ public class Weblog implements Serializable {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             recentEntries = wmgr.getWeblogEntries(
+                    
                     this, 
                     null,       // user
                     null,       // startDate
                     null,       // endDate
                     null,       // cat or null
-                    tags,       //  
-                    WeblogEntryData.PUBLISHED, 
+                    tags,WeblogEntry.PUBLISHED, 
                     null,       // text
                     "pubTime",  // sortby
                     null,

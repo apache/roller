@@ -19,7 +19,7 @@
 package org.apache.roller.ui.struts2.editor;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 
 
 /**
@@ -66,7 +66,7 @@ public class CategoryBean {
     }
     
     
-    public void copyTo(WeblogCategoryData dataHolder) throws RollerException {
+    public void copyTo(WeblogCategory dataHolder) throws RollerException {
         
         if(!dataHolder.getName().equals(this.name)) {
             dataHolder.updateName(this.name);
@@ -77,7 +77,7 @@ public class CategoryBean {
     }
     
     
-    public void copyFrom(WeblogCategoryData dataHolder) {
+    public void copyFrom(WeblogCategory dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();

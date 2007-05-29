@@ -18,24 +18,24 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.WeblogEntryTagData;
+import org.apache.roller.pojos.WeblogEntryTag;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.pojos.WeblogEntryTagData
+ * Generated wrapper for class: org.apache.roller.pojos.WeblogEntryTag
  */
 public class WeblogEntryTagDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private WeblogEntryTagData pojo = null;
+    private WeblogEntryTag pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogEntryTagDataWrapper(WeblogEntryTagData toWrap) {
+    private WeblogEntryTagDataWrapper(WeblogEntryTag toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static WeblogEntryTagDataWrapper wrap(WeblogEntryTagData toWrap) {
+    public static WeblogEntryTagDataWrapper wrap(WeblogEntryTag toWrap) {
         if(toWrap != null)
             return new WeblogEntryTagDataWrapper(toWrap);
 
@@ -108,7 +108,7 @@ public class WeblogEntryTagDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.WeblogEntryTagData getPojo() {
+    public org.apache.roller.pojos.WeblogEntryTag getPojo() {
         return this.pojo;
     }
 

@@ -36,18 +36,17 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Weblog Category.
- *
- * @struts.form include-all="true"
- *
- * @ejb:bean name="WeblogCategoryData"
- * @hibernate.class lazy="true" table="weblogcategory"
+ * 
+ * @ejb:bean name="WeblogCategory"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="weblogcategory"
+ * @struts.form include-all="true"
  */
-public class WeblogCategoryData implements Serializable {
+public class WeblogCategory implements Serializable {
     
     public static final long serialVersionUID = 1435782148712018954L;
     
-    private static Log log = LogFactory.getLog(WeblogCategoryData.class);
+    private static Log log = LogFactory.getLog(WeblogCategory.class);
     
     
     // attributes
@@ -59,16 +58,16 @@ public class WeblogCategoryData implements Serializable {
     
     // associations
     private Weblog website = null;
-    private WeblogCategoryData parentCategory = null;
+    private WeblogCategory parentCategory = null;
     private Set childCategories = new HashSet();
     
     
-    public WeblogCategoryData() {
+    public WeblogCategory() {
     }
     
-    public WeblogCategoryData(
+    public WeblogCategory(
             Weblog website,
-            WeblogCategoryData parent,
+            WeblogCategory parent,
             java.lang.String name,
             java.lang.String description,
             java.lang.String image) {
@@ -91,13 +90,13 @@ public class WeblogCategoryData implements Serializable {
     }
     
     
-    public WeblogCategoryData(WeblogCategoryData otherData) {
+    public WeblogCategory(WeblogCategory otherData) {
         this.setData(otherData);
     }
     
     
-    public void setData(WeblogCategoryData otherData) {
-        WeblogCategoryData other = (WeblogCategoryData) otherData;
+    public void setData(WeblogCategory otherData) {
+        WeblogCategory other = (WeblogCategory) otherData;
         
         this.id = other.getId();
         this.website = other.getWebsite();
@@ -126,8 +125,8 @@ public class WeblogCategoryData implements Serializable {
         
         if (other == null) return false;
         
-        if (other instanceof WeblogCategoryData) {
-            WeblogCategoryData o = (WeblogCategoryData)other;
+        if (other instanceof WeblogCategory) {
+            WeblogCategory o = (WeblogCategory)other;
             return new EqualsBuilder()
                 .append(getPath(), o.getPath()) 
                 //.append(getWebsite(), o.getWebsite()) 
@@ -250,23 +249,22 @@ public class WeblogCategoryData implements Serializable {
      *
      * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
-    public WeblogCategoryData getParent() {
+    public WeblogCategory getParent() {
         return this.parentCategory;
     }
     
-    public void setParent(WeblogCategoryData parent) {
+    public void setParent(WeblogCategory parent) {
         this.parentCategory = parent;
     }
     
     
     /**
      * Get child categories of this category.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
-     *
-     * @hibernate.set lazy="true" inverse="true" cascade="delete"
+     * 
      * @hibernate.collection-key column="parentid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogCategoryData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogCategory"
+     * @hibernate.set lazy="true" inverse="true" cascade="delete"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategory"
      */
     public Set getWeblogCategories() {
         return this.childCategories;
@@ -296,7 +294,7 @@ public class WeblogCategoryData implements Serializable {
     /**
      * Add a category as a child of this category.
      */
-    public void addCategory(WeblogCategoryData category) {
+    public void addCategory(WeblogCategory category) {
         
         // make sure category is not null
         if(category == null || category.getName() == null) {
@@ -324,9 +322,9 @@ public class WeblogCategoryData implements Serializable {
      */
     public boolean hasCategory(String name) {
         Iterator cats = this.getWeblogCategories().iterator();
-        WeblogCategoryData cat = null;
+        WeblogCategory cat = null;
         while(cats.hasNext()) {
-            cat = (WeblogCategoryData) cats.next();
+            cat = (WeblogCategory) cats.next();
             if(name.equals(cat.getName())) {
                 return true;
             }
@@ -340,7 +338,7 @@ public class WeblogCategoryData implements Serializable {
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public boolean descendentOf(WeblogCategoryData ancestor) {
+    public boolean descendentOf(WeblogCategory ancestor) {
         
         // if this is a root node then we can't be a descendent
         if(getParent() == null) {
@@ -390,15 +388,15 @@ public class WeblogCategoryData implements Serializable {
     
     
     // updates the paths of all descendents of the given category
-    public static void updatePathTree(WeblogCategoryData cat) 
+    public static void updatePathTree(WeblogCategory cat) 
             throws RollerException {
         
         log.debug("Updating path tree for category "+cat.getPath());
         
-        WeblogCategoryData childCat = null;
+        WeblogCategory childCat = null;
         Iterator childCats = cat.getWeblogCategories().iterator();
         while(childCats.hasNext()) {
-            childCat = (WeblogCategoryData) childCats.next();
+            childCat = (WeblogCategory) childCats.next();
             
             log.debug("OLD child category path was "+childCat.getPath());
             

@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -54,7 +54,7 @@ public class Profile extends UIAction {
     @SkipValidation
     public String execute() {
         
-        UserData ud = getAuthenticatedUser();
+        User ud = getAuthenticatedUser();
         
         // load up the form from the users existing profile data
         getBean().copyFrom(ud);
@@ -79,7 +79,7 @@ public class Profile extends UIAction {
         
         if (!hasActionErrors()) {
             // We ONLY modify the user currently logged in
-            UserData existingUser = getAuthenticatedUser();
+            User existingUser = getAuthenticatedUser();
             
             // We want to be VERY selective about what data gets updated
             existingUser.setScreenName(getBean().getScreenName());

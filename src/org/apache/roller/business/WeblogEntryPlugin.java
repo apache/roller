@@ -20,7 +20,7 @@ package org.apache.roller.business;
 
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -60,6 +60,6 @@ public interface WeblogEntryPlugin {
      * @param str         String to which plugin should be applied.
      * @return            Results of applying plugin to entry.
      */
-    public String render(WeblogEntryData entry, String str);
+    public String render(WeblogEntry entry, String str);
     
 }

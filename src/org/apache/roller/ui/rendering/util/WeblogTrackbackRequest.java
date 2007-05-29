@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 
 
 /**
@@ -46,7 +46,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
     private String weblogAnchor = null;
     
     // heavyweight attributes
-    private WeblogEntryData weblogEntry = null;
+    private WeblogEntry weblogEntry = null;
     
     
     public WeblogTrackbackRequest() {}
@@ -191,7 +191,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         this.weblogAnchor = weblogAnchor;
     }
 
-    public WeblogEntryData getWeblogEntry() {
+    public WeblogEntry getWeblogEntry() {
         
         if(weblogEntry == null && weblogAnchor != null) {
             try {
@@ -205,7 +205,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
         return weblogEntry;
     }
 
-    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+    public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
     

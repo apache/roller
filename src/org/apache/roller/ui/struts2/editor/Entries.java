@@ -27,7 +27,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.ui.struts2.util.KeyValueObject;
 import org.apache.roller.ui.struts2.util.UIAction;
 
@@ -43,13 +43,13 @@ public class Entries extends UIAction {
     private EntriesBean bean = new EntriesBean();
     
     // list of entries to display
-    private List<WeblogEntryData> entries = Collections.EMPTY_LIST;
+    private List<WeblogEntry> entries = Collections.EMPTY_LIST;
     
     // first entry in the list
-    private WeblogEntryData firstEntry = null;
+    private WeblogEntry firstEntry = null;
     
     // last entry in the list
-    private WeblogEntryData lastEntry = null;
+    private WeblogEntry lastEntry = null;
     
     // are there more results for the query?
     private boolean moreResults = false;
@@ -78,7 +78,7 @@ public class Entries extends UIAction {
             String status = getBean().getStatus();
             
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List<WeblogEntryData> entries = wmgr.getWeblogEntries(
+            List<WeblogEntry> entries = wmgr.getWeblogEntries(
                     getActionWeblog(),
                     null,
                     getBean().getStartDate(),
@@ -102,8 +102,8 @@ public class Entries extends UIAction {
                 }
                 
                 setEntries(entries);
-                setFirstEntry((WeblogEntryData)entries.get(0));
-                setLastEntry((WeblogEntryData)entries.get(entries.size()-1));
+                setFirstEntry((WeblogEntry)entries.get(0));
+                setLastEntry((WeblogEntry)entries.get(entries.size()-1));
             }
         } catch (RollerException ex) {
             log.error("Error looking up entries", ex);
@@ -145,27 +145,27 @@ public class Entries extends UIAction {
         this.bean = bean;
     }
 
-    public List<WeblogEntryData> getEntries() {
+    public List<WeblogEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(List<WeblogEntryData> entries) {
+    public void setEntries(List<WeblogEntry> entries) {
         this.entries = entries;
     }
 
-    public WeblogEntryData getFirstEntry() {
+    public WeblogEntry getFirstEntry() {
         return firstEntry;
     }
 
-    public void setFirstEntry(WeblogEntryData firstEntry) {
+    public void setFirstEntry(WeblogEntry firstEntry) {
         this.firstEntry = firstEntry;
     }
 
-    public WeblogEntryData getLastEntry() {
+    public WeblogEntry getLastEntry() {
         return lastEntry;
     }
 
-    public void setLastEntry(WeblogEntryData lastEntry) {
+    public void setLastEntry(WeblogEntry lastEntry) {
         this.lastEntry = lastEntry;
     }
 

@@ -36,9 +36,9 @@ import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogReferrer;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.Weblog;
 
@@ -214,7 +214,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(WeblogEntryData entry) {
+    public static void invalidate(WeblogEntry entry) {
         
         log.debug("invalidating entry = "+entry.getAnchor());
         
@@ -284,7 +284,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(UserData user) {
+    public static void invalidate(User user) {
         
         log.debug("invalidating user = "+user.getUserName());
         
@@ -295,7 +295,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(WeblogCategoryData category) {
+    public static void invalidate(WeblogCategory category) {
         
         log.debug("invalidating category = "+category.getId());
         

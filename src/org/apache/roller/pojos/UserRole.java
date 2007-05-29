@@ -38,14 +38,14 @@ public class UserRole
 
    private java.lang.String id = UUIDGenerator.generateUUID();
    private java.lang.String userName;
-   private UserData user;
+   private User user;
    private java.lang.String role;
 
    public UserRole()
    {
    }
 
-   public UserRole(String id, UserData user, String role)
+   public UserRole(String id, User user, String role)
    {
       //this.id = id;
       this.userName = user.getUserName();
@@ -94,12 +94,12 @@ public class UserRole
     * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
     * @ejb:persistent-field 
     */
-   public UserData getUser()
+   public User getUser()
    {
       return this.user;
    }
    /** @ejb:persistent-field */ 
-   public void setUser( UserData user )
+   public void setUser( User user )
    {
       this.user = user;
    }

@@ -29,7 +29,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 
 /**
@@ -71,7 +71,7 @@ public class UserDataServlet extends HttpServlet {
                     umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length);
             Iterator userIter = users.iterator();
             while (userIter.hasNext()) {
-                UserData user = (UserData)userIter.next();
+                User user = (User)userIter.next();
                 response.getWriter().print(user.getUserName());
                 response.getWriter().print(",");
                 response.getWriter().println(user.getEmailAddress());

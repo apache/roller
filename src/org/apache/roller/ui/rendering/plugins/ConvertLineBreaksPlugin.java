@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.business.WeblogEntryPlugin;
 
@@ -77,7 +77,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
      * Transform the given plain text into html text by inserting p and br
      * tags around paragraphs and after line breaks.
      */
-    public String render(WeblogEntryData entry, String str) {
+    public String render(WeblogEntry entry, String str) {
         
         if(str == null || str.trim().equals(""))
             return "";

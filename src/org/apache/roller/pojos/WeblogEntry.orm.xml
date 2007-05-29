@@ -9,76 +9,76 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="WeblogEntryData"
-            class="org.apache.roller.pojos.WeblogEntryData">
+    <entity metadata-complete="true" name="WeblogEntry"
+            class="org.apache.roller.pojos.WeblogEntry">
         <table name="weblogentry"/>
-        <named-query name="WeblogEntryData.getByStatus&amp;Category">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.status = ?1 AND w.category = ?2</query>
+        <named-query name="WeblogEntry.getByStatus&amp;Category">
+            <query>SELECT w FROM WeblogEntry w WHERE w.status = ?1 AND w.category = ?2</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByCategory">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.category = ?1</query>
+        <named-query name="WeblogEntry.getByCategory">
+            <query>SELECT w FROM WeblogEntry w WHERE w.category = ?1</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByStatus&amp;Category.pathLike&amp;Website">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.status = ?1 AND w.category.path LIKE ?2 AND w.website = ?3</query>
+        <named-query name="WeblogEntry.getByStatus&amp;Category.pathLike&amp;Website">
+            <query>SELECT w FROM WeblogEntry w WHERE w.status = ?1 AND w.category.path LIKE ?2 AND w.website = ?3</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByPinnedToMain&amp;statusOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC</query>
+        <named-query name="WeblogEntry.getByPinnedToMain&amp;statusOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;CategoryOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;CategoryOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
                                                      AND UPPER(w.locale) LIKE ?5
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreaterOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreaterOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeGreater&amp;LocaleLikeOrderByPubTimeAsc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;LocaleLikeOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
                                                      AND UPPER(w.locale) LIKE ?4
                                                    ORDER BY w.pubTime ASC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLessOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLessOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;CategoryOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3 AND w.category = ?4
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;CategoryOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3 AND w.category = ?4
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3  AND w.category = ?4
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3  AND w.category = ?4
                                                      AND UPPER(w.locale) LIKE ?5
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Status&amp;PubTimeLess&amp;LocaleLikeOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;LocaleLikeOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
                                                      AND UPPER(w.locale) LIKE ?4
                                                    ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;AnchorOrderByPubTimeDesc">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC</query>
+        <named-query name="WeblogEntry.getByWebsite&amp;AnchorOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite&amp;Anchor">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1 AND w.anchor = ?2</query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Anchor">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.anchor = ?2</query>
         </named-query>
-        <named-query name="WeblogEntryData.getByWebsite">
-            <query>SELECT w FROM WeblogEntryData w WHERE w.website = ?1</query>
+        <named-query name="WeblogEntry.getByWebsite">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1</query>
         </named-query>
-        <named-query name="WeblogEntryData.getCountDistinctByStatus">
+        <named-query name="WeblogEntry.getCountDistinctByStatus">
             <!-- DISTINCT is not required for this query -->
-            <query>SELECT COUNT(e) FROM WeblogEntryData e WHERE e.status = ?1</query>
+            <query>SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1</query>
         </named-query>
-        <named-query name="WeblogEntryData.getCountDistinctByStatus&amp;Website">
+        <named-query name="WeblogEntry.getCountDistinctByStatus&amp;Website">
             <!-- DISTINCT is not required for this query -->
-            <query>SELECT COUNT(e) FROM WeblogEntryData e WHERE e.status = ?1 AND e.website = ?2</query>
+            <query>SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.website = ?2</query>
         </named-query>
-        <named-query name="WeblogEntryData.updateAllowComments&amp;CommentDaysByWebsite">
-            <query>UPDATE WeblogEntryData SET allowComments = ?1, commentDays = ?2, 
+        <named-query name="WeblogEntry.updateAllowComments&amp;CommentDaysByWebsite">
+            <query>UPDATE WeblogEntry SET allowComments = ?1, commentDays = ?2, 
                                               pubTime=pubTime, updateTime=updateTime
                                           WHERE website = ?3</query>
         </named-query>
@@ -134,13 +134,13 @@
             <basic name="locale">
                 <column name="locale" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="category" target-entity="org.apache.roller.pojos.WeblogCategoryData">
+            <many-to-one name="category" target-entity="org.apache.roller.pojos.WeblogCategory">
                 <join-column name="categoryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="creator" target-entity="org.apache.roller.pojos.UserData">
+            <many-to-one name="creator" target-entity="org.apache.roller.pojos.User">
                 <join-column name="userid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.pojos.WeblogEntryAttribute" fetch="LAZY">
@@ -148,7 +148,7 @@
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
-            <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryTagData" fetch="LAZY">
+            <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryTag" fetch="LAZY">
                 <cascade>
                     <cascade-persist /> <!-- Added so entry added by addTag() gets persisted -->
                 </cascade>

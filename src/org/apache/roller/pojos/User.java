@@ -37,20 +37,20 @@ import org.apache.roller.util.Utilities;
 
 /**
  * User bean.
+ * 
  * @author David M Johnson
- *
- * @ejb:bean name="UserData"
- * @struts.form include-all="true"
- * @hibernate.class lazy="true" table="rolleruser"
+ * @ejb:bean name="User"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="rolleruser"
+ * @struts.form include-all="true"
  */
-public class UserData
+public class User
         implements Serializable {
-    public static final UserData SYSTEM_USER = new UserData(
+    public static final User SYSTEM_USER = new User(
             "n/a","systemuser","n/a","systemuser","n/a",
             "en_US_WIN", "America/Los_Angeles", new Date(), Boolean.TRUE);
     
-    public static final UserData ANONYMOUS_USER = new UserData(
+    public static final User ANONYMOUS_USER = new User(
             "n/a","anonymoususer","n/a","anonymoususer","n/a",
             "en_US_WIN", "America/Los_Angeles", new Date(), Boolean.TRUE);
     
@@ -72,10 +72,10 @@ public class UserData
     private List permissions = new ArrayList();
     
     
-    public UserData() {
+    public User() {
     }
     
-    public UserData( String id, String userName,
+    public User( String id, String userName,
             String password, String fullName,
             String emailAddress,
             String locale, String timeZone,
@@ -92,7 +92,7 @@ public class UserData
         this.enabled = isEnabled;
     }
     
-    public UserData( UserData otherData ) {
+    public User( User otherData ) {
         setData(otherData);
     }
     
@@ -284,8 +284,8 @@ public class UserData
     /**
      * Set bean properties based on other bean.
      */
-    public void setData( UserData otherData ) {
-        UserData other = (UserData)otherData;
+    public void setData( User otherData ) {
+        User other = (User)otherData;
         this.id =       other.getId();
         this.userName = other.getUserName();
         this.password = other.getPassword();
@@ -396,8 +396,8 @@ public class UserData
     
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof UserData != true) return false;
-        UserData o = (UserData)other;
+        if (other instanceof User != true) return false;
+        User o = (User)other;
         return new EqualsBuilder().append(getUserName(), o.getUserName()).isEquals();
     }
     

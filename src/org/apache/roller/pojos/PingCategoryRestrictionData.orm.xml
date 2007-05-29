@@ -20,7 +20,7 @@
                 <join-column name="autopingid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <many-to-one name="weblogCategory"
-                         target-entity="org.apache.roller.pojos.WeblogCategoryData">
+                         target-entity="org.apache.roller.pojos.WeblogCategory">
                 <join-column name="weblogcategoryid" insertable="true" updatable="true"
                              nullable="false"/>
             </many-to-one>

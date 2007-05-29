@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 
@@ -36,7 +36,7 @@ public class ModifyUser extends UIAction {
     private static Log log = LogFactory.getLog(ModifyUser.class);
     
     // user we are modifying
-    private UserData user = new UserData();
+    private User user = new User();
     
     // a bean to store our form data
     private CreateUserBean bean = new CreateUserBean();
@@ -183,11 +183,11 @@ public class ModifyUser extends UIAction {
         this.bean = bean;
     }
 
-    public UserData getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(UserData user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

@@ -18,24 +18,24 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.pojos.UserData
+ * Generated wrapper for class: org.apache.roller.pojos.User
  */
 public class UserDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private UserData pojo = null;
+    private User pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private UserDataWrapper(UserData toWrap) {
+    private UserDataWrapper(User toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static UserDataWrapper wrap(UserData toWrap) {
+    public static UserDataWrapper wrap(User toWrap) {
         if(toWrap != null)
             return new UserDataWrapper(toWrap);
 
@@ -118,7 +118,7 @@ public class UserDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.UserData getPojo() {
+    public org.apache.roller.pojos.User getPojo() {
         return this.pojo;
     }
 

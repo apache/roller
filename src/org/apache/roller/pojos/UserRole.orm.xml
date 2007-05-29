@@ -21,7 +21,7 @@
             <basic name="role">
                 <column name="rolename" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="user" target-entity="org.apache.roller.pojos.UserData">
+            <many-to-one name="user" target-entity="org.apache.roller.pojos.User">
                 <join-column name="userid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
         </attributes>

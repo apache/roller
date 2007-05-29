@@ -103,7 +103,7 @@
             <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryData">
+            <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntry">
                 <join-column name="entryid" insertable="true" updatable="true"/>
             </many-to-one>
             <transient name="displayUrl"/>

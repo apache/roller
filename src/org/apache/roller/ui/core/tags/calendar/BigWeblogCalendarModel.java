@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.URLUtilities;
@@ -56,12 +56,12 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             monthMap = mgr.getWeblogEntryObjectMap(
+                    
                     weblog,                  // website
                     startDate,                 // startDate
                     endDate,                   // endDate
                     catName,                   // cat
-                    null,                      // tags
-                    WeblogEntryData.PUBLISHED, // status
+                    null,WeblogEntry.PUBLISHED, // status
                     locale,
                     0, -1);
         } catch (RollerException e) {
@@ -82,7 +82,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             List entries = (List)monthMap.get(day);
             if ( entries != null ) {
                 dateString = mStarDateFormat.format(
-                        ((WeblogEntryData)entries.get(0)).getPubTime());
+                        ((WeblogEntry)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
                 String dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
@@ -97,12 +97,12 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 for ( int i=0; i<entries.size(); i++ ) {
                     sb.append("<div class=\"bCalendarDayContentBig\">");
                     sb.append("<a href=\"");
-                    sb.append(((WeblogEntryData)entries.get(i)).getPermalink());
+                    sb.append(((WeblogEntry)entries.get(i)).getPermalink());
                     sb.append("\">");
                     
-                    String title = ((WeblogEntryData)entries.get(i)).getTitle().trim();
+                    String title = ((WeblogEntry)entries.get(i)).getTitle().trim();
                     if ( title.length()==0 ) {
-                        title = ((WeblogEntryData)entries.get(i)).getAnchor();
+                        title = ((WeblogEntry)entries.get(i)).getAnchor();
                     }
                     if ( title.length() > 20 ) {
                         title = title.substring(0,20)+"...";
@@ -139,7 +139,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         String dateString = null;
         List entries = (List)monthMap.get( day );
         if ( entries != null && day != null ) {
-            WeblogEntryData entry = (WeblogEntryData)entries.get(0);
+            WeblogEntry entry = (WeblogEntry)entries.get(0);
             dateString = mStarDateFormat.format(entry.getPubTime());
         }
         if (dateString == null && !alwaysURL) return null;

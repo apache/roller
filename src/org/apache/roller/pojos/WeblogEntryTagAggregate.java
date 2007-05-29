@@ -26,44 +26,39 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 /**
- * Tag bean.
+ * 
+ * 
  * @author Elias Torres
- *
- * @ejb:bean name="WeblogEntryTagData"
- * @struts.form include-all="true"
- * @hibernate.class lazy="true" table="roller_weblogentrytag"
+ * @ejb:bean name="WeblogEntryTagAggregate"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="roller_weblogentrytagagg"
+ * @struts.form include-all="true"
  */
-public class WeblogEntryTagData
+public class WeblogEntryTagAggregate
     implements java.io.Serializable
 {
-    private static final long serialVersionUID = -2602052289337573384L;
+    private static final long serialVersionUID = -4343500268898106982L;
     private java.lang.String id = UUIDGenerator.generateUUID();
-    private Weblog website = null;
-    private WeblogEntryData weblogEntry = null;
-    private UserData user = null;
     private java.lang.String name = null;    
-    private Timestamp time = null;
+    private Weblog website = null;
+    private Timestamp lastUsed = null;
+    private int total = 0;
 
-    public WeblogEntryTagData()
+    public WeblogEntryTagAggregate()
     {
     }
 
-    public WeblogEntryTagData(java.lang.String id, 
-                       Weblog website, 
-                       WeblogEntryData weblogEntry, 
-                       UserData user, java.lang.String name,
-                       Timestamp time)
+    public WeblogEntryTagAggregate(java.lang.String id,
+                       Weblog website,
+                       java.lang.String name, int total)
     {
         //this.id = id;
         this.website = website;
-        this.weblogEntry = weblogEntry;
-        this.user = user;
         this.name = name;
-        this.time = time;
+        this.total = total;
     }
 
-    public WeblogEntryTagData(WeblogEntryTagData otherData)
+    public WeblogEntryTagAggregate(WeblogEntryTagAggregate otherData)
     {
         setData(otherData);
     }
@@ -73,7 +68,6 @@ public class WeblogEntryTagData
     /** 
      * Unique ID and primary key of this Referer.
      *
-     * @roller.wrapPojoMethod type="simple"
      * @hibernate.id column="id" generator-class="assigned"  
      */
     public java.lang.String getId()
@@ -87,52 +81,21 @@ public class WeblogEntryTagData
         if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
-
-    /** 
-     * ID of website that this tag refers to.
-     *
+    
+    /**
      * @roller.wrapPojoMethod type="pojo"
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
+     * @ejb:persistent-field
+     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public org.apache.roller.pojos.Weblog getWeblog()
-    {
+    public Weblog getWeblog() {
         return this.website;
     }
-
-    public void setWeblog(org.apache.roller.pojos.Weblog website)
-    {
-        this.website = website;
-    }
-
-    /**
-     * @roller.wrapPojoMethod type="pojo"
-     * @hibernate.many-to-one column="entryid" cascade="none"
-     */
-    public org.apache.roller.pojos.WeblogEntryData getWeblogEntry()
-    {
-        return weblogEntry;
-    }
-
-    /**
-     * @param data
-     */
-    public void setWeblogEntry(org.apache.roller.pojos.WeblogEntryData data)
-    {
-        weblogEntry = data;
-    }
     
-    /**
-     * @roller.wrapPojoMethod type="pojo"
-     * @hibernate.many-to-one column="userid" cascade="none"
-     */
-    public UserData getUser() {
-        return this.user;
-    }
     /** @ejb:persistent-field */
-    public void setUser( UserData user ) {
-        this.user = user;
+    public void setWeblog(Weblog website) {
+        this.website = website;
     }    
-    
+
     /**
      * Tag value
      *
@@ -152,17 +115,32 @@ public class WeblogEntryTagData
     *
     * @roller.wrapPojoMethod type="simple"
     * @ejb:persistent-field
-    * @hibernate.property column="time" non-null="true" unique="false"
+    * @hibernate.property column="total" non-null="true" unique="false"
     */
-   public java.sql.Timestamp getTime()
+   public int getTotal()
    {
-       return this.time;
+       return this.total;
    }
+   
+   /**
+   *
+   * @roller.wrapPojoMethod type="simple"
+   * @ejb:persistent-field
+   * @hibernate.property column="lastused" non-null="true" unique="false"
+   */   
+   public Timestamp getLastUsed() {
+       return this.lastUsed;
+   }
+   
+   /** @ejb:persistent-field */
+   public void setLastUsed(Timestamp lastUsed) {
+       this.lastUsed = lastUsed;
+   }   
 
    /** @ejb:persistent-field */
-   public void setTime(java.sql.Timestamp tagTime)
+   public void setTotal(int total)
    {
-       this.time = tagTime;
+       this.total = total;
    }    
 
     //------------------------------------------------------- Good citizenship
@@ -172,40 +150,39 @@ public class WeblogEntryTagData
         buf.append("{");
         buf.append(this.id);
         buf.append(", ").append(this.name);
-        buf.append(", ").append(this.time);
+        buf.append(", ").append(this.total);
+        buf.append(", ").append(this.lastUsed);
         buf.append("}");
         return buf.toString();
     }
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof WeblogEntryTagData != true) return false;
-        WeblogEntryTagData o = (WeblogEntryTagData)other;
+        if (other instanceof WeblogEntryTagAggregate != true) return false;
+        WeblogEntryTagAggregate o = (WeblogEntryTagAggregate)other;
         return new EqualsBuilder()
             .append(getName(), o.getName()) 
-            .append(getWeblogEntry(), o.getWeblogEntry()) 
+            .append(this.getWeblog(), o.getWeblog()) 
             .isEquals();
     }
     
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getName())
-            .append(getWeblogEntry())
+            .append(getWeblog())
             .toHashCode();
     }
  
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(WeblogEntryTagData otherData)
+    public void setData(WeblogEntryTagAggregate data)
     {
-        WeblogEntryTagData data = (WeblogEntryTagData) otherData;
         this.id = data.getId();
         this.website = data.getWeblog();
-        this.weblogEntry = data.getWeblogEntry();
-        this.user = data.getUser();
         this.name = data.getName();
-        this.time = data.getTime();
+        this.total = data.getTotal();
+        this.lastUsed = data.getLastUsed();
     }
 
 }

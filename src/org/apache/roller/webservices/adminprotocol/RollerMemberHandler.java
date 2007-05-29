@@ -29,7 +29,7 @@ import org.jdom.JDOMException;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.webservices.adminprotocol.sdk.Entry;
@@ -142,7 +142,7 @@ class RollerMemberHandler extends Handler {
             List users = getRoller().getUserManager().getUsers(null, null, null, null, 0, -1);
             List perms = new ArrayList();
             for (Iterator i = users.iterator(); i.hasNext(); ) {
-                UserData user = (UserData)i.next();
+                User user = (User)i.next();
                 List permissions = getRoller().getUserManager().getAllPermissions(user);
                 for (Iterator j = permissions.iterator(); j.hasNext(); ) {
                     WeblogPermission pd = (WeblogPermission)j.next();
@@ -176,7 +176,7 @@ class RollerMemberHandler extends Handler {
                 if (wd == null) {
                     throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
                 }
-                UserData ud = getUserData(username);
+                User ud = getUserData(username);
                 if (ud == null) {
                     throw new NotFoundException("ERROR: Unknown user name: " + username);
                 }
@@ -279,7 +279,7 @@ class RollerMemberHandler extends Handler {
     }
     
     private WeblogPermission toPermissionsData(MemberEntry entry) throws HandlerException {
-        UserData ud = getUserData(entry.getName());
+        User ud = getUserData(entry.getName());
         Weblog wd = getWebsiteData(entry.getHandle());
         WeblogPermission pd = new WeblogPermission();
         pd.setUser(ud);
@@ -296,7 +296,7 @@ class RollerMemberHandler extends Handler {
     
     private WeblogPermission getPermissionsData(String handle, String username) throws HandlerException {
         try {
-            UserData ud = getUserData(username);
+            User ud = getUserData(username);
             Weblog wd = getWebsiteData(handle);
             WeblogPermission pd = getRoller().getUserManager().getPermissions(wd, ud);
             
@@ -329,7 +329,7 @@ class RollerMemberHandler extends Handler {
         }
         
         try {
-            UserData ud = getUserData(entry.getName());
+            User ud = getUserData(entry.getName());
             Weblog wd = getWebsiteData(entry.getHandle());
             
             UserManager mgr = getRoller().getUserManager();
@@ -364,7 +364,7 @@ class RollerMemberHandler extends Handler {
             mgr.removePermissions(pd);
             getRoller().flush();
             
-            UserData ud = getUserData(username);
+            User ud = getUserData(username);
             CacheManager.invalidate(ud);
             Weblog wd = getWebsiteData(handle);
             CacheManager.invalidate(wd);

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
@@ -102,20 +102,20 @@ public class WeblogCalendarModel implements CalendarModel {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             List prevEntries = mgr.getWeblogEntries(
+                    
                     weblog,                    // website
                     null,                      // user
                     null,                      // startDate
                     startDate,                 // endDate 
                     cat,                       // cat
-                    null,                      // tags
-                    WeblogEntryData.PUBLISHED, // status
+                    null,WeblogEntry.PUBLISHED, // status
                     null,                      // text
                     null,                      // sortby (null means pubTime)
                     WeblogManager.DESCENDING,  // sortorder, null means DESCENDING
                     locale,                    // locale
                     0, 1);                     // offset, range
             if (prevEntries.size() > 0) {
-                WeblogEntryData prevEntry = (WeblogEntryData)prevEntries.get(0);
+                WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
                 prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()));
             }
         } catch (RollerException e) {
@@ -128,20 +128,20 @@ public class WeblogCalendarModel implements CalendarModel {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             List nextEntries = mgr.getWeblogEntries(
+                    
                     weblog,                    // website
                     null,                      // user
                     endDate,                   // startDate
                     null,                      // endDate 
                     cat,                       // cat
-                    null,                      // tags
-                    WeblogEntryData.PUBLISHED, // status
+                    null,WeblogEntry.PUBLISHED, // status
                     null,                      // text
                     null,                      // sortby (null means pubTime)
                     WeblogManager.ASCENDING,   // sortorder
                     locale,                    // locale
                     0, 1);                     // offset, range
             if (nextEntries.size() > 0) {
-                WeblogEntryData nextEntry = (WeblogEntryData)nextEntries.get(0);
+                WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
                 nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()));
             }
         } catch (RollerException e) {
@@ -159,12 +159,12 @@ public class WeblogCalendarModel implements CalendarModel {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             monthMap = mgr.getWeblogEntryStringMap(
+                    
                     weblog,                  // website
                     startDate,                 // startDate
                     endDate,                   // endDate
                     catName,                   // cat
-                    null,                      // tags
-                    WeblogEntryData.PUBLISHED, // status
+                    null,WeblogEntry.PUBLISHED, // status
                     locale,
                     0, -1);
         } catch (RollerException e) {

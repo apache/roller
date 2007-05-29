@@ -26,7 +26,7 @@ import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.util.MediacastException;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.MailUtil;
@@ -70,9 +70,9 @@ public final class EntryAdd extends EntryBase {
         
         // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
         if(getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
-            getBean().setStatus(WeblogEntryData.PUBLISHED);
+            getBean().setStatus(WeblogEntry.PUBLISHED);
         } else {
-            getBean().setStatus(WeblogEntryData.PENDING);
+            getBean().setStatus(WeblogEntry.PENDING);
         }
         
         // set entry locale based on weblog locale
@@ -101,7 +101,7 @@ public final class EntryAdd extends EntryBase {
         if(!hasActionErrors()) try {
             WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
             
-            WeblogEntryData entry = new WeblogEntryData();
+            WeblogEntry entry = new WeblogEntry();
             entry.setCreator(getAuthenticatedUser());
             entry.setWebsite(getActionWeblog());
             
@@ -121,7 +121,7 @@ public final class EntryAdd extends EntryBase {
                 
                 // if user does not have author perms then force PENDING status
                 if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
-                    entry.setStatus(WeblogEntryData.PENDING);
+                    entry.setStatus(WeblogEntry.PENDING);
                 }
             }
             
@@ -187,6 +187,7 @@ public final class EntryAdd extends EntryBase {
             // TODO: i18n
             addError("Error saving new entry");
         }
+
 
         
         return INPUT;

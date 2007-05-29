@@ -27,8 +27,8 @@ import org.apache.roller.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.business.search.operations.SearchOperation;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -51,10 +51,10 @@ public class IndexManagerTest extends TestCase {
         Weblog website = new Weblog();
         website.setHandle("trekker");
 
-        UserData user = new UserData();
+        User user = new User();
         user.setUserName("nimoy");
 
-        WeblogEntryData wd1 = new WeblogEntryData();            
+        WeblogEntry wd1 = new WeblogEntry();            
         wd1.setId("dummy1");
         wd1.setAnchor("dummy1");
         wd1.setCreator(user);
@@ -69,7 +69,7 @@ public class IndexManagerTest extends TestCase {
         imgr.executeIndexOperationNow(
             new AddEntryOperation((IndexManagerImpl) imgr, wd1));
 
-        WeblogEntryData wd2 = new WeblogEntryData();
+        WeblogEntry wd2 = new WeblogEntry();
         wd2.setId("dummy2");
         wd2.setAnchor("dummy2");
         wd2.setCreator(user);

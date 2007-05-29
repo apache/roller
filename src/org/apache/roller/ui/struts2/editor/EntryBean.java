@@ -32,8 +32,8 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryAttribute;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 
 
 /**
@@ -241,19 +241,19 @@ public class EntryBean {
     }
     
     public boolean isDraft() {
-        return status.equals(WeblogEntryData.DRAFT);
+        return status.equals(WeblogEntry.DRAFT);
     }
     
     public boolean isPending() {
-        return status.equals(WeblogEntryData.PENDING);
+        return status.equals(WeblogEntry.PENDING);
     }
     
     public boolean isPublished() {
-        return status.equals(WeblogEntryData.PUBLISHED);
+        return status.equals(WeblogEntry.PUBLISHED);
     }
     
     
-    public void copyTo(WeblogEntryData entry) throws RollerException {
+    public void copyTo(WeblogEntry entry) throws RollerException {
         
         entry.setTitle(getTitle());
         entry.setStatus(getStatus());
@@ -264,7 +264,7 @@ public class EntryBean {
         
         // figure out the category selected
         if (getCategoryId() != null) {
-            WeblogCategoryData cat = null;
+            WeblogCategory cat = null;
             try {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 cat = wmgr.getWeblogCategory(getCategoryId());
@@ -298,7 +298,7 @@ public class EntryBean {
     /**
      * Copy values from WeblogEntryData to this Form.
      */
-    public void copyFrom(WeblogEntryData entry, Locale locale) {
+    public void copyFrom(WeblogEntry entry, Locale locale) {
         
         setId(entry.getId());
         setTitle(entry.getTitle());

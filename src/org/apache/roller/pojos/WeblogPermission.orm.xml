@@ -34,7 +34,7 @@
             <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="website_id" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
-            <many-to-one name="user" target-entity="org.apache.roller.pojos.UserData">
+            <many-to-one name="user" target-entity="org.apache.roller.pojos.User">
                 <join-column name="user_id" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
         </attributes>

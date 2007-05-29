@@ -56,12 +56,12 @@ public class WeblogEntryComment implements Serializable {
     private String    referrer = null;
     private String    userAgent = null;
     
-    private WeblogEntryData weblogEntry = null;
+    private WeblogEntry weblogEntry = null;
     
     
     public WeblogEntryComment() {}
     
-    public WeblogEntryComment(WeblogEntryData entry, String name, String email,
+    public WeblogEntryComment(WeblogEntry entry, String name, String email,
                        String url, String content, Timestamp postTime, 
                        String status, Boolean notify) {
         this.name = name;
@@ -105,7 +105,7 @@ public class WeblogEntryComment implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="entryid" cascade="none" not-null="true"
      */
-    public WeblogEntryData getWeblogEntry() {
+    public WeblogEntry getWeblogEntry() {
         return weblogEntry;
     }
     
@@ -113,7 +113,7 @@ public class WeblogEntryComment implements Serializable {
      * Weblog entry assocaited with comment
      * @ejb:persistent-field
      */
-    public void setWeblogEntry(WeblogEntryData entry) {
+    public void setWeblogEntry(WeblogEntry entry) {
         weblogEntry = entry;
     }
     

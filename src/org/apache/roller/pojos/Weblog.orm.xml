@@ -230,13 +230,13 @@
 			<basic name="customStylesheetPath">
 				<column name="customstylesheet" insertable="true" updatable="true" unique="false"/>
 			</basic>
-			<many-to-one name="creator" target-entity="org.apache.roller.pojos.UserData">
+			<many-to-one name="creator" target-entity="org.apache.roller.pojos.User">
 				<join-column name="userid" insertable="true" updatable="true" nullable="false"/>
 			</many-to-one>
-			<many-to-one name="bloggerCategory" target-entity="org.apache.roller.pojos.WeblogCategoryData">
+			<many-to-one name="bloggerCategory" target-entity="org.apache.roller.pojos.WeblogCategory">
 				<join-column name="bloggercatid" insertable="true" updatable="true"/>
 			</many-to-one>
-			<many-to-one name="defaultCategory" target-entity="org.apache.roller.pojos.WeblogCategoryData">
+			<many-to-one name="defaultCategory" target-entity="org.apache.roller.pojos.WeblogCategory">
 				<join-column name="defaultcatid" insertable="true" updatable="true"/>
 			</many-to-one>
 			<one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.pojos.WeblogPermission" fetch="LAZY">

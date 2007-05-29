@@ -19,8 +19,8 @@ package org.apache.roller.business.search;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.search.operations.IndexOperation;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -36,13 +36,13 @@ public interface IndexManager
     public void removeWebsiteIndex(Weblog website) throws RollerException;
     
     /** Remove entry from index, returns immediately and operates in background */
-    public void removeEntryIndexOperation(WeblogEntryData entry) throws RollerException;
+    public void removeEntryIndexOperation(WeblogEntry entry) throws RollerException;
     
     /** Add entry to index, returns immediately and operates in background */
-    public void addEntryIndexOperation(WeblogEntryData entry) throws RollerException;
+    public void addEntryIndexOperation(WeblogEntry entry) throws RollerException;
     
     /** R-index entry, returns immediately and operates in background */
-    public void addEntryReIndexOperation(WeblogEntryData entry) throws RollerException;
+    public void addEntryReIndexOperation(WeblogEntry entry) throws RollerException;
     
     /** Execute operation immediately */
     public abstract void executeIndexOperationNow(final IndexOperation op);

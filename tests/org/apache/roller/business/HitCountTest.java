@@ -29,7 +29,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogHitCount;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -40,7 +40,7 @@ public class HitCountTest extends TestCase {
     
     public static Log log = LogFactory.getLog(HitCountTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     
     

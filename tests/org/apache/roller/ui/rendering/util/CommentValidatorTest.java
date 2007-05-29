@@ -21,9 +21,9 @@ package org.apache.roller.ui.rendering.util;
 import junit.framework.TestCase;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.WeblogEntryComment;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RollerMessages;
 
@@ -34,8 +34,8 @@ import org.apache.roller.util.RollerMessages;
 public class CommentValidatorTest extends TestCase {
     CommentValidationManager mgr = null;
     Weblog        weblog = null;
-    UserData           user = null;
-    WeblogEntryData    entry = null;
+    User           user = null;
+    WeblogEntry    entry = null;
     
     /** Creates a new instance of CommentValidatorTest */
     public CommentValidatorTest() {

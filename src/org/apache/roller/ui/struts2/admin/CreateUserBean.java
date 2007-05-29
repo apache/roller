@@ -19,7 +19,7 @@
 package org.apache.roller.ui.struts2.admin;
 
 import java.util.Locale;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 
 /**
@@ -121,7 +121,7 @@ public class CreateUserBean {
     }
     
     
-    public void copyTo(UserData dataHolder, Locale locale) {
+    public void copyTo(User dataHolder, Locale locale) {
         
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
@@ -132,7 +132,7 @@ public class CreateUserBean {
     }
     
     
-    public void copyFrom(UserData dataHolder, Locale locale) {
+    public void copyFrom(User dataHolder, Locale locale) {
         
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();

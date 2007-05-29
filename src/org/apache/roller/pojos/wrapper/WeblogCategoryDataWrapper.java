@@ -18,24 +18,24 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.pojos.WeblogCategoryData
+ * Generated wrapper for class: org.apache.roller.pojos.WeblogCategory
  */
 public class WeblogCategoryDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private WeblogCategoryData pojo = null;
+    private WeblogCategory pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogCategoryDataWrapper(WeblogCategoryData toWrap) {
+    private WeblogCategoryDataWrapper(WeblogCategory toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static WeblogCategoryDataWrapper wrap(WeblogCategoryData toWrap) {
+    public static WeblogCategoryDataWrapper wrap(WeblogCategory toWrap) {
         if(toWrap != null)
             return new WeblogCategoryDataWrapper(toWrap);
 
@@ -129,7 +129,7 @@ public class WeblogCategoryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper.wrap((org.apache.roller.pojos.WeblogCategoryData) it.next()));
+            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper.wrap((org.apache.roller.pojos.WeblogCategory) it.next()));
             i++;
         }
 
@@ -154,7 +154,7 @@ public class WeblogCategoryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper.wrap((org.apache.roller.pojos.WeblogEntry) it.next()));
             i++;
         }
 
@@ -166,7 +166,7 @@ public class WeblogCategoryDataWrapper {
      *
      * Simply returns the same value that the pojo would have returned.
      */
-    public boolean descendentOf(org.apache.roller.pojos.WeblogCategoryData ancestor)
+    public boolean descendentOf(org.apache.roller.pojos.WeblogCategory ancestor)
     {   
         return this.pojo.descendentOf(ancestor);
     }
@@ -187,7 +187,7 @@ public class WeblogCategoryDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.WeblogCategoryData getPojo() {
+    public org.apache.roller.pojos.WeblogCategory getPojo() {
         return this.pojo;
     }
 

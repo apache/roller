@@ -46,8 +46,8 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryComment;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
@@ -175,7 +175,7 @@ public class CommentServlet extends HttpServlet {
         String dispatch_url = null;
         
         Weblog weblog = null;
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
         
         String message = null;
         RollerMessages messages = new RollerMessages();
@@ -350,7 +350,7 @@ public class CommentServlet extends HttpServlet {
     /**
      * Re-index the WeblogEntry so that the new comment gets indexed.
      */
-    private void reindexEntry(WeblogEntryData entry)
+    private void reindexEntry(WeblogEntry entry)
     throws RollerException {
         
         IndexManager manager = RollerFactory.getRoller().getIndexManager();
@@ -380,9 +380,9 @@ public class CommentServlet extends HttpServlet {
             WeblogEntryComment commentObject, boolean notifySubscribers,
             RollerMessages messages, String rootURL, I18nMessages resources) {
         
-        WeblogEntryData entry = commentObject.getWeblogEntry();
+        WeblogEntry entry = commentObject.getWeblogEntry();
         Weblog site = entry.getWebsite();
-        UserData user = entry.getCreator();
+        User user = entry.getCreator();
         
         // Send e-mail to owner and subscribed users (if enabled)
         boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
@@ -582,9 +582,9 @@ public class CommentServlet extends HttpServlet {
      */
     public static void sendEmailApprovalNotification(WeblogEntryComment cd, String rootURL, I18nMessages resources) {
         
-        WeblogEntryData entry = cd.getWeblogEntry();
+        WeblogEntry entry = cd.getWeblogEntry();
         Weblog site = entry.getWebsite();
-        UserData user = entry.getCreator();
+        User user = entry.getCreator();
         
         // Only send email if email notificaiton is enabled
         boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");

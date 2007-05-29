@@ -27,7 +27,7 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.webservices.adminprotocol.sdk.Entry;
 import org.apache.roller.webservices.adminprotocol.sdk.EntrySet;
@@ -91,7 +91,7 @@ class RollerUserHandler extends Handler {
             if (users == null) {
                 users = java.util.Collections.EMPTY_LIST;
             }
-            EntrySet es = toUserEntrySet((UserData[])users.toArray(new UserData[0]));
+            EntrySet es = toUserEntrySet((User[])users.toArray(new User[0]));
             
             return es;
         } catch (RollerException re) {
@@ -100,8 +100,8 @@ class RollerUserHandler extends Handler {
     }
     
     private EntrySet getEntry() throws HandlerException {
-        UserData ud = getUserData(getUri().getEntryId());
-        UserData[] uds = new UserData[] { ud };
+        User ud = getUserData(getUri().getEntryId());
+        User[] uds = new User[] { ud };
         
         EntrySet c = toUserEntrySet(uds);
         return c;
@@ -157,13 +157,13 @@ class RollerUserHandler extends Handler {
                     // if no creation date supplied, add it
                     entry.setDateCreated(new Date());
                 }
-                UserData ud = toUserData(entry);
+                User ud = toUserData(entry);
                 mgr.addUser(ud);
                 getRoller().flush();
                 CacheManager.invalidate(ud);
                 userDatas.add(ud);
             }
-            return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
+            return toUserEntrySet((User[])userDatas.toArray(new User[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create users: " + c, re);
         }
@@ -173,14 +173,14 @@ class RollerUserHandler extends Handler {
         List userDatas = new ArrayList();
         for (int i = 0; i < c.getEntries().length; i++) {
             UserEntry entry = (UserEntry)c.getEntries()[i];
-            UserData ud = getUserData(entry.getName());
+            User ud = getUserData(entry.getName());
             updateUserData(ud, entry);
             userDatas.add(ud);
         }
-        return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
+        return toUserEntrySet((User[])userDatas.toArray(new User[0]));
     }
     
-    private void updateUserData(UserData ud, UserEntry entry) throws HandlerException {
+    private void updateUserData(User ud, UserEntry entry) throws HandlerException {
         // user name cannot be updated
 
         if (entry.getScreenName() != null) {
@@ -216,14 +216,14 @@ class RollerUserHandler extends Handler {
     }
     
     private EntrySet deleteEntry() throws HandlerException {
-        UserData ud = getUserData(getUri().getEntryId());
+        User ud = getUserData(getUri().getEntryId());
         
         // don't allow deletion of the currently authenticated user
         if (ud.getUserName().equals(getUserName())) {
             throw new NotAllowedException("ERROR: Can't delete authenticated user: " + getUserName());
         }
         
-        UserData[] uds = new UserData[] { ud };
+        User[] uds = new User[] { ud };
         
         try {
             getRoller().getUserManager().removeUser(ud);
@@ -237,7 +237,7 @@ class RollerUserHandler extends Handler {
         return es;
     }
     
-    private UserEntry toUserEntry(UserData ud) {
+    private UserEntry toUserEntry(User ud) {
         if (ud == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
@@ -257,7 +257,7 @@ class RollerUserHandler extends Handler {
         return ue;
     }
     
-    private UserEntrySet toUserEntrySet(UserData[] uds) {
+    private UserEntrySet toUserEntrySet(User[] uds) {
         if (uds == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
@@ -265,7 +265,7 @@ class RollerUserHandler extends Handler {
         
         List entries = new ArrayList();
         for (int i = 0; i < uds.length; i++) {
-            UserData ud = uds[i];
+            User ud = uds[i];
             Entry entry = toUserEntry(ud);
             entries.add(entry);
         }
@@ -274,8 +274,10 @@ class RollerUserHandler extends Handler {
         return ues;
     }
     
-    /** This object, as a Roller UserData object. */
-    public UserData toUserData(UserEntry ue) {
+    /**
+     * This object, as a Roller User object.
+     */
+    public User toUserData(UserEntry ue) {
         if (ue == null) {
             throw new NullPointerException("ERROR: Null user entry not allowed");
         }
@@ -284,7 +286,7 @@ class RollerUserHandler extends Handler {
         // if any of the entry fields are null, the set below amounts
         // to a no-op.
         //
-        UserData ud = new UserData();
+        User ud = new User();
         ud.setUserName(ue.getName());
 
         if (ue.getScreenName() != null) {

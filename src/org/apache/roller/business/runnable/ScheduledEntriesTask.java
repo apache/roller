@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.util.cache.CacheManager;
 
 
@@ -131,13 +131,13 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             
             // get all published entries older than current time
             List scheduledEntries = wMgr.getWeblogEntries(
+                    
                     null,   // website
                     null,   // user
                     null,   // startDate
                     now,    // endDate
                     null,   // catName
-                    null,   // tags
-                    WeblogEntryData.SCHEDULED, // status
+                    null,WeblogEntry.SCHEDULED, // status
                     null,   // text
                     null,   // sortBy
                     null,   // sortOrder
@@ -146,13 +146,13 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
                     
             log.debug("promoting "+scheduledEntries.size()+" entries to PUBLISHED state");
             
-            WeblogEntryData entry = null;
+            WeblogEntry entry = null;
             Iterator it = scheduledEntries.iterator();
             while(it.hasNext()) {
-                entry = (WeblogEntryData) it.next();
+                entry = (WeblogEntry) it.next();
                 
                 // update status to PUBLISHED and save
-                entry.setStatus(WeblogEntryData.PUBLISHED);
+                entry.setStatus(WeblogEntry.PUBLISHED);
                 wMgr.saveWeblogEntry(entry);
             }
             
@@ -163,7 +163,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             // this is because we need the updated entries flushed first
             it = scheduledEntries.iterator();
             while(it.hasNext()) {
-                entry = (WeblogEntryData) it.next();
+                entry = (WeblogEntry) it.next();
                 
                 // trigger a cache invalidation
                 CacheManager.invalidate(entry);

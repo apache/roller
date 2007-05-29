@@ -38,7 +38,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -99,13 +99,13 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                     int entryCount = RollerRuntimeConfig.getIntProperty(
                             "site.newsfeeds.defaultEntries");
                     entries = blogmgr.getWeblogEntries(
+                            
                             website,
                             null,
                             null,                        // startDate
                             null,                        // endDate
                             null,                        // catName
-                            null,                        // tags
-                            WeblogEntryData.PUBLISHED,   // status
+                            null,WeblogEntry.PUBLISHED,   // status
                             null,                        // text
                             null,                        // sortby (null means pubTime)
                             null,
@@ -132,8 +132,8 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {
                     try {
-                        WeblogEntryData rollerEntry =
-                                (WeblogEntryData)entryIter.next();
+                        WeblogEntry rollerEntry =
+                                (WeblogEntry)entryIter.next();
                         
                         PlanetEntryData entry = new PlanetEntryData();                        
                         String content = "";

@@ -31,7 +31,7 @@ import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 
 /**
  * An operation that adds a new log entry into the index.
@@ -46,14 +46,14 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
     
     //~ Instance fields ========================================================
     
-    private WeblogEntryData data;
+    private WeblogEntry data;
     
     //~ Constructors ===========================================================
     
     /**
      * Adds a web log entry into the index.
      */
-    public ReIndexEntryOperation(IndexManagerImpl mgr, WeblogEntryData data) {
+    public ReIndexEntryOperation(IndexManagerImpl mgr,WeblogEntry data) {
         super(mgr);
         this.data = data;
     }

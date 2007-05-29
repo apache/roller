@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -43,7 +43,7 @@ public interface UserManager {
      * @param newUser User object to be added.
      * @throws RollerException If there is a problem.
      */
-    public void addUser(UserData newUser) throws RollerException;
+    public void addUser(User newUser) throws RollerException;
     
     
     /**
@@ -52,7 +52,7 @@ public interface UserManager {
      * @param user User to be saved.
      * @throws RollerException If there is a problem.
      */
-    public void saveUser(UserData user) throws RollerException;
+    public void saveUser(User user) throws RollerException;
     
     
     /**
@@ -61,58 +61,58 @@ public interface UserManager {
      * @param user User to be removed.
      * @throws RollerException If there is a problem.
      */
-    public void removeUser(UserData user) throws RollerException;
+    public void removeUser(User user) throws RollerException;
     
     
     /**
      * Lookup a user by ID.
-     *
+     * 
      * @param id ID of user to lookup.
-     * @returns UserData The user, or null if not found.
+     * @returns UsUserhe user, or null if not found.
      * @throws RollerException If there is a problem.
      */
-    public UserData getUser(String id) throws RollerException;
+    public User getUser(String id) throws RollerException;
     
     
     /**
      * Lookup a user by UserName.
-     *
+     * 
      * This lookup is restricted to 'enabled' users by default.  So this method
      * should return null if the user is found but is not enabled.
-     *
+     * 
      * @param userName User Name of user to lookup.
-     * @returns UserData The user, or null if not found or is disabled.
+     * @returns UsUserhe user, or null if not found or is disabled.
      * @throws RollerException If there is a problem.
      */
-    public UserData getUserByUserName(String userName) throws RollerException;
+    public User getUserByUserName(String userName) throws RollerException;
     
     
     /**
      * Lookup a user by UserName with the given enabled status.
-     *
+     * 
      * @param userName User Name of user to lookup.
-     * @returns UserData The user, or null if not found or doesn't match 
+     * @returns UsUserhe user, or null if not found or doesn't match 
      *   the proper enabled status.
      * @throws RollerException If there is a problem.
      */
-    public UserData getUserByUserName(String userName, Boolean enabled)
+    public User getUserByUserName(String userName, Boolean enabled)
         throws RollerException;
     
     
     /**
      * Lookup a group of users.
-     *
+     * 
      * The lookup may be constrained to users with a certain enabled status,
      * to users created within a certain date range, and the results can be
      * confined to a certain offset & length for paging abilities.
-     *
+     * 
      * @param weblog Confine results to users with permission to a certain weblog.
      * @param enabled True for enabled only, False for disabled only (or null for all)
      * @param startDate Restrict to those created after startDate (or null for all)
      * @param endDate Restrict to those created before startDate (or null for all)
      * @param offset The index of the first result to return.
      * @param length The number of results to return.
-     * @returns List A list of UserData objects which match the criteria.
+     * @returns List A list of UserDatUsers which match the criteria.
      * @throws RollerException If there is a problem.
      */
     public List getUsers(
@@ -205,7 +205,7 @@ public interface UserManager {
      * @returns List of WebsiteData objects.
      */
     public List getWebsites(
-            UserData user,
+            User user,
             Boolean  enabled,
             Boolean  active,
             Date     startDate,
@@ -269,7 +269,7 @@ public interface UserManager {
      * @param user User (not null)
      * @returns List of PermissionsData objects.
      */
-    public List getPendingPermissions(UserData user) throws RollerException;
+    public List getPendingPermissions(User user) throws RollerException;
     
     
     /**
@@ -286,7 +286,7 @@ public interface UserManager {
      * @param user    User (not null)
      * @return        PermissionsData object
      */
-    public WeblogPermission getPermissions(Weblog website, UserData user)
+    public WeblogPermission getPermissions(Weblog website, User user)
         throws RollerException;
     
     
@@ -303,7 +303,7 @@ public interface UserManager {
      * @param user User (not null)
      * @return     PermissionsData object
      */
-    public List getAllPermissions(UserData user) throws RollerException;
+    public List getAllPermissions(User user) throws RollerException;
     
     
     /**
@@ -313,7 +313,7 @@ public interface UserManager {
      * @param perms   Permissions mask (see statics in PermissionsData)
      * @return        New PermissionsData object, with pending=true
      */
-    public WeblogPermission inviteUser(Weblog website, UserData user, short perms)
+    public WeblogPermission inviteUser(Weblog website, User user, short perms)
         throws RollerException;
     
     
@@ -322,7 +322,7 @@ public interface UserManager {
      * @param website Website to be retired from (persistent instance)
      * @param user    User to be retired (persistent instance)
      */
-    public void retireUser(Weblog website, UserData user)
+    public void retireUser(Weblog website, User user)
         throws RollerException;
     
     
@@ -331,7 +331,7 @@ public interface UserManager {
      * @param roleName Name of the role to be revoked
      * @param user    User for whom the role is to be revoked
      */
-    public void revokeRole(String roleName, UserData user)
+    public void revokeRole(String roleName, User user)
         throws RollerException;
 
     /**
@@ -401,7 +401,7 @@ public interface UserManager {
      * @return
      * @throws RollerException
      */
-    public UserData getUserByActivationCode(String activationCode) throws RollerException;
+    public User getUserByActivationCode(String activationCode) throws RollerException;
     
     /**
      * get a user by password request code
@@ -409,7 +409,7 @@ public interface UserManager {
      * @return
      * @throws RollerException
      */
-    //public UserData getUserByPasswordRequestCode(String passwordRequestCode) throws RollerException;
+    //public User getUserByPasswordRequestCode(String passwordRequestCode) throws RollerException;
 
 
 }

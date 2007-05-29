@@ -19,9 +19,7 @@
 package org.apache.roller.ui.rendering.util;
 
 import org.apache.roller.pojos.WeblogEntryComment;
-import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 
 /**

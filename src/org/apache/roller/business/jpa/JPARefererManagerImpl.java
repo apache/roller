@@ -41,7 +41,7 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.StatCount;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.StatCountCountComparator;
 import org.apache.roller.util.LinkbackExtractor;
@@ -301,13 +301,13 @@ public class JPARefererManagerImpl implements RefererManager {
     public List getReferersToEntry(String entryid) throws RollerException {
         if (null == entryid)
             throw new RollerException("entryid is null");
-        //TODO: DataMapperPort: Change calling code to pass WebLogEntryData instead of id
-        // we should change calling code to pass instance of WeblogEntryData instead
+        //TODO: DataMapperPort: Change calling code to pass WeblogEntry instead of id
+        // we should change calling code to pass instance of WeblogEntry instead
         // of extracting and passing id. Once that is done, change the code below to
         // skip the load (Please note that the load below will always find the enty in cache)
         Query q = strategy.getNamedQuery(
             "WeblogReferrer.getByWeblogEntry&TitleNotNull&ExcerptNotNullOrderByTotalHitsDesc");
-        q.setParameter(1, strategy.load(WeblogEntryData.class, entryid));
+        q.setParameter(1, strategy.load(WeblogEntry.class, entryid));
         return q.getResultList();
     }
 
@@ -374,7 +374,7 @@ public class JPARefererManagerImpl implements RefererManager {
 
         String selfSiteFragment = "/"+weblogHandle;
         Weblog weblog = null;
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
 
         // lookup the weblog now
         try {

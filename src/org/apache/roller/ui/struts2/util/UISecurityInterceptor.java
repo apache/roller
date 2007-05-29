@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
@@ -56,7 +56,7 @@ public class UISecurityInterceptor extends AbstractInterceptor {
             // are we requiring an authenticated user?
             if(theAction.isUserRequired()) {
                 
-                UserData authenticatedUser = ((UIAction)theAction).getAuthenticatedUser();
+                User authenticatedUser = ((UIAction)theAction).getAuthenticatedUser();
                 if(authenticatedUser == null) {
                     log.debug("DENIED: required user not found");
                     return "access-denied";

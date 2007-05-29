@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.ui.struts2.core.Register;
 import org.apache.roller.ui.struts2.util.UIAction;
 
@@ -88,7 +88,7 @@ public class CreateUser extends UIAction {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             
             // copy form data into new user pojo
-            UserData newUser = new UserData();
+            User newUser = new User();
             getBean().copyTo(newUser, getLocale()); // doesn't copy password
             newUser.setDateCreated(new java.util.Date());
             

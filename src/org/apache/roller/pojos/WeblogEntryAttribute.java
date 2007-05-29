@@ -30,7 +30,7 @@ import org.apache.roller.util.UUIDGenerator;
 public class WeblogEntryAttribute implements java.lang.Comparable
 {
     private String id = UUIDGenerator.generateUUID();
-    private WeblogEntryData entry;
+    private WeblogEntry entry;
     private String name;
     private String value;
     
@@ -39,8 +39,8 @@ public class WeblogEntryAttribute implements java.lang.Comparable
     }
 
     public WeblogEntryAttribute(
-        String id,
-        WeblogEntryData entry,
+        
+        String id,WeblogEntry entry,
         String name,
         String value)
     {
@@ -90,12 +90,12 @@ public class WeblogEntryAttribute implements java.lang.Comparable
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="entryid" cascade="none" not-null="true"
      */
-    public WeblogEntryData getEntry()
+    public WeblogEntry getEntry()
     {
         return entry;
     }
     /** @ejb:persistent-field */ 
-    public void setEntry(WeblogEntryData entry)
+    public void setEntry(WeblogEntry entry)
     {
         this.entry = entry;
     }

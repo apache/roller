@@ -29,8 +29,8 @@ import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.planet.tasks.SyncWebsitesTask;
@@ -44,7 +44,7 @@ import org.apache.roller.planet.tasks.SyncWebsitesTask;
 public class PlanetManagerLocalTest extends TestCase {
     public static Log log = LogFactory.getLog(PlanetManagerLocalTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     
     public static void main(String[] args) {
@@ -60,7 +60,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testUser = TestUtils.setupUser("entryTestUser");
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
             
-            WeblogEntryData testEntry1 = new WeblogEntryData();
+            WeblogEntry testEntry1 = new WeblogEntry();
             testEntry1.setTitle("entryTestEntry1");
             testEntry1.setLink("testEntryLink1");
             testEntry1.setText("blah blah entry1");
@@ -72,7 +72,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry1.setCategory(testWeblog.getDefaultCategory());
             RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
-            WeblogEntryData testEntry2 = new WeblogEntryData();
+            WeblogEntry testEntry2 = new WeblogEntry();
             testEntry2.setTitle("entryTestEntry2");
             testEntry2.setLink("testEntryLink2");
             testEntry2.setText("blah blah entry2");
@@ -84,7 +84,7 @@ public class PlanetManagerLocalTest extends TestCase {
             testEntry2.setCategory(testWeblog.getDefaultCategory());
             RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
-            WeblogEntryData testEntry3 = new WeblogEntryData();
+            WeblogEntry testEntry3 = new WeblogEntry();
             testEntry3.setTitle("entryTestEntry3");
             testEntry3.setLink("testEntryLink3");
             testEntry3.setText("blah blah entry3");

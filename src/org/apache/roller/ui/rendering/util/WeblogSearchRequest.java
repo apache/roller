@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -43,7 +43,7 @@ public class WeblogSearchRequest extends WeblogRequest {
     private String weblogCategoryName = null;
     
     // heavyweight attributes
-    private WeblogCategoryData weblogCategory = null;
+    private WeblogCategory weblogCategory = null;
     
     
     public WeblogSearchRequest() {}
@@ -131,7 +131,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         this.weblogCategoryName = weblogCategory;
     }
 
-    public WeblogCategoryData getWeblogCategory() {
+    public WeblogCategory getWeblogCategory() {
         
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
@@ -145,7 +145,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         return weblogCategory;
     }
 
-    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
+    public void setWeblogCategory(WeblogCategory weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
     

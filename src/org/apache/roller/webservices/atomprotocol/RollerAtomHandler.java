@@ -37,10 +37,10 @@ import org.apache.roller.business.FileNotFoundException;
 import org.apache.roller.business.FilePathException;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.WSSEUtilities;
@@ -65,7 +65,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.pojos.RollerPropertyData;
-import org.apache.roller.pojos.WeblogEntryTagData;
+import org.apache.roller.pojos.WeblogEntryTag;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.cache.CacheManager;
@@ -111,7 +111,7 @@ import org.apache.roller.util.cache.CacheManager;
  */
 public class RollerAtomHandler implements AtomHandler {
     private Roller   roller;
-    private UserData user;
+    private User user;
     private int      maxEntries = 20;
     
     private static Log log =
@@ -193,7 +193,7 @@ public class RollerAtomHandler implements AtomHandler {
                     cats.setScheme(getWeblogCategoryScheme(perm.getWebsite()));
                     List rollerCats = roller.getWeblogManager().getWeblogCategories(perm.getWebsite(), false);
                     for (Iterator it = rollerCats.iterator(); it.hasNext();) {
-                        WeblogCategoryData rollerCat = (WeblogCategoryData)it.next();
+                        WeblogCategory rollerCat = (WeblogCategory)it.next();
                         Category cat = new Category();
                         cat.setTerm(rollerCat.getPath().substring(1));
                         cat.setLabel(rollerCat.getName());
@@ -335,7 +335,7 @@ public class RollerAtomHandler implements AtomHandler {
             List atomEntries = new ArrayList();
             int count = 0;
             for (Iterator iter = entries.iterator(); iter.hasNext() && count < maxEntries; count++) {
-                WeblogEntryData rollerEntry = (WeblogEntryData)iter.next();
+                WeblogEntry rollerEntry = (WeblogEntry)iter.next();
                 Entry entry = createAtomEntry(rollerEntry);
                 atomEntries.add(entry);
                 if (count == 0) {
@@ -501,7 +501,7 @@ public class RollerAtomHandler implements AtomHandler {
             }
             // Save it and commit it
             WeblogManager mgr = roller.getWeblogManager();
-            WeblogEntryData rollerEntry = new WeblogEntryData();
+            WeblogEntry rollerEntry = new WeblogEntry();
             rollerEntry.setWebsite(website);
             rollerEntry.setCreator(this.user);
             copyToRollerEntry(entry, rollerEntry);
@@ -531,7 +531,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (pathInfo.length > 2) // URI is /blogname/entries/entryid
             {
                 if (pathInfo[1].equals("entry")) {
-                    WeblogEntryData entry = 
+                    WeblogEntry entry = 
                         roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
                     if (entry == null) {
                         throw new AtomNotFoundException("Cannot find specified entry/resource");
@@ -568,7 +568,7 @@ public class RollerAtomHandler implements AtomHandler {
         try {
             if (pathInfo.length == 3) // URI is /blogname/entries/entryid
             {
-                WeblogEntryData rollerEntry =
+                WeblogEntry rollerEntry =
                     roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
                 if (rollerEntry == null) {
                     throw new AtomNotFoundException(
@@ -603,7 +603,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (pathInfo.length > 2) {
                 if (pathInfo[1].equals("entry")) // URI is /blogname/entry/entryid
                 {                    
-                    WeblogEntryData rollerEntry = roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
+                    WeblogEntry rollerEntry = roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
                     if (rollerEntry == null) {
                         throw new AtomNotFoundException("cannot find specified entry/resource");
                     }
@@ -838,7 +838,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Return true if user is allowed to edit an entry.
      */
-    private boolean canEdit(WeblogEntryData entry) {
+    private boolean canEdit(WeblogEntry entry) {
         try {
             return entry.hasWritePermissions(this.user);
         } catch (Exception e) {
@@ -862,7 +862,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Return true if user is allowed to view an entry.
      */
-    private boolean canView(WeblogEntryData entry) {
+    private boolean canView(WeblogEntry entry) {
         return canEdit(entry);
     }
     
@@ -908,7 +908,7 @@ public class RollerAtomHandler implements AtomHandler {
         }
         String digest = null;
         try {
-            UserData user = roller.getUserManager().getUserByUserName(userName);
+            User user = roller.getUserManager().getUserByUserName(userName);
             digest = WSSEUtilities.generateDigest(
                     WSSEUtilities.base64Decode(nonce),
                     created.getBytes("UTF-8"),
@@ -941,7 +941,7 @@ public class RollerAtomHandler implements AtomHandler {
                         int p = userPass.indexOf(":");
                         if (p != -1) {
                             userID = userPass.substring(0, p);
-                            UserData user = roller.getUserManager().getUserByUserName(userID);
+                            User user = roller.getUserManager().getUserByUserName(userID);
                             boolean enabled = user.getEnabled().booleanValue();
                             if (enabled) {
                                 // are passwords encrypted?
@@ -972,7 +972,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Content is escaped.
      * Link is stored as rel=alternate link.
      */
-    private Entry createAtomEntry(WeblogEntryData entry) {
+    private Entry createAtomEntry(WeblogEntry entry) {
         Entry atomEntry = new Entry();
         
         Content content = new Content();
@@ -993,7 +993,7 @@ public class RollerAtomHandler implements AtomHandler {
         atomEntry.setPublished( entry.getPubTime());
         atomEntry.setUpdated(   entry.getUpdateTime());
         
-        UserData creator = entry.getCreator();
+        User creator = entry.getCreator();
         Person author = new Person();
         author.setName(         creator.getUserName());
         author.setEmail(        creator.getEmailAddress());
@@ -1008,7 +1008,7 @@ public class RollerAtomHandler implements AtomHandler {
         
         // Add Atom categories for each Roller tag with null scheme
         for (Iterator tagit = entry.getTags().iterator(); tagit.hasNext();) {
-            WeblogEntryTagData tag = (WeblogEntryTagData) tagit.next();
+            WeblogEntryTag tag = (WeblogEntryTag) tagit.next();
             Category newcat = new Category();
             newcat.setTerm(tag.getName());
             categories.add(newcat);
@@ -1034,7 +1034,7 @@ public class RollerAtomHandler implements AtomHandler {
         List modules = new ArrayList();
         PubControlModule pubControl = new PubControlModuleImpl();
         pubControl.setDraft(
-                !WeblogEntryData.PUBLISHED.equals(entry.getStatus()));
+                !WeblogEntry.PUBLISHED.equals(entry.getStatus()));
         modules.add(pubControl);
         atomEntry.setModules(modules);
         
@@ -1091,7 +1091,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Copy fields from ROME entry to Roller entry.
      */
-    private void copyToRollerEntry(Entry entry, WeblogEntryData rollerEntry) throws RollerException {
+    private void copyToRollerEntry(Entry entry,WeblogEntry rollerEntry) throws RollerException {
         
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
@@ -1116,9 +1116,9 @@ public class RollerAtomHandler implements AtomHandler {
         PubControlModule control =
                 (PubControlModule)entry.getModule("http://purl.org/atom/app#");
         if (control!=null && control.getDraft()) {
-            rollerEntry.setStatus(WeblogEntryData.DRAFT);
+            rollerEntry.setStatus(WeblogEntry.DRAFT);
         } else {
-            rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
+            rollerEntry.setStatus(WeblogEntry.PUBLISHED);
         }
                 
         // Process incoming categories:
@@ -1133,7 +1133,7 @@ public class RollerAtomHandler implements AtomHandler {
                 if (cat.getScheme() != null && cat.getScheme().equals(getWeblogCategoryScheme(rollerEntry.getWebsite()))) {                
                     String catString = cat.getTerm();
                     if (catString != null) {
-                        WeblogCategoryData rollerCat =
+                        WeblogCategory rollerCat =
                                 roller.getWeblogManager().getWeblogCategoryByPath(
                                 rollerEntry.getWebsite(), catString);
                         if (rollerCat != null) {
@@ -1181,7 +1181,7 @@ public class RollerAtomHandler implements AtomHandler {
         return path;
     }
     
-    private void reindexEntry(WeblogEntryData entry) throws RollerException {
+    private void reindexEntry(WeblogEntry entry) throws RollerException {
         IndexManager manager = roller.getIndexManager();
         
         // TODO: figure out what's up here and at WeblogEntryFormAction line 696

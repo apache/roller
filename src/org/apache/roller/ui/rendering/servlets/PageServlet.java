@@ -43,7 +43,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.StaticThemeTemplate;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.InvalidRequestException;
@@ -308,7 +308,7 @@ public class PageServlet extends HttpServlet {
             
             // permalink specified.
             // entry must exist, be published before current time, and locale must match
-            WeblogEntryData entry = pageRequest.getWeblogEntry();
+            WeblogEntry entry = pageRequest.getWeblogEntry();
             if(entry == null) {
                 invalid = true;
             } else if (pageRequest.getLocale() != null && 

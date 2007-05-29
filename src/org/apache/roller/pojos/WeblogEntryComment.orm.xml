@@ -96,7 +96,7 @@
             <basic name="userAgent">
                 <column name="useragent" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntryData">
+            <many-to-one name="weblogEntry" target-entity="org.apache.roller.pojos.WeblogEntry">
                 <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <transient name="timestamp"/>

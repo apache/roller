@@ -35,7 +35,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryComment;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.CommentValidationManager;
 import org.apache.roller.ui.rendering.util.TrackbackLinkbackCommentValidator;
@@ -92,7 +92,7 @@ public class TrackbackServlet extends HttpServlet {
         PrintWriter pw = response.getWriter();
         
         Weblog weblog = null;
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
         
         RollerMessages messages = new RollerMessages();
         

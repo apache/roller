@@ -29,7 +29,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 
 
 /**
@@ -45,11 +45,11 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
     
     //~ Instance fields ========================================================
     
-    private WeblogEntryData data;
+    private WeblogEntry data;
     
     //~ Constructors ===========================================================
     
-    public RemoveEntryOperation(IndexManagerImpl mgr, WeblogEntryData data) {
+    public RemoveEntryOperation(IndexManagerImpl mgr,WeblogEntry data) {
         super(mgr);
         this.data = data;
     }

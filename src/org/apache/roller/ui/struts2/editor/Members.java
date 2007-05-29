@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
 
@@ -84,7 +84,7 @@ public class Members extends UIAction implements ParameterAware {
                 String sval = getParameter("perm-" + perms.getId());
                 if (sval != null) {
                     short val = Short.parseShort(sval);
-                    UserData user = getAuthenticatedUser();
+                    User user = getAuthenticatedUser();
                     if (perms.getUser().getId().equals(user.getId()) && 
                             val < perms.getPermissionMask()) {
                         addError("memberPermissions.noSelfDemotions");

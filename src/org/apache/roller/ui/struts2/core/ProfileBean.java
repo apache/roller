@@ -18,7 +18,7 @@
 
 package org.apache.roller.ui.struts2.core;
 
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 
 /**
@@ -120,7 +120,7 @@ public class ProfileBean {
     }
     
     
-    public void copyTo(UserData dataHolder) {
+    public void copyTo(User dataHolder) {
         
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
@@ -130,7 +130,7 @@ public class ProfileBean {
     }
     
     
-    public void copyFrom(UserData dataHolder) {
+    public void copyFrom(User dataHolder) {
         
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();

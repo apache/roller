@@ -48,14 +48,14 @@ import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
 import org.apache.roller.pojos.TagStatCountComparator;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogEntryTagAggregateData;
-import org.apache.roller.pojos.WeblogEntryTagData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
+import org.apache.roller.pojos.WeblogEntryTagAggregate;
+import org.apache.roller.pojos.WeblogEntryTag;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.WeblogEntryAttribute;
 import org.apache.roller.pojos.StatCountCountComparator;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.util.DateUtil;
 
 /*
@@ -95,7 +95,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException {
+    public void saveWeblogCategory(WeblogCategory cat) throws RollerException {
         boolean exists = getWeblogCategory(cat.getId()) != null;
         if (!exists) {
             if (isDuplicateWeblogCategoryName(cat)) {
@@ -103,7 +103,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
             // Newly added object. If it has a parent,
             // maintain relationship from both sides
-            WeblogCategoryData parent = cat.getParent();
+            WeblogCategory parent = cat.getParent();
             if(parent != null) {
                 parent.getWeblogCategories().add(cat);
             }
@@ -117,7 +117,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void removeWeblogCategory(WeblogCategoryData cat)
+    public void removeWeblogCategory(WeblogCategory cat)
     throws RollerException {
         if(cat.retrieveWeblogEntries(true).size() > 0) {
             throw new RollerException("Cannot remove category with entries");
@@ -126,20 +126,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove cat
         this.strategy.remove(cat);
         //relationship management for the other side
-        WeblogCategoryData parent = cat.getParent();
+        WeblogCategory parent = cat.getParent();
         if(parent != null) {
             parent.getWeblogCategories().remove(cat);
         }
         
         // update website default cats if needed
         if(cat.getWebsite().getBloggerCategory().equals(cat)) {
-            WeblogCategoryData rootCat = this.getRootWeblogCategory(cat.getWebsite());
+            WeblogCategory rootCat = this.getRootWeblogCategory(cat.getWebsite());
             cat.getWebsite().setBloggerCategory(rootCat);
             this.strategy.store(cat.getWebsite());
         }
         
         if(cat.getWebsite().getDefaultCategory().equals(cat)) {
-            WeblogCategoryData rootCat = this.getRootWeblogCategory(cat.getWebsite());
+            WeblogCategory rootCat = this.getRootWeblogCategory(cat.getWebsite());
             cat.getWebsite().setDefaultCategory(rootCat);
             this.strategy.store(cat.getWebsite());
         }
@@ -152,7 +152,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void moveWeblogCategory(WeblogCategoryData srcCat, WeblogCategoryData destCat)
+    public void moveWeblogCategory(WeblogCategory srcCat, WeblogCategory destCat)
     throws RollerException {
         
         // TODO: this check should be made before calling this method?
@@ -165,7 +165,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 " under "+destCat.getPath());
         
         
-        WeblogCategoryData oldParent = srcCat.getParent();
+        WeblogCategory oldParent = srcCat.getParent();
         if(oldParent != null) {
             oldParent.getWeblogCategories().remove(srcCat);
         }
@@ -186,15 +186,15 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     
     // updates the paths of all descendents of the given category
-    private void updatePathTree(WeblogCategoryData cat)
+    private void updatePathTree(WeblogCategory cat)
     throws RollerException {
         
         log.debug("Updating path tree for category "+cat.getPath());
         
-        WeblogCategoryData childCat = null;
+        WeblogCategory childCat = null;
         Iterator childCats = cat.getWeblogCategories().iterator();
         while(childCats.hasNext()) {
-            childCat = (WeblogCategoryData) childCats.next();
+            childCat = (WeblogCategory) childCats.next();
             
             log.debug("OLD child category path was "+childCat.getPath());
             
@@ -216,8 +216,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void moveWeblogCategoryContents(WeblogCategoryData srcCat,
-            WeblogCategoryData destCat)
+    public void moveWeblogCategoryContents(WeblogCategory srcCat,
+            WeblogCategory destCat)
             throws RollerException {
         
         // TODO: this check should be made before calling this method?
@@ -233,7 +233,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Iterator iter = results.iterator();
         Weblog website = destCat.getWebsite();
         while (iter.hasNext()) {
-            WeblogEntryData entry = (WeblogEntryData) iter.next();
+            WeblogEntry entry = (WeblogEntry) iter.next();
             entry.setCategory(destCat);
             entry.setWebsite(website);
             this.strategy.store(entry);
@@ -283,7 +283,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     // TODO: perhaps the createAnchor() and queuePings() items should go outside this method?
-    public void saveWeblogEntry(WeblogEntryData entry) throws RollerException {
+    public void saveWeblogEntry(WeblogEntry entry) throws RollerException {
         
         if (entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
             entry.setAnchor(this.createAnchor(entry));
@@ -304,7 +304,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // more than 1 minute into the future
         if ("PUBLISHED".equals(entry.getStatus()) &&
                 entry.getPubTime().after(new Date(System.currentTimeMillis() + 60000))) {
-            entry.setStatus(WeblogEntryData.SCHEDULED);
+            entry.setStatus(WeblogEntry.SCHEDULED);
         }
         
         // Store value object (creates new or updates existing)
@@ -328,7 +328,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void removeWeblogEntry(WeblogEntryData entry)
+    public void removeWeblogEntry(WeblogEntry entry)
     throws RollerException {
         Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
         q.setParameter(1, entry);
@@ -357,7 +357,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove tags aggregates
         if(entry.getTags() != null) {
             for(Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
-                WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+                WeblogEntryTag tag = (WeblogEntryTag) it.next();
                 updateTagCount(tag.getName(), entry.getWebsite(), -1);
                 it.remove();
                 this.strategy.remove(tag);
@@ -377,12 +377,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
     
-    public List getNextPrevEntries(WeblogEntryData current, String catName,
+    public List getNextPrevEntries(WeblogEntry current, String catName,
             String locale, int maxEntries, boolean next)
             throws RollerException {
         Query query = null;
         List results = null;
-        WeblogCategoryData category = null;
+        WeblogCategory category = null;
         
         if (catName != null && !catName.trim().equals("/")) {
             category = getWeblogCategoryByPath(current.getWebsite(), null,
@@ -393,12 +393,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
-        queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
+        queryString.append("SELECT e FROM WeblogEntry e WHERE ");
                      
         params.add(size++, current.getWebsite());
         whereClause.append("e.website = ?" + size); 
         
-        params.add(size++, WeblogEntryData.PUBLISHED);
+        params.add(size++, WeblogEntry.PUBLISHED);
         whereClause.append(" AND e.status = ?" + size);
                 
         if (next) {
@@ -441,16 +441,16 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategoryData getRootWeblogCategory(Weblog website)
+    public WeblogCategory getRootWeblogCategory(Weblog website)
     throws RollerException {
         if (website == null)
             throw new RollerException("website is null");
         
         Query q = strategy.getNamedQuery(
-                "WeblogCategoryData.getByWebsite&ParentNull");
+                "WeblogCategory.getByWebsite&ParentNull");
         q.setParameter(1, website);
         try {
-            return (WeblogCategoryData)q.getSingleResult();
+            return (WeblogCategory)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -467,7 +467,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (includeRoot) return getWeblogCategories(website);
         
         Query q = strategy.getNamedQuery(
-                "WeblogCategoryData.getByWebsite&ParentNotNull");
+                "WeblogCategory.getByWebsite&ParentNotNull");
         q.setParameter(1, website);
         return q.getResultList();
     }
@@ -481,7 +481,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             throw new RollerException("website is null");
         
         Query q = strategy.getNamedQuery(
-                "WeblogCategoryData.getByWebsite");
+                "WeblogCategory.getByWebsite");
         q.setParameter(1, website);
         return q.getResultList();
     }
@@ -491,7 +491,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public List getWeblogEntries(
             Weblog website,
-            UserData    user,
+            User    user,
             Date        startDate,
             Date        endDate,
             String      catName,
@@ -504,7 +504,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             int         offset,
             int         length) throws RollerException {
         
-        WeblogCategoryData cat = null;
+        WeblogCategory cat = null;
         if (StringUtils.isNotEmpty(catName) && website != null) {
             cat = getWeblogCategoryByPath(website, catName);
             if (cat == null) catName = null;
@@ -517,11 +517,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         int size = 0;
         StringBuffer queryString = new StringBuffer();
         
-        //queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
+        //queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         if (tags == null || tags.size()==0) {
-            queryString.append("SELECT e FROM WeblogEntryData e WHERE ");
+            queryString.append("SELECT e FROM WeblogEntry e WHERE ");
         } else {
-            queryString.append("SELECT e FROM WeblogEntryData e JOIN e.tags t WHERE ");
+            queryString.append("SELECT e FROM WeblogEntry e JOIN e.tags t WHERE ");
             queryString.append("(");
             for(int i = 0; i < tags.size(); i++) {
                 if (i != 0) queryString.append(" OR ");
@@ -540,10 +540,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         /*if (tags != null && tags.size() > 0) {
-            // A JOIN with WeblogEntryTagData in parent quert will cause a DISTINCT in SELECT clause
-            // WeblogEntryData has a clob field and many databases do not link DISTINCT for CLOB fields
+            // A JOIN with WeblogEntryTag in parent quert will cause a DISTINCT in SELECT clause
+            // WeblogEntry has a clob field and many databases do not link DISTINCT for CLOB fields
             // Hence as a workaround using corelated EXISTS query.
-            queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTagData t WHERE "
+            queryString.append(" AND EXISTS (SELECT t FROM WeblogEntryTag t WHERE "
                     + " t.weblogEntry = e AND t.name IN (");
             final String PARAM_SEPERATOR = ", ";
             for(int i = 0; i < tags.size(); i++) {
@@ -632,16 +632,16 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public List getWeblogEntriesPinnedToMain(Integer max)
     throws RollerException {
         Query query = strategy.getNamedQuery(
-                "WeblogEntryData.getByPinnedToMain&statusOrderByPubTimeDesc");
+                "WeblogEntry.getByPinnedToMain&statusOrderByPubTimeDesc");
         query.setParameter(1, Boolean.TRUE);
-        query.setParameter(2, WeblogEntryData.PUBLISHED);
+        query.setParameter(2, WeblogEntry.PUBLISHED);
         if (max != null) {
             query.setMaxResults(max.intValue());
         }
         return query.getResultList();
     }
     
-    public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
+    public void removeWeblogEntryAttribute(String name, WeblogEntry entry)
     throws RollerException {
         for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
             WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
@@ -656,10 +656,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public void removeWeblogEntryTag(String name, WeblogEntryData entry)
+    public void removeWeblogEntryTag(String name, WeblogEntry entry)
     throws RollerException {
         for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
-            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            WeblogEntryTag tag = (WeblogEntryTag) it.next();
             if (tag.getName().equals(name)) {
                 //Call back the entity to adjust its internal state
                 entry.onRemoveTag(name);
@@ -674,7 +674,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogEntryData getWeblogEntryByAnchor(Weblog website,
+    public WeblogEntry getWeblogEntryByAnchor(Weblog website,
             String anchor) throws RollerException {
         
         if (website == null)
@@ -690,7 +690,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // NOTE: if we ever allow changing anchors then this needs updating
         if(this.entryAnchorToIdMap.containsKey(mappingKey)) {
             
-            WeblogEntryData entry = this.getWeblogEntry((String) this.entryAnchorToIdMap.get(mappingKey));
+            WeblogEntry entry = this.getWeblogEntry((String) this.entryAnchorToIdMap.get(mappingKey));
             if(entry != null) {
                 log.debug("entryAnchorToIdMap CACHE HIT - "+mappingKey);
                 return entry;
@@ -702,12 +702,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // cache failed, do lookup
         Query q = strategy.getNamedQuery(
-                "WeblogEntryData.getByWebsite&AnchorOrderByPubTimeDesc");
+                "WeblogEntry.getByWebsite&AnchorOrderByPubTimeDesc");
         q.setParameter(1, website);
         q.setParameter(2, anchor);
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
         try {
-            entry = (WeblogEntryData)q.getSingleResult();
+            entry = (WeblogEntry)q.getSingleResult();
         } catch (NoResultException e) {
             entry = null;
         }
@@ -724,20 +724,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     // TODO: this method should be removed and it's functionality moved to getWeblogEntries()
-    public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
+    public List getWeblogEntries(WeblogCategory cat, boolean subcats)
     throws RollerException {
         List results = null;
         
         if (!subcats) {
             Query q = strategy.getNamedQuery(
-                    "WeblogEntryData.getByStatus&Category");
-            q.setParameter(1, WeblogEntryData.PUBLISHED);
+                    "WeblogEntry.getByStatus&Category");
+            q.setParameter(1, WeblogEntry.PUBLISHED);
             q.setParameter(2, cat);
             results = q.getResultList();
         } else {
             Query q = strategy.getNamedQuery(
-                    "WeblogEntryData.getByStatus&Category.pathLike&Website");
-            q.setParameter(1, WeblogEntryData.PUBLISHED);
+                    "WeblogEntry.getByStatus&Category.pathLike&Website");
+            q.setParameter(1, WeblogEntry.PUBLISHED);
             q.setParameter(2, cat.getPath() + '%');
             q.setParameter(3, cat.getWebsite());
             results = q.getResultList();
@@ -749,7 +749,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public String createAnchor(WeblogEntryData entry) throws RollerException {
+    public String createAnchor(WeblogEntry entry) throws RollerException {
         // Check for uniqueness of anchor
         String base = entry.createAnchorBase();
         String name = base;
@@ -761,7 +761,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
             
             Query q = strategy.getNamedQuery(
-                    "WeblogEntryData.getByWebsite&Anchor");
+                    "WeblogEntry.getByWebsite&Anchor");
             q.setParameter(1, entry.getWebsite());
             q.setParameter(2, name);
             List results = q.getResultList();
@@ -778,11 +778,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public boolean isDuplicateWeblogCategoryName(WeblogCategoryData cat)
+    public boolean isDuplicateWeblogCategoryName(WeblogCategory cat)
     throws RollerException {
         
         // ensure that no sibling categories share the same name
-        WeblogCategoryData parent = cat.getParent();
+        WeblogCategory parent = cat.getParent();
         if (null != parent) {
             return (getWeblogCategoryByPath(
                     cat.getWebsite(), cat.getPath()) != null);
@@ -794,10 +794,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public boolean isWeblogCategoryInUse(WeblogCategoryData cat)
+    public boolean isWeblogCategoryInUse(WeblogCategory cat)
     throws RollerException {
         
-        Query q = strategy.getNamedQuery("WeblogEntryData.getByCategory");
+        Query q = strategy.getNamedQuery("WeblogEntry.getByCategory");
         q.setParameter(1, cat);
         int entryCount = q.getResultList().size();
         
@@ -807,7 +807,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         Iterator cats = cat.getWeblogCategories().iterator();
         while (cats.hasNext()) {
-            WeblogCategoryData childCat = (WeblogCategoryData)cats.next();
+            WeblogCategory childCat = (WeblogCategory)cats.next();
             if (childCat.isInUse()) {
                 return true;
             }
@@ -829,7 +829,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public List getComments(
             Weblog     website,
-            WeblogEntryData entry,
+            WeblogEntry entry,
             String          searchString,
             Date            startDate,
             Date            endDate,
@@ -914,7 +914,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public int removeMatchingComments(
             Weblog     website,
-            WeblogEntryData entry,
+            WeblogEntry entry,
             String  searchString,
             Date    startDate,
             Date    endDate,
@@ -940,18 +940,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogCategoryData getWeblogCategory(String id)
+    public WeblogCategory getWeblogCategory(String id)
     throws RollerException {
-        return (WeblogCategoryData) this.strategy.load(
-                WeblogCategoryData.class, id);
+        return (WeblogCategory) this.strategy.load(
+                WeblogCategory.class, id);
     }
     
-    //--------------------------------------------- WeblogCategoryData Queries
+    //--------------------------------------------- WeblogCategory Queries
     
     /**
      * @inheritDoc
      */
-    public WeblogCategoryData getWeblogCategoryByPath(Weblog website,
+    public WeblogCategory getWeblogCategoryByPath(Weblog website,
             String categoryPath) throws RollerException {
         return getWeblogCategoryByPath(website, null, categoryPath);
     }
@@ -960,8 +960,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     // TODO: ditch this method in favor of getWeblogCategoryByPath(weblog, path)
-    public WeblogCategoryData getWeblogCategoryByPath(Weblog website,
-            WeblogCategoryData category, String path) throws RollerException {
+    public WeblogCategory getWeblogCategoryByPath(Weblog website,
+            WeblogCategory category, String path) throws RollerException {
         
         if (path == null || path.trim().equals("/")) {
             return getRootWeblogCategory(website);
@@ -975,11 +975,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             
             // now just do simple lookup by path
             Query q = strategy.getNamedQuery(
-                    "WeblogCategoryData.getByPath&Website");
+                    "WeblogCategory.getByPath&Website");
             q.setParameter(1, catPath);
             q.setParameter(2, website);
             try {
-                return (WeblogCategoryData)q.getSingleResult();
+                return (WeblogCategory)q.getSingleResult();
             } catch (NoResultException e) {
                 return null;
             }
@@ -996,8 +996,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogEntryData getWeblogEntry(String id) throws RollerException {
-        return (WeblogEntryData)strategy.load(WeblogEntryData.class, id);
+    public WeblogEntry getWeblogEntry(String id) throws RollerException {
+        return (WeblogEntry)strategy.load(WeblogEntry.class, id);
     }
     
     /**
@@ -1089,7 +1089,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         SimpleDateFormat formatter = DateUtil.get8charDateFormat();
         for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
-            WeblogEntryData entry = (WeblogEntryData) wbItr.next();
+            WeblogEntry entry = (WeblogEntry) wbItr.next();
             Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
             if (stringsOnly) {
                 if (map.get(sDate) == null)
@@ -1174,12 +1174,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogEntryData getNextEntry(WeblogEntryData current,
+    public WeblogEntry getNextEntry(WeblogEntry current,
             String catName, String locale) throws RollerException {
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
         List entryList = getNextPrevEntries(current, catName, locale, 1, true);
         if (entryList != null && entryList.size() > 0) {
-            entry = (WeblogEntryData)entryList.get(0);
+            entry = (WeblogEntry)entryList.get(0);
         }
         return entry;
     }
@@ -1187,12 +1187,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public WeblogEntryData getPreviousEntry(WeblogEntryData current,
+    public WeblogEntry getPreviousEntry(WeblogEntry current,
             String catName, String locale) throws RollerException {
-        WeblogEntryData entry = null;
+        WeblogEntry entry = null;
         List entryList = getNextPrevEntries(current, catName, locale, 1, false);
         if (entryList != null && entryList.size() > 0) {
-            entry = (WeblogEntryData)entryList.get(0);
+            entry = (WeblogEntry)entryList.get(0);
         }
         return entry;
     }
@@ -1213,7 +1213,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // TODO: Non-standard JPA bulk update, using parameter values in set clause
         Query q = strategy.getNamedUpdate(
-                "WeblogEntryData.updateAllowComments&CommentDaysByWebsite");
+                "WeblogEntry.updateAllowComments&CommentDaysByWebsite");
         q.setParameter(1, website.getDefaultAllowComments());
         q.setParameter(2, new Integer(website.getDefaultCommentDays()));
         q.setParameter(3, website);
@@ -1232,24 +1232,24 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
-                        "WeblogEntryTagAggregateData.getPopularTagsByWebsite&StartDate");
+                        "WeblogEntryTagAggregate.getPopularTagsByWebsite&StartDate");
                 query.setParameter(1, website);
                 query.setParameter(2, start);
             } else {
                 Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
-                        "WeblogEntryTagAggregateData.getPopularTagsByWebsite");
+                        "WeblogEntryTagAggregate.getPopularTagsByWebsite");
                 query.setParameter(1, start);
             }
         } else {
             if (startDate != null) {
                 Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
-                        "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull&StartDate");
+                        "WeblogEntryTagAggregate.getPopularTagsByWebsiteNull&StartDate");
                 query.setParameter(1, start);
             } else {
                 query = strategy.getNamedQuery(
-                        "WeblogEntryTagAggregateData.getPopularTagsByWebsiteNull");
+                        "WeblogEntryTagAggregate.getPopularTagsByWebsiteNull");
             }
         }
         if (limit != -1) {
@@ -1301,7 +1301,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();            
-        queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregateData w WHERE ");
+        queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE ");
                 
         if (website != null) {
             params.add(size++, website.getId());
@@ -1362,7 +1362,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         StringBuffer queryString = new StringBuffer();
         queryString.append("SELECT DISTINCT w.name ");
-        queryString.append("FROM WeblogEntryTagAggregateData w WHERE w.name IN (");
+        queryString.append("FROM WeblogEntryTagAggregate w WHERE w.name IN (");
         //?1) AND w.weblog = ?2");
         //Append tags as parameter markers to avoid potential escaping issues
         //The IN clause would be of form (?1, ?2, ?3, ..)
@@ -1417,22 +1417,22 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // eventually that second entry will have a very low total (most likely 1) and
         // won't matter
         Query weblogQuery = strategy.getNamedQuery(
-                "WeblogEntryTagAggregateData.getByName&WebsiteOrderByLastUsedDesc");
+                "WeblogEntryTagAggregate.getByName&WebsiteOrderByLastUsedDesc");
         weblogQuery.setParameter(1, name);
         weblogQuery.setParameter(2, website);
-        WeblogEntryTagAggregateData weblogTagData;
+        WeblogEntryTagAggregate weblogTagData;
         try {
-            weblogTagData = (WeblogEntryTagAggregateData)weblogQuery.getSingleResult();
+            weblogTagData = (WeblogEntryTagAggregate)weblogQuery.getSingleResult();
         } catch (NoResultException e) {
             weblogTagData = null;
         }
         
         Query siteQuery = strategy.getNamedQuery(
-                "WeblogEntryTagAggregateData.getByName&WebsiteNullOrderByLastUsedDesc");
+                "WeblogEntryTagAggregate.getByName&WebsiteNullOrderByLastUsedDesc");
         siteQuery.setParameter(1, name);
-        WeblogEntryTagAggregateData siteTagData;
+        WeblogEntryTagAggregate siteTagData;
         try {
-            siteTagData = (WeblogEntryTagAggregateData)siteQuery.getSingleResult();
+            siteTagData = (WeblogEntryTagAggregate)siteQuery.getSingleResult();
         } catch (NoResultException e) {
             siteTagData = null;
         }
@@ -1440,7 +1440,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // create it only if we are going to need it.
         if (weblogTagData == null && amount > 0) {
-            weblogTagData = new WeblogEntryTagAggregateData(null, website, name, amount);
+            weblogTagData = new WeblogEntryTagAggregate(null, website, name, amount);
             weblogTagData.setLastUsed(lastUsed);
             strategy.store(weblogTagData);
             
@@ -1450,7 +1450,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             strategy.store(weblogTagData);
             // Why use update query when only one object needs update?
 //            Query update = strategy.getNamedUpdate(
-//                    "WeblogEntryTagAggregateData.updateAddToTotalByName&Weblog");
+//                    "WeblogEntryTagAggregate.updateAddToTotalByName&Weblog");
 //            update.setParameter(1, new Long(amount));
 //            update.setParameter(2, lastUsed);
 //            update.setParameter(3, weblogTagData.getName());
@@ -1460,7 +1460,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // create it only if we are going to need it.
         if (siteTagData == null && amount > 0) {
-            siteTagData = new WeblogEntryTagAggregateData(null, null, name, amount);
+            siteTagData = new WeblogEntryTagAggregate(null, null, name, amount);
             siteTagData.setLastUsed(lastUsed);
             strategy.store(siteTagData);
             
@@ -1470,7 +1470,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             strategy.store(siteTagData);
             // Why use update query when only one object needs update?
 //            Query update = strategy.getNamedUpdate(
-//                    "WeblogEntryTagAggregateData.updateAddToTotalByName&WeblogNull");
+//                    "WeblogEntryTagAggregate.updateAddToTotalByName&WeblogNull");
 //            update.setParameter(1, new Long(amount));
 //            update.setParameter(2, siteTagData.getName());
 //            update.executeUpdate();
@@ -1478,7 +1478,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // delete all bad counts
         Query removeq = strategy.getNamedUpdate(
-                "WeblogEntryTagAggregateData.removeByTotalLessEqual");
+                "WeblogEntryTagAggregate.removeByTotalLessEqual");
         removeq.setParameter(1, new Integer(0));
         removeq.executeUpdate();
     }
@@ -1638,7 +1638,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public long getEntryCount() throws RollerException {
         Query q = strategy.getNamedQuery(
-                "WeblogEntryData.getCountDistinctByStatus");
+                "WeblogEntry.getCountDistinctByStatus");
         q.setParameter(1, "PUBLISHED");
         List results = q.getResultList();
         return ((Long)results.get(0)).longValue();
@@ -1649,7 +1649,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public long getEntryCount(Weblog website) throws RollerException {
         Query q = strategy.getNamedQuery(
-                "WeblogEntryData.getCountDistinctByStatus&Website");
+                "WeblogEntry.getCountDistinctByStatus&Website");
         q.setParameter(1, "PUBLISHED");
         q.setParameter(2, website);
         List results = q.getResultList();

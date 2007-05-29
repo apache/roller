@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.webservices.adminprotocol.sdk.UnexpectedRootElementException;
 import org.jdom.Document;
@@ -213,10 +213,10 @@ abstract class Handler {
         }
     }
 
-    protected UserData getUserData(String name) throws NotFoundException, InternalException {
+    protected User getUserData(String name) throws NotFoundException, InternalException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUserByUserName(name, Boolean.TRUE);
+            User ud = mgr.getUserByUserName(name, Boolean.TRUE);
             if (ud == null) {
                 ud = mgr.getUserByUserName(name, Boolean.FALSE);
             }
