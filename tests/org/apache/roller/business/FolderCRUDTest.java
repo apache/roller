@@ -22,9 +22,9 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -35,7 +35,7 @@ public class FolderCRUDTest extends TestCase {
     public static Log log = LogFactory.getLog(FolderCRUDTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     /**
@@ -75,7 +75,7 @@ public class FolderCRUDTest extends TestCase {
     
     
     /**
-     * Test FolderData.equals() method.
+     * Test WeblogBookmarkFolder.equals() method.
      */
     public void testFolderEquality() throws Exception {
         
@@ -84,12 +84,12 @@ public class FolderCRUDTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
-        FolderData testFolder = new FolderData(null, "root", "root", TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(null, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertTrue(root.equals(testFolder));
         
-        testFolder = new FolderData(root, "root", "root", TestUtils.getManagedWebsite(testWeblog));
+        testFolder = new WeblogBookmarkFolder(root, "root", "root", TestUtils.getManagedWebsite(testWeblog));
         assertFalse(root.equals(testFolder));
         
         log.info("END");
@@ -106,14 +106,14 @@ public class FolderCRUDTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
         // start out with no folders and no bookmarks
         assertEquals(0, root.getFolders().size());
         assertEquals(0, root.getBookmarks().size());
         
         // add a folder
-        FolderData newFolder = new FolderData(root, "folderBasicCRUD", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(root, "folderBasicCRUD", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(newFolder);
         TestUtils.endSession(true);
         
@@ -121,7 +121,7 @@ public class FolderCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(1, root.getFolders().size());
-        FolderData folder = (FolderData) root.getFolders().iterator().next();
+        WeblogBookmarkFolder folder = (WeblogBookmarkFolder) root.getFolders().iterator().next();
         assertEquals(newFolder, folder);
         
         // modify folder
@@ -132,7 +132,7 @@ public class FolderCRUDTest extends TestCase {
         // check that folder was saved
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
-        folder = (FolderData) root.getFolders().iterator().next();
+        folder = (WeblogBookmarkFolder) root.getFolders().iterator().next();
         assertEquals("folderTest1", folder.getName());
         
         // test remove folder
@@ -160,13 +160,13 @@ public class FolderCRUDTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
         // add a small tree /fold1/fold2
-        FolderData fold1 = new FolderData(root, "fold1", null, testWeblog);
+        WeblogBookmarkFolder fold1 = new WeblogBookmarkFolder(root, "fold1", null, testWeblog);
         root.addFolder(fold1);
         bmgr.saveFolder(fold1);
-        FolderData fold2 = new FolderData(fold1, "fold2", null, testWeblog);
+        WeblogBookmarkFolder fold2 = new WeblogBookmarkFolder(fold1, "fold2", null, testWeblog);
         fold1.addFolder(fold2);
         bmgr.saveFolder(fold2);
         TestUtils.endSession(true);
@@ -175,10 +175,10 @@ public class FolderCRUDTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         root = bmgr.getRootFolder(testWeblog);
         assertEquals(1, root.getFolders().size());
-        fold1 = (FolderData) root.getFolders().iterator().next();
+        fold1 = (WeblogBookmarkFolder) root.getFolders().iterator().next();
         assertEquals("fold1", fold1.getName());
         assertEquals(1, fold1.getFolders().size());
-        fold2 = (FolderData) fold1.getFolders().iterator().next();
+        fold2 = (WeblogBookmarkFolder) fold1.getFolders().iterator().next();
         assertEquals("fold2", fold2.getName());
         
         // now delete folder and subfolders should be deleted by cascade

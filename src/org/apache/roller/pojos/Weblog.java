@@ -54,15 +54,15 @@ import org.apache.roller.util.I18nUtils;
  *
  * @author David M Johnson
  *
- * @ejb:bean name="WebsiteData"
+ * @ejb:bean name="Weblog"
  * @struts.form include-all="true"
  * @hibernate.class lazy="true"  table="website"
  * @hibernate.cache usage="read-write"
  */
-public class WebsiteData implements Serializable {
+public class Weblog implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
     
-    private static Log log = LogFactory.getLog(WebsiteData.class);
+    private static Log log = LogFactory.getLog(Weblog.class);
     
     // Simple properties
     private String  id               = UUIDGenerator.generateUUID();
@@ -106,10 +106,10 @@ public class WebsiteData implements Serializable {
     
     private Map initializedPlugins = null;
     
-    public WebsiteData() {    
+    public Weblog() {    
     }
     
-    public WebsiteData(
+    public Weblog(
             String handle,
             UserData creator,
             String name,
@@ -131,7 +131,7 @@ public class WebsiteData implements Serializable {
         this.timeZone = timeZone;
     }
     
-    public WebsiteData(WebsiteData otherData) {
+    public Weblog(Weblog otherData) {
         this.setData(otherData);
     }
     
@@ -152,8 +152,8 @@ public class WebsiteData implements Serializable {
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof WebsiteData != true) return false;
-        WebsiteData o = (WebsiteData)other;
+        if (other instanceof Weblog != true) return false;
+        Weblog o = (Weblog)other;
         return new EqualsBuilder()
             .append(getHandle(), o.getHandle()) 
             .isEquals();
@@ -169,7 +169,7 @@ public class WebsiteData implements Serializable {
      * @hibernate.bag lazy="true" inverse="true" cascade="delete"
      * @hibernate.collection-key column="website_id"
      * @hibernate.collection-one-to-many
-     *    class="org.apache.roller.pojos.PermissionsData"
+     *    class="org.apache.roller.pojos.WeblogPermission"
      */
     public List getPermissions() {
         return permissions;
@@ -180,7 +180,7 @@ public class WebsiteData implements Serializable {
     /**
      * Remove permission from collection.
      */
-    public void removePermission(PermissionsData perms) {
+    public void removePermission(WeblogPermission perms) {
         permissions.remove(perms);
     }
     
@@ -668,7 +668,7 @@ public class WebsiteData implements Serializable {
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(WebsiteData other) {
+    public void setData(Weblog other) {
         
         this.id = other.getId();
         this.name = other.getName();
@@ -733,10 +733,10 @@ public class WebsiteData implements Serializable {
      */
     public boolean hasUserPermissions(UserData user, short mask) {
         // look for user in website's permissions
-        PermissionsData userPerms = null;
+        WeblogPermission userPerms = null;
         Iterator iter = getPermissions().iterator();
         while (iter.hasNext()) {
-            PermissionsData perms = (PermissionsData) iter.next();
+            WeblogPermission perms = (WeblogPermission) iter.next();
             if (perms.getUser().getId().equals(user.getId())) {
                 userPerms = perms;
                 break;
@@ -766,11 +766,11 @@ public class WebsiteData implements Serializable {
     
     public int getAdminUserCount() {
         int count = 0;
-        PermissionsData userPerms = null;
+        WeblogPermission userPerms = null;
         Iterator iter = getPermissions().iterator();
         while (iter.hasNext()) {
-            PermissionsData perms = (PermissionsData) iter.next();
-            if (perms.getPermissionMask() == PermissionsData.ADMIN) {
+            WeblogPermission perms = (WeblogPermission) iter.next();
+            if (perms.getPermissionMask() == WeblogPermission.ADMIN) {
                 count++;
             }
         }
@@ -1193,10 +1193,10 @@ public class WebsiteData implements Serializable {
      * @param folderName Name or path of bookmark folder to be returned (null for root)
      * @return Folder object requested.
      *
-     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.FolderData"
+     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.WeblogBookmarkFolder"
      */
-    public FolderData getBookmarkFolder(String folderName) {
-        FolderData ret = null;
+    public WeblogBookmarkFolder getBookmarkFolder(String folderName) {
+        WeblogBookmarkFolder ret = null;
         try {
             Roller roller = RollerFactory.getRoller();
             BookmarkManager bmgr = roller.getBookmarkManager();

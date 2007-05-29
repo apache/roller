@@ -32,10 +32,10 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
 
 
@@ -47,7 +47,7 @@ public class BookmarkTest extends TestCase {
     public static Log log = LogFactory.getLog(BookmarkTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     /**
@@ -87,9 +87,9 @@ public class BookmarkTest extends TestCase {
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
-        FolderData folder = new FolderData(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder folder = new WeblogBookmarkFolder(root, "TestFolder2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
         
@@ -97,7 +97,7 @@ public class BookmarkTest extends TestCase {
         folder = bmgr.getFolder(folder.getId());
         
         // Add bookmark by adding to folder
-        BookmarkData bookmark1 = new BookmarkData(
+        WeblogBookmark bookmark1 = new WeblogBookmark(
                 folder,
                 "TestBookmark1",
                 "created by testBookmarkCRUD()",
@@ -109,7 +109,7 @@ public class BookmarkTest extends TestCase {
         folder.addBookmark(bookmark1);
         
         // Add another bookmark
-        BookmarkData bookmark2 = new BookmarkData(
+        WeblogBookmark bookmark2 = new WeblogBookmark(
                 folder,
                 "TestBookmark2",
                 "created by testBookmarkCRUD()",
@@ -123,14 +123,14 @@ public class BookmarkTest extends TestCase {
         TestUtils.endSession(true);
         
         
-        FolderData testFolder = null;
-        BookmarkData bookmarkb = null, bookmarka = null;
+        WeblogBookmarkFolder testFolder = null;
+        WeblogBookmark bookmarkb = null, bookmarka = null;
         
         // See that two bookmarks were stored
         testFolder = bmgr.getFolder(folder.getId());
         assertEquals(2, testFolder.getBookmarks().size());
-        bookmarka = (BookmarkData)testFolder.getBookmarks().iterator().next();
-        bookmarkb = (BookmarkData)testFolder.getBookmarks().iterator().next();
+        bookmarka = (WeblogBookmark)testFolder.getBookmarks().iterator().next();
+        bookmarkb = (WeblogBookmark)testFolder.getBookmarks().iterator().next();
         
         // Remove one bookmark
         bmgr.removeBookmark(bookmarka);
@@ -159,28 +159,28 @@ public class BookmarkTest extends TestCase {
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
         // add some folders
-        FolderData f1 = new FolderData(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder f1 = new WeblogBookmarkFolder(root, "f1", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f1);
-        FolderData f2 = new FolderData(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder f2 = new WeblogBookmarkFolder(f1, "f2", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f2);
-        FolderData f3 = new FolderData(root, "f3", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder f3 = new WeblogBookmarkFolder(root, "f3", null, TestUtils.getManagedWebsite(testWeblog));
         bmgr.saveFolder(f3);
         
         // add some bookmarks
-        BookmarkData b1 = new BookmarkData(
+        WeblogBookmark b1 = new WeblogBookmark(
                 f1, "b1", "testbookmark",
                 "http://example.com", "http://example.com/rss",
                 new Integer(1), new Integer(1), "image.gif");
         bmgr.saveBookmark(b1);
-        BookmarkData b2 = new BookmarkData(
+        WeblogBookmark b2 = new WeblogBookmark(
                 f1, "b2", "testbookmark",
                 "http://example.com", "http://example.com/rss",
                 new Integer(1), new Integer(1), "image.gif");
         bmgr.saveBookmark(b2);
-        BookmarkData b3 = new BookmarkData(
+        WeblogBookmark b3 = new WeblogBookmark(
                 f2, "b3", "testbookmark",
                 "http://example.com", "http://example.com/rss",
                 new Integer(1), new Integer(1), "image.gif");
@@ -189,12 +189,12 @@ public class BookmarkTest extends TestCase {
         TestUtils.endSession(true);
         
         // test lookup by id
-        BookmarkData testBookmark = bmgr.getBookmark(b1.getId());
+        WeblogBookmark testBookmark = bmgr.getBookmark(b1.getId());
         assertNotNull(testBookmark);
         assertEquals("b1", testBookmark.getName());
         
         // test lookup of all bookmarks in single folder
-        FolderData testFolder = bmgr.getFolder(f1.getId());
+        WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
         List allBookmarks = bmgr.getBookmarks(testFolder, false);
         assertNotNull(allBookmarks);
         assertEquals(2, allBookmarks.size());
@@ -230,39 +230,39 @@ public class BookmarkTest extends TestCase {
         try {        
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            FolderData root = bmgr.getRootFolder(testWeblog);
+            WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
 
-            FolderData dest = new FolderData(root, "dest", null, testWeblog);
+            WeblogBookmarkFolder dest = new WeblogBookmarkFolder(root, "dest", null, testWeblog);
             bmgr.saveFolder(dest);
 
             // create source folder f1
-            FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+            WeblogBookmarkFolder f1 = new WeblogBookmarkFolder(root, "f1", null, testWeblog);
             bmgr.saveFolder(f1);
 
             // create bookmark b1 inside source folder f1
-            BookmarkData b1 = new BookmarkData(
+            WeblogBookmark b1 = new WeblogBookmark(
                     f1, "b1", "testbookmark",
                     "http://example.com", "http://example.com/rss",
                     new Integer(1), new Integer(1), "image.gif");
             f1.addBookmark(b1);
 
             // create folder f2 inside f1
-            FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+            WeblogBookmarkFolder f2 = new WeblogBookmarkFolder(f1, "f2", null, testWeblog);
             bmgr.saveFolder(f2);
 
             // create bookmark b2 inside folder f2
-            BookmarkData b2 = new BookmarkData(
+            WeblogBookmark b2 = new WeblogBookmark(
                     f2, "b2", "testbookmark",
                     "http://example.com", "http://example.com/rss",
                     new Integer(1), new Integer(1), "image.gif");
             f2.addBookmark(b2);
 
             // create folder f3 inside folder f2
-            FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
+            WeblogBookmarkFolder f3 = new WeblogBookmarkFolder(f2, "f3", null, testWeblog);
             bmgr.saveFolder(f3);
 
             // crete bookmark b3 inside folder f3
-            BookmarkData b3 = new BookmarkData(
+            WeblogBookmark b3 = new WeblogBookmark(
                     f3, "b3", "testbookmark",
                     "http://example.com", "http://example.com/rss",
                     new Integer(1), new Integer(1), "image.gif");
@@ -327,7 +327,7 @@ public class BookmarkTest extends TestCase {
                 TestUtils.getManagedWebsite(testWeblog), "ZZZ_imports_ZZZ", fileToString(fis));
         TestUtils.endSession(true);
         
-        FolderData fd = null;
+        WeblogBookmarkFolder fd = null;
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");

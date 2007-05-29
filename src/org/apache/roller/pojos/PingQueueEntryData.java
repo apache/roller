@@ -38,7 +38,7 @@ public class PingQueueEntryData implements Serializable {
     private String id = UUIDGenerator.generateUUID();
     private Timestamp entryTime = null;
     private PingTargetData pingTarget = null;
-    private WebsiteData website = null;
+    private Weblog website = null;
     private int attempts = 0;
 
     public static final long serialVersionUID = -1468021030819538243L;
@@ -58,7 +58,7 @@ public class PingQueueEntryData implements Serializable {
      * @param website    website originating the ping
      * @param attempts   number of prior ping attempts
      */
-    public PingQueueEntryData(String id, Timestamp entryTime, PingTargetData pingTarget, WebsiteData website, int attempts) {
+    public PingQueueEntryData(String id, Timestamp entryTime, PingTargetData pingTarget, Weblog website, int attempts) {
         //this.id = id;
         this.entryTime = entryTime;
         this.pingTarget = pingTarget;
@@ -149,7 +149,7 @@ public class PingQueueEntryData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return website;
     }
 
@@ -159,7 +159,7 @@ public class PingQueueEntryData implements Serializable {
      * @param website the website originating the ping.
      * @ejb:persistent-field
      */
-    public void setWebsite(WebsiteData website) {
+    public void setWebsite(Weblog website) {
         this.website = website;
     }
 

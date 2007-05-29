@@ -20,7 +20,7 @@ package org.apache.roller.ui.rendering.pagers;
 
 import java.util.Locale;
 import java.util.Map;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
@@ -36,7 +36,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     private Map entries = null;
     
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private String      locale = null;
     private String      query = null;
     private String      category = null;

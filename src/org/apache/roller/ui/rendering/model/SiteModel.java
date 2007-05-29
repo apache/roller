@@ -34,12 +34,12 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.HitCountData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -61,7 +61,7 @@ public class SiteModel implements Model {
     
     private static Log log = LogFactory.getLog(SiteModel.class);   
     
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private WeblogRequest weblogRequest = null;
     private WeblogFeedRequest feedRequest = null;
     private List tags = new ArrayList();
@@ -135,7 +135,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WebsiteData queryWeblog, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, null, null, sinceDays, length);
     }
 
@@ -147,7 +147,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, UserData user, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
     }
 
@@ -160,7 +160,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, String cat, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, UserData user, String cat, int sinceDays, int length) {
         
         String pagerUrl = null;
         if (feedRequest != null) {
@@ -310,7 +310,7 @@ public class SiteModel implements Model {
             UserData user = umgr.getUserByUserName(userName);
             List perms = umgr.getAllPermissions(user);
             for (Iterator it = perms.iterator(); it.hasNext();) {
-                PermissionsData perm = (PermissionsData) it.next();
+                WeblogPermission perm = (WeblogPermission) it.next();
                 results.add(WebsiteDataWrapper.wrap(perm.getWebsite()));
             }
         } catch (Exception e) {
@@ -328,10 +328,10 @@ public class SiteModel implements Model {
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            WebsiteData website = umgr.getWebsiteByHandle(handle);
+            Weblog website = umgr.getWebsiteByHandle(handle);
             List perms = umgr.getAllPermissions(website);
             for (Iterator it = perms.iterator(); it.hasNext();) {
-                PermissionsData perm = (PermissionsData) it.next();
+                WeblogPermission perm = (WeblogPermission) it.next();
                 results.add(UserDataWrapper.wrap(perm.getUser()));
             }
         } catch (Exception e) {
@@ -363,7 +363,7 @@ public class SiteModel implements Model {
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            WebsiteData website = umgr.getWebsiteByHandle(handle);
+            Weblog website = umgr.getWebsiteByHandle(handle);
             wrappedWebsite = WebsiteDataWrapper.wrap(website);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
@@ -392,7 +392,7 @@ public class SiteModel implements Model {
             List weblogs = umgr.getWebsites(
                 null, Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
-                WebsiteData website = (WebsiteData) it.next();
+                Weblog website = (Weblog) it.next();
                 results.add(WebsiteDataWrapper.wrap(website));
             }
         } catch (Exception e) {

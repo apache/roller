@@ -29,7 +29,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collection;
@@ -142,7 +142,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         
         // Determine the set of "brother" targets (custom or common) among which this name should be unique.
         List brotherTargets = null;
-        WebsiteData website = pingTarget.getWebsite();
+        Weblog website = pingTarget.getWebsite();
         if (website == null) {
             brotherTargets = getCommonPingTargets();
         } else {
@@ -215,7 +215,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     /**
      * @see org.apache.roller.model.PingTargetManager#getCustomPingTargets(org.apache.roller.pojos.WebsiteData)
      */
-    public List getCustomPingTargets(WebsiteData website) throws RollerException {
+    public List getCustomPingTargets(Weblog website) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(PingTargetData.class);

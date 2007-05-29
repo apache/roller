@@ -31,8 +31,8 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.PermissionsData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.WeblogPermission;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
 import org.apache.roller.ui.struts2.util.UIAction;
@@ -70,7 +70,7 @@ public class WeblogConfig extends UIAction {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -128,7 +128,7 @@ public class WeblogConfig extends UIAction {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             UserManager umgr = RollerFactory.getRoller().getUserManager();
             
-            WebsiteData weblog = getActionWeblog();
+            Weblog weblog = getActionWeblog();
             
             getBean().copyTo(weblog);
             

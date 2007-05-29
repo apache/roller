@@ -31,10 +31,10 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogEntryPlugin;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -65,14 +65,14 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website) throws RollerException {}
+    public void init(Weblog website) throws RollerException {}
     
     
     public String render(WeblogEntryData entry, String str) {
         String text = str;
         try {
             BookmarkManager bMgr = RollerFactory.getRoller().getBookmarkManager();
-            FolderData rootFolder = bMgr.getRootFolder(entry.getWebsite());
+            WeblogBookmarkFolder rootFolder = bMgr.getRootFolder(entry.getWebsite());
             text = matchBookmarks(text, rootFolder);
             text = lookInFolders(text, rootFolder.getFolders());
         } catch (RollerException e) {
@@ -96,7 +96,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
         
         Iterator it = folders.iterator();
         while (it.hasNext()) {
-            FolderData folder = (FolderData)it.next();
+            WeblogBookmarkFolder folder = (WeblogBookmarkFolder)it.next();
             text = matchBookmarks(text, folder);
             
             if (!folder.getFolders().isEmpty()) {
@@ -108,11 +108,11 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     }
     
     
-    private String matchBookmarks(String text, FolderData folder) {
+    private String matchBookmarks(String text,WeblogBookmarkFolder folder) {
         Iterator bookmarks = folder.getBookmarks().iterator();
         String workingText = text;
         while (bookmarks.hasNext()) {
-            BookmarkData bookmark = (BookmarkData)bookmarks.next();
+            WeblogBookmark bookmark = (WeblogBookmark)bookmarks.next();
             String bkDescription = bookmark.getDescription();
             if (bkDescription == null) bkDescription = "";
             String bookmarkLink = "<a href=\"" +

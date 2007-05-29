@@ -37,7 +37,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
@@ -78,7 +78,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     BlogId: " + blogid);
         mLogger.debug("     UserId: " + userid);
         
-        WebsiteData website = validate(blogid, userid,password);
+        Weblog website = validate(blogid, userid,password);
         Roller roller = RollerFactory.getRoller();
         try {
             Hashtable result = new Hashtable();
@@ -216,7 +216,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("    Publish: " + publish);
         
-        WebsiteData website = validate(blogid, userid, password);
+        Weblog website = validate(blogid, userid, password);
         
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -340,7 +340,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("   Password: *********");
         
-        WebsiteData website = validate(blogid, userid, password);
+        Weblog website = validate(blogid, userid, password);
         try {
             String name = (String) struct.get("name");
             name = name.replaceAll("/","_");
@@ -389,7 +389,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("     Number: " + numposts);
         
-        WebsiteData website = validate(blogid, userid,password);
+        Weblog website = validate(blogid, userid,password);
         
         try {
             Vector results = new Vector();

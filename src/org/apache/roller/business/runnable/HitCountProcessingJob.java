@@ -29,7 +29,7 @@ import org.apache.roller.business.HitCountQueue;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -82,7 +82,7 @@ public class HitCountProcessingJob implements Job {
         try {
             long startTime = System.currentTimeMillis();
             
-            WebsiteData weblog = null;
+            Weblog weblog = null;
             String key = null;
             Iterator it = hitsTally.keySet().iterator();
             while(it.hasNext()) {

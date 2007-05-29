@@ -9,14 +9,14 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="BookmarkData"
-            class="org.apache.roller.pojos.BookmarkData">
+    <entity metadata-complete="true" name="WeblogBookmark"
+            class="org.apache.roller.pojos.WeblogBookmark">
         <table name="bookmark"/>
         <named-query name="BoomarkData.getByFolder">
-            <query>SELECT b FROM BookmarkData b WHERE b.folder = ?1</query>
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1</query>
         </named-query>
         <named-query name="BoomarkData.getByFolder.pathLike&amp;Folder.website">
-            <query>SELECT b FROM BookmarkData b WHERE b.folder.path LIKE ?1 AND b.folder.website = ?2</query>
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder.path LIKE ?1 AND b.folder.website = ?2</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -43,7 +43,7 @@
             <basic name="feedUrl">
                 <column name="feedurl" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="folder" target-entity="org.apache.roller.pojos.FolderData">
+            <many-to-one name="folder" target-entity="org.apache.roller.pojos.WeblogBookmarkFolder">
                 <join-column name="folderid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             

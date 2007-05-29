@@ -30,7 +30,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Converts ascii emoticons into HTML image tags.
@@ -77,7 +77,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      * later use.  Need an HttpServletRequest though so that we can
      * get the ServletContext Path.  But only do it once.
      */
-    public synchronized void init(WebsiteData website) throws RollerException {
+    public synchronized void init(Weblog website) throws RollerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
             String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();

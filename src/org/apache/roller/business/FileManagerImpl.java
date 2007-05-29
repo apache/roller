@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.ThemeResource;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 
@@ -70,7 +70,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getFile(weblog, java.lang.String)
      */
-    public ThemeResource getFile(WebsiteData weblog, String path) 
+    public ThemeResource getFile(Weblog weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the file, checks that file exists & is readable
@@ -90,7 +90,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getFiles(weblog, java.lang.String)
      */
-    public ThemeResource[] getFiles(WebsiteData weblog, String path) 
+    public ThemeResource[] getFiles(Weblog weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the dir, checks that dir exists & is readable
@@ -112,7 +112,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getDirectories(weblog)
      */
-    public ThemeResource[] getDirectories(WebsiteData weblog)
+    public ThemeResource[] getDirectories(Weblog weblog)
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the root dir, checks that dir exists & is readable
@@ -139,7 +139,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#saveFile(weblog, java.lang.String, java.lang.String, long, java.io.InputStream)
      */
-    public void saveFile(WebsiteData weblog, 
+    public void saveFile(Weblog weblog, 
                          String path, 
                          String contentType, 
                          long size, 
@@ -200,7 +200,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#createDirectory(weblog, java.lang.String)
      */
-    public void createDirectory(WebsiteData weblog, String path)
+    public void createDirectory(Weblog weblog, String path)
             throws FileNotFoundException, FilePathException, FileIOException {
         
         // get path to weblog's uploads area
@@ -248,7 +248,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#deleteFile(weblog, java.lang.String)
      */
-    public void deleteFile(WebsiteData weblog, String path) 
+    public void deleteFile(Weblog weblog, String path) 
             throws FileNotFoundException, FilePathException, FileIOException {
         
         // get path to delete file, checks that path exists and is readable
@@ -264,7 +264,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#overQuota(weblog)
      */
-    public boolean overQuota(WebsiteData weblog) {
+    public boolean overQuota(Weblog weblog) {
         
         String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
         String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
@@ -293,7 +293,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * Determine if file can be saved given current RollerConfig settings.
      */
-    private boolean canSave(WebsiteData weblog, 
+    private boolean canSave(Weblog weblog, 
                            String path, 
                            String contentType,
                            long size, 
@@ -488,7 +488,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * Construct the full real path to a resource in a weblog's uploads area.
      */
-    private File getRealFile(WebsiteData weblog, String path) 
+    private File getRealFile(Weblog weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // make sure uploads area exists for this weblog
@@ -565,16 +565,16 @@ public class FileManagerImpl implements FileManager {
         private String relativePath = null;
         
         // the weblog the resource is attached to
-        private WebsiteData weblog = null;
+        private Weblog weblog = null;
         
         
-        public WeblogResourceFile(WebsiteData weblog, String path, File file) {
+        public WeblogResourceFile(Weblog weblog, String path, File file) {
             this.weblog = weblog;
             relativePath = path;
             resourceFile = file;
         }
         
-        public WebsiteData getWeblog() {
+        public Weblog getWeblog() {
             return weblog;
         }
         

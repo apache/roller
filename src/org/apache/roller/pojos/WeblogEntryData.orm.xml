@@ -137,7 +137,7 @@
             <many-to-one name="category" target-entity="org.apache.roller.pojos.WeblogCategoryData">
                 <join-column name="categoryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
+            <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <many-to-one name="creator" target-entity="org.apache.roller.pojos.UserData">

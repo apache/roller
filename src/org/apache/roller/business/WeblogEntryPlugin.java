@@ -21,7 +21,7 @@ package org.apache.roller.business;
 import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -50,7 +50,7 @@ public interface WeblogEntryPlugin {
      * @param weblog     Weblog being processed
      * @param model      Rendering model where objects can be placed
      */
-    public void init(WebsiteData weblog) throws RollerException;
+    public void init(Weblog weblog) throws RollerException;
     
     
     /**

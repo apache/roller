@@ -30,9 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -48,7 +48,7 @@ public class Bookmarks extends UIAction {
     private String folderId = null;
     
     // the folder being viewed
-    private FolderData folder = null;
+    private WeblogBookmarkFolder folder = null;
     
     // the list of folders to move/delete
     private String[] selectedFolders = null;
@@ -75,7 +75,7 @@ public class Bookmarks extends UIAction {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -106,15 +106,15 @@ public class Bookmarks extends UIAction {
         try {
             // Build list of all folders, except for current one, sorted by path.
             BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-            List<FolderData> folders = bmgr.getAllFolders(getActionWeblog());
-            for(FolderData fd : folders) {
+            List<WeblogBookmarkFolder> folders = bmgr.getAllFolders(getActionWeblog());
+            for(WeblogBookmarkFolder fd : folders) {
                 if (!fd.getId().equals(getFolderId())) {
                     allFolders.add(fd);
                 }
             }
             
             // build folder path
-            FolderData parent = getFolder().getParent();
+            WeblogBookmarkFolder parent = getFolder().getParent();
             if(parent != null) {
                 List folderPath = new LinkedList();
                 folderPath.add(0, getFolder());
@@ -153,12 +153,12 @@ public class Bookmarks extends UIAction {
                 log.debug("Processing delete of "+folders.length+" folders.");
                 for (int i = 0; i < folders.length; i++) {
                     log.debug("Deleting folder - "+folders[i]);
-                    FolderData fd = bmgr.getFolder(folders[i]);
+                    WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
                     bmgr.removeFolder(fd); // removes child folders and bookmarks too
                 }
             }
             
-            BookmarkData bookmark = null;
+            WeblogBookmark bookmark = null;
             String bookmarks[] = getSelectedBookmarks();
             if (null != bookmarks) {
                 log.debug("Processing delete of "+bookmarks.length+" bookmarks.");
@@ -197,10 +197,10 @@ public class Bookmarks extends UIAction {
             
             // Move folders to new parent folder.
             String folders[] = getSelectedFolders();
-            FolderData parent = bmgr.getFolder(getTargetFolderId());
+            WeblogBookmarkFolder parent = bmgr.getFolder(getTargetFolderId());
             if (null != folders) {
                 for (int i = 0; i < folders.length; i++) {
-                    FolderData fd = bmgr.getFolder(folders[i]);
+                    WeblogBookmarkFolder fd = bmgr.getFolder(folders[i]);
                     
                     // Don't move folder into itself.
                     if (!fd.getId().equals(parent.getId()) && 
@@ -217,7 +217,7 @@ public class Bookmarks extends UIAction {
             if (null != bookmarks) {
                 for (int j = 0; j < bookmarks.length; j++) {
                     // maybe we should be using folder.addBookmark()?
-                    BookmarkData bd = bmgr.getBookmark(bookmarks[j]);
+                    WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
                     bd.setFolder(parent);
                     bmgr.saveBookmark(bd);
                 }
@@ -240,8 +240,8 @@ public class Bookmarks extends UIAction {
     
     private static final class FolderPathComparator implements Comparator {
         public int compare(Object o1, Object o2) {
-            FolderData f1 = (FolderData)o1;
-            FolderData f2 = (FolderData)o2;
+            WeblogBookmarkFolder f1 = (WeblogBookmarkFolder)o1;
+            WeblogBookmarkFolder f2 = (WeblogBookmarkFolder)o2;
             return f1.getPath().compareTo(f2.getPath());
         }
     }
@@ -287,11 +287,11 @@ public class Bookmarks extends UIAction {
         this.allFolders = allFolders;
     }
 
-    public FolderData getFolder() {
+    public WeblogBookmarkFolder getFolder() {
         return folder;
     }
 
-    public void setFolder(FolderData folder) {
+    public void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
     }
 

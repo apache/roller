@@ -27,7 +27,7 @@
             <basic name="dailyHits">
                 <column name="dailyhits" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="weblog" target-entity="org.apache.roller.pojos.WebsiteData">
+            <many-to-one name="weblog" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
         </attributes>

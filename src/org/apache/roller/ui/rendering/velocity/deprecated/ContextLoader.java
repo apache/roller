@@ -35,12 +35,12 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -104,11 +104,11 @@ public class ContextLoader {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         WeblogEntryData entry = null;
         WeblogCategoryData category = null;
         ThemeTemplate page = null;
-        FolderData folder = null;  // don't even know how this is involved :/
+        WeblogBookmarkFolder folder = null;  // don't even know how this is involved :/
         Date date = null;
         boolean isDay = false;
         boolean isMonth = false;
@@ -205,7 +205,7 @@ public class ContextLoader {
      */
     private static void loadWeblogValues(
             Map ctx,
-            WebsiteData weblog,
+            Weblog weblog,
             Locale locale,
             HttpServletRequest request) throws RollerException {
         
@@ -316,7 +316,7 @@ public class ContextLoader {
     private static void loadRssValues(
             Map ctx,
             HttpServletRequest request,
-            WebsiteData website,
+            Weblog website,
             WeblogCategoryData category)
             throws RollerException {
         
@@ -358,7 +358,7 @@ public class ContextLoader {
     private static void loadUtilityObjects(
             Map ctx,
             HttpServletRequest request,
-            WebsiteData website,
+            Weblog website,
             ThemeTemplate page) throws RollerException {
         
         mLogger.debug("Loading utility objects");
@@ -396,7 +396,7 @@ public class ContextLoader {
     private static void loadPathValues(
             Map ctx,
             HttpServletRequest request,
-            WebsiteData   website,
+            Weblog   website,
             String locale) throws RollerException {
         
         mLogger.debug("Loading path values");

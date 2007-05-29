@@ -31,7 +31,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -44,7 +44,7 @@ public class CommentTest extends TestCase {
     public static Log log = LogFactory.getLog(CommentTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     WeblogEntryData testEntry = null;
     
     
@@ -214,7 +214,7 @@ public class CommentTest extends TestCase {
 
             // first make sure we can delete an entry with comments
             UserData user = TestUtils.setupUser("commentParentDeleteUser");
-            WebsiteData weblog = TestUtils.setupWeblog("commentParentDelete", user);
+            Weblog weblog = TestUtils.setupWeblog("commentParentDelete", user);
             WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", 
                     weblog.getDefaultCategory(), weblog, user);
             TestUtils.endSession(true);

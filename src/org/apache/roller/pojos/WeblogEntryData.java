@@ -95,7 +95,7 @@ public class WeblogEntryData implements Serializable {
     
     // Associated objects
     private UserData           creator  = null;
-    private WebsiteData        website  = null;
+    private Weblog        website  = null;
     private WeblogCategoryData category = null;
     
     // Collection of name/value entry attributes
@@ -114,7 +114,7 @@ public class WeblogEntryData implements Serializable {
     public WeblogEntryData(
             String id,
             WeblogCategoryData category,
-            WebsiteData website,
+            Weblog website,
             UserData creator,
             String title,
             String link,
@@ -248,12 +248,12 @@ public class WeblogEntryData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return this.website;
     }
     
     /** @ejb:persistent-field */
-    public void setWebsite(WebsiteData website) {
+    public void setWebsite(Weblog website) {
         this.website = website;
     }
     
@@ -919,7 +919,7 @@ public class WeblogEntryData implements Serializable {
         } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
         }        
-        WebsiteData website = this.getWebsite();
+        Weblog website = this.getWebsite();
         return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;
     }
     
@@ -1119,9 +1119,11 @@ public class WeblogEntryData implements Serializable {
         }
         
         boolean author = getWebsite().hasUserPermissions(
-                user, (short)(PermissionsData.AUTHOR));
+                
+                user,(short)(WeblogPermission.AUTHOR));
         boolean limited = getWebsite().hasUserPermissions(
-                user, (short)(PermissionsData.LIMITED));
+                
+                user,(short)(WeblogPermission.LIMITED));
         
         if (author || (limited && isDraft()) || (limited && isPending())) {
             return true;

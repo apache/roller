@@ -30,13 +30,13 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
@@ -154,13 +154,13 @@ public abstract class BaseRollerMenu {
             UserData user = null;
             if (rses != null) user = rses.getAuthenticatedUser();
             
-            WebsiteData website = getRequestedWeblog(req);
+            Weblog website = getRequestedWeblog(req);
             BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
             if (pageModel != null) {
                 website = pageModel.getWebsite();
             }
             
-            PermissionsData permsData = null;
+            WeblogPermission permsData = null;
             if (user != null && website != null) {
                 permsData = RollerFactory.getRoller()
                 .getUserManager().getPermissions(website, user);
@@ -174,9 +174,9 @@ public abstract class BaseRollerMenu {
                     break;
                 }
                 if (permsData != null &&
-                        ((perm.equals("admin")  && permsData.has(PermissionsData.ADMIN))
-                        || (perm.equals("author")  && permsData.has(PermissionsData.AUTHOR))
-                        || (perm.equals("limited") && permsData.has(PermissionsData.LIMITED)))) {
+                        ((perm.equals("admin")  && permsData.has(WeblogPermission.ADMIN))
+                        || (perm.equals("author")  && permsData.has(WeblogPermission.AUTHOR))
+                        || (perm.equals("limited") && permsData.has(WeblogPermission.LIMITED)))) {
                     ret = true; // user has one of the required permissions
                     break;
                 }
@@ -219,8 +219,8 @@ public abstract class BaseRollerMenu {
      *       the authoring/admin UI and one for rendering.  it doesn't make
      *       sense for this strange intermixing to be happening.
      */
-    protected static WebsiteData getRequestedWeblog(HttpServletRequest request) throws RollerException {
-        WebsiteData weblog = null;
+    protected static Weblog getRequestedWeblog(HttpServletRequest request) throws RollerException {
+        Weblog weblog = null;
         Roller roller = RollerFactory.getRoller();
         // first check authoring form of URL
         if (request.getParameter(RequestConstants.WEBLOG) != null) {
@@ -243,14 +243,14 @@ public abstract class BaseRollerMenu {
             }
         } else if (request.getParameter(RequestConstants.FOLDER_ID) != null) {
             String folderId = request.getParameter(RequestConstants.FOLDER_ID);
-            FolderData folder = roller.getBookmarkManager().getFolder(folderId);
+            WeblogBookmarkFolder folder = roller.getBookmarkManager().getFolder(folderId);
             if(folder != null) {
                 weblog = folder.getWebsite();
             }
         } else if (request.getParameter(RequestConstants.BOOKMARK_ID) != null) {
             String bookmarkId = request.getParameter(RequestConstants.BOOKMARK_ID);
-            BookmarkData bookmark = roller.getBookmarkManager().getBookmark(bookmarkId);
-            FolderData folder = bookmark.getFolder();
+            WeblogBookmark bookmark = roller.getBookmarkManager().getBookmark(bookmarkId);
+            WeblogBookmarkFolder folder = bookmark.getFolder();
             if(folder != null) {
                 weblog = folder.getWebsite();
             }

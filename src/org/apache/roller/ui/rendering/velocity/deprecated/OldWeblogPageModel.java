@@ -41,11 +41,11 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.FolderDataWrapper;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
@@ -77,7 +77,7 @@ public class OldWeblogPageModel {
     private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
     private HttpServletRequest   mRequest = null;
-    private WebsiteData          mWebsite = null;
+    private Weblog          mWebsite = null;
     private WeblogEntryData      mEntry = null;
     private WeblogCategoryData   mCategory = null;
     private Date                 mDate = null;
@@ -102,7 +102,7 @@ public class OldWeblogPageModel {
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
     public void init(HttpServletRequest request,
-            WebsiteData website,
+            Weblog website,
             WeblogEntryData entry,
             WeblogCategoryData category,
             Date date,
@@ -180,7 +180,7 @@ public class OldWeblogPageModel {
             Iterator it = mTops.iterator();
             int i=0;
             while(it.hasNext()) {
-                tops.add(i, FolderDataWrapper.wrap((FolderData) it.next()));
+                tops.add(i,FolderDataWrapper.wrap((WeblogBookmarkFolder) it.next()));
                 i++;
             }
         } catch (RollerException e) {
@@ -258,7 +258,7 @@ public class OldWeblogPageModel {
     
     /** Encapsulates UserManager.getPageByName() */
     public TemplateWrapper getUsersPageByName(WebsiteDataWrapper wrapper, String pageName) {
-        WebsiteData website = wrapper.getPojo();
+        Weblog website = wrapper.getPojo();
         TemplateWrapper page = null;
         try {
             if (website == null)
@@ -771,7 +771,7 @@ public class OldWeblogPageModel {
     
     public FolderDataWrapper getFolderByPath(String path) {
         try {
-            FolderData folder = mBookmarkMgr.getFolder(mWebsite, path);
+            WeblogBookmarkFolder folder = mBookmarkMgr.getFolder(mWebsite, path);
             
             if(folder != null)
                 return FolderDataWrapper.wrap(folder);

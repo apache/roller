@@ -35,7 +35,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -48,7 +48,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     private SharedTheme theme = null;
     
     
-    public WeblogSharedTheme(WebsiteData weblog, SharedTheme theme) {
+    public WeblogSharedTheme(Weblog weblog, SharedTheme theme) {
         super(weblog);
         this.theme = theme;
     }

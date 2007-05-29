@@ -20,7 +20,7 @@ package org.apache.roller.business;
 
 import java.io.InputStream;
 import org.apache.roller.pojos.ThemeResource;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -43,7 +43,7 @@ public interface FileManager {
      *
      * @return ThemeResource representing the real file resource.
      */
-    public ThemeResource getFile(WebsiteData weblog, String path) 
+    public ThemeResource getFile(Weblog weblog, String path) 
         throws FileNotFoundException, FilePathException;
     
     
@@ -67,7 +67,7 @@ public interface FileManager {
      *
      * @return ThemeResource[] of files in website's uploads area at given path.
      */
-    public ThemeResource[] getFiles(WebsiteData weblog, String path) 
+    public ThemeResource[] getFiles(Weblog weblog, String path) 
         throws FileNotFoundException, FilePathException;
     
     
@@ -84,7 +84,7 @@ public interface FileManager {
      *
      * @return ThemeResource[] of directories in website's uploads area.
      */
-    public ThemeResource[] getDirectories(WebsiteData weblog)
+    public ThemeResource[] getDirectories(Weblog weblog)
             throws FileNotFoundException, FilePathException;
     
     
@@ -102,7 +102,7 @@ public interface FileManager {
      * @throws FilePathException If path is invalid, is not a directory, or can't be read.
      * @throws FileIOException If there is an unexpected error during the save.
      */
-    public void saveFile(WebsiteData weblog, 
+    public void saveFile(Weblog weblog, 
                          String path, 
                          String contentType, 
                          long size,
@@ -121,7 +121,7 @@ public interface FileManager {
      * @throws FilePathException If path is invalid, is not a directory, or can't be read.
      * @throws FileIOException If there is an unexpected error during the create.
      */
-    public void createDirectory(WebsiteData weblog, String path) 
+    public void createDirectory(Weblog weblog, String path) 
         throws FileNotFoundException, FilePathException, FileIOException;
     
     
@@ -136,7 +136,7 @@ public interface FileManager {
      * @throws FilePathException If path is invalid, or can't be read.
      * @throws FileIOException If there is an unexpected error during the delete.
      */
-    public void deleteFile(WebsiteData weblog, String path) 
+    public void deleteFile(Weblog weblog, String path) 
         throws FileNotFoundException, FilePathException, FileIOException;
     
     
@@ -147,7 +147,7 @@ public interface FileManager {
      *
      * @return True if weblog is over set quota, False otherwise.
      */
-    public boolean overQuota(WebsiteData weblog);
+    public boolean overQuota(Weblog weblog);
     
     
     /**

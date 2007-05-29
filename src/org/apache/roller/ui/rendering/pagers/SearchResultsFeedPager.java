@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
@@ -38,7 +38,7 @@ public class SearchResultsFeedPager extends AbstractPager {
     
     private List entries = null;
     
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private boolean     moreResults = false;
     
     private WeblogFeedRequest feedRequest = null;

@@ -33,7 +33,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -55,7 +55,7 @@ public class FeedModel implements Model {
     private static int DEFAULT_ENTRIES = RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     
     private WeblogFeedRequest feedRequest = null;
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     
     
     public void init(Map initData) throws RollerException {

@@ -26,9 +26,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -62,7 +62,7 @@ public class MenuHelper {
     
     
     public static Menu getMenu(String menuId, String currentAction,
-                               UserData user, WebsiteData weblog) {
+                               UserData user, Weblog weblog) {
         
         if(menuId == null) {
             return null;
@@ -81,7 +81,7 @@ public class MenuHelper {
     
     
     private static Menu buildMenu(ParsedMenu menuConfig, String currentAction, 
-                                  UserData user, WebsiteData weblog) {
+                                  UserData user, Weblog weblog) {
         
         log.debug("creating menu for action - "+currentAction);
         
@@ -188,18 +188,18 @@ public class MenuHelper {
     }
     
     
-    private static boolean isPermitted(String perm, UserData user, WebsiteData weblog) {
+    private static boolean isPermitted(String perm, UserData user, Weblog weblog) {
         
         // convert permissions string to short
         short permMask = -1;
         if(perm == null) {
             return true;
         } else if("limited".equals(perm)) {
-            permMask = PermissionsData.LIMITED;
+            permMask = WeblogPermission.LIMITED;
         } else if("author".equals(perm)) {
-            permMask = PermissionsData.AUTHOR;
+            permMask = WeblogPermission.AUTHOR;
         } else if("admin".equals(perm)) {
-            permMask = PermissionsData.ADMIN;
+            permMask = WeblogPermission.ADMIN;
         } else {
             // unknown perm
             return false;

@@ -31,7 +31,7 @@ import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.planet.tasks.SyncWebsitesTask;
 
@@ -45,7 +45,7 @@ public class PlanetManagerLocalTest extends TestCase {
     public static Log log = LogFactory.getLog(PlanetManagerLocalTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     public static void main(String[] args) {
         TestRunner.run(PlanetManagerLocalTest.class);

@@ -49,7 +49,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.EntryAttributeData;
 import org.apache.roller.util.DateUtil;
 import org.hibernate.Criteria;
@@ -167,7 +167,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         // Loop through entries in src cat, assign them to dest cat
         Iterator iter = results.iterator();
-        WebsiteData website = destCat.getWebsite();
+        Weblog website = destCat.getWebsite();
         while (iter.hasNext()) {
             WeblogEntryData entry = (WeblogEntryData) iter.next();
             entry.setCategory(destCat);
@@ -370,7 +370,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public WeblogCategoryData getRootWeblogCategory(WebsiteData website)
+    public WeblogCategoryData getRootWeblogCategory(Weblog website)
     throws RollerException {
         if (website == null)
             throw new RollerException("website is null");
@@ -391,7 +391,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public List getWeblogCategories(WebsiteData website, boolean includeRoot)
+    public List getWeblogCategories(Weblog website, boolean includeRoot)
             throws RollerException {
         
         if (website == null) {
@@ -415,7 +415,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     
     public List getWeblogEntries(
-            WebsiteData website,
+            Weblog website,
             UserData    user,
             Date        startDate,
             Date        endDate,
@@ -551,7 +551,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public WeblogEntryData getWeblogEntryByAnchor(WebsiteData website, String anchor) 
+    public WeblogEntryData getWeblogEntryByAnchor(Weblog website, String anchor) 
             throws RollerException {
         
         if (website == null)
@@ -718,7 +718,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
                 
     public List getComments(
-            WebsiteData     website,
+            Weblog     website,
             WeblogEntryData entry,
             String          searchString,
             Date            startDate,
@@ -791,7 +791,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     public int removeMatchingComments(
-            WebsiteData     website, 
+            Weblog     website, 
             WeblogEntryData entry, 
             String  searchString, 
             Date    startDate, 
@@ -908,7 +908,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     //--------------------------------------------- WeblogCategoryData Queries
     
-    public WeblogCategoryData getWeblogCategoryByPath(WebsiteData website, 
+    public WeblogCategoryData getWeblogCategoryByPath(Weblog website, 
                                                       String categoryPath) 
             throws RollerException {
         
@@ -945,7 +945,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     
     public Map getWeblogEntryObjectMap(
-            WebsiteData website,
+            Weblog website,
             Date    startDate,
             Date    endDate,
             String  catName,
@@ -968,7 +968,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     public Map getWeblogEntryStringMap(
-            WebsiteData website,
+            Weblog website,
             Date    startDate,
             Date    endDate,
             String  catName,
@@ -993,7 +993,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     private Map getWeblogEntryMap(
-            WebsiteData website,
+            Weblog website,
             Date    startDate,
             Date    endDate,
             String  catName,
@@ -1047,7 +1047,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     public List getMostCommentedWeblogEntries( 
-            WebsiteData website, Date startDate, Date endDate, int offset, int length) 
+            Weblog website, Date startDate, Date endDate, int offset, int length) 
             throws RollerException {
         // TODO: ATLAS getMostCommentedWeblogEntries DONE
         String msg = "Getting most commented weblog entries";
@@ -1147,7 +1147,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
      * all existing entries in a website using a single HQL query.
      * @param website Website where comment defaults are from/to be applied.
      */
-    public void applyCommentDefaultsToEntries(WebsiteData website) throws RollerException {
+    public void applyCommentDefaultsToEntries(Weblog website) throws RollerException {
         if (log.isDebugEnabled()) {
             log.debug("applyCommentDefaults");
         }       
@@ -1170,7 +1170,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     /* (non-Javadoc)
      * @see org.apache.roller.model.WeblogManager#getPopularTags(org.apache.roller.pojos.WebsiteData, java.util.Date, int)
      */
-    public List getPopularTags(WebsiteData website, Date startDate, int limit)
+    public List getPopularTags(Weblog website, Date startDate, int limit)
             throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy)
@@ -1245,7 +1245,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
      * @see org.apache.roller.model.WeblogManager#getTags(org.apache.roller.pojos.WebsiteData,
      *      java.lang.String, java.lang.String, int)
      */
-    public List getTags(WebsiteData website, String sortBy, String startsWith, int limit) throws RollerException {    
+    public List getTags(Weblog website, String sortBy, String startsWith, int limit) throws RollerException {    
         try {
             List results = new ArrayList();
 
@@ -1297,7 +1297,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
      * list of tags is "foo", "bar" and we only find "foo" then that's a
      * miss and we return false.
      */
-    public boolean getTagComboExists(List tags, WebsiteData weblog) 
+    public boolean getTagComboExists(List tags, Weblog weblog) 
             throws RollerException {
         
         boolean comboExists = false;
@@ -1335,7 +1335,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void updateTagCount(String name, WebsiteData website, int amount) throws RollerException {
+    public void updateTagCount(String name, Weblog website, int amount) throws RollerException {
         
         Session session = ((HibernatePersistenceStrategy) strategy)
         .getSession();
@@ -1419,7 +1419,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public HitCountData getHitCountByWeblog(WebsiteData weblog) 
+    public HitCountData getHitCountByWeblog(Weblog weblog) 
         throws RollerException {
         
         // do lookup
@@ -1482,7 +1482,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void incrementHitCount(WebsiteData weblog, int amount)
+    public void incrementHitCount(Weblog weblog, int amount)
         throws RollerException {
         
         Session session = ((HibernatePersistenceStrategy) strategy).getSession();
@@ -1525,7 +1525,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void resetHitCount(WebsiteData weblog) throws RollerException {
+    public void resetHitCount(Weblog weblog) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -1547,7 +1547,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     /**
      * Get weblog comment count 
      */    
-    public long getCommentCount(WebsiteData website) throws RollerException {
+    public long getCommentCount(Weblog website) throws RollerException {
         long ret = 0;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -1582,7 +1582,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     /**
      * Get weblog entry count 
      */    
-    public long getEntryCount(WebsiteData website) throws RollerException {
+    public long getEntryCount(Weblog website) throws RollerException {
         long ret = 0;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();

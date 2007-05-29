@@ -32,15 +32,15 @@ import org.apache.roller.business.runnable.Job;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.BookmarkData;
+import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -225,7 +225,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(WebsiteData website) {
+    public static void invalidate(Weblog website) {
         
         log.debug("invalidating website = "+website.getHandle());
         
@@ -236,7 +236,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(BookmarkData bookmark) {
+    public static void invalidate(WeblogBookmark bookmark) {
         
         log.debug("invalidating bookmark = "+bookmark.getId());
         
@@ -247,7 +247,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(FolderData folder) {
+    public static void invalidate(WeblogBookmarkFolder folder) {
         
         log.debug("invalidating folder = "+folder.getId());
         

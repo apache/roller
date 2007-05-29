@@ -35,7 +35,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
@@ -86,7 +86,7 @@ public class FeedServlet extends HttpServlet {
 
         log.debug("Entering");
 
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         boolean isSiteWide = false;
 
         WeblogFeedRequest feedRequest = null;

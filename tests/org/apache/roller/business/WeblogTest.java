@@ -30,7 +30,7 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -97,9 +97,9 @@ public class WeblogTest extends TestCase {
         try {
         
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData weblog = null;
+            Weblog weblog = null;
 
-            WebsiteData testWeblog = new WebsiteData();
+            Weblog testWeblog = new Weblog();
             testUser = TestUtils.getManagedUser(testUser);
             testWeblog.setName("Test Weblog");
             testWeblog.setDescription("Test Weblog");
@@ -163,11 +163,11 @@ public class WeblogTest extends TestCase {
     public void testWeblogLookups() throws Exception {
         
         log.info("BEGIN");
-        WebsiteData testWeblog1 = null;
-        WebsiteData testWeblog2 = null;
+        Weblog testWeblog1 = null;
+        Weblog testWeblog2 = null;
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData weblog = null;
+            Weblog weblog = null;
             
             // add test weblogs
             testWeblog1 = TestUtils.setupWeblog("testWeblog1", testUser);
@@ -206,7 +206,7 @@ public class WeblogTest extends TestCase {
             weblog = null;
             List weblogs1 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             assertEquals(2, weblogs1.size());
-            weblog = (WebsiteData) weblogs1.get(0);
+            weblog = (Weblog) weblogs1.get(0);
             assertNotNull(weblog);
             
             // testing paging
@@ -221,7 +221,7 @@ public class WeblogTest extends TestCase {
             TestUtils.endSession(true);
             List weblogs2 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             assertEquals(1, weblogs2.size());
-            weblog = (WebsiteData) weblogs2.get(0);
+            weblog = (Weblog) weblogs2.get(0);
             assertNotNull(weblog);
             
             // make sure inactive weblogs are not returned

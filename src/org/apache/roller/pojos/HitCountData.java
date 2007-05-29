@@ -32,7 +32,7 @@ import org.apache.roller.util.UUIDGenerator;
 public class HitCountData implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private int dailyHits = 0;
     
     
@@ -94,11 +94,11 @@ public class HitCountData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" non-null="true"
      */
-    public WebsiteData getWeblog() {
+    public Weblog getWeblog() {
         return weblog;
     }
 
-    public void setWeblog(WebsiteData weblog) {
+    public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
     

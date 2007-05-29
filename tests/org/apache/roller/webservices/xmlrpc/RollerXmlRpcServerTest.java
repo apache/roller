@@ -44,7 +44,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.MockRollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.RegexUtil;
@@ -60,7 +60,7 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
 public class RollerXmlRpcServerTest extends TestCase {
     public static Log log = LogFactory.getLog(RollerXmlRpcServerTest.class);
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     private static HashMap typeMap = new HashMap();
     static {
         typeMap.put(Boolean.class, "boolean");

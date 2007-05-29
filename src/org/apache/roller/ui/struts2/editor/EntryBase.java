@@ -29,7 +29,7 @@ import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
@@ -203,7 +203,7 @@ public abstract class EntryBase extends UIAction {
     
     
     public boolean isUserAnAuthor() {
-        return getActionWeblog().hasUserPermissions(getAuthenticatedUser(), PermissionsData.AUTHOR);
+        return getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR);
     }
     
     

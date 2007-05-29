@@ -29,10 +29,10 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.themes.SharedTheme;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -68,7 +68,7 @@ public class ThemeEdit extends UIAction {
     
     
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -99,7 +99,7 @@ public class ThemeEdit extends UIAction {
      */
     public String save() {
         
-        WebsiteData weblog = getActionWeblog();
+        Weblog weblog = getActionWeblog();
         
         if(WeblogTheme.CUSTOM.equals(getThemeType())) {
             

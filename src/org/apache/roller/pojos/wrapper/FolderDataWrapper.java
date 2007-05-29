@@ -18,7 +18,7 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 
 
 /**
@@ -27,15 +27,15 @@ import org.apache.roller.pojos.FolderData;
 public class FolderDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private FolderData pojo = null;
+    private WeblogBookmarkFolder pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private FolderDataWrapper(FolderData toWrap) {
+    private FolderDataWrapper(WeblogBookmarkFolder toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static FolderDataWrapper wrap(FolderData toWrap) {
+    public static FolderDataWrapper wrap(WeblogBookmarkFolder toWrap) {
         if(toWrap != null)
             return new FolderDataWrapper(toWrap);
 
@@ -119,7 +119,7 @@ public class FolderDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.FolderDataWrapper.wrap((org.apache.roller.pojos.FolderData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.FolderDataWrapper.wrap((org.apache.roller.pojos.WeblogBookmarkFolder) it.next()));
             i++;
         }
 
@@ -143,7 +143,7 @@ public class FolderDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.BookmarkDataWrapper.wrap((org.apache.roller.pojos.BookmarkData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.BookmarkDataWrapper.wrap((org.apache.roller.pojos.WeblogBookmark) it.next()));
             i++;
         }
 
@@ -168,7 +168,7 @@ public class FolderDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.BookmarkDataWrapper.wrap((org.apache.roller.pojos.BookmarkData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.BookmarkDataWrapper.wrap((org.apache.roller.pojos.WeblogBookmark) it.next()));
             i++;
         }
 
@@ -180,7 +180,7 @@ public class FolderDataWrapper {
      *
      * Simply returns the same value that the pojo would have returned.
      */
-    public boolean descendentOf(org.apache.roller.pojos.FolderData ancestor)
+    public boolean descendentOf(org.apache.roller.pojos.WeblogBookmarkFolder ancestor)
     {   
         return this.pojo.descendentOf(ancestor);
     }
@@ -191,7 +191,7 @@ public class FolderDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.FolderData getPojo() {
+    public org.apache.roller.pojos.WeblogBookmarkFolder getPojo() {
         return this.pojo;
     }
 

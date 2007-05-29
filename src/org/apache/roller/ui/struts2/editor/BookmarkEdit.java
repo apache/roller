@@ -26,8 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -41,7 +41,7 @@ public class BookmarkEdit extends UIAction {
     private static Log log = LogFactory.getLog(BookmarkEdit.class);
     
     // the bookmark we are editing
-    private BookmarkData bookmark = null;
+    private WeblogBookmark bookmark = null;
     
     // bean for managing form data
     private BookmarkBean bean = new BookmarkBean();
@@ -55,7 +55,7 @@ public class BookmarkEdit extends UIAction {
     
     
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -143,11 +143,11 @@ public class BookmarkEdit extends UIAction {
     }
     
     
-    public BookmarkData getBookmark() {
+    public WeblogBookmark getBookmark() {
         return bookmark;
     }
 
-    public void setBookmark(BookmarkData bookmark) {
+    public void setBookmark(WeblogBookmark bookmark) {
         this.bookmark = bookmark;
     }
 

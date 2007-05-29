@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.util.MediacastException;
 import org.apache.roller.util.cache.CacheManager;
@@ -56,7 +56,7 @@ public final class EntryAdd extends EntryBase {
     
     @Override
     public short requiredWeblogPermissions() {
-        return PermissionsData.LIMITED;
+        return WeblogPermission.LIMITED;
     }
     
     
@@ -69,7 +69,7 @@ public final class EntryAdd extends EntryBase {
     public String execute() {
         
         // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
-        if(getActionWeblog().hasUserPermissions(getAuthenticatedUser(), PermissionsData.AUTHOR)) {
+        if(getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
             getBean().setStatus(WeblogEntryData.PUBLISHED);
         } else {
             getBean().setStatus(WeblogEntryData.PENDING);
@@ -120,7 +120,7 @@ public final class EntryAdd extends EntryBase {
                 }
                 
                 // if user does not have author perms then force PENDING status
-                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(), PermissionsData.AUTHOR)) {
+                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
                     entry.setStatus(WeblogEntryData.PENDING);
                 }
             }
@@ -187,6 +187,7 @@ public final class EntryAdd extends EntryBase {
             // TODO: i18n
             addError("Error saving new entry");
         }
+
         
         return INPUT;
     }

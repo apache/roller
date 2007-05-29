@@ -42,7 +42,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.StatCountCountComparator;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
@@ -96,7 +96,7 @@ public class JPARefererManagerImpl implements RefererManager {
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void clearReferrers(WebsiteData website) throws RollerException {
+    public void clearReferrers(Weblog website) throws RollerException {
         clearDayHitsByWebsite(website);
         Query q = strategy.getNamedUpdate("RefererData.removeByNullOrEmptyExcerpt&Website");
         q.setParameter(1, website);
@@ -121,7 +121,7 @@ public class JPARefererManagerImpl implements RefererManager {
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
-    public void applyRefererFilters(WebsiteData website)
+    public void applyRefererFilters(Weblog website)
             throws RollerException {
         if (null == website) throw new RollerException("website is null");
         if (null == website.getBlacklist()) return;
@@ -136,7 +136,7 @@ public class JPARefererManagerImpl implements RefererManager {
         }
     }
 
-    protected List getExistingReferers(WebsiteData website, String dateString,
+    protected List getExistingReferers(Weblog website, String dateString,
             String permalink) throws RollerException {
 
         Query q = strategy.getNamedQuery( 
@@ -147,7 +147,7 @@ public class JPARefererManagerImpl implements RefererManager {
         return q.getResultList();
     }
 
-    protected List getMatchingReferers(WebsiteData website, String requestUrl,
+    protected List getMatchingReferers(Weblog website, String requestUrl,
             String refererUrl) throws RollerException {
 
         Query q = strategy.getNamedQuery( 
@@ -212,7 +212,7 @@ public class JPARefererManagerImpl implements RefererManager {
         return results;
     }
 
-    protected int getHits(WebsiteData website, String type) 
+    protected int getHits(Weblog website, String type) 
             throws RollerException {
         int hits = -1;
         if (log.isDebugEnabled()) {
@@ -249,7 +249,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @param weblog
      * @return List of type RefererData
      */
-    public List getReferers(WebsiteData weblog) throws RollerException {
+    public List getReferers(Weblog weblog) throws RollerException {
         Query q = strategy.getNamedQuery(
             "RefererData.getByWebsiteOrderByTotalHitsDesc");
         q.setParameter(1, weblog);
@@ -261,7 +261,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @param website Web site.
      * @return List of type RefererData
      */
-    public List getTodaysReferers(WebsiteData website) throws RollerException {
+    public List getTodaysReferers(Weblog website) throws RollerException {
         Query q = strategy.getNamedQuery(
             "RefererData.getByWebsite&DayHitsGreaterZeroOrderByDayHitsDesc");
         q.setParameter(1, website);
@@ -275,7 +275,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * @return List of type RefererData.
      * @throws org.apache.roller.RollerException
      */
-    public List getReferersToDate(WebsiteData website, String date)
+    public List getReferersToDate(Weblog website, String date)
             throws RollerException {
 
         if (website==null )
@@ -314,7 +314,7 @@ public class JPARefererManagerImpl implements RefererManager {
     /**
      * Query for collection of referers.
      */
-    protected List getReferersToWebsite(WebsiteData website, String refererUrl)
+    protected List getReferersToWebsite(Weblog website, String refererUrl)
             throws RollerException {
         Query q = strategy.getNamedQuery( 
             "RefererData.getByWebsite&RefererUrl");
@@ -326,7 +326,7 @@ public class JPARefererManagerImpl implements RefererManager {
     /**
      * Query for collection of referers.
      */
-    protected List getReferersWithSameTitle(WebsiteData website,
+    protected List getReferersWithSameTitle(Weblog website,
                                             String requestUrl,
                                             String title,
                                             String excerpt)
@@ -343,14 +343,14 @@ public class JPARefererManagerImpl implements RefererManager {
     /**
      * Get user's day hits
      */
-    public int getDayHits(WebsiteData website) throws RollerException {
+    public int getDayHits(Weblog website) throws RollerException {
         return getHits(website, DAYHITS);
     }
 
     /**
      * Get user's all-time total hits
      */
-    public int getTotalHits(WebsiteData website) throws RollerException {
+    public int getTotalHits(Weblog website) throws RollerException {
         return getHits(website, TOTALHITS);
     }
 
@@ -373,7 +373,7 @@ public class JPARefererManagerImpl implements RefererManager {
             return;
 
         String selfSiteFragment = "/"+weblogHandle;
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         WeblogEntryData entry = null;
 
         // lookup the weblog now
@@ -636,7 +636,7 @@ public class JPARefererManagerImpl implements RefererManager {
         query.executeUpdate();
     }
 
-    protected void clearDayHitsByWebsite(WebsiteData website) throws RollerException {
+    protected void clearDayHitsByWebsite(Weblog website) throws RollerException {
         Query query = strategy.getNamedUpdate("RefererData.clearDayHitsByWebsite");
         query.setParameter(1, website);
         query.executeUpdate();
@@ -649,7 +649,7 @@ public class JPARefererManagerImpl implements RefererManager {
         return (List) query.getResultList();
     }
 
-    protected List getBlackListedReferer(WebsiteData website, String[] blacklist) 
+    protected List getBlackListedReferer(Weblog website, String[] blacklist) 
             throws RollerException {
         StringBuffer queryString = getQueryStringForBlackList(blacklist);
         queryString.append(" AND r.website = ?1 ");

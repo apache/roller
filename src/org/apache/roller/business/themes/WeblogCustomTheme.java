@@ -29,7 +29,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -38,7 +38,7 @@ import org.apache.roller.pojos.WebsiteData;
 public class WeblogCustomTheme extends WeblogTheme {
     
     
-    public WeblogCustomTheme(WebsiteData weblog) {
+    public WeblogCustomTheme(Weblog weblog) {
         super(weblog);
     }
     

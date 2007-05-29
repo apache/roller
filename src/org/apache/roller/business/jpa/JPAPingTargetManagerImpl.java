@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /*
  * JPAPingTargetManagerImpl.java
@@ -106,7 +106,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         // Determine the set of "brother" targets (custom or common) 
         // among which this name should be unique.
         List brotherTargets = null;
-        WebsiteData website = pingTarget.getWebsite();
+        Weblog website = pingTarget.getWebsite();
         if (website == null) {
             brotherTargets = getCommonPingTargets();
         } else {
@@ -171,7 +171,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return q.getResultList();
     }
 
-    public List getCustomPingTargets(WebsiteData website)
+    public List getCustomPingTargets(Weblog website)
             throws RollerException {
         Query q = strategy.getNamedQuery(
                 "PingTargetData.getByWebsiteOrderByName");

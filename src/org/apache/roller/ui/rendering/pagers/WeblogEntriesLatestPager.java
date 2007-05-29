@@ -33,7 +33,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 
@@ -52,7 +52,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     
     
     public WeblogEntriesLatestPager(
-            WebsiteData        weblog,
+            Weblog        weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,

@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.Utilities;
@@ -59,7 +59,7 @@ public class TemplateEdit extends UIAction {
     
     @Override
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     

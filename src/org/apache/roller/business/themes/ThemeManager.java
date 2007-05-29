@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -48,7 +48,7 @@ public interface ThemeManager {
      * @return WeblogTheme The theme to be used for the given weblog.
      * @throws RollerException If there is some kind of fatal backend error.
      */
-    public WeblogTheme getTheme(WebsiteData weblog)
+    public WeblogTheme getTheme(Weblog weblog)
         throws RollerException;
     
     
@@ -69,7 +69,7 @@ public interface ThemeManager {
      *
      * @throws RollerException If there is some kind of error in saving.
      */
-    public void importTheme(WebsiteData website, SharedTheme theme) 
+    public void importTheme(Weblog website, SharedTheme theme) 
         throws RollerException;
     
 }

@@ -33,9 +33,9 @@ import org.jdom.Document;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.webservices.adminprotocol.sdk.Entry;
@@ -114,8 +114,8 @@ class RollerWeblogHandler extends Handler {
         
     private EntrySet getEntry() throws HandlerException {
         String handle = getUri().getEntryId();
-        WebsiteData wd = getWebsiteData(handle);
-        WebsiteData[] wds = new WebsiteData[] { wd };
+        Weblog wd = getWebsiteData(handle);
+        Weblog[] wds = new Weblog[] { wd };
         EntrySet c = toWeblogEntrySet(wds);
         
         return c;
@@ -169,7 +169,7 @@ class RollerWeblogHandler extends Handler {
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
                 UserData user = mgr.getUserByUserName(entry.getCreatingUser());
-                WebsiteData wd = new WebsiteData(
+                Weblog wd = new Weblog(
                         entry.getHandle(),
                         user,
                         entry.getName(),
@@ -205,7 +205,7 @@ class RollerWeblogHandler extends Handler {
                 websiteDatas.add(wd);
             }
             
-            return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
+            return toWeblogEntrySet((Weblog[])websiteDatas.toArray(new Weblog[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create weblogs: " + c, re);
         }
@@ -221,14 +221,14 @@ class RollerWeblogHandler extends Handler {
         List websiteDatas = new ArrayList();
         for (int i = 0; i < c.getEntries().length; i++) {
             WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
-            WebsiteData wd = getWebsiteData(entry.getHandle());
+            Weblog wd = getWebsiteData(entry.getHandle());
             updateWebsiteData(wd, entry);
             websiteDatas.add(wd);
         }
-        return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
+        return toWeblogEntrySet((Weblog[])websiteDatas.toArray(new Weblog[0]));
     }
     
-    private void updateWebsiteData(WebsiteData wd, WeblogEntry entry) throws HandlerException {
+    private void updateWebsiteData(Weblog wd, WeblogEntry entry) throws HandlerException {
         if (entry.getName() != null) {
             wd.setName(entry.getName());
         }
@@ -264,8 +264,8 @@ class RollerWeblogHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            WebsiteData wd = getWebsiteData(handle);
-            WebsiteData[] wds = new WebsiteData[] { wd };
+            Weblog wd = getWebsiteData(handle);
+            Weblog[] wds = new Weblog[] { wd };
             EntrySet es = toWeblogEntrySet(wds);
             
             mgr.removeWebsite(wd);
@@ -278,7 +278,7 @@ class RollerWeblogHandler extends Handler {
         }
     }
     
-    private WeblogEntry toWeblogEntry(WebsiteData wd) throws HandlerException {
+    private WeblogEntry toWeblogEntry(Weblog wd) throws HandlerException {
         if (wd == null) {
             throw new NullPointerException("ERROR: Null website data not allowed");
         }
@@ -314,8 +314,8 @@ class RollerWeblogHandler extends Handler {
             UserData ud = uds[i];
             List permissions = ud.getPermissions();
             for (Iterator j = permissions.iterator(); j.hasNext(); ) {
-                PermissionsData pd = (PermissionsData)j.next();
-                WebsiteData wd = pd.getWebsite();
+                WeblogPermission pd = (WeblogPermission)j.next();
+                Weblog wd = pd.getWebsite();
                 WeblogEntry we = toWeblogEntry(wd);
                 entries.add(we);
             }
@@ -325,7 +325,7 @@ class RollerWeblogHandler extends Handler {
         return wes;
     }
     
-    private WeblogEntrySet toWeblogEntrySet(WebsiteData[] wds) throws HandlerException {
+    private WeblogEntrySet toWeblogEntrySet(Weblog[] wds) throws HandlerException {
         if (wds == null) {
             throw new NullPointerException("ERROR: Null website datas not allowed");
         }

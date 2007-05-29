@@ -33,7 +33,7 @@ import org.apache.roller.business.FilePathException;
 import org.apache.roller.business.FileManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.URLUtilities;
@@ -83,7 +83,7 @@ public final class Resources extends UIAction {
     
     // requires author role
     public short requiredWeblogPermissions() {
-        return PermissionsData.AUTHOR;
+        return WeblogPermission.AUTHOR;
     }
     
     

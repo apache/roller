@@ -25,9 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.struts2.util.UIAction;
 
 
@@ -63,7 +63,7 @@ public class MainMenu extends UIAction {
         
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            PermissionsData perms = userMgr.getPermissions(getInviteId());
+            WeblogPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {        
                 // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
                 // TODO EXCEPTIONS: better exception handling
@@ -89,7 +89,7 @@ public class MainMenu extends UIAction {
         
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            PermissionsData perms = userMgr.getPermissions(getInviteId());
+            WeblogPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {
                 // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
                 // TODO EXCEPTIONS: better exception handling here
@@ -116,10 +116,10 @@ public class MainMenu extends UIAction {
         
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData website = mgr.getWebsite(getWebsiteId());
+            Weblog website = mgr.getWebsite(getWebsiteId());
             
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            PermissionsData perms = userMgr.getPermissions(website, user);
+            WeblogPermission perms = userMgr.getPermissions(website, user);
             
             if (perms != null) {
                 // TODO ROLLER_2.0: notify website members that user has resigned

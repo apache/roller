@@ -26,12 +26,12 @@ import org.apache.roller.util.UUIDGenerator;
  * Role bean.
  * @author David M Johnson
  *
- * @ejb:bean name="RoleData"
+ * @ejb:bean name="UserRole"
  * @struts.form include-all="true"
  * @hibernate.class lazy="true" table="userrole"
  * @hibernate.cache usage="read-write"
  */
-public class RoleData
+public class UserRole
    implements java.io.Serializable
 {
    static final long serialVersionUID = -4254083071697970972L;
@@ -41,11 +41,11 @@ public class RoleData
    private UserData user;
    private java.lang.String role;
 
-   public RoleData()
+   public UserRole()
    {
    }
 
-   public RoleData(String id, UserData user, String role)
+   public UserRole(String id, UserData user, String role)
    {
       //this.id = id;
       this.userName = user.getUserName();
@@ -53,7 +53,7 @@ public class RoleData
       this.role = role;
    }
 
-   public RoleData( RoleData otherData )
+   public UserRole( UserRole otherData )
    {
        setData(otherData);
    }
@@ -133,8 +133,8 @@ public class RoleData
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof RoleData != true) return false;
-        RoleData o = (RoleData)other;
+        if (other instanceof UserRole != true) return false;
+        UserRole o = (UserRole)other;
         return new EqualsBuilder()
             .append(getRole(), o.getRole())
             .append(getUserName(), o.getUserName())
@@ -148,7 +148,7 @@ public class RoleData
     /**
      * Set bean properties based on other bean.
      */
-   public void setData( RoleData otherData )
+   public void setData( UserRole otherData )
    {
       this.id = otherData.getId();
       this.userName = otherData.getUserName();

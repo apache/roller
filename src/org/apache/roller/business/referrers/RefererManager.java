@@ -21,7 +21,7 @@ package org.apache.roller.business.referrers;
 import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Interface to Referer management.
@@ -46,7 +46,7 @@ public interface RefererManager {
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void clearReferrers(WebsiteData website) throws RollerException;    
+    public void clearReferrers(Weblog website) throws RollerException;    
     
     /**
      * Retrieve referer by id.
@@ -58,14 +58,14 @@ public interface RefererManager {
      * @param weblog
      * @return List of type RefererData
      */
-    public List getReferers(WebsiteData weblog) throws RollerException;    
+    public List getReferers(Weblog weblog) throws RollerException;    
     
     /**
      * Get all referers for specified user that were made today.
      * @param userName Name of user.
      * @return List of type RefererData
      */
-    public List getTodaysReferers(WebsiteData website) throws RollerException;    
+    public List getTodaysReferers(Weblog website) throws RollerException;    
     
     /**
      * Get referers for a specified date.
@@ -74,7 +74,7 @@ public interface RefererManager {
      * @return List of type RefererData.
      * @throws RollerException
      */
-    public List getReferersToDate(WebsiteData website, String date) 
+    public List getReferersToDate(Weblog website, String date) 
         throws RollerException;    
         
     /**
@@ -98,12 +98,12 @@ public interface RefererManager {
     /** 
      * Get user's day hits 
      */
-    public int getDayHits(WebsiteData website) throws RollerException;    
+    public int getDayHits(Weblog website) throws RollerException;    
     
     /** 
      * Get user's all-time total hits 
      */
-    public int getTotalHits(WebsiteData website) throws RollerException;    
+    public int getTotalHits(Weblog website) throws RollerException;    
     
     /**
      * Apply ignoreWord/spam filters to all referers in system.
@@ -113,7 +113,7 @@ public interface RefererManager {
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
-    public void applyRefererFilters(WebsiteData website) throws RollerException;    
+    public void applyRefererFilters(Weblog website) throws RollerException;    
     
     /**
      * Process an incoming referer.

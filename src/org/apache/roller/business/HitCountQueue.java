@@ -27,7 +27,7 @@ import org.apache.roller.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.business.runnable.HitCountProcessingJob;
 import org.apache.roller.business.runnable.WorkerThread;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -84,7 +84,7 @@ public class HitCountQueue {
     }
     
     
-    public void processHit(WebsiteData weblog, String url, String referrer) {
+    public void processHit(Weblog weblog, String url, String referrer) {
         
         // if the weblog isn't null then just drop it's handle in the queue
         // each entry in the queue is a weblog handle and indicates a single hit

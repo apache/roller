@@ -40,7 +40,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -121,7 +121,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      *
      * TODO: do we really need dialect specific queries?
      */
-    public void clearReferrers(WebsiteData website) throws RollerException {
+    public void clearReferrers(Weblog website) throws RollerException {
         
         if (log.isDebugEnabled()) {
             log.debug("clearReferrers");
@@ -181,7 +181,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
-    public void applyRefererFilters(WebsiteData website) throws RollerException {
+    public void applyRefererFilters(Weblog website) throws RollerException {
         
         if (null == website) throw new RollerException("website is null");
         if (null == website.getBlacklist()) return;
@@ -214,7 +214,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
-    protected List getExistingReferers(WebsiteData website, String dateString,
+    protected List getExistingReferers(Weblog website, String dateString,
             String permalink) throws RollerException {
         
         try {
@@ -234,7 +234,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
-    protected List getMatchingReferers(WebsiteData website, String requestUrl,
+    protected List getMatchingReferers(Weblog website, String requestUrl,
             String refererUrl) throws RollerException {
         
         try {
@@ -268,7 +268,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 ((HibernatePersistenceStrategy)strategy).getSession();            
             Query query = session.createQuery(
                 "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
-               +"from WebsiteData w, RefererData r "
+               +"from Weblog w, RefererData r "
                +"where r.website=w and w.enabled=true and w.active=true and w.lastModified > :startDate "
                +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
             query.setParameter("startDate", startDate);
@@ -311,7 +311,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Use raw SQL because Hibernate can't handle the query.
      */
-    protected int getHits(WebsiteData website, String type) throws RollerException {
+    protected int getHits(Weblog website, String type) throws RollerException {
         int hits = 0;
         if (log.isDebugEnabled()) {
             log.debug("getHits: " + website.getName());
@@ -356,7 +356,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * @see org.apache.roller.pojos.RefererManager#getReferers(java.lang.String)
      */
-    public List getReferers(WebsiteData website) throws RollerException {
+    public List getReferers(Weblog website) throws RollerException {
         if (website==null )
             throw new RollerException("website is null");
         
@@ -375,7 +375,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * @see org.apache.roller.pojos.RefererManager#getTodaysReferers(String)
      */
-    public List getTodaysReferers(WebsiteData website) throws RollerException {
+    public List getTodaysReferers(Weblog website) throws RollerException {
         if (website==null )
             throw new RollerException("website is null");
         
@@ -398,7 +398,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * @see org.apache.roller.pojos.RefererManager#getReferersToDate(
      * org.apache.roller.pojos.WebsiteData, java.lang.String)
      */
-    public List getReferersToDate(WebsiteData website, String date)
+    public List getReferersToDate(Weblog website, String date)
             throws RollerException {
         if (website==null )
             throw new RollerException("website is null");
@@ -448,7 +448,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Query for collection of referers.
      */
-    protected List getReferersToWebsite(WebsiteData website, String refererUrl)
+    protected List getReferersToWebsite(Weblog website, String refererUrl)
             throws RollerException {
         
         try {
@@ -466,7 +466,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Query for collection of referers.
      */
-    protected List getReferersWithSameTitle(WebsiteData website,
+    protected List getReferersWithSameTitle(Weblog website,
                                             String requestUrl,
                                             String title,
                                             String excerpt)
@@ -493,11 +493,11 @@ public class HibernateRefererManagerImpl implements RefererManager {
         }
     }
         
-    public int getDayHits(WebsiteData website) throws RollerException {
+    public int getDayHits(Weblog website) throws RollerException {
         return getHits(website, DAYHITS);
     }
         
-    public int getTotalHits(WebsiteData website) throws RollerException {
+    public int getTotalHits(Weblog website) throws RollerException {
         return getHits(website, TOTALHITS);
     }
         
@@ -522,7 +522,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             return;
         
         String selfSiteFragment = "/"+weblogHandle;
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         WeblogEntryData entry = null;
         
         // lookup the weblog now

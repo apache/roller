@@ -62,7 +62,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private String  decoratorName = null;
     private String  outputContentType = null;
     
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     
     
     static {
@@ -116,12 +116,12 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return this.weblog;
     }
     
     /** @ejb:persistent-field */
-    public void setWebsite( WebsiteData website ) {
+    public void setWebsite( Weblog website ) {
         this.weblog = website;
     }
     

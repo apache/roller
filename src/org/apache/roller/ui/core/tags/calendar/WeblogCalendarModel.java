@@ -31,7 +31,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.URLUtilities;
@@ -50,7 +50,7 @@ public class WeblogCalendarModel implements CalendarModel {
     protected String            pageLink = null;
     protected String            locale = null;
     protected Calendar          calendar = null;
-    protected WebsiteData       weblog = null;
+    protected Weblog       weblog = null;
     protected Date              prevMonth = null; // prev month or null if none
     protected Date              nextMonth = null; // next month or null if none    
     protected WeblogPageRequest pageRequest = null;

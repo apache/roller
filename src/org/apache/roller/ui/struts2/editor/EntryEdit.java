@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.MailUtil;
@@ -66,7 +66,7 @@ public final class EntryEdit extends EntryBase {
     
     @Override
     public short requiredWeblogPermissions() {
-        return PermissionsData.LIMITED;
+        return WeblogPermission.LIMITED;
     }
     
     
@@ -138,7 +138,7 @@ public final class EntryEdit extends EntryBase {
                 }
                 
                 // if user does not have author perms then force PENDING status
-                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(), PermissionsData.AUTHOR)) {
+                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
                     entry.setStatus(WeblogEntryData.PENDING);
                 }
             }
@@ -195,6 +195,7 @@ public final class EntryEdit extends EntryBase {
             // TODO: i18n
             addError("Error saving new entry");
         }
+
         
         return INPUT;
     }

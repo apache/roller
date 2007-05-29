@@ -29,7 +29,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.URLUtilities;
 
@@ -50,7 +50,7 @@ public class URLModel implements Model {
     
     private static Log log = LogFactory.getLog(URLModel.class);
     
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private String locale = null;
     
     /** TODO: remove dependency on pageContext */

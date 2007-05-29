@@ -29,7 +29,7 @@ import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -48,7 +48,7 @@ public class IndexManagerTest extends TestCase {
     public void testSearch() throws Exception {
         IndexManager imgr = RollerFactory.getRoller().getIndexManager();
 
-        WebsiteData website = new WebsiteData();
+        Weblog website = new Weblog();
         website.setHandle("trekker");
 
         UserData user = new UserData();

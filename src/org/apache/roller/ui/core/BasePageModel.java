@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.roller.config.RollerRuntimeConfig;
 
 import org.apache.struts.action.ActionMapping;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.util.StrutsUtil;
 
 /**
@@ -46,7 +46,7 @@ public class BasePageModel
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected ActionMapping mapping = null;
-    protected WebsiteData website = null;
+    protected Weblog website = null;
     
     public BasePageModel(
             String titleKey,
@@ -64,12 +64,12 @@ public class BasePageModel
         website = rreq.getWebsite();
     }
 
-    public WebsiteData getWebsite() 
+    public Weblog getWebsite() 
     {
         return website;
     }
     
-    public void setWebsite(WebsiteData website) 
+    public void setWebsite(Weblog website) 
     {
         this.website = website;
     }

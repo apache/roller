@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
@@ -56,7 +56,7 @@ public class Members extends UIAction implements ParameterAware {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -74,12 +74,12 @@ public class Members extends UIAction implements ParameterAware {
         
         UserManager userMgr = RollerFactory.getRoller().getUserManager();
         
-        List<PermissionsData> permissions = getActionWeblog().getPermissions();
+        List<WeblogPermission> permissions = getActionWeblog().getPermissions();
         
         int removed = 0;
         int changed = 0;
         try {
-            for( PermissionsData perms : permissions ) {
+            for( WeblogPermission perms : permissions ) {
                 
                 String sval = getParameter("perm-" + perms.getId());
                 if (sval != null) {

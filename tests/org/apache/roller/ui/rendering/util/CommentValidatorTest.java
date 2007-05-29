@@ -24,7 +24,7 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RollerMessages;
 
 /**
@@ -33,7 +33,7 @@ import org.apache.roller.util.RollerMessages;
  */
 public class CommentValidatorTest extends TestCase {
     CommentValidationManager mgr = null;
-    WebsiteData        weblog = null;
+    Weblog        weblog = null;
     UserData           user = null;
     WeblogEntryData    entry = null;
     

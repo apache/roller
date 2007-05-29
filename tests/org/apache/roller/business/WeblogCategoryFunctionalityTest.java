@@ -28,7 +28,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
 
 
@@ -40,7 +40,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     public static Log log = LogFactory.getLog(WeblogCategoryFunctionalityTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     WeblogCategoryData cat1 = null;
     WeblogCategoryData cat2 = null;
     WeblogCategoryData cat3 = null;

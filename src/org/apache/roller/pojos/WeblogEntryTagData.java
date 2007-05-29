@@ -39,7 +39,7 @@ public class WeblogEntryTagData
 {
     private static final long serialVersionUID = -2602052289337573384L;
     private java.lang.String id = UUIDGenerator.generateUUID();
-    private WebsiteData website = null;
+    private Weblog website = null;
     private WeblogEntryData weblogEntry = null;
     private UserData user = null;
     private java.lang.String name = null;    
@@ -50,7 +50,7 @@ public class WeblogEntryTagData
     }
 
     public WeblogEntryTagData(java.lang.String id, 
-                       WebsiteData website, 
+                       Weblog website, 
                        WeblogEntryData weblogEntry, 
                        UserData user, java.lang.String name,
                        Timestamp time)
@@ -94,12 +94,12 @@ public class WeblogEntryTagData
      * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.WebsiteData getWeblog()
+    public org.apache.roller.pojos.Weblog getWeblog()
     {
         return this.website;
     }
 
-    public void setWeblog(org.apache.roller.pojos.WebsiteData website)
+    public void setWeblog(org.apache.roller.pojos.Weblog website)
     {
         this.website = website;
     }

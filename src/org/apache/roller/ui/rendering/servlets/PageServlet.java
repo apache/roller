@@ -44,7 +44,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.StaticThemeTemplate;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
@@ -140,7 +140,7 @@ public class PageServlet extends HttpServlet {
         }
         
         
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         boolean isSiteWide = false;
         
         WeblogPageRequest pageRequest = null;
@@ -497,7 +497,7 @@ public class PageServlet extends HttpServlet {
     /**
      * Notify the hit tracker that it has an incoming page hit.
      */
-    private void processHit(WebsiteData weblog, String url, String referrer) {
+    private void processHit(Weblog weblog, String url, String referrer) {
         
         HitCountQueue counter = HitCountQueue.getInstance();
         counter.processHit(weblog, url, referrer);

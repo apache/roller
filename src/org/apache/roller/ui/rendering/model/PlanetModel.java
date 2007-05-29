@@ -31,7 +31,7 @@ import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
@@ -49,7 +49,7 @@ public class PlanetModel implements Model {
     private WeblogRequest  weblogRequest = null;
     private String pageLink = null;
     private int            pageNum = 0;
-    private WebsiteData    weblog = null;
+    private Weblog    weblog = null;
     
     
     public String getModelName() {

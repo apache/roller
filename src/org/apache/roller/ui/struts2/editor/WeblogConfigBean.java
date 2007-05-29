@@ -25,7 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 
 
@@ -296,7 +296,7 @@ public class WeblogConfigBean {
     }
     
     
-    public void copyFrom(WebsiteData dataHolder) {
+    public void copyFrom(Weblog dataHolder) {
         
         this.id = dataHolder.getId();
         this.handle = dataHolder.getHandle();
@@ -337,7 +337,7 @@ public class WeblogConfigBean {
     }
     
     
-    public void copyTo(WebsiteData dataHolder) {
+    public void copyTo(Weblog dataHolder) {
         
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);

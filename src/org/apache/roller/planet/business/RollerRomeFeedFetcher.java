@@ -39,7 +39,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Extends Roller Planet's feed fetcher to fetch local feeds directly from Roller.
@@ -78,7 +78,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 
                 // get corresponding website object
                 UserManager usermgr = RollerFactory.getRoller().getUserManager();
-                WebsiteData website = usermgr.getWebsiteByHandle(sub.getAuthor());
+                Weblog website = usermgr.getWebsiteByHandle(sub.getAuthor());
                 if (website == null) 
                     return newEntries;
                 

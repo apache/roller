@@ -24,7 +24,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -59,7 +59,7 @@ public interface AutoPingManager {
      * @param website    the website
      * @throws RollerException
      */
-    public void removeAutoPing(PingTargetData pingTarget, WebsiteData website) throws RollerException;
+    public void removeAutoPing(PingTargetData pingTarget, Weblog website) throws RollerException;
     
     
     /**
@@ -95,7 +95,7 @@ public interface AutoPingManager {
      * @param website
      * @return a list of auto ping configurations for the given website as <code>AutoPingData</code> objects.
      */
-    public List getAutoPingsByWebsite(WebsiteData website) throws RollerException;
+    public List getAutoPingsByWebsite(Weblog website) throws RollerException;
     
     
     /**

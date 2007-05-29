@@ -29,7 +29,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
 
@@ -105,14 +105,14 @@ public class BaseAPIHandler implements Serializable {
      * @param username Username sent in request
      * @param password Password sent in requeset
      */
-    protected WebsiteData validate(String blogid, String username, String password)
+    protected Weblog validate(String blogid, String username, String password)
     throws Exception {
         boolean authenticated = false;
         boolean userEnabled = false;
         boolean weblogEnabled = false;
         boolean apiEnabled = false;
         boolean weblogFound = false;
-        WebsiteData website = null;
+        Weblog website = null;
         UserData user = null;
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
@@ -213,7 +213,7 @@ public class BaseAPIHandler implements Serializable {
     }
     
     //------------------------------------------------------------------------
-    protected void flushPageCache(WebsiteData website) throws Exception {
+    protected void flushPageCache(Weblog website) throws Exception {
         CacheManager.invalidate(website);
     }
 }

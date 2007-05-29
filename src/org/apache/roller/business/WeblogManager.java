@@ -27,7 +27,7 @@ import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RollerMessages;
 
 
@@ -57,7 +57,7 @@ public interface WeblogManager {
     /** 
      * Get weblog entry by anchor. 
      */
-    public WeblogEntryData getWeblogEntryByAnchor(WebsiteData website, String anchor) 
+    public WeblogEntryData getWeblogEntryByAnchor(Weblog website, String anchor) 
             throws RollerException;
         
     /**
@@ -78,7 +78,7 @@ public interface WeblogManager {
      * @throws RollerException
      */
     public List getWeblogEntries(
-            WebsiteData website,
+            Weblog website,
             UserData    user,
             Date        startDate,
             Date        endDate,
@@ -108,7 +108,7 @@ public interface WeblogManager {
      * @throws RollerException
      */
     public Map getWeblogEntryObjectMap(
-            WebsiteData website,
+            Weblog website,
             Date        startDate,
             Date        endDate,
             String      catName,
@@ -134,7 +134,7 @@ public interface WeblogManager {
      * @throws RollerException
      */
     public Map getWeblogEntryStringMap(
-            WebsiteData website,
+            Weblog website,
             Date        startDate,
             Date        endDate,
             String      catName,
@@ -165,7 +165,7 @@ public interface WeblogManager {
      * @returns List of WeblogEntryData objects.
      */
     public List getMostCommentedWeblogEntries(
-            WebsiteData website,             
+            Weblog website,             
             Date        startDate,
             Date        endDate,
             int         offset, 
@@ -247,7 +247,7 @@ public interface WeblogManager {
      * Get top level categories for a website.
      * @param website Website.
      */
-    public WeblogCategoryData getRootWeblogCategory(WebsiteData website) throws RollerException;
+    public WeblogCategoryData getRootWeblogCategory(Weblog website) throws RollerException;
     
     
     /**
@@ -255,14 +255,14 @@ public interface WeblogManager {
      * @param website      Website of WeblogCategory.
      * @param categoryPath Path of WeblogCategory, relative to category root.
      */
-    public WeblogCategoryData getWeblogCategoryByPath(WebsiteData website, 
+    public WeblogCategoryData getWeblogCategoryByPath(Weblog website, 
             String categoryPath) throws RollerException;
     
     
     /** 
      * Get WebLogCategory objects for a website. 
      */
-    public List getWeblogCategories(WebsiteData website, boolean includeRoot)
+    public List getWeblogCategories(Weblog website, boolean includeRoot)
             throws RollerException;
     
                
@@ -293,7 +293,7 @@ public interface WeblogManager {
      * @param length     Max comments to return (or -1 for no limit)
      */
     public List getComments(
-            WebsiteData     website,
+            Weblog     website,
             WeblogEntryData entry,
             String          searchString,
             Date            startDate,
@@ -314,7 +314,7 @@ public interface WeblogManager {
      * @return Number of comments deleted
      */
     public int removeMatchingComments(
-            WebsiteData     website,
+            Weblog     website,
             WeblogEntryData entry,
             String          searchString,
             Date            startDate,
@@ -343,7 +343,7 @@ public interface WeblogManager {
     /**
      * Apply comment default settings from website to all of website's entries.
      */
-    public void applyCommentDefaultsToEntries(WebsiteData website) 
+    public void applyCommentDefaultsToEntries(Weblog website) 
         throws RollerException;
     
     /**
@@ -359,7 +359,7 @@ public interface WeblogManager {
      * @return
      * @throws RollerException
      */
-    public List getPopularTags(WebsiteData website, Date startDate, int limit)
+    public List getPopularTags(Weblog website, Date startDate, int limit)
             throws RollerException;
     
     /**
@@ -371,7 +371,7 @@ public interface WeblogManager {
      * @return
      * @throws RollerException
      */
-    public List getTags(WebsiteData website, String sortBy, String startsWith, int limit)
+    public List getTags(Weblog website, String sortBy, String startsWith, int limit)
             throws RollerException;    
     
     /**
@@ -387,7 +387,7 @@ public interface WeblogManager {
      * @return True if tags exist, false otherwise.
      * @throws RollerException If there is any problem doing the operation.
      */
-    public boolean getTagComboExists(List tags, WebsiteData weblog) 
+    public boolean getTagComboExists(List tags, Weblog weblog) 
         throws RollerException;
     
     /**
@@ -401,7 +401,7 @@ public interface WeblogManager {
      * @param amount    The amount to increment the tag count (it can be positive or negative).
      * @throws RollerException
      */
-    public void updateTagCount(String name, WebsiteData website, int amount)
+    public void updateTagCount(String name, Weblog website, int amount)
         throws RollerException;
     
     
@@ -422,7 +422,7 @@ public interface WeblogManager {
      * @return The HitCountData object, or null if it wasn't found.
      * @throws RollerException If there was a problem with the backend.
      */
-    public HitCountData getHitCountByWeblog(WebsiteData weblog)
+    public HitCountData getHitCountByWeblog(Weblog weblog)
         throws RollerException;
     
     
@@ -473,7 +473,7 @@ public interface WeblogManager {
      * @param amount How much to increment by.
      * @throws RollerException If there was a problem with the backend.
      */
-    public void incrementHitCount(WebsiteData weblog, int amount)
+    public void incrementHitCount(Weblog weblog, int amount)
         throws RollerException;
     
     
@@ -491,7 +491,7 @@ public interface WeblogManager {
      * @param weblog The WebsiteData object to reset the count for.
      * @throws RollerException If there was a problem with the backend.
      */
-    public void resetHitCount(WebsiteData weblog) throws RollerException;
+    public void resetHitCount(Weblog weblog) throws RollerException;
 
     
     /**
@@ -503,7 +503,7 @@ public interface WeblogManager {
     /**
      * Get weblog comment count 
      */    
-    public long getCommentCount(WebsiteData websiteData) throws RollerException;
+    public long getCommentCount(Weblog websiteData) throws RollerException;
 
     
     /**
@@ -515,7 +515,7 @@ public interface WeblogManager {
     /**
      * Get weblog entry count 
      */    
-    public long getEntryCount(WebsiteData websiteData) throws RollerException;
+    public long getEntryCount(Weblog websiteData) throws RollerException;
     
 }
 

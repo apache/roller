@@ -33,7 +33,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.TagStat;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Return list of tags matching a startsWith strings. <br />
@@ -103,7 +103,7 @@ public class TagStatsServlet extends HttpServlet {
             response.setContentType("text/html; charset=utf-8");
             
             WeblogManager wmgr = roller.getWeblogManager();
-            WebsiteData website = null;           
+            Weblog website = null;           
             
             // website handle is always the first path segment,
             // only throw an exception when not found if we have a tag prefix 

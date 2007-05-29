@@ -20,7 +20,7 @@ package org.apache.roller.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.common.PingTargetEditBase;
 
 
@@ -41,7 +41,7 @@ public class CustomPingTargetEdit extends PingTargetEditBase {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     

@@ -18,7 +18,7 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.BookmarkData;
+import org.apache.roller.pojos.WeblogBookmark;
 
 
 /**
@@ -27,15 +27,15 @@ import org.apache.roller.pojos.BookmarkData;
 public class BookmarkDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private BookmarkData pojo = null;
+    private WeblogBookmark pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private BookmarkDataWrapper(BookmarkData toWrap) {
+    private BookmarkDataWrapper(WeblogBookmark toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static BookmarkDataWrapper wrap(BookmarkData toWrap) {
+    public static BookmarkDataWrapper wrap(WeblogBookmark toWrap) {
         if(toWrap != null)
             return new BookmarkDataWrapper(toWrap);
 
@@ -138,7 +138,7 @@ public class BookmarkDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.BookmarkData getPojo() {
+    public org.apache.roller.pojos.WeblogBookmark getPojo() {
         return this.pojo;
     }
 

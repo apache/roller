@@ -40,7 +40,7 @@ import org.apache.roller.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.business.search.operations.RemoveWebsiteIndexOperation;
 import org.apache.roller.business.search.operations.WriteToIndexOperation;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
@@ -174,12 +174,12 @@ public class IndexManagerImpl implements IndexManager {
                 new RebuildWebsiteIndexOperation(this, null));
     }
     
-    public void rebuildWebsiteIndex(WebsiteData website) throws RollerException {
+    public void rebuildWebsiteIndex(Weblog website) throws RollerException {
         scheduleIndexOperation(
                 new RebuildWebsiteIndexOperation(this, website));
     }
     
-    public void removeWebsiteIndex(WebsiteData website) throws RollerException {
+    public void removeWebsiteIndex(Weblog website) throws RollerException {
         scheduleIndexOperation(
                 new RemoveWebsiteIndexOperation(this, website));
     }

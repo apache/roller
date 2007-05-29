@@ -34,7 +34,7 @@
             <id name="id">
                 <column name="id"/>
             </id>
-            <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
+            <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
             <many-to-one name="pingTarget" target-entity="org.apache.roller.pojos.PingTargetData">

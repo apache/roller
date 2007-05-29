@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.business.WeblogEntryPlugin;
 
 
@@ -67,7 +67,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website) throws RollerException {
+    public void init(Weblog website) throws RollerException {
         // we don't need to do any init.
         mLogger.debug("initing");
     }

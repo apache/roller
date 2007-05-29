@@ -35,7 +35,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -155,7 +155,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             Iterator websites =
                     userManager.getWebsites(null, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1).iterator();
             while(websites.hasNext()) {
-                WebsiteData weblog = (WebsiteData) websites.next();
+                Weblog weblog = (Weblog) websites.next();
                 
                 String siteUrl = URLUtilities.getWeblogURL(weblog, null, true);
                 String feedUrl = URLUtilities.getWeblogFeedURL(weblog, null, "entries", "rss", null, null, null, false, true);

@@ -35,7 +35,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 
 
@@ -47,8 +47,8 @@ public class RefererTest extends TestCase {
     public static Log log = LogFactory.getLog(RefererTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
-    WebsiteData testWeblog2 = null;
+    Weblog testWeblog = null;
+    Weblog testWeblog2 = null;
     
     int count = 20;
     String testDay;

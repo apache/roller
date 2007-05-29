@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.I18nMessages;
 import org.apache.roller.util.URLUtilities;
@@ -49,7 +49,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
     
-    WebsiteData weblog = null;
+    Weblog weblog = null;
     String locale = null;
     String pageLink = null;
     String entryAnchor = null;
@@ -62,7 +62,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     
     public AbstractWeblogEntriesPager(
-            WebsiteData        weblog,
+            Weblog        weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,
@@ -226,7 +226,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     protected String createURL(
             int                page,
             int                pageAdd,
-            WebsiteData        website,
+            Weblog        website,
             String             locale,
             String             pageLink,
             String             entryAnchor,

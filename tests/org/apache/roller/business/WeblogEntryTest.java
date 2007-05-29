@@ -40,7 +40,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -51,7 +51,7 @@ public class WeblogEntryTest extends TestCase {
     public static Log log = LogFactory.getLog(WeblogEntryTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     public WeblogEntryTest(String name) {
@@ -488,7 +488,7 @@ public class WeblogEntryTest extends TestCase {
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WebsiteData weblog = TestUtils.setupWeblog("tagsExistWeblog1", testUser);
+        Weblog weblog = TestUtils.setupWeblog("tagsExistWeblog1", testUser);
         String wid = weblog.getId();
         
         // setup some test entries to use
@@ -715,7 +715,7 @@ public class WeblogEntryTest extends TestCase {
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WebsiteData testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2", testUser);
+        Weblog testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2", testUser);
         
         try {
             // let's make sure we are starting from scratch
@@ -865,7 +865,7 @@ public class WeblogEntryTest extends TestCase {
 
     public void testTagAggregatesCaseSensitivity() throws Exception {
 
-        WebsiteData testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2",
+        Weblog testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2",
                 testUser);
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
@@ -963,10 +963,10 @@ public class WeblogEntryTest extends TestCase {
         UserManager umgr = RollerFactory.getRoller().getUserManager();
         
         UserData user1 = TestUtils.setupUser("statuser1");
-        WebsiteData blog1 = TestUtils.setupWeblog("statblog1", user1);
-        WebsiteData blog2 = TestUtils.setupWeblog("statblog2", user1);
+        Weblog blog1 = TestUtils.setupWeblog("statblog1", user1);
+        Weblog blog2 = TestUtils.setupWeblog("statblog2", user1);
 
-        WebsiteData blog3 = TestUtils.setupWeblog("statblog3", user1);
+        Weblog blog3 = TestUtils.setupWeblog("statblog3", user1);
         blog3.setEnabled(Boolean. FALSE);
         umgr.saveWebsite(blog3);
 

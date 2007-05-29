@@ -31,14 +31,14 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.HitCountData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -118,9 +118,9 @@ public final class TestUtils {
     /**
      * Convenience method that creates a weblog and stores it.
      */
-    public static WebsiteData setupWeblog(String handle, UserData creator) throws Exception {
+    public static Weblog setupWeblog(String handle, UserData creator) throws Exception {
         
-        WebsiteData testWeblog = new WebsiteData();
+        Weblog testWeblog = new Weblog();
         testWeblog.setName("Test Weblog");
         testWeblog.setDescription("Test Weblog");
         testWeblog.setHandle(handle);
@@ -142,7 +142,7 @@ public final class TestUtils {
         RollerFactory.getRoller().flush();
         
         // query for the new weblog and return it
-        WebsiteData weblog = mgr.getWebsiteByHandle(handle);
+        Weblog weblog = mgr.getWebsiteByHandle(handle);
         
         if(weblog == null)
             throw new RollerException("error setting up weblog");
@@ -158,7 +158,7 @@ public final class TestUtils {
         
         // lookup the weblog
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        WebsiteData weblog = mgr.getWebsite(id);
+        Weblog weblog = mgr.getWebsite(id);
         
         // remove the weblog
         mgr.removeWebsite(weblog);
@@ -175,7 +175,7 @@ public final class TestUtils {
         
         // lookup the permissions
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        PermissionsData perm = mgr.getPermissions(id);
+        WeblogPermission perm = mgr.getPermissions(id);
         
         // remove the permissions
         mgr.removePermissions(perm);
@@ -188,7 +188,7 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog category.
      */
-    public static WeblogCategoryData setupWeblogCategory(WebsiteData weblog,
+    public static WeblogCategoryData setupWeblogCategory(Weblog weblog,
                                                          String name,
                                                          WeblogCategoryData parent)
             throws Exception {
@@ -238,7 +238,7 @@ public final class TestUtils {
      */
     public static WeblogEntryData setupWeblogEntry(String anchor,
                                                    WeblogCategoryData cat,
-                                                   WebsiteData weblog,
+                                                   Weblog weblog,
                                                    UserData user)
             throws Exception {
         
@@ -385,7 +385,7 @@ public final class TestUtils {
     /**
      * Convenience method for creating an auto ping.
      */
-    public static AutoPingData setupAutoPing(PingTargetData ping, WebsiteData weblog)
+    public static AutoPingData setupAutoPing(PingTargetData ping, Weblog weblog)
             throws Exception {
         
         AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
@@ -427,7 +427,7 @@ public final class TestUtils {
     /**
      * Convenience method for creating a hit count.
      */
-    public static HitCountData setupHitCount(WebsiteData weblog, int amount)
+    public static HitCountData setupHitCount(Weblog weblog, int amount)
             throws Exception {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
@@ -471,26 +471,26 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog folder.
      */
-    public static FolderData setupFolder(WebsiteData weblog,
+    public static WeblogBookmarkFolder setupFolder(Weblog weblog,
                                          String name,
-                                         FolderData parent)
+                                         WeblogBookmarkFolder parent)
             throws Exception {
         
         BookmarkManager mgr = RollerFactory.getRoller().getBookmarkManager();
-        FolderData root = mgr.getRootFolder(weblog);
+        WeblogBookmarkFolder root = mgr.getRootFolder(weblog);
         
-        FolderData folderParent = root;
+        WeblogBookmarkFolder folderParent = root;
         if(parent != null) {
             folderParent = parent;
         }
-        FolderData testFolder = new FolderData(folderParent, name, null, weblog);
+        WeblogBookmarkFolder testFolder = new WeblogBookmarkFolder(folderParent, name, null, weblog);
         mgr.saveFolder(testFolder);
         
         // flush to db
         RollerFactory.getRoller().flush();
         
         // query for object
-        FolderData cat = mgr.getFolder(testFolder.getId());
+        WeblogBookmarkFolder cat = mgr.getFolder(testFolder.getId());
         
         if(testFolder == null)
             throw new RollerException("error setting up weblog folder");
@@ -506,7 +506,7 @@ public final class TestUtils {
         
         // lookup the folder
         BookmarkManager mgr = RollerFactory.getRoller().getBookmarkManager();
-        FolderData folder = mgr.getFolder(id);
+        WeblogBookmarkFolder folder = mgr.getFolder(id);
         
         // remove the cat
         mgr.removeFolder(folder);
@@ -527,7 +527,7 @@ public final class TestUtils {
     /**
      * Convenience method that returns managed copy of given website.
      */
-    public static WebsiteData getManagedWebsite(WebsiteData website) throws RollerException {
+    public static Weblog getManagedWebsite(Weblog website) throws RollerException {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         return mgr.getWebsite(website.getId());
     }

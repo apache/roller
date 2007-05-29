@@ -20,7 +20,7 @@
         eternal="false"
         overflowToDisk="false" />
         
-    <cache name="org.apache.roller.pojos.WebsiteData"
+    <cache name="org.apache.roller.pojos.Weblog"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />

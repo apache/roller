@@ -36,8 +36,8 @@ import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.ui.core.RequestConstants;
@@ -63,9 +63,9 @@ public class OldPageHelper {
     private HttpServletResponse mResponse = null;
     
     private Map mPagePlugins = null;  // Plugins keyed by name
-    private WebsiteData mWebsite = null;
+    private Weblog mWebsite = null;
     private Date mDate = null;
-    private FolderData mFolder = null;
+    private WeblogBookmarkFolder mFolder = null;
     private String mPageName = null;
     private WeblogPageRequest mPageRequest = null;
     
@@ -76,9 +76,8 @@ public class OldPageHelper {
     public OldPageHelper(HttpServletRequest request,
                       HttpServletResponse response,
                       Map ctx,
-                      WebsiteData website,
-                      Date date,
-                      FolderData folder,
+                      Weblog website,
+                      Date date,WeblogBookmarkFolder folder,
                       String pageName,
                       PageContext pageContext,
                       WeblogPageRequest pageRequest) throws RollerException {

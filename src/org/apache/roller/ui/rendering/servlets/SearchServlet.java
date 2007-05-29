@@ -36,7 +36,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.Model;
@@ -77,7 +77,7 @@ public class SearchServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         WeblogSearchRequest searchRequest = null;
         
         // first off lets parse the incoming request and validate it

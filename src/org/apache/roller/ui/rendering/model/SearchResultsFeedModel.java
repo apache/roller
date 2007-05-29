@@ -41,7 +41,7 @@ import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.search.operations.SearchOperation;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -63,7 +63,7 @@ public class SearchResultsFeedModel implements Model {
     
     private WeblogFeedRequest feedRequest = null;
 
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
         
     // the pager used by the 3.0+ rendering system
     private SearchResultsFeedPager pager = null;

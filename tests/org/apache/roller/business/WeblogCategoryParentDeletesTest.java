@@ -25,7 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -36,7 +36,7 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
     public static Log log = LogFactory.getLog(WeblogCategoryParentDeletesTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     /**

@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.WeblogPermission;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -48,7 +48,7 @@ public class Maintenance extends UIAction {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -83,7 +83,7 @@ public class Maintenance extends UIAction {
     public String flushCache() {
         
         try {
-            WebsiteData weblog = getActionWeblog();
+            Weblog weblog = getActionWeblog();
             
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());

@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -57,7 +57,7 @@ public class WeblogRequest extends ParsedRequest {
     private String pathInfo = null;
     
     // heavyweight attributes
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private Locale localeInstance = null;
     
     
@@ -182,7 +182,7 @@ public class WeblogRequest extends ParsedRequest {
         this.pathInfo = pathInfo;
     }
 
-    public WebsiteData getWeblog() {
+    public Weblog getWeblog() {
         
         if(weblog == null && weblogHandle != null) {
             try {
@@ -196,7 +196,7 @@ public class WeblogRequest extends ParsedRequest {
         return weblog;
     }
 
-    public void setWeblog(WebsiteData weblog) {
+    public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
     }
     
