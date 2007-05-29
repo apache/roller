@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.RegexUtil;
 
 
@@ -57,7 +57,7 @@ public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website) throws RollerException {}
+    public void init(Weblog website) throws RollerException {}
     
     
     public String render(WeblogEntryData entry, String str) {

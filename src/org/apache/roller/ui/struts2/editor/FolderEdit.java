@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -39,7 +39,7 @@ public class FolderEdit extends UIAction {
     private static Log log = LogFactory.getLog(FolderEdit.class);
     
     // the folder we are editing
-    private FolderData folder = null;
+    private WeblogBookmarkFolder folder = null;
     
     // bean for managing form data
     private FolderBean bean = new FolderBean();
@@ -54,7 +54,7 @@ public class FolderEdit extends UIAction {
     
     // author perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.AUTHOR;
+        return WeblogPermission.AUTHOR;
     }
     
     
@@ -137,7 +137,7 @@ public class FolderEdit extends UIAction {
         
         // make sure new name is not a duplicate of an existing folder
         if(!getFolder().getName().equals(getBean().getName())) {
-            FolderData parent = getFolder().getParent();
+            WeblogBookmarkFolder parent = getFolder().getParent();
             if(parent != null && parent.hasFolder(getBean().getName())) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }
@@ -145,11 +145,11 @@ public class FolderEdit extends UIAction {
     }
     
 
-    public FolderData getFolder() {
+    public WeblogBookmarkFolder getFolder() {
         return folder;
     }
 
-    public void setFolder(FolderData folder) {
+    public void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
     }
 

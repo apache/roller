@@ -31,7 +31,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.search.IndexUtil;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -47,7 +47,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     
     //~ Instance fields ========================================================
     
-    private WebsiteData website;
+    private Weblog website;
     
     //~ Constructors ===========================================================
     
@@ -55,7 +55,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
      * Create a new operation that will recreate an index.
      * @param website The website to rebuild the index for, or null for all sites.
      */
-    public RemoveWebsiteIndexOperation(IndexManagerImpl mgr, WebsiteData website) {
+    public RemoveWebsiteIndexOperation(IndexManagerImpl mgr, Weblog website) {
         super(mgr);
         this.website = website;
     }

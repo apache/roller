@@ -32,9 +32,9 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.security.AutoProvision;
 
 
@@ -175,12 +175,12 @@ public class RollerSession
     /**
      * Is session's authenticated user authorized to work in current website?
      */
-    public boolean isUserAuthorized(WebsiteData website)
+    public boolean isUserAuthorized(Weblog website)
             throws RollerException {
         
         UserData user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
-            return hasPermissions(website, PermissionsData.LIMITED);
+            return hasPermissions(website,WeblogPermission.LIMITED);
         return false;
     }
     
@@ -188,12 +188,12 @@ public class RollerSession
     /**
      * Is session's authenticated user authorized to post in current weblog?
      */
-    public boolean isUserAuthorizedToAuthor(WebsiteData website)
+    public boolean isUserAuthorizedToAuthor(Weblog website)
             throws RollerException {
         
         UserData user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
-            return hasPermissions(website, PermissionsData.AUTHOR);
+            return hasPermissions(website,WeblogPermission.AUTHOR);
         return false;
     }
     
@@ -201,17 +201,17 @@ public class RollerSession
     /**
      * Is session's authenticated user authorized to admin current weblog?
      */
-    public boolean isUserAuthorizedToAdmin(WebsiteData website)
+    public boolean isUserAuthorizedToAdmin(Weblog website)
             throws RollerException {
         
         UserData user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
-            return hasPermissions(website, PermissionsData.ADMIN);
+            return hasPermissions(website,WeblogPermission.ADMIN);
         return false;
     }
     
     
-    private boolean hasPermissions(WebsiteData website, short mask) {
+    private boolean hasPermissions(Weblog website, short mask) {
         
         UserData user = getAuthenticatedUser();
         if (website != null && user != null) {

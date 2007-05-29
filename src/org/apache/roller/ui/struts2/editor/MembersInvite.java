@@ -24,7 +24,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.MailUtil;
@@ -55,7 +55,7 @@ public class MembersInvite extends UIAction {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -110,7 +110,7 @@ public class MembersInvite extends UIAction {
         
         // check for existing permissions or invitation
         try {
-            PermissionsData perms = umgr.getPermissions(getActionWeblog(), user);
+            WeblogPermission perms = umgr.getPermissions(getActionWeblog(), user);
             
             if (perms != null && perms.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");

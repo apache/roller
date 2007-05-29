@@ -23,17 +23,17 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Represents a user's permissions within a website.
  *
- * @ejb:bean name="PermissionsData"
+ * @ejb:bean name="WeblogPermission"
  * @struts.form include-all="true"
  * @hibernate.class lazy="true" table="roller_user_permissions"
  * @hibernate.cache usage="read-write"
  *
  * @author Dave Johnson
  */
-public class PermissionsData
+public class WeblogPermission
 {
     private String      id = UUIDGenerator.generateUUID();
-    private WebsiteData website = null;
+    private Weblog website = null;
     private UserData    user = null;
     private boolean     pending = true;
     public static short LIMITED = 0x00; // 0000 
@@ -42,7 +42,7 @@ public class PermissionsData
     private short       permissionMask = LIMITED;
     
     /** Creates a new instance of PermissionsData */
-    public PermissionsData() 
+    public WeblogPermission() 
     {
     }
 
@@ -72,11 +72,11 @@ public class PermissionsData
     /** 
      * @hibernate.many-to-one column="website_id" cascade="none" not-null="false"
      */
-    public WebsiteData getWebsite() 
+    public Weblog getWebsite() 
     {
         return website;
     }
-    public void setWebsite(WebsiteData website) 
+    public void setWebsite(Weblog website) 
     {
         this.website = website;
     }
@@ -135,8 +135,8 @@ public class PermissionsData
     
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof PermissionsData != true) return false;
-        PermissionsData o = (PermissionsData)other;
+        if (other instanceof WeblogPermission != true) return false;
+        WeblogPermission o = (WeblogPermission)other;
         return new EqualsBuilder()
             .append(user, o.user) 
             .append(website, o.website) 

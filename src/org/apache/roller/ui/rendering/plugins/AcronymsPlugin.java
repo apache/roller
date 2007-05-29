@@ -32,7 +32,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -72,7 +72,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website) throws RollerException {}
+    public void init(Weblog website) throws RollerException {}
     
     
     public String render(WeblogEntryData entry, String str) {
@@ -125,7 +125,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      * @return
      * @throws RollerException
      */
-    private Properties loadAcronyms(WebsiteData website) {
+    private Properties loadAcronyms(Weblog website) {
         Properties acronyms = new Properties();
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();

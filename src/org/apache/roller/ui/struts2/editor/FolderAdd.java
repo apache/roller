@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -42,7 +42,7 @@ public class FolderAdd extends UIAction {
     private String folderId = null;
     
     // the folder we are adding the new subfolder into
-    private FolderData folder = null;
+    private WeblogBookmarkFolder folder = null;
     
     // bean for managing form data
     private FolderBean bean = new FolderBean();
@@ -56,7 +56,7 @@ public class FolderAdd extends UIAction {
     
     
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -98,7 +98,7 @@ public class FolderAdd extends UIAction {
         
         if(!hasActionErrors()) try {
             
-            FolderData newFolder = new FolderData(
+            WeblogBookmarkFolder newFolder = new WeblogBookmarkFolder(
                     getFolder(),
                     getBean().getName(),
                     getBean().getDescription(),
@@ -125,6 +125,7 @@ public class FolderAdd extends UIAction {
             // TODO: i18n
             addError("Error saving new folder");
         }
+
         
         return INPUT;
     }
@@ -150,11 +151,11 @@ public class FolderAdd extends UIAction {
         this.folderId = folderId;
     }
 
-    public FolderData getFolder() {
+    public WeblogBookmarkFolder getFolder() {
         return folder;
     }
 
-    public void setFolder(FolderData folder) {
+    public void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
     }
 

@@ -26,7 +26,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -74,7 +74,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public void removeAutoPing(PingTargetData pingTarget, WebsiteData website) throws RollerException {
+    public void removeAutoPing(PingTargetData pingTarget, Weblog website) throws RollerException {
         try {
             Session session = strategy.getSession();
             Criteria criteria = session.createCriteria(AutoPingData.class);
@@ -131,7 +131,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public List getAutoPingsByWebsite(WebsiteData website) throws RollerException {
+    public List getAutoPingsByWebsite(Weblog website) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(AutoPingData.class);

@@ -39,7 +39,7 @@ public class WeblogEntryTagAggregateData
     private static final long serialVersionUID = -4343500268898106982L;
     private java.lang.String id = UUIDGenerator.generateUUID();
     private java.lang.String name = null;    
-    private WebsiteData website = null;
+    private Weblog website = null;
     private Timestamp lastUsed = null;
     private int total = 0;
 
@@ -48,7 +48,7 @@ public class WeblogEntryTagAggregateData
     }
 
     public WeblogEntryTagAggregateData(java.lang.String id,
-                       WebsiteData website,
+                       Weblog website,
                        java.lang.String name, int total)
     {
         //this.id = id;
@@ -86,12 +86,12 @@ public class WeblogEntryTagAggregateData
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public WebsiteData getWeblog() {
+    public Weblog getWeblog() {
         return this.website;
     }
     
     /** @ejb:persistent-field */
-    public void setWeblog(WebsiteData website) {
+    public void setWeblog(Weblog website) {
         this.website = website;
     }    
 

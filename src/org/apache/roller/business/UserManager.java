@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -116,7 +116,7 @@ public interface UserManager {
      * @throws RollerException If there is a problem.
      */
     public List getUsers(
-            WebsiteData weblog,
+            Weblog weblog,
             Boolean enabled,
             Date    startDate,
             Date    endDate,
@@ -157,39 +157,39 @@ public interface UserManager {
      * creates categories and other objects required for new website.
      * @param newWebsite New website to be created, must have creator.
      */
-    public void addWebsite(WebsiteData newWebsite) throws RollerException;
+    public void addWebsite(Weblog newWebsite) throws RollerException;
     
     
     /**
      * Store a single weblog.
      */
-    public void saveWebsite(WebsiteData data) throws RollerException;
+    public void saveWebsite(Weblog data) throws RollerException;
     
     
     /**
      * Remove website object.
      */
-    public void removeWebsite(WebsiteData website) throws RollerException;
+    public void removeWebsite(Weblog website) throws RollerException;
     
     
     /**
      * Get website object by name.
      */
-    public WebsiteData getWebsite(String id) throws RollerException;
+    public Weblog getWebsite(String id) throws RollerException;
     
     
     /**
      * Get website specified by handle (or null if enabled website not found).
      * @param handle  Handle of website
      */
-    public WebsiteData getWebsiteByHandle(String handle) throws RollerException;
+    public Weblog getWebsiteByHandle(String handle) throws RollerException;
     
     
     /**
      * Get website specified by handle with option to return only enabled websites.
      * @param handle  Handle of website
      */
-    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled)
+    public Weblog getWebsiteByHandle(String handle, Boolean enabled)
         throws RollerException;
     
     
@@ -249,19 +249,19 @@ public interface UserManager {
     /**
      * Save permissions object.
      */
-    public void savePermissions(PermissionsData perms) throws RollerException;
+    public void savePermissions(WeblogPermission perms) throws RollerException;
     
     
     /**
      * Remove permissions object.
      */
-    public void removePermissions(PermissionsData perms) throws RollerException;
+    public void removePermissions(WeblogPermission perms) throws RollerException;
     
     
     /**
      * Get permissions object by id.
      */
-    public PermissionsData getPermissions(String id) throws RollerException;
+    public WeblogPermission getPermissions(String id) throws RollerException;
     
     
     /**
@@ -277,7 +277,7 @@ public interface UserManager {
      * @param website Website (not null)
      * @returns List of PermissionsData objects.
      */
-    public List getPendingPermissions(WebsiteData user) throws RollerException;
+    public List getPendingPermissions(Weblog user) throws RollerException;
     
     
     /**
@@ -286,7 +286,7 @@ public interface UserManager {
      * @param user    User (not null)
      * @return        PermissionsData object
      */
-    public PermissionsData getPermissions(WebsiteData website, UserData user)
+    public WeblogPermission getPermissions(Weblog website, UserData user)
         throws RollerException;
     
     
@@ -295,7 +295,7 @@ public interface UserManager {
      * @param website Website (not null)
      * @return        PermissionsData object
      */
-    public List getAllPermissions(WebsiteData website) throws RollerException;
+    public List getAllPermissions(Weblog website) throws RollerException;
     
     
     /**
@@ -313,7 +313,7 @@ public interface UserManager {
      * @param perms   Permissions mask (see statics in PermissionsData)
      * @return        New PermissionsData object, with pending=true
      */
-    public PermissionsData inviteUser(WebsiteData website, UserData user, short perms)
+    public WeblogPermission inviteUser(Weblog website, UserData user, short perms)
         throws RollerException;
     
     
@@ -322,7 +322,7 @@ public interface UserManager {
      * @param website Website to be retired from (persistent instance)
      * @param user    User to be retired (persistent instance)
      */
-    public void retireUser(WebsiteData website, UserData user)
+    public void retireUser(Weblog website, UserData user)
         throws RollerException;
     
     
@@ -355,26 +355,26 @@ public interface UserManager {
     /**
      * Get user's page by action.
      */
-    public WeblogTemplate getPageByAction(WebsiteData w, String a) throws RollerException;
+    public WeblogTemplate getPageByAction(Weblog w, String a) throws RollerException;
     
     
     /**
      * Get user's page by name.
      */
-    public WeblogTemplate getPageByName(WebsiteData w, String p) throws RollerException;
+    public WeblogTemplate getPageByName(Weblog w, String p) throws RollerException;
     
     
     /**
      * Get website's page by link.
      */
-    public WeblogTemplate getPageByLink(WebsiteData w, String p)
+    public WeblogTemplate getPageByLink(Weblog w, String p)
         throws RollerException;
     
     
     /**
      * Get website's pages
      */
-    public List getPages(WebsiteData w) throws RollerException;
+    public List getPages(Weblog w) throws RollerException;
    
     
     /**
@@ -402,5 +402,14 @@ public interface UserManager {
      * @throws RollerException
      */
     public UserData getUserByActivationCode(String activationCode) throws RollerException;
+    
+    /**
+     * get a user by password request code
+     * @param passwordRequestCode
+     * @return
+     * @throws RollerException
+     */
+    //public UserData getUserByPasswordRequestCode(String passwordRequestCode) throws RollerException;
+
 
 }

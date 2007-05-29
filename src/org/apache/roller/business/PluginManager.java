@@ -21,7 +21,7 @@ package org.apache.roller.business;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.plugins.WeblogEntryEditor;
 
 
@@ -42,7 +42,7 @@ public interface PluginManager {
      *
      * @param website        Website being processed
      */
-    public Map getWeblogEntryPlugins(WebsiteData website);
+    public Map getWeblogEntryPlugins(Weblog website);
     
     
     /**

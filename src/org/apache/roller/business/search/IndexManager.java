@@ -21,7 +21,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.search.operations.IndexOperation;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Interface to Roller's Lucene-based search facility.
@@ -33,7 +33,7 @@ public interface IndexManager
     public abstract boolean isInconsistentAtStartup();
     
     /** Remove user from index, returns immediately and operates in background */
-    public void removeWebsiteIndex(WebsiteData website) throws RollerException;
+    public void removeWebsiteIndex(Weblog website) throws RollerException;
     
     /** Remove entry from index, returns immediately and operates in background */
     public void removeEntryIndexOperation(WeblogEntryData entry) throws RollerException;
@@ -55,7 +55,7 @@ public interface IndexManager
     /** Shutdown to be called on application shutdown */
     public abstract void shutdown();
 
-    public abstract void rebuildWebsiteIndex(WebsiteData website) throws RollerException;
+    public abstract void rebuildWebsiteIndex(Weblog website) throws RollerException;
 
     public abstract void rebuildWebsiteIndex() throws RollerException;
 }

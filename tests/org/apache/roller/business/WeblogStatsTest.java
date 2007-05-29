@@ -11,7 +11,7 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  *
@@ -20,14 +20,14 @@ public class WeblogStatsTest extends TestCase {
     
     private UserData user1, user2;
     
-    private WebsiteData website1;
+    private Weblog website1;
         private WeblogEntryData entry11;
             private CommentData comment11;
             private CommentData comment12;
         private WeblogEntryData entry12;
             private CommentData comment13;
 
-    private WebsiteData website2;
+    private Weblog website2;
         private WeblogEntryData entry21;
             private CommentData comment21; 
     

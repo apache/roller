@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogCategoryPathComparator;
 import org.apache.roller.ui.struts2.util.UIAction;
@@ -63,7 +63,7 @@ public class CategoryRemove extends UIAction {
     
     
     public short requiredWeblogPermissions() {
-        return PermissionsData.AUTHOR;
+        return WeblogPermission.AUTHOR;
     }
     
     

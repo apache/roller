@@ -24,9 +24,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.Weblog;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public void saveBookmark(BookmarkData bookmark) throws RollerException {
+    public void saveBookmark(WeblogBookmark bookmark) throws RollerException {
         this.strategy.store(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -71,16 +71,16 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public BookmarkData getBookmark(String id) throws RollerException {
-        BookmarkData bd = (BookmarkData)
-        strategy.load(id, BookmarkData.class);
+    public WeblogBookmark getBookmark(String id) throws RollerException {
+        WeblogBookmark bd = (WeblogBookmark)
+        strategy.load(id,WeblogBookmark.class);
         // TODO: huh?  why do we do this?
         if (bd != null) bd.setBookmarkManager(this);
         return bd;
     }
     
     
-    public void removeBookmark(BookmarkData bookmark) throws RollerException {
+    public void removeBookmark(WeblogBookmark bookmark) throws RollerException {
         //Remove the bookmark from its parent folder
         bookmark.getFolder().getBookmarks().remove(bookmark);
         //Now remove it from database
@@ -91,9 +91,9 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public void saveFolder(FolderData folder) throws RollerException {
+    public void saveFolder(WeblogBookmarkFolder folder) throws RollerException {
         
-        FolderData existingFolder = getFolder(folder.getId());        
+        WeblogBookmarkFolder existingFolder = getFolder(folder.getId());        
         if(existingFolder == null && isDuplicateFolderName(folder)) {
             throw new RollerException("Duplicate folder name");
         }
@@ -105,7 +105,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public void removeFolder(FolderData folder) throws RollerException {
+    public void removeFolder(WeblogBookmarkFolder folder) throws RollerException {
         
         this.strategy.remove(folder);
         
@@ -114,7 +114,10 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public void moveFolder(FolderData srcFolder, FolderData destFolder)
+    public void moveFolder(WeblogBookmarkFolder srcFolder,
+
+    WeblogBookmarkFolder destFolder
+)
             throws RollerException {
         
         // TODO: this check should be made before calling this method?
@@ -135,19 +138,19 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         
         // the main work to be done for a category move is to update the 
         // path attribute of the category and all descendent categories
-        FolderData.updatePathTree(srcFolder);
+        WeblogBookmarkFolder.updatePathTree(srcFolder);
     }
     
     
     /**
      * Retrieve folder and lazy-load it's sub-folders and bookmarks.
      */
-    public FolderData getFolder(String id) throws RollerException {
-        return (FolderData)strategy.load(id, FolderData.class);
+    public WeblogBookmarkFolder getFolder(String id) throws RollerException {
+        return (WeblogBookmarkFolder)strategy.load(id,WeblogBookmarkFolder.class);
     }
     
     
-    public void importBookmarks(WebsiteData website, String folderName, String opml)
+    public void importBookmarks(Weblog website, String folderName, String opml)
             throws RollerException {
         
         String msg = "importBookmarks";
@@ -157,9 +160,9 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
             StringReader reader = new StringReader( opml );
             Document doc = builder.build( reader );
             
-            FolderData newFolder = getFolder(website, folderName);
+            WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
-                newFolder = new FolderData(
+                newFolder = new WeblogBookmarkFolder(
                         getRootFolder(website), folderName, folderName, website);
                 this.strategy.store(newFolder);
             }
@@ -180,7 +183,8 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     // convenience method used when importing bookmarks
     // NOTE: this method does not commit any changes, that is done by importBookmarks()
     private void importOpmlElement(
-            WebsiteData website, Element elem, FolderData parent)
+            
+            Weblog website, Element elem,WeblogBookmarkFolder parent)
             throws RollerException {
         String text = elem.getAttributeValue("text");
         String title = elem.getAttributeValue("title");
@@ -202,7 +206,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
             // which could result in a db exception.
             // TODO: Consider providing error feedback instead of silently skipping the invalid bookmarks here.
             if (null != title && null != url) {
-                BookmarkData bd = new BookmarkData(parent,
+                WeblogBookmark bd = new WeblogBookmark(parent,
                         title,
                         desc,
                         url,
@@ -216,7 +220,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
             }
         } else {
             // Store a folder
-            FolderData fd = new FolderData(
+            WeblogBookmarkFolder fd = new WeblogBookmarkFolder(
                     parent,
                     title,
                     desc,
@@ -233,7 +237,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public FolderData getFolder(WebsiteData website, String path)
+    public WeblogBookmarkFolder getFolder(Weblog website, String path)
             throws RollerException {
         
         if (path == null || path.trim().equals("/")) {
@@ -249,11 +253,11 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
             // now just do simple lookup by path
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             
-            Criteria criteria = session.createCriteria(FolderData.class);
+            Criteria criteria = session.createCriteria(WeblogBookmarkFolder.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("path", folderPath));
             
-            return (FolderData) criteria.uniqueResult();
+            return (WeblogBookmarkFolder) criteria.uniqueResult();
         }
     }
     
@@ -262,12 +266,12 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
      * @see org.apache.roller.model.BookmarkManager#retrieveBookmarks(
      *      org.apache.roller.pojos.FolderData, boolean)
      */
-    public List getBookmarks(FolderData folder, boolean subfolders)
+    public List getBookmarks(WeblogBookmarkFolder folder, boolean subfolders)
             throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(BookmarkData.class);
+            Criteria criteria = session.createCriteria(WeblogBookmark.class);
             
             if(!subfolders) {
                 // if no subfolders then this is an equals query
@@ -288,33 +292,33 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public FolderData getRootFolder(WebsiteData website) throws RollerException {
+    public WeblogBookmarkFolder getRootFolder(Weblog website) throws RollerException {
         
         if (website == null)
             throw new RollerException("website is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderData.class);
+            Criteria criteria = session.createCriteria(WeblogBookmarkFolder.class);
             
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.isNull("parent"));
             criteria.setMaxResults(1);
             
-            return (FolderData) criteria.uniqueResult();
+            return (WeblogBookmarkFolder) criteria.uniqueResult();
             
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
     
-    public List getAllFolders(WebsiteData website) throws RollerException {
+    public List getAllFolders(Weblog website) throws RollerException {
         if (website == null)
             throw new RollerException("Website is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderData.class);
+            Criteria criteria = session.createCriteria(WeblogBookmarkFolder.class);
             criteria.add(Expression.eq("website", website));
             return criteria.list();
         } catch (HibernateException e) {
@@ -327,10 +331,10 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     /**
      * make sure the given folder doesn't already exist.
      */
-    private boolean isDuplicateFolderName(FolderData folder) throws RollerException {
+    private boolean isDuplicateFolderName(WeblogBookmarkFolder folder) throws RollerException {
         
         // ensure that no sibling categories share the same name
-        FolderData parent = folder.getParent();
+        WeblogBookmarkFolder parent = folder.getParent();
         if (null != parent) {
             return (getFolder(folder.getWebsite(), folder.getPath()) != null);
         }

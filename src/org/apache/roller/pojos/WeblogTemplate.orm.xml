@@ -66,7 +66,7 @@
             <basic name="outputContentType">
                 <column name="outputtype" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
+            <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <transient name="required"/>

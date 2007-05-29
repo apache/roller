@@ -40,15 +40,15 @@ import org.apache.roller.util.UUIDGenerator;
  * Folders or Bookmarks. Don't construct one of these yourself, instead use
  * the create method in your BookmarkManager implementation.</p>
  * 
- * @ejb:bean name="FolderData"
+ * @ejb:bean name="WeblogBookmarkFolder"
  * @hibernate.class lazy="true" table="folder"
  * @hibernate.cache usage="read-write"
  */
-public class FolderData implements Serializable, Comparable {
+public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     public static final long serialVersionUID = -6272468884763861944L;
     
-    private static Log log = LogFactory.getLog(FolderData.class);
+    private static Log log = LogFactory.getLog(WeblogBookmarkFolder.class);
     
     
     // attributes
@@ -58,20 +58,20 @@ public class FolderData implements Serializable, Comparable {
     private String path = null;
     
     // associations
-    private WebsiteData website = null;
-    private FolderData parentFolder = null;
+    private Weblog website = null;
+    private WeblogBookmarkFolder parentFolder = null;
     private Set childFolders = new TreeSet();
     private Set bookmarks = new TreeSet();
     
     
-    public FolderData() {
+    public WeblogBookmarkFolder() {
     }
     
-    public FolderData(
-            FolderData parent,
+    public WeblogBookmarkFolder(
+            WeblogBookmarkFolder parent,
             String name,
             String desc,
-            WebsiteData website) {
+            Weblog website) {
         
         this.name = name;
         this.description = desc;
@@ -90,7 +90,7 @@ public class FolderData implements Serializable, Comparable {
     }
     
     
-    public void setData(FolderData otherData) {
+    public void setData(WeblogBookmarkFolder otherData) {
         
         this.id = otherData.getId();
         this.name = otherData.getName();
@@ -118,8 +118,8 @@ public class FolderData implements Serializable, Comparable {
         
         if (other == null) return false;
         
-        if (other instanceof FolderData) {
-            FolderData o = (FolderData) other;
+        if (other instanceof WeblogBookmarkFolder) {
+            WeblogBookmarkFolder o = (WeblogBookmarkFolder) other;
             return new EqualsBuilder()
                 .append(getPath(), o.getPath()) 
                 //.append(getWebsite(), o.getWebsite()) 
@@ -141,7 +141,7 @@ public class FolderData implements Serializable, Comparable {
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
-        FolderData other = (FolderData)o;
+        WeblogBookmarkFolder other = (WeblogBookmarkFolder)o;
         return getName().compareTo(other.getName());
     }
     
@@ -225,11 +225,11 @@ public class FolderData implements Serializable, Comparable {
      *
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return website;
     }
     
-    public void setWebsite( WebsiteData website ) {
+    public void setWebsite( Weblog website ) {
         this.website = website;
     }
     
@@ -241,11 +241,11 @@ public class FolderData implements Serializable, Comparable {
      *
      * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
-    public FolderData getParent() {
+    public WeblogBookmarkFolder getParent() {
         return this.parentFolder;
     }
     
-    public void setParent(FolderData parent) {
+    public void setParent(WeblogBookmarkFolder parent) {
         this.parentFolder = parent;
     }
     
@@ -253,11 +253,11 @@ public class FolderData implements Serializable, Comparable {
     /**
      * Get child folders of this folder.
      *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.FolderData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogBookmarkFolder"
      *
      * @hibernate.set lazy="true" inverse="true" cascade="delete" 
      * @hibernate.collection-key column="parentid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.FolderData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogBookmarkFolder"
      */
     public Set getFolders() {
         return this.childFolders;
@@ -271,11 +271,11 @@ public class FolderData implements Serializable, Comparable {
     /**
      * Get bookmarks contained in this folder.
      *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogBookmark"
      *
      * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
      * @hibernate.collection-key column="folderid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.BookmarkData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogBookmark"
      */
     public Set getBookmarks() {
         return this.bookmarks;
@@ -290,7 +290,7 @@ public class FolderData implements Serializable, Comparable {
     /**
      * Add a folder as a child of this folder.
      */
-    public void addFolder(FolderData folder) {
+    public void addFolder(WeblogBookmarkFolder folder) {
         
         // make sure folder is not null
         if(folder == null || folder.getName() == null) {
@@ -313,14 +313,14 @@ public class FolderData implements Serializable, Comparable {
     /** 
      * Add a bookmark to this folder.
      */
-    public void addBookmark(BookmarkData bookmark) throws RollerException {
+    public void addBookmark(WeblogBookmark bookmark) throws RollerException {
         bookmark.setFolder(this);
         getBookmarks().add(bookmark);
     }
     
     
     /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogBookmark"
      *
      * @param subfolders
      */
@@ -338,9 +338,9 @@ public class FolderData implements Serializable, Comparable {
      */
     public boolean hasFolder(String name) {
         Iterator folders = this.getFolders().iterator();
-        FolderData folder = null;
+        WeblogBookmarkFolder folder = null;
         while(folders.hasNext()) {
-            folder = (FolderData) folders.next();
+            folder = (WeblogBookmarkFolder) folders.next();
             if(name.equals(folder.getName())) {
                 return true;
             }
@@ -354,7 +354,7 @@ public class FolderData implements Serializable, Comparable {
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public boolean descendentOf(FolderData ancestor) {
+    public boolean descendentOf(WeblogBookmarkFolder ancestor) {
         
         // if this is a root node then we can't be a descendent
         if(getParent() == null) {
@@ -387,15 +387,15 @@ public class FolderData implements Serializable, Comparable {
     
     
     // update the path tree for a given folder
-    public static void updatePathTree(FolderData folder) 
+    public static void updatePathTree(WeblogBookmarkFolder folder) 
             throws RollerException {
         
         log.debug("Updating path tree for folder "+folder.getPath());
         
-        FolderData childFolder = null;
+        WeblogBookmarkFolder childFolder = null;
         Iterator childFolders = folder.getFolders().iterator();
         while(childFolders.hasNext()) {
-            childFolder = (FolderData) childFolders.next();
+            childFolder = (WeblogBookmarkFolder) childFolders.next();
             
             log.debug("OLD child folder path was "+childFolder.getPath());
             

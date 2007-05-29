@@ -30,7 +30,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -41,7 +41,7 @@ public class HitCountTest extends TestCase {
     public static Log log = LogFactory.getLog(HitCountTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     public HitCountTest(String name) {
@@ -215,9 +215,9 @@ public class HitCountTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         testUser = TestUtils.getManagedUser(testUser);
-        WebsiteData blog1 = TestUtils.setupWeblog("hitCntTest1", testUser);
-        WebsiteData blog2 = TestUtils.setupWeblog("hitCntTest2", testUser);
-        WebsiteData blog3 = TestUtils.setupWeblog("hitCntTest3", testUser);
+        Weblog blog1 = TestUtils.setupWeblog("hitCntTest1", testUser);
+        Weblog blog2 = TestUtils.setupWeblog("hitCntTest2", testUser);
+        Weblog blog3 = TestUtils.setupWeblog("hitCntTest3", testUser);
         
         HitCountData cnt1 = TestUtils.setupHitCount(blog1, 10);
         HitCountData cnt2 = TestUtils.setupHitCount(blog2, 20);
@@ -277,9 +277,9 @@ public class HitCountTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         testUser = TestUtils.getManagedUser(testUser);
-        WebsiteData blog1 = TestUtils.setupWeblog("hitCntHotTest1", testUser);
-        WebsiteData blog2 = TestUtils.setupWeblog("hitCntHotTest2", testUser);
-        WebsiteData blog3 = TestUtils.setupWeblog("hitCntHotTest3", testUser);
+        Weblog blog1 = TestUtils.setupWeblog("hitCntHotTest1", testUser);
+        Weblog blog2 = TestUtils.setupWeblog("hitCntHotTest2", testUser);
+        Weblog blog3 = TestUtils.setupWeblog("hitCntHotTest3", testUser);
         
         HitCountData cnt1 = TestUtils.setupHitCount(blog1, 10);
         HitCountData cnt2 = TestUtils.setupHitCount(blog2, 20);

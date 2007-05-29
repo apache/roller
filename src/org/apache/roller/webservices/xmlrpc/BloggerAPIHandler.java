@@ -42,7 +42,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -283,7 +283,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 List websites = umgr.getWebsites(user, Boolean.TRUE, null, null, null, 0, -1);
                 Iterator iter = websites.iterator();
                 while (iter.hasNext()) {
-                    WebsiteData website = (WebsiteData)iter.next();
+                    Weblog website = (Weblog)iter.next();
                     Hashtable blog = new Hashtable(3);
                     blog.put("url", website.getURL());
                     blog.put("blogid", website.getHandle());
@@ -379,7 +379,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("    Publish: " + publish);
         mLogger.debug("    Content:\n " + content);
         
-        WebsiteData website = validate(blogid, userid, password);
+        Weblog website = validate(blogid, userid, password);
         
         // extract the title from the content
         String title = "";
@@ -455,7 +455,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("     Number: " + numposts);
         
-        WebsiteData website = validate(blogid, userid,password);
+        Weblog website = validate(blogid, userid,password);
         
         try {
             Vector results = new Vector();

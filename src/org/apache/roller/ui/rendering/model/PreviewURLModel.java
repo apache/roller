@@ -20,7 +20,7 @@ package org.apache.roller.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.URLUtilities;
@@ -33,7 +33,7 @@ import org.apache.roller.util.URLUtilities;
 public class PreviewURLModel extends URLModel {
     
     private WeblogPreviewRequest previewRequest = null;
-    private WebsiteData weblog = null;
+    private Weblog weblog = null;
     private String locale = null;
     
     

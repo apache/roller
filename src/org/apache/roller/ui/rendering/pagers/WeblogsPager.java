@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 
 
@@ -160,7 +160,7 @@ public class WeblogsPager extends AbstractPager {
                 
                 // wrap the results
                 for (Iterator it = weblogs.iterator(); it.hasNext();) {
-                    WebsiteData website = (WebsiteData) it.next();
+                    Weblog website = (Weblog) it.next();
                     results.add(WebsiteDataWrapper.wrap(website));
                 }
                 

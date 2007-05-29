@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogTheme;
 import org.apache.roller.ui.struts2.util.UIAction;
@@ -55,7 +55,7 @@ public class Templates extends UIAction {
     
     // must be a weblog admin to use this action
     public short requiredWeblogPermissions() {
-        return PermissionsData.ADMIN;
+        return WeblogPermission.ADMIN;
     }
     
     

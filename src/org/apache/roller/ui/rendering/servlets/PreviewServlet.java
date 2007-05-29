@@ -36,7 +36,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
@@ -79,7 +79,7 @@ public class PreviewServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         
         WeblogPreviewRequest previewRequest = null;
         try {
@@ -104,7 +104,7 @@ public class PreviewServlet extends HttpServlet {
         
         // construct a temporary Website object for this request
         // and set the EditorTheme to our previewTheme
-        WebsiteData tmpWebsite = new WebsiteData();
+        Weblog tmpWebsite = new Weblog();
         tmpWebsite.setData(weblog);
         if(previewTheme != null && previewTheme.isEnabled()) {
             tmpWebsite.setEditorTheme(previewTheme.getId());

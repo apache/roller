@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.struts2.StrutsStatics;
@@ -67,7 +67,7 @@ public class UIActionInterceptor extends AbstractInterceptor
             // extract the work weblog and set it
             String weblogHandle = theAction.getWeblog();
             if(!StringUtils.isEmpty(weblogHandle)) {
-                WebsiteData weblog = null;
+                Weblog weblog = null;
                 try {
                     UserManager mgr = RollerFactory.getRoller().getUserManager();
                     weblog = mgr.getWebsiteByHandle(weblogHandle);

@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.Utilities;
@@ -62,7 +62,7 @@ public class ModelLoader {
      *
      * Does not fail if there is a problem with one of the models.
      */
-    public static void loadCustomModels(WebsiteData weblog, Map model, Map initData) {
+    public static void loadCustomModels(Weblog weblog, Map model, Map initData) {
         
         if (weblog.getPageModels() != null) {
             try {

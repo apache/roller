@@ -29,7 +29,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Test File Management business layer operations.
@@ -39,7 +39,7 @@ public class FileManagerTest extends TestCase {
     private static Log log = LogFactory.getLog(FileManagerTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     public FileManagerTest(String name) {

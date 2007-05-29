@@ -18,7 +18,7 @@
 
 package org.apache.roller.ui.struts2.editor;
 
-import org.apache.roller.pojos.BookmarkData;
+import org.apache.roller.pojos.WeblogBookmark;
 
 
 /**
@@ -101,7 +101,7 @@ public class BookmarkBean {
     }
     
     
-    public void copyTo(BookmarkData dataHolder) {
+    public void copyTo(WeblogBookmark dataHolder) {
         dataHolder.setName(this.name);
         dataHolder.setDescription(this.description);
         dataHolder.setUrl(this.url);
@@ -112,7 +112,7 @@ public class BookmarkBean {
     }
     
     
-    public void copyFrom(BookmarkData dataHolder) {
+    public void copyFrom(WeblogBookmark dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();

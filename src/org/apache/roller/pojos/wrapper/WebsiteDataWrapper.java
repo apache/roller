@@ -18,7 +18,7 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -28,15 +28,15 @@ import org.apache.roller.util.URLUtilities;
 public class WebsiteDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private WebsiteData pojo = null;
+    private Weblog pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WebsiteDataWrapper(WebsiteData toWrap) {
+    private WebsiteDataWrapper(Weblog toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static WebsiteDataWrapper wrap(WebsiteData toWrap) {
+    public static WebsiteDataWrapper wrap(Weblog toWrap) {
         if(toWrap != null)
             return new WebsiteDataWrapper(toWrap);
 
@@ -691,7 +691,7 @@ public class WebsiteDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.WebsiteData getPojo() {
+    public org.apache.roller.pojos.Weblog getPojo() {
         return this.pojo;
     }
 

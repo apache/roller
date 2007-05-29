@@ -19,7 +19,7 @@
 package org.apache.roller.ui.struts2.editor;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 
 
 /**
@@ -57,7 +57,7 @@ public class FolderBean {
     }
     
     
-    public void copyTo(FolderData dataHolder) throws RollerException {
+    public void copyTo(WeblogBookmarkFolder dataHolder) throws RollerException {
         
         if(!dataHolder.getName().equals(this.name)) {
             dataHolder.updateName(this.name);
@@ -67,7 +67,7 @@ public class FolderBean {
     }
     
     
-    public void copyFrom(FolderData dataHolder) {
+    public void copyFrom(WeblogBookmarkFolder dataHolder) {
         this.id = dataHolder.getId();
         this.name = dataHolder.getName();
         this.description = dataHolder.getDescription();

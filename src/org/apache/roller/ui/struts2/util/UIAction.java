@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.util.UIUtils;
 import org.apache.roller.ui.core.util.menu.Menu;
 import org.apache.roller.ui.core.util.menu.MenuHelper;
@@ -54,7 +54,7 @@ public abstract class UIAction extends ActionSupport
     private UserData authenticatedUser = null;
     
     // the weblog this action is intended to work on, or null if no weblog specified
-    private WebsiteData actionWeblog = null;
+    private Weblog actionWeblog = null;
     
     // the weblog handle of the action weblog
     private String weblog = null;
@@ -191,11 +191,11 @@ public abstract class UIAction extends ActionSupport
         this.authenticatedUser = authenticatedUser;
     }
 
-    public WebsiteData getActionWeblog() {
+    public Weblog getActionWeblog() {
         return actionWeblog;
     }
 
-    public void setActionWeblog(WebsiteData workingWeblog) {
+    public void setActionWeblog(Weblog workingWeblog) {
         this.actionWeblog = workingWeblog;
     }
 

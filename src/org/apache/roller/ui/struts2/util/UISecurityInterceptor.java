@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
 
@@ -73,7 +73,7 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                 // are we requiring a valid action weblog?
                 if(theAction.isWeblogRequired()) {
                     
-                    WebsiteData actionWeblog = ((UIAction)theAction).getActionWeblog();
+                    Weblog actionWeblog = ((UIAction)theAction).getActionWeblog();
                     if(actionWeblog == null) {
                         log.debug("DENIED: required action weblog not found");
                         return "access-denied";

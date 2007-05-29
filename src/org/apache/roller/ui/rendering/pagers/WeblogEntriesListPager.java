@@ -31,7 +31,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 
@@ -46,7 +46,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private int sinceDays = -1;
     private int length = 0;
     
-    private WebsiteData queryWeblog = null;
+    private Weblog queryWeblog = null;
     private UserData queryUser = null;
     private String queryCat = null;
     private List queryTags = null;
@@ -60,7 +60,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     
     public WeblogEntriesListPager(
             String         baseUrl,
-            WebsiteData    queryWeblog,
+            Weblog    queryWeblog,
             UserData       queryUser,
             String         queryCat,
             List           queryTags,

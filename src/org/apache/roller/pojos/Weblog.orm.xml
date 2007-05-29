@@ -9,130 +9,130 @@
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
 	<package>org.apache.roller.pojos</package>
-	<entity metadata-complete="true" name="WebsiteData" class="org.apache.roller.pojos.WebsiteData">
+	<entity metadata-complete="true" name="Weblog" class="org.apache.roller.pojos.Weblog">
 		<table name="website"/>
-		<named-query name="WebsiteData.getByHandle">
-			<query>SELECT w FROM WebsiteData w WHERE w.handle = ?1</query>
+		<named-query name="Weblog.getByHandle">
+			<query>SELECT w FROM Weblog w WHERE w.handle = ?1</query>
 		</named-query>
-		<named-query name="WebsiteData.getByHandleOrderByHandle">
-			<query>SELECT w FROM WebsiteData w WHERE w.handle = ?1 ORDER BY w.handle</query>
+		<named-query name="Weblog.getByHandleOrderByHandle">
+			<query>SELECT w FROM Weblog w WHERE w.handle = ?1 ORDER BY w.handle</query>
 		</named-query>
-		<named-query name="WebsiteData.getByLetterOrderByHandle">
-			<query>SELECT w FROM WebsiteData w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle</query>
+		<named-query name="Weblog.getByLetterOrderByHandle">
+			<query>SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3  AND w.active = ?4
-                                                 AND EXISTS (SELECT p from PermissionsData p where
+                                                 AND EXISTS (SELECT p from WeblogPermission p where
                                                          p.website = w
                                                          AND p.user = ?5
                                                          AND p.pending = ?6 )
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                  AND w.enabled = ?2
-                                                 AND EXISTS (SELECT p from PermissionsData p where
+                                                 AND EXISTS (SELECT p from WeblogPermission p where
                                                          p.website = w
                                                          AND p.user = ?3
                                                          AND p.pending = ?4 )
                                              ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
-                                                AND EXISTS (SELECT p from PermissionsData p where
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
+                                                AND EXISTS (SELECT p from WeblogPermission p where
                                                          p.website = w
                                                          AND p.user = ?3
                                                          AND p.pending = ?4 )
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                   AND w.enabled = ?3 AND w.active = ?4
                                                 ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;EnabledOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;EnabledOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDateOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDateOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDateOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDateOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3
-                                                 AND EXISTS (SELECT p from PermissionsData p where
+                                                 AND EXISTS (SELECT p from WeblogPermission p where
                                                          p.website = w
                                                          AND p.user = ?4
                                                          AND p.pending = ?5 )
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.active = ?3
-                                                 AND EXISTS (SELECT p from PermissionsData p where
+                                                 AND EXISTS (SELECT p from WeblogPermission p where
                                                             p.website = w
                                                             AND p.user = ?4
                                                             AND p.pending = ?5 )
                                               ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;StartDate&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.active = ?3
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                 AND w.enabled = ?2 AND w.active = ?3
-                                                AND EXISTS (SELECT p from PermissionsData p where
+                                                AND EXISTS (SELECT p from WeblogPermission p where
                                                            p.website = w
                                                            AND p.user = ?4
                                                            AND p.pending = ?5 )
                                              ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                  AND w.enabled = ?2 AND w.active = ?3
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                  AND w.enabled = ?2
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                 AND w.active = ?2
-                                                AND EXISTS (SELECT p from PermissionsData p where
+                                                AND EXISTS (SELECT p from WeblogPermission p where
                                                         p.website = w
                                                         AND p.user = ?3
                                                         AND p.pending = ?4 )</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;ActiveOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
+		<named-query name="Weblog.getByEndDate&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                  AND w.active = ?2
                                                ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getByEndDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
-			<query>SELECT w FROM WebsiteData w WHERE w.dateCreated &lt; ?1
-                                                AND EXISTS (SELECT p from PermissionsData p where
+		<named-query name="Weblog.getByEndDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                                AND EXISTS (SELECT p from WeblogPermission p where
                                                         p.website = w
                                                         AND p.user = ?2
                                                         AND p.pending = ?3 )
                                               ORDER BY w.dateCreated DESC</query>
 		</named-query>
-		<named-query name="WebsiteData.getCountAllDistinct">
+		<named-query name="Weblog.getCountAllDistinct">
 			<!-- DISTINCT is not required here -->
-            <query>SELECT COUNT(w) FROM WebsiteData w</query>
+            <query>SELECT COUNT(w) FROM Weblog w</query>
 		</named-query>
-		<named-query name="WebsiteData.getCountByHandleLike">
-			<query>SELECT COUNT(w) FROM WebsiteData w WHERE UPPER(w.handle) like ?1</query>
+		<named-query name="Weblog.getCountByHandleLike">
+			<query>SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1</query>
 		</named-query>
 		<attributes>
 			<id name="id">
@@ -239,7 +239,7 @@
 			<many-to-one name="defaultCategory" target-entity="org.apache.roller.pojos.WeblogCategoryData">
 				<join-column name="defaultcatid" insertable="true" updatable="true"/>
 			</many-to-one>
-			<one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.pojos.PermissionsData" fetch="LAZY">
+			<one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.pojos.WeblogPermission" fetch="LAZY">
 			</one-to-many>
 			<transient name="absoluteURL"/>
 			<transient name="adminUserCount"/>

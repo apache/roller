@@ -38,7 +38,7 @@ import org.apache.roller.util.UUIDGenerator;
 public class AutoPingData implements Serializable {
     private String id = UUIDGenerator.generateUUID();
     private PingTargetData pingTarget = null;
-    private WebsiteData website = null;
+    private Weblog website = null;
 
     public static final long serialVersionUID = -9105985454111986435L;
 
@@ -55,7 +55,7 @@ public class AutoPingData implements Serializable {
      * @param pingtarget ping target that should be pinged
      * @param website    website to which this configuration applies
      */
-    public AutoPingData(String id, PingTargetData pingtarget, WebsiteData website) {
+    public AutoPingData(String id, PingTargetData pingtarget, Weblog website) {
         //this.id = id;
         this.website = website;
         this.pingTarget = pingtarget;
@@ -101,7 +101,7 @@ public class AutoPingData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return website;
     }
 
@@ -112,7 +112,7 @@ public class AutoPingData implements Serializable {
      * @param website the website.
      * @ejb:persistent-field
      */
-    public void setWebsite(WebsiteData website) {
+    public void setWebsite(Weblog website) {
         this.website = website;
     }
 

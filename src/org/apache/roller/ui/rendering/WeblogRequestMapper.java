@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -384,7 +384,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData weblog = mgr.getWebsiteByHandle(potentialHandle);
+            Weblog weblog = mgr.getWebsiteByHandle(potentialHandle);
             
             if(weblog != null) {
                 isWeblog = true;

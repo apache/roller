@@ -32,15 +32,15 @@ public abstract class WeblogTheme implements Theme, Serializable {
     // this is the name that will be used to identify a user customized theme
     public static final String CUSTOM = "custom";
     
-    protected WebsiteData weblog = null;
+    protected Weblog weblog = null;
     
     
-    public WeblogTheme(WebsiteData weblog) {
+    public WeblogTheme(Weblog weblog) {
         this.weblog = weblog;
     }
     
     
-    public WebsiteData getWeblog() {
+    public Weblog getWeblog() {
         return this.weblog;
     }
     

@@ -38,7 +38,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * An index operation that rebuilds a given users index (or all indexes).
@@ -53,7 +53,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     
     //~ Instance fields ========================================================
     
-    private WebsiteData website;
+    private Weblog website;
     
     //~ Constructors ===========================================================
     
@@ -62,7 +62,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
      *
      * @param website The website to rebuild the index for, or null for all users.
      */
-    public RebuildWebsiteIndexOperation(IndexManagerImpl mgr, WebsiteData website) {
+    public RebuildWebsiteIndexOperation(IndexManagerImpl mgr, Weblog website) {
         super(mgr);
         this.website = website;
     }

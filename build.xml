@@ -110,9 +110,7 @@
             addedtags="@xdoclet-generated at ${TODAY}"
             force="true">
             
-            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
-            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
-            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
+            <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*.java" />
             
             <hibernate validatexml="true" version="3.0"/>
             

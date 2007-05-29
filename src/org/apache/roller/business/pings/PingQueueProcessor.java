@@ -28,7 +28,7 @@ import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.PingQueueEntryData;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -120,7 +120,7 @@ public class PingQueueProcessor {
         if (logger.isDebugEnabled()) logger.debug("Processing ping queue entry: " + pingQueueEntry);
         
         PingTargetData pingTarget = pingQueueEntry.getPingTarget();
-        WebsiteData website = pingQueueEntry.getWebsite();
+        Weblog website = pingQueueEntry.getWebsite();
         boolean pingSucceeded = false;
         if (PingConfig.getLogPingsOnly()) {
             // Just log the ping and pretend it succeeded.

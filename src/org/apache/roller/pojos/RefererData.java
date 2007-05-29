@@ -39,7 +39,7 @@ public class RefererData
 {
     static final long serialVersionUID = -1817992900602131316L;
     private java.lang.String id = UUIDGenerator.generateUUID();
-    private org.apache.roller.pojos.WebsiteData website = null;
+    private org.apache.roller.pojos.Weblog website = null;
     private org.apache.roller.pojos.WeblogEntryData weblogEntry = null;
     private java.lang.String dateString = null;
     private java.lang.String refererUrl = null;
@@ -57,7 +57,7 @@ public class RefererData
     }
 
     public RefererData(java.lang.String id, 
-                       org.apache.roller.pojos.WebsiteData website, 
+                       org.apache.roller.pojos.Weblog website, 
                        org.apache.roller.pojos.WeblogEntryData weblogEntry, 
                        java.lang.String dateString, java.lang.String refererUrl, 
                        java.lang.String refererPermalink, 
@@ -113,12 +113,12 @@ public class RefererData
      * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.WebsiteData getWebsite()
+    public org.apache.roller.pojos.Weblog getWebsite()
     {
         return this.website;
     }
 
-    public void setWebsite(org.apache.roller.pojos.WebsiteData website)
+    public void setWebsite(org.apache.roller.pojos.Weblog website)
     {
         this.website = website;
     }

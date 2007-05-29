@@ -32,7 +32,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.webservices.adminprotocol.sdk.UnexpectedRootElementException;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -197,9 +197,9 @@ abstract class Handler {
         }
     }
     
-    protected WebsiteData getWebsiteData(String handle) throws NotFoundException, InternalException {
+    protected Weblog getWebsiteData(String handle) throws NotFoundException, InternalException {
         try {
-            WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.TRUE);
+            Weblog wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.TRUE);
             if (wd == null) {
                 wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.FALSE);
             }

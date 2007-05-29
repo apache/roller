@@ -28,7 +28,7 @@ import org.apache.roller.config.PingConfig;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         strategy.remove(autoPing);
     }
 
-    public void removeAutoPing(PingTargetData pingTarget, WebsiteData website)
+    public void removeAutoPing(PingTargetData pingTarget, Weblog website)
             throws RollerException {
         Query q = strategy.getNamedUpdate("AutoPingData.removeByPingTarget&Website");
         q.setParameter(1, pingTarget);
@@ -109,7 +109,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         }
     }
 
-    public List getAutoPingsByWebsite(WebsiteData website)
+    public List getAutoPingsByWebsite(Weblog website)
             throws RollerException {
         Query q = strategy.getNamedQuery("AutoPingData.getByWebsite");
         q.setParameter(1, website);

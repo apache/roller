@@ -27,9 +27,9 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Test folder business functions and lookups.
@@ -39,11 +39,11 @@ public class FolderFunctionalityTest extends TestCase {
     public static Log log = LogFactory.getLog(FolderFunctionalityTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
-    FolderData f1 = null;
-    FolderData f2 = null;
-    FolderData f3 = null;
-    FolderData testFolder = null;
+    Weblog testWeblog = null;
+    WeblogBookmarkFolder f1 = null;
+    WeblogBookmarkFolder f2 = null;
+    WeblogBookmarkFolder f3 = null;
+    WeblogBookmarkFolder testFolder = null;
     
     /**
      * All tests in this suite require a user and a weblog.
@@ -100,7 +100,7 @@ public class FolderFunctionalityTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         // start at root
-        FolderData root = bmgr.getRootFolder(TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder root = bmgr.getRootFolder(TestUtils.getManagedWebsite(testWeblog));
         
         // walk first level
         Set folders = root.getFolders();
@@ -108,9 +108,9 @@ public class FolderFunctionalityTest extends TestCase {
         assertTrue(folders.contains(testFolder));
         
         // find cat1
-        FolderData folder = null;
+        WeblogBookmarkFolder folder = null;
         for(Iterator it = folders.iterator(); it.hasNext(); ) {
-            folder = (FolderData) it.next();
+            folder = (WeblogBookmarkFolder) it.next();
             if(folder.getName().equals(f1.getName())) {
                 break;
             }
@@ -122,7 +122,7 @@ public class FolderFunctionalityTest extends TestCase {
         assertTrue(folders.contains(f2));
         
         // find cat2
-        folder = (FolderData) folders.iterator().next();
+        folder = (WeblogBookmarkFolder) folders.iterator().next();
         
         // walk third level
         folders = folder.getFolders();
@@ -130,7 +130,7 @@ public class FolderFunctionalityTest extends TestCase {
         assertTrue(folders.contains(f3));
         
         // find cat3
-        folder = (FolderData) folders.iterator().next();
+        folder = (WeblogBookmarkFolder) folders.iterator().next();
         
         // make sure this is the end of the tree
         folders = folder.getFolders();
@@ -141,7 +141,7 @@ public class FolderFunctionalityTest extends TestCase {
     
     
     /**
-     * Test the hasFolder() method on FolderData.
+     * Test the hasFolder() method on WeblogBookmarkFolder.
      */
     public void testHasFolder() throws Exception {
         
@@ -150,7 +150,7 @@ public class FolderFunctionalityTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
         // check that root has folder
         assertTrue(root.hasFolder(testFolder.getName()));
@@ -169,12 +169,12 @@ public class FolderFunctionalityTest extends TestCase {
             BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            FolderData root = bmgr.getRootFolder(testWeblog);
+            WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
 
             boolean exception = false;
             try {
                 // child folder with same name as first
-                FolderData dupeFolder = new FolderData(root, testFolder.getName(), null, testWeblog);
+                WeblogBookmarkFolder dupeFolder = new WeblogBookmarkFolder(root, testFolder.getName(), null, testWeblog);
                 bmgr.saveFolder(dupeFolder);
                 TestUtils.endSession(true);
             } catch (Throwable e) {
@@ -205,7 +205,7 @@ public class FolderFunctionalityTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         // test lookup by id
-        FolderData testFolder = bmgr.getFolder(f1.getId());
+        WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
         assertNotNull(testFolder);
         assertEquals(f1, testFolder);
         
@@ -223,7 +223,7 @@ public class FolderFunctionalityTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData folder = bmgr.getFolder(testWeblog, "/folderFuncTest-f1");
+        WeblogBookmarkFolder folder = bmgr.getFolder(testWeblog, "/folderFuncTest-f1");
         assertNotNull(folder);
         assertEquals(f1, folder);
         

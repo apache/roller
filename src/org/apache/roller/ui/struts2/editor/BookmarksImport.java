@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -59,7 +59,7 @@ public final class BookmarksImport extends UIAction {
     
     // author perms required
     public short requiredWeblogPermissions() {
-        return PermissionsData.AUTHOR;
+        return WeblogPermission.AUTHOR;
     }
     
     

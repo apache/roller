@@ -37,12 +37,12 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
  
@@ -74,7 +74,7 @@ public class RollerRequest
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(RollerRequest.class);
 
-    private BookmarkData       mBookmark;
+    private WeblogBookmark       mBookmark;
     private ServletContext     mContext = null;    
     private Date               mDate = null;
     private String             mDateString = null;
@@ -83,7 +83,7 @@ public class RollerRequest
     private ThemeTemplate      mPage = null;
     private PageContext        mPageContext = null;
     private HttpServletRequest mRequest = null;
-    private WebsiteData        mWebsite;
+    private Weblog        mWebsite;
     private WeblogEntryData    mWeblogEntry;
     private WeblogCategoryData mWeblogCategory;
     
@@ -306,7 +306,7 @@ public class RollerRequest
             
             String handle = mRequest.getParameter(RequestConstants.WEBLOG);
             String websiteid = mRequest.getParameter(RequestConstants.WEBLOG_ID);
-            FolderData folder = getFolder();
+            WeblogBookmarkFolder folder = getFolder();
             if (handle != null && mWebsite == null) 
             {
                 mWebsite = userMgr.getWebsiteByHandle(handle); 
@@ -556,7 +556,7 @@ public class RollerRequest
      * Gets the BookmarkData specified by the request, or null.
      * @return BookmarkData
      */
-    public BookmarkData getBookmark( )
+    public WeblogBookmark getBookmark( )
     {
         if ( mBookmark == null )
         {
@@ -623,9 +623,9 @@ public class RollerRequest
      * Gets the FolderData specified by the request, or null.
      * @return FolderData
      */
-    public FolderData getFolder( )
+    public WeblogBookmarkFolder getFolder( )
     {
-        FolderData folder = null;
+        WeblogBookmarkFolder folder = null;
         //if ( folder == null )
         //{
             String id = getFromRequest(RequestConstants.FOLDER_ID);
@@ -706,11 +706,11 @@ public class RollerRequest
      * authenticated user is currently editing).
      * @return WebsiteData object specified by request URI.
      */
-    public WebsiteData getWebsite()
+    public Weblog getWebsite()
     {
         return mWebsite;
     }
-    public void setWebsite(WebsiteData wd)
+    public void setWebsite(Weblog wd)
     {
         mWebsite = wd;
     }

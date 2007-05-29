@@ -27,7 +27,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 /**
  * Checks comment, trackbacks and referrers for spam.
@@ -63,7 +63,7 @@ public class BlacklistChecker {
      * Test referrer URL, applying blacklist and website blacklist only if configured 
      * @return True if comment matches blacklist term
      */
-    public static boolean checkReferrer(WebsiteData website, String referrerURL) {
+    public static boolean checkReferrer(Weblog website, String referrerURL) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
             List stringRules = new ArrayList();
             List regexRules = new ArrayList();
@@ -86,7 +86,7 @@ public class BlacklistChecker {
         boolean ret = false;
         List stringRules = new ArrayList();
         List regexRules = new ArrayList();
-        WebsiteData website = c.getWeblogEntry().getWebsite();
+        Weblog website = c.getWeblogEntry().getWebsite();
         Blacklist.populateSpamRules(
             website.getBlacklist(), stringRules, regexRules, 
             RollerRuntimeConfig.getProperty("spam.blacklist"));

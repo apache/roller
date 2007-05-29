@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.I18nMessages;
@@ -58,7 +58,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     
     public WeblogEntriesMonthPager(
-            WebsiteData        weblog,
+            Weblog        weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,

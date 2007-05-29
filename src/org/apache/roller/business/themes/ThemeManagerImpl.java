@@ -42,7 +42,7 @@ import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -114,7 +114,7 @@ public class ThemeManagerImpl implements ThemeManager {
     /**
      * @see org.apache.roller.model.ThemeManager#getTheme(weblog)
      */
-    public WeblogTheme getTheme(WebsiteData weblog) throws RollerException {
+    public WeblogTheme getTheme(Weblog weblog) throws RollerException {
         
         if(weblog == null)
             return null;
@@ -162,7 +162,7 @@ public class ThemeManagerImpl implements ThemeManager {
     /**
      * @see org.apache.roller.model.ThemeManager#importTheme(website, theme)
      */
-    public void importTheme(WebsiteData website, SharedTheme theme)
+    public void importTheme(Weblog website, SharedTheme theme)
             throws RollerException {
         
         log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");

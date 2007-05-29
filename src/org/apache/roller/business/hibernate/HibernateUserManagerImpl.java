@@ -47,20 +47,20 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.PingQueueEntryData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.RoleData;
+import org.apache.roller.pojos.Weblog;
+import org.apache.roller.pojos.UserRole;
 import org.hibernate.Query;
 
 
@@ -88,13 +88,13 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * Update existing website.
      */
-    public void saveWebsite(WebsiteData website) throws RollerException {
+    public void saveWebsite(Weblog website) throws RollerException {
         
         website.setLastModified(new java.util.Date());
         strategy.store(website);
     }
     
-    public void removeWebsite(WebsiteData weblog) throws RollerException {
+    public void removeWebsite(Weblog weblog) throws RollerException {
         
         // remove contents first, then remove website
         this.removeWebsiteContents(weblog);
@@ -108,7 +108,7 @@ public class HibernateUserManagerImpl implements UserManager {
      * convenience method for removing contents of a weblog.
      * TODO BACKEND: use manager methods instead of queries here
      */
-    private void removeWebsiteContents(WebsiteData website)
+    private void removeWebsiteContents(Weblog website)
     throws HibernateException, RollerException {
         
         Session session = this.strategy.getSession();
@@ -189,7 +189,7 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         
         // remove folders (including bookmarks)
-        FolderData rootFolder = bmgr.getRootFolder(website);
+        WeblogBookmarkFolder rootFolder = bmgr.getRootFolder(website);
         if (null != rootFolder) {
             this.strategy.remove(rootFolder);
         }
@@ -203,7 +203,7 @@ public class HibernateUserManagerImpl implements UserManager {
         // remove permissions
         List permissions = this.getAllPermissions(website);
         for (Iterator iter = permissions.iterator(); iter.hasNext(); ) {
-            this.removePermissions((PermissionsData) iter.next());
+            this.removePermissions((WeblogPermission) iter.next());
         }
     }
         
@@ -218,11 +218,11 @@ public class HibernateUserManagerImpl implements UserManager {
         this.userNameToIdMap.remove(user.getUserName());
     }
         
-    public void savePermissions(PermissionsData perms) throws RollerException {
+    public void savePermissions(WeblogPermission perms) throws RollerException {
         this.strategy.store(perms);
     }
         
-    public void removePermissions(PermissionsData perms) throws RollerException {
+    public void removePermissions(WeblogPermission perms) throws RollerException {
         this.strategy.remove(perms);
     }
         
@@ -274,23 +274,23 @@ public class HibernateUserManagerImpl implements UserManager {
         this.strategy.store(newUser);
     }
         
-    public void addWebsite(WebsiteData newWeblog) throws RollerException {
+    public void addWebsite(Weblog newWeblog) throws RollerException {
         
         this.strategy.store(newWeblog);
         this.addWeblogContents(newWeblog);
     }
         
-    private void addWeblogContents(WebsiteData newWeblog) throws RollerException {
+    private void addWeblogContents(Weblog newWeblog) throws RollerException {
         
         UserManager umgr = RollerFactory.getRoller().getUserManager();
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
         // grant weblog creator ADMIN permissions
-        PermissionsData perms = new PermissionsData();
+        WeblogPermission perms = new WeblogPermission();
         perms.setUser(newWeblog.getCreator());
         perms.setWebsite(newWeblog);
         perms.setPending(false);
-        perms.setPermissionMask(PermissionsData.ADMIN);
+        perms.setPermissionMask(WeblogPermission.ADMIN);
         this.strategy.store(perms);
         
         // add default category
@@ -327,7 +327,7 @@ public class HibernateUserManagerImpl implements UserManager {
         this.strategy.store(newWeblog);
         
         // add default bookmarks
-        FolderData root = new FolderData(
+        WeblogBookmarkFolder root = new WeblogBookmarkFolder(
                 null, "root", "root", newWeblog);
         this.strategy.store(root);
         
@@ -338,7 +338,7 @@ public class HibernateUserManagerImpl implements UserManager {
             for (int i=0; i<splitroll.length; i++) {
                 String[] rollitems = splitroll[i].split("\\|");
                 if (rollitems != null && rollitems.length > 1) {
-                    BookmarkData b = new BookmarkData(
+                    WeblogBookmark b = new WeblogBookmark(
                             root,                // parent
                             rollitems[0],        // name
                             "",                  // description
@@ -372,13 +372,13 @@ public class HibernateUserManagerImpl implements UserManager {
      * Creates and stores a pending PermissionsData for user and website specified.
      * TODO BACKEND: do we really need this?  can't we just use storePermissions()?
      */
-    public PermissionsData inviteUser(WebsiteData website,
+    public WeblogPermission inviteUser(Weblog website,
             UserData user, short mask) throws RollerException {
         
         if (website == null) throw new RollerException("Website cannot be null");
         if (user == null) throw new RollerException("User cannot be null");
         
-        PermissionsData perms = new PermissionsData();
+        WeblogPermission perms = new WeblogPermission();
         perms.setWebsite(website);
         perms.setUser(user);
         perms.setPermissionMask(mask);
@@ -392,15 +392,15 @@ public class HibernateUserManagerImpl implements UserManager {
      *
      * TODO: replace this with a domain model method like weblog.retireUser(user)
      */
-    public void retireUser(WebsiteData website, UserData user) throws RollerException {
+    public void retireUser(Weblog website, UserData user) throws RollerException {
         
         if (website == null) throw new RollerException("Website cannot be null");
         if (user == null) throw new RollerException("User cannot be null");
         
         Iterator perms = website.getPermissions().iterator();
-        PermissionsData target = null;
+        WeblogPermission target = null;
         while (perms.hasNext()) {
-            PermissionsData pd = (PermissionsData)perms.next();
+            WeblogPermission pd = (WeblogPermission)perms.next();
             if (pd.getUser().getId().equals(user.getId())) {
                 target = pd;
                 break;
@@ -412,18 +412,18 @@ public class HibernateUserManagerImpl implements UserManager {
         this.strategy.remove(target);
     }
         
-    public WebsiteData getWebsite(String id) throws RollerException {
-        return (WebsiteData) this.strategy.load(id,WebsiteData.class);
+    public Weblog getWebsite(String id) throws RollerException {
+        return (Weblog) this.strategy.load(id,Weblog.class);
     }
         
-    public WebsiteData getWebsiteByHandle(String handle) throws RollerException {
+    public Weblog getWebsiteByHandle(String handle) throws RollerException {
         return getWebsiteByHandle(handle, Boolean.TRUE);
     }
         
     /**
      * Return website specified by handle.
      */
-    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled)
+    public Weblog getWebsiteByHandle(String handle, Boolean enabled)
     throws RollerException {
         
         if (handle==null )
@@ -433,7 +433,7 @@ public class HibernateUserManagerImpl implements UserManager {
         // NOTE: if we ever allow changing handles then this needs updating
         if(this.weblogHandleToIdMap.containsKey(handle)) {
             
-            WebsiteData weblog = this.getWebsite((String) this.weblogHandleToIdMap.get(handle));
+            Weblog weblog = this.getWebsite((String) this.weblogHandleToIdMap.get(handle));
             if(weblog != null) {
                 // only return weblog if enabled status matches
                 if(enabled == null || enabled.equals(weblog.getEnabled())) {
@@ -449,10 +449,10 @@ public class HibernateUserManagerImpl implements UserManager {
         // cache failed, do lookup
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WebsiteData.class);
+            Criteria criteria = session.createCriteria(Weblog.class);
             criteria.add(new IgnoreCaseEqExpression("handle", handle));
             
-            WebsiteData website = (WebsiteData) criteria.uniqueResult();
+            Weblog website = (Weblog) criteria.uniqueResult();
             
             // add mapping to cache
             if(website != null) {
@@ -482,7 +482,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WebsiteData.class);
+            Criteria criteria = session.createCriteria(Weblog.class);
             
             if (user != null) {
                 criteria.createAlias("permissions","permissions");
@@ -578,7 +578,7 @@ public class HibernateUserManagerImpl implements UserManager {
     }
     
     
-    public List getUsers(WebsiteData weblog, Boolean enabled, Date startDate, 
+    public List getUsers(Weblog weblog, Boolean enabled, Date startDate, 
                          Date endDate, int offset, int length) 
             throws RollerException {
         
@@ -661,7 +661,7 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
-    public WeblogTemplate getPageByLink(WebsiteData website, String pagelink)
+    public WeblogTemplate getPageByLink(Weblog website, String pagelink)
             throws RollerException {
         
         if (website == null)
@@ -686,7 +686,7 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * @see org.apache.roller.model.UserManager#getPageByAction(WebsiteData, java.lang.String)
      */
-    public WeblogTemplate getPageByAction(WebsiteData website, String action)
+    public WeblogTemplate getPageByAction(Weblog website, String action)
             throws RollerException {
         
         if (website == null)
@@ -711,7 +711,7 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * @see org.apache.roller.model.UserManager#getPageByName(WebsiteData, java.lang.String)
      */
-    public WeblogTemplate getPageByName(WebsiteData website, String pagename)
+    public WeblogTemplate getPageByName(Weblog website, String pagename)
             throws RollerException {
         
         if (website == null)
@@ -735,7 +735,7 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * @see org.apache.roller.model.UserManager#getPages(WebsiteData)
      */
-    public List getPages(WebsiteData website) throws RollerException {
+    public List getPages(Weblog website) throws RollerException {
         
         if (website == null)
             throw new RollerException("website is null");
@@ -752,24 +752,24 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    public PermissionsData getPermissions(String inviteId) throws RollerException {
-        return (PermissionsData)this.strategy.load(inviteId, PermissionsData.class);
+    public WeblogPermission getPermissions(String inviteId) throws RollerException {
+        return (WeblogPermission)this.strategy.load(inviteId,WeblogPermission.class);
     }
     
     /**
      * Return permissions for specified user in website
      */
-    public PermissionsData getPermissions(
-            WebsiteData website, UserData user) throws RollerException {
+    public WeblogPermission getPermissions(
+            Weblog website, UserData user) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(PermissionsData.class);
+            Criteria criteria = session.createCriteria(WeblogPermission.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("user", user));
             
             List list = criteria.list();
-            return list.size()!=0 ? (PermissionsData)list.get(0) : null;
+            return list.size()!=0 ? (WeblogPermission)list.get(0) : null;
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
@@ -782,7 +782,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(PermissionsData.class);
+            Criteria criteria = session.createCriteria(WeblogPermission.class);
             criteria.add(Expression.eq("user", user));
             criteria.add(Expression.eq("pending", Boolean.TRUE));
             
@@ -795,11 +795,11 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * Get pending permissions for website
      */
-    public List getPendingPermissions(WebsiteData website) throws RollerException {
+    public List getPendingPermissions(Weblog website) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(PermissionsData.class);
+            Criteria criteria = session.createCriteria(WeblogPermission.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("pending", Boolean.TRUE));
             
@@ -812,11 +812,11 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * Get all permissions of a website (pendings not including)
      */
-    public List getAllPermissions(WebsiteData website) throws RollerException {
+    public List getAllPermissions(Weblog website) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(PermissionsData.class);
+            Criteria criteria = session.createCriteria(WeblogPermission.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("pending", Boolean.FALSE));
             
@@ -833,7 +833,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(PermissionsData.class);
+            Criteria criteria = session.createCriteria(WeblogPermission.class);
             criteria.add(Expression.eq("user", user));
             criteria.add(Expression.eq("pending", Boolean.FALSE));
             
@@ -897,7 +897,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 ((HibernatePersistenceStrategy)strategy).getSession();
             for (int i=0; i<26; i++) {
                 Query query = session.createQuery(
-                    "select count(website) from WebsiteData website where upper(website.handle) like '"+lc.charAt(i)+"%'");
+                    "select count(website) from Weblog website where upper(website.handle) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
                 Number count = (Number)row.get(0);
                 results.put(new String(new char[]{lc.charAt(i)}), count);
@@ -914,7 +914,7 @@ public class HibernateUserManagerImpl implements UserManager {
         // TODO: ATLAS getWeblogsByLetter DONE
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WebsiteData.class);
+            Criteria criteria = session.createCriteria(Weblog.class);
             criteria.add(Expression.ilike("handle", new String(new char[]{letter}) + "%", MatchMode.START));
             criteria.addOrder(Order.asc("handle"));
             if (offset != 0) {
@@ -982,7 +982,7 @@ public class HibernateUserManagerImpl implements UserManager {
         long ret = 0;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            String query = "select count(distinct w) from WebsiteData w";
+            String query = "select count(distinct w) from Weblog w";
             List result = session.createQuery(query).list();
             ret = ((Number)result.get(0)).intValue();
         } catch (Exception e) {
@@ -992,11 +992,11 @@ public class HibernateUserManagerImpl implements UserManager {
     }
 
     public void revokeRole(String roleName, UserData user) throws RollerException {
-        RoleData removeme = null;
+        UserRole removeme = null;
         Collection roles = user.getRoles();
         Iterator iter = roles.iterator();
         while (iter.hasNext()) {
-            RoleData role = (RoleData) iter.next();
+            UserRole role = (UserRole) iter.next();
             if (role.getRole().equals(roleName)) {
                 iter.remove();
                 this.strategy.remove(role);

@@ -48,7 +48,7 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
 import org.apache.roller.ui.rendering.util.CommentValidationManager;
@@ -174,7 +174,7 @@ public class CommentServlet extends HttpServlet {
         String error = null;
         String dispatch_url = null;
         
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         WeblogEntryData entry = null;
         
         String message = null;
@@ -381,7 +381,7 @@ public class CommentServlet extends HttpServlet {
             RollerMessages messages, String rootURL, I18nMessages resources) {
         
         WeblogEntryData entry = commentObject.getWeblogEntry();
-        WebsiteData site = entry.getWebsite();
+        Weblog site = entry.getWebsite();
         UserData user = entry.getCreator();
         
         // Send e-mail to owner and subscribed users (if enabled)
@@ -583,7 +583,7 @@ public class CommentServlet extends HttpServlet {
     public static void sendEmailApprovalNotification(CommentData cd, String rootURL, I18nMessages resources) {
         
         WeblogEntryData entry = cd.getWeblogEntry();
-        WebsiteData site = entry.getWebsite();
+        Weblog site = entry.getWebsite();
         UserData user = entry.getCreator();
         
         // Only send email if email notificaiton is enabled

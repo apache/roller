@@ -17,8 +17,6 @@
 */
 package org.apache.roller.business;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -28,9 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -41,7 +39,7 @@ public class PermissionTest extends TestCase {
     public static Log log = LogFactory.getLog(PermissionTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     
     public PermissionTest(String name) {
@@ -98,7 +96,7 @@ public class PermissionTest extends TestCase {
         log.info("BEGIN");
         
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        PermissionsData perm = null;
+        WeblogPermission perm = null;
                 
         // delete permissions
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -116,11 +114,11 @@ public class PermissionTest extends TestCase {
         assertNull(perm);
         
         // create permissions
-        perm = new PermissionsData();
+        perm = new WeblogPermission();
         perm.setUser(testUser);
         perm.setWebsite(testWeblog);
         perm.setPending(false);
-        perm.setPermissionMask(PermissionsData.ADMIN);
+        perm.setPermissionMask(WeblogPermission.ADMIN);
         mgr.savePermissions(perm);
         TestUtils.endSession(true);
         
@@ -130,10 +128,10 @@ public class PermissionTest extends TestCase {
         perm = null;
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNotNull(perm);
-        assertEquals(PermissionsData.ADMIN, perm.getPermissionMask());
+        assertEquals(WeblogPermission.ADMIN, perm.getPermissionMask());
         
         // update permissions
-        perm.setPermissionMask(PermissionsData.LIMITED);
+        perm.setPermissionMask(WeblogPermission.LIMITED);
         mgr.savePermissions(perm);
         TestUtils.endSession(true);
 
@@ -143,7 +141,7 @@ public class PermissionTest extends TestCase {
         perm = null;
         perm = mgr.getPermissions(testWeblog, testUser);
         assertNotNull(perm);
-        assertEquals(PermissionsData.LIMITED, perm.getPermissionMask());
+        assertEquals(WeblogPermission.LIMITED, perm.getPermissionMask());
         
         log.info("END");
     }
@@ -162,7 +160,7 @@ public class PermissionTest extends TestCase {
             TestUtils.endSession(true);
             
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            PermissionsData perm = null;
+            WeblogPermission perm = null;
             List perms = null;
             
             // get all permissions for a user
@@ -175,11 +173,11 @@ public class PermissionTest extends TestCase {
             perms = mgr.getAllPermissions(TestUtils.getManagedWebsite(testWeblog));
             assertEquals(1, perms.size());
             
-            perm = new PermissionsData();
+            perm = new WeblogPermission();
             perm.setUser(TestUtils.getManagedUser(user));
             perm.setWebsite(TestUtils.getManagedWebsite(testWeblog));
             perm.setPending(true);
-            perm.setPermissionMask(PermissionsData.AUTHOR);
+            perm.setPermissionMask(WeblogPermission.AUTHOR);
             mgr.savePermissions(perm);
             TestUtils.endSession(true);
             
@@ -204,11 +202,11 @@ public class PermissionTest extends TestCase {
             perm = null;
             perm = mgr.getPermissions(TestUtils.getManagedWebsite(testWeblog), TestUtils.getManagedUser(testUser));
             assertNotNull(perm);
-            assertEquals(PermissionsData.ADMIN, perm.getPermissionMask());
+            assertEquals(WeblogPermission.ADMIN, perm.getPermissionMask());
             perm = null;
             perm = mgr.getPermissions(TestUtils.getManagedWebsite(testWeblog), TestUtils.getManagedUser(user));
             assertNotNull(perm);
-            assertEquals(PermissionsData.AUTHOR, perm.getPermissionMask());
+            assertEquals(WeblogPermission.AUTHOR, perm.getPermissionMask());
             assertEquals(true, perm.isPending());
             
             // cleanup
@@ -236,11 +234,11 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
 
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        PermissionsData perm = null;
+        WeblogPermission perm = null;
         List perms = null;
 
         // invite user to weblog
-        perm = mgr.inviteUser(TestUtils.getManagedWebsite(testWeblog), user, PermissionsData.LIMITED);
+        perm = mgr.inviteUser(TestUtils.getManagedWebsite(testWeblog), user, WeblogPermission.LIMITED);
         String id = perm.getId();
         TestUtils.endSession(true);
 
@@ -266,7 +264,7 @@ public class PermissionTest extends TestCase {
         assertFalse(mgr.getPermissions(testWeblog, user).isPending());
         List weblogs = mgr.getWebsites(TestUtils.getManagedUser(user), null, null, null, null, 0, -1);
         assertEquals(1, weblogs.size());
-        assertEquals(testWeblog.getId(), ((WebsiteData)weblogs.get(0)).getId());
+        assertEquals(testWeblog.getId(), ((Weblog)weblogs.get(0)).getId());
 
         // assert that website has user
         List users = mgr.getUsers(testWeblog, null, null, null, 0, -1);

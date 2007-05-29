@@ -40,10 +40,10 @@ import org.apache.roller.business.MailProvider;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -94,7 +94,8 @@ public class MailUtil {
             while (websiteUserIter.hasNext()) {
                 UserData websiteUser = (UserData)websiteUserIter.next();
                 if (entry.getWebsite().hasUserPermissions(
-                        websiteUser, PermissionsData.AUTHOR)
+                        
+                        websiteUser,WeblogPermission.AUTHOR)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
                 }
@@ -133,7 +134,7 @@ public class MailUtil {
     /**
      * Send a weblog invitation email.
      */
-    public static void sendWeblogInvitation(WebsiteData website, 
+    public static void sendWeblogInvitation(Weblog website, 
                                             UserData user)
             throws RollerException {
         

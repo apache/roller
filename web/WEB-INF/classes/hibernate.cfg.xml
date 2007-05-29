@@ -43,14 +43,14 @@
         <!-- Map Roller pojo classes -->
         <mapping resource="org/apache/roller/pojos/RollerPropertyData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/UserData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/RoleData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/UserRole.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/RollerConfigData.hbm.xml" />
 
-        <mapping resource="org/apache/roller/pojos/WebsiteData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/PermissionsData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/BookmarkData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/Weblog.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogPermission.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogBookmark.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/CommentData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/FolderData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogBookmarkFolder.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogTemplate.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/PingCategoryRestrictionData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/AutoPingData.hbm.xml" />

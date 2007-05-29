@@ -11,7 +11,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.RoleData;
+import org.apache.roller.pojos.UserRole;
 import org.apache.roller.pojos.UserData;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -41,7 +41,7 @@ public class RollerUserDetailsService implements UserDetailsService {
             new GrantedAuthorityImpl[userData.getRoles().size()];
         int i = 0;
         for (Iterator it = userData.getRoles().iterator(); it.hasNext();) {
-            RoleData role = (RoleData)it.next();
+            UserRole role = (UserRole)it.next();
             authorities[i++] = new GrantedAuthorityImpl(role.getRole());
         }
         

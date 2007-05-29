@@ -26,9 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -39,7 +39,7 @@ public class FolderParentDeletesTest extends TestCase {
     public static Log log = LogFactory.getLog(FolderFunctionalityTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     
     /**
      * All tests in this suite require a user and a weblog.
@@ -86,13 +86,13 @@ public class FolderParentDeletesTest extends TestCase {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        FolderData root = bmgr.getRootFolder(testWeblog);
+        WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
         // add a small tree /parentDelete-fold1/parentDelete-fold2
-        FolderData fold1 = new FolderData(root, "parentDelete-fold1", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder fold1 = new WeblogBookmarkFolder(root, "parentDelete-fold1", null, TestUtils.getManagedWebsite(testWeblog));
         root.addFolder(fold1);
         bmgr.saveFolder(fold1);
-        FolderData fold2 = new FolderData(fold1, "parentDelete-fold2", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder fold2 = new WeblogBookmarkFolder(fold1, "parentDelete-fold2", null, TestUtils.getManagedWebsite(testWeblog));
         fold1.addFolder(fold2);
         bmgr.saveFolder(fold2);
         TestUtils.endSession(true);

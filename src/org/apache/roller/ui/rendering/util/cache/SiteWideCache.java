@@ -31,15 +31,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.BookmarkData;
+import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.Utilities;
@@ -333,7 +333,7 @@ public class SiteWideCache implements CacheHandler {
     /**
      * A weblog has changed.
      */
-    public void invalidate(WebsiteData website) {
+    public void invalidate(Weblog website) {
         
         if(!cacheEnabled)
             return;
@@ -346,7 +346,7 @@ public class SiteWideCache implements CacheHandler {
     /**
      * A bookmark has changed.
      */
-    public void invalidate(BookmarkData bookmark) {
+    public void invalidate(WeblogBookmark bookmark) {
         if(RollerRuntimeConfig.isSiteWideWeblog(bookmark.getWebsite().getHandle())) {
             invalidate(bookmark.getWebsite());
         }
@@ -356,7 +356,7 @@ public class SiteWideCache implements CacheHandler {
     /**
      * A folder has changed.
      */
-    public void invalidate(FolderData folder) {
+    public void invalidate(WeblogBookmarkFolder folder) {
         if(RollerRuntimeConfig.isSiteWideWeblog(folder.getWebsite().getHandle())) {
             invalidate(folder.getWebsite());
         }

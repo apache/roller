@@ -25,9 +25,9 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.pojos.BookmarkData;
+import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.business.WeblogEntryPlugin;
 
 import java.io.UnsupportedEncodingException;
@@ -132,7 +132,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * @param ctx  Plugins may place objects into the Velocity Context.
      * @see PagWeblogEntryPluginit(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public void init(WebsiteData website) throws RollerException
+    public void init(Weblog website) throws RollerException
     {
         if (mLogger.isDebugEnabled())
         {
@@ -146,7 +146,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         userBookmarks = buildBookmarkMap(website);
 
         // Determine default topic site from bookmark if present
-        BookmarkData defaultTopicBookmark = (BookmarkData) userBookmarks.get(defaultTopicBookmarkName);
+        WeblogBookmark defaultTopicBookmark = (WeblogBookmark) userBookmarks.get(defaultTopicBookmarkName);
         if (defaultTopicBookmark != null) defaultTopicSite = defaultTopicBookmark.getUrl();
 
         // Append / to defaultTopicSite if it doesn't have it
@@ -294,7 +294,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      */
     protected String getBookmarkSite(String bookmarkName)
     {
-        BookmarkData bookmark = (BookmarkData) getUserBookmarks().get(bookmarkName);
+        WeblogBookmark bookmark = (WeblogBookmark) getUserBookmarks().get(bookmarkName);
         return bookmark == null ? null : bookmark.getUrl();
     }
 
@@ -304,7 +304,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * If ignoreBookmarks property is set, an empty map is returned.
      * @return map of the user's bookmarks (type BookmarkData), keyed by name (type String).
      */
-    protected Map buildBookmarkMap(WebsiteData website) throws RollerException
+    protected Map buildBookmarkMap(Weblog website) throws RollerException
     {
         Map bookmarkMap = new HashMap();
         if (RollerConfig.getBooleanProperty("plugins.topictag.ignoreBookmarks")) {
@@ -321,7 +321,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
 
             for (Iterator i = bookmarks.iterator(); i.hasNext();)
             {
-                BookmarkData b = (BookmarkData) i.next();
+                WeblogBookmark b = (WeblogBookmark) i.next();
                 bookmarkMap.put(b.getName(), b);
             }
         }

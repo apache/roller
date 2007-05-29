@@ -100,7 +100,7 @@ public class UserData
      * @hibernate.bag lazy="true" inverse="true" cascade="none"
      * @hibernate.collection-key column="user_id"
      * @hibernate.collection-one-to-many
-     *    class="org.apache.roller.pojos.PermissionsData"
+     *    class="org.apache.roller.pojos.WeblogPermission"
      */
     public List getPermissions() {
         return permissions;
@@ -324,7 +324,7 @@ public class UserData
     /**
      * @hibernate.set lazy="true" inverse="true" cascade="all"
      * @hibernate.collection-key column="userid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.RoleData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.UserRole"
      */
     public Set getRoles() {
         return roles;
@@ -344,7 +344,7 @@ public class UserData
     public boolean hasRole(String roleName) {
         Iterator iter = getRoles().iterator();
         while (iter.hasNext()) {
-            RoleData role = (RoleData) iter.next();
+            UserRole role = (UserRole) iter.next();
             if (role.getRole().equals(roleName)) {
                 return true;
             }
@@ -357,7 +357,7 @@ public class UserData
      */
     public void grantRole(String roleName) throws RollerException {
         if (!hasRole(roleName)) {
-            RoleData role = new RoleData(null, this, roleName);
+            UserRole role = new UserRole(null, this, roleName);
             getRoles().add(role);
             role.setUser(this);
         }

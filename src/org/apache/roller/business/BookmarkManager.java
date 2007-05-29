@@ -20,9 +20,9 @@ package org.apache.roller.business;
 
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.WeblogBookmark;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -41,7 +41,7 @@ public interface BookmarkManager {
      * @param folder The folder to be saved.
      * @throws RollerException If there is a problem.
      */
-    public void saveFolder(FolderData folder) throws RollerException;
+    public void saveFolder(WeblogBookmarkFolder folder) throws RollerException;
     
     
     /**
@@ -52,7 +52,7 @@ public interface BookmarkManager {
      * @param folder The folder to be removed.
      * @throws RollerException If there is a problem.
      */
-    public void removeFolder(FolderData folder) throws RollerException;
+    public void removeFolder(WeblogBookmarkFolder folder) throws RollerException;
     
     
     /**
@@ -60,7 +60,10 @@ public interface BookmarkManager {
      *
      * This moves the src folder itself and all children and associated bookmarks.
      */
-    public void moveFolder(FolderData src, FolderData dest)
+    public void moveFolder(WeblogBookmarkFolder src,
+
+    WeblogBookmarkFolder dest
+)
             throws RollerException;
     
     
@@ -71,7 +74,7 @@ public interface BookmarkManager {
      * @returns FolderData The folder, or null if not found.
      * @throws RollerException If there is a problem.
      */
-    public FolderData getFolder(String id) throws RollerException;
+    public WeblogBookmarkFolder getFolder(String id) throws RollerException;
     
     
     /** 
@@ -81,7 +84,7 @@ public interface BookmarkManager {
      * @returns List The list of FolderData objects from the weblog.
      * @throws RollerException If there is a problem.
      */
-    public List getAllFolders(WebsiteData weblog) throws RollerException;
+    public List getAllFolders(Weblog weblog) throws RollerException;
     
     
     /** 
@@ -92,7 +95,7 @@ public interface BookmarkManager {
      * @returns FolderData The root folder, or null if not found.
      * @throws RollerException If there is a problem.
      */
-    public FolderData getRootFolder(WebsiteData weblog) throws RollerException;
+    public WeblogBookmarkFolder getRootFolder(Weblog weblog) throws RollerException;
     
     
     /** 
@@ -103,7 +106,7 @@ public interface BookmarkManager {
      * @returns FolderData The folder from the given path, or null if not found.
      * @throws RollerException If there is a problem.
      */
-    public FolderData getFolder(WebsiteData weblog, String path)
+    public WeblogBookmarkFolder getFolder(Weblog weblog, String path)
             throws RollerException;
     
     
@@ -113,7 +116,7 @@ public interface BookmarkManager {
      * @param bookmark The bookmark to be saved.
      * @throws RollerException If there is a problem.
      */
-    public void saveBookmark(BookmarkData bookmark) throws RollerException;
+    public void saveBookmark(WeblogBookmark bookmark) throws RollerException;
     
     
     /**
@@ -122,7 +125,7 @@ public interface BookmarkManager {
      * @param bookmark The bookmark to be removed.
      * @throws RollerException If there is a problem.
      */
-    public void removeBookmark(BookmarkData bookmark) throws RollerException;
+    public void removeBookmark(WeblogBookmark bookmark) throws RollerException;
     
     
     /** 
@@ -132,7 +135,7 @@ public interface BookmarkManager {
      * @returns BookmarkData The bookmark, or null if not found.
      * @throws RollerException If there is a problem.
      */
-    public BookmarkData getBookmark(String id) throws RollerException;
+    public WeblogBookmark getBookmark(String id) throws RollerException;
     
     
     /** 
@@ -143,7 +146,7 @@ public interface BookmarkManager {
      * @returns List The list of bookmarks found.
      * @throws RollerException If there is a problem.
      */
-    public List getBookmarks(FolderData folder, boolean recurse)
+    public List getBookmarks(WeblogBookmarkFolder folder, boolean recurse)
             throws RollerException;
     
     
@@ -154,7 +157,7 @@ public interface BookmarkManager {
      * @param folder The NEW folder name to import the OPML into.
      * @param opml OPML data to be imported.
      */
-    public void importBookmarks(WebsiteData weblog, String folder, String opml)
+    public void importBookmarks(Weblog weblog, String folder, String opml)
             throws RollerException;
     
     

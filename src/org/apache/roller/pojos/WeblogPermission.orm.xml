@@ -9,17 +9,17 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="PermissionsData"
-            class="org.apache.roller.pojos.PermissionsData">
+    <entity metadata-complete="true" name="WeblogPermission"
+            class="org.apache.roller.pojos.WeblogPermission">
         <table name="roller_user_permissions"/>
-        <named-query name="PermissionsData.getByWebsiteAndUser">
-            <query>SELECT p FROM PermissionsData p WHERE p.website = ?1 AND p.user = ?2</query>
+        <named-query name="WeblogPermission.getByWebsiteAndUser">
+            <query>SELECT p FROM WeblogPermission p WHERE p.website = ?1 AND p.user = ?2</query>
         </named-query>
-        <named-query name="PermissionsData.getByUserAndPending">
-            <query>SELECT p FROM PermissionsData p WHERE p.user = ?1 AND p.pending = ?2</query>
+        <named-query name="WeblogPermission.getByUserAndPending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.user = ?1 AND p.pending = ?2</query>
         </named-query>
-        <named-query name="PermissionsData.getByWebsiteAndPending">
-            <query>SELECT p FROM PermissionsData p WHERE p.website = ?1 AND p.pending = ?2</query>
+        <named-query name="WeblogPermission.getByWebsiteAndPending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.website = ?1 AND p.pending = ?2</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -31,7 +31,7 @@
             <basic name="pending">
                 <column name="pending" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <many-to-one name="website" target-entity="org.apache.roller.pojos.WebsiteData">
+            <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="website_id" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
             <many-to-one name="user" target-entity="org.apache.roller.pojos.UserData">

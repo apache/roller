@@ -27,7 +27,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.WeblogPermission;
 
 
 /**
@@ -244,7 +244,7 @@ public class UpgradeDatabase {
                 permsInsert.setString( 1, websiteid+"p");
                 permsInsert.setString( 2, websiteid);
                 permsInsert.setString( 3, userid);
-                permsInsert.setShort(  4, PermissionsData.ADMIN);
+                permsInsert.setShort(    4,WeblogPermission.ADMIN);
                 permsInsert.setBoolean(5, false);
                 permsInsert.executeUpdate();
             }

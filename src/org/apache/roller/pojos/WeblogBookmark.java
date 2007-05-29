@@ -31,16 +31,16 @@ import org.apache.roller.util.UUIDGenerator;
  * Don't construct one of these yourself, instead use the create method in 
  * the your BookmarkManager implementation.</p>
  *
- * @ejb:bean name="BookmarkData"
+ * @ejb:bean name="WeblogBookmark"
  * @hibernate.class lazy="true" table="bookmark"
  * @hibernate.cache usage="read-write"
  */
-public class BookmarkData
+public class WeblogBookmark
     implements Serializable, Comparable
 {
     static final long serialVersionUID = 2315131256728236003L;
     
-    private FolderData folder;
+    private WeblogBookmarkFolder folder;
 
     private String id = UUIDGenerator.generateUUID();
     private String name;
@@ -56,12 +56,12 @@ public class BookmarkData
     //----------------------------------------------------------- Constructors
     
     /** Default constructor, for use in form beans only. */
-    public BookmarkData()
+    public WeblogBookmark()
     {
     }
     
-    public BookmarkData(
-        FolderData parent,
+    public WeblogBookmark(
+        WeblogBookmarkFolder parent,
         String name, 
         String desc, 
         String url, 
@@ -81,7 +81,7 @@ public class BookmarkData
     }
 
     /** For use by BookmarkManager implementations only. */
-    public BookmarkData(BookmarkManager bmgr)
+    public WeblogBookmark(BookmarkManager bmgr)
     {
         bookmarkManager = bmgr;
     }
@@ -263,13 +263,13 @@ public class BookmarkData
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="folderid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.FolderData getFolder()
+    public org.apache.roller.pojos.WeblogBookmarkFolder getFolder()
     {
         return this.folder;
     }
 
     /** @ejb:persistent-field */
-    public void setFolder(org.apache.roller.pojos.FolderData folder)
+    public void setFolder(org.apache.roller.pojos.WeblogBookmarkFolder folder)
     {
         this.folder = folder;
     }
@@ -287,8 +287,8 @@ public class BookmarkData
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof BookmarkData != true) return false;
-        BookmarkData o = (BookmarkData)other;
+        if (other instanceof WeblogBookmark != true) return false;
+        WeblogBookmark o = (WeblogBookmark)other;
         return new EqualsBuilder()
             .append(getName(), o.getName()) 
             .append(getFolder(), o.getFolder()) 
@@ -305,7 +305,7 @@ public class BookmarkData
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(BookmarkData other)
+    public void setData(WeblogBookmark other)
     {
         this.id = other.getId();
         this.name = other.getName();
@@ -336,7 +336,7 @@ public class BookmarkData
         bookmarkManager = bmgr;
     }
 
-    public WebsiteData getWebsite()
+    public Weblog getWebsite()
     {
         return this.folder.getWebsite();
     }

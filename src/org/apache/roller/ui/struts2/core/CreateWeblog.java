@@ -30,7 +30,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -116,7 +116,7 @@ public class CreateWeblog extends UIAction {
         
         if(!hasActionErrors()) {
             
-            WebsiteData wd = new WebsiteData(
+            Weblog wd = new Weblog(
                     getBean().getHandle(),
                     user,
                     getBean().getName(),

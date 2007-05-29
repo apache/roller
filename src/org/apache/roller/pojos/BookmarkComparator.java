@@ -27,8 +27,8 @@ public class BookmarkComparator implements Comparator, Serializable
     public int compare(Object val1, Object val2)
     throws ClassCastException
     {
-        BookmarkData bd1 = (BookmarkData)val1;
-        BookmarkData bd2 = (BookmarkData)val2;
+        WeblogBookmark bd1 = (WeblogBookmark)val1;
+        WeblogBookmark bd2 = (WeblogBookmark)val2;
         int priority1 = bd1.getPriority().intValue();
         int priority2 = bd2.getPriority().intValue();
 

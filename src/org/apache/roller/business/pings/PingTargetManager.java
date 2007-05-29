@@ -21,7 +21,7 @@ package org.apache.roller.business.pings;
 import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -83,7 +83,7 @@ public interface PingTargetManager {
      *         objects
      * @throws RollerException
      */
-    public List getCustomPingTargets(WebsiteData website) throws RollerException;
+    public List getCustomPingTargets(Weblog website) throws RollerException;
     
     
     /**

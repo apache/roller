@@ -58,7 +58,7 @@ public class WeblogCategoryData implements Serializable {
     private String path = null;
     
     // associations
-    private WebsiteData website = null;
+    private Weblog website = null;
     private WeblogCategoryData parentCategory = null;
     private Set childCategories = new HashSet();
     
@@ -67,7 +67,7 @@ public class WeblogCategoryData implements Serializable {
     }
     
     public WeblogCategoryData(
-            WebsiteData website,
+            Weblog website,
             WeblogCategoryData parent,
             java.lang.String name,
             java.lang.String description,
@@ -234,11 +234,11 @@ public class WeblogCategoryData implements Serializable {
      *
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return website;
     }
     
-    public void setWebsite(WebsiteData website) {
+    public void setWebsite(Weblog website) {
         this.website = website;
     }
     

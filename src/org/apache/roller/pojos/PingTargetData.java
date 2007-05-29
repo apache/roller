@@ -46,7 +46,7 @@ public class PingTargetData implements Serializable {
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
     private String pingUrl = null;
-    private WebsiteData website = null;
+    private Weblog website = null;
     private int conditionCode = -1;
     private Timestamp lastSuccess = null;
     private boolean autoEnabled = false;
@@ -67,7 +67,7 @@ public class PingTargetData implements Serializable {
      * @param pingUrl the URL to which to send the ping
      * @param website the website (on this server) for which this is a custom ping target (may be null)
      */
-    public PingTargetData(String id, String name, String pingUrl, WebsiteData website, boolean autoEnable) {
+    public PingTargetData(String id, String name, String pingUrl, Weblog website, boolean autoEnable) {
         //this.id = id;
         this.name = name;
         this.pingUrl = pingUrl;
@@ -175,7 +175,7 @@ public class PingTargetData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public WebsiteData getWebsite() {
+    public Weblog getWebsite() {
         return website;
     }
 
@@ -187,7 +187,7 @@ public class PingTargetData implements Serializable {
      *                custom target
      * @ejb:persistent-field
      */
-    public void setWebsite(WebsiteData website) {
+    public void setWebsite(Weblog website) {
         this.website = website;
     }
 

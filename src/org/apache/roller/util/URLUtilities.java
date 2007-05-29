@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -76,7 +76,7 @@ public final class URLUtilities {
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
-    public static final String getWeblogURL(WebsiteData weblog,
+    public static final String getWeblogURL(Weblog weblog,
                                             String locale,
                                             boolean absolute) {
         
@@ -105,7 +105,7 @@ public final class URLUtilities {
     /**
      * Get url for a single weblog entry on a given weblog.
      */
-    public static final String getWeblogEntryURL(WebsiteData weblog,
+    public static final String getWeblogEntryURL(Weblog weblog,
                                                  String locale,
                                                  String entryAnchor,
                                                  boolean absolute) {
@@ -126,7 +126,7 @@ public final class URLUtilities {
     /**
      * Get url for a single weblog entry comments on a given weblog.
      */
-    public static final String getWeblogCommentsURL(WebsiteData weblog,
+    public static final String getWeblogCommentsURL(Weblog weblog,
                                                     String locale,
                                                     String entryAnchor,
                                                     boolean absolute) {
@@ -138,7 +138,7 @@ public final class URLUtilities {
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
-    public static final String getWeblogCommentURL(WebsiteData weblog,
+    public static final String getWeblogCommentURL(Weblog weblog,
                                                    String locale,
                                                    String entryAnchor,
                                                    String timeStamp,
@@ -151,7 +151,7 @@ public final class URLUtilities {
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    public static final String getWeblogCollectionURL(WebsiteData weblog,
+    public static final String getWeblogCollectionURL(Weblog weblog,
                                                       String locale,
                                                       String category,
                                                       String dateString,
@@ -199,7 +199,7 @@ public final class URLUtilities {
     /**
      * Get url for a custom page on a given weblog.
      */
-    public static final String getWeblogPageURL(WebsiteData weblog,
+    public static final String getWeblogPageURL(Weblog weblog,
                                                 String locale,
                                                 String pageLink,
                                                 String entryAnchor,
@@ -246,7 +246,7 @@ public final class URLUtilities {
     /**
      * Get url for a feed on a given weblog.
      */
-    public static final String getWeblogFeedURL(WebsiteData weblog,
+    public static final String getWeblogFeedURL(Weblog weblog,
                                                 String locale,
                                                 String type,
                                                 String format,
@@ -286,7 +286,7 @@ public final class URLUtilities {
     /**
      * Get url to search endpoint on a given weblog.
      */
-    public static final String getWeblogSearchURL(WebsiteData weblog,
+    public static final String getWeblogSearchURL(Weblog weblog,
                                                   String locale,
                                                   String query,
                                                   String category,
@@ -322,7 +322,7 @@ public final class URLUtilities {
     /**
      * Get url to a resource on a given weblog.
      */
-    public static final String getWeblogResourceURL(WebsiteData weblog,
+    public static final String getWeblogResourceURL(Weblog weblog,
                                                     String filePath,
                                                     boolean absolute) {
         
@@ -348,7 +348,7 @@ public final class URLUtilities {
     /**
      * Get url to rsd file on a given weblog.
      */
-    public static final String getWeblogRsdURL(WebsiteData weblog,
+    public static final String getWeblogRsdURL(Weblog weblog,
                                                boolean absolute) {
         
         if(weblog == null) {
@@ -362,7 +362,7 @@ public final class URLUtilities {
     /**
      * Get url to JSON tags service url, optionally for a given weblog.
      */
-    public static final String getWeblogTagsJsonURL(WebsiteData weblog,
+    public static final String getWeblogTagsJsonURL(Weblog weblog,
                                                     boolean absolute) {
         
         StringBuffer url = new StringBuffer();
@@ -499,7 +499,7 @@ public final class URLUtilities {
      * Optionally for a certain locale.
      */
     public static final String getPreviewWeblogURL(String previewTheme,
-                                                   WebsiteData weblog,
+                                                   Weblog weblog,
                                                    String locale,
                                                    boolean absolute) {
         
@@ -535,7 +535,7 @@ public final class URLUtilities {
      * Optionally for a certain locale.
      */
     public static final String getPreviewWeblogEntryURL(String previewAnchor,
-                                                        WebsiteData weblog,
+                                                        Weblog weblog,
                                                         String locale,
                                                         boolean absolute) {
         
@@ -570,7 +570,7 @@ public final class URLUtilities {
      * Get a url to a *preview* resource on a given weblog.
      */
     public static final String getPreviewWeblogResourceURL(String previewTheme,
-                                                           WebsiteData weblog,
+                                                           Weblog weblog,
                                                            String filePath,
                                                            boolean absolute) {
         

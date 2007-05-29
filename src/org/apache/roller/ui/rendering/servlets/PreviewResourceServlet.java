@@ -35,7 +35,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.ThemeResource;
 import org.apache.roller.pojos.WeblogTheme;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.ui.rendering.util.WeblogPreviewResourceRequest;
 
@@ -72,7 +72,7 @@ public class PreviewResourceServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        WebsiteData weblog = null;
+        Weblog weblog = null;
         String context = request.getContextPath();
         String servlet = request.getServletPath();
         String reqURI = request.getRequestURI();

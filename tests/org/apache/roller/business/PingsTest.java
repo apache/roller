@@ -37,7 +37,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -48,7 +48,7 @@ public class PingsTest extends TestCase {
     public static Log log = LogFactory.getLog(PingsTest.class);
     
     UserData testUser = null;
-    WebsiteData testWeblog = null;
+    Weblog testWeblog = null;
     PingTargetData testCommonPing = null;
     PingTargetData testCustomPing = null;
     

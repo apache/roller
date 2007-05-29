@@ -27,7 +27,7 @@ import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.BasePageModel;
 import org.xml.sax.SAXException;
 
@@ -144,7 +144,7 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel {
     static Hashtable createParams(HttpServletRequest req) {
         Hashtable params = new Hashtable();
         try {
-            WebsiteData website = getRequestedWeblog(req);
+            Weblog website = getRequestedWeblog(req);
             BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
             if (website == null && pageModel != null) {
                 website = pageModel.getWebsite();

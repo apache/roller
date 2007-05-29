@@ -19,15 +19,15 @@
 package org.apache.roller.util.cache;
 
 import java.util.Map;
-import org.apache.roller.pojos.BookmarkData;
+import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 
 /**
@@ -43,11 +43,11 @@ public interface CacheHandler {
     
     public void invalidate(WeblogEntryData entry);
     
-    public void invalidate(WebsiteData website);
+    public void invalidate(Weblog website);
     
-    public void invalidate(BookmarkData bookmark);
+    public void invalidate(WeblogBookmark bookmark);
     
-    public void invalidate(FolderData folder);
+    public void invalidate(WeblogBookmarkFolder folder);
 
     public void invalidate(CommentData comment);
 

@@ -21,7 +21,7 @@ package org.apache.roller.ui.rendering.plugins;
 import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.Weblog;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -53,7 +53,7 @@ public abstract class SearchPluginBase {
      *
      * @see org.apache.roller.model.PagePlugin#init(WebsiteData, Object, String baseUrl, org.apache.velocity.context.Context)
      */
-    public void init(WebsiteData website) throws RollerException {
+    public void init(Weblog website) throws RollerException {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug(getClass().getName() + "; version:  " + getVersion() + "; base version " + baseVersion);
         }
