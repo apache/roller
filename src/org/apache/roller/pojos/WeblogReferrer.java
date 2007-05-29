@@ -40,7 +40,7 @@ public class WeblogReferrer
     static final long serialVersionUID = -1817992900602131316L;
     private java.lang.String id = UUIDGenerator.generateUUID();
     private org.apache.roller.pojos.Weblog website = null;
-    private org.apache.roller.pojos.WeblogEntryData weblogEntry = null;
+    private org.apache.roller.pojos.WeblogEntry weblogEntry = null;
     private java.lang.String dateString = null;
     private java.lang.String refererUrl = null;
     private java.lang.String refererPermalink = null;
@@ -57,8 +57,7 @@ public class WeblogReferrer
     }
 
     public WeblogReferrer(java.lang.String id, 
-                       org.apache.roller.pojos.Weblog website, 
-                       org.apache.roller.pojos.WeblogEntryData weblogEntry, 
+                       org.apache.roller.pojos.Weblog website,org.apache.roller.pojos.WeblogEntry weblogEntry, 
                        java.lang.String dateString, java.lang.String refererUrl, 
                        java.lang.String refererPermalink, 
                        java.lang.String requestUrl, java.lang.String title, 
@@ -127,7 +126,7 @@ public class WeblogReferrer
      * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="entryid" cascade="none"
      */
-    public org.apache.roller.pojos.WeblogEntryData getWeblogEntry()
+    public org.apache.roller.pojos.WeblogEntry getWeblogEntry()
     {
         return weblogEntry;
     }
@@ -135,7 +134,7 @@ public class WeblogReferrer
     /**
      * @param data
      */
-    public void setWeblogEntry(org.apache.roller.pojos.WeblogEntryData data)
+    public void setWeblogEntry(org.apache.roller.pojos.WeblogEntry data)
     {
         weblogEntry = data;
     }

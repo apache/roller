@@ -33,7 +33,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.security.AutoProvision;
 
@@ -76,7 +76,7 @@ public class RollerSession
             if (rollerSession.getAuthenticatedUser() == null && principal != null) {
                 try {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
-                    UserData user = umgr.getUserByUserName(principal.getName());
+                    User user = umgr.getUserByUserName(principal.getName());
                     
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has SSO-enabled in security.xml
@@ -136,9 +136,9 @@ public class RollerSession
     /**
      * Authenticated user associated with this session.
      */
-    public UserData getAuthenticatedUser() {
+    public User getAuthenticatedUser() {
         
-        UserData authenticUser = null;
+        User authenticUser = null;
         if(userId != null) {
             try {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -155,7 +155,7 @@ public class RollerSession
     /**
      * Authenticated user associated with this session.
      */
-    public void setAuthenticatedUser(UserData authenticatedUser) {
+    public void setAuthenticatedUser(User authenticatedUser) {
         this.userId = authenticatedUser.getId();
     }
     
@@ -165,7 +165,7 @@ public class RollerSession
      */
     public boolean isGlobalAdminUser() throws RollerException {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         if (user != null && user.hasRole("admin")
         && user.getEnabled().booleanValue()) return true;
         return false;
@@ -178,7 +178,7 @@ public class RollerSession
     public boolean isUserAuthorized(Weblog website)
             throws RollerException {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
             return hasPermissions(website,WeblogPermission.LIMITED);
         return false;
@@ -191,7 +191,7 @@ public class RollerSession
     public boolean isUserAuthorizedToAuthor(Weblog website)
             throws RollerException {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
             return hasPermissions(website,WeblogPermission.AUTHOR);
         return false;
@@ -204,7 +204,7 @@ public class RollerSession
     public boolean isUserAuthorizedToAdmin(Weblog website)
             throws RollerException {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
             return hasPermissions(website,WeblogPermission.ADMIN);
         return false;
@@ -213,7 +213,7 @@ public class RollerSession
     
     private boolean hasPermissions(Weblog website, short mask) {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         if (website != null && user != null) {
             return website.hasUserPermissions(user, mask);
         }

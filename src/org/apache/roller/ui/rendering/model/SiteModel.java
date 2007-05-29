@@ -37,8 +37,8 @@ import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -147,7 +147,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, UserData user, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
     }
 
@@ -160,7 +160,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, UserData user, String cat, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, String cat, int sinceDays, int length) {
         
         String pagerUrl = null;
         if (feedRequest != null) {
@@ -307,7 +307,7 @@ public class SiteModel implements Model {
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            UserData user = umgr.getUserByUserName(userName);
+            User user = umgr.getUserByUserName(userName);
             List perms = umgr.getAllPermissions(user);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 WeblogPermission perm = (WeblogPermission) it.next();
@@ -348,7 +348,7 @@ public class SiteModel implements Model {
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            UserData user = umgr.getUserByUserName(username, Boolean.TRUE);
+            User user = umgr.getUserByUserName(username, Boolean.TRUE);
             wrappedUser = UserDataWrapper.wrap(user);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
@@ -414,7 +414,7 @@ public class SiteModel implements Model {
             UserManager umgr = roller.getUserManager();
             List users = umgr.getUsers(null, Boolean.TRUE, null, null, 0, length);
             for (Iterator it = users.iterator(); it.hasNext();) {
-                UserData user = (UserData) it.next();
+                User user = (User) it.next();
                 results.add(UserDataWrapper.wrap(user));
             }
         } catch (Exception e) {
@@ -519,7 +519,7 @@ public class SiteModel implements Model {
             WeblogManager wmgr = roller.getWeblogManager();
             List weblogs = wmgr.getWeblogEntriesPinnedToMain(new Integer(length));
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
-                WeblogEntryData entry = (WeblogEntryData) it.next();
+                WeblogEntry entry = (WeblogEntry) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));
             }
         } catch (Exception e) {

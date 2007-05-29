@@ -25,9 +25,9 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
 
@@ -39,12 +39,12 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     
     public static Log log = LogFactory.getLog(WeblogCategoryFunctionalityTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
-    WeblogCategoryData cat1 = null;
-    WeblogCategoryData cat2 = null;
-    WeblogCategoryData cat3 = null;
-    WeblogCategoryData testCat = null;
+    WeblogCategory cat1 = null;
+    WeblogCategory cat2 = null;
+    WeblogCategory cat3 = null;
+    WeblogCategory testCat = null;
     
     
     /**
@@ -100,7 +100,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         // start at root
-        WeblogCategoryData root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
+        WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
         // walk first level
         Set cats = root.getWeblogCategories();
@@ -108,9 +108,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         assertTrue(cats.contains(testCat));
         
         // find cat1
-        WeblogCategoryData cat = null;
+        WeblogCategory cat = null;
         for(Iterator it = cats.iterator(); it.hasNext(); ) {
-            cat = (WeblogCategoryData) it.next();
+            cat = (WeblogCategory) it.next();
             if(cat.getName().equals(cat1.getName())) {
                 break;
             }
@@ -122,7 +122,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         assertTrue(cats.contains(cat2));
         
         // find cat2
-        cat = (WeblogCategoryData) cats.iterator().next();
+        cat = (WeblogCategory) cats.iterator().next();
         
         // walk third level
         cats = cat.getWeblogCategories();
@@ -130,7 +130,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         assertTrue(cats.contains(cat3));
         
         // find cat3
-        cat = (WeblogCategoryData) cats.iterator().next();
+        cat = (WeblogCategory) cats.iterator().next();
         
         // make sure this is the end of the tree
         cats = cat.getWeblogCategories();
@@ -141,7 +141,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     
     
     /**
-     * Test the hasCategory() method on WeblogCategoryData.
+     * Test the hasCategory() method on WeblogCategory.
      */
     public void testHasCategory() throws Exception {
         
@@ -149,7 +149,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        WeblogCategoryData root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
+        WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
         // check that root has category
         assertTrue(root.hasCategory(testCat.getName()));
@@ -167,7 +167,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        WeblogCategoryData cat = mgr.getWeblogCategory(testCat.getId());
+        WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
         assertNotNull(cat);
         assertEquals(cat, testCat);
         
@@ -185,7 +185,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        WeblogCategoryData cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1");
+        WeblogCategory cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1");
         assertNotNull(cat);
         assertEquals(cat, cat1);
         
@@ -240,19 +240,19 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        WeblogCategory root = mgr.getRootWeblogCategory(testWeblog);
         
         // add some categories and entries to test with
-        WeblogCategoryData dest = new WeblogCategoryData(testWeblog, root, "c0", null, null);
+        WeblogCategory dest = new WeblogCategory(testWeblog, root, "c0", null, null);
         mgr.saveWeblogCategory(dest);
         
-        WeblogCategoryData c1 = new WeblogCategoryData(testWeblog, root, "c1", null, null);
+        WeblogCategory c1 = new WeblogCategory(testWeblog, root, "c1", null, null);
         mgr.saveWeblogCategory(c1);
         
-        WeblogCategoryData c2 = new WeblogCategoryData(testWeblog, c1, "c2", null, null);
+        WeblogCategory c2 = new WeblogCategory(testWeblog, c1, "c2", null, null);
         mgr.saveWeblogCategory(c2);
         
-        WeblogCategoryData c3 = new WeblogCategoryData(testWeblog, c2, "c3", null, null);
+        WeblogCategory c3 = new WeblogCategory(testWeblog, c2, "c3", null, null);
         mgr.saveWeblogCategory(c3);
         
         TestUtils.endSession(true);
@@ -262,9 +262,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         c3 = mgr.getWeblogCategory(c3.getId());
         dest = mgr.getWeblogCategory(dest.getId());
         
-        WeblogEntryData e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
-        WeblogEntryData e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
-        WeblogEntryData e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
+        WeblogEntry e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
+        WeblogEntry e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
+        WeblogEntry e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
         
         TestUtils.endSession(true);
         
@@ -315,19 +315,19 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        WeblogCategory root = mgr.getRootWeblogCategory(testWeblog);
         
         // add some categories and entries to test with
-        WeblogCategoryData dest = new WeblogCategoryData(testWeblog, root, "c0", null, null);
+        WeblogCategory dest = new WeblogCategory(testWeblog, root, "c0", null, null);
         mgr.saveWeblogCategory(dest);
         
-        WeblogCategoryData c1 = new WeblogCategoryData(testWeblog, root, "c1", null, null);
+        WeblogCategory c1 = new WeblogCategory(testWeblog, root, "c1", null, null);
         mgr.saveWeblogCategory(c1);
         
-        WeblogCategoryData c2 = new WeblogCategoryData(testWeblog, c1, "c2", null, null);
+        WeblogCategory c2 = new WeblogCategory(testWeblog, c1, "c2", null, null);
         mgr.saveWeblogCategory(c2);
         
-        WeblogCategoryData c3 = new WeblogCategoryData(testWeblog, c2, "c3", null, null);
+        WeblogCategory c3 = new WeblogCategory(testWeblog, c2, "c3", null, null);
         mgr.saveWeblogCategory(c3);
         
         TestUtils.endSession(true);
@@ -339,9 +339,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
-        WeblogEntryData e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
-        WeblogEntryData e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
-        WeblogEntryData e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
+        WeblogEntry e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
+        WeblogEntry e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
+        WeblogEntry e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
         
         TestUtils.endSession(true);
         

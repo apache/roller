@@ -27,7 +27,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -38,7 +38,7 @@ public class PermissionTest extends TestCase {
     
     public static Log log = LogFactory.getLog(PermissionTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     
     
@@ -156,7 +156,7 @@ public class PermissionTest extends TestCase {
         
         try {
             // we need a second user for this test
-            UserData user = TestUtils.setupUser("testPermissionsLookups");
+            User user = TestUtils.setupUser("testPermissionsLookups");
             TestUtils.endSession(true);
             
             UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -230,7 +230,7 @@ public class PermissionTest extends TestCase {
         log.info("BEGIN");
         
         // we need a second user for this test
-        UserData user = TestUtils.setupUser("testInvitations");
+        User user = TestUtils.setupUser("testInvitations");
         TestUtils.endSession(true);
 
         UserManager mgr = RollerFactory.getRoller().getUserManager();

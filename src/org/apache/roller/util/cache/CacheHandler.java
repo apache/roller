@@ -23,9 +23,9 @@ import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogReferrer;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.Weblog;
 
@@ -41,7 +41,7 @@ import org.apache.roller.pojos.Weblog;
  */
 public interface CacheHandler {
     
-    public void invalidate(WeblogEntryData entry);
+    public void invalidate(WeblogEntry entry);
     
     public void invalidate(Weblog website);
     
@@ -53,9 +53,9 @@ public interface CacheHandler {
 
     public void invalidate(WeblogReferrer referer);
 
-    public void invalidate(UserData user);
+    public void invalidate(User user);
 
-    public void invalidate(WeblogCategoryData category);
+    public void invalidate(WeblogCategory category);
 
     public void invalidate(WeblogTemplate template);
     

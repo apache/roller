@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -38,7 +38,7 @@ public class FolderFunctionalityTest extends TestCase {
     
     public static Log log = LogFactory.getLog(FolderFunctionalityTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     WeblogBookmarkFolder f1 = null;
     WeblogBookmarkFolder f2 = null;

@@ -22,11 +22,11 @@
         <mapping-file>org/apache/roller/pojos/RollerConfigData.orm.xml               </mapping-file>
         <mapping-file>org/apache/roller/pojos/RollerPropertyData.orm.xml             </mapping-file>
         <mapping-file>org/apache/roller/pojos/TaskLockData.orm.xml                   </mapping-file>
-        <mapping-file>org/apache/roller/pojos/UserData.orm.xml                       </mapping-file>
-        <mapping-file>org/apache/roller/pojos/WeblogCategoryData.orm.xml             </mapping-file>
-        <mapping-file>org/apache/roller/pojos/WeblogEntryData.orm.xml                </mapping-file>
-        <mapping-file>org/apache/roller/pojos/WeblogEntryTagAggregateData.orm.xml    </mapping-file>
-        <mapping-file>org/apache/roller/pojos/WeblogEntryTagData.orm.xml             </mapping-file>
+        <mapping-file>org/apache/roller/pojos/User.orm.xml                           </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogCategory.orm.xml                 </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogEntry.orm.xml                    </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogEntryTagAggregate.orm.xml        </mapping-file>
+        <mapping-file>org/apache/roller/pojos/WeblogEntryTag.orm.xml                 </mapping-file>
         <mapping-file>org/apache/roller/pojos/WeblogTemplate.orm.xml                 </mapping-file>
         <mapping-file>org/apache/roller/pojos/Weblog.orm.xml                         </mapping-file>
     </persistence-unit> 

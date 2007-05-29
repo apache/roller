@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
@@ -39,7 +39,7 @@ public class CategoryEdit extends UIAction {
     private static Log log = LogFactory.getLog(CategoryEdit.class);
     
     // the category we are editing
-    private WeblogCategoryData category = null;
+    private WeblogCategory category = null;
     
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
@@ -136,7 +136,7 @@ public class CategoryEdit extends UIAction {
         
         // make sure new name is not a duplicate of an existing category
         if(!getCategory().getName().equals(getBean().getName())) {
-            WeblogCategoryData parent = getCategory().getParent();
+            WeblogCategory parent = getCategory().getParent();
             if(parent != null && parent.hasCategory(getBean().getName())) {
                 addError("categoryForm.error.duplicateName", getBean().getName());
             }
@@ -144,11 +144,11 @@ public class CategoryEdit extends UIAction {
     }
 
 
-    public WeblogCategoryData getCategory() {
+    public WeblogCategory getCategory() {
         return category;
     }
 
-    public void setCategory(WeblogCategoryData category) {
+    public void setCategory(WeblogCategory category) {
         this.category = category;
     }
 

@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 
 /**
@@ -63,9 +63,9 @@ public class UserTest extends TestCase {
     public void testUserCRUD() throws Exception {
         
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        UserData user = null;
+        User user = null;
         
-        UserData testUser = new UserData();
+        User testUser = new User();
         testUser.setUserName("testUser");
         testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");
@@ -121,10 +121,10 @@ public class UserTest extends TestCase {
     public void testUserLookups() throws Exception {
         
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        UserData user = null;
+        User user = null;
         
         // add test user
-        UserData testUser = TestUtils.setupUser("userTestUser");
+        User testUser = TestUtils.setupUser("userTestUser");
         TestUtils.endSession(true);
         
         // lookup by username
@@ -143,7 +143,7 @@ public class UserTest extends TestCase {
         user = null;
         List users1 = mgr.getUsersStartingWith(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users1.size());
-        user = (UserData) users1.get(0);
+        user = (User) users1.get(0);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
@@ -151,7 +151,7 @@ public class UserTest extends TestCase {
         user = null;
         List users2 = mgr.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users2.size());
-        user = (UserData) users2.get(0);
+        user = (User) users2.get(0);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
@@ -175,10 +175,10 @@ public class UserTest extends TestCase {
     public void testRoleCRUD() throws Exception {
         
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        UserData user = null;
+        User user = null;
         
         // add test user
-        UserData testUser = TestUtils.setupUser("roleTestUser");
+        User testUser = TestUtils.setupUser("roleTestUser");
         TestUtils.endSession(true);
         
         // verify user has 2 roles, admin & editor

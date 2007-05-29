@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -50,11 +50,11 @@ public class Trackback {
     
     private static final Log mLogger = LogFactory.getLog(Trackback.class);
     
-    private final WeblogEntryData entry;
+    private final WeblogEntry entry;
     private final String trackbackURL;
     
     
-    public Trackback(WeblogEntryData tEntry, String tURL)
+    public Trackback(WeblogEntry tEntry, String tURL)
             throws TrackbackNotAllowedException {
         
         // Make sure trackback to URL is allowed

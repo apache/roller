@@ -29,7 +29,7 @@ import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +51,7 @@ public final class EntryEdit extends EntryBase {
     private EntryBean bean = new EntryBean();
     
     // the entry we are editing
-    private WeblogEntryData entry = null;
+    private WeblogEntry entry = null;
     
     // url to send trackback to
     private String trackbackUrl = null;
@@ -121,7 +121,7 @@ public final class EntryEdit extends EntryBase {
         if(!hasActionErrors()) try {
             WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
             
-            WeblogEntryData entry = getEntry();
+            WeblogEntry entry = getEntry();
             
             // set updatetime & pubtime
             entry.setUpdateTime(new Timestamp(new Date().getTime()));
@@ -139,7 +139,7 @@ public final class EntryEdit extends EntryBase {
                 
                 // if user does not have author perms then force PENDING status
                 if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
-                    entry.setStatus(WeblogEntryData.PENDING);
+                    entry.setStatus(WeblogEntry.PENDING);
                 }
             }
             
@@ -195,6 +195,7 @@ public final class EntryEdit extends EntryBase {
             // TODO: i18n
             addError("Error saving new entry");
         }
+
 
         
         return INPUT;
@@ -269,11 +270,11 @@ public final class EntryEdit extends EntryBase {
         this.bean = bean;
     }
 
-    public WeblogEntryData getEntry() {
+    public WeblogEntry getEntry() {
         return entry;
     }
 
-    public void setEntry(WeblogEntryData entry) {
+    public void setEntry(WeblogEntry entry) {
         this.entry = entry;
     }
 

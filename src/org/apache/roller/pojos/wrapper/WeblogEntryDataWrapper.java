@@ -18,7 +18,7 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 
 
 /**
@@ -27,15 +27,15 @@ import org.apache.roller.pojos.WeblogEntryData;
 public class WeblogEntryDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private WeblogEntryData pojo = null;
+    private WeblogEntry pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogEntryDataWrapper(WeblogEntryData toWrap) {
+    private WeblogEntryDataWrapper(WeblogEntry toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static WeblogEntryDataWrapper wrap(WeblogEntryData toWrap) {
+    public static WeblogEntryDataWrapper wrap(WeblogEntry toWrap) {
         if(toWrap != null)
             return new WeblogEntryDataWrapper(toWrap);
 
@@ -79,7 +79,7 @@ public class WeblogEntryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper.wrap((org.apache.roller.pojos.WeblogCategoryData) it.next()));
+            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper.wrap((org.apache.roller.pojos.WeblogCategory) it.next()));
             i++;
         }
 
@@ -101,7 +101,7 @@ public class WeblogEntryDataWrapper {
      *
      * Simply returns the same value that the pojo would have returned.
      */
-    public org.apache.roller.pojos.UserData getCreator()
+    public org.apache.roller.pojos.User getCreator()
     {   
         return this.pojo.getCreator();
     }
@@ -317,7 +317,7 @@ public class WeblogEntryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogEntryTagDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryTagData) it.next()));
+            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.WeblogEntryTagDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryTag) it.next()));
             i++;
         }
 
@@ -562,7 +562,7 @@ public class WeblogEntryDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.WeblogEntryData getPojo() {
+    public org.apache.roller.pojos.WeblogEntry getPojo() {
         return this.pojo;
     }
 

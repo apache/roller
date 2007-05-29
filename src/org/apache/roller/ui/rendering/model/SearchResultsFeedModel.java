@@ -40,7 +40,7 @@ import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.search.operations.SearchOperation;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -173,7 +173,7 @@ public class SearchResultsFeedModel implements Model {
             Roller roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
-            WeblogEntryData entry = null;
+            WeblogEntry entry = null;
             Document doc = null;
             String handle = null;
             Timestamp now = new Timestamp(new Date().getTime());

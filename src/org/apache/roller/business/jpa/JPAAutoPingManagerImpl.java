@@ -27,7 +27,7 @@ import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 import java.util.Collection;
@@ -91,7 +91,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         removeAutoPings(q.getResultList());
     }
 
-    public void queueApplicableAutoPings(WeblogEntryData changedWeblogEntry)
+    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry)
             throws RollerException {
         if (PingConfig.getSuspendPingProcessing()) {
             if (logger.isDebugEnabled())
@@ -123,7 +123,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         return q.getResultList();
     }
 
-    public List getApplicableAutoPings(WeblogEntryData changedWeblogEntry) 
+    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) 
             throws RollerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
         //        return (List)strategy.newQuery(AutoPingData.class, "AutoPingData.getByWebsite")

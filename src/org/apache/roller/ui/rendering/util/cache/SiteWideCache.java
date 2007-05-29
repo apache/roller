@@ -35,9 +35,9 @@ import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogReferrer;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
@@ -320,7 +320,7 @@ public class SiteWideCache implements CacheHandler {
     /**
      * A weblog entry has changed.
      */
-    public void invalidate(WeblogEntryData entry) {
+    public void invalidate(WeblogEntry entry) {
         
         if(!cacheEnabled)
             return;
@@ -384,7 +384,7 @@ public class SiteWideCache implements CacheHandler {
     /**
      * A user profile has changed.
      */
-    public void invalidate(UserData user) {
+    public void invalidate(User user) {
         // ignored
     }
     
@@ -392,7 +392,7 @@ public class SiteWideCache implements CacheHandler {
     /**
      * A category has changed.
      */
-    public void invalidate(WeblogCategoryData category) {
+    public void invalidate(WeblogCategory category) {
         if(RollerRuntimeConfig.isSiteWideWeblog(category.getWebsite().getHandle())) {
             invalidate(category.getWebsite());
         }

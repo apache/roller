@@ -20,7 +20,7 @@ package org.apache.roller.ui.rendering.plugins;
 
 import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 import java.io.UnsupportedEncodingException;
@@ -67,7 +67,7 @@ public abstract class SearchPluginBase {
      * @return Results of applying plugin to string.
      * @see org.apache.roller.model.PagePlugin#render(String)
      */
-    public String render(WeblogEntryData entry, String str) {
+    public String render(WeblogEntry entry, String str) {
         Pattern pattern = getPattern();
         Matcher m = pattern.matcher(str);
         StringBuffer result = new StringBuffer(str.length() + 128);   // rough guess at a reasonable length

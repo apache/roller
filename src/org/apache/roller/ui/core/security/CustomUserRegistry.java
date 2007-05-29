@@ -31,7 +31,7 @@ import org.acegisecurity.userdetails.ldap.LdapUserDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 /**
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
@@ -53,7 +53,7 @@ public class CustomUserRegistry {
     private static String LOCALE_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.locale";
     private static String TIMEZONE_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.timezone";
     
-    public static UserData getUserDetailsFromAuthentication() {
+    public static User getUserDetailsFromAuthentication() {
         boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
         if(!usingSSO) {
             log.info("SSO is not enabled. Skipping CustomUserRegistry functionality.");
@@ -85,7 +85,7 @@ public class CustomUserRegistry {
         String password = userDetails.getPassword();
         boolean enabled = userDetails.isEnabled();
         
-        UserData ud = new UserData();
+        User ud = new User();
         ud.setId(null);
         ud.setUserName(userName);
         

@@ -9,8 +9,8 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.StatCount;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -18,17 +18,17 @@ import org.apache.roller.pojos.Weblog;
  */
 public class WeblogStatsTest extends TestCase {
     
-    private UserData user1, user2;
+    private User user1, user2;
     
     private Weblog website1;
-        private WeblogEntryData entry11;
+        private WeblogEntry entry11;
             private WeblogEntryComment comment11;
             private WeblogEntryComment comment12;
-        private WeblogEntryData entry12;
+        private WeblogEntry entry12;
             private WeblogEntryComment comment13;
 
     private Weblog website2;
-        private WeblogEntryData entry21;
+        private WeblogEntry entry21;
             private WeblogEntryComment comment21; 
     
     public WeblogStatsTest() {

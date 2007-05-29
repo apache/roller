@@ -40,8 +40,8 @@ import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.ThemeTemplate;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
@@ -84,8 +84,8 @@ public class RollerRequest
     private PageContext        mPageContext = null;
     private HttpServletRequest mRequest = null;
     private Weblog        mWebsite;
-    private WeblogEntryData    mWeblogEntry;
-    private WeblogCategoryData mWeblogCategory;
+    private WeblogEntry    mWeblogEntry;
+    private WeblogCategory mWeblogCategory;
     
     private boolean            mIsDaySpecified = false;
     private boolean            mIsMonthSpecified = false;
@@ -579,10 +579,11 @@ public class RollerRequest
 
     //------------------------------------------------------------------------
     /**
-     * Gets the WeblogCategoryData specified by the request, or null.
+     * Gets the WeblogCategory specified by the request, or null.
+     * 
      * @return 
      */
-    public WeblogCategoryData getWeblogCategory()
+    public WeblogCategory getWeblogCategory()
     {
         if ( mWeblogCategory == null )
         {
@@ -728,7 +729,7 @@ public class RollerRequest
      * 
      * @return WeblogEntryData
      */
-    public WeblogEntryData getWeblogEntry( )
+    public WeblogEntry getWeblogEntry( )
     {
         if ( mWeblogEntry == null )
         {        

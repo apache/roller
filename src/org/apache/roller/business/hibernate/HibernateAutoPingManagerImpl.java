@@ -25,7 +25,7 @@ import org.hibernate.criterion.Expression;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import java.util.Collection;
 import java.util.Collections;
@@ -115,7 +115,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public void queueApplicableAutoPings(WeblogEntryData changedWeblogEntry) throws RollerException {
+    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException {
         if (PingConfig.getSuspendPingProcessing()) {
             if (log.isDebugEnabled()) log.debug("Ping processing is suspended.  No auto pings will be queued.");
             return;
@@ -159,7 +159,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public List getApplicableAutoPings(WeblogEntryData changedWeblogEntry) throws RollerException {
+    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(AutoPingData.class);

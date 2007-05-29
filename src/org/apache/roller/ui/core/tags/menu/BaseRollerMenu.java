@@ -33,9 +33,9 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RequestConstants;
@@ -151,7 +151,7 @@ public abstract class BaseRollerMenu {
         
         // finally make sure that user has required website permissions
         if (ret && mPerms != null && mPerms.size() > 0) {
-            UserData user = null;
+            User user = null;
             if (rses != null) user = rses.getAuthenticatedUser();
             
             Weblog website = getRequestedWeblog(req);
@@ -231,13 +231,13 @@ public abstract class BaseRollerMenu {
             weblog = roller.getUserManager().getWebsite(weblogId);
         } else if (request.getParameter(RequestConstants.WEBLOGENTRY_ID) != null) {
             String entryId = request.getParameter(RequestConstants.WEBLOGENTRY_ID);
-            WeblogEntryData entry = roller.getWeblogManager().getWeblogEntry(entryId);
+            WeblogEntry entry = roller.getWeblogManager().getWeblogEntry(entryId);
             if(entry != null) {
                 weblog = entry.getWebsite();
             }
         } else if (request.getParameter(RequestConstants.WEBLOGCATEGORY_ID) != null) {
             String catId = request.getParameter(RequestConstants.WEBLOGCATEGORY_ID);
-            WeblogCategoryData cat = roller.getWeblogManager().getWeblogCategory(catId);
+            WeblogCategory cat = roller.getWeblogManager().getWeblogCategory(catId);
             if(cat != null) {
                 weblog = cat.getWebsite();
             }

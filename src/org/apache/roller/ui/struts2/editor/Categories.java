@@ -30,7 +30,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.WeblogCategoryPathComparator;
 import org.apache.roller.ui.struts2.util.UIAction;
 
@@ -46,7 +46,7 @@ public class Categories extends UIAction {
     private String categoryId = null;
     
     // the category we are viewing
-    private WeblogCategoryData category = null;
+    private WeblogCategory category = null;
     
     // list of category ids to move
     private String[] selectedCategories = null;
@@ -97,15 +97,15 @@ public class Categories extends UIAction {
         try {
             // Build list of all categories, except for current one, sorted by path.
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List<WeblogCategoryData> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
-            for(WeblogCategoryData cat : cats) {
+            List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
+            for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getCategoryId())) {
                     allCategories.add(cat);
                 }
             }
             
             // build category path
-            WeblogCategoryData parent = getCategory().getParent();
+            WeblogCategory parent = getCategory().getParent();
             if(parent != null) {
                 List categoryPath = new LinkedList();
                 categoryPath.add(0, getCategory());
@@ -138,10 +138,10 @@ public class Categories extends UIAction {
             
             // Move subCategories to new category.
             String[] cats = getSelectedCategories();
-            WeblogCategoryData parent = wmgr.getWeblogCategory(getTargetCategoryId());
+            WeblogCategory parent = wmgr.getWeblogCategory(getTargetCategoryId());
             if(cats != null) {
                 for (int i = 0; i < cats.length; i++) {
-                    WeblogCategoryData cd =
+                    WeblogCategory cd =
                             wmgr.getWeblogCategory(cats[i]);
                     
                     // Don't move category into itself.
@@ -174,11 +174,11 @@ public class Categories extends UIAction {
         this.categoryId = categoryId;
     }
 
-    public WeblogCategoryData getCategory() {
+    public WeblogCategory getCategory() {
         return category;
     }
 
-    public void setCategory(WeblogCategoryData category) {
+    public void setCategory(WeblogCategory category) {
         this.category = category;
     }
 

@@ -25,20 +25,20 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Ping Category Restriction.  An instance of this class relates an auto ping configuration {@link AutoPingData} to a
- * specific weblog category {@link WeblogCategoryData}.  When one or more instances of this class are present for a
+ * specific weblog category {@link WeblogCategory}.  When one or more instances of this class are present for a
  * given auto ping configuration, it means that pings should only go out for changes to the categories specified by those
  * instances.  If no instances of this class are present for a given auto ping configuration, it means that the ping
  * configuration is not restricted by category, so pings should go out for changes in any category.
- *
+ * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="AutoPingData"
- * @hibernate.class lazy="true" table="pingcategory"
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="pingcategory"
  */
 public class PingCategoryRestrictionData implements Serializable {
     private String id = UUIDGenerator.generateUUID();
     private AutoPingData autoPing;
-    private WeblogCategoryData weblogCategory;
+    private WeblogCategory weblogCategory;
 
     static final long serialVersionUID = 2261280579491859418L;
 
@@ -55,7 +55,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @param autoPing       auto ping configuration being restricted
      * @param weblogCategory weblog category to which this auto ping configuration is restricted
      */
-    public PingCategoryRestrictionData(String id, AutoPingData autoPing, WeblogCategoryData weblogCategory) {
+    public PingCategoryRestrictionData(String id, AutoPingData autoPing, WeblogCategory weblogCategory) {
         //this.id = id;
         this.autoPing = autoPing;
         this.weblogCategory = weblogCategory;
@@ -121,7 +121,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="weblogcategoryid" cascade="none" not-null="true"
      */
-    public WeblogCategoryData getWeblogCategory() {
+    public WeblogCategory getWeblogCategory() {
         return weblogCategory;
     }
 
@@ -131,7 +131,7 @@ public class PingCategoryRestrictionData implements Serializable {
      * @param weblogCategory the weblog category to which pings should be restricted.
      * @ejb:persistent-field
      */
-    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
+    public void setWeblogCategory(WeblogCategory weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
 

@@ -26,7 +26,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogBookmark;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.business.WeblogEntryPlugin;
 
@@ -199,7 +199,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * @param singleEntry     Ignored.
      * @return Results of applying plugin to entry.
      */
-    public String render(WeblogEntryData entry, String str)
+    public String render(WeblogEntry entry, String str)
     {
         String entryText = str;
         StringBuffer result = new StringBuffer(entryText.length());

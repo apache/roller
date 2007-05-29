@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 

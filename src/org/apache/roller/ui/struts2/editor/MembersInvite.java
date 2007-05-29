@@ -25,7 +25,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.MailUtil;
 
@@ -91,7 +91,7 @@ public class MembersInvite extends UIAction {
         UserManager umgr = RollerFactory.getRoller().getUserManager();
         
         // user being invited
-        UserData user = null;
+        User user = null;
         try {
             user = umgr.getUserByUserName(getUserName());
             if (user == null) {

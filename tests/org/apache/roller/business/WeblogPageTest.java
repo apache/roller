@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.Weblog;
 
@@ -39,7 +39,7 @@ public class WeblogPageTest extends TestCase {
     
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     WeblogTemplate testPage = null;
     

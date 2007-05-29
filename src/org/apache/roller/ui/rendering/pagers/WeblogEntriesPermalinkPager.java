@@ -30,7 +30,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.I18nMessages;
@@ -44,9 +44,9 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     private static Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
     
-    WeblogEntryData currEntry = null;
-    WeblogEntryData nextEntry = null;
-    WeblogEntryData prevEntry = null;
+    WeblogEntry currEntry = null;
+    WeblogEntry nextEntry = null;
+    WeblogEntry prevEntry = null;
     
     // collection for the pager
     Map entries = null;
@@ -73,7 +73,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
-            if (currEntry != null && currEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
+            if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 entries = new TreeMap();
                 entries.put(new Date(currEntry.getPubTime().getTime()),
                         Collections.singletonList(WeblogEntryDataWrapper.wrap(currEntry)));
@@ -81,6 +81,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
         } catch (Exception e) {
             log.error("ERROR: fetching entry");
         }
+
         
         return entries;
     }
@@ -130,36 +131,38 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     }
     
     
-    private WeblogEntryData getNextEntry() {
+    private WeblogEntry getNextEntry() {
         if (nextEntry == null) try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             nextEntry = wmgr.getNextEntry(currEntry, null, locale);
             // make sure that entry is published and not to future
             if (nextEntry != null && nextEntry.getPubTime().after(new Date())
-            && nextEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
+            && nextEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 nextEntry = null;
             }
         } catch (RollerException e) {
             log.error("ERROR: getting next entry", e);
         }
+
         return nextEntry;
     }
     
     
-    private WeblogEntryData getPrevEntry() {
+    private WeblogEntry getPrevEntry() {
         if (prevEntry == null) try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
             // make sure that entry is published and not to future
             if (prevEntry != null && prevEntry.getPubTime().after(new Date())
-            && prevEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
+            && prevEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 prevEntry = null;
             }
         } catch (RollerException e) {
             log.error("ERROR: getting prev entry", e);
         }
+
         return prevEntry;
     }
     

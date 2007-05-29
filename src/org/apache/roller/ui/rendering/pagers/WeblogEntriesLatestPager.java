@@ -30,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -76,12 +76,12 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 Map mmap = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+                        
                         weblog,
                         null,
                         new Date(),
                         catPath,
-                        tags,
-                        WeblogEntryData.PUBLISHED,
+                        tags,WeblogEntry.PUBLISHED,
                         locale,
                         offset,
                         length + 1);
@@ -98,8 +98,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                     List unwrapped= (List) mmap.get(key);
                     for(int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,
-                                WeblogEntryDataWrapper.wrap((WeblogEntryData)unwrapped.get(i)));
+                            wrapped.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry)unwrapped.get(i)));
                         } else {
                             more = true;
                         }

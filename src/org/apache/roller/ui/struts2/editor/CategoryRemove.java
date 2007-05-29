@@ -29,7 +29,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.WeblogCategoryPathComparator;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
@@ -46,7 +46,7 @@ public class CategoryRemove extends UIAction {
     private String removeId = null;
     
     // category object that we will remove
-    private WeblogCategoryData category = null;
+    private WeblogCategory category = null;
     
     // category id of the category to move to
     private String targetCategoryId = null;
@@ -90,8 +90,8 @@ public class CategoryRemove extends UIAction {
         try {
             // Build list of all categories, except for current one, sorted by path.
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List<WeblogCategoryData> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
-            for(WeblogCategoryData cat : cats) {
+            List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
+            for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
                     allCategories.add(cat);
                 }
@@ -119,7 +119,7 @@ public class CategoryRemove extends UIAction {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             
             if(getTargetCategoryId() != null) {
-                WeblogCategoryData target = wmgr.getWeblogCategory(getTargetCategoryId());
+                WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
                 wmgr.moveWeblogCategoryContents(getCategory(), target);
                 RollerFactory.getRoller().flush();
             }
@@ -153,11 +153,11 @@ public class CategoryRemove extends UIAction {
         this.removeId = categoryId;
     }
 
-    public WeblogCategoryData getCategory() {
+    public WeblogCategory getCategory() {
         return category;
     }
 
-    public void setCategory(WeblogCategoryData category) {
+    public void setCategory(WeblogCategory category) {
         this.category = category;
     }
 

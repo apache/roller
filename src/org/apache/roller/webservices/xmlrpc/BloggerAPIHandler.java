@@ -39,8 +39,8 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.Utilities;
@@ -86,7 +86,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
-        WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
+        WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
         // Return false if entry not found
         if (entry == null) return false;
@@ -221,7 +221,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
-            UserData user = userMgr.getUserByUserName(userid);
+            User user = userMgr.getUserByUserName(userid);
             
             // parses full name into two strings, firstname and lastname
             String firstname = "", lastname = "";
@@ -278,7 +278,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
-                UserData user = umgr.getUserByUserName(userid);
+                User user = umgr.getUserByUserName(userid);
                 // get list of user's enabled websites
                 List websites = umgr.getWebsites(user, Boolean.TRUE, null, null, null, 0, -1);
                 Iterator iter = websites.iterator();
@@ -329,13 +329,13 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager weblogMgr = roller.getWeblogManager();
-                WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
+                WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
                 entry.setText(content);
                 entry.setUpdateTime(current);
                 if (Boolean.valueOf(publish).booleanValue()) {
-                    entry.setStatus(WeblogEntryData.PUBLISHED);
+                    entry.setStatus(WeblogEntry.PUBLISHED);
                 } else {
-                    entry.setStatus(WeblogEntryData.DRAFT);
+                    entry.setStatus(WeblogEntry.DRAFT);
                 }
                 
                 // save the entry
@@ -400,20 +400,20 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             
             Timestamp current = new Timestamp(System.currentTimeMillis());
             
-            WeblogEntryData entry = new WeblogEntryData();
+            WeblogEntry entry = new WeblogEntry();
             entry.setTitle(title);
             entry.setText(content);
             entry.setPubTime(current);
             entry.setUpdateTime(current);
-            UserData user = roller.getUserManager().getUserByUserName(userid);
+            User user = roller.getUserManager().getUserByUserName(userid);
             entry.setCreator(user);
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
             entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
             if (Boolean.valueOf(publish).booleanValue()) {
-                entry.setStatus(WeblogEntryData.PUBLISHED);
+                entry.setStatus(WeblogEntry.PUBLISHED);
             } else {
-                entry.setStatus(WeblogEntryData.DRAFT);
+                entry.setStatus(WeblogEntry.DRAFT);
             }
             
             // save the entry
@@ -476,7 +476,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                     ArrayList list = (ArrayList) iter.next();
                     Iterator i = list.iterator();
                     while (i.hasNext()) {
-                        WeblogEntryData entry = (WeblogEntryData) i.next();
+                        WeblogEntry entry = (WeblogEntry) i.next();
                         Hashtable result = new Hashtable();
                         if (entry.getPubTime() != null) {
                             result.put("dateCreated", entry.getPubTime());

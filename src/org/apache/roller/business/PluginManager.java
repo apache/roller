@@ -20,7 +20,7 @@ package org.apache.roller.business;
 
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.plugins.WeblogEntryEditor;
 
@@ -55,7 +55,7 @@ public interface PluginManager {
      * @param str         String to which to apply plugins
      * @return        the transformed text
      */
-    public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntryData entry, String str);
+    public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str);
     
     
     /**

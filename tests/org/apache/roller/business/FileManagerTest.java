@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.ThemeResource;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -38,7 +38,7 @@ public class FileManagerTest extends TestCase {
     
     private static Log log = LogFactory.getLog(FileManagerTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
     
     

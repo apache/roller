@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -113,7 +113,7 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      * @return a list of the ping configurations that should be applied due to this change
      */
-    public List getApplicableAutoPings(WeblogEntryData changedWeblogEntry) throws RollerException;
+    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException;
     
     
     /**
@@ -123,7 +123,7 @@ public interface AutoPingManager {
      *
      * @param changedWeblogEntry the entry that has been created or changed
      */
-    public void queueApplicableAutoPings(WeblogEntryData changedWeblogEntry) throws RollerException;
+    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException;
     
     
     /**

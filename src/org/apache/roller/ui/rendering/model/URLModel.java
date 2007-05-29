@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.URLUtilities;
@@ -256,7 +256,7 @@ public class URLModel implements Model {
         try {
             // need to determine entryId from anchor
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            WeblogEntryData entry = wmgr.getWeblogEntryByAnchor(weblog, anchor);
+            WeblogEntry entry = wmgr.getWeblogEntryByAnchor(weblog, anchor);
             if(entry != null) {
                 return URLUtilities.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
             }

@@ -29,7 +29,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.Utilities;
@@ -60,7 +60,7 @@ public class CreateWeblog extends UIAction {
     @SkipValidation
     public String execute() {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         
         try {
             if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
@@ -95,7 +95,7 @@ public class CreateWeblog extends UIAction {
     
     public String save() {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         try {
             if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();

@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.WeblogEntryPlugin;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -109,7 +109,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     /**
      * Find occurences of ascii emoticons and turn them into HTML image pointers.
      */
-    public String render(WeblogEntryData entry, String text) {
+    public String render(WeblogEntry entry, String text) {
         Matcher matcher = null;
         for (int i=0; i<smileyPatterns.length; i++) {
             matcher = smileyPatterns[i].matcher(text);

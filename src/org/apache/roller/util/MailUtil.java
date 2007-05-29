@@ -41,8 +41,8 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -65,7 +65,7 @@ public class MailUtil {
     /**
      * Send an email notice that a new pending entry has been submitted.
      */
-    public static void sendPendingEntryNotice(WeblogEntryData entry) 
+    public static void sendPendingEntryNotice(WeblogEntry entry) 
             throws RollerException {
         
         Session mailSession = MailProvider.getMailProvider().getSession();
@@ -92,7 +92,7 @@ public class MailUtil {
             // build list of reviewers (website users with author permission)
             Iterator websiteUserIter = websiteUsers.iterator();
             while (websiteUserIter.hasNext()) {
-                UserData websiteUser = (UserData)websiteUserIter.next();
+                User websiteUser = (User)websiteUserIter.next();
                 if (entry.getWebsite().hasUserPermissions(
                         
                         websiteUser,WeblogPermission.AUTHOR)
@@ -135,7 +135,7 @@ public class MailUtil {
      * Send a weblog invitation email.
      */
     public static void sendWeblogInvitation(Weblog website, 
-                                            UserData user)
+                                            User user)
             throws RollerException {
         
         Session mailSession = MailProvider.getMailProvider().getSession();
@@ -192,7 +192,7 @@ public class MailUtil {
     /**
      * Send a weblog invitation email.
      */
-    public static void sendUserActivationEmail(UserData user)
+    public static void sendUserActivationEmail(User user)
             throws RollerException {
         
         Session mailSession = MailProvider.getMailProvider().getSession();

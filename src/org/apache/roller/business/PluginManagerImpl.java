@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.commons.lang.StringUtils;
 
@@ -75,9 +75,9 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     
-    public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntryData entry, String str) {
+    public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str) {
         String ret = str;
-        WeblogEntryData copy = new WeblogEntryData(entry);
+        WeblogEntry copy = new WeblogEntry(entry);
         List entryPlugins = copy.getPluginsList();
         if (entryPlugins != null && !entryPlugins.isEmpty()) {
             Iterator iter = entryPlugins.iterator();

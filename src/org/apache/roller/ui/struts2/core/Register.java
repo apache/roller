@@ -31,7 +31,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.ui.core.security.CustomUserRegistry;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.MailUtil;
@@ -90,7 +90,7 @@ public class Register extends UIAction implements ServletRequestAware {
             // and retrieve custom user data to pre-populate form.
             boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
             if(usingSSO) {
-                UserData fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
+                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
                 if(fromSSO != null) {
                     getBean().copyFrom(fromSSO);
                     setFromSS0(true);
@@ -125,7 +125,7 @@ public class Register extends UIAction implements ServletRequestAware {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             
             // copy form data into new user pojo
-            UserData ud = new UserData();
+            User ud = new User();
             getBean().copyTo(ud); // doesn't copy password
             ud.setId(null);
             ud.setUserName(getBean().getUserName());
@@ -214,7 +214,7 @@ public class Register extends UIAction implements ServletRequestAware {
             if (getActivationCode() == null) {
                 addError("error.activate.user.missingActivationCode");
             } else {
-                UserData user = mgr.getUserByActivationCode(getActivationCode());
+                User user = mgr.getUserByActivationCode(getActivationCode());
                 
                 if (user != null) {
                     // enable user account
@@ -253,7 +253,7 @@ public class Register extends UIAction implements ServletRequestAware {
         boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
         if(usingSSO) {
             boolean storePassword = RollerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
-            UserData fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
+            User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
             if(fromSSO != null) {
                 String password = RollerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
                 if(storePassword) {

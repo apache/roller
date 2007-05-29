@@ -3,7 +3,6 @@ package org.apache.roller.ui.core.security;
 import java.util.Iterator;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.userdetails.User;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
@@ -12,7 +11,7 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserRole;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -24,7 +23,7 @@ public class RollerUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) 
         throws UsernameNotFoundException, DataAccessException {
         
-        UserData userData = null;
+        User userData = null;
         try {
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
@@ -45,7 +44,7 @@ public class RollerUserDetailsService implements UserDetailsService {
             authorities[i++] = new GrantedAuthorityImpl(role.getRole());
         }
         
-        return new User(
+        return new org.acegisecurity.userdetails.User(
             userData.getUserName(), userData.getPassword(), true, authorities);
     }
     

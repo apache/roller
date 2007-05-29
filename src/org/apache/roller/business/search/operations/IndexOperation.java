@@ -31,8 +31,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.pojos.WeblogEntryComment;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.config.RollerConfig;
 
@@ -67,7 +67,7 @@ public abstract class IndexOperation implements Runnable {
     //~ Methods
     // ================================================================
 
-    protected Document getDocument(WeblogEntryData data) {
+    protected Document getDocument(WeblogEntry data) {
 
         // Actual comment content is indexed only if search.index.comments
         // is true or absent from the (static) configuration properties.
@@ -134,7 +134,7 @@ public abstract class IndexOperation implements Runnable {
         doc.add(Field.UnStored(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V));
 
         // index Category
-        WeblogCategoryData categorydata = data.getCategory();
+        WeblogCategory categorydata = data.getCategory();
         Field category = (categorydata == null) 
            ? Field.UnStored(FieldConstants.CATEGORY, "") 
            : Field.Text(FieldConstants.CATEGORY, categorydata.getName());

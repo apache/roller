@@ -9,20 +9,20 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="WeblogCategoryData"
-            class="org.apache.roller.pojos.WeblogCategoryData">
+    <entity metadata-complete="true" name="WeblogCategory"
+            class="org.apache.roller.pojos.WeblogCategory">
         <table name="weblogcategory"/>
-        <named-query name="WeblogCategoryData.getByPath&amp;Website">
-                <query>SELECT w FROM WeblogCategoryData w WHERE w.path = ?1 AND w.website = ?2</query>
+        <named-query name="WeblogCategory.getByPath&amp;Website">
+                <query>SELECT w FROM WeblogCategory w WHERE w.path = ?1 AND w.website = ?2</query>
         </named-query>
-        <named-query name="WeblogCategoryData.getByWebsite">
-                <query>SELECT w FROM WeblogCategoryData w WHERE w.website = ?1</query>
+        <named-query name="WeblogCategory.getByWebsite">
+                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1</query>
         </named-query>
-        <named-query name="WeblogCategoryData.getByWebsite&amp;ParentNull">
-                <query>SELECT w FROM WeblogCategoryData w WHERE w.website = ?1 AND w.parent IS NULL</query>
+        <named-query name="WeblogCategory.getByWebsite&amp;ParentNull">
+                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1 AND w.parent IS NULL</query>
         </named-query>
-        <named-query name="WeblogCategoryData.getByWebsite&amp;ParentNotNull">
-                <query>SELECT w FROM WeblogCategoryData w WHERE w.website = ?1 AND w.parent IS NOT NULL</query>
+        <named-query name="WeblogCategory.getByWebsite&amp;ParentNotNull">
+                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1 AND w.parent IS NOT NULL</query>
         </named-query>
         <attributes>
             <id name="id">
@@ -43,10 +43,10 @@
             <many-to-one name="website" target-entity="org.apache.roller.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <many-to-one name="parent" target-entity="org.apache.roller.pojos.WeblogCategoryData">
+            <many-to-one name="parent" target-entity="org.apache.roller.pojos.WeblogCategory">
                 <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
             </many-to-one>
-            <one-to-many name="weblogCategories" mapped-by="parent" target-entity="org.apache.roller.pojos.WeblogCategoryData" fetch="LAZY">
+            <one-to-many name="weblogCategories" mapped-by="parent" target-entity="org.apache.roller.pojos.WeblogCategory" fetch="LAZY">
                 <cascade>
                     <cascade-remove/>
                 </cascade>

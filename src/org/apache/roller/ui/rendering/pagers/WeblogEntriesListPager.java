@@ -29,8 +29,8 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
@@ -47,7 +47,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private int length = 0;
     
     private Weblog queryWeblog = null;
-    private UserData queryUser = null;
+    private User queryUser = null;
     private String queryCat = null;
     private List queryTags = null;
     
@@ -61,7 +61,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     public WeblogEntriesListPager(
             String         baseUrl,
             Weblog    queryWeblog,
-            UserData       queryUser,
+            User       queryUser,
             String         queryCat,
             List           queryTags,
             String         locale,
@@ -106,13 +106,13 @@ public class WeblogEntriesListPager extends AbstractPager {
                 WeblogManager wmgr = roller.getWeblogManager();
                 UserManager umgr = roller.getUserManager();
                 List rawEntries = wmgr.getWeblogEntries(
+                        
                         queryWeblog,
                         queryUser,
                         startDate,
                         null,
                         queryCat,
-                        queryTags,
-                        WeblogEntryData.PUBLISHED,
+                        queryTags,WeblogEntry.PUBLISHED,
                         null,
                         "pubTime",
                         null,
@@ -123,7 +123,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                 // wrap the results
                 int count = 0;
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    WeblogEntryData entry = (WeblogEntryData) it.next();
+                    WeblogEntry entry = (WeblogEntry) it.next();
                     if (count++ < length) {
                         results.add(WeblogEntryDataWrapper.wrap(entry));
                     }

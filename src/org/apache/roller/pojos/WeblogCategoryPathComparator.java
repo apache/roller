@@ -27,8 +27,8 @@ import java.util.Comparator;
 public class WeblogCategoryPathComparator implements Comparator {
     
     public int compare(Object o1, Object o2) {
-        WeblogCategoryData f1 = (WeblogCategoryData)o1;
-        WeblogCategoryData f2 = (WeblogCategoryData)o2;
+        WeblogCategory f1 = (WeblogCategory)o1;
+        WeblogCategory f2 = (WeblogCategory)o2;
         return f1.getPath().compareTo(f2.getPath());
     }
     

@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 /**
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
@@ -38,7 +38,7 @@ public class BasicUserAutoProvision implements AutoProvision {
    * @see org.apache.roller.ui.core.security.AutoProvision#execute()
    */
   public boolean execute() {
-    UserData ud = CustomUserRegistry.getUserDetailsFromAuthentication();
+    User ud = CustomUserRegistry.getUserDetailsFromAuthentication();
     
     if(ud != null) {
       UserManager mgr;

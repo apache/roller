@@ -24,7 +24,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -40,7 +40,7 @@ public class EntryRemove extends UIAction {
     private String removeId = null;
     
     // entry object to remove
-    private WeblogEntryData removeEntry = null;
+    private WeblogEntry removeEntry = null;
     
     
     public EntryRemove() {
@@ -71,12 +71,12 @@ public class EntryRemove extends UIAction {
         
         if(getRemoveEntry() != null) try {
             
-            WeblogEntryData entry = getRemoveEntry();
+            WeblogEntry entry = getRemoveEntry();
             
             try {
                 // remove the entry from the search index
                 // TODO: can we do this in a better way?
-                entry.setStatus(WeblogEntryData.DRAFT);
+                entry.setStatus(WeblogEntry.DRAFT);
                 IndexManager manager = RollerFactory.getRoller().getIndexManager();
                 manager.addEntryReIndexOperation(entry);
             } catch (RollerException ex) {
@@ -117,11 +117,11 @@ public class EntryRemove extends UIAction {
         this.removeId = removeId;
     }
 
-    public WeblogEntryData getRemoveEntry() {
+    public WeblogEntry getRemoveEntry() {
         return removeEntry;
     }
 
-    public void setRemoveEntry(WeblogEntryData removeEntry) {
+    public void setRemoveEntry(WeblogEntry removeEntry) {
         this.removeEntry = removeEntry;
     }
     

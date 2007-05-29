@@ -28,7 +28,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
@@ -113,7 +113,7 @@ public class BaseAPIHandler implements Serializable {
         boolean apiEnabled = false;
         boolean weblogFound = false;
         Weblog website = null;
-        UserData user = null;
+        User user = null;
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             user = userMgr.getUserByUserName(username);
@@ -174,7 +174,7 @@ public class BaseAPIHandler implements Serializable {
     throws Exception {
         boolean authenticated = false;
         boolean enabled = false;
-        UserData user = null;
+        User user = null;
         try {
             
             UserManager userMgr = RollerFactory.getRoller().getUserManager();

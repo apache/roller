@@ -34,7 +34,7 @@ public class WeblogPermission
 {
     private String      id = UUIDGenerator.generateUUID();
     private Weblog website = null;
-    private UserData    user = null;
+    private User    user = null;
     private boolean     pending = true;
     public static short LIMITED = 0x00; // 0000 
     public static short AUTHOR  = 0x01; // 0001
@@ -83,11 +83,11 @@ public class WeblogPermission
     /** 
      * @hibernate.many-to-one column="user_id" cascade="none" not-null="false"
      */
-    public UserData getUser() 
+    public User getUser() 
     {
         return user;
     }
-    public void setUser(UserData user) 
+    public void setUser(User user) 
     {
         this.user = user;
     }

@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 
 
@@ -148,7 +148,7 @@ public class UsersPager extends AbstractPager {
                 
                 // wrap the results
                 for (Iterator it = rawUsers.iterator(); it.hasNext();) {
-                    UserData user = (UserData) it.next();
+                    User user = (User) it.next();
                     results.add(UserDataWrapper.wrap(user));
                 }
                 

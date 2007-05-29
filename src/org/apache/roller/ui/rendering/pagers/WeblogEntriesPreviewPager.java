@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
@@ -68,7 +68,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             if (currEntry != null) {
                 
                 // clone the entry since we don't want to work with the real pojo
-                WeblogEntryData tmpEntry = new WeblogEntryData();
+                WeblogEntry tmpEntry = new WeblogEntry();
                 tmpEntry.setData(currEntry);
                 
                 // set the pubtime to the current time if it is unset
@@ -84,6 +84,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
         } catch (Exception e) {
             log.error("ERROR: fetching entry", e);
         }
+
         
         return entries;
     }

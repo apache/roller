@@ -21,7 +21,7 @@
 <%@ page import="org.apache.roller.ui.core.RollerSession" %>
 <%@ page import="java.util.List" %>
 <%
-UserData user = RollerSession.getRollerSession(request).getAuthenticatedUser();
+User user = RollerSession.getRollerSession(request).getAuthenticatedUser();
 List websites = RollerFactory.getRoller().getUserManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, Integer.MAX_VALUE);
 
 if (websites.size() == 1) {

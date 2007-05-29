@@ -26,7 +26,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.struts2.util.UIAction;
 
@@ -112,7 +112,7 @@ public class MainMenu extends UIAction {
     
     public String resign() {
         
-        UserData user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
         
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();

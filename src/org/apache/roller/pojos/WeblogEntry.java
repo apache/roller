@@ -58,14 +58,14 @@ import org.apache.roller.util.Utilities;
 /**
  * Represents a Weblog Entry.
  *
- * @ejb:bean name="WeblogEntryData"
+ * @ejb:bean name="WeblogEntry"
  * @struts.form include-all="true"
  * @hibernate.class lazy="true" table="weblogentry"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogEntryData implements Serializable {
+public class WeblogEntry implements Serializable {
     private static Log mLogger =
-            LogFactory.getFactory().getInstance(WeblogEntryData.class);
+            LogFactory.getFactory().getInstance(WeblogEntry.class);
     
     public static final long serialVersionUID = 2341505386843044125L;
     
@@ -94,9 +94,9 @@ public class WeblogEntryData implements Serializable {
     private String    locale        = null;
     
     // Associated objects
-    private UserData           creator  = null;
+    private User           creator  = null;
     private Weblog        website  = null;
-    private WeblogCategoryData category = null;
+    private WeblogCategory category = null;
     
     // Collection of name/value entry attributes
     private Map attMap = new HashMap();
@@ -108,14 +108,14 @@ public class WeblogEntryData implements Serializable {
     
     //----------------------------------------------------------- Construction
     
-    public WeblogEntryData() {
+    public WeblogEntry() {
     }
     
-    public WeblogEntryData(
+    public WeblogEntry(
             String id,
-            WeblogCategoryData category,
+            WeblogCategory category,
             Weblog website,
-            UserData creator,
+            User creator,
             String title,
             String link,
             String text,
@@ -136,7 +136,7 @@ public class WeblogEntryData implements Serializable {
         this.status = status;
     }
     
-    public WeblogEntryData(WeblogEntryData otherData) {
+    public WeblogEntry(WeblogEntry otherData) {
         this.setData(otherData);
     }
     
@@ -145,7 +145,7 @@ public class WeblogEntryData implements Serializable {
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(WeblogEntryData other) {
+    public void setData(WeblogEntry other) {
         
         this.id = other.getId();
         this.category = other.getCategory();
@@ -180,8 +180,8 @@ public class WeblogEntryData implements Serializable {
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof WeblogEntryData != true) return false;
-        WeblogEntryData o = (WeblogEntryData)other;
+        if (other instanceof WeblogEntry != true) return false;
+        WeblogEntry o = (WeblogEntry)other;
         return new EqualsBuilder()
             .append(getAnchor(), o.getAnchor()) 
             .append(getWebsite(), o.getWebsite()) 
@@ -218,19 +218,20 @@ public class WeblogEntryData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="categoryid" cascade="none" not-null="true"
      */
-    public WeblogCategoryData getCategory() {
+    public WeblogCategory getCategory() {
         return this.category;
     }
     
     /** @ejb:persistent-field */
-    public void setCategory(WeblogCategoryData category) {
+    public void setCategory(WeblogCategory category) {
         this.category = category;
     }
        
     /**
-     * Return collection of WeblogCategoryData objects of this entry.
+     * Return collection of WeblogCategory objects of this entry.
      * Added for symetry with PlanetEntryData object.
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     * 
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategory"
      */
     public List getCategories() {
         List cats = new ArrayList();
@@ -262,12 +263,12 @@ public class WeblogEntryData implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
-    public UserData getCreator() {
+    public User getCreator() {
         return this.creator;
     }
     
     /** @ejb:persistent-field */
-    public void setCreator(UserData creator) {
+    public void setCreator(User creator) {
         this.creator = creator;
     }
     
@@ -624,14 +625,12 @@ public class WeblogEntryData implements Serializable {
         this.locale = locale;
     }
     
-    /** 
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryTagData"
-     *
-     * @ejb:persistent-field
+    /**
+     * @ejb:persistent-field 
      * 
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all" 
-     * @hibernate.collection-key column="entryid" 
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogEntryTagData"
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
+     * @hibernate.collection-key column="entryid"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogEntryTag"
      */
      public Set getTags()
      {
@@ -658,12 +657,12 @@ public class WeblogEntryData implements Serializable {
             return;
         
         for (Iterator it = getTags().iterator(); it.hasNext();) {
-            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            WeblogEntryTag tag = (WeblogEntryTag) it.next();
             if (tag.getName().equals(name))
                 return;
         }
 
-        WeblogEntryTagData tag = new WeblogEntryTagData();
+        WeblogEntryTag tag = new WeblogEntryTag();
         tag.setName(name);
         tag.setUser(getCreator());
         tag.setWeblog(getWebsite());
@@ -703,7 +702,7 @@ public class WeblogEntryData implements Serializable {
 
         // remove old ones no longer passed.
         for (Iterator it = getTags().iterator(); it.hasNext();) {
-            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            WeblogEntryTag tag = (WeblogEntryTag) it.next();
             if (!newTags.contains(tag.getName())) {
                 removeTags.add(tag.getName());
             } else {
@@ -727,7 +726,7 @@ public class WeblogEntryData implements Serializable {
     public String getTagsAsString() {
         StringBuffer sb = new StringBuffer();
         for (Iterator it = getTags().iterator(); it.hasNext();) {
-            sb.append(((WeblogEntryTagData) it.next()).getName()).append(" ");
+            sb.append(((WeblogEntryTag) it.next()).getName()).append(" ");
         }
         if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);
@@ -1111,7 +1110,7 @@ public class WeblogEntryData implements Serializable {
     /**
      * Determine if the specified user has permissions to edit this entry.
      */
-    public boolean hasWritePermissions(UserData user) throws RollerException {
+    public boolean hasWritePermissions(User user) throws RollerException {
         
         // global admins can hack whatever they want
         if(user.hasRole("admin")) {

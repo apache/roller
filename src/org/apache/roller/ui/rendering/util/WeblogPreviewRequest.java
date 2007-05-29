@@ -27,7 +27,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.themes.ThemeManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.Theme;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.util.URLUtilities;
 
 
@@ -46,7 +46,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     
     // heavyweight attributes
     private Theme theme = null;
-    private WeblogEntryData weblogEntry = null;
+    private WeblogEntry weblogEntry = null;
     
     public WeblogPreviewRequest(HttpServletRequest request) 
             throws InvalidRequestException {
@@ -122,7 +122,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     }
     
     // if we have a preview entry we would prefer to return that
-    public WeblogEntryData getWeblogEntry() {
+    public WeblogEntry getWeblogEntry() {
         
         if(weblogEntry == null && 
                 (previewEntry != null || super.getWeblogAnchor() != null)) {
@@ -143,7 +143,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         return weblogEntry;
     }
     
-    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+    public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }
     

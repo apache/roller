@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.core.util.UIUtils;
 import org.apache.roller.ui.core.util.menu.Menu;
@@ -51,7 +51,7 @@ public abstract class UIAction extends ActionSupport
     public static final String LIST = "list";
     
     // the authenticated user accessing this action, or null if client is not logged in
-    private UserData authenticatedUser = null;
+    private User authenticatedUser = null;
     
     // the weblog this action is intended to work on, or null if no weblog specified
     private Weblog actionWeblog = null;
@@ -183,11 +183,11 @@ public abstract class UIAction extends ActionSupport
     }
     
 
-    public UserData getAuthenticatedUser() {
+    public User getAuthenticatedUser() {
         return authenticatedUser;
     }
 
-    public void setAuthenticatedUser(UserData authenticatedUser) {
+    public void setAuthenticatedUser(User authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
     }
 

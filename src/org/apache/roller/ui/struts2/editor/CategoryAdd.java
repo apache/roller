@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogCategory;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
@@ -42,7 +42,7 @@ public class CategoryAdd extends UIAction {
     private String categoryId = null;
     
     // the category we are adding the new subcategory into
-    private WeblogCategoryData category = null;
+    private WeblogCategory category = null;
     
     // bean for managing form data
     private CategoryBean bean = new CategoryBean();
@@ -105,7 +105,7 @@ public class CategoryAdd extends UIAction {
         
         if(!hasActionErrors()) try {
             
-            WeblogCategoryData newCategory = new WeblogCategoryData(
+            WeblogCategory newCategory = new WeblogCategory(
                     getActionWeblog(),
                     getCategory(),
                     getBean().getName(),
@@ -158,11 +158,11 @@ public class CategoryAdd extends UIAction {
         this.categoryId = categoryId;
     }
 
-    public WeblogCategoryData getCategory() {
+    public WeblogCategory getCategory() {
         return category;
     }
 
-    public void setCategory(WeblogCategoryData category) {
+    public void setCategory(WeblogCategory category) {
         this.category = category;
     }
 

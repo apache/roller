@@ -29,8 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.WeblogEntryComment;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -43,9 +43,9 @@ public class CommentTest extends TestCase {
     
     public static Log log = LogFactory.getLog(CommentTest.class);
     
-    UserData testUser = null;
+    User testUser = null;
     Weblog testWeblog = null;
-    WeblogEntryData testEntry = null;
+    WeblogEntry testEntry = null;
     
     
     public CommentTest(String name) {
@@ -213,9 +213,9 @@ public class CommentTest extends TestCase {
             UserManager umgr = RollerFactory.getRoller().getUserManager();
 
             // first make sure we can delete an entry with comments
-            UserData user = TestUtils.setupUser("commentParentDeleteUser");
+            User user = TestUtils.setupUser("commentParentDeleteUser");
             Weblog weblog = TestUtils.setupWeblog("commentParentDelete", user);
-            WeblogEntryData entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", 
+            WeblogEntry entry = TestUtils.setupWeblogEntry("CommentParentDeletes1", 
                     weblog.getDefaultCategory(), weblog, user);
             TestUtils.endSession(true);
 

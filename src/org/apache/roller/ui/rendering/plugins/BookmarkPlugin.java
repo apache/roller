@@ -33,7 +33,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.pojos.WeblogBookmark;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -68,7 +68,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     public void init(Weblog website) throws RollerException {}
     
     
-    public String render(WeblogEntryData entry, String str) {
+    public String render(WeblogEntry entry, String str) {
         String text = str;
         try {
             BookmarkManager bMgr = RollerFactory.getRoller().getBookmarkManager();

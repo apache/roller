@@ -37,7 +37,7 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -116,22 +116,22 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
             if (writer != null) {
                 WeblogManager weblogManager = roller.getWeblogManager();
                 
+                
                 List entries = weblogManager .getWeblogEntries(
+                        
                         website,                   // website            
                         null,
                         null,                      // startDate
                         null,                      // endDate
                         null,                      // catName
-                        null,
-                        WeblogEntryData.PUBLISHED, // status
+                        null,WeblogEntry.PUBLISHED, // status
                         null,                      // text
                         null,                      // sortby (null means pubTime)
                         null, 
                         null,
                         0, -1);     // offset, length, locale
-                
                 for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
-                    WeblogEntryData entry = (WeblogEntryData) wbItr.next();
+                    WeblogEntry entry = (WeblogEntry) wbItr.next();
                     writer.addDocument(getDocument(entry));
                     mLogger.debug(
                             MessageFormat.format("Indexed entry {0}: {1}",

@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
@@ -104,7 +104,7 @@ class RollerWeblogHandler extends Handler {
             if (users == null) {
                 users = Collections.EMPTY_LIST;
             }
-            EntrySet c = toWeblogEntrySet((UserData[])users.toArray(new UserData[0]));
+            EntrySet c = toWeblogEntrySet((User[])users.toArray(new User[0]));
             
             return c;
         } catch (RollerException re) {
@@ -168,7 +168,7 @@ class RollerWeblogHandler extends Handler {
             List websiteDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
-                UserData user = mgr.getUserByUserName(entry.getCreatingUser());
+                User user = mgr.getUserByUserName(entry.getCreatingUser());
                 Weblog wd = new Weblog(
                         entry.getHandle(),
                         user,
@@ -303,7 +303,7 @@ class RollerWeblogHandler extends Handler {
         return we;
     }
     
-    private WeblogEntrySet toWeblogEntrySet(UserData[] uds) throws HandlerException {
+    private WeblogEntrySet toWeblogEntrySet(User[] uds) throws HandlerException {
         if (uds == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
@@ -311,7 +311,7 @@ class RollerWeblogHandler extends Handler {
         WeblogEntrySet wes = new WeblogEntrySet(getUrlPrefix());
         List entries = new ArrayList();
         for (int i = 0; i < uds.length; i++) {
-            UserData ud = uds[i];
+            User ud = uds[i];
             List permissions = ud.getPermissions();
             for (Iterator j = permissions.iterator(); j.hasNext(); ) {
                 WeblogPermission pd = (WeblogPermission)j.next();

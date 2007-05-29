@@ -21,7 +21,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.User;
 
 /**
  * This class implements HTTP basic authentication for roller.

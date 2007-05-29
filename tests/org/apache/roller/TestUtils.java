@@ -35,9 +35,9 @@ import org.apache.roller.pojos.WeblogBookmarkFolder;
 import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.User;
+import org.apache.roller.pojos.WeblogCategory;
+import org.apache.roller.pojos.WeblogEntry;
 import org.apache.roller.pojos.Weblog;
 
 
@@ -68,9 +68,9 @@ public final class TestUtils {
     /**
      * Convenience method that creates a user and stores it.
      */
-    public static UserData setupUser(String username) throws Exception {
+    public static User setupUser(String username) throws Exception {
         
-        UserData testUser = new UserData();
+        User testUser = new User();
         testUser.setUserName(username);
         testUser.setPassword("password");
         testUser.setScreenName("Test User Screen Name");
@@ -89,7 +89,7 @@ public final class TestUtils {
         RollerFactory.getRoller().flush();
         
         // query for the user to make sure we return the persisted object
-        UserData user = mgr.getUserByUserName(username);
+        User user = mgr.getUserByUserName(username);
         
         if(user == null)
             throw new RollerException("error inserting new user");
@@ -105,7 +105,7 @@ public final class TestUtils {
         
         // lookup the user
         UserManager mgr = RollerFactory.getRoller().getUserManager();
-        UserData user = mgr.getUser(id);
+        User user = mgr.getUser(id);
         
         // remove the user
         mgr.removeUser(user);
@@ -118,7 +118,7 @@ public final class TestUtils {
     /**
      * Convenience method that creates a weblog and stores it.
      */
-    public static Weblog setupWeblog(String handle, UserData creator) throws Exception {
+    public static Weblog setupWeblog(String handle, User creator) throws Exception {
         
         Weblog testWeblog = new Weblog();
         testWeblog.setName("Test Weblog");
@@ -188,26 +188,26 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog category.
      */
-    public static WeblogCategoryData setupWeblogCategory(Weblog weblog,
+    public static WeblogCategory setupWeblogCategory(Weblog weblog,
                                                          String name,
-                                                         WeblogCategoryData parent)
+                                                         WeblogCategory parent)
             throws Exception {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-        WeblogCategoryData root = mgr.getRootWeblogCategory(weblog);
+        WeblogCategory root = mgr.getRootWeblogCategory(weblog);
         
-        WeblogCategoryData catParent = root;
+        WeblogCategory catParent = root;
         if(parent != null) {
             catParent = parent;
         }
-        WeblogCategoryData testCat = new WeblogCategoryData(weblog, catParent, name, null, null);
+        WeblogCategory testCat = new WeblogCategory(weblog, catParent, name, null, null);
         mgr.saveWeblogCategory(testCat);
         
         // flush to db
         RollerFactory.getRoller().flush();
         
         // query for object
-        WeblogCategoryData cat = mgr.getWeblogCategory(testCat.getId());
+        WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
         
         if(cat == null)
             throw new RollerException("error setting up weblog category");
@@ -223,7 +223,7 @@ public final class TestUtils {
         
         // lookup the cat
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-        WeblogCategoryData cat = mgr.getWeblogCategory(id);
+        WeblogCategory cat = mgr.getWeblogCategory(id);
         
         // remove the cat
         mgr.removeWeblogCategory(cat);
@@ -236,20 +236,20 @@ public final class TestUtils {
     /**
      * Convenience method for creating a weblog entry.
      */
-    public static WeblogEntryData setupWeblogEntry(String anchor,
-                                                   WeblogCategoryData cat,
+    public static WeblogEntry setupWeblogEntry(String anchor,
+                                                   WeblogCategory cat,
                                                    Weblog weblog,
-                                                   UserData user)
+                                                   User user)
             throws Exception {
         
-        WeblogEntryData testEntry = new WeblogEntryData();
+        WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle(anchor);
         testEntry.setLink("testEntryLink");
         testEntry.setText("blah blah entry");
         testEntry.setAnchor(anchor);
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        testEntry.setStatus(WeblogEntryData.PUBLISHED);
+        testEntry.setStatus(WeblogEntry.PUBLISHED);
         testEntry.setWebsite(getManagedWebsite(weblog));
         testEntry.setCreator(getManagedUser(user));
         testEntry.setCategory(cat);
@@ -262,7 +262,7 @@ public final class TestUtils {
         RollerFactory.getRoller().flush();
         
         // query for object
-        WeblogEntryData entry = mgr.getWeblogEntry(testEntry.getId());
+        WeblogEntry entry = mgr.getWeblogEntry(testEntry.getId());
         
         if(entry == null)
             throw new RollerException("error setting up weblog entry");
@@ -278,7 +278,7 @@ public final class TestUtils {
         
         // lookup the entry
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-        WeblogEntryData entry = mgr.getWeblogEntry(id);
+        WeblogEntry entry = mgr.getWeblogEntry(id);
         
         // remove the entry
         mgr.removeWeblogEntry(entry);
@@ -291,7 +291,7 @@ public final class TestUtils {
     /**
      * Convenience method for creating a comment.
      */
-    public static WeblogEntryComment setupComment(String content, WeblogEntryData entry)
+    public static WeblogEntryComment setupComment(String content, WeblogEntry entry)
             throws Exception {
         
         WeblogEntryComment testComment = new WeblogEntryComment();
@@ -519,7 +519,7 @@ public final class TestUtils {
     /**
      * Convenience method that returns managed copy of given user.
      */
-    public static UserData getManagedUser(UserData user) throws RollerException {
+    public static User getManagedUser(User user) throws RollerException {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         return mgr.getUser(user.getId());
     }
@@ -535,7 +535,7 @@ public final class TestUtils {
     /**
      * Convenience method that returns managed copy of given WeblogEntry.
      */
-    public static WeblogEntryData getManagedWeblogEntry(WeblogEntryData weblogEntry) throws RollerException {
+    public static WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) throws RollerException {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         return mgr.getWeblogEntry(weblogEntry.getId());
     }
