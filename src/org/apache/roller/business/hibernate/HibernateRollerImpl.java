@@ -42,10 +42,7 @@ public class HibernateRollerImpl extends RollerImpl {
     
     static final long serialVersionUID = 5256135928578074652L;
     
-    private static Log mLogger = LogFactory.getLog(HibernateRollerImpl.class);
-    
-    // our singleton instance
-    private static HibernateRollerImpl me = null;
+    private static Log mLogger = LogFactory.getLog(HibernateRollerImpl.class);    
     
     // a persistence utility class
     private HibernatePersistenceStrategy strategy = null;
@@ -82,17 +79,14 @@ public class HibernateRollerImpl extends RollerImpl {
      * Instantiates and returns an instance of HibernateRollerImpl.
      */
     public static Roller instantiate() throws RollerException {
-        if (me == null) {
-            mLogger.debug("Instantiating HibernateRollerImpl");
-            me = new HibernateRollerImpl();
-                                
-            // Now that Roller has been instantiated, initialize individual managers
-            me.getPropertiesManager();
-            me.getIndexManager();
-            me.getThemeManager();          
-        }
-        
-        return me;
+        mLogger.debug("Instantiating HibernateRollerImpl");
+        Roller roller = new HibernateRollerImpl();
+
+        // Now that Roller has been instantiated, initialize individual managers
+        roller.getPropertiesManager();
+        roller.getIndexManager();
+        roller.getThemeManager();          
+        return roller;
     }
     
     

@@ -30,6 +30,12 @@ public interface ThreadManager {
     
     
     /**
+     * Schedule execution of all configured tasks.
+     */
+    public void startTasks();
+    
+    
+    /**
      * Execute runnable in background (asynchronously).
      * @param runnable
      * @throws java.lang.InterruptedException
