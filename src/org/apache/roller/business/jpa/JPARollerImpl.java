@@ -126,7 +126,13 @@ public class JPARollerImpl extends RollerImpl {
      */
     public static Roller instantiate() throws RollerException {
         logger.debug("Instantiating JPARollerImpl");
-        return new JPARollerImpl();
+        Roller roller = new JPARollerImpl();
+
+        // Now that Roller has been instantiated, initialize individual managers
+        roller.getPropertiesManager();
+        roller.getIndexManager();
+        roller.getThemeManager();          
+        return roller;
     }
     
     public void flush() throws RollerException {

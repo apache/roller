@@ -24,8 +24,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 
 
 /**
@@ -46,6 +49,42 @@ public class ThreadManagerImpl implements ThreadManager {
         serviceScheduler = Executors.newScheduledThreadPool(10);
     }
     
+    public void startTasks() {
+        
+        Date now = new Date();
+        
+        // okay, first we look for what tasks have been enabled
+        String tasksStr = RollerConfig.getProperty("tasks.enabled");
+        String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
+        for (int i=0; i < tasks.length; i++) {
+            
+            String taskClassName = RollerConfig.getProperty("tasks."+tasks[i]+".class");
+            if(taskClassName != null) {
+                log.info("Initializing task: "+tasks[i]);
+                
+                try {
+                    Class taskClass = Class.forName(taskClassName);
+                    RollerTask task = (RollerTask) taskClass.newInstance();
+                    task.init();
+                    
+                    Date startTime = task.getStartTime(now);
+                    if(startTime == null || now.after(startTime)) {
+                        startTime = now;
+                    }
+                    
+                    // schedule it
+                    scheduleFixedRateTimerTask(task, startTime, task.getInterval());
+                    
+                } catch (ClassCastException ex) {
+                    log.warn("Task does not extend RollerTask class", ex);
+                } catch (RollerException ex) {
+                    log.error("Error scheduling task", ex);
+                } catch (Exception ex) {
+                    log.error("Error instantiating task", ex);
+                }
+            }
+        }        
+    }
     
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
