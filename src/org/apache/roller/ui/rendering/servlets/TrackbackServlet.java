@@ -34,7 +34,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.ui.rendering.util.CommentValidationManager;
@@ -152,7 +152,7 @@ public class TrackbackServlet extends HttpServlet {
             if (entry != null && entry.getCommentsStillAllowed() && entry.isPublished()) {
                 
                 // Track trackbacks as comments
-                CommentData comment = new CommentData();
+                WeblogEntryComment comment = new WeblogEntryComment();
                 comment.setContent("[Trackback] "+trackbackRequest.getExcerpt());
                 comment.setName(trackbackRequest.getBlogName());
                 comment.setUrl(trackbackRequest.getUrl());
@@ -167,17 +167,17 @@ public class TrackbackServlet extends HttpServlet {
                 
                 if (validationScore == 100 && weblog.getCommentModerationRequired()) {
                     // Valid comments go into moderation if required
-                    comment.setStatus(CommentData.PENDING);
+                    comment.setStatus(WeblogEntryComment.PENDING);
                 } else if (validationScore == 100) {
                     // else they're approved
-                    comment.setStatus(CommentData.APPROVED);
+                    comment.setStatus(WeblogEntryComment.APPROVED);
                 } else {
                     // Invalid comments are marked as spam
-                    comment.setStatus(CommentData.SPAM);
+                    comment.setStatus(WeblogEntryComment.SPAM);
                 }
                 
                 // save, commit, send response
-                if(!CommentData.SPAM.equals(comment.getStatus()) ||
+                if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !RollerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
                     
                     WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
@@ -195,7 +195,7 @@ public class TrackbackServlet extends HttpServlet {
                     CommentServlet.sendEmailNotification(comment, validationScore == 100, messages, rootURL, 
                             I18nMessages.getMessages(trackbackRequest.getLocaleInstance()));
                     
-                    if(CommentData.PENDING.equals(comment.getStatus())) {
+                    if(WeblogEntryComment.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));
                     } else {
                         pw.println(this.getSuccessResponse("Trackback accepted"));

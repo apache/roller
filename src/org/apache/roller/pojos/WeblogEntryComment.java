@@ -27,13 +27,13 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Weblogentry Comment bean.
  *
- * @ejb:bean name="CommentData"
+ * @ejb:bean name="WeblogEntryComment"
  * @struts.form include-all="true"
  *
  * @hibernate.class lazy="true" table="roller_comment"
  * @hibernate.cache usage="read-write"
  */
-public class CommentData implements Serializable {
+public class WeblogEntryComment implements Serializable {
     
     public static final long serialVersionUID = -6668122596726478462L;
     
@@ -59,9 +59,9 @@ public class CommentData implements Serializable {
     private WeblogEntryData weblogEntry = null;
     
     
-    public CommentData() {}
+    public WeblogEntryComment() {}
     
-    public CommentData(WeblogEntryData entry, String name, String email,
+    public WeblogEntryComment(WeblogEntryData entry, String name, String email,
                        String url, String content, Timestamp postTime, 
                        String status, Boolean notify) {
         this.name = name;
@@ -74,7 +74,7 @@ public class CommentData implements Serializable {
         this.weblogEntry = entry;
     }
     
-    public CommentData(CommentData otherData) {
+    public WeblogEntryComment(WeblogEntryComment otherData) {
         this.setData(otherData);
     }
     
@@ -365,8 +365,8 @@ public class CommentData implements Serializable {
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof CommentData != true) return false;
-        CommentData o = (CommentData)other;
+        if (other instanceof WeblogEntryComment != true) return false;
+        WeblogEntryComment o = (WeblogEntryComment)other;
         return new EqualsBuilder()
             .append(getName(), o.getName()) 
             .append(getPostTime(), o.getPostTime()) 
@@ -385,7 +385,7 @@ public class CommentData implements Serializable {
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(CommentData otherComment) {
+    public void setData(WeblogEntryComment otherComment) {
         
         this.id = otherComment.getId();
         this.weblogEntry = otherComment.getWeblogEntry();

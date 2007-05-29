@@ -183,7 +183,7 @@ public class WeblogEntryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.EntryAttributeDataWrapper.wrap((org.apache.roller.pojos.EntryAttributeData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.EntryAttributeDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryAttribute) it.next()));
             i++;
         }
 
@@ -381,7 +381,7 @@ public class WeblogEntryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.pojos.CommentData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryComment) it.next()));
             i++;
         }
 
@@ -405,7 +405,7 @@ public class WeblogEntryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.pojos.CommentData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryComment) it.next()));
             i++;
         }
 
@@ -439,7 +439,7 @@ public class WeblogEntryDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.RefererDataWrapper.wrap((org.apache.roller.pojos.RefererData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.RefererDataWrapper.wrap((org.apache.roller.pojos.WeblogReferrer) it.next()));
             i++;
         }
 

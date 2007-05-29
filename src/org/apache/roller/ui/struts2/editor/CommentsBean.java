@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.Utilities;
 
 
@@ -55,12 +55,12 @@ public class CommentsBean {
         
         Iterator it = comments.iterator();
         while (it.hasNext()) {
-            CommentData comment = (CommentData)it.next();
+            WeblogEntryComment comment = (WeblogEntryComment)it.next();
             allComments.add(comment.getId());
             
-            if(CommentData.APPROVED.equals(comment.getStatus())) {
+            if(WeblogEntryComment.APPROVED.equals(comment.getStatus())) {
                 approvedList.add(comment.getId());
-            } else if(CommentData.SPAM.equals(comment.getStatus())) {
+            } else if(WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
@@ -79,13 +79,13 @@ public class CommentsBean {
     
     public String getStatus() {
         if (approvedString.equals("ONLY_APPROVED")) {
-            return CommentData.APPROVED;
+            return WeblogEntryComment.APPROVED;
         } else if (approvedString.equals("ONLY_DISAPPROVED")) {
-            return CommentData.DISAPPROVED;
+            return WeblogEntryComment.DISAPPROVED;
         } else if (approvedString.equals("ONLY_PENDING")) {
-            return CommentData.PENDING;
+            return WeblogEntryComment.PENDING;
         } else if (spamString.equals("ONLY_SPAM")) {
-            return CommentData.SPAM;
+            return WeblogEntryComment.SPAM;
         } else if (spamString.equals("NO_SPAM")) {
             // all status' except spam
             // special situation, so this doesn't map to a persisted comment status

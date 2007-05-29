@@ -29,12 +29,12 @@ import org.apache.roller.util.UUIDGenerator;
  * Referer bean.
  * @author David M Johnson
  *
- * @ejb:bean name="RefererData"
+ * @ejb:bean name="WeblogReferrer"
  * @struts.form include-all="true"
  * @hibernate.class lazy="true" table="referer"
  * @hibernate.cache usage="read-write"
  */
-public class RefererData
+public class WeblogReferrer
     implements java.io.Serializable
 {
     static final long serialVersionUID = -1817992900602131316L;
@@ -52,11 +52,11 @@ public class RefererData
     private java.lang.Integer dayHits = null;
     private java.lang.Integer totalHits = null;
 
-    public RefererData()
+    public WeblogReferrer()
     {
     }
 
-    public RefererData(java.lang.String id, 
+    public WeblogReferrer(java.lang.String id, 
                        org.apache.roller.pojos.Weblog website, 
                        org.apache.roller.pojos.WeblogEntryData weblogEntry, 
                        java.lang.String dateString, java.lang.String refererUrl, 
@@ -81,7 +81,7 @@ public class RefererData
         this.totalHits = totalHits;
     }
 
-    public RefererData(RefererData otherData)
+    public WeblogReferrer(WeblogReferrer otherData)
     {
         setData(otherData);
     }
@@ -391,7 +391,7 @@ public class RefererData
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(RefererData otherData)
+    public void setData(WeblogReferrer otherData)
     {
         this.id =          otherData.getId();
         this.website =     otherData.getWebsite();
@@ -440,8 +440,8 @@ public class RefererData
 
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof RefererData != true) return false;
-        RefererData o = (RefererData)other;
+        if (other instanceof WeblogReferrer != true) return false;
+        WeblogReferrer o = (WeblogReferrer)other;
         return new EqualsBuilder()
             .append(getRefererUrl(), o.getRefererUrl()) 
             .append(getWeblogEntry(), o.getWeblogEntry()) 

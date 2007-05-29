@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.URLUtilities;
 
@@ -52,7 +52,7 @@ public class AkismetCommentValidator implements CommentValidator {
         return bundle.getString("comment.validator.akismetName");
     }
 
-    public int validate(CommentData comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, RollerMessages messages) {
         StringBuffer sb = new StringBuffer();
         sb.append("blog=").append(
             URLUtilities.getWeblogURL(comment.getWeblogEntry().getWebsite(), null, true)).append("&");

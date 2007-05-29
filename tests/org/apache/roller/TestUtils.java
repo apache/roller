@@ -30,9 +30,9 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
@@ -291,10 +291,10 @@ public final class TestUtils {
     /**
      * Convenience method for creating a comment.
      */
-    public static CommentData setupComment(String content, WeblogEntryData entry)
+    public static WeblogEntryComment setupComment(String content, WeblogEntryData entry)
             throws Exception {
         
-        CommentData testComment = new CommentData();
+        WeblogEntryComment testComment = new WeblogEntryComment();
         testComment.setName("test");
         testComment.setEmail("test");
         testComment.setUrl("test");
@@ -302,7 +302,7 @@ public final class TestUtils {
         testComment.setContent("this is a test comment");
         testComment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testComment.setWeblogEntry(getManagedWeblogEntry(entry));
-        testComment.setStatus(CommentData.APPROVED);
+        testComment.setStatus(WeblogEntryComment.APPROVED);
         
         // store testComment
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
@@ -312,7 +312,7 @@ public final class TestUtils {
         RollerFactory.getRoller().flush();
         
         // query for object
-        CommentData comment = mgr.getComment(testComment.getId());
+        WeblogEntryComment comment = mgr.getComment(testComment.getId());
         
         if(comment == null)
             throw new RollerException("error setting up comment");
@@ -328,7 +328,7 @@ public final class TestUtils {
         
         // lookup the comment
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-        CommentData comment = mgr.getComment(id);
+        WeblogEntryComment comment = mgr.getComment(id);
         
         // remove the comment
         mgr.removeComment(comment);
@@ -427,13 +427,13 @@ public final class TestUtils {
     /**
      * Convenience method for creating a hit count.
      */
-    public static HitCountData setupHitCount(Weblog weblog, int amount)
+    public static WeblogHitCount setupHitCount(Weblog weblog, int amount)
             throws Exception {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         // store
-        HitCountData testCount = new HitCountData();
+        WeblogHitCount testCount = new WeblogHitCount();
         testCount.setWeblog(getManagedWebsite(weblog));
         testCount.setDailyHits(amount);
         mgr.saveHitCount(testCount);
@@ -458,7 +458,7 @@ public final class TestUtils {
         
         // query for it
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-        HitCountData testCount = mgr.getHitCount(id);
+        WeblogHitCount testCount = mgr.getHitCount(id);
         
         // remove
         mgr.removeHitCount(testCount);

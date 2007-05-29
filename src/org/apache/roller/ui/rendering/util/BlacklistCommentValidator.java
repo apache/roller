@@ -19,7 +19,7 @@
 package org.apache.roller.ui.rendering.util;
 
 import java.util.ResourceBundle;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.BlacklistChecker;
 
@@ -34,7 +34,7 @@ public class BlacklistCommentValidator implements CommentValidator {
         return bundle.getString("comment.validator.blacklistName");
     }
 
-    public int validate(CommentData comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, RollerMessages messages) {
         if (checker.checkComment(comment)) {
             messages.addError("comment.validator.blacklistMessage");
             return 0;

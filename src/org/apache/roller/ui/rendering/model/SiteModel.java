@@ -33,7 +33,7 @@ import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.ThemeTemplate;
@@ -438,7 +438,7 @@ public class SiteModel implements Model {
             
             Iterator hitCounts = hotBlogs.iterator();
             while (hitCounts.hasNext()) {
-                HitCountData hitCount = (HitCountData) hitCounts.next();
+                WeblogHitCount hitCount = (WeblogHitCount) hitCounts.next();
                 StatCount statCount = new StatCount(
                     hitCount.getWeblog().getId(),
                     hitCount.getWeblog().getHandle(),

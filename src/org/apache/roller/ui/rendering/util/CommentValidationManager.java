@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.ui.rendering.servlets.CommentServlet;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.Utilities;
@@ -84,7 +84,7 @@ public class CommentValidationManager {
      * @param messages Messages object to which errors will be added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
      */
-    public int validateComment(CommentData comment, RollerMessages messages) {
+    public int validateComment(WeblogEntryComment comment, RollerMessages messages) {
         int total = 0;
         if (validators.size() > 0) {
             for (Iterator it = validators.iterator(); it.hasNext();) {

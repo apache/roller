@@ -29,8 +29,8 @@ public class RefererComparator implements Comparator, Serializable
     public int compare(Object val1, Object val2)
     throws ClassCastException
     {
-        RefererData r1 = (RefererData)val1;
-        RefererData r2 = (RefererData)val2;
+        WeblogReferrer r1 = (WeblogReferrer)val1;
+        WeblogReferrer r2 = (WeblogReferrer)val2;
         int hits1 = r1.getDayHits().intValue();
         int hits2 = r2.getDayHits().intValue();
 

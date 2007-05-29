@@ -38,7 +38,7 @@ import org.hibernate.type.Type;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.referrers.RefererManager;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.Weblog;
 import org.hibernate.dialect.OracleDialect;
@@ -78,11 +78,11 @@ public class HibernateRefererManagerImpl implements RefererManager {
         strategy = strat;
     }
     
-    public void saveReferer(RefererData referer) throws RollerException {
+    public void saveReferer(WeblogReferrer referer) throws RollerException {
         strategy.store(referer);
     }
         
-    public void removeReferer(RefererData referer) throws RollerException {
+    public void removeReferer(WeblogReferrer referer) throws RollerException {
         strategy.remove(referer);
     }
         
@@ -99,16 +99,16 @@ public class HibernateRefererManagerImpl implements RefererManager {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Dialect currentDialect = ((SessionFactoryImplementor)session.getSessionFactory()).getDialect();
-            String reset = "update RefererData set dayHits=0";
+            String reset = "update WeblogReferrer set dayHits=0";
             session.createQuery(reset).executeUpdate();
             String delete = null;
             // Some databases can't handle comparing CLOBs, use like as a workaround
             if (   currentDialect instanceof SQLServerDialect 
                 || currentDialect instanceof OracleDialect 
                 || currentDialect instanceof DerbyDialect) {
-                delete = "delete RefererData where excerpt is null or excerpt like ''";
+                delete = "delete WeblogReferrer where excerpt is null or excerpt like ''";
             } else {
-                delete = "delete RefererData where excerpt is null or excerpt=''";
+                delete = "delete WeblogReferrer where excerpt is null or excerpt=''";
             }
             session.createQuery(delete).executeUpdate();
         } catch (Exception e) {
@@ -129,14 +129,14 @@ public class HibernateRefererManagerImpl implements RefererManager {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Dialect currentDialect = ((SessionFactoryImplementor)session.getSessionFactory()).getDialect();
-            String reset = "update RefererData set dayHits=0 where website=:site";
+            String reset = "update WeblogReferrer set dayHits=0 where website=:site";
             session.createQuery(reset)
             .setParameter("site",website).executeUpdate();
             String delete = null;
             if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
-                delete = "delete RefererData where website=:site and (excerpt is null or excerpt like '')";
+                delete = "delete WeblogReferrer where website=:site and (excerpt is null or excerpt like '')";
             } else {
-                delete = "delete RefererData where website=:site and (excerpt is null or excerpt='')";
+                delete = "delete WeblogReferrer where website=:site and (excerpt is null or excerpt='')";
             }
             session.createQuery(delete)
             .setParameter("site",website).executeUpdate();
@@ -152,7 +152,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             
             String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
             
@@ -170,7 +170,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             Iterator referer = criteria.list().iterator();
             while (referer.hasNext()) {
-                this.strategy.remove((RefererData) referer.next());
+                this.strategy.remove((WeblogReferrer) referer.next());
             }
 
         } catch (HibernateException e) {
@@ -188,7 +188,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             
             String[] blacklist = StringUtils.split(
                     StringUtils.deleteWhitespace(website.getBlacklist()),",");
@@ -203,7 +203,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             Iterator referer = criteria.list().iterator();
             while (referer.hasNext()) {
-                this.strategy.remove((RefererData) referer.next());
+                this.strategy.remove((WeblogReferrer) referer.next());
             }
             
         } catch (HibernateException e) {
@@ -219,7 +219,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.add(Expression.conjunction()
             .add(Expression.eq("website",website))
             .add(Expression.eq("dateString",dateString))
@@ -239,7 +239,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.add(Expression.conjunction()
             .add(Expression.eq("website",website))
             .add(Expression.eq("requestUrl",requestUrl))
@@ -268,7 +268,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 ((HibernatePersistenceStrategy)strategy).getSession();            
             Query query = session.createQuery(
                 "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
-               +"from Weblog w, RefererData r "
+               +"from Weblog w, WeblogReferrer r "
                +"where r.website=w and w.enabled=true and w.active=true and w.lastModified > :startDate "
                +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
             query.setParameter("startDate", startDate);
@@ -329,7 +329,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             Query q = session.createQuery(
                     "select sum(h.dayHits),sum(h.totalHits) from h in class " +
-                    "org.apache.roller.pojos.RefererData " +
+                    "org.apache.roller.pojos.WeblogReferrer " +
                     "where h.website.enabled=? and h.website.id=? ");
             q.setParameters(args, types);
             results = q.list();
@@ -362,7 +362,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.add(Expression.eq("website",website));
             criteria.addOrder(Order.desc("totalHits"));
             
@@ -381,7 +381,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.gt("dayHits", new Integer(0)));
             criteria.addOrder(Order.desc("dayHits"));
@@ -408,7 +408,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("dateString", date));
             criteria.add(Expression.eq("duplicate", Boolean.FALSE));
@@ -430,7 +430,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.createAlias("weblogEntry","e");
             
             criteria.add(Expression.eq("e.id", entryid));
@@ -453,7 +453,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("refererUrl", refererUrl));
             
@@ -474,7 +474,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(RefererData.class);
+            Criteria criteria = session.createCriteria(WeblogReferrer.class);
             
             Junction conjunction = Expression.conjunction();
             conjunction.add(Expression.eq("website", website));
@@ -504,8 +504,8 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * @see org.apache.roller.pojos.RefererManager#retrieveReferer(java.lang.String)
      */
-    public RefererData getReferer(String id) throws RollerException {
-        return (RefererData)strategy.load(id,RefererData.class);
+    public WeblogReferrer getReferer(String id) throws RollerException {
+        return (WeblogReferrer)strategy.load(id,WeblogReferrer.class);
     }
     
     
@@ -545,7 +545,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         try {
             List matchRef = null;
             
-            // try to find existing RefererData for referrerUrl
+            // try to find existing WeblogReferrer for referrerUrl
             if (referrerUrl == null || referrerUrl.trim().length() < 8) {
                 referrerUrl = "direct";
                 
@@ -575,7 +575,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             if (matchRef.size() == 1) {
                 // Referer was found in database, so bump up hit count
-                RefererData ref = (RefererData)matchRef.get(0);
+                WeblogReferrer ref = (WeblogReferrer)matchRef.get(0);
                 
                 ref.setDayHits(new Integer(ref.getDayHits().intValue() + 1));
                 ref.setTotalHits(new Integer(ref.getTotalHits().intValue() + 1));
@@ -588,8 +588,8 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 
                 // Referer was not found in database, so new Referer object
                 Integer one = new Integer(1);
-                RefererData ref =
-                        new RefererData(
+                WeblogReferrer ref =
+                        new WeblogReferrer(
                         null,
                         weblog,
                         entry,
@@ -651,9 +651,9 @@ public class HibernateRefererManagerImpl implements RefererManager {
      */
     class LinkbackExtractorRunnable implements Runnable {
         
-        private RefererData mReferer = null;
+        private WeblogReferrer mReferer = null;
         
-        public LinkbackExtractorRunnable( RefererData referer) {
+        public LinkbackExtractorRunnable( WeblogReferrer referer) {
             mReferer = referer;
         }
         
@@ -715,10 +715,10 @@ public class HibernateRefererManagerImpl implements RefererManager {
                                 mReferer.getRequestUrl(),
                                 lb.getTitle(),
                                 lb.getExcerpt());
-                        RefererData chosen = null;
+                        WeblogReferrer chosen = null;
                         int maxweight = 0;
                         for (Iterator rdItr = refs.iterator();rdItr.hasNext();) {
-                            RefererData referer = (RefererData) rdItr.next();
+                            WeblogReferrer referer = (WeblogReferrer) rdItr.next();
                             
                             int weight = referer.getRefererUrl().length();
                             if (referer.getRefererUrl().indexOf('#') != -1) {
@@ -741,7 +741,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                         // LOOP: to mark all of the lower weight ones
                         // as duplicates
                         for (Iterator rdItr = refs.iterator();rdItr.hasNext();) {
-                            RefererData referer = (RefererData) rdItr.next();
+                            WeblogReferrer referer = (WeblogReferrer) rdItr.next();
                             
                             if (referer != chosen) {
                                 referer.setDuplicate(Boolean.TRUE);

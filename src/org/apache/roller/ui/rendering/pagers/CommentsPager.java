@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.Weblog;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 
@@ -89,8 +89,8 @@ public class CommentsPager extends AbstractPager {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 List entries = wmgr.getComments(
-                        null, null, null, startDate, null,
-                        CommentData.APPROVED, true, offset, length + 1);
+                        
+                        null, null, null, startDate, null,WeblogEntryComment.APPROVED, true, offset, length + 1);
                 
                 // check if there are more results for paging
                 if(entries.size() > length) {
@@ -100,7 +100,7 @@ public class CommentsPager extends AbstractPager {
                 
                 // wrap the results
                 for (Iterator it = entries.iterator(); it.hasNext();) {
-                    CommentData comment = (CommentData) it.next();
+                    WeblogEntryComment comment = (WeblogEntryComment) it.next();
                     results.add(CommentDataWrapper.wrap(comment));
                 }
                 

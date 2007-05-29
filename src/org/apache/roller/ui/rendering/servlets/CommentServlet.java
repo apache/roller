@@ -45,7 +45,7 @@ import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.Weblog;
@@ -242,7 +242,7 @@ public class CommentServlet extends HttpServlet {
         // collect input from request params and construct new comment object
         // fields: name, email, url, content, notify
         // TODO: data validation on collected comment data
-        CommentData comment = new CommentData();
+        WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName(commentRequest.getName());
         comment.setEmail(commentRequest.getEmail());
         comment.setUrl(commentRequest.getUrl());
@@ -287,20 +287,20 @@ public class CommentServlet extends HttpServlet {
             
             if (validationScore == 100 && weblog.getCommentModerationRequired()) {
                 // Valid comments go into moderation if required
-                comment.setStatus(CommentData.PENDING);
+                comment.setStatus(WeblogEntryComment.PENDING);
                 message = messageUtils.getString("commentServlet.submittedToModerator");
             } else if (validationScore == 100) {
                 // else they're approved
-                comment.setStatus(CommentData.APPROVED);
+                comment.setStatus(WeblogEntryComment.APPROVED);
             } else {
                 // Invalid comments are marked as spam
-                comment.setStatus(CommentData.SPAM);
+                comment.setStatus(WeblogEntryComment.SPAM);
                 error = messageUtils.getString("commentServlet.commentMarkedAsSpam");
                 log.debug("Comment marked as spam");
             }
             
             try {               
-                if(!CommentData.SPAM.equals(comment.getStatus()) ||
+                if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !RollerRuntimeConfig.getBooleanProperty("comments.ignoreSpam.enabled")) {
                     
                     WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
@@ -377,7 +377,7 @@ public class CommentServlet extends HttpServlet {
      * @param rootURL            Root URL of the Roller site
      */
     public static void sendEmailNotification(
-            CommentData commentObject, boolean notifySubscribers,
+            WeblogEntryComment commentObject, boolean notifySubscribers,
             RollerMessages messages, String rootURL, I18nMessages resources) {
         
         WeblogEntryData entry = commentObject.getWeblogEntry();
@@ -415,7 +415,7 @@ public class CommentServlet extends HttpServlet {
                 
                 // Get all the subscribers to this comment thread
                 for (Iterator it = comments.iterator(); it.hasNext();) {
-                    CommentData comment = (CommentData) it.next();
+                    WeblogEntryComment comment = (WeblogEntryComment) it.next();
                     if (!StringUtils.isEmpty(comment.getEmail())) {
                         // If user has commented twice,
                         // count the most recent notify setting
@@ -580,7 +580,7 @@ public class CommentServlet extends HttpServlet {
      *
      * TODO: Make the addressing options configurable on a per-website basis.
      */
-    public static void sendEmailApprovalNotification(CommentData cd, String rootURL, I18nMessages resources) {
+    public static void sendEmailApprovalNotification(WeblogEntryComment cd, String rootURL, I18nMessages resources) {
         
         WeblogEntryData entry = cd.getWeblogEntry();
         Weblog site = entry.getWebsite();

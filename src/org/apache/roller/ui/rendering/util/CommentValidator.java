@@ -19,7 +19,7 @@
 package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.RollerMessages;
 
 /** Interface for comment validation plugin */
@@ -35,5 +35,5 @@ public interface CommentValidator {
      * @param messages Messages object to which errors will added
      * @return Number indicating confidence that comment is valid (100 meaning 100%)
      */
-    public int validate(CommentData comment, RollerMessages messages);   
+    public int validate(WeblogEntryComment comment, RollerMessages messages);   
 }

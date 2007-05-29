@@ -20,7 +20,7 @@ package org.apache.roller.ui.rendering.util;
 
 import java.util.ResourceBundle;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.RollerMessages;
 
 /**
@@ -38,7 +38,7 @@ public class ExcessSizeCommentValidator implements CommentValidator {
         return bundle.getString("comment.validator.excessSizeName");
     }
 
-    public int validate(CommentData comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, RollerMessages messages) {
         if (comment.getContent() != null && comment.getContent().length() > threshold) {
             messages.addError("comment.validator.excessSizeMessage", Integer.toString(threshold));
             return 0;

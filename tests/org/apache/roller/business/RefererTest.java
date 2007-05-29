@@ -32,7 +32,7 @@ import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.Weblog;
@@ -135,10 +135,10 @@ public class RefererTest extends TestCase {
     public void testRefererCRUD() throws Exception {
         
         RefererManager mgr = RollerFactory.getRoller().getRefererManager();
-        RefererData referer = null;
+        WeblogReferrer referer = null;
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        RefererData testReferer = new RefererData();
+        WeblogReferrer testReferer = new WeblogReferrer();
         testReferer.setWebsite(testWeblog);
         testReferer.setDateString("20060420");
         testReferer.setRefererUrl("blah");

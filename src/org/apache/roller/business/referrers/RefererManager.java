@@ -20,7 +20,7 @@ package org.apache.roller.business.referrers;
 
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -31,12 +31,12 @@ public interface RefererManager {
     /**
      * Store the referer.
      */
-    public void saveReferer(RefererData referer) throws RollerException;    
+    public void saveReferer(WeblogReferrer referer) throws RollerException;    
     
     /**
      * Remove a single referer.
      */
-    public void removeReferer(RefererData referer) throws RollerException;    
+    public void removeReferer(WeblogReferrer referer) throws RollerException;    
     
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
@@ -51,7 +51,7 @@ public interface RefererManager {
     /**
      * Retrieve referer by id.
      */
-    public RefererData getReferer(String id) throws RollerException;    
+    public WeblogReferrer getReferer(String id) throws RollerException;    
     
     /**
      * Get all referers for specified weblog.

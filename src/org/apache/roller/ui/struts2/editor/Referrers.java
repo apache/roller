@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogPermission;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.ui.struts2.util.UIAction;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -38,7 +38,7 @@ public class Referrers extends UIAction {
     private static Log log = LogFactory.getLog(Referrers.class);
     
     // list of referrers to display
-    private List<RefererData> referrers = Collections.EMPTY_LIST;
+    private List<WeblogReferrer> referrers = Collections.EMPTY_LIST;
     
     // referrers hits today
     private int dayHits = 0;
@@ -110,7 +110,7 @@ public class Referrers extends UIAction {
             RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
             
             try {
-                RefererData referer = null;
+                WeblogReferrer referer = null;
                 for (int i=0; i < removeIds.length; i++) {
                     referer = refmgr.getReferer(removeIds[i]);
                     
@@ -141,11 +141,11 @@ public class Referrers extends UIAction {
     }
 
     
-    public List<RefererData> getReferrers() {
+    public List<WeblogReferrer> getReferrers() {
         return referrers;
     }
 
-    public void setReferrers(List<RefererData> referrers) {
+    public void setReferrers(List<WeblogReferrer> referrers) {
         this.referrers = referrers;
     }
 

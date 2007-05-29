@@ -143,7 +143,7 @@
             <many-to-one name="creator" target-entity="org.apache.roller.pojos.UserData">
                 <join-column name="userid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
-            <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.pojos.EntryAttributeData" fetch="LAZY">
+            <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.pojos.WeblogEntryAttribute" fetch="LAZY">
                 <cascade>
                     <cascade-remove/>
                 </cascade>

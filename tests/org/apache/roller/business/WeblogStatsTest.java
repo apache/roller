@@ -7,7 +7,7 @@ import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -22,14 +22,14 @@ public class WeblogStatsTest extends TestCase {
     
     private Weblog website1;
         private WeblogEntryData entry11;
-            private CommentData comment11;
-            private CommentData comment12;
+            private WeblogEntryComment comment11;
+            private WeblogEntryComment comment12;
         private WeblogEntryData entry12;
-            private CommentData comment13;
+            private WeblogEntryComment comment13;
 
     private Weblog website2;
         private WeblogEntryData entry21;
-            private CommentData comment21; 
+            private WeblogEntryComment comment21; 
     
     public WeblogStatsTest() {
     }  

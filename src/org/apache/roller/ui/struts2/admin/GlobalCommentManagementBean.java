@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
 
@@ -57,10 +57,10 @@ public class GlobalCommentManagementBean {
         
         Iterator it = comments.iterator();
         while (it.hasNext()) {
-            CommentData comment = (CommentData)it.next();
+            WeblogEntryComment comment = (WeblogEntryComment)it.next();
             allComments.add(comment.getId());
             
-            if (CommentData.SPAM.equals(comment.getStatus())) {
+            if (WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                 spamList.add(comment.getId());
             }
         }
@@ -75,13 +75,13 @@ public class GlobalCommentManagementBean {
     
     public String getStatus() {
         if (approvedString.equals("ONLY_APPROVED")) {
-            return CommentData.APPROVED;
+            return WeblogEntryComment.APPROVED;
         } else if (approvedString.equals("ONLY_DISAPPROVED")) {
-            return CommentData.DISAPPROVED;
+            return WeblogEntryComment.DISAPPROVED;
         } else if (approvedString.equals("ONLY_PENDING")) {
-            return CommentData.PENDING;
+            return WeblogEntryComment.PENDING;
         } else if (spamString.equals("ONLY_SPAM")) {
-            return CommentData.SPAM;
+            return WeblogEntryComment.SPAM;
         } else if (spamString.equals("NO_SPAM")) {
             // all status' except spam
             // special situation, so this doesn't map to a persisted comment status
