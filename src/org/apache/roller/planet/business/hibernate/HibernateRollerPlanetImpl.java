@@ -20,7 +20,7 @@ package org.apache.roller.planet.business.hibernate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.planet.business.Planet;
 

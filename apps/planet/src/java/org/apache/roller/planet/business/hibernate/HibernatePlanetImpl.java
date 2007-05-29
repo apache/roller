@@ -25,7 +25,7 @@ import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.URLStrategy;
 
