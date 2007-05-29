@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.ui.struts2.util.KeyValueObject;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.struts2.util.UIAction;
@@ -50,10 +50,10 @@ public class GlobalCommentManagement extends UIAction {
     private List comments = Collections.EMPTY_LIST;
     
     // first comment in the list
-    private CommentData firstComment = null;
+    private WeblogEntryComment firstComment = null;
     
     // last comment in the list
-    private CommentData lastComment = null;
+    private WeblogEntryComment lastComment = null;
     
     // are there more results for the query?
     private boolean moreResults = false;
@@ -109,8 +109,8 @@ public class GlobalCommentManagement extends UIAction {
                 }
                 
                 setComments(comments);
-                setFirstComment((CommentData)comments.get(0));
-                setLastComment((CommentData)comments.get(comments.size()-1));
+                setFirstComment((WeblogEntryComment)comments.get(0));
+                setLastComment((WeblogEntryComment)comments.get(comments.size()-1));
                 loadNextPrevLinks(isMoreResults());
             }
         } catch (RollerException ex) {
@@ -220,7 +220,7 @@ public class GlobalCommentManagement extends UIAction {
             if(deletes != null && deletes.size() > 0) {
                 log.debug("Processing deletes - "+deletes.size());
                 
-                CommentData deleteComment = null;
+                WeblogEntryComment deleteComment = null;
                 for(String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
                     wmgr.removeComment(deleteComment);
@@ -242,19 +242,19 @@ public class GlobalCommentManagement extends UIAction {
                     continue;
                 }
                 
-                CommentData comment = wmgr.getComment(ids[i]);
+                WeblogEntryComment comment = wmgr.getComment(ids[i]);
                 
                 // mark/unmark spam
                 if (spamIds.contains(ids[i]) && 
-                        !CommentData.SPAM.equals(comment.getStatus())) {
+                        !WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                     log.debug("Marking as spam - "+comment.getId());
-                    comment.setStatus(CommentData.SPAM);
+                    comment.setStatus(WeblogEntryComment.SPAM);
                     wmgr.saveComment(comment);
                     
                     flushList.add(comment);
-                } else if(CommentData.SPAM.equals(comment.getStatus())) {
+                } else if(WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                     log.debug("Marking as approved - "+comment.getId());
-                    comment.setStatus(CommentData.APPROVED);
+                    comment.setStatus(WeblogEntryComment.APPROVED);
                     wmgr.saveComment(comment);
                     
                     flushList.add(comment);
@@ -265,7 +265,7 @@ public class GlobalCommentManagement extends UIAction {
             
             // notify caches of changes
             for (Iterator comments=flushList.iterator(); comments.hasNext();) {
-                CacheManager.invalidate((CommentData)comments.next());
+                CacheManager.invalidate((WeblogEntryComment)comments.next());
             }
             
             addMessage("commentManagement.updateSuccess");
@@ -337,19 +337,19 @@ public class GlobalCommentManagement extends UIAction {
         this.bulkDeleteCount = bulkDeleteCount;
     }
 
-    public CommentData getFirstComment() {
+    public WeblogEntryComment getFirstComment() {
         return firstComment;
     }
 
-    public void setFirstComment(CommentData firstComment) {
+    public void setFirstComment(WeblogEntryComment firstComment) {
         this.firstComment = firstComment;
     }
 
-    public CommentData getLastComment() {
+    public WeblogEntryComment getLastComment() {
         return lastComment;
     }
 
-    public void setLastComment(CommentData lastComment) {
+    public void setLastComment(WeblogEntryComment lastComment) {
         this.lastComment = lastComment;
     }
 

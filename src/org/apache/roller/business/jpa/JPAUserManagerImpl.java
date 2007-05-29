@@ -156,11 +156,11 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         // remove associated referers
-        Query refQuery2 = strategy.getNamedQuery("RefererData.getByWebsite");
+        Query refQuery2 = strategy.getNamedQuery("WeblogReferrer.getByWebsite");
         refQuery2.setParameter(1, website);
         List referers = refQuery2.getResultList();
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            RefererData referer = (RefererData) iter.next();
+            WeblogReferrer referer = (WeblogReferrer) iter.next();
             this.strategy.remove(referer);
         }
         
@@ -1081,13 +1081,13 @@ public class JPAUserManagerImpl implements UserManager {
             Timestamp start = new Timestamp(startDate.getTime());
             Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
-                    "CommentData.getMostCommentedWebsiteByEndDate&StartDate");
+                    "WeblogEntryComment.getMostCommentedWebsiteByEndDate&StartDate");
             query.setParameter(1, end);
             query.setParameter(2, start);
         } else {
             Timestamp end = new Timestamp(endDate.getTime());
             query = strategy.getNamedQuery(
-                    "CommentData.getMostCommentedWebsiteByEndDate");
+                    "WeblogEntryComment.getMostCommentedWebsiteByEndDate");
             query.setParameter(1, end);
         }
         if (offset != 0) {

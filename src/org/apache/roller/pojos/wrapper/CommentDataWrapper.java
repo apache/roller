@@ -19,7 +19,7 @@
 package org.apache.roller.pojos.wrapper;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 
 
 /**
@@ -28,15 +28,15 @@ import org.apache.roller.pojos.CommentData;
 public class CommentDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private CommentData pojo = null;
+    private WeblogEntryComment pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private CommentDataWrapper(CommentData toWrap) {
+    private CommentDataWrapper(WeblogEntryComment toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static CommentDataWrapper wrap(CommentData toWrap) {
+    public static CommentDataWrapper wrap(WeblogEntryComment toWrap) {
         if(toWrap != null)
             return new CommentDataWrapper(toWrap);
 
@@ -209,7 +209,7 @@ public class CommentDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.CommentData getPojo() {
+    public org.apache.roller.pojos.WeblogEntryComment getPojo() {
         return this.pojo;
     }
 

@@ -25,21 +25,21 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Represents hit count data for a weblog.
  *
- * @ejb:bean name="HitCountData"
+ * @ejb:bean name="WeblogHitCount"
  * @hibernate.class lazy="true" table="roller_hitcounts"
  * @hibernate.cache usage="read-write"
  */
-public class HitCountData implements Serializable {
+public class WeblogHitCount implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
     private Weblog weblog = null;
     private int dailyHits = 0;
     
     
-    public HitCountData() {}
+    public WeblogHitCount() {}
 
     
-    public void setData(HitCountData other) {
+    public void setData(WeblogHitCount other) {
         this.id = other.getId();
         this.weblog = other.getWeblog();
         this.dailyHits = other.getDailyHits();
@@ -62,10 +62,10 @@ public class HitCountData implements Serializable {
     public boolean equals(Object other) {
         
         if(this == other) return true;
-        if( !(other instanceof HitCountData) ) return false;
+        if( !(other instanceof WeblogHitCount) ) return false;
         
         // our natural key, or business key, is our weblog
-        final HitCountData that = (HitCountData) other;
+        final WeblogHitCount that = (WeblogHitCount) other;
         return this.getWeblog().equals(that.getWeblog());
     }
        

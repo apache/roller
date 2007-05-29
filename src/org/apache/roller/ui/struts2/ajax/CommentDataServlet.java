@@ -28,7 +28,7 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.Utilities;
 
 
@@ -46,7 +46,7 @@ public class CommentDataServlet extends HttpServlet {
         Roller roller = RollerFactory.getRoller();
         try {
             WeblogManager wmgr = roller.getWeblogManager();
-            CommentData c = wmgr.getComment(request.getParameter("id"));
+            WeblogEntryComment c = wmgr.getComment(request.getParameter("id"));
             String content = Utilities.escapeHTML(c.getContent());
             content = WordUtils.wrap(content, 72);
             content = StringEscapeUtils.escapeJavaScript(content);

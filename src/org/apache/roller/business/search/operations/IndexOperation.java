@@ -30,7 +30,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.util.Utilities;
@@ -84,7 +84,7 @@ public abstract class IndexOperation implements Runnable {
                 StringBuffer commentContentBuf = new StringBuffer();
                 StringBuffer commentNameBuf = new StringBuffer();
                 for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
-                    CommentData comment = (CommentData) cItr.next();
+                    WeblogEntryComment comment = (WeblogEntryComment) cItr.next();
                     if (comment.getContent() != null) {
                         commentContentBuf.append(comment.getContent());
                         commentContentBuf.append(",");

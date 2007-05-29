@@ -40,9 +40,9 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.Weblog;
@@ -56,7 +56,7 @@ import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.ThemeTemplate;
 
 
@@ -220,7 +220,7 @@ public class OldWeblogPageModel {
         comments = new ArrayList(unwrappped.size());
         Iterator it = unwrappped.iterator();
         while(it.hasNext()) {
-            comments.add(CommentDataWrapper.wrap((CommentData)it.next()));
+            comments.add(CommentDataWrapper.wrap((WeblogEntryComment)it.next()));
         }
         return comments;
     }
@@ -230,7 +230,7 @@ public class OldWeblogPageModel {
     /** Encapsulates RefererManager */
     public int getDayHits() {
         try {
-            HitCountData hitCount = mWeblogMgr.getHitCountByWeblog(mWebsite);
+            WeblogHitCount hitCount = mWeblogMgr.getHitCountByWeblog(mWebsite);
             
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
             
@@ -522,7 +522,7 @@ public class OldWeblogPageModel {
                     RollerSession.getRollerSession(mRequest);
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
-                RefererData referer = (RefererData) rdItr.next();
+                WeblogReferrer referer = (WeblogReferrer) rdItr.next();
                 String title =referer.getTitle();
                 String excerpt = referer.getExcerpt();
                 if (   StringUtils.isNotEmpty(title)
@@ -550,7 +550,7 @@ public class OldWeblogPageModel {
                RollerSession.getRollerSession(mRequest);
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
-                RefererData referer = (RefererData) rdItr.next();
+                WeblogReferrer referer = (WeblogReferrer) rdItr.next();
                 String title =referer.getTitle();
                 String excerpt = referer.getExcerpt();
                 if (   StringUtils.isNotEmpty(title)
@@ -793,12 +793,12 @@ public class OldWeblogPageModel {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List recent = wmgr.getComments(
+                    
                     mWebsite,
                     null,  // weblog entry
                     null,  // search String
                     null,  // startDate
-                    null,  // endDate
-                    CommentData.APPROVED, // approved comments only
+                    null,WeblogEntryComment.APPROVED, // approved comments only
                     true,          // we want reverse chrono order
                     0,             // offset
                     maxCount);     // no limit
@@ -807,7 +807,7 @@ public class OldWeblogPageModel {
             recentComments = new ArrayList(recent.size());
             Iterator it = recent.iterator();
             while(it.hasNext()) {
-                recentComments.add(CommentDataWrapper.wrap((CommentData) it.next()));
+                recentComments.add(CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
             }
         } catch (RollerException e) {
             mLogger.error(e);

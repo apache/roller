@@ -18,7 +18,7 @@
 
 package org.apache.roller.ui.rendering.util;
 
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -39,18 +39,18 @@ public class WeblogEntryCommentForm {
     private String content = "";
     private boolean notify = false;
     
-    private CommentData previewComment = null;
+    private WeblogEntryComment previewComment = null;
     
     
     public WeblogEntryCommentForm() {}
     
     
-    public void setPreview(CommentData preview) {
+    public void setPreview(WeblogEntryComment preview) {
         this.previewComment = preview;
         setData(preview);
     }
     
-    public void setData(CommentData comment) {
+    public void setData(WeblogEntryComment comment) {
         this.name = comment.getName();
         this.email = comment.getEmail();
         this.url = comment.getUrl();

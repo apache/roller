@@ -22,8 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.WeblogEntryComment;
+import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -269,17 +269,17 @@ public interface WeblogManager {
     /**
      * Save comment.
      */
-    public void saveComment(CommentData comment) throws RollerException;
+    public void saveComment(WeblogEntryComment comment) throws RollerException;
     
     /**
      * Remove comment.
      */
-    public void removeComment(CommentData comment) throws RollerException;
+    public void removeComment(WeblogEntryComment comment) throws RollerException;
    
     /**
      * Get comment by id.
      */
-    public CommentData getComment(String id) throws RollerException;
+    public WeblogEntryComment getComment(String id) throws RollerException;
        
     /**
      * Generic comments query method.
@@ -412,7 +412,7 @@ public interface WeblogManager {
      * @return The HitCountData object, or null if it wasn't found.
      * @throws RollerException If there was a problem with the backend.
      */
-    public HitCountData getHitCount(String id) throws RollerException;
+    public WeblogHitCount getHitCount(String id) throws RollerException;
     
     
     /**
@@ -422,7 +422,7 @@ public interface WeblogManager {
      * @return The HitCountData object, or null if it wasn't found.
      * @throws RollerException If there was a problem with the backend.
      */
-    public HitCountData getHitCountByWeblog(Weblog weblog)
+    public WeblogHitCount getHitCountByWeblog(Weblog weblog)
         throws RollerException;
     
     
@@ -451,7 +451,7 @@ public interface WeblogManager {
      * @param hitCount The HitCountData object to save.
      * @throws RollerException If there was a problem with the backend.
      */
-    public void saveHitCount(HitCountData hitCount) throws RollerException;
+    public void saveHitCount(WeblogHitCount hitCount) throws RollerException;
     
     
     /**
@@ -460,7 +460,7 @@ public interface WeblogManager {
      * @param hitCount The HitCountData object to remove.
      * @throws RollerException If there was a problem with the backend.
      */
-    public void removeHitCount(HitCountData hitCount) throws RollerException;
+    public void removeHitCount(WeblogHitCount hitCount) throws RollerException;
     
     
     /**

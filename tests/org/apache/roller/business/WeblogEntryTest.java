@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -982,12 +982,12 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntryData entry5 = TestUtils.setupWeblogEntry("entry5", 
                 testWeblog.getDefaultCategory(), blog2, user1);
                
-        CommentData comment1 = TestUtils.setupComment("comment1", entry1);
-        CommentData comment2 = TestUtils.setupComment("comment2", entry1);
+        WeblogEntryComment comment1 = TestUtils.setupComment("comment1", entry1);
+        WeblogEntryComment comment2 = TestUtils.setupComment("comment2", entry1);
         
-        CommentData comment3 = TestUtils.setupComment("comment3", entry3);
-        CommentData comment4 = TestUtils.setupComment("comment4", entry3);
-        CommentData comment5 = TestUtils.setupComment("comment5", entry3);
+        WeblogEntryComment comment3 = TestUtils.setupComment("comment3", entry3);
+        WeblogEntryComment comment4 = TestUtils.setupComment("comment4", entry3);
+        WeblogEntryComment comment5 = TestUtils.setupComment("comment5", entry3);
         TestUtils.endSession(true);
 
         try {

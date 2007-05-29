@@ -23,22 +23,22 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * @author David M Johnson
- * @ejb:bean name="EntryAttribute"
+ * @ejb:bean name="WeblogEntryAttribute"
  * @hibernate.class lazy="true" table="entryattribute"
  * @hibernate.cache usage="read-write"
  */
-public class EntryAttributeData implements java.lang.Comparable
+public class WeblogEntryAttribute implements java.lang.Comparable
 {
     private String id = UUIDGenerator.generateUUID();
     private WeblogEntryData entry;
     private String name;
     private String value;
     
-    public EntryAttributeData()
+    public WeblogEntryAttribute()
     {
     }
 
-    public EntryAttributeData(
+    public WeblogEntryAttribute(
         String id,
         WeblogEntryData entry,
         String name,
@@ -50,7 +50,7 @@ public class EntryAttributeData implements java.lang.Comparable
         this.value = value;
     }
 
-    public EntryAttributeData(EntryAttributeData otherData)
+    public WeblogEntryAttribute(WeblogEntryAttribute otherData)
     {
         setData(otherData);
     }
@@ -77,7 +77,7 @@ public class EntryAttributeData implements java.lang.Comparable
     /**
      * Set bean properties based on other bean.
      */
-    public void setData(EntryAttributeData otherData)
+    public void setData(WeblogEntryAttribute otherData)
     {
         this.id = otherData.getId();
         this.entry = otherData.getEntry();
@@ -131,7 +131,7 @@ public class EntryAttributeData implements java.lang.Comparable
     }
 
     public int compareTo(Object o) {
-        EntryAttributeData att = (EntryAttributeData)o;
+        WeblogEntryAttribute att = (WeblogEntryAttribute)o;
         return getName().compareTo(att.getName());
     }
     
@@ -149,8 +149,8 @@ public class EntryAttributeData implements java.lang.Comparable
     
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof EntryAttributeData != true) return false;
-        EntryAttributeData o = (EntryAttributeData)other;
+        if (other instanceof WeblogEntryAttribute != true) return false;
+        WeblogEntryAttribute o = (WeblogEntryAttribute)other;
         return new EqualsBuilder()
             .append(getName(), o.getName()) 
             .append(getEntry(), o.getEntry()) 

@@ -604,7 +604,7 @@ public class WebsiteDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.pojos.CommentData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.pojos.WeblogEntryComment) it.next()));
             i++;
         }
 
@@ -638,7 +638,7 @@ public class WebsiteDataWrapper {
         java.util.Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.pojos.wrapper.RefererDataWrapper.wrap((org.apache.roller.pojos.RefererData) it.next()));
+            wrappedCollection.add(i,org.apache.roller.pojos.wrapper.RefererDataWrapper.wrap((org.apache.roller.pojos.WeblogReferrer) it.next()));
             i++;
         }
 

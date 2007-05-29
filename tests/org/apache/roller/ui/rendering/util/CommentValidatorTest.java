@@ -20,7 +20,7 @@ package org.apache.roller.ui.rendering.util;
 
 import junit.framework.TestCase;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -61,7 +61,7 @@ public class CommentValidatorTest extends TestCase {
     
     public void testExcessSizeCommentValidator() {
         RollerMessages msgs = new RollerMessages();
-        CommentData comment = createEmptyComment();
+        WeblogEntryComment comment = createEmptyComment();
 
         // string that exceeds default excess size threshold of 1000
         StringBuffer sb = new StringBuffer();
@@ -78,7 +78,7 @@ public class CommentValidatorTest extends TestCase {
     
     public void testExcessLinksCommentValidator() {
         RollerMessages msgs = new RollerMessages();
-        CommentData comment = createEmptyComment();
+        WeblogEntryComment comment = createEmptyComment();
         
         comment.setContent("<a href=\"http://example.com\">link1</a>"); 
         assertEquals(100, mgr.validateComment(comment, msgs));
@@ -96,7 +96,7 @@ public class CommentValidatorTest extends TestCase {
     
     public void testBlacklistCommentValidator() {
         RollerMessages msgs = new RollerMessages();
-        CommentData comment = createEmptyComment();
+        WeblogEntryComment comment = createEmptyComment();
        
         comment.setContent("nice friendly stuff"); 
         assertEquals(100, mgr.validateComment(comment, msgs));
@@ -110,7 +110,7 @@ public class CommentValidatorTest extends TestCase {
 //
 //     public void testAkismetCommentValidator() {
 //        RollerMessages msgs = new RollerMessages();
-//        CommentData comment = createEmptyComment();       
+//        WeblogEntryComment comment = createEmptyComment();       
 //        comment.setContent("nice friendly stuff"); 
 //        
 //        assertEquals(100, mgr.validateComment(comment, msgs));
@@ -119,8 +119,8 @@ public class CommentValidatorTest extends TestCase {
 //        assertTrue(mgr.validateComment(comment, msgs) != 100);
 //    }
     
-    private CommentData createEmptyComment() {
-        CommentData comment = new CommentData();
+    private WeblogEntryComment createEmptyComment() {
+        WeblogEntryComment comment = new WeblogEntryComment();
         comment.setUrl("http://example.com");
         comment.setName("Mortimer Snerd");
         comment.setEmail("mortimer@snerd.com");

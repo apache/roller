@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.HitCountData;
+import org.apache.roller.pojos.WeblogHitCount;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.Weblog;
 
@@ -89,7 +89,7 @@ public class HitCountTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        HitCountData testCount = new HitCountData();
+        WeblogHitCount testCount = new WeblogHitCount();
         testCount.setWeblog(testWeblog);
         testCount.setDailyHits(10);
         
@@ -99,7 +99,7 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was created
-        HitCountData hitCount = null;
+        WeblogHitCount hitCount = null;
         hitCount = mgr.getHitCount(id);
         assertNotNull(hitCount);
         assertEquals(testCount, hitCount);
@@ -133,7 +133,7 @@ public class HitCountTest extends TestCase {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        HitCountData testCount = new HitCountData();
+        WeblogHitCount testCount = new WeblogHitCount();
         testCount.setWeblog(testWeblog);
         testCount.setDailyHits(10);
         
@@ -143,7 +143,7 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // test lookup by id
-        HitCountData hitCount = null;
+        WeblogHitCount hitCount = null;
         hitCount = mgr.getHitCount(id);
         assertNotNull(hitCount);
         assertEquals(testCount, hitCount);
@@ -172,7 +172,7 @@ public class HitCountTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        HitCountData testCount = new HitCountData();
+        WeblogHitCount testCount = new WeblogHitCount();
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testCount.setWeblog(testWeblog);
         testCount.setDailyHits(10);
@@ -183,7 +183,7 @@ public class HitCountTest extends TestCase {
         TestUtils.endSession(true);
         
         // make sure it was created
-        HitCountData hitCount = null;
+        WeblogHitCount hitCount = null;
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         hitCount = mgr.getHitCountByWeblog(testWeblog);
         assertNotNull(hitCount);
@@ -219,15 +219,15 @@ public class HitCountTest extends TestCase {
         Weblog blog2 = TestUtils.setupWeblog("hitCntTest2", testUser);
         Weblog blog3 = TestUtils.setupWeblog("hitCntTest3", testUser);
         
-        HitCountData cnt1 = TestUtils.setupHitCount(blog1, 10);
-        HitCountData cnt2 = TestUtils.setupHitCount(blog2, 20);
-        HitCountData cnt3 = TestUtils.setupHitCount(blog3, 30);
+        WeblogHitCount cnt1 = TestUtils.setupHitCount(blog1, 10);
+        WeblogHitCount cnt2 = TestUtils.setupHitCount(blog2, 20);
+        WeblogHitCount cnt3 = TestUtils.setupHitCount(blog3, 30);
         
         TestUtils.endSession(true);
         
         try {
             // make sure data was properly initialized
-            HitCountData testCount = null;
+            WeblogHitCount testCount = null;
             testCount = mgr.getHitCount(cnt1.getId());
             assertEquals(10, testCount.getDailyHits());
             testCount = mgr.getHitCount(cnt2.getId());
@@ -281,14 +281,14 @@ public class HitCountTest extends TestCase {
         Weblog blog2 = TestUtils.setupWeblog("hitCntHotTest2", testUser);
         Weblog blog3 = TestUtils.setupWeblog("hitCntHotTest3", testUser);
         
-        HitCountData cnt1 = TestUtils.setupHitCount(blog1, 10);
-        HitCountData cnt2 = TestUtils.setupHitCount(blog2, 20);
-        HitCountData cnt3 = TestUtils.setupHitCount(blog3, 30);
+        WeblogHitCount cnt1 = TestUtils.setupHitCount(blog1, 10);
+        WeblogHitCount cnt2 = TestUtils.setupHitCount(blog2, 20);
+        WeblogHitCount cnt3 = TestUtils.setupHitCount(blog3, 30);
         
         TestUtils.endSession(true);
         
         // make sure data was properly initialized
-        HitCountData testCount = null;
+        WeblogHitCount testCount = null;
         testCount = mgr.getHitCount(cnt1.getId());
         assertEquals(10, testCount.getDailyHits());
         testCount = mgr.getHitCount(cnt2.getId());
@@ -302,10 +302,10 @@ public class HitCountTest extends TestCase {
         assertEquals(3, hotBlogs.size());
         
         // also check ordering and values
-        HitCountData hitCount = null;
+        WeblogHitCount hitCount = null;
         Iterator it = hotBlogs.iterator();
         for(int i=3; it.hasNext(); i--) {
-            hitCount = (HitCountData) it.next();
+            hitCount = (WeblogHitCount) it.next();
             
             assertEquals(i*10, hitCount.getDailyHits());
         }

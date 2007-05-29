@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.EntryAttributeData;
+import org.apache.roller.pojos.WeblogEntryAttribute;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 
@@ -340,9 +340,9 @@ public class EntryBean {
         setPinnedToMain(entry.getPinnedToMain());
         
         // enclosure url, if it exists
-        Set<EntryAttributeData> attrs = entry.getEntryAttributes();
+        Set<WeblogEntryAttribute> attrs = entry.getEntryAttributes();
         if(attrs != null && attrs.size() > 0) {
-            for(EntryAttributeData attr : attrs) {
+            for(WeblogEntryAttribute attr : attrs) {
                 if("att_mediacast_url".equals(attr.getName())) {
                     setEnclosureURL(attr.getValue());
                 }

@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.ui.struts2.util.KeyValueObject;
 import org.apache.roller.util.cache.CacheManager;
@@ -50,10 +50,10 @@ public class Comments extends UIAction {
     private List comments = Collections.EMPTY_LIST;
     
     // first comment in the list
-    private CommentData firstComment = null;
+    private WeblogEntryComment firstComment = null;
     
     // last comment in the list
-    private CommentData lastComment = null;
+    private WeblogEntryComment lastComment = null;
     
     // are there more results for the query?
     private boolean moreResults = false;
@@ -104,8 +104,8 @@ public class Comments extends UIAction {
                 }
                 
                 setComments(comments);
-                setFirstComment((CommentData)comments.get(0));
-                setLastComment((CommentData)comments.get(comments.size()-1));
+                setFirstComment((WeblogEntryComment)comments.get(0));
+                setLastComment((WeblogEntryComment)comments.get(comments.size()-1));
                 loadNextPrevLinks(isMoreResults());
             }
         } catch (RollerException ex) {
@@ -207,14 +207,14 @@ public class Comments extends UIAction {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             
-            List<CommentData> flushList = new ArrayList();
+            List<WeblogEntryComment> flushList = new ArrayList();
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
             if(deletes != null && deletes.size() > 0) {
                 log.debug("Processing deletes - "+deletes.size());
                 
-                CommentData deleteComment = null;
+                WeblogEntryComment deleteComment = null;
                 for(String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
                     
@@ -232,7 +232,7 @@ public class Comments extends UIAction {
             log.debug(spamIds.size()+" comments marked as spam");
             
             // track comments approved via moderation
-            List<CommentData> approvedComments = new ArrayList();
+            List<WeblogEntryComment> approvedComments = new ArrayList();
             
             String[] ids = Utilities.stringToStringArray(getBean().getIds(),",");
             for (int i=0; i < ids.length; i++) {
@@ -244,7 +244,7 @@ public class Comments extends UIAction {
                     continue;
                 }
                 
-                CommentData comment = wmgr.getComment(ids[i]);
+                WeblogEntryComment comment = wmgr.getComment(ids[i]);
                 
                 // make sure comment is tied to action weblog
                 if(getActionWeblog().equals(comment.getWeblogEntry().getWebsite())) {
@@ -252,25 +252,25 @@ public class Comments extends UIAction {
                     if(approvedIds.contains(ids[i])) {
                         // if a comment was previously PENDING then this is
                         // it's first approval, so track it for notification
-                        if(CommentData.PENDING.equals(comment.getStatus())) {
+                        if(WeblogEntryComment.PENDING.equals(comment.getStatus())) {
                             approvedComments.add(comment);
                         }
                         
                         log.debug("Marking as approved - "+comment.getId());
-                        comment.setStatus(CommentData.APPROVED);
+                        comment.setStatus(WeblogEntryComment.APPROVED);
                         wmgr.saveComment(comment);
                         
                         flushList.add(comment);
                         
                     } else if(spamIds.contains(ids[i])) {
                         log.debug("Marking as spam - "+comment.getId());
-                        comment.setStatus(CommentData.SPAM);
+                        comment.setStatus(WeblogEntryComment.SPAM);
                         wmgr.saveComment(comment);
                         
                         flushList.add(comment);
-                    } else if(!CommentData.DISAPPROVED.equals(comment.getStatus())) {
+                    } else if(!WeblogEntryComment.DISAPPROVED.equals(comment.getStatus())) {
                         log.debug("Marking as disapproved - "+comment.getId());
-                        comment.setStatus(CommentData.DISAPPROVED);
+                        comment.setStatus(WeblogEntryComment.DISAPPROVED);
                         wmgr.saveComment(comment);
                         
                         flushList.add(comment);
@@ -281,7 +281,7 @@ public class Comments extends UIAction {
             RollerFactory.getRoller().flush();
             
             // notify caches of changes
-            for(CommentData comm : flushList) {
+            for(WeblogEntryComment comm : flushList) {
                 CacheManager.invalidate(comm);
             }
             
@@ -356,19 +356,19 @@ public class Comments extends UIAction {
         this.bulkDeleteCount = bulkDeleteCount;
     }
 
-    public CommentData getFirstComment() {
+    public WeblogEntryComment getFirstComment() {
         return firstComment;
     }
 
-    public void setFirstComment(CommentData firstComment) {
+    public void setFirstComment(WeblogEntryComment firstComment) {
         this.firstComment = firstComment;
     }
 
-    public CommentData getLastComment() {
+    public WeblogEntryComment getLastComment() {
         return lastComment;
     }
 
-    public void setLastComment(CommentData lastComment) {
+    public void setLastComment(WeblogEntryComment lastComment) {
         this.lastComment = lastComment;
     }
 

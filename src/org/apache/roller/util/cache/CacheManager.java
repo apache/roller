@@ -33,9 +33,9 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.WeblogBookmark;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.WeblogBookmarkFolder;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -258,7 +258,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(CommentData comment) {
+    public static void invalidate(WeblogEntryComment comment) {
         
         log.debug("invalidating comment = "+comment.getId());
         
@@ -269,7 +269,7 @@ public class CacheManager {
     }
     
     
-    public static void invalidate(RefererData referer) {
+    public static void invalidate(WeblogReferrer referer) {
         
         log.debug("invalidating referer = "+referer.getId());
         

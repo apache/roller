@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.util.RollerMessages;
 
 /**
@@ -41,7 +41,7 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         return bundle.getString("comment.validator.excessLinksName");
     }
 
-    public int validate(CommentData comment, RollerMessages messages) {
+    public int validate(WeblogEntryComment comment, RollerMessages messages) {
         Matcher m = linkPattern.matcher(comment.getContent());
         int count = 0;
         while (m.find()) {

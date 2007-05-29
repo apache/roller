@@ -41,9 +41,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.HitCountData;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogEntryComment;
+import org.apache.roller.pojos.WeblogHitCount;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
@@ -53,7 +53,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.Weblog;
-import org.apache.roller.pojos.EntryAttributeData;
+import org.apache.roller.pojos.WeblogEntryAttribute;
 import org.apache.roller.pojos.StatCountCountComparator;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.util.DateUtil;
@@ -260,7 +260,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void saveComment(CommentData comment) throws RollerException {
+    public void saveComment(WeblogEntryComment comment) throws RollerException {
         this.strategy.store(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -271,7 +271,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void removeComment(CommentData comment) throws RollerException {
+    public void removeComment(WeblogEntryComment comment) throws RollerException {
         this.strategy.remove(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -330,11 +330,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public void removeWeblogEntry(WeblogEntryData entry)
     throws RollerException {
-        Query q = strategy.getNamedQuery("RefererData.getByWeblogEntry");
+        Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
         q.setParameter(1, entry);
         List referers = q.getResultList();
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            RefererData referer = (RefererData) iter.next();
+            WeblogReferrer referer = (WeblogReferrer) iter.next();
             this.strategy.remove(referer);
         }
         
@@ -351,7 +351,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 -1);   // no limit
         Iterator commentsIT = comments.iterator();
         while (commentsIT.hasNext()) {
-            this.strategy.remove((CommentData) commentsIT.next());
+            this.strategy.remove((WeblogEntryComment) commentsIT.next());
         }
         
         // remove tags aggregates
@@ -644,7 +644,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
     throws RollerException {
         for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
-            EntryAttributeData entryAttribute = (EntryAttributeData) it.next();
+            WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
             if (entryAttribute.getName().equals(name)) {
                 //Call back the entity to adjust its internal state
                 entry.onRemoveEntryAttribute(entryAttribute);
@@ -841,7 +841,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List params = new ArrayList();
         int size = 0;
         StringBuffer queryString = new StringBuffer();
-        queryString.append("SELECT c FROM CommentData c ");
+        queryString.append("SELECT c FROM WeblogEntryComment c ");
         
         StringBuffer whereClause = new StringBuffer();
         if (entry != null) {
@@ -875,7 +875,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             if("ALL_IGNORE_SPAM".equals(status)) {
                 // we want all comments, except spam
                 // so that means where status != SPAM
-                status = CommentData.SPAM;
+                status = WeblogEntryComment.SPAM;
                 comparisionOperator = " <> ";
             } else {
                 comparisionOperator = " = ";
@@ -929,7 +929,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 status, true, 0, -1);
         int count = 0;
         for (Iterator it = comments.iterator(); it.hasNext();) {
-            CommentData comment = (CommentData) it.next();
+            WeblogEntryComment comment = (WeblogEntryComment) it.next();
             removeComment(comment);
             count++;
         }
@@ -989,8 +989,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public CommentData getComment(String id) throws RollerException {
-        return (CommentData) this.strategy.load(CommentData.class, id);
+    public WeblogEntryComment getComment(String id) throws RollerException {
+        return (WeblogEntryComment) this.strategy.load(WeblogEntryComment.class, id);
     }
     
     /**
@@ -1121,14 +1121,14 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 Timestamp start = new Timestamp(startDate.getTime());
                 Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
-                        "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate&StartDate");
+                        "WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&EndDate&StartDate");
                 query.setParameter(1, website);
                 query.setParameter(2, end);
                 query.setParameter(3, start);
             } else {
                 Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
-                        "CommentData.getMostCommentedWeblogEntryByWebsite&EndDate");
+                        "WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&EndDate");
                 query.setParameter(1, website);
                 query.setParameter(2, end);
             }
@@ -1137,13 +1137,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 Timestamp start = new Timestamp(startDate.getTime());
                 Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
-                        "CommentData.getMostCommentedWeblogEntryByEndDate&StartDate");
+                        "WeblogEntryComment.getMostCommentedWeblogEntryByEndDate&StartDate");
                 query.setParameter(1, end);
                 query.setParameter(2, start);
             } else {
                 Timestamp end = new Timestamp(endDate.getTime());
                 query = strategy.getNamedQuery(
-                        "CommentData.getMostCommentedWeblogEntryByEndDate");
+                        "WeblogEntryComment.getMostCommentedWeblogEntryByEndDate");
                 query.setParameter(1, end);
             }
         }
@@ -1486,21 +1486,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public HitCountData getHitCount(String id) throws RollerException {
+    public WeblogHitCount getHitCount(String id) throws RollerException {
         
         // do lookup
-        return (HitCountData) strategy.load(HitCountData.class, id);
+        return (WeblogHitCount) strategy.load(WeblogHitCount.class, id);
     }
     
     /**
      * @inheritDoc
      */
-    public HitCountData getHitCountByWeblog(Weblog weblog)
+    public WeblogHitCount getHitCountByWeblog(Weblog weblog)
     throws RollerException {
-        Query q = strategy.getNamedQuery("HitCountData.getByWeblog");
+        Query q = strategy.getNamedQuery("WeblogHitCount.getByWeblog");
         q.setParameter(1, weblog);
         try {
-            return (HitCountData)q.getSingleResult();
+            return (WeblogHitCount)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -1519,7 +1519,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         Date startDate = cal.getTime();
         
         Query query = strategy.getNamedQuery(
-                "HitCountData.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc");
+                "WeblogHitCount.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc");
         query.setParameter(1, startDate);
         
         // Was commented out due to https://glassfish.dev.java.net/issues/show_bug.cgi?id=2084
@@ -1537,7 +1537,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void saveHitCount(HitCountData hitCount) throws RollerException {
+    public void saveHitCount(WeblogHitCount hitCount) throws RollerException {
         this.strategy.store(hitCount);
     }
     
@@ -1545,7 +1545,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public void removeHitCount(HitCountData hitCount) throws RollerException {
+    public void removeHitCount(WeblogHitCount hitCount) throws RollerException {
         this.strategy.remove(hitCount);
     }
     
@@ -1564,18 +1564,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             throw new RollerException("Website cannot be NULL.");
         }
         
-        Query q = strategy.getNamedQuery("HitCountData.getByWeblog");
+        Query q = strategy.getNamedQuery("WeblogHitCount.getByWeblog");
         q.setParameter(1, weblog);
-        HitCountData hitCount = null;
+        WeblogHitCount hitCount = null;
         try {
-            hitCount = (HitCountData)q.getSingleResult();
+            hitCount = (WeblogHitCount)q.getSingleResult();
         } catch (NoResultException e) {
             hitCount = null;
         }
         
         // create it if it doesn't exist
         if(hitCount == null && amount > 0) {
-            hitCount = new HitCountData();
+            hitCount = new WeblogHitCount();
             hitCount.setWeblog(weblog);
             hitCount.setDailyHits(amount);
             strategy.store(hitCount);
@@ -1589,7 +1589,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     public void resetAllHitCounts() throws RollerException {       
-        Query q = strategy.getNamedUpdate("HitCountData.updateDailyHitCountZero");
+        Query q = strategy.getNamedUpdate("WeblogHitCount.updateDailyHitCountZero");
         q.executeUpdate();
     }
     
@@ -1597,11 +1597,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     public void resetHitCount(Weblog weblog) throws RollerException {
-        Query q = strategy.getNamedQuery("HitCountData.getByWeblog");
+        Query q = strategy.getNamedQuery("WeblogHitCount.getByWeblog");
         q.setParameter(1, weblog);
-        HitCountData hitCount = null;
+        WeblogHitCount hitCount = null;
         try {
-            hitCount = (HitCountData)q.getSingleResult();
+            hitCount = (WeblogHitCount)q.getSingleResult();
             hitCount.setDailyHits(0);
             strategy.store(hitCount);
         } catch (NoResultException e) {
@@ -1615,8 +1615,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public long getCommentCount() throws RollerException {
         Query q = strategy.getNamedQuery(
-                "CommentData.getCountAllDistinctByStatus");
-        q.setParameter(1, CommentData.APPROVED);
+                "WeblogEntryComment.getCountAllDistinctByStatus");
+        q.setParameter(1, WeblogEntryComment.APPROVED);
         List results = q.getResultList();
         return ((Long)results.get(0)).longValue();
     }
@@ -1626,9 +1626,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public long getCommentCount(Weblog website) throws RollerException {
         Query q = strategy.getNamedQuery(
-                "CommentData.getCountDistinctByWebsite&Status");
+                "WeblogEntryComment.getCountDistinctByWebsite&Status");
         q.setParameter(1, website);
-        q.setParameter(2, CommentData.APPROVED);
+        q.setParameter(2, WeblogEntryComment.APPROVED);
         List results = q.getResultList();
         return ((Long)results.get(0)).longValue();
     }

@@ -55,7 +55,7 @@ import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogPermission;
 import org.apache.roller.pojos.PingQueueEntryData;
 import org.apache.roller.pojos.PingTargetData;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -171,11 +171,11 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         
         // remove associated referers
-        Criteria refererQuery = session.createCriteria(RefererData.class);
+        Criteria refererQuery = session.createCriteria(WeblogReferrer.class);
         refererQuery.add(Expression.eq("website", website));
         List referers = refererQuery.list();
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            RefererData referer = (RefererData) iter.next();
+            WeblogReferrer referer = (WeblogReferrer) iter.next();
             this.strategy.remove(referer);
         }
         
@@ -939,7 +939,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 ((HibernatePersistenceStrategy)strategy).getSession();            
             StringBuffer sb = new StringBuffer();
             sb.append("select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name ");
-            sb.append("from CommentData c where c.weblogEntry.pubTime < :endDate ");
+            sb.append("from WeblogEntryComment c where c.weblogEntry.pubTime < :endDate ");
             if (startDate != null) {
                 sb.append("and c.weblogEntry.pubTime > :startDate ");
             }  

@@ -1163,7 +1163,7 @@ public class Weblog implements Serializable {
      * @param length Max entries to return (1-100)
      * @return List of comment objects.
      *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.CommentData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryComment"
      */
     public List getRecentComments(int length) {   
         if (length > 100) length = 100;
@@ -1172,12 +1172,12 @@ public class Weblog implements Serializable {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             recentComments = wmgr.getComments(
+                    
                     this,
                     null,          // weblog entry
                     null,          // search String
                     null,          // startDate
-                    null,          // endDate
-                    CommentData.APPROVED, // approved comments only
+                    null,WeblogEntryComment.APPROVED, // approved comments only
                     true,          // we want reverse chrono order
                     0,             // offset
                     length);       // length
@@ -1214,7 +1214,7 @@ public class Weblog implements Serializable {
     
     /** 
      * Return collection of referrers for current day.
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.RefererData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogReferrer"
      */
     public List getTodaysReferrers() {
         List referers = null;
@@ -1240,7 +1240,7 @@ public class Weblog implements Serializable {
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
-            HitCountData hitCount = mgr.getHitCountByWeblog(this);
+            WeblogHitCount hitCount = mgr.getHitCountByWeblog(this);
             
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
             

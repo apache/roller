@@ -9,16 +9,16 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.pojos</package>
-    <entity metadata-complete="true" name="HitCountData" class="org.apache.roller.pojos.HitCountData">
+    <entity metadata-complete="true" name="WeblogHitCount" class="org.apache.roller.pojos.WeblogHitCount">
         <table name="roller_hitcounts"/>
-        <named-query name="HitCountData.getByWeblog">
-            <query>SELECT h FROM HitCountData h WHERE h.weblog = ?1</query>
+        <named-query name="WeblogHitCount.getByWeblog">
+            <query>SELECT h FROM WeblogHitCount h WHERE h.weblog = ?1</query>
         </named-query>
-        <named-query name="HitCountData.getByWeblogEnabledTrueAndActiveTrue&amp;DailyHitsGreaterThenZero&amp;WeblogLastModifiedGreaterOrderByDailyHitsDesc">
-            <query>SELECT h FROM HitCountData h WHERE h.weblog.enabled = true AND h.weblog.active = true AND h.weblog.lastModified > ?1 AND h.dailyHits > 0 ORDER BY h.dailyHits DESC</query>
+        <named-query name="WeblogHitCount.getByWeblogEnabledTrueAndActiveTrue&amp;DailyHitsGreaterThenZero&amp;WeblogLastModifiedGreaterOrderByDailyHitsDesc">
+            <query>SELECT h FROM WeblogHitCount h WHERE h.weblog.enabled = true AND h.weblog.active = true AND h.weblog.lastModified > ?1 AND h.dailyHits > 0 ORDER BY h.dailyHits DESC</query>
         </named-query>
-        <named-query name="HitCountData.updateDailyHitCountZero">
-            <query>UPDATE HitCountData h SET h.dailyHits = 0</query>
+        <named-query name="WeblogHitCount.updateDailyHitCountZero">
+            <query>UPDATE WeblogHitCount h SET h.dailyHits = 0</query>
         </named-query>
         <attributes>
             <id name="id">

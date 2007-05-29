@@ -38,9 +38,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.HitCountData;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogEntryComment;
+import org.apache.roller.pojos.WeblogHitCount;
+import org.apache.roller.pojos.WeblogReferrer;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
@@ -50,7 +50,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogEntryTagAggregateData;
 import org.apache.roller.pojos.Weblog;
-import org.apache.roller.pojos.EntryAttributeData;
+import org.apache.roller.pojos.WeblogEntryAttribute;
 import org.apache.roller.util.DateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -192,7 +192,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void saveComment(CommentData comment) throws RollerException {
+    public void saveComment(WeblogEntryComment comment) throws RollerException {
         this.strategy.store(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -200,7 +200,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void removeComment(CommentData comment) throws RollerException {
+    public void removeComment(WeblogEntryComment comment) throws RollerException {
         this.strategy.remove(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -255,11 +255,11 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
         
         // remove referers
-        Criteria refererQuery = session.createCriteria(RefererData.class);
+        Criteria refererQuery = session.createCriteria(WeblogReferrer.class);
         refererQuery.add(Expression.eq("weblogEntry", entry));
         List referers = refererQuery.list();
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            RefererData referer = (RefererData) iter.next();
+            WeblogReferrer referer = (WeblogReferrer) iter.next();
             this.strategy.remove(referer);
         }
         
@@ -276,7 +276,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 -1);   // no limit
         Iterator commentsIT = comments.iterator();
         while (commentsIT.hasNext()) {
-            this.strategy.remove((CommentData) commentsIT.next());
+            this.strategy.remove((WeblogEntryComment) commentsIT.next());
         }
         
         // remove tags aggregates
@@ -302,7 +302,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     public void removeWeblogEntryAttribute(String name, WeblogEntryData entry)
              throws RollerException {
         for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
-            EntryAttributeData entryAttribute = (EntryAttributeData) it.next();
+            WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
             if (entryAttribute.getName().equals(name)) {
                 //Call back the entity to adjust its internal state
                 entry.onRemoveEntryAttribute(entryAttribute);
@@ -731,7 +731,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(CommentData.class);
+            Criteria criteria = session.createCriteria(WeblogEntryComment.class);
             
             if (entry != null) {
                 criteria.add(Expression.eq("weblogEntry", entry));
@@ -804,7 +804,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 status, true, 0, -1);
             int count = 0;
             for (Iterator it = comments.iterator(); it.hasNext();) {
-                CommentData comment = (CommentData) it.next();
+                WeblogEntryComment comment = (WeblogEntryComment) it.next();
                 removeComment(comment);
                 count++;
             }
@@ -822,8 +822,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
          
             // Can't use join in a bulk delete query, but can use a sub-query      
             queryString.append(
-                "delete CommentData cmt where cmt.id in "
-              + "(select c.id from CommentData as c where ");
+                "delete WeblogEntryComment cmt where cmt.id in "
+              + "(select c.id from WeblogEntryComment as c where ");
                 
             if (entry != null) {
                 queryString.append("c.weblogEntry.anchor = ? and c.weblogEntry.website.handle = ? ");
@@ -933,8 +933,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
         
-    public CommentData getComment(String id) throws RollerException {
-        return (CommentData) this.strategy.load(id, CommentData.class);
+    public WeblogEntryComment getComment(String id) throws RollerException {
+        return (WeblogEntryComment) this.strategy.load(id,WeblogEntryComment.class);
     }
         
     public WeblogEntryData getWeblogEntry(String id)
@@ -1059,7 +1059,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             if (website != null) {
                 StringBuffer sb = new StringBuffer();
                 sb.append("select count(distinct c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title ");
-                sb.append("from CommentData c ");
+                sb.append("from WeblogEntryComment c ");
                 sb.append("where c.weblogEntry.website=:website and c.weblogEntry.pubTime < :endDate ");
                 if (startDate != null) {
                     sb.append("and c.weblogEntry.pubTime > :startDate ");
@@ -1075,7 +1075,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             } else {
                 StringBuffer sb = new StringBuffer();
                 sb.append("select count(distinct c),   c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title ");
-                sb.append("from CommentData c ");
+                sb.append("from WeblogEntryComment c ");
                 sb.append("where c.weblogEntry.pubTime < :endDate ");
                 if (startDate != null) {
                     sb.append("and c.weblogEntry.pubTime > :startDate ");
@@ -1403,15 +1403,15 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public HitCountData getHitCount(String id) throws RollerException {
+    public WeblogHitCount getHitCount(String id) throws RollerException {
         
         // do lookup
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(HitCountData.class);
+            Criteria criteria = session.createCriteria(WeblogHitCount.class);
             
             criteria.add(Expression.eq("id", id));
-            HitCountData hitCount = (HitCountData) criteria.uniqueResult();
+            WeblogHitCount hitCount = (WeblogHitCount) criteria.uniqueResult();
             
             return hitCount;
         } catch (HibernateException e) {
@@ -1419,16 +1419,16 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public HitCountData getHitCountByWeblog(Weblog weblog) 
+    public WeblogHitCount getHitCountByWeblog(Weblog weblog) 
         throws RollerException {
         
         // do lookup
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(HitCountData.class);
+            Criteria criteria = session.createCriteria(WeblogHitCount.class);
             
             criteria.add(Expression.eq("weblog", weblog));
-            HitCountData hitCount = (HitCountData) criteria.uniqueResult();
+            WeblogHitCount hitCount = (WeblogHitCount) criteria.uniqueResult();
             
             return hitCount;
         } catch (HibernateException e) {
@@ -1449,7 +1449,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         try {      
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();            
             Query query = session.createQuery(
-                    "from HitCountData hcd " +
+                    "from WeblogHitCount hcd " +
                     "where hcd.weblog.enabled=true " +
                     "and hcd.weblog.active=true " +
                     "and hcd.weblog.lastModified > :startDate " +
@@ -1472,12 +1472,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void saveHitCount(HitCountData hitCount) throws RollerException {
+    public void saveHitCount(WeblogHitCount hitCount) throws RollerException {
         this.strategy.store(hitCount);
     }
     
     
-    public void removeHitCount(HitCountData hitCount) throws RollerException {
+    public void removeHitCount(WeblogHitCount hitCount) throws RollerException {
         this.strategy.remove(hitCount);
     }
     
@@ -1495,15 +1495,15 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException("Website cannot be NULL.");
         }
         
-        Criteria criteria = session.createCriteria(HitCountData.class);
+        Criteria criteria = session.createCriteria(WeblogHitCount.class);
         criteria.add(Expression.eq("weblog", weblog));
         criteria.setMaxResults(1);
         
-        HitCountData hitCount = (HitCountData) criteria.uniqueResult();
+        WeblogHitCount hitCount = (WeblogHitCount) criteria.uniqueResult();
         
         // create it if it doesn't exist
         if(hitCount == null && amount > 0) {
-            hitCount = new HitCountData();
+            hitCount = new WeblogHitCount();
             hitCount.setWeblog(weblog);
             hitCount.setDailyHits(amount);
             strategy.store(hitCount);
@@ -1518,7 +1518,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            session.createQuery("update HitCountData set dailyHits = 0").executeUpdate();
+            session.createQuery("update WeblogHitCount set dailyHits = 0").executeUpdate();
         } catch (Exception e) {
             throw new RollerException(e);
         }
@@ -1529,7 +1529,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            String query = "update HitCountData set dailyHits = 0 where weblog = ?";
+            String query = "update WeblogHitCount set dailyHits = 0 where weblog = ?";
             session.createQuery(query).setParameter(0, weblog).executeUpdate();
         } catch (Exception e) {
             throw new RollerException(e);
@@ -1554,12 +1554,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Query query = null;
             if(website == null) {
                 query = session.createQuery("select count(distinct c) "+
-                        "from CommentData c where c.status=?");
-                query.setParameter(0, CommentData.APPROVED);
+                        "from WeblogEntryComment c where c.status=?");
+                query.setParameter(0,WeblogEntryComment.APPROVED);
             } else {
                 query = session.createQuery("select count(distinct c) "+
-                        "from CommentData c where c.status=? and c.weblogEntry.website=?");
-                query.setParameter(0, CommentData.APPROVED);
+                        "from WeblogEntryComment c where c.status=? and c.weblogEntry.website=?");
+                query.setParameter(0,WeblogEntryComment.APPROVED);
                 query.setParameter(1, website);
             }
             List result = query.list();

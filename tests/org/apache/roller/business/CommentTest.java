@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.Weblog;
@@ -95,7 +95,7 @@ public class CommentTest extends TestCase {
         
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         
-        CommentData comment = new CommentData();
+        WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName("test");
         comment.setEmail("test");
         comment.setUrl("test");
@@ -103,7 +103,7 @@ public class CommentTest extends TestCase {
         comment.setContent("this is a test comment");
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         comment.setWeblogEntry(TestUtils.getManagedWeblogEntry(testEntry));
-        comment.setStatus(CommentData.APPROVED);
+        comment.setStatus(WeblogEntryComment.APPROVED);
         
         // create a comment
         mgr.saveComment(comment);
@@ -148,9 +148,9 @@ public class CommentTest extends TestCase {
         
         // we need some comments to play with
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
-        CommentData comment1 = TestUtils.setupComment("comment1", testEntry);
-        CommentData comment2 = TestUtils.setupComment("comment2", testEntry);
-        CommentData comment3 = TestUtils.setupComment("comment3", testEntry);
+        WeblogEntryComment comment1 = TestUtils.setupComment("comment1", testEntry);
+        WeblogEntryComment comment2 = TestUtils.setupComment("comment2", testEntry);
+        WeblogEntryComment comment3 = TestUtils.setupComment("comment3", testEntry);
         TestUtils.endSession(true);
         
         // get all comments
@@ -168,19 +168,19 @@ public class CommentTest extends TestCase {
         
         // make some changes
         comment3 = mgr.getComment(comment3.getId());
-        comment3.setStatus(CommentData.PENDING);
+        comment3.setStatus(WeblogEntryComment.PENDING);
         mgr.saveComment(comment3);
         TestUtils.endSession(true);
         
         // get pending comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, CommentData.PENDING, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, WeblogEntryComment.PENDING, false, 0, -1);
         assertNotNull(comments);
         assertEquals(1, comments.size());
         
         // get approved comments
         comments = null;
-        comments = mgr.getComments(null, null, null, null, null, CommentData.APPROVED, false, 0, -1);
+        comments = mgr.getComments(null, null, null, null, null, WeblogEntryComment.APPROVED, false, 0, -1);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
@@ -284,12 +284,12 @@ public class CommentTest extends TestCase {
         List comments = null;
         
         // we need some comments to play with
-        CommentData comment1 = TestUtils.setupComment("deletemeXXX", testEntry);
-        CommentData comment2 = TestUtils.setupComment("XXXdeleteme", testEntry);
-        CommentData comment3 = TestUtils.setupComment("deleteme", testEntry);
-        CommentData comment4 = TestUtils.setupComment("saveme", testEntry);
-        CommentData comment5 = TestUtils.setupComment("saveme", testEntry);
-        CommentData comment6 = TestUtils.setupComment("saveme", testEntry);
+        WeblogEntryComment comment1 = TestUtils.setupComment("deletemeXXX", testEntry);
+        WeblogEntryComment comment2 = TestUtils.setupComment("XXXdeleteme", testEntry);
+        WeblogEntryComment comment3 = TestUtils.setupComment("deleteme", testEntry);
+        WeblogEntryComment comment4 = TestUtils.setupComment("saveme", testEntry);
+        WeblogEntryComment comment5 = TestUtils.setupComment("saveme", testEntry);
+        WeblogEntryComment comment6 = TestUtils.setupComment("saveme", testEntry);
         TestUtils.endSession(true);
         
         // get all comments
@@ -374,10 +374,10 @@ public class CommentTest extends TestCase {
 //        List comments = null;
 //        
 //        // we need some comments to play with
-//        CommentData comment1 = TestUtils.setupComment("comment1", testEntry);
-//        CommentData comment2 = TestUtils.setupComment("comment2", testEntry);
-//        CommentData comment3 = TestUtils.setupComment("comment3", testEntry);
-//        CommentData comment4 = TestUtils.setupComment("comment4", testEntry);
+//        WeblogEntryComment comment1 = TestUtils.setupComment("comment1", testEntry);
+//        WeblogEntryComment comment2 = TestUtils.setupComment("comment2", testEntry);
+//        WeblogEntryComment comment3 = TestUtils.setupComment("comment3", testEntry);
+//        WeblogEntryComment comment4 = TestUtils.setupComment("comment4", testEntry);
 //        TestUtils.endSession(true);
 //        
 //        // remove a collection of comments

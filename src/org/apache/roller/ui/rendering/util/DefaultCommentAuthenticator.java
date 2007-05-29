@@ -19,9 +19,6 @@
 package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.velocity.context.Context;
-import org.apache.roller.pojos.CommentData;
 
 
 /**

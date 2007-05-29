@@ -18,7 +18,7 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.EntryAttributeData;
+import org.apache.roller.pojos.WeblogEntryAttribute;
 
 
 /**
@@ -27,15 +27,15 @@ import org.apache.roller.pojos.EntryAttributeData;
 public class EntryAttributeDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private EntryAttributeData pojo = null;
+    private WeblogEntryAttribute pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private EntryAttributeDataWrapper(EntryAttributeData toWrap) {
+    private EntryAttributeDataWrapper(WeblogEntryAttribute toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static EntryAttributeDataWrapper wrap(EntryAttributeData toWrap) {
+    public static EntryAttributeDataWrapper wrap(WeblogEntryAttribute toWrap) {
         if(toWrap != null)
             return new EntryAttributeDataWrapper(toWrap);
 
@@ -88,7 +88,7 @@ public class EntryAttributeDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.EntryAttributeData getPojo() {
+    public org.apache.roller.pojos.WeblogEntryAttribute getPojo() {
         return this.pojo;
     }
 

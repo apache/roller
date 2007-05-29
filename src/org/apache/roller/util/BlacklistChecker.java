@@ -25,8 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogEntryComment;
 import org.apache.roller.pojos.Weblog;
 
 /**
@@ -41,7 +40,7 @@ public class BlacklistChecker {
      * Test comment, applying all blacklists, if configured 
      * @return True if comment matches blacklist term
      */
-    public static boolean checkComment(CommentData comment) {
+    public static boolean checkComment(WeblogEntryComment comment) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.comments")) {
             return testComment(comment);
         }
@@ -52,7 +51,7 @@ public class BlacklistChecker {
      * Test trackback comment, applying all blacklists, if configured 
      * @return True if comment matches blacklist term
      */
-    public static boolean checkTrackback(CommentData comment) {
+    public static boolean checkTrackback(WeblogEntryComment comment) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.trackbacks")) {
             return testComment(comment);
         }
@@ -82,7 +81,7 @@ public class BlacklistChecker {
      * Test comment against built in blacklist, site blacklist and website blacklist 
      * @return True if comment matches blacklist term
      */
-    private static boolean testComment(CommentData c) {
+    private static boolean testComment(WeblogEntryComment c) {
         boolean ret = false;
         List stringRules = new ArrayList();
         List regexRules = new ArrayList();

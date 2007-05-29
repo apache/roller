@@ -18,7 +18,7 @@
 
 package org.apache.roller.pojos.wrapper;
 
-import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.WeblogReferrer;
 
 
 /**
@@ -27,15 +27,15 @@ import org.apache.roller.pojos.RefererData;
 public class RefererDataWrapper {
 
     // keep a reference to the wrapped pojo
-    private RefererData pojo = null;
+    private WeblogReferrer pojo = null;
 
     // this is private so that we can force the use of the .wrap(pojo) method
-    private RefererDataWrapper(RefererData toWrap) {
+    private RefererDataWrapper(WeblogReferrer toWrap) {
         this.pojo = toWrap;
     }
 
     // wrap the given pojo if it is not null
-    public static RefererDataWrapper wrap(RefererData toWrap) {
+    public static RefererDataWrapper wrap(WeblogReferrer toWrap) {
         if(toWrap != null)
             return new RefererDataWrapper(toWrap);
 
@@ -208,7 +208,7 @@ public class RefererDataWrapper {
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.pojos.RefererData getPojo() {
+    public org.apache.roller.pojos.WeblogReferrer getPojo() {
         return this.pojo;
     }
 

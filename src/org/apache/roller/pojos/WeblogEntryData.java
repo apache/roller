@@ -375,11 +375,11 @@ public class WeblogEntryData implements Serializable {
     /**
      * Map attributes as set because XDoclet 1.2b4 map support is broken.
      *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.EntryAttributeData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryAttribute"
      * @ejb:persistent-field
      * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all"
      * @hibernate.collection-key column="entryid" type="String"
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.EntryAttributeData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogEntryAttribute"
      */
     public Set getEntryAttributes() {
         return attSet;
@@ -394,7 +394,7 @@ public class WeblogEntryData implements Serializable {
             this.attMap = new HashMap();
             Iterator iter = this.attSet.iterator();
             while (iter.hasNext()) {
-                EntryAttributeData att = (EntryAttributeData)iter.next();
+                WeblogEntryAttribute att = (WeblogEntryAttribute)iter.next();
                 attMap.put(att.getName(), att);
             }
         } else {
@@ -410,15 +410,15 @@ public class WeblogEntryData implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String findEntryAttribute(String name) {
-        EntryAttributeData att = ((EntryAttributeData)attMap.get(name));
+        WeblogEntryAttribute att = ((WeblogEntryAttribute)attMap.get(name));
         return (att != null) ? att.getValue() : null;
     }
     
     
     public void putEntryAttribute(String name, String value) throws Exception {
-        EntryAttributeData att = (EntryAttributeData)attMap.get(name);
+        WeblogEntryAttribute att = (WeblogEntryAttribute)attMap.get(name);
         if (att == null) {
-            att = new EntryAttributeData();
+            att = new WeblogEntryAttribute();
             att.setEntry(this);
             att.setName(name);
             att.setValue(value);
@@ -428,7 +428,7 @@ public class WeblogEntryData implements Serializable {
             att.setValue(value);
         }
     }
-    public void onRemoveEntryAttribute(EntryAttributeData att) throws RollerException {
+    public void onRemoveEntryAttribute(WeblogEntryAttribute att) throws RollerException {
         attMap.remove(att.getName());
     }
     //-------------------------------------------------------------------------
@@ -840,14 +840,14 @@ public class WeblogEntryData implements Serializable {
     //------------------------------------------------------------------------
     
     /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.CommentData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryComment"
      */
     public List getComments() {
         return getComments(true, true);
     }
     
     /**
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.CommentData"
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryComment"
      *
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
@@ -856,12 +856,12 @@ public class WeblogEntryData implements Serializable {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             return wmgr.getComments(
+                    
                     getWebsite(),
                     this,
                     null,  // search String
                     null,  // startDate
-                    null,  // endDate
-                    CommentData.APPROVED,  // approved comments only
+                    null,WeblogEntryComment.APPROVED,  // approved comments only
                     false, // we want chrono order
                     0,    // offset
                     -1);   // no limit
