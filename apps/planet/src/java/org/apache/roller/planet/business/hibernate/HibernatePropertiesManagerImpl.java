@@ -28,7 +28,7 @@ import org.hibernate.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
