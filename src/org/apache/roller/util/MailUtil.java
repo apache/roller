@@ -34,11 +34,9 @@ import javax.mail.Transport;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.MailProvider;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.config.RollerRuntimeConfig;
@@ -55,23 +53,14 @@ public class MailUtil {
     
     private static Log log = LogFactory.getLog(MailUtil.class);
     
-    
     /**
-     * Lookup the configured mail Session if possible.
-     *
-     * @returns Mail Session if possible, otherwise null.
+     * Ideally mail senders should call this first to avoid errors that occur 
+     * when mail is not properly configured. We'll complain about that at 
+     * startup, no need to complain on every attempt to send.
      */
-    public static Session getMailSession() throws RollerException {
-        try {
-            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-            Session mailSession = (Session) ctx.lookup("mail/Session");
-            return mailSession;
-        } catch (NamingException ex) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
-                    + "Roller's mail session not properly configured", ex);
-        }
+    public static boolean isMailConfigured() {
+        return MailProvider.isMailConfigured(); 
     }
-    
     
     /**
      * Send an email notice that a new pending entry has been submitted.
@@ -79,7 +68,7 @@ public class MailUtil {
     public static void sendPendingEntryNotice(WeblogEntryData entry) 
             throws RollerException {
         
-        Session mailSession = getMailSession();
+        Session mailSession = MailProvider.getMailProvider().getSession();
         if(mailSession == null) {
             throw new RollerException("Couldn't get mail Session");
         }
@@ -134,7 +123,7 @@ public class MailUtil {
                     );
             content = sb.toString();
             MailUtil.sendTextMessage(
-                    mailSession, from, to, cc, bcc, subject, content);
+                    from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
             log.error("ERROR: Problem sending pending entry notification email.");
         }
@@ -148,7 +137,7 @@ public class MailUtil {
                                             UserData user)
             throws RollerException {
         
-        Session mailSession = getMailSession();
+        Session mailSession = MailProvider.getMailProvider().getSession();
         if(mailSession == null) {
             throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
@@ -191,7 +180,7 @@ public class MailUtil {
             }));
             content = sb.toString();
             MailUtil.sendTextMessage(
-                    mailSession, from, to, cc, bcc, subject, content);
+                    from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
             throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "due to Roller configuration or mail server problem.", e);
@@ -205,7 +194,7 @@ public class MailUtil {
     public static void sendUserActivationEmail(UserData user)
             throws RollerException {
         
-        Session mailSession = getMailSession();
+        Session mailSession = MailProvider.getMailProvider().getSession();
         if(mailSession == null) {
             throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
@@ -239,7 +228,7 @@ public class MailUtil {
                     activationURL }));
             content = sb.toString();
             
-            sendHTMLMessage(mailSession, from, to, cc, bcc, subject, content);
+            sendHTMLMessage(from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
             throw new RollerException("ERROR: Problem sending activation email.", e);
         }
@@ -261,7 +250,6 @@ public class MailUtil {
      */
     public static void sendMessage
             (
-            Session session,
             String from,
             String[] to,
             String[] cc,
@@ -271,6 +259,17 @@ public class MailUtil {
             String mimeType
             )
             throws MessagingException {
+        
+        MailProvider mailProvider = null;
+        Session session = null;
+        try {
+            mailProvider = MailProvider.getMailProvider(); 
+        } catch (RollerException ex) {
+            // The MailProvider should have been constructed long before 
+            // we get to this point, so this should never ever happen
+            throw new RuntimeException("ERROR getting mail provider", ex);
+        }
+        session = mailProvider.getSession();
         Message message = new MimeMessage(session);
         
         // n.b. any default from address is expected to be determined by caller.
@@ -320,23 +319,29 @@ public class MailUtil {
         
         SendFailedException sendex = new SendFailedException("Unable to send message to some recipients");
         
+        Transport transport = mailProvider.getTransport();
+        
         // Try to send while there remain some potentially good addresses
-        do
-        {
-            // Avoid a loop if we are stuck
-            nAddresses = remainingAddresses.length;
+        try { 
+            do {
+                // Avoid a loop if we are stuck
+                nAddresses = remainingAddresses.length;
+
+                try {
+                    // Send to the list of remaining addresses, ignoring the addresses attached to the message
+                    transport.send(message, remainingAddresses);
+                } catch(SendFailedException ex) {
+                    bFailedToSome=true;
+                    sendex.setNextException(ex);
+
+                    // Extract the remaining potentially good addresses
+                    remainingAddresses=ex.getValidUnsentAddresses();
+                }
+            } while (remainingAddresses!=null && remainingAddresses.length>0 && remainingAddresses.length!=nAddresses);
             
-            try {
-                // Send to the list of remaining addresses, ignoring the addresses attached to the message
-                Transport.send(message,remainingAddresses);
-            } catch(SendFailedException ex) {
-                bFailedToSome=true;
-                sendex.setNextException(ex);
-                
-                // Extract the remaining potentially good addresses
-                remainingAddresses=ex.getValidUnsentAddresses();
-            }
-        } while (remainingAddresses!=null && remainingAddresses.length>0 && remainingAddresses.length!=nAddresses);
+        } finally {
+            transport.close();
+        }
         
         if (bFailedToSome) throw sendex;
     }
@@ -353,7 +358,6 @@ public class MailUtil {
      */
     public static void sendTextMessage
             (
-            Session session,
             String from,
             String[] to,
             String[] cc,
@@ -362,7 +366,7 @@ public class MailUtil {
             String content
             )
             throws MessagingException {
-        sendMessage(session, from, to, cc, bcc, subject, content, "text/plain; charset=utf-8");
+        sendMessage(from, to, cc, bcc, subject, content, "text/plain; charset=utf-8");
     }
     
     
@@ -378,7 +382,6 @@ public class MailUtil {
      */
     public static void sendTextMessage
             (
-            Session session,
             String from,
             String to,
             String[] cc,
@@ -390,7 +393,7 @@ public class MailUtil {
         String[] recipient = null;
         if (to!=null) recipient = new String[] {to};
         
-        sendMessage(session, from, recipient, cc, bcc, subject, content, "text/plain; charset=utf-8");
+        sendMessage(from, recipient, cc, bcc, subject, content, "text/plain; charset=utf-8");
     }
     
     
@@ -408,7 +411,6 @@ public class MailUtil {
      */
     public static void sendTextMessage
             (
-            Session session,
             String from,
             String to,
             String cc,
@@ -425,7 +427,7 @@ public class MailUtil {
         if (cc!=null) copy = new String[] {cc};
         if (bcc!=null) bcopy = new String[] {bcc};
         
-        sendMessage(session, from, recipient, copy, bcopy, subject, content, "text/plain; charset=utf-8");
+        sendMessage(from, recipient, copy, bcopy, subject, content, "text/plain; charset=utf-8");
     }
     
     
@@ -440,7 +442,6 @@ public class MailUtil {
      */
     public static void sendHTMLMessage
             (
-            Session session,
             String from,
             String[] to,
             String[] cc,
@@ -449,7 +450,7 @@ public class MailUtil {
             String content
             )
             throws MessagingException {
-        sendMessage(session, from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
+        sendMessage(from, to, cc, bcc, subject, content, "text/html; charset=utf-8");
     }
     
     
@@ -465,7 +466,6 @@ public class MailUtil {
      */
     public static void sendHTMLMessage
             (
-            Session session,
             String from,
             String to,
             String cc,
@@ -482,7 +482,7 @@ public class MailUtil {
         if (cc!=null) copy = new String[] {cc};
         if (bcc!=null) bcopy = new String[] {bcc};
         
-        sendMessage(session, from, recipient, copy, bcopy, subject, content, "text/html; charset=utf-8");
+        sendMessage(from, recipient, copy, bcopy, subject, content, "text/html; charset=utf-8");
     }
     
     
@@ -499,7 +499,6 @@ public class MailUtil {
      */
     public static void sendHTMLMessage
             (
-            Session session,
             String from,
             String to,
             String[] cc,
@@ -511,7 +510,7 @@ public class MailUtil {
         String[] recipient = null;
         if (to!=null) recipient = new String[] {to};
         
-        sendMessage(session, from, recipient, cc, bcc, subject, content, "text/html; charset=utf-8");
+        sendMessage(from, recipient, cc, bcc, subject, content, "text/html; charset=utf-8");
     }
     
 }

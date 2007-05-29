@@ -28,7 +28,6 @@ import java.util.TreeSet;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -550,22 +549,18 @@ public class CommentServlet extends HttpServlet {
             //------------------------------------------
             // --- Send message to email recipients
             try {
-                Context ctx = (Context)
-                new InitialContext().lookup("java:comp/env");
-                Session session = (Session)ctx.lookup("mail/Session");
                 boolean isHtml = !escapeHtml;
                 // Send separate messages to owner and commenters
-                sendMessage(session, from,
-                        new String[]{user.getEmailAddress()}, null, null, subject, ownermsg.toString(), isHtml);
+                sendMessage(
+                    from, new String[]{user.getEmailAddress()}, null, 
+                    null, subject, ownermsg.toString(), isHtml);
                 if (notifySubscribers && commenterAddrs.length > 0) {
                     // If hiding commenter addrs, they go in Bcc: otherwise in the To: of the second message
                     String[] to = hideCommenterAddrs ? null : commenterAddrs;
                     String[] bcc = hideCommenterAddrs ? commenterAddrs : null;
-                    sendMessage(session, from, to, null, bcc, subject, msg.toString(), isHtml);
+                    sendMessage(from, to, null, bcc, subject, msg.toString(), isHtml);
 
                 }
-            } catch (NamingException ne) {
-                log.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {
                 log.warn("Exception sending comment mail: " + e.getMessage());
                 // This will log the stack trace if debug is enabled
@@ -625,18 +620,13 @@ public class CommentServlet extends HttpServlet {
             //------------------------------------------
             // --- Send message to author of approved comment
             try {
-                Context ctx = (Context)
-                new InitialContext().lookup("java:comp/env");
-                Session session = (Session)ctx.lookup("mail/Session");
                 String[] cc = null;
                 String[] bcc = null;
-                sendMessage(session, from,
+                sendMessage(from,
                         new String[] {cd.getEmail()},
                         null, // cc
                         null, // bcc
                         subject, msg.toString(), false);
-            } catch (NamingException ne) {
-                log.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {
                 log.warn("Exception sending comment mail: " + e.getMessage());
                 // This will log the stack trace if debug is enabled
@@ -655,12 +645,12 @@ public class CommentServlet extends HttpServlet {
      * This is somewhat ridiculous, but avoids duplicating a bunch of logic
      * in the already messy sendEmailNotification.
      */
-    static void sendMessage(Session session, String from, String[] to, String[] cc, String[] bcc, String subject,
+    static void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
             String msg, boolean isHtml) throws MessagingException {
         if (isHtml)
-            MailUtil.sendHTMLMessage(session, from, to, cc, bcc, subject, msg);
+            MailUtil.sendHTMLMessage(from, to, cc, bcc, subject, msg);
         else
-            MailUtil.sendTextMessage(session, from, to, cc, bcc, subject, msg);
+            MailUtil.sendTextMessage(from, to, cc, bcc, subject, msg);
     }
     
 }
