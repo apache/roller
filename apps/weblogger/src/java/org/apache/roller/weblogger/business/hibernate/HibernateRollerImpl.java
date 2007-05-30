@@ -83,9 +83,9 @@ public class HibernateRollerImpl extends RollerImpl {
         Roller roller = new HibernateRollerImpl();
 
         // Now that Roller has been instantiated, initialize individual managers
-//        roller.getPropertiesManager();
-//        roller.getIndexManager();
-//        roller.getThemeManager();          
+        roller.getPropertiesManager();
+        roller.getIndexManager();
+        roller.getThemeManager();          
         return roller;
     }
     
