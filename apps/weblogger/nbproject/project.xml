@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ant.freeform</type>
+    <configuration>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
+            <name>roller_trunk</name>
+            <properties>
+                <property name="ant.script">build.xml</property>
+            </properties>
+            <folders>
+                <source-folder>
+                    <label>web</label>
+                    <type>doc_root</type>
+                    <location>web</location>
+                </source-folder>
+                <source-folder>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src/java</location>
+                </source-folder>
+                <source-folder>
+                    <label>test/java</label>
+                    <type>java</type>
+                    <location>test/java</location>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <target>build</target>
+                </action>
+                <action name="clean">
+                    <target>clean</target>
+                </action>
+                <action name="javadoc">
+                    <target>javadoc</target>
+                </action>
+                <action name="test">
+                    <target>tests</target>
+                </action>
+                <action name="redeploy">
+                    <target>deploy-glassfish</target>
+                </action>
+                <action name="rebuild">
+                    <target>clean</target>
+                    <target>build</target>
+                </action>
+                <action name="debug.single">
+                    <target>debug-selected-files</target>
+                    <context>
+                        <property>classname</property>
+                        <folder>./src/java</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug.test.single">
+                    <target>test-selected-files</target>
+                    <context>
+                        <property>classname</property>
+                        <folder>./test/java</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+            </ide-actions>
+            <view>
+                <items>
+                    <source-folder style="tree">
+                        <label>Web Pages</label>
+                        <location>web</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src</label>
+                        <location>src/java</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>test/java</label>
+                        <location>test/java</location>
+                    </source-folder>
+                    <source-file>
+                        <location>${ant.script}</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
+                    <ide-action name="test"/>
+                    <ide-action name="redeploy"/>
+                    <ide-action name="rebuild"/>
+                </context-menu>
+            </view>
+            <subprojects/>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
+            <compilation-unit>
+                <package-root>src/java</package-root>
+                <classpath mode="compile">../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-betwixt-1.0-beta-1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-codec-1.3.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-collections-3.2.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-httpclient-2.0.2.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-id-0.1-SNAPSHOT.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-lang-2.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/commons-logging-1.0.4.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/jaxen-full.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/jdom.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/log4j-1.2.11.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/lucene-1.4.3.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/rome-0.9.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/rome-fetcher-0.9.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/saxpath.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/velocity-1.5.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/lib/taglibs-string.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/antlr.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/commons-beanutils.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/commons-digester.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/commons-validator.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/jakarta-oro.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/struts-el.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-1.2.4/lib/struts.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/antlr-2.7.2.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/commons-beanutils-1.6.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/commons-chain-1.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/commons-fileupload-1.2.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/commons-io-1.3.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/commons-validator-1.3.0.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/freemarker-2.3.8.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/ognl-2.6.11.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/oro-2.0.8.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/struts2-core-2.0.6.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/struts2-spring-plugin-2.0.6.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/struts2-tiles-plugin-2.0.6.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/tiles-api-2.0-20070207.130156-4.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/tiles-core-2.0-20070207.130156-4.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/struts-2.0.6/lib/xwork-2.0.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/buildtime/tomcat-5.0.28/jsp-api.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/buildtime/activation.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/buildtime/mail.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/hibernate3.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/asm-attrs.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/asm.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/ehcache-1.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/hibernate-3.1/lib/jta.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/openjpa-0.9.7/geronimo-jta_1.0.1B_spec-1.0.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/openjpa-0.9.7/openjpa-0.9.7-incubating.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/openjpa-0.9.7/serp-1.11.0.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/spring-1.2/acegi-security-1.0.3.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/spring-1.2/spring.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/roller-core/roller-core.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/roller-planet/roller-planet-business.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/xmlrpc-3.0/lib/ws-commons-util-1.0.1.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/xmlrpc-3.0/lib/xmlrpc-client-3.0.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/xmlrpc-3.0/lib/xmlrpc-common-3.0.jar:../../../../../../workspace/roller_bsc/roller-trunk/tools/xmlrpc-3.0/lib/xmlrpc-server-3.0.jar</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>test/java</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+        </java-data>
+        <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">
+            <web-module>
+                <doc-root>web</doc-root>
+                <context-path>/roller</context-path>
+                <j2ee-spec-level>1.5</j2ee-spec-level>
+            </web-module>
+        </web-data>
+    </configuration>
+</project>
