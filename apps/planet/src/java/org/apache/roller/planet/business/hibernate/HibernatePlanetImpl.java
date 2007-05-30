@@ -58,7 +58,7 @@ public class HibernatePlanetImpl implements Planet {
      * Create HibernatePlanetImpl using Hibernate XML config file or config
      * file plus JDBC overrides from planet-custom.properties.
      */
-    protected HibernatePlanetImpl() throws RollerException {
+    public HibernatePlanetImpl() throws RollerException {
         
         strategy = getStrategy();
         
