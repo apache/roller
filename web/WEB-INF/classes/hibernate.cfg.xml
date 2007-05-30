@@ -42,9 +42,9 @@
         
         <!-- Map Roller pojo classes -->
         <mapping resource="org/apache/roller/pojos/RuntimeConfigProperty.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/TaskLock.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/User.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/UserRole.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/RollerConfigData.hbm.xml" />
 
         <mapping resource="org/apache/roller/pojos/Weblog.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogPermission.hbm.xml" />
@@ -52,13 +52,11 @@
         <mapping resource="org/apache/roller/pojos/WeblogEntryComment.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogBookmarkFolder.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogTemplate.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/PingCategoryRestrictionData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogReferrer.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogHitCount.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/AutoPing.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/PingQueueEntry.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/PingTarget.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogReferrer.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/TaskLock.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogHitCount.hbm.xml" />
 
         <mapping resource="org/apache/roller/pojos/WeblogEntry.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogEntryTag.hbm.xml" />        
