@@ -31,11 +31,11 @@
 <!ENTITY custom-pre-dbtest     SYSTEM "custom/custom-pre-dbtest.xmlf">
 <!ENTITY custom-post-dbtest    SYSTEM "custom/custom-post-dbtest.xmlf">
 ]>
-<!-- ********************************************************************* -->
-<!-- Ant build script for Roller main branch -->
-<!-- Author: David M Johnson -->
-<!-- ********************************************************************* -->
-<project name="roller" default="usage">
+<project name="Roller Weblogger" default="usage" basedir=".">
+    
+    <description>Builds, tests, and runs the project Roller Weblogger.</description>
+
+    <property file="build.properties" />
     
     <!-- Only gen dbscripts if they do not already exist -->
     <available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" property="dbscripts-exist" />
@@ -105,7 +105,7 @@
         <!-- generate hibernate files -->
         <hibernatedoclet
             destdir="${build.compile.business}"
-            mergedir="./metadata/xdoclet"
+            mergedir="."
             excludedtags="@version,@author"
             addedtags="@xdoclet-generated at ${TODAY}"
             force="true">
@@ -245,7 +245,9 @@
         <mkdir dir="${build.webapp}/WEB-INF/lib"/>
         <copy todir="${build.webapp}/WEB-INF/lib">
             <fileset dir="${build.lib}" />
+            <!-- 
             <fileset dir="./contrib/lib" />
+            -->
             <fileset refid="base.jars" />
             <fileset refid="presentation.jars" />
             <fileset refid="hibernate.jar" />
@@ -334,8 +336,8 @@
         
         <path id="texen.path">
             <fileset refid="base.jars" />
-            <pathelement location="${basedir}/metadata/database/" />
-            <pathelement location="${basedir}/metadata/database/tmpls/" />
+            <pathelement location="${root}/metadata/database/" />
+            <pathelement location="${sql}" />
         </path>
         <taskdef name="texen" 
                  classname="org.apache.velocity.texen.ant.TexenTask"
@@ -343,13 +345,13 @@
         
         <texen
             controlTemplate="control.vm" 
-            contextProperties="${basedir}/metadata/database/dbscripts.properties"
+            contextProperties="${sql}/dbscripts.properties"
             useClasspath="true"
             outputDirectory="${build.dbscripts}" 
             outputFile="README.txt" />
         
         <!-- just copy over the droptables script -->
-        <copy todir="${build.dbscripts}" file="${basedir}/metadata/database/droptables.sql" />
+        <copy todir="${build.dbscripts}" file="${sql}/droptables.sql" />
         
     </target>
     

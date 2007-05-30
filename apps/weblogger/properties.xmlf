@@ -21,12 +21,16 @@
 
 <property file="ant.properties" />
 
+<!-- a pointer to the root of the entire Roller workspace -->
+<property name="root"             value="${basedir}/../.." />
+
 <!-- core properties -->
 <property name="ro.build"            value="${basedir}/build" />
 <property name="ro.dist"             value="${basedir}/dist" />
-<property name="ro.src"              value="${basedir}/src" />
-<property name="ro.tools"            value="${basedir}/tools" />
-<property name="ro.tests"            value="${basedir}/tests" />
+<property name="ro.src"              value="${basedir}/src/java" />
+<property name="sql"                 value="${basedir}/src/sql" />
+<property name="ro.tools"            value="${basedir}/../../tools" />
+<property name="ro.tests"            value="${basedir}/test/java" />
 
 <!-- build properties -->
 <property name="build.generated"                value="${ro.build}/generated"/>
