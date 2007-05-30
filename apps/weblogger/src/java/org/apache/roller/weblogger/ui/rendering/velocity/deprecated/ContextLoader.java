@@ -50,7 +50,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.util.DateUtil;
 import org.apache.roller.weblogger.util.RegexUtil;
 import org.apache.roller.weblogger.util.URLUtilities;
-import org.apache.struts.util.RequestUtils;
 
 /**
  * Load Velocity Context with Roller objects, values, and custom plugins.
@@ -414,7 +413,7 @@ public class ContextLoader {
         ctx.put("uploadPath", ContextLoader.figureResourcePath());
         
         try {
-            URL absUrl = RequestUtils.absoluteURL(request, "/");
+            URL absUrl = new URL(RollerRuntimeConfig.getAbsoluteContextURL());
             ctx.put("host", absUrl.getHost());
         } catch (MalformedURLException e) {
             throw new RollerException(e);
