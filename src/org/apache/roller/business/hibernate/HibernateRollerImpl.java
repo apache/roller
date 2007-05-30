@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerImpl;
+import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 
 /**
  * A Hibernate specific implementation of the Roller business layer.
@@ -42,6 +43,24 @@ public class HibernateRollerImpl extends RollerImpl {
     @Inject
     public HibernateRollerImpl(HibernatePersistenceStrategy strategy) throws RollerException {
         this.strategy = strategy;
+    }
+    
+    
+    /**
+     * Instantiates and returns an instance of HibernateRollerImpl.
+     */
+    public static Roller instantiate() throws RollerException {
+        if (me == null) {
+            mLogger.debug("Instantiating HibernateRollerImpl");
+            me = new HibernateRollerImpl();
+                                
+            // Now that Roller has been instantiated, initialize individual managers
+            me.getPropertiesManager();
+            me.getIndexManager();
+            me.getThemeManager();          
+        }
+        
+        return me;
     }
     
     

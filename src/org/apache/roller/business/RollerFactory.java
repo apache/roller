@@ -35,6 +35,15 @@ public abstract class RollerFactory implements Module {
     private static Injector injector = null;
        
     
+    private static final String DEFAULT_IMPL =
+        "org.apache.roller.business.jpa.JPARollerImpl";
+        //"org.apache.roller.business.hibernate.HibernateRollerImpl";
+        //"org.apache.roller.business.datamapper.jpa.JPARollerImpl";
+    
+    private static Roller rollerInstance = null;
+    
+    
+   
     // non-instantiable
     private RollerFactory() {
         // hello all you beautiful people

@@ -1,0 +1,8 @@
+
+Latest
+
+May 30, 2007
+svn merge -r 541742:542748 https://svn.apache.org/repos/asf/roller/trunk
+
+May 25, 2007
+svn merge -r 539779:541742 https://svn.apache.org/repos/asf/roller/trunk

@@ -1,0 +1,96 @@
+#**
+ * Date formatting, theme image and theme paths.
+ * @author  Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * General purpose date formatter. Need to be careful of whitespace.
+ * @param dateFormat Date format to be used (see java.text.SimpleDateFormat).
+ * @param date Date object to be formatted (see java.util.Date).
+ *#
+#macro( formatDate $dateFormat $date ) $utils.formatDate($date, $dateFormat) #end
+
+#**
+ * Show Roller version number string.
+ *#
+#macro( showVersion )$config.rollerVersion#end
+
+#**
+ * Show path to common images directory.
+ *#
+#macro( showImagePath )$url.site/images#end
+
+#**
+ * Show path to a theme directory.
+ * @param theme Name of the theme.
+ *#
+#macro( showThemePath $theme )$url.site/themes/$theme#end
+
+#**
+ * Show path to a theme image.
+ * @param theme Name of the theme.
+ * @param imageName Name of the image.
+ *#
+#macro( showThemeImagePath $theme $imageName )#showThemePath($theme)/images/$imageName#end
+
+#**
+ * Shows an IMG tag for a theme image.
+ * @param theme Name of the theme.
+ * @param imageName Name of the image.
+ *#
+#macro( showThemeImage $theme $imageName )
+<img alt="$imageName" src="#showThemeImagePath($theme $imageName)" />#end
+
+#**
+ * Shows path to a file in a theme's style directory.
+ * @param theme Name of the theme.
+ * @param stylesheet Name of the file.
+ *#
+#macro( showThemeStylePath $theme $stylesheet )#showThemePath($theme)/styles/$stylesheet#end
+
+#**
+ * Shows a STYLE or LINK REL tag for a file in a theme's style directory.
+ * @param theme Name of the theme.
+ * @param stylesheet Name of the file.
+ * @param useImport true to use STYLE tag, otherwhise uses LINK REL
+ *#
+#macro( showThemeStyle $theme $stylesheet $useImport )
+#if ($useImport)
+<style type="text/css">
+@import url(#showThemeStylePath($theme $stylesheet));
+</style>
+#else
+<link rel="stylesheet" type="text/css" href="#showThemeStylePath($theme $stylesheet)" />
+#end
+#end
+
+#**
+ * Shows a STYLE tag a file in a theme's style directory.
+ * @param theme Name of the theme.
+ * @param stylesheet Name of the file.
+ * @param useImport true to use STYLE tag, otherwhise uses LINK REL
+ *#
+#macro( showThemeStyleImport $theme $stylesheet )#showThemeStyle($theme $stylesheet true)#end
+
+#**
+ * Shows path to a file in a theme's scripts directory.
+ * @param theme Name of the theme.
+ * @param scriptFile Name of the file.
+ *#
+#macro( showThemeScriptPath $theme $scriptFile )#showThemePath($theme)/scripts/$scriptFile#end
+
+#**
+ * Shows SCRIPT tag for a file in a theme's scripts directory.
+ * @param theme Name of the theme.
+ * @param scriptFile Name of the file.
+ *#
+#macro( showThemeScript $theme $scriptFile )
+<script type="text/javascript" src="#showThemeScriptPath($theme $scriptFile)"></script>
+#end
+
+#**
+ * Evaluate string as a Velocity template.
+ * @param str String to be evaluated.
+ *#
+#macro( evaluateString $str ) $str #end
+

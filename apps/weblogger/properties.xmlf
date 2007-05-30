@@ -1,0 +1,302 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
+<!-- ================================================ -->
+<!-- Properties and classpaths -->
+<!-- ================================================ -->
+
+<property file="ant.properties" />
+
+<!-- a pointer to the root of the entire Roller workspace -->
+<property name="root"             value="${basedir}/../.." />
+
+<!-- core properties -->
+<property name="ro.build"            value="${basedir}/build" />
+<property name="ro.dist"             value="${basedir}/dist" />
+<property name="ro.src"              value="${basedir}/src/java" />
+<property name="sql"                 value="${basedir}/src/sql" />
+<property name="ro.tools"            value="${basedir}/../../tools" />
+<property name="ro.tests"            value="${basedir}/test/java" />
+
+<!-- build properties -->
+<property name="build.generated"                value="${ro.build}/generated"/>
+<property name="build.generated.business"       value="${build.generated}/business"/>
+<property name="build.generated.web"            value="${build.generated}/web"/>
+<property name="build.compile"                  value="${ro.build}/compile"/>
+<property name="build.compile.business"         value="${build.compile}/business"/>
+<property name="build.compile.web"              value="${build.compile}/web"/>
+<property name="build.compile.contrib"          value="${build.compile}/contrib"/>
+<property name="build.compile.tests"            value="${build.compile}/tests"/>
+<property name="build.lib"           value="${ro.build}/lib"/>
+<property name="build.webapp"        value="${ro.build}/webapp"/>
+<property name="build.dist"          value="${ro.build}/release"/>
+<property name="build.dist.apache"   value="${build.dist}/apache"/>
+<property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
+<property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
+<property name="build.dbscripts"     value="${build.webapp}/WEB-INF/dbscripts"/>
+<property name="build.tests"         value="${ro.build}/tests"/>
+<property name="build.reports"       value="${build.tests}/reports"/>
+<property name="build.docs"          value="${ro.build}/docs"/>
+<property name="build.javadoc"       value="${build.docs}/javadoc"/>
+<property name="build.velocidoc"     value="${build.docs}/velocidoc"/>
+<property name="build.jspc"          value="${ro.build}/jspc"/>
+
+
+<!-- various libraries used by Roller -->
+<property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
+<property name="tools.struts2"       value="${ro.tools}/struts-2.0.5" />
+<property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
+<property name="tools.jpa"           value="${ro.tools}/openjpa-0.9.7" />
+<!-- 
+<property name="tools.jpa"           value="${ro.tools}/toplink-essentials-9.1" />
+-->
+<property name="tools.spring"        value="${ro.tools}/spring-1.2" />
+<property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
+<property name="tools.xdoclet"       value="${ro.tools}/buildtime/xdoclet-1.2.3" />
+<property name="tools.tomcat"        value="${ro.tools}/buildtime/tomcat-5.0.28" />
+
+<!--
+If you would like Ant to copy all the jar files that Resin needs
+into the /WEB-INF/lib, uncomment the "resinServer" property below.
+In order to run Roller properly on versions of Resin prior to 2.1.9
+you will need to uncomment the "resinFilters" and "resin.path" elements
+below.  In addition, make sure to uncomment the reference to resin.path
+in the "base.path" definition.
+ -->
+<!--property name="resinServer" value="true" /-->
+<!--
+<property name="resinFilters" value="true" />
+<fileset id="resin.jars" dir="../../resin-2.1.8/lib" >
+   <include name="resin.jar" />
+</fileset>
+-->
+
+<!-- **************************************************************** -->
+<!-- Define filesets to be used in paths and copy tasks -->
+<!-- **************************************************************** -->
+
+<fileset id="base.jars" dir="${ro.tools}/lib">
+    <include name="commons-id-0.1-SNAPSHOT.jar"/>
+    <include name="commons-betwixt-1.0-beta-1.jar" />
+    <include name="commons-cache.jar" />
+    <include name="commons-collections-3.2.jar" />
+    <include name="commons-codec-1.3.jar" />
+    <include name="commons-httpclient-2.0.2.jar" />
+    <include name="commons-logging-1.0.4.jar" />
+    <include name="commons-lang-2.1.jar" />
+    <include name="concurrent-1.3.2.jar"/>
+    <include name="jaxen-full.jar" />
+    <include name="saxpath.jar" />
+    <include name="jdom.jar"/>
+    <include name="lucene-1.4.3.jar"/>
+    <include name="log4j-1.2.11.jar"/>
+    <include name="rome-0.9.jar"/>
+    <include name="rome-fetcher-0.9.jar"/>
+    <include name="velocity-1.5.jar"/>
+</fileset>
+
+<fileset id="presentation.jars" dir="${ro.tools}/lib">
+    <include name="taglibs-string.jar"/>
+</fileset>
+
+<fileset id="commons-httpclient.jar" dir="${ro.tools}/lib">
+    <include name="commons-httpclient*.jar"/>
+</fileset>
+
+<fileset id="struts.jars" dir="${tools.struts}/lib">
+    <include name="antlr.jar"/>
+    <include name="commons-beanutils.jar"/>
+    <include name="commons-digester.jar"/>
+    <include name="commons-fileupload.jar"/>
+    <include name="commons-validator.jar"/>
+    <include name="jakarta-org.jar"/>
+    <include name="struts.jar"/>
+    <include name="struts-el.jar"/>
+</fileset>
+
+<fileset id="struts2.jars" dir="${ro.tools}/struts-2.0.6/lib">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="servlet.jars" dir="${tools.tomcat}">
+    <include name="servlet-api.jar"/>
+    <include name="jsp-api.jar"/>
+</fileset>
+
+<fileset id="mail.jars" dir="${ro.tools}/buildtime">
+    <include name="activation.jar"/>
+    <include name="mail.jar"/>
+</fileset>
+
+<fileset id="jstl.jars" dir="${tools.jstl}/lib">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="hibernate.jar" dir="${tools.hibernate}">
+    <include name="hibernate3.jar"/>
+</fileset>
+
+<fileset id="hibernate.jars" dir="${tools.hibernate}/lib">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="jpa.jars" dir="${tools.jpa}">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="spring.jars" dir="${tools.spring}">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="xmlrpc.jars" dir="${ro.tools}/xmlrpc-3.0/lib">
+    <include name="ws-commons-util-1.0.1.jar"/>
+    <include name="xmlrpc-common-3.0.jar"/>
+    <include name="xmlrpc-client-3.0.jar"/>
+    <include name="xmlrpc-server-3.0.jar"/>
+</fileset>
+
+<fileset id="roller-core.jars" dir="${ro.tools}/roller-core">
+    <include name="*.jar"/>
+</fileset>
+
+<fileset id="roller-planet.jars" dir="${ro.tools}/roller-planet">
+    <include name="*.jar"/>
+</fileset>
+
+<!-- **************************************************************** -->
+<!-- Define path based on above filesets -->
+<!-- **************************************************************** -->
+
+<!-- Dependencies common to both presentation and business layers -->
+<path id="base.path">
+    <fileset refid="base.jars"/>
+    <fileset refid="mail.jars"/>
+    <fileset refid="roller-core.jars" />
+    <fileset refid="roller-planet.jars" />
+    <fileset refid="xmlrpc.jars"/>
+    <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
+    <fileset refid="jpa.jars" />
+</path>
+
+<path id="business.path">
+    <path refid="base.path"/>
+    <fileset refid="hibernate.jar" />
+    <fileset refid="hibernate.jars" />
+</path>
+
+<path id="presentation.path">
+    <path refid="base.path"/>
+    <fileset refid="presentation.jars"/>
+    <fileset refid="struts.jars"/>
+    <fileset refid="struts2.jars"/>
+    <fileset refid="servlet.jars"/>
+    <fileset refid="mail.jars"/>
+    <fileset refid="jstl.jars"/>
+    <fileset refid="spring.jars"/>
+</path>
+
+<path id="javadoc.path">
+    <path refid="base.path"/>
+    <path refid="presentation.path"/>
+    <path refid="business.path"/>
+</path>
+
+<path id="xdoclet.path">
+    <path refid="presentation.path"/>
+    <path refid="business.path"/>
+    <fileset dir="${ro.tools}/buildtime/" includes="ejb-1.1.jar"/>
+    <fileset dir="${tools.xdoclet}/lib" includes="*.jar"/>
+</path>
+
+<path id="webdoclet.path">
+    <path refid="xdoclet.path"/>
+    <path location="${build.generated.web}"/>
+    <path location="${build.compile.business}"/>
+    <path location="${build.compile.web}"/>
+</path>
+
+<path id="tests.path">
+    <!-- testing jars -->
+    <fileset dir="${ro.tools}/buildtime/mockrunner-0.35/lib">
+       <include name="*.jar"/>
+    </fileset>
+    <fileset refid="commons-httpclient.jar"/>
+    <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+    <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant-junit.jar"/>
+    <pathelement location="${ro.tools}/buildtime/derby.jar"/>
+    <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
+    <pathelement location="${ro.tools}/buildtime/derbynet.jar"/>
+    <pathelement location="${ro.tools}/roller-planet/roller-planet-business.jar"/>
+
+    <!-- plus normal jars -->
+    <path refid="business.path"/>
+    <path refid="presentation.path"/>
+
+    <!-- plus already built Roller jars -->
+    <fileset dir="${build.lib}">
+         <include name="*.jar" />
+    </fileset>
+</path>
+
+<path id="tests.run.path">
+    <!-- all jars used for testing -->
+    <path refid="tests.path"/>
+
+    <!-- plus our compiled test classes -->
+    <pathelement location="${build.compile.tests}"/>
+
+    <!-- plus our config location, like the webapp would have -->
+    <pathelement location="${build.tests}/WEB-INF/classes" />
+</path>
+
+<path id="jasper.path">
+    <pathelement location="${java.home}/../lib/tools.jar"/> 
+    <fileset dir="${catalina.home}/bin"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/server/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/common/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+</path>
+
+<path id="jsp.compile.path">
+    <pathelement location="${java.home}/../lib/tools.jar"/> 
+    <fileset dir="${build.webapp}/WEB-INF/lib"> 
+        <include name="*.jar"/> 
+    </fileset>     
+    <fileset dir="${catalina.home}/bin"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/server/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/common/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+</path>
+   
+<path id="findbugs.path">
+    <path refid="presentation.path"/>
+    <path refid="business.path"/>
+    <path refid="tests.path"/>
+    <fileset dir="${basedir}/contrib/lib" includes="*.jar"/>
+    <fileset dir="${ro.tools}/buildtime/findbugs/lib" includes="*.jar"/>
+</path>
+

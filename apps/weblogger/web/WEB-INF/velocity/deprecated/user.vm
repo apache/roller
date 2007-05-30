@@ -1,0 +1,37 @@
+#**
+ * Uploaded image display and resource paths.
+ * @author Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * Show an image IMG tag, optionally surrounded with an 'A HREF' link tag 
+ * @param imageUrl URL for the image.
+ * @param linkUrl URL for the link or empty string if none.
+ * @param alt ALT text for the IMG tag.
+ * @param border BORDER for the IMG tag.
+ * @param halign HALIGN horizontal alignment for the IMG tag.
+ * @pram valign VALIGN vertical ailignment for the IMG tag.
+ *#
+#macro( showImage $imageUrl $linkUrl $alt $border $halign $valign )
+    #if ($utilities.isNotEmpty($linkUrl))
+        <a href="$linkUrl"/><img src="$imageUrl" alt="$alt"
+            border="$border" halign="$halign" valign="$valign" /></a>
+    #else
+        <img src="$imageUrl" alt="$alt" border="$border"
+            halign="$halign" valign="$valign" />
+    #end
+#end
+
+#**
+ * Show an image IMG tag for an image you have uploaded to Roller, 
+ * optionally surrounded with an 'A HREF' link tag 
+ *#
+#macro( showResourceImage $fileName $linkUrl $alt $border $halign $valign )
+    #set( $imageUrl = $url.resource($fileName) )
+    #showImage( $imageUrl $linkUrl $alt $border $halign $valign )
+#end
+
+#**
+ * Show path to your file upload directory, for use in building URLs.
+ *#
+#macro( showResourcePath )${url.home}resource#end

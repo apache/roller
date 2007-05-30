@@ -1,0 +1,47 @@
+
+
+<table class="menuTabTable" cellspacing="0" >
+<tr>
+  #foreach( $menu in $menuModel.getMenus() )
+    #if( $menu.isPermitted( $req ) )
+	    #if( $menu.isSelected( $req ) )
+	    <td class="menuTabSelected">
+	    #else
+	    <td class="menuTabUnselected">
+	    #end
+	    <div class="menu-tr">
+	       <div class="menu-tl">
+	          &nbsp;&nbsp;<a href="$menu.getUrl( $ctx )">$text.get( $menu.getName() )</a>&nbsp;&nbsp; 
+	       </div>
+	    </div>
+	    </td>	    
+        <td class="menuTabSeparator"></td>
+    #end
+  #end
+</tr>
+</table>
+
+<table class="menuItemTable" cellspacing="0">
+    <tr>
+        <td class="padleft">
+            #set( $count = 0 )
+            #set( $currentMenu = $menuModel.getSelectedMenu( $req ) )
+            #if( $currentMenu.isPermitted( $req ) ) 
+                #foreach( $item in $currentMenu.getMenuItems() )
+                    #if ($item.isPermitted($req))
+                        #if ( $count > 0 )
+                            | 
+                        #end
+                        #if ( $item.isSelected( $req ) )                               
+                            <a class="menuItemSelected" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a>
+                        #else
+                            <a class="menuItemUnselected" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a>
+                        #end
+                        #set( $count = $count + 1 )
+                    #end
+                #end
+            #end
+        </td>
+    </tr>
+</table>
+

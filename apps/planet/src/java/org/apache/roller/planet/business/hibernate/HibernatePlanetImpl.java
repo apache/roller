@@ -25,7 +25,7 @@ import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.URLStrategy;
 
@@ -58,7 +58,7 @@ public class HibernatePlanetImpl implements Planet {
      * Create HibernatePlanetImpl using Hibernate XML config file or config
      * file plus JDBC overrides from planet-custom.properties.
      */
-    protected HibernatePlanetImpl() throws RollerException {
+    public HibernatePlanetImpl() throws RollerException {
         
         strategy = getStrategy();
         

@@ -1,0 +1,63 @@
+#**
+ * The deprecated #showNewsfeeds() macro.
+ * @author Lance Lavandowska (conversion to Velocimacros)
+ * @author Dave Johnson (conversion from Digestor to Flock)
+ *#
+
+#**
+ * Display an RSS newschannel as a list that may be styled via CSS.
+ * @param feedUrl URL of RSS newschannel you wish to display.
+ * @param showDescription True to show full content for each item in channel.
+ * @param maxItems Maximum number of news items to display from newschannel.
+ * @param expandingFolders True to display channel as a folding folder.
+ *#
+#macro( showNewsfeed $feedUrl $showDescription $maxItems $expandingFolders )
+#set( $channel = $newsfeedCache.getChannel( $feedUrl ) )
+#if( $channel )
+    #set( $channelId = $utilities.stringReplace( $channel.title, " ", "_" ) )
+    #set( $channelId = $utilities.stringReplace( $channelId, "'", "_" ) )
+    #if( $expandingFolders )
+        <div class="rNewsfeedTitle">
+           <a href="javascript:toggleFolder('$channelId')">
+           <span id="i$channelId">+</span> $channel.title</a>
+        </div>
+        <div id="$channelId" style="display:none">
+    #else
+        <span class="rNewsfeedTitle">$channel.title</span>
+    #end
+    <ul>
+    #foreach( $item in $channel.entries )
+        ## NOTE: Velocity does not have "break" command
+        #if ( $maxItems == -1 || $velocityCount <= $maxItems )
+            <li>#if( $item.title && $item.title!="<No Title>" && $item.guid )
+                <a class="rNewsfeedLink" href="$item.guid.location">$item.title</a>
+            #elseif( $item.title && $item.title!="<No Title>" && $item.link )
+                <a class="rNewsfeedLink" href="$item.link">$item.title</a>
+            #elseif( $item.description && $item.guid )
+                <a class="rNewsfeedLink" href="$item.guid.location">$utilities.truncateNicely($utilities.removeHTML($item.description.value),25,30,"...")</a>
+            #elseif($item.description && $item.link)
+                <a class="rNewsfeedLink" href="$item.link">$utilities.truncateNicely($utilities.removeHTML($item.description.value),25,30,"...")</a>
+            #elseif( $item.title )
+                <span class="rNewsfeedLink">$item.title</span>
+            #else
+                <span class="rNewsfeedLink">$utilities.truncateNicely($utilities.removeHTML($item.description.value),25,30,"...")</span>
+            #end
+            #if( $showDescription && $item.description )
+                <span class="rNewsfeedDesc">$item.description</span>
+            #end</li>
+        #end
+    #end
+    </ul>
+    #if( $expandingFolders )
+        </div>
+        <script type="text/javascript">
+        <!--
+        folderPreference("$channelId");
+        // -->
+        </script>
+    #end
+#else
+    <div class="rNewsfeedTitle">Unable to display <a href="$feedUrl">feed</a></div>
+#end
+#end
+

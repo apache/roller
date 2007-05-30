@@ -1,0 +1,16 @@
+<div class="entry">
+   #showDayPermalink( $day )
+   #showEntryDate( $day )
+</div>
+
+#foreach( $entry in $entries )
+<p>
+   <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
+   <b>$entry.title</b> #showEntryText($entry)
+   <font class="date">(#showTimestamp($entry.pubTime))</font>
+   #showEntryPermalink( $entry )
+   #showCommentsPageLink( $entry )
+</p>
+#end
+
+#showLinkbacks( $day )
