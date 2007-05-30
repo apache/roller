@@ -98,28 +98,6 @@ public class PingConfig {
     // targets that implement minor variants of the WeblogUpdates.ping call.
     // This is initialized once at startup, and referenced when pings are made.
     private static final Map configuredVariants = new HashMap();
-    
-    
-    static {
-        try {
-            // Initialize common targets from the configuration
-            initializeCommonTargets();
-            // Initialize ping variants
-            initializePingVariants();
-            // Remove custom ping targets if they have been disallowed
-            if (getDisallowCustomTargets()) {
-                logger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
-                RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
-            }
-            // Remove all autoping configurations if ping usage has been disabled.
-            if (PingConfig.getDisablePingUsage()) {
-                logger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-                RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
-            }
-        } catch (RollerException e) {
-            logger.error("ERROR configing ping managers", e);
-        }
-    }
 
 
     // Inhibit construction

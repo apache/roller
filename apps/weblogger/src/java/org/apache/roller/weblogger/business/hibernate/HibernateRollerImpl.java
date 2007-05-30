@@ -80,13 +80,7 @@ public class HibernateRollerImpl extends RollerImpl {
      */
     public static Roller instantiate() throws RollerException {
         mLogger.debug("Instantiating HibernateRollerImpl");
-        Roller roller = new HibernateRollerImpl();
-
-        // Now that Roller has been instantiated, initialize individual managers
-        roller.getPropertiesManager();
-        roller.getIndexManager();
-        roller.getThemeManager();          
-        return roller;
+        return new HibernateRollerImpl();
     }
     
     

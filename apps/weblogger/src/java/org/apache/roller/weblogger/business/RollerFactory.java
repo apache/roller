@@ -20,15 +20,17 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
 /**
  * Provides access to the Roller instance.
  */
-public abstract class RollerFactory {
+public final class RollerFactory {
     
-    private static Log log = LogFactory.getLog(RollerFactory.class);
+    private static final Log log = LogFactory.getLog(RollerFactory.class);
     
     private static final String DEFAULT_IMPL =
         "org.apache.roller.weblogger.business.jpa.JPARollerImpl";
@@ -38,7 +40,6 @@ public abstract class RollerFactory {
     private static Roller rollerInstance = null;
     
     
-    
     // non-instantiable
     private RollerFactory() {
         // hello all you beautiful people
@@ -46,9 +47,53 @@ public abstract class RollerFactory {
     
     
     /**
+     * Bootstrap the Roller Weblogger business tier.
+     */
+    public static final void bootstrap() {
+        
+        // This will cause instantiation and initialziation of Roller impl
+        Roller roller = getRoller();
+        
+        // TODO: this initialization process should probably be controlled by
+        // a more generalized application lifecycle event framework
+        
+        // Now that Roller has been instantiated, initialize individual managers
+        roller.getPropertiesManager();
+        roller.getIndexManager();
+        roller.getThemeManager();
+        
+        // And this will schedule all configured tasks
+        roller.getThreadManager().startTasks();
+        
+        // Initialize ping systems
+        try {
+            // Initialize common targets from the configuration
+            PingConfig.initializeCommonTargets();
+            
+            // Initialize ping variants
+            PingConfig.initializePingVariants();
+            
+            // Remove custom ping targets if they have been disallowed
+            if (PingConfig.getDisallowCustomTargets()) {
+                log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
+                RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
+            }
+            
+            // Remove all autoping configurations if ping usage has been disabled.
+            if (PingConfig.getDisablePingUsage()) {
+                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+                RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
+            }
+        } catch (RollerException e) {
+            log.error("ERROR configing ping managers", e);
+        }
+    }
+    
+    
+    /**
      * Static accessor for the instance of Roller.
      */
-    public static Roller getRoller() {
+    public static final Roller getRoller() {
         
         // check to see if we need to instantiate
         if(rollerInstance == null) {
