@@ -121,17 +121,14 @@ public class RollerContext extends ContextLoaderListener
             // Parts of database upgrade are not included in migration scripts
             upgradeDatabaseIfNeeded();
             
-            // Initialize Aceigy based on Roller configuration
+            // trigger bootstrapping process
+            RollerFactory.bootstrap();
+            
+            // Initialize Acegi based on Roller configuration
             initializeSecurityFeatures(servletContext);
             
             // Setup Velocity template engine
             setupVelocity();
-            
-            // This will cause instantiation and initialziation of Roller impl
-            Roller roller = RollerFactory.getRoller();
-            
-            // And this will schedule all configured tasks
-            roller.getThreadManager().startTasks();
             
         } catch (Throwable t) {
             log.fatal("Roller Weblogger initialization failed", t);
