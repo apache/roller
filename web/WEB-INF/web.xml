@@ -29,42 +29,42 @@
     
     <filter>
         <filter-name>DebugFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.DebugFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.DebugFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>PersistenceSessionFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.PersistenceSessionFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.PersistenceSessionFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>CompressionFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.CompressionFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.CompressionFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>RequestMappingFilter</filter-name>
-        <filter-class>org.apache.roller.ui.rendering.filters.RequestMappingFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>InitFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.InitFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.InitFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>IPBanFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.IPBanFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.IPBanFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>SchemeEnforcementFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.SchemeEnforcementFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.SchemeEnforcementFilter</filter-class>
     </filter>
     
     <filter>
         <filter-name>CharEncodingFilter</filter-name>
-        <filter-class>org.apache.roller.ui.core.filters.CharEncodingFilter</filter-class>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.CharEncodingFilter</filter-class>
     </filter>
     
     
@@ -161,11 +161,11 @@
     
     <!-- Context Listeners -->
     <listener>
-        <listener-class>org.apache.roller.ui.core.RollerSession</listener-class>
+        <listener-class>org.apache.roller.weblogger.ui.core.RollerSession</listener-class>
     </listener>
     
     <listener>
-        <listener-class>org.apache.roller.ui.core.RollerContext</listener-class>
+        <listener-class>org.apache.roller.weblogger.ui.core.RollerContext</listener-class>
     </listener>
     
     <listener>
@@ -176,99 +176,99 @@
     <!-- Servlet Definitions -->
     <servlet>
         <servlet-name>PageServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.PageServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PageServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>FeedServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.FeedServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.FeedServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>ResourceServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.ResourceServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.ResourceServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>SearchServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.SearchServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.SearchServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>CommentServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.CommentServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>TrackbackServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.TrackbackServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>RSDServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.RSDServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.RSDServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>PlanetFeedServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.PlanetFeedServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>CommentAuthenticatorServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.CommentAuthenticatorServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentAuthenticatorServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>PreviewServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.PreviewServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewServlet</servlet-class>
         <load-on-startup>9</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>PreviewResourceServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.servlets.PreviewResourceServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewResourceServlet</servlet-class>
         <load-on-startup>9</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>RedirectServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.rendering.velocity.deprecated.RedirectServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.velocity.deprecated.RedirectServlet</servlet-class>
         <load-on-startup>9</load-on-startup>
     </servlet>
     
     <servlet>
         <servlet-name>AtomServlet</servlet-name>
-        <servlet-class>org.apache.roller.webservices.atomprotocol.AtomServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.webservices.atomprotocol.AtomServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>CommentDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.struts2.ajax.CommentDataServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.CommentDataServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>UserDataServlet</servlet-name>
-        <servlet-class>org.apache.roller.ui.struts2.ajax.UserDataServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.UserDataServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>org.apache.roller.webservices.adminprotocol.AdminServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.webservices.adminprotocol.AdminServlet</servlet-class>
     </servlet>
     
     <servlet>
         <servlet-name>TagStatsServlet</servlet-name>
-        <servlet-class>org.apache.roller.webservices.json.TagStatsServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.webservices.json.TagStatsServlet</servlet-class>
     </servlet>
     
     

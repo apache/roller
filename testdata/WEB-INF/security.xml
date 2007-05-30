@@ -80,7 +80,7 @@ Minimal security.xml needed for running UI unit tests.
          <property name="userCache" ref="userCache"/>
     </bean>
     
-    <bean id="mockAuthenticationDao" class="org.apache.roller.ui.MockAcegiUserDetailsService" />        
+    <bean id="mockAuthenticationDao" class="org.apache.roller.weblogger.ui.MockAcegiUserDetailsService" />        
     <!-- Read users from database
     <bean id="jdbcAuthenticationDao" class="org.acegisecurity.userdetails.jdbc.JdbcDaoImpl">                
         <property name="dataSource">

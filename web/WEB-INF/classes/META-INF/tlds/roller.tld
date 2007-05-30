@@ -10,16 +10,16 @@
    <uri>http://www.rollerweblogger.org/tags</uri>
 
    <listener>
-      <listener-class>org.apache.roller.ui.core.RollerSession</listener-class>
+      <listener-class>org.apache.roller.weblogger.ui.core.RollerSession</listener-class>
    </listener>
    <listener>
-      <listener-class>org.apache.roller.ui.core.RollerContext</listener-class>
+      <listener-class>org.apache.roller.weblogger.ui.core.RollerContext</listener-class>
    </listener>
 
    <tag>
 
       <name>Menu</name>
-      <tag-class>org.apache.roller.ui.core.tags.menu.MenuTag</tag-class>
+      <tag-class>org.apache.roller.weblogger.ui.core.tags.menu.MenuTag</tag-class>
 
       <attribute>
          <name>id</name>
@@ -40,7 +40,7 @@
    <tag>
 
       <name>Date</name>
-      <tag-class>org.apache.roller.ui.core.tags.DateTag</tag-class>
+      <tag-class>org.apache.roller.weblogger.ui.core.tags.DateTag</tag-class>
 
       <attribute>
          <name>dateFormat</name>
@@ -79,7 +79,7 @@
    <tag>
 
       <name>Calendar</name>
-      <tag-class>org.apache.roller.ui.core.tags.calendar.CalendarTag</tag-class>
+      <tag-class>org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag</tag-class>
 
       <attribute>
          <name>name</name>
@@ -99,7 +99,7 @@
    <tag>
 
       <name>EditorNavigationBar</name>
-      <tag-class>org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag</tag-class>
+      <tag-class>org.apache.roller.weblogger.ui.core.tags.menu.EditorNavigationBarTag</tag-class>
 
       <attribute>
          <name>id</name>
