@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity.deprecated;
 
-import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -30,17 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.PluginManager;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.ui.core.RequestConstants;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
@@ -133,35 +131,9 @@ public class OldPageHelper {
     
     
     public String getToggleLinkbackDisplayHTML(RefererDataWrapper referer) {
-        String ret = "";
-        String link = null;
-        try {
-            RollerSession rollerSession =
-                    RollerSession.getRollerSession(mRequest);
-            if (mWebsite != null
-                    && rollerSession.isUserAuthorizedToAdmin(mWebsite)) {
-                Hashtable params = new Hashtable();
-                params.put( RequestConstants.REFERRER_ID, referer.getId());
-                params.put( RequestConstants.WEBLOG, mWebsite.getHandle());
-                link = RequestUtils.computeURL( mPageContext,
-                        "toggleLinkback", null, null, null, params,null,false);
-                
-                StringBuffer sb = new StringBuffer();
-                sb.append("[<a href=\"");
-                sb.append(link);
-                if ( referer.getVisible().booleanValue() ) {
-                    sb.append("\">Visible</a>] ");
-                } else {
-                    sb.append("\">Hidden</a>] ");
-                }
-                ret = sb.toString();
-            }
-        } catch (Exception e) {
-            // should never happen, but if it does:
-            mLogger.error("ERROR creating toggle-linkback URL",e);
-        }
-        
-        return ret;
+        // NOTE: this was EOLed as part of Roller 4.0 since we no longer
+        // have an action for toggling linkback display
+        return "";
     }
     
     
@@ -302,35 +274,25 @@ public class OldPageHelper {
      */
     public String strutsUrlHelper1( boolean useIds, boolean isAction,
             String path, String val1, String val2, Hashtable params) {
-        if (useIds) {
-            if (mFolder != null) {
-                params.put(RequestConstants.FOLDER_ID,
-                        mFolder.getId());
-            }
-            if (mWebsite != null) {
-                params.put(RequestConstants.WEBLOG, mWebsite.getHandle());
-            }
-        }
         
-        if (OldStringUtils.isNotEmpty(val1) && !val1.equals("null")) {
-            params.clear();
-            params.put("weblog", val1);
-        }
+        // NOTE: this method is now official defunct since Roller 4.0
+        // when we EOLed struts1 and had no real equivalent for this
         
-        String returnUrl = "";
-        try {
-            if (isAction) {
-                returnUrl = RequestUtils.computeURL( mPageContext,
-                        path, null, null, null, params, null, false);
-            } else {
-                returnUrl = RequestUtils.computeURL( mPageContext,
-                        null, path, null, null, params, null, false);
-            }
-        } catch (MalformedURLException mue) {
-            mLogger.warn("RollerRequest.strutsUrlHelper exception: ", mue);
-            returnUrl = "<span class=\"error\">ERROR generating link</span>";
+        if(path == null) {
+            return null;
+        } else if("weblogCreate".equals(path)) {
+            // a little hacky, but hopefully nobody is really using this anymore
+            return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/createWeblog.rol";
+        } else if("editWebsite".equals(path)) {
+            // a little hacky, but hopefully nobody is really using this anymore
+            return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/weblogConfig.rol?weblog="+val1;
+        } else if("logout-redirect".equals(path)) {
+            return URLUtilities.getLogoutURL(false);
+        } else if("login-redirect".equals(path)) {
+            return URLUtilities.getLoginURL(false);
+        } else {
+            return "<span class=\"error\">ERROR generating link</span>";
         }
-        return returnUrl;
     }
     
     
