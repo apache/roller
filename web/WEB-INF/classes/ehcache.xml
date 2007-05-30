@@ -10,17 +10,17 @@
         timeToLiveSeconds="1200"
         overflowToDisk="false" />
 
-    <cache name="org.apache.roller.pojos.RuntimeConfigProperty"
+    <cache name="org.apache.roller.weblogger.pojos.RuntimeConfigProperty"
         maxElementsInMemory="100"
         eternal="false"
         overflowToDisk="false" />
         
-    <cache name="org.apache.roller.pojos.User"
+    <cache name="org.apache.roller.weblogger.pojos.User"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />
         
-    <cache name="org.apache.roller.pojos.Weblog"
+    <cache name="org.apache.roller.weblogger.pojos.Weblog"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />

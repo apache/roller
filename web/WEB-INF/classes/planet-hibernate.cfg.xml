@@ -31,7 +31,7 @@
 
         <!-- use custom thread local Session context -->
         <!--<property name="hibernate.current_session_context_class">thread</property>-->
-        <property name="hibernate.current_session_context_class">org.apache.roller.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
+        <property name="hibernate.current_session_context_class">org.apache.roller.weblogger.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
         <!-- Hibernate L2 Caching -->
         <property name="hibernate.cache.use_second_level_cache">false</property>

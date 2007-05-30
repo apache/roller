@@ -31,7 +31,7 @@
 
         <!-- use custom thread local Session context -->
         <!--<property name="hibernate.current_session_context_class">thread</property>-->
-        <property name="hibernate.current_session_context_class">org.apache.roller.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
+        <property name="hibernate.current_session_context_class">org.apache.roller.weblogger.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
         <!-- Hibernate L2 Caching -->
         <property name="hibernate.cache.use_second_level_cache">true</property>
@@ -41,28 +41,28 @@
         
         
         <!-- Map Roller pojo classes -->
-        <mapping resource="org/apache/roller/pojos/RuntimeConfigProperty.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/TaskLock.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/User.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/UserRole.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/RuntimeConfigProperty.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/TaskLock.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/User.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/UserRole.hbm.xml" />
 
-        <mapping resource="org/apache/roller/pojos/Weblog.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogPermission.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogBookmark.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogEntryComment.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogBookmarkFolder.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogTemplate.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogReferrer.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogHitCount.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/AutoPing.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/PingQueueEntry.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/PingTarget.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/Weblog.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogPermission.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogBookmark.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogEntryComment.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogBookmarkFolder.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogTemplate.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogReferrer.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogHitCount.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/AutoPing.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/PingQueueEntry.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/PingTarget.hbm.xml" />
 
-        <mapping resource="org/apache/roller/pojos/WeblogEntry.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogEntryTag.hbm.xml" />        
-        <mapping resource="org/apache/roller/pojos/WeblogEntryTagAggregate.hbm.xml" />                       
-        <mapping resource="org/apache/roller/pojos/WeblogEntryAttribute.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogCategory.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogEntry.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogEntryTag.hbm.xml" />        
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogEntryTagAggregate.hbm.xml" />                       
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogEntryAttribute.hbm.xml" />
+        <mapping resource="org/apache/roller/weblogger/pojos/WeblogCategory.hbm.xml" />
         
     </session-factory>
 </hibernate-configuration>

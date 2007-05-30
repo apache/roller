@@ -19,7 +19,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
 <%-- simple test page to test your Roller datasource setup --%>
-<%@ page import="org.apache.roller.business.DatabaseProvider" %>
+<%@ page import="org.apache.roller.weblogger.business.DatabaseProvider" %>
 <%@ page import="java.sql.Connection" %>
 <html>
 <head>

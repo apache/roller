@@ -16,12 +16,12 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs.jsp" %><% {
-String prefix = org.apache.roller.ui.core.tags.DateTag.KEY_PREFIX;
+String prefix = org.apache.roller.weblogger.ui.core.tags.DateTag.KEY_PREFIX;
 String formName = request.getAttribute(prefix+"_formName").toString(); 
 String dateField = request.getAttribute(prefix+"_property").toString(); 
 String dateFormat = request.getAttribute(prefix+"_dateFormat").toString();
 // value comes from request, must escape to avoid XSS vulnerability
-String value = org.apache.roller.util.Utilities.escapeHTML(request.getAttribute(prefix+"_value").toString());
+String value = org.apache.roller.weblogger.util.Utilities.escapeHTML(request.getAttribute(prefix+"_value").toString());
 Boolean readOnly = (Boolean)request.getAttribute(prefix+"_readOnly");
 %>
 <script type="text/javascript" >

@@ -113,7 +113,7 @@
       <property name="userCache" ref="userCache"/>
     </bean>    
     
-    <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.ui.core.security.AuthoritiesPopulator">
+    <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
         <property name="dataSource">
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
                 <property name="jndiName" value="java:comp/env/jdbc/rollerdb"/>
@@ -133,7 +133,7 @@
     </bean>
     
     <!-- Read users from Roller API -->
-    <bean id="jdbcAuthenticationDao" class="org.apache.roller.ui.core.security.RollerUserDetailsService"/>
+    <bean id="jdbcAuthenticationDao" class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
 
     <bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
         <property name="cache">
