@@ -58,7 +58,7 @@ public class HibernateRollerPlanetImpl extends HibernatePlanetImpl {
     public static Planet instantiate() throws RollerException {
         if (me == null) {
             log.debug("Instantiating HibernatePlanetImpl");
-            me = new HibernatePlanetImpl();
+            me = new HibernateRollerPlanetImpl();
         }
         
         return me;
