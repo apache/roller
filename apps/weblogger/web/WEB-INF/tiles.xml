@@ -151,12 +151,12 @@
         <put name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
     </definition>
     
-    <definition name=".PlanetSubscriptions" extends=".tiles-tabbedpage" >
-        <put name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
-    </definition>
-    
     <definition name=".PlanetConfig" extends=".tiles-tabbedpage" >
         <put name="content" value="/WEB-INF/jsps/admin/PlanetConfig.jsp" />
+    </definition>
+    
+    <definition name=".PlanetSubscriptions" extends=".tiles-tabbedpage" >
+        <put name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
     </definition>
     
     <definition name=".PlanetGroups" extends=".tiles-tabbedpage" >
