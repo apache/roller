@@ -14,17 +14,23 @@
     
     <target name="build-integrated" 
         description="Build Core, Planet and Roller together (i.e. Rebuilds Core and Planet jars, uses them to build Roller)">        
+        
         <ant  dir="components/core" target="dist" />        
-        <copy file="components/core/dist/lib/roller-core.jar" todir="tools/roller-core" />        
+        <copy file="components/core/dist/lib/roller-core.jar" todir="tools/roller-core" /> 
+        
         <ant  dir="apps/planet" target="dist" />
-        <copy file="apps/planet/dist/lib/roller-planet-business.jar" todir="tools/roller-planet" />        
-        <ant  dir="apps/weblogger" target="apache-release" />        
+        <copy file="apps/planet/dist/lib/roller-planet-business.jar" todir="tools/roller-planet" /> 
+        
+        <ant dir="apps/weblogger"  target="all" />
+        <ant dir="apps/weblogger"  target="apache-release" />
+        
     </target>
 
     <target name="build" 
         description="Build Core, Planet and Roller separately (i.e. uses Core and Planet jars from Subversion)" >
         <ant dir="components/core" target="dist" />
         <ant dir="apps/planet"     target="dist" />
+        <ant dir="apps/weblogger"  target="all" />
         <ant dir="apps/weblogger"  target="apache-release" />
     </target>
 
