@@ -416,7 +416,7 @@ public final class URLUtilities {
             url.append(RollerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/logout-redirect.rol");
+        url.append("/roller-ui/logout.rol");
         
         return url.toString();
     }
@@ -484,7 +484,7 @@ public final class URLUtilities {
             url.append(RollerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/admin/weblogConfig.rol");
+        url.append("/roller-ui/authoring/weblogConfig.rol");
         
         Map params = new HashMap();
         params.put("weblog", weblogHandle);
