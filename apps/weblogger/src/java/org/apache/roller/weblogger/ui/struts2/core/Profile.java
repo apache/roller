@@ -67,12 +67,6 @@ public class Profile extends UIAction {
     }
     
     
-    @SkipValidation
-    public String cancel() {
-        return "cancel";
-    }
-    
-    
     public String save() {
         
         myValidate();

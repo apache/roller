@@ -106,12 +106,6 @@ public class Register extends UIAction implements ServletRequestAware {
     }
     
     
-    @SkipValidation
-    public String cancel() {
-        return "cancel";
-    }
-    
-    
     public String save() {
         
         if(!RollerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {

@@ -121,13 +121,8 @@ public class CreateUser extends UIAction {
     }
     
     
-    public String cancel() {
-        return "cancel";
-    }
-    
-    
     // TODO: replace with struts2 validation
-    protected void myValidate() {
+    private void myValidate() {
         
         String allowed = RollerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {

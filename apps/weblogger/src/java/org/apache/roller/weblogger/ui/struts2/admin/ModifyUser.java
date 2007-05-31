@@ -157,11 +157,6 @@ public class ModifyUser extends UIAction {
     }
     
     
-    public String cancel() {
-        return "cancel";
-    }
-    
-    
     // TODO: replace with struts2 validation
     private void myValidate() {
         
