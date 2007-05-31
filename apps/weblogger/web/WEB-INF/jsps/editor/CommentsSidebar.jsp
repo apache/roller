@@ -33,7 +33,7 @@
     
     <div class="sideformrow">
         <label for="searchString" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>   
-        <s:textfield name="bean.searchString" />
+        <s:textfield name="bean.searchString" size="15" />
     </div>
     <br />
     <br />
