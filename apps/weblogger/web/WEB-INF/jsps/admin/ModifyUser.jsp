@@ -135,7 +135,7 @@
     
     <div class="control">
         <s:submit key="userAdmin.save" />
-        <s:submit key="application.cancel" action="modifyUser!cancel" />
+        <input type="button" value="<s:text name="application.cancel"/>" onclick="window.location='<s:url action="userAdmin"/>'" />
     </div>
     
 </s:form>

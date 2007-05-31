@@ -83,6 +83,6 @@
 <br />
 
 <s:submit key="userSettings.button.save" />
-<s:submit key="userSettings.button.cancel" action="profile!cancel" />
+<input type="button" value="<s:text name="userSettings.button.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
 
 </s:form>
