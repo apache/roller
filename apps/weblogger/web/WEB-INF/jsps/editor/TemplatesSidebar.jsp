@@ -25,7 +25,7 @@
                 <h3><s:text name="pagesForm.addNewPage" /></h3>
                 <hr size="1" noshade="noshade" />
                 
-                <s:form action="templateAdd!save">
+                <s:form action="templates!add">
                     <s:hidden name="weblog" />
                     
                     <table cellpadding="0" cellspacing="6">
