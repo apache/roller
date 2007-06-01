@@ -6,7 +6,7 @@
     <author>Dave Johnson</author>
     
     <!-- theme preview image -->
-    <preview-image path="sm-theme-frontpage.jpg" />
+    <preview-image path="sm-theme-frontpage.png" />
     
     <!-- templates -->
     <template action="weblog">

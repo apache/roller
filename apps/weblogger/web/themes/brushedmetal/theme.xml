@@ -6,7 +6,7 @@
     <author>Bryan Bell</author>
     
     <!-- theme preview image -->
-    <preview-image path="sm-theme-brushedmetal.jpg" />
+    <preview-image path="sm-theme-brushedmetal.png" />
     
     <!-- templates -->
     <template action="weblog">

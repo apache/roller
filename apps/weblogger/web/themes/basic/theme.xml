@@ -6,7 +6,7 @@
     <author>Roller Weblogger</author>
     
     <!-- theme preview image -->
-    <preview-image path="sm-theme-basic.jpg" />
+    <preview-image path="sm-theme-basic.png" />
     
     <!-- custom stylesheet -->
     <custom-stylesheet path="basic-custom.css" />

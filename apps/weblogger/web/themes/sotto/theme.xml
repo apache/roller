@@ -6,7 +6,7 @@
     <author>Matt Raible</author>
     
     <!-- theme preview image -->
-    <preview-image path="sm-theme-sotto.jpg" />
+    <preview-image path="sm-theme-sotto.png" />
     
     <!-- templates -->
     <template action="weblog">
