@@ -205,13 +205,13 @@ function fullPreviewMode() {
     <br>
     <div class="control">
         <s:if test="userAnAuthor">
-            <s:submit key="weblogEdit.post" onclick="document.getElementById('entryAdd_bean_status').value='PUBLISHED';"/>
+            <s:submit key="weblogEdit.post" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
         </s:if>
         <s:else>
-            <s:submit key="weblogEdit.submitForReview" onclick="document.getElementById('entryAdd_bean_status').value='PENDING';"/>
+            <s:submit key="weblogEdit.submitForReview" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
         </s:else>
         
-        <s:submit key="weblogEdit.save" onclick="document.getElementById('entryAdd_bean_status').value='DRAFT';" />
+        <s:submit key="weblogEdit.save" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
         
         <s:url id="removeUrl" action="entryRemove">
             <s:param name="weblog" value="actionWeblog.handle" />
