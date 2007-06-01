@@ -30,7 +30,7 @@
     <entry>
         <id>$entry.permalink</id>
         <title type="html">$utils.escapeXML($entry.title)</title>
-        <author><name>$entry.creator.fullName</name></author>
+        <author><name>$entry.creator.screenName</name></author>
         <link rel="alternate" type="text/html" href="$entry.permalink"/>
         <published>$utils.formatIso8601Date($entry.pubTime)</published>
         <updated>$utils.formatIso8601Date($entry.updateTime)</updated> 
@@ -59,7 +59,7 @@
   <item>
     <guid isPermaLink="true">$entry.permalink</guid>
     <title>$utils.escapeXML($utils.removeHTML($entry.title))</title>
-    <dc:creator>$utils.escapeXML($entry.creator.fullName)</dc:creator>
+    <dc:creator>$utils.escapeXML($entry.creator.screenName)</dc:creator>
     <link>$entry.permalink</link>
     #if( $entry.link && !$entry.link.trim().equals("") )
     <source url="$utils.escapeXML($entry.link)">$utils.escapeXML($entry.link)</source>
