@@ -18,6 +18,13 @@
         <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
     </filter>
     
+    <!-- This is really strange, but for some reason it's needed to prevent
+         some problems with the file uploads not working intermittently -->
+    <filter>
+        <filter-name>struts2-cleanup</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
+    </filter>
+    
     <filter>
         <filter-name>securityFilter</filter-name>
         <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
@@ -151,6 +158,13 @@
     </filter-mapping>
     
     <!-- Struts2 -->
+    <filter-mapping>
+        <filter-name>struts2-cleanup</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    
     <filter-mapping>
         <filter-name>struts2</filter-name>
         <url-pattern>/*</url-pattern>
