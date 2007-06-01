@@ -20,7 +20,7 @@
 <script type="text/javascript">
 <!--
 function previewImage(theme) {
-    document.preview.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
+    document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
 }
 function handlePreview(handle) {
     previewSpan = document.getElementById("handlePreview");
