@@ -43,13 +43,12 @@ public class UserDataWrapper {
     }
 
     /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
+     * This is here for backwards compatability.  We no longer allow the
+     * username to be displayed publicly, so screen name is returned instead.
      */
     public java.lang.String getUserName()
     {   
-        return this.pojo.getUserName();
+        return this.pojo.getScreenName();
     }
 
     /**
