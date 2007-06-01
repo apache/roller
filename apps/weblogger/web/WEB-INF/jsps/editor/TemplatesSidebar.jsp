@@ -28,15 +28,15 @@
                 <s:form action="templateAdd!save">
                     <s:hidden name="weblog" />
                     
-                    <table cellpadding="0" cellspacing="0">
+                    <table cellpadding="0" cellspacing="6">
                         <tr>
-                            <td><s:text name="pagesForm.name"/>:</td>
+                            <td><s:text name="pagesForm.name"/></td>
                             <td><s:textfield name="newTmplName" /></td>
                         </tr>
                         
                         <s:if test="!availableActions.isEmpty" >
                             <tr>
-                                <td><s:text name="pagesForm.action"/>:</td>
+                                <td><s:text name="pagesForm.action"/></td>
                                 <td>
                                     <s:select name="newTmplAction" size="1" list="availableActions" />
                                 </td>
