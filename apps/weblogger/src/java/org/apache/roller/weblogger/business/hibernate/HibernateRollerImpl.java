@@ -196,7 +196,7 @@ public class HibernateRollerImpl extends RollerImpl {
      */
     public AutoPingManager getAutopingManager() {
         if (autoPingManager == null) {
-            autoPingManager = new HibernateAutoPingManagerImpl(strategy);
+            autoPingManager = new HibernateAutoPingManagerImpl(this, strategy);
         }
         return autoPingManager;
     }

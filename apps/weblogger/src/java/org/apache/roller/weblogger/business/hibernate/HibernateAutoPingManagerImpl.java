@@ -16,12 +16,12 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.hibernate;
+package org.apache.roller.weblogger.business.hibernate; 
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
+import org.hibernate.Criteria; 
+import org.hibernate.HibernateException; 
+import org.hibernate.Session; 
+import org.hibernate.criterion.Expression; 
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -31,12 +31,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;  
+import org.apache.commons.logging.LogFactory;  
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
-import org.apache.roller.weblogger.business.RollerFactory;
 
 
 /**
@@ -46,14 +46,17 @@ import org.apache.roller.weblogger.business.RollerFactory;
  */
 public class HibernateAutoPingManagerImpl implements AutoPingManager {
     
+    private Roller roller;
+    
     static final long serialVersionUID = 5420615676256979199L;
     
     private static Log log = LogFactory.getLog(HibernateAutoPingManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
     
-    
-    public HibernateAutoPingManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject    
+    public HibernateAutoPingManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        this.roller = roller;
         this.strategy = strat;
     }
     
@@ -122,7 +125,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
         }
         
         // TODO: new manager method for addQueueEntries(list)?
-        PingQueueManager pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
+        PingQueueManager pingQueueMgr = roller.getPingQueueManager();
         List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
         for (Iterator i = applicableAutopings.iterator(); i.hasNext(); ) {
             AutoPing autoPing = (AutoPing) i.next();
