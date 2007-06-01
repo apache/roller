@@ -44,13 +44,13 @@
 
     <tr>
         <td class="label"><s:text name="websiteSettings.websiteDescription" /></td>
-        <td class="field"><s:textfield name="bean.description" /></td>
+        <td class="field"><s:textfield name="bean.description" size="40"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
     <tr>
         <td class="label"><s:text name="websiteSettings.icon" /></td>
-        <td class="field"><s:textfield name="bean.icon" /></td>
+        <td class="field"><s:textfield name="bean.icon" size="40"/></td>
         <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
     </tr>
     
