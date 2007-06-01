@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
@@ -112,6 +113,22 @@ public class Entries extends UIAction {
         }
         
         return LIST;
+    }
+    
+    
+    public List<WeblogCategory> getCategories() {
+        // make list of categories with first option being being a transient
+        // category just meant to represent the default option of any category
+        List<WeblogCategory> cats = new ArrayList();
+        
+        WeblogCategory tmpCat = new WeblogCategory();
+        tmpCat.setName("Any");
+        tmpCat.setPath("");
+        cats.add(tmpCat);
+        
+        cats.addAll(getActionWeblog().getWeblogCategories());
+        
+        return cats;
     }
     
     
