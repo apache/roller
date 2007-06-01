@@ -22,21 +22,21 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.weblogger.RollerPermissionsException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -256,7 +256,7 @@ public final class EntryEdit extends EntryBase {
     
     
     public String getPreviewURL() {
-        return getEntry().getPermalink();
+        return URLUtilities.getPreviewWeblogEntryURL(getEntry().getAnchor(), getActionWeblog(), null, true);
     }
     
     
