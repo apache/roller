@@ -220,6 +220,7 @@
         <!-- Copy in resources -->
         <copy todir="${build.compile.web}">
             <fileset dir="${ro.src}">
+                <exclude name="**/META-INF/**"/> <!-- don't copy persistence.xml -->
                 <exclude name="**/*.java"/>
                 <exclude name="**/*.html"/>
                 <exclude name="**/*.png"/>
