@@ -110,7 +110,8 @@ function updateThemeChooser(selected) {
             &raquo; <a href="#" onclick="fullPreview(document.getElementById('sharedSelector'))">See how your blog will look with this theme.</a><br/>
             How can you know if this is really the theme for you until you see it on your blog right?  Click the link above to launch a full page preview of how your blog will look with the selected theme.
         </p>
-        <s:if test="actionWeblog.theme.customStylesheet != null">
+        
+        <s:if test="!customTheme && actionWeblog.theme.customStylesheet != null">
             <p>
                 <s:url action="stylesheetEdit" id="stylesheetEdit" >
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
