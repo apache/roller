@@ -97,9 +97,9 @@
 
 </table>
 
-<br />
-
-<div class="control">
-    <s:url id="addPing" action="commonPingTargetAdd" />
-    <s:a href="%{addPing}">Add Ping Target</s:a>
+<div style="padding: 4px; font-weight: bold;">
+    <s:url id="addPing" action="customPingTargetAdd">
+        <s:param name="weblog" value="actionWeblog.handle" />
+    </s:url>
+    <img src='<s:url value="/images/add.png"/>' border="0"alt="icon" /><s:a href="%{addPing}">Add Ping Target</s:a>
 </div>
