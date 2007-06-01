@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -76,10 +77,17 @@ public class Members extends UIAction implements ParameterAware {
         
         List<WeblogPermission> permissions = getActionWeblog().getPermissions();
         
+        // we have to copy the permissions list so that when we remove permissions
+        // below we don't get ConcurrentModificationExceptions
+        List<WeblogPermission> permsList = new ArrayList();
+        for( WeblogPermission perm : permissions ) {
+            permsList.add(perm);
+        }
+        
         int removed = 0;
         int changed = 0;
         try {
-            for( WeblogPermission perms : permissions ) {
+            for( WeblogPermission perms : permsList ) {
                 
                 String sval = getParameter("perm-" + perms.getId());
                 if (sval != null) {

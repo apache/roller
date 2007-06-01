@@ -223,6 +223,11 @@ public class HibernateUserManagerImpl implements UserManager {
     }
         
     public void removePermissions(WeblogPermission perms) throws RollerException {
+        
+        // make sure associations are broken
+        perms.getWebsite().getPermissions().remove(perms);
+        perms.getUser().getPermissions().remove(perms);
+        
         this.strategy.remove(perms);
     }
         
@@ -383,6 +388,10 @@ public class HibernateUserManagerImpl implements UserManager {
         perms.setUser(user);
         perms.setPermissionMask(mask);
         this.strategy.store(perms);
+        
+        // manage associations
+        website.getPermissions().add(perms);
+        user.getPermissions().add(perms);
         
         return perms;
     }
