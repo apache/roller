@@ -282,7 +282,7 @@ public class OldPageHelper {
             return null;
         } else if("weblogCreate".equals(path)) {
             // a little hacky, but hopefully nobody is really using this anymore
-            return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/createWeblog.rol";
+            return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/entryAdd.rol?weblog="+val1;
         } else if("editWebsite".equals(path)) {
             // a little hacky, but hopefully nobody is really using this anymore
             return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/weblogConfig.rol?weblog="+val1;
