@@ -73,10 +73,12 @@ function handleCommentResponse() {
 </script>
 
 <p class="subtitle">
-    <s:text name="commentManagement.subtitle" />
+    <s:text name="commentManagement.website.subtitle">
+        <s:param value="%{actionWeblog.handle}"/>
+    </s:text>
 </p>
 
-<p class="pagetip"><s:text name="commentManagement.globalTip" /></p>
+<p class="pagetip"><s:text name="commentManagement.tip" /></p>
 
 <s:if test="comments.isEmpty">
     <s:text name="commentManagement.noCommentsFound" />
