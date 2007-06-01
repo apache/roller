@@ -334,11 +334,6 @@
             <result name="list" type="tiles">.Templates</result>
         </action>
         
-        <action name="templateAdd!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.TemplateAdd">
-            <result name="success" type="chain">templates</result>
-        </action>
-        
         <action name="templateEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
             <result name="list" type="chain">templates</result>

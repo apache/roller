@@ -20,7 +20,9 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -45,6 +47,10 @@ public class Templates extends UIAction {
     // list of template action types user is allowed to create
     private List availableActions = Collections.EMPTY_LIST;
     
+    // name and action of new template if we are adding a template
+    private String newTmplName = null;
+    private String newTmplAction = null;
+    
     
     public Templates() {
         this.actionName = "templates";
@@ -53,7 +59,6 @@ public class Templates extends UIAction {
     }
     
     
-    // must be a weblog admin to use this action
     public short requiredWeblogPermissions() {
         return WeblogPermission.ADMIN;
     }
@@ -97,6 +102,90 @@ public class Templates extends UIAction {
     }
     
     
+    /**
+     * Save a new template.
+     */
+    public String add() {
+        
+        // validation
+        myValidate();
+        
+        if(!hasActionErrors()) try {
+            
+            WeblogTemplate newTemplate = new WeblogTemplate();
+            newTemplate.setWebsite(getActionWeblog());
+            newTemplate.setAction(getNewTmplAction());
+            newTemplate.setName(getNewTmplName());
+            newTemplate.setDescription(newTemplate.getName());
+            newTemplate.setContents(getText("pageForm.newTemplateContent"));
+            newTemplate.setHidden(false);
+            newTemplate.setNavbar(false);
+            newTemplate.setLastModified( new Date() );
+            
+            // all templates start out as velocity templates
+            newTemplate.setTemplateLanguage("velocity");
+            
+            // for now, all templates just use _decorator
+            if(!"_decorator".equals(newTemplate.getName())) {
+                newTemplate.setDecoratorName("_decorator");
+            }
+            
+            // save the new Template
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            mgr.savePage( newTemplate );
+            
+            // if this person happened to create a Weblog template from
+            // scratch then make sure and set the defaultPageId
+            if(WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
+                getActionWeblog().setDefaultPageId(newTemplate.getId());
+                mgr.saveWebsite(getActionWeblog());
+            }
+            
+            // flush results to db
+            RollerFactory.getRoller().flush();
+            
+            // reset form fields
+            setNewTmplName(null);
+            setNewTmplAction(null);
+            
+        } catch (RollerException ex) {
+            log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
+            // TODO: i18n
+            addError("Error adding new template");
+        }
+        
+        return execute();
+    }
+    
+    
+    // validation when adding a new template
+    private void myValidate() {
+        
+        // make sure name is non-null and within proper size
+        if(StringUtils.isEmpty(getNewTmplName())) {
+            addError("TemplateEdit.error.nameNull");
+        } else if(getNewTmplName().length() > 255) {
+            addError("TemplateEdit.error.nameSize");
+        }
+        
+        // make sure action is a valid
+        if(StringUtils.isEmpty(getNewTmplAction())) {
+            addError("TemplateEdit.error.actionNull");
+        }
+        
+        // check if template by that name already exists
+        try {
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            WeblogTemplate existingPage = umgr.getPageByName(getActionWeblog(), getNewTmplName());
+            if(existingPage != null) {
+                addError("pagesForm.error.alreadyExists", getNewTmplName());
+            }
+        } catch (RollerException ex) {
+            log.error("Error checking for existing template", ex);
+        }
+    }
+    
+    
     public List getTemplates() {
         return templates;
     }
@@ -111,6 +200,22 @@ public class Templates extends UIAction {
 
     public void setAvailableActions(List availableActions) {
         this.availableActions = availableActions;
+    }
+    
+    public String getNewTmplName() {
+        return newTmplName;
+    }
+
+    public void setNewTmplName(String newTmplName) {
+        this.newTmplName = newTmplName;
+    }
+
+    public String getNewTmplAction() {
+        return newTmplAction;
+    }
+
+    public void setNewTmplAction(String newTmplAction) {
+        this.newTmplAction = newTmplAction;
     }
     
 }
