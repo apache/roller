@@ -39,7 +39,7 @@
                     <div class="sideformrow">
                         <label for="categoryId" class="sideformrow">
                         <s:text name="weblogEntryQuery.label.category" /></label>          
-                        <s:select name="bean.categoryPath" list="actionWeblog.weblogCategories" listKey="path" listValue="path" size="1" />
+                        <s:select name="bean.categoryPath" list="categories" listKey="path" listValue="name" size="1" />
                     </div>
                     <br />
                     <br />
