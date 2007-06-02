@@ -18,98 +18,60 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.sql.Timestamp;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.weblogger.pojos.WeblogEntryTag
+ * Pojo safety wrapper for WeblogEntryTag objects.
  */
 public class WeblogEntryTagDataWrapper {
-
+    
     // keep a reference to the wrapped pojo
-    private WeblogEntryTag pojo = null;
-
+    private final WeblogEntryTag pojo;
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogEntryTagDataWrapper(WeblogEntryTag toWrap) {
         this.pojo = toWrap;
     }
-
+    
+    
     // wrap the given pojo if it is not null
     public static WeblogEntryTagDataWrapper wrap(WeblogEntryTag toWrap) {
         if(toWrap != null)
             return new WeblogEntryTagDataWrapper(toWrap);
-
+        
         return null;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getId()
-    {   
+    
+    
+    public String getId() {
         return this.pojo.getId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper getWeblog()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper.wrap(this.pojo.getWeblog());
+    
+    
+    public WebsiteDataWrapper getWeblog() {
+        return WebsiteDataWrapper.wrap(this.pojo.getWeblog());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper getWeblogEntry()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
+    
+    
+    public WeblogEntryDataWrapper getWeblogEntry() {
+        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.UserDataWrapper getUser()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.UserDataWrapper.wrap(this.pojo.getUser());
+    
+    
+    public UserDataWrapper getUser() {
+        return UserDataWrapper.wrap(this.pojo.getUser());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getName()
-    {   
+    
+    
+    public String getName() {
         return this.pojo.getName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.sql.Timestamp getTime()
-    {   
+    
+    
+    public Timestamp getTime() {
         return this.pojo.getTime();
     }
-
-    /**
-     * this is a special method to access the original pojo
-     * we don't really want to do this, but it's necessary
-     * because some parts of the rendering process still need the
-     * orginal pojo object
-     */
-    public org.apache.roller.weblogger.pojos.WeblogEntryTag getPojo() {
-        return this.pojo;
-    }
-
+    
 }

@@ -18,406 +18,239 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TimeZone;
+import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.weblogger.pojos.WebsiteData
+ * Pojo safety wrapper for Weblog objects.
  */
 public class WebsiteDataWrapper {
-
+    
     // keep a reference to the wrapped pojo
-    private Weblog pojo = null;
-
+    private final Weblog pojo;
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private WebsiteDataWrapper(Weblog toWrap) {
         this.pojo = toWrap;
     }
-
+    
+    
     // wrap the given pojo if it is not null
     public static WebsiteDataWrapper wrap(Weblog toWrap) {
         if(toWrap != null)
             return new WebsiteDataWrapper(toWrap);
-
+        
         return null;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper getPageByAction(java.lang.String action)
-        throws org.apache.roller.RollerException
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper.wrap(this.pojo.getPageByAction(action));
+    
+    
+    public TemplateWrapper getPageByAction(String action)
+            throws RollerException {
+        return TemplateWrapper.wrap(this.pojo.getPageByAction(action));
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper getPageByName(java.lang.String name)
-        throws org.apache.roller.RollerException
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper.wrap(this.pojo.getPageByName(name));
+    
+    
+    public TemplateWrapper getPageByName(String name)
+            throws RollerException {
+        return TemplateWrapper.wrap(this.pojo.getPageByName(name));
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper getPageByLink(java.lang.String link)
-        throws org.apache.roller.RollerException
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper.wrap(this.pojo.getPageByLink(link));
+    
+    
+    public TemplateWrapper getPageByLink(String link)
+            throws RollerException {
+        return TemplateWrapper.wrap(this.pojo.getPageByLink(link));
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getPages()
-        throws org.apache.roller.RollerException
-    {
-        java.util.List initialCollection = this.pojo.getPages();
-
+    
+    
+    public List getPages() throws RollerException {
+        
+        List initialCollection = this.pojo.getPages();
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper.wrap((org.apache.roller.weblogger.pojos.ThemeTemplate) it.next()));
+            wrappedCollection.add(i, TemplateWrapper.wrap((ThemeTemplate) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getId()
-    {   
+    
+    
+    public String getId() {
         return this.pojo.getId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getHandle()
-    {   
+    
+    
+    public String getHandle() {
         return this.pojo.getHandle();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getName()
-    {   
+    
+    
+    public String getName() {
         return this.pojo.getName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getDescription()
-    {   
+    
+    
+    public String getDescription() {
         return this.pojo.getDescription();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.UserDataWrapper getCreator()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.UserDataWrapper.wrap(this.pojo.getCreator());
+    
+    
+    public UserDataWrapper getCreator() {
+        return UserDataWrapper.wrap(this.pojo.getCreator());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getDefaultPageId()
-    {   
+    
+    
+    public String getDefaultPageId() {
         return this.pojo.getDefaultPageId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getWeblogDayPageId()
-    {   
+    
+    
+    public String getWeblogDayPageId() {
         return this.pojo.getWeblogDayPageId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getEnableBloggerApi()
-    {   
+    
+    
+    public Boolean getEnableBloggerApi() {
         return this.pojo.getEnableBloggerApi();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public org.apache.roller.weblogger.pojos.WeblogCategory getBloggerCategory()
-    {   
-        return this.pojo.getBloggerCategory();
+    
+    
+    public WeblogCategoryDataWrapper getBloggerCategory() {
+        return WeblogCategoryDataWrapper.wrap(this.pojo.getBloggerCategory());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper getDefaultCategory()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper.wrap(this.pojo.getDefaultCategory());
+    
+    
+    public WeblogCategoryDataWrapper getDefaultCategory() {
+        return WeblogCategoryDataWrapper.wrap(this.pojo.getDefaultCategory());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getEditorPage()
-    {   
+    
+    
+    public String getEditorPage() {
         return this.pojo.getEditorPage();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getBlacklist()
-    {   
+    
+    
+    public String getBlacklist() {
         return this.pojo.getBlacklist();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getAllowComments()
-    {   
+    
+    
+    public Boolean getAllowComments() {
         return this.pojo.getAllowComments();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getDefaultAllowComments()
-    {   
+    
+    
+    public Boolean getDefaultAllowComments() {
         return this.pojo.getDefaultAllowComments();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public int getDefaultCommentDays()
-    {   
+    
+    
+    public int getDefaultCommentDays() {
         return this.pojo.getDefaultCommentDays();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getModerateComments()
-    {   
+    
+    
+    public Boolean getModerateComments() {
         return this.pojo.getModerateComments();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getEmailComments()
-    {   
+    
+    
+    public Boolean getEmailComments() {
         return this.pojo.getEmailComments();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getEmailFromAddress()
-    {   
+    
+    
+    public String getEmailFromAddress() {
         return this.pojo.getEmailFromAddress();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getEmailAddress()
-    {   
+    
+    
+    public String getEmailAddress() {
         return this.pojo.getEmailAddress();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getEditorTheme()
-    {   
+    
+    
+    public String getEditorTheme() {
         return this.pojo.getEditorTheme();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getLocale()
-    {   
+    
+    
+    public String getLocale() {
         return this.pojo.getLocale();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getTimeZone()
-    {   
+    
+    
+    public String getTimeZone() {
         return this.pojo.getTimeZone();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.Date getDateCreated()
-    {   
+    
+    
+    public Date getDateCreated() {
         return this.pojo.getDateCreated();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getDefaultPlugins()
-    {   
+    
+    
+    public String getDefaultPlugins() {
         return this.pojo.getDefaultPlugins();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.Locale getLocaleInstance()
-    {   
+    
+    
+    public Locale getLocaleInstance() {
         return this.pojo.getLocaleInstance();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.TimeZone getTimeZoneInstance()
-    {   
+    
+    
+    public TimeZone getTimeZoneInstance() {
         return this.pojo.getTimeZoneInstance();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public int getEntryDisplayCount()
-    {   
+    
+    
+    public int getEntryDisplayCount() {
         return this.pojo.getEntryDisplayCount();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getEnabled()
-    {   
+    
+    
+    public Boolean getEnabled() {
         return this.pojo.getEnabled();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getActive()
-    {   
+    
+    
+    public Boolean getActive() {
         return this.pojo.getActive();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.Date getLastModified()
-    {   
+    
+    
+    public Date getLastModified() {
         return this.pojo.getLastModified();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public boolean isEnableMultiLang()
-    {   
+    
+    
+    public boolean isEnableMultiLang() {
         return this.pojo.isEnableMultiLang();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public boolean isShowAllLangs()
-    {   
+    
+    
+    public boolean isShowAllLangs() {
         return this.pojo.isShowAllLangs();
     }
     
@@ -428,6 +261,14 @@ public class WebsiteDataWrapper {
     }
     
     
+    /**
+     * Get path to weblog icon image if defined.
+     *
+     * This method is somewhat smart in the sense that it will check the entered
+     * icon value and if it is a full url then it will be left alone, but if it
+     * is a relative path to a file in the weblog's uploads section then it will
+     * build the full url to that resource and return it.
+     */
     public String getIcon() {
         
         String iconPath = this.pojo.getIconPath();
@@ -451,248 +292,168 @@ public class WebsiteDataWrapper {
     }
     
     
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getURL()
-    {   
+    
+    public String getURL() {
         return this.pojo.getURL();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getAbsoluteURL()
-    {   
+    
+    
+    public String getAbsoluteURL() {
         return this.pojo.getAbsoluteURL();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public org.apache.roller.weblogger.pojos.WeblogEntry getWeblogEntry(java.lang.String anchor)
-    {   
-        return this.pojo.getWeblogEntry(anchor);
+    
+    
+    public WeblogEntryDataWrapper getWeblogEntry(String anchor) {
+        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry(anchor));
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getWeblogCategories()
-    {
-        java.util.Set initialCollection = this.pojo.getWeblogCategories();
-
+    
+    
+    public List getWeblogCategories() {
+        Set initialCollection = this.pojo.getWeblogCategories();
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper.wrap((org.apache.roller.weblogger.pojos.WeblogCategory) it.next()));
+            wrappedCollection.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategory) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getWeblogCategories(java.lang.String categoryPath)
-    {
-        java.util.Set initialCollection = this.pojo.getWeblogCategories(categoryPath);
-
+    
+    
+    public List getWeblogCategories(String categoryPath) {
+        Set initialCollection = this.pojo.getWeblogCategories(categoryPath);
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper.wrap((org.apache.roller.weblogger.pojos.WeblogCategory) it.next()));
+            wrappedCollection.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategory) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper getWeblogCategory(java.lang.String categoryPath)
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper.wrap(this.pojo.getWeblogCategory(categoryPath));
+    
+    
+    public WeblogCategoryDataWrapper getWeblogCategory(String categoryPath) {
+        return WeblogCategoryDataWrapper.wrap(this.pojo.getWeblogCategory(categoryPath));
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getRecentWeblogEntries(java.lang.String cat,int length)
-    {
-        java.util.List initialCollection = this.pojo.getRecentWeblogEntries(cat,length);
-
+    
+    
+    public List getRecentWeblogEntries(String cat,int length) {
+        List initialCollection = this.pojo.getRecentWeblogEntries(cat,length);
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper.wrap((org.apache.roller.weblogger.pojos.WeblogEntry) it.next()));
+            wrappedCollection.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getRecentWeblogEntriesByTag(java.lang.String tag,int length)
-    {
-        java.util.List initialCollection = this.pojo.getRecentWeblogEntriesByTag(tag,length);
-
+    
+    
+    public List getRecentWeblogEntriesByTag(String tag,int length) {
+        List initialCollection = this.pojo.getRecentWeblogEntriesByTag(tag,length);
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper.wrap((org.apache.roller.weblogger.pojos.WeblogEntry) it.next()));
+            wrappedCollection.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getRecentComments(int length)
-    {
-        java.util.List initialCollection = this.pojo.getRecentComments(length);
-
+    
+    
+    public List getRecentComments(int length) {
+        List initialCollection = this.pojo.getRecentComments(length);
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,org.apache.roller.weblogger.pojos.wrapper.CommentDataWrapper.wrap((org.apache.roller.weblogger.pojos.WeblogEntryComment) it.next()));
+            wrappedCollection.add(i,CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.FolderDataWrapper getBookmarkFolder(java.lang.String folderName)
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.FolderDataWrapper.wrap(this.pojo.getBookmarkFolder(folderName));
+    
+    
+    public FolderDataWrapper getBookmarkFolder(String folderName) {
+        return FolderDataWrapper.wrap(this.pojo.getBookmarkFolder(folderName));
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
-     *
-     * This method returns a collection of pojos so we need to wrap
-     * each pojo that is part of the collection.
-     */
-    public java.util.List getTodaysReferrers()
-    {
-        java.util.List initialCollection = this.pojo.getTodaysReferrers();
-
+    
+    
+    public List getTodaysReferrers() {
+        List initialCollection = this.pojo.getTodaysReferrers();
+        
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
         // for any Collection type we encounter.
-        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
-        java.util.Iterator it = initialCollection.iterator();
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,org.apache.roller.weblogger.pojos.wrapper.RefererDataWrapper.wrap((org.apache.roller.weblogger.pojos.WeblogReferrer) it.next()));
+            wrappedCollection.add(i,RefererDataWrapper.wrap((WeblogReferrer) it.next()));
             i++;
         }
-
+        
         return wrappedCollection;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public int getTodaysHits()
-    {   
+    
+    
+    public int getTodaysHits() {
         return this.pojo.getTodaysHits();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.List getPopularTags(int sinceDays,int length)
-    {   
+    
+    // TODO: needs wrapping
+    public List getPopularTags(int sinceDays,int length) {
         return this.pojo.getPopularTags(sinceDays,length);
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public long getCommentCount()
-    {   
+    
+    
+    public long getCommentCount() {
         return this.pojo.getCommentCount();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public long getEntryCount()
-    {   
+    
+    
+    public long getEntryCount() {
         return this.pojo.getEntryCount();
     }
-
+    
+    
     /**
      * this is a special method to access the original pojo
      * we don't really want to do this, but it's necessary
      * because some parts of the rendering process still need the
      * orginal pojo object
      */
-    public org.apache.roller.weblogger.pojos.Weblog getPojo() {
+    public Weblog getPojo() {
         return this.pojo;
     }
-
+    
 }
