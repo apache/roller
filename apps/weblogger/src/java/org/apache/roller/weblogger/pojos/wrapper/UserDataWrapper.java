@@ -18,107 +18,69 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.util.Date;
 import org.apache.roller.weblogger.pojos.User;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.weblogger.pojos.User
+ * Pojo safety wrapper for User objects.
  */
 public class UserDataWrapper {
-
+    
     // keep a reference to the wrapped pojo
-    private User pojo = null;
-
+    private final User pojo;
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private UserDataWrapper(User toWrap) {
         this.pojo = toWrap;
     }
-
+    
+    
     // wrap the given pojo if it is not null
     public static UserDataWrapper wrap(User toWrap) {
         if(toWrap != null)
             return new UserDataWrapper(toWrap);
-
+        
         return null;
     }
-
+    
+    
     /**
      * This is here for backwards compatability.  We no longer allow the
      * username to be displayed publicly, so screen name is returned instead.
      */
-    public java.lang.String getUserName()
-    {   
+    public String getUserName() {
         return this.pojo.getScreenName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getScreenName()
-    {
+    
+    
+    public String getScreenName() {
         return this.pojo.getScreenName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getFullName()
-    {   
+    
+    
+    public String getFullName() {
         return this.pojo.getFullName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getEmailAddress()
-    {   
+    
+    
+    public String getEmailAddress() {
         return this.pojo.getEmailAddress();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.Date getDateCreated()
-    {   
+    
+    
+    public Date getDateCreated() {
         return this.pojo.getDateCreated();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getLocale()
-    {   
+    
+    
+    public String getLocale() {
         return this.pojo.getLocale();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getTimeZone()
-    {   
+    
+    
+    public String getTimeZone() {
         return this.pojo.getTimeZone();
     }
-
-    /**
-     * this is a special method to access the original pojo
-     * we don't really want to do this, but it's necessary
-     * because some parts of the rendering process still need the
-     * orginal pojo object
-     */
-    public org.apache.roller.weblogger.pojos.User getPojo() {
-        return this.pojo;
-    }
-
+    
 }

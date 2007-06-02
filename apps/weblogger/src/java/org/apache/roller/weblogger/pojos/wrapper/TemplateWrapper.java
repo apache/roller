@@ -18,118 +18,70 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.util.Date;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.weblogger.pojos.ThemeTemplate
+ * Pojo safety wrapper for ThemeTemplate objects.
  */
 public class TemplateWrapper {
-
+    
     // keep a reference to the wrapped pojo
-    private ThemeTemplate pojo = null;
-
+    private final ThemeTemplate pojo;
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private TemplateWrapper(ThemeTemplate toWrap) {
         this.pojo = toWrap;
     }
-
+    
+    
     // wrap the given pojo if it is not null
     public static TemplateWrapper wrap(ThemeTemplate toWrap) {
         if(toWrap != null)
             return new TemplateWrapper(toWrap);
-
+        
         return null;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getId()
-    {   
+    
+    
+    public String getId() {
         return this.pojo.getId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getName()
-    {   
+    
+    
+    public String getName() {
         return this.pojo.getName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getDescription()
-    {   
+    
+    
+    public String getDescription() {
         return this.pojo.getDescription();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getContents()
-    {   
+    
+    
+    public String getContents() {
         return this.pojo.getContents();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getLink()
-    {   
+    
+    
+    public String getLink() {
         return this.pojo.getLink();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.util.Date getLastModified()
-    {   
+    
+    
+    public Date getLastModified() {
         return this.pojo.getLastModified();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public boolean isHidden()
-    {   
+    
+    
+    public boolean isHidden() {
         return this.pojo.isHidden();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public boolean isNavbar()
-    {   
+    
+    
+    public boolean isNavbar() {
         return this.pojo.isNavbar();
     }
-
-    /**
-     * this is a special method to access the original pojo
-     * we don't really want to do this, but it's necessary
-     * because some parts of the rendering process still need the
-     * orginal pojo object
-     */
-    public org.apache.roller.weblogger.pojos.ThemeTemplate getPojo() {
-        return this.pojo;
-    }
-
+    
 }
