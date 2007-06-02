@@ -40,6 +40,7 @@ public class CommentsPager extends AbstractPager {
     
     private static Log log = LogFactory.getLog(CommentsPager.class);
     
+    private Weblog weblog = null;
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
@@ -53,6 +54,7 @@ public class CommentsPager extends AbstractPager {
     
     public CommentsPager(
             String         baseUrl,
+            Weblog         weblog,
             String         locale,
             int            sinceDays,
             int            page,
@@ -60,6 +62,7 @@ public class CommentsPager extends AbstractPager {
         
         super(baseUrl, page);
         
+        this.weblog = weblog;
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
@@ -89,8 +92,7 @@ public class CommentsPager extends AbstractPager {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 List entries = wmgr.getComments(
-                        
-                        null, null, null, startDate, null,WeblogEntryComment.APPROVED, true, offset, length + 1);
+                        weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);
                 
                 // check if there are more results for paging
                 if(entries.size() > length) {
