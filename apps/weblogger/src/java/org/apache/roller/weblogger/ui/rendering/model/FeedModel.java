@@ -173,7 +173,7 @@ public class FeedModel implements Model {
             super(URLUtilities.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
-                    null, false, true), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
             this.feedRequest = feedRequest;
         }
         

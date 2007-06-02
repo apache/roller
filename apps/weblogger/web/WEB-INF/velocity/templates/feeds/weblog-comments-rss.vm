@@ -29,7 +29,6 @@
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
   <generator>Apache Roller (incubating) $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($comments = $model.getComments())
-  #showCommentsRSS20($comments)
+  #showCommentsRSS20($model.commentsPager.items)
 </channel>
 </rss>
