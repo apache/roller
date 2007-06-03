@@ -42,8 +42,6 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
-import org.apache.roller.weblogger.ui.core.tags.menu.EditorNavigationBarTag;
-import org.apache.roller.weblogger.ui.core.tags.menu.MenuTag;
 import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -172,15 +170,9 @@ public class OldPageHelper {
      * @return String HTML for navbar.
      */
     public String showEditorNavBar(boolean vertical) {
-        EditorNavigationBarTag editorTag = new EditorNavigationBarTag();
-        editorTag.setPageContext(mPageContext);
-        if ( vertical ) {
-            editorTag.setView("templates/navbar/navbar-vertical.vm");
-        } else {
-            editorTag.setView("templates/navbar/navbar-horizontal.vm");
-        }
-        editorTag.setModel("editor-menu.xml");
-        return editorTag.emit();
+        // this method has been EOLd starting in Roller 4.0
+        // this same functionality can be obtained via the #showAuthorMenu() macro
+        return null;
     }
     
     
@@ -191,11 +183,9 @@ public class OldPageHelper {
      * @return String HTML for menu.
      */
     public String showMenu(String model, String template) {
-        MenuTag menuTag = new MenuTag();
-        menuTag.setPageContext(mPageContext);
-        menuTag.setModel(model);
-        menuTag.setView(template);
-        return menuTag.emit();
+        // this method has been EOLd starting in Roller 4.0
+        // this same functionality can be obtained via the #showAuthorMenu() macro
+        return null;
     }
     
     //------------------------------------------------- WeblogCalendar methods

@@ -649,7 +649,59 @@ $calendarModel.showWeblogEntryCalendarBig($weblog, $category)
 Show weblog author menu with vertical or horizontal orientation.
 *#
 #macro(showAuthorMenu $vertical)
-$menuModel.showAuthorMenu($vertical)
+  
+  #set( $authorMenu = $menuModel.authorMenu )
+  #if( $authorMenu )
+      #if( $vertical )
+          #foreach( $menu in $authorMenu.tabs )
+            <ul class="rMenu">
+            #foreach( $item in $menu.items )
+                <li class="rMenuItem"><a href="$url.action($item.action, '/roller-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a></li>
+            #end
+            </ul>
+          #end
+      #else
+          #set( $menuCnt = 0 )
+          #foreach( $menu in $authorMenu.tabs )
+            #foreach( $item in $menu.items )
+                #if ($menuCnt > 0)&nbsp;|&nbsp;#end
+                <a href="$url.action($item.action, '/roller-ui/authoring')">$text.get( $menu.key ):$text.get( $item.key )</a>
+                #set($menuCnt = $menuCnt + 1)
+            #end
+          #end
+      #end
+  #end
+
+#end
+
+
+#** 
+Show weblog author menu with vertical or horizontal orientation.
+*#
+#macro(showAdminMenu $vertical)
+  
+  #set( $adminMenu = $menuModel.adminMenu )
+  #if( $adminMenu )
+      #if( $vertical )
+          #foreach( $menu in $adminMenu.tabs )
+            <ul class="rMenu">
+            #foreach( $item in $menu.items )
+                <li class="rMenuItem"><a href="$url.action($item.action, '/roller-ui/admin')">$text.get( $menu.key ):$text.get( $item.key )</a></li>
+            #end
+            </ul>
+          #end
+      #else
+          #set( $menuCnt = 0 )
+          #foreach( $menu in $adminMenu.tabs )
+            #foreach( $item in $menu.items )
+                #if ($menuCnt > 0)&nbsp;|&nbsp;#end
+                <a href="$url.action($item.action, '/roller-ui/admin')">$text.get( $menu.key ):$text.get( $item.key )</a>
+                #set($menuCnt = $menuCnt + 1)
+            #end
+          #end
+      #end
+  #end
+
 #end
 
 

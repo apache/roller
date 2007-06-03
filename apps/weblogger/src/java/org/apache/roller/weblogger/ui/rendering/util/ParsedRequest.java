@@ -18,8 +18,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.User;
 
 
 /**
@@ -35,9 +40,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class ParsedRequest {
     
+    private static Log log = LogFactory.getLog(ParsedRequest.class);
+    
     HttpServletRequest request = null;
     
+    // lightweight attributes
     private String authenticUser = null;
+    
+    // heavyweight attributes
+    private User user = null;
     
     
     ParsedRequest() {}
@@ -70,6 +81,26 @@ public abstract class ParsedRequest {
     
     public void setAuthenticUser(String authenticUser) {
         this.authenticUser = authenticUser;
+    }
+    
+    
+    public User getUser() {
+        
+        if(user == null && authenticUser != null) {
+            try {
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                user = umgr.getUserByUserName(authenticUser);
+            } catch (RollerException ex) {
+                log.error("Error looking up user "+authenticUser, ex);
+            }
+        }
+        
+        return user;
+    }
+    
+    
+    public void setUser(User u) {
+        this.user = u;
     }
     
     
