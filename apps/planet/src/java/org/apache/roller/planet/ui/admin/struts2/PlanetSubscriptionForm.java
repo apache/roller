@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.admin.struts2;
 import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -106,7 +106,7 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
             
             // flush changes
             PlanetFactory.getPlanet().flush();
-        } catch (RollerException ex) {
+        } catch (PlanetException ex) {
             log.error("Error saving subscription", ex);
             setError("PlanetSubscriptionForm.error.saveFailed");
             return INPUT;

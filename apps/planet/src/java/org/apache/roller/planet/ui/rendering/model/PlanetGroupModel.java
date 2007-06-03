@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.rendering.model;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.ui.rendering.util.PlanetGroupRequest;
@@ -58,12 +58,12 @@ public class PlanetGroupModel implements Model {
     /** 
      * Init page model based on request. 
      */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws PlanetException {
         
         // we expect the init data to contain a planetRequest object
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
-            throw new RollerException("expected planetRequest from init data");
+            throw new PlanetException("expected planetRequest from init data");
         }
         
         // only works on planet group requests, so cast planetRequest
@@ -71,7 +71,7 @@ public class PlanetGroupModel implements Model {
         if(planetRequest instanceof PlanetGroupRequest) {
             this.planetGroupRequest = (PlanetGroupRequest) planetRequest;
         } else {
-            throw new RollerException("planetRequest is not a PlanetGroupRequest."+
+            throw new PlanetException("planetRequest is not a PlanetGroupRequest."+
                     "  PlanetGroupModel only supports planet group requests.");
         }
         

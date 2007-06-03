@@ -18,7 +18,7 @@
 
 package org.apache.roller.planet.business;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 
 
 /**
@@ -30,6 +30,6 @@ public interface FeedFetcher {
     /** 
      * Refresh all subscriptions by fetching and parsing feeds. 
      */
-    public void refreshEntries(String cacheDirPath) throws RollerException;
+    public void refreshEntries(String cacheDirPath) throws PlanetException;
     
 }

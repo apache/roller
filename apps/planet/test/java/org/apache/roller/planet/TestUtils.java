@@ -18,7 +18,7 @@
 
 package org.apache.roller.planet;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -69,7 +69,7 @@ public final class TestUtils {
         PlanetData planet = mgr.getPlanet(handle);
         
         if(planet == null)
-            throw new RollerException("error inserting new planet");
+            throw new PlanetException("error inserting new planet");
         
         return planet;
     }
@@ -115,7 +115,7 @@ public final class TestUtils {
         PlanetGroupData group = mgr.getGroupById(testGroup.getId());
         
         if(group == null)
-            throw new RollerException("error inserting new group");
+            throw new PlanetException("error inserting new group");
         
         return group;
     }
@@ -160,7 +160,7 @@ public final class TestUtils {
         PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub.getId());
         
         if(sub == null)
-            throw new RollerException("error inserting new subscription");
+            throw new PlanetException("error inserting new subscription");
         
         return sub;
     }
@@ -210,7 +210,7 @@ public final class TestUtils {
         PlanetEntryData entry = mgr.getEntryById(testEntry.getId());
         
         if(entry == null)
-            throw new RollerException("error inserting new entry");
+            throw new PlanetException("error inserting new entry");
         
         return entry;
     }

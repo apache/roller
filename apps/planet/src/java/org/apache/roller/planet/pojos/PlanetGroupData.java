@@ -17,10 +17,13 @@
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.PlanetManager;
 
 
 /**
@@ -32,10 +35,8 @@ public class PlanetGroupData implements Serializable, Comparable {
     
     transient private String[] catArray = null;
     
-    /** Database ID */
-    private String id = UUIDGenerator.generateUUID();
-    
     // attributes
+    private String id = null;
     private String handle = null;
     private String title = null;
     private String description = null;
@@ -177,6 +178,19 @@ public class PlanetGroupData implements Serializable, Comparable {
     
     public void setPlanet(PlanetData planet) {
         this.planet = planet;
+    }
+    
+    
+    /**
+     * Return a list of the most recent 10 entries from this group.
+     */
+    public List getRecentEntries() {
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        try {
+            return mgr.getEntries(this, 0, 10);
+        } catch(Exception e) {
+            return Collections.EMPTY_LIST;
+        }
     }
     
     

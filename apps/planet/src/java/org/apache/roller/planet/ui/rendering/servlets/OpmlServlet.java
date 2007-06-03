@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -77,13 +77,13 @@ public class OpmlServlet extends HttpServlet {
 
             planet = opmlRequest.getPlanet();
             if(planet == null) {
-                throw new RollerException("unable to lookup planet: "+
+                throw new PlanetException("unable to lookup planet: "+
                         opmlRequest.getPlanetHandle());
             }
             
             group = opmlRequest.getGroup();
             if(group == null) {
-                throw new RollerException("unable to lookup group: "+
+                throw new PlanetException("unable to lookup group: "+
                         opmlRequest.getGroupHandle());
             }
 
@@ -109,7 +109,7 @@ public class OpmlServlet extends HttpServlet {
             String opmlModels = PlanetConfig.getProperty("rendering.opmlModels");
             ModelLoader.loadModels(opmlModels, model, initData, true);
 
-        } catch (RollerException ex) {
+        } catch (PlanetException ex) {
             log.error("ERROR loading model for page", ex);
 
             if(!response.isCommitted()) response.reset();

@@ -27,7 +27,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.hibernate.cfg.Environment;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -96,7 +96,7 @@ public class HibernatePersistenceStrategy {
     }
     
     
-    public void flush() throws RollerException {
+    public void flush() throws PlanetException {
         
         Session session = getSession();
         try {
@@ -113,7 +113,7 @@ public class HibernatePersistenceStrategy {
             release();
             
             // wrap and rethrow so caller knows something bad happened
-            throw new RollerException(t);
+            throw new PlanetException(t);
         }
     }
     
@@ -164,10 +164,10 @@ public class HibernatePersistenceStrategy {
     /**
      * Retrieve object.  We return null if the object is not found.
      */
-    public Object load(String id, Class clazz) throws RollerException {
+    public Object load(String id, Class clazz) throws PlanetException {
         
         if(id == null || clazz == null) {
-            throw new RollerException("Cannot load objects when value is null");
+            throw new PlanetException("Cannot load objects when value is null");
         }
         
         return (Object) getSession().get(clazz, id);

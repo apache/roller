@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.rendering.model;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
@@ -56,7 +56,7 @@ public class PlanetURLModel implements Model {
         return "url";
     }
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws PlanetException {
         
         // grab a reference to the url strategy
         this.urlStrategy = PlanetFactory.getPlanet().getURLStrategy();
@@ -64,7 +64,7 @@ public class PlanetURLModel implements Model {
         // need a weblog request so that we can know the weblog and locale
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
-            throw new RollerException("Expected 'planetRequest' init param!");
+            throw new PlanetException("Expected 'planetRequest' init param!");
         }
         
         this.planet = planetRequest.getPlanet();

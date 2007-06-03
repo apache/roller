@@ -20,7 +20,7 @@ package org.apache.roller.planet.business.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
@@ -58,14 +58,14 @@ public class HibernatePlanetImpl implements Planet {
      * Create HibernatePlanetImpl using Hibernate XML config file or config
      * file plus JDBC overrides from planet-custom.properties.
      */
-    public HibernatePlanetImpl() throws RollerException {
+    public HibernatePlanetImpl() throws PlanetException {
         
         strategy = getStrategy();
         
         try {
             String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
             if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
-                throw new RollerException("No FeedFetcher configured!!!");
+                throw new PlanetException("No FeedFetcher configured!!!");
             }
             
             Class fetchClass = Class.forName(feedFetchClass);
@@ -75,11 +75,11 @@ public class HibernatePlanetImpl implements Planet {
             setFeedFetcher(feedFetcher);
             
         } catch (Exception e) {
-            throw new RollerException("Error initializing feed fetcher", e);
+            throw new PlanetException("Error initializing feed fetcher", e);
         }
     }
     
-    protected HibernatePersistenceStrategy getStrategy() throws RollerException {
+    protected HibernatePersistenceStrategy getStrategy() throws PlanetException {
         try {
             String dialect =  
                 PlanetConfig.getProperty("hibernate.dialect");
@@ -91,7 +91,7 @@ public class HibernatePlanetImpl implements Planet {
         } catch(Throwable t) {
             // if this happens then we are screwed
             log.fatal("Error initializing Hibernate", t);
-            throw new RollerException(t);
+            throw new PlanetException(t);
         }        
     }
     
@@ -99,7 +99,7 @@ public class HibernatePlanetImpl implements Planet {
     /**
      * Instantiates and returns an instance of HibernatePlanetImpl.
      */
-    public static Planet instantiate() throws RollerException {
+    public static Planet instantiate() throws PlanetException {
         if (me == null) {
             log.debug("Instantiating HibernatePlanetImpl");
             me = new HibernatePlanetImpl();
@@ -145,7 +145,7 @@ public class HibernatePlanetImpl implements Planet {
     }
     
     
-    public void flush() throws RollerException {
+    public void flush() throws PlanetException {
         this.strategy.flush();
     }
     

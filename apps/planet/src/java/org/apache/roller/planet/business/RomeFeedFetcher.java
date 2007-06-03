@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.PlanetEntryData;
@@ -54,7 +54,7 @@ public class RomeFeedFetcher implements FeedFetcher {
     
     
     // refresh Entries for all Subscriptions
-    public void refreshEntries(String cacheDirPath) throws RollerException {
+    public void refreshEntries(String cacheDirPath) throws PlanetException {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
@@ -151,7 +151,7 @@ public class RomeFeedFetcher implements FeedFetcher {
     protected Set getNewEntries(PlanetSubscriptionData sub,
                                 com.sun.syndication.fetcher.FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
-            throws RollerException {
+            throws PlanetException {
         
         Set newEntries = new TreeSet();
         SyndFeed feed = null;

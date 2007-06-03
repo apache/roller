@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
@@ -53,7 +53,7 @@ public class SiteModel implements Model {
     /** 
      * Init page model based on request. 
      */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws PlanetException {
         // no-op
     }
     

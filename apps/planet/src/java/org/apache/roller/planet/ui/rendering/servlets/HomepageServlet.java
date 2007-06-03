@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -81,7 +81,7 @@ public class HomepageServlet extends HttpServlet {
             String models = PlanetConfig.getProperty("rendering.homepageModels");
             ModelLoader.loadModels(models, model, initData, true);
 
-        } catch (RollerException ex) {
+        } catch (PlanetException ex) {
             log.error("ERROR loading model", ex);
 
             if(!response.isCommitted()) response.reset();

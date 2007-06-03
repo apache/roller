@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.pojos.PropertyData;
@@ -111,7 +111,7 @@ public class ConfigForm extends PlanetActionSupport
             pMgr.saveProperties(this.properties);
             PlanetFactory.getPlanet().flush();
             
-        } catch (RollerException e) {
+        } catch (PlanetException e) {
             log.error(e);
             setError("ConfigForm.error.saveFailed");
         }

@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.rendering.model;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.ui.rendering.pagers.Pager;
@@ -61,7 +61,7 @@ public class FeedModel extends PlanetGroupModel {
     /** 
      * Init page model based on request. 
      */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws PlanetException {
         
         // parent gets to go first
         super.init(initData);
@@ -69,7 +69,7 @@ public class FeedModel extends PlanetGroupModel {
         // we expect the init data to contain a weblogRequest object
         PlanetRequest planetRequest = (PlanetRequest) initData.get("planetRequest");
         if(planetRequest == null) {
-            throw new RollerException("expected planetRequest from init data");
+            throw new PlanetException("expected planetRequest from init data");
         }
         
         // PageModel only works on page requests, so cast planetRequest
@@ -77,7 +77,7 @@ public class FeedModel extends PlanetGroupModel {
         if(planetRequest instanceof PlanetGroupFeedRequest) {
             this.feedRequest = (PlanetGroupFeedRequest) planetRequest;
         } else {
-            throw new RollerException("weblogRequest is not a WeblogPageRequest."+
+            throw new PlanetException("weblogRequest is not a WeblogPageRequest."+
                     "  PageModel only supports page requests.");
         }
     }
