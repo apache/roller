@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.RequestConstants;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.struts2.StrutsStatics;
 
