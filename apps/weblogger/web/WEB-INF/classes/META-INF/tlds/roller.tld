@@ -18,27 +18,6 @@
 
    <tag>
 
-      <name>Menu</name>
-      <tag-class>org.apache.roller.weblogger.ui.core.tags.menu.MenuTag</tag-class>
-
-      <attribute>
-         <name>id</name>
-
-      </attribute>
-      <attribute>
-         <name>view</name>
-         <required>true</required>
-
-      </attribute>
-      <attribute>
-         <name>model</name>
-         <required>true</required>
-
-      </attribute>
-
-   </tag>
-   <tag>
-
       <name>Date</name>
       <tag-class>org.apache.roller.weblogger.ui.core.tags.DateTag</tag-class>
 
@@ -92,27 +71,6 @@
       </attribute>
       <attribute>
          <name>classSuffix</name>
-
-      </attribute>
-
-   </tag>
-   <tag>
-
-      <name>EditorNavigationBar</name>
-      <tag-class>org.apache.roller.weblogger.ui.core.tags.menu.EditorNavigationBarTag</tag-class>
-
-      <attribute>
-         <name>id</name>
-
-      </attribute>
-      <attribute>
-         <name>view</name>
-         <required>true</required>
-
-      </attribute>
-      <attribute>
-         <name>model</name>
-         <required>true</required>
 
       </attribute>
 

@@ -103,6 +103,21 @@ public class URLModel implements Model {
     }
     
     
+    /** URL for a specific UI action */
+    public String action(String action, String namespace) {
+        if(namespace != null) {
+            if("/roller-ui".equals(namespace)) {
+                return URLUtilities.getActionURL(action, namespace, null, true);
+            } else if("/roller-ui/authoring".equals(namespace)) {
+                return URLUtilities.getActionURL(action, namespace, weblog.getHandle(), true);
+            } else if("/roller-ui/admin".equals(namespace)) {
+                return URLUtilities.getActionURL(action, namespace, null, true);
+            }
+        }
+        return null;
+    }
+    
+    
     public String getCommentAuthenticator() {
         return getSite()+"/CommentAuthenticatorServlet";
     }

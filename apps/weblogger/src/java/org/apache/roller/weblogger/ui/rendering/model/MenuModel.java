@@ -19,11 +19,13 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.weblogger.ui.core.tags.menu.EditorNavigationBarTag;
+import org.apache.roller.weblogger.ui.core.util.menu.Menu;
+import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
 
 /**
@@ -35,7 +37,7 @@ public class MenuModel implements Model {
     
     private static Log logger = LogFactory.getLog(MenuModel.class);
     
-    private PageContext pageContext = null;
+    private WeblogPageRequest pageRequest = null;
     
     
     /** Template context name to be used for model */
@@ -47,26 +49,44 @@ public class MenuModel implements Model {
     /** Init page model based on request */
     public void init(Map initData) throws RollerException {
         
-        // extract page context
-        this.pageContext = (PageContext) initData.get("pageContext");
+        // we expect the init data to contain a weblogRequest object
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        if(weblogRequest == null) {
+            throw new RollerException("expected weblogRequest from init data");
+        }
+        
+        // MenuModel only works on page requests, so cast weblogRequest
+        // into a WeblogPageRequest and if it fails then throw exception
+        if(weblogRequest instanceof WeblogPageRequest) {
+            this.pageRequest = (WeblogPageRequest) weblogRequest;
+        } else {
+            throw new RollerException("weblogRequest is not a WeblogPageRequest."+
+                    "  MenuModel only supports page requests.");
+        }
     }
     
     
     /**
-     * Display author menu.
-     * @param vertical True for vertical navbar.
-     * @return String HTML for navbar.
+     * Get a Menu representing the admin UI action menu, if the user is 
+     * currently logged in and is an admin.
      */
-    public String showAuthorMenu(boolean vertical) {
-        EditorNavigationBarTag editorTag = new EditorNavigationBarTag();
-        editorTag.setPageContext(pageContext);
-        if ( vertical ) {
-            editorTag.setView("templates/navbar/navbar-vertical.vm");
-        } else {
-            editorTag.setView("templates/navbar/navbar-horizontal.vm");
+    public Menu getAdminMenu() {
+        if(pageRequest.isLoggedIn() && pageRequest.getUser().hasRole("admin")) {
+            return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
         }
-        editorTag.setModel("editor-menu.xml");
-        return editorTag.emit();
+        return null;
+    }
+    
+    
+    /**
+     * Get a Menu representing the author UI action menu, if the use is
+     * currently logged in.
+     */
+    public Menu getAuthorMenu() {
+        if(pageRequest.isLoggedIn()) {
+            return MenuHelper.getMenu("editor", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+        }
+        return null;
     }
     
 }

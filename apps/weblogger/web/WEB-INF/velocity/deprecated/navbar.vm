@@ -9,7 +9,26 @@
  * @param $template Name of Velocity template to display menu.
  *#
 #macro( showMenu $model $template )
-    $pageHelper.showMenu($model, $template)
+
+    ## NOTE: technically this method allowed users access to use things that
+    ## weren't part of Roller, but in 4.0 we are removing this very old menu
+    ## building code and so there is no way to guarantee backwards comapatability
+    ## in the cases where someone made their own menus
+
+    #if( $model == 'editor-menu.xml' )
+        #if( $template == 'templates/navbar/navbar-horizontal.vm' )
+            #showAuthorMenu( false )
+        #else
+            #showAuthorMenu( true )
+        #end
+    #elseif( $model == 'admin-menu.xml' )
+        #if( $template == 'templates/navbar/navbar-horizontal.vm' )
+            #showAdminMenu( false )
+        #else
+            #showAdminMenu( true )
+        #end
+    #end
+
 #end
 
 #**
@@ -17,14 +36,16 @@
  * @param vertical True if bar is to be displayed vertically.
  *#
 #macro( showEditorNavBar $vertical )
-    $pageHelper.showEditorNavBar($vertical)
+    ## just call new 3.0 version of this macro
+    #showAuthorMenu( $vertical )
 #end
 
 #**
  * Show Editor navbar using CSS friendly template.
  *#
 #macro( showEditorMenu )
-    $pageHelper.showMenu("editor-menu.xml", "templates/navbar/navbar-css.vm")
+    ## just call new 3.0 version of this macro
+    #showAuthorMenu( true )
 #end
 
 #**
