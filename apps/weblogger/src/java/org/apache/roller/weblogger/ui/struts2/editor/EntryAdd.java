@@ -180,8 +180,6 @@ public final class EntryAdd extends EntryBase {
             
             return SUCCESS;
             
-        } catch (RollerPermissionsException e) {
-            addError("error.permissions.deniedSave");
         } catch (Exception e) {
             log.error("Error saving new entry", e);
             // TODO: i18n
