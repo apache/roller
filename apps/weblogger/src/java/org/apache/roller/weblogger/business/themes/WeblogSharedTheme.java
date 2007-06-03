@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
@@ -82,7 +82,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public List getTemplates() throws RollerException {
+    public List getTemplates() throws WebloggerException {
         
         Map pages = new TreeMap();
         
@@ -124,7 +124,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     /**
      * Lookup the default template.
      */
-    public ThemeTemplate getDefaultTemplate() throws RollerException {
+    public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         return this.theme.getDefaultTemplate();
     }
     
@@ -133,7 +133,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) throws RollerException {
+    public ThemeTemplate getTemplateByAction(String action) throws WebloggerException {
         
         if(action == null)
             return null;
@@ -149,7 +149,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByName(String name) throws RollerException {
+    public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
         
         if(name == null)
             return null;
@@ -174,7 +174,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws RollerException {
+    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
         
         if(link == null)
             return null;
@@ -214,7 +214,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             try {
                 FileManager fileMgr = RollerFactory.getRoller().getFileManager();
                 resource = fileMgr.getFile(this.weblog, path);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 // ignored, resource considered not found
             }
         }

@@ -26,7 +26,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -86,7 +86,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         if(decoratorName != null && !id.equals(decoratorName)) {
             try {
                 return weblog.getPageByName(decoratorName);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error getting decorator["+decoratorName+"] "+
                         "for template "+id);
             }

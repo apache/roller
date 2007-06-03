@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetsBase;
@@ -60,7 +60,7 @@ public class CommonPingTargets extends PingTargetsBase {
         try {
             PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
             setPingTargets(pingTargetMgr.getCommonPingTargets());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error loading common ping targets", ex);
             // TODO: i18n
             addError("Error loading common ping targets");

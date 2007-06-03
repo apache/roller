@@ -30,7 +30,7 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Template;
@@ -88,7 +88,7 @@ public class PreviewServlet extends HttpServlet {
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
             if(weblog == null) {
-                throw new RollerException("unable to lookup weblog: "+
+                throw new WebloggerException("unable to lookup weblog: "+
                         previewRequest.getWeblogHandle());
             }
         } catch (Exception e) {
@@ -123,9 +123,9 @@ public class PreviewServlet extends HttpServlet {
             page = tmpWebsite.getDefaultPage();
             
             if(page == null) {
-                throw new RollerException("No default page for weblog: "+tmpWebsite.getHandle());
+                throw new WebloggerException("No default page for weblog: "+tmpWebsite.getHandle());
             }
-        } catch(RollerException re) {
+        } catch(WebloggerException re) {
             // couldn't get page
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             log.error("Error getting default page for preview", re);
@@ -177,7 +177,7 @@ public class PreviewServlet extends HttpServlet {
             // ick, gotta load pre-3.0 model stuff as well :(
             ModelLoader.loadOldModels(model, request, response, pageContext, previewRequest);
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
             
             if(!response.isCommitted()) response.reset();

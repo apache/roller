@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -62,7 +62,7 @@ public class WeblogCalendarModel implements CalendarModel {
         try {
             this.weblog = pageRequest.getWeblog();            
             if(weblog == null) {
-                throw new RollerException("unable to lookup weblog: "+
+                throw new WebloggerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
             }
             pageLink = pageRequest.getWeblogPageName();            
@@ -118,7 +118,7 @@ public class WeblogCalendarModel implements CalendarModel {
                 WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
                 prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()));
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR determining previous non-empty month");
         }
         
@@ -144,7 +144,7 @@ public class WeblogCalendarModel implements CalendarModel {
                 WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
                 nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()));
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR determining next non-empty month");
         }  
         
@@ -167,7 +167,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     null,WeblogEntry.PUBLISHED, // status
                     locale,
                     0, -1);
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error(e);
             monthMap = new HashMap();
         }

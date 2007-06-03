@@ -21,10 +21,10 @@ package org.apache.roller.weblogger.business.hibernate;
 import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.TaskLock;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -44,13 +44,15 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     private static Log log = LogFactory.getLog(HibernateThreadManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     
+    @com.google.inject.Inject    
     public HibernateThreadManagerImpl(HibernatePersistenceStrategy strat) {
         super();
         
         log.debug("Instantiating Hibernate Thread Manager");
-        
+        this.roller = roller;        
         this.strategy = strat;
     }
     
@@ -75,10 +77,10 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
                 
                 // save it and flush
                 this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
+                roller.flush();
             }
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.warn("Error getting or inserting TaskLock", ex);
             return false;
         }
@@ -105,7 +107,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             int result = query.executeUpdate();
             
             // this may not be needed
-            RollerFactory.getRoller().flush();
+            roller.flush();
             
             if(result == 1) {
                 return true;
@@ -134,7 +136,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
                 return false;
             }
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.warn("Error getting TaskLock", ex);
             return false;
         }
@@ -151,7 +153,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             int result = query.executeUpdate();
             
             // this may not be needed
-            RollerFactory.getRoller().flush();
+            roller.flush();
             
             if(result == 1) {
                 return true;
@@ -166,7 +168,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     }
     
     
-    private TaskLock getTaskLockByName(String name) throws RollerException {
+    private TaskLock getTaskLockByName(String name) throws WebloggerException {
         
         // do lookup
         try {
@@ -178,12 +180,12 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             
             return taskLock;
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
-    private void saveTaskLock(TaskLock data) throws RollerException {
+    private void saveTaskLock(TaskLock data) throws WebloggerException {
         this.strategy.store(data);
     }
     

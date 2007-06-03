@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -119,7 +119,7 @@ public class ModifyUser extends UIAction {
                     getUser().resetPassword(RollerFactory.getRoller(),
                             getBean().getPassword(),
                             getBean().getPassword());
-                } catch (RollerException e) {
+                } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }
             }
@@ -145,7 +145,7 @@ public class ModifyUser extends UIAction {
                 
                 return INPUT;
                 
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
                 // TODO: i18n
                 addError("unexpected error doing profile save");

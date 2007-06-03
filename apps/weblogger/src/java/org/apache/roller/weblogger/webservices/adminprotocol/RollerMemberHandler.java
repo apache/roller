@@ -26,7 +26,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
 import org.jdom.JDOMException;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -151,7 +151,7 @@ class RollerMemberHandler extends Handler {
             }
             EntrySet es = toMemberEntrySet((WeblogPermission[])perms.toArray(new WeblogPermission[0]));
             return es;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get member collection", re);
         }
     }
@@ -189,7 +189,7 @@ class RollerMemberHandler extends Handler {
             
             EntrySet es = toMemberEntrySet((WeblogPermission[])perms.toArray(new WeblogPermission[0]));
             return es;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get entry for handle: " + handle + ", username: " + username, re);
         }
     }
@@ -273,7 +273,7 @@ class RollerMemberHandler extends Handler {
                 permissionsDatas.add(pd);
             }
             return toMemberEntrySet((WeblogPermission[])permissionsDatas.toArray(new WeblogPermission[0]));
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not create members", re);
         }
     }
@@ -301,7 +301,7 @@ class RollerMemberHandler extends Handler {
             WeblogPermission pd = getRoller().getUserManager().getPermissions(wd, ud);
             
             return pd;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get permissions data for weblog handle: " + handle + ", user name: " + username, re);
         }
     }
@@ -337,7 +337,7 @@ class RollerMemberHandler extends Handler {
             getRoller().flush();
             CacheManager.invalidate(ud);
             CacheManager.invalidate(wd);
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not update permissions data", re);
         }
     }
@@ -371,7 +371,7 @@ class RollerMemberHandler extends Handler {
             
             EntrySet es = toMemberEntrySet(pds);
             return es;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not delete entry", re);
         }
     }

@@ -30,7 +30,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
@@ -159,7 +159,7 @@ public class IndexManagerImpl implements IndexManager {
                         "Index was inconsistent. Rebuilding index in the background...");
                 try {
                     rebuildWebsiteIndex();
-                } catch (RollerException e) {
+                } catch (WebloggerException e) {
                     mLogger.error("ERROR: scheduling re-index operation");
                 }
             }
@@ -169,32 +169,32 @@ public class IndexManagerImpl implements IndexManager {
     //~ Methods
     // ================================================================
     
-    public void rebuildWebsiteIndex() throws RollerException {
+    public void rebuildWebsiteIndex() throws WebloggerException {
         scheduleIndexOperation(
                 new RebuildWebsiteIndexOperation(this, null));
     }
     
-    public void rebuildWebsiteIndex(Weblog website) throws RollerException {
+    public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(
                 new RebuildWebsiteIndexOperation(this, website));
     }
     
-    public void removeWebsiteIndex(Weblog website) throws RollerException {
+    public void removeWebsiteIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(
                 new RemoveWebsiteIndexOperation(this, website));
     }
     
-    public void addEntryIndexOperation(WeblogEntry entry) throws RollerException {
+    public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
         AddEntryOperation addEntry = new AddEntryOperation(this, entry);
         scheduleIndexOperation(addEntry);
     }
     
-    public void addEntryReIndexOperation(WeblogEntry entry) throws RollerException {
+    public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException {
         ReIndexEntryOperation reindex = new ReIndexEntryOperation(this, entry);
         scheduleIndexOperation(reindex);
     }
     
-    public void removeEntryIndexOperation(WeblogEntry entry) throws RollerException {
+    public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
         RemoveEntryOperation removeOp = new RemoveEntryOperation(this, entry);
         executeIndexOperationNow(removeOp);
     }

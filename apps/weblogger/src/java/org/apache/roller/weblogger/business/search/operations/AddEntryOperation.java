@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -66,7 +66,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
         try {
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
             this.data = wMgr.getWeblogEntry(this.data.getId());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             mLogger.error("Error getting weblogentry object", ex);
             return;
         }

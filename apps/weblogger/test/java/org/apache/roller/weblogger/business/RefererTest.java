@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
@@ -194,7 +194,7 @@ public class RefererTest extends TestCase {
     }
     
     
-    public void testRefererProcessing() throws RollerException {
+    public void testRefererProcessing() throws WebloggerException {
         
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
         

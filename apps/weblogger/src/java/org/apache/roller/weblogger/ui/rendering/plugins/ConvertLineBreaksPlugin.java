@@ -23,7 +23,7 @@ import java.io.StringReader;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
@@ -67,7 +67,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(Weblog website) throws RollerException {
+    public void init(Weblog website) throws WebloggerException {
         // we don't need to do any init.
         mLogger.debug("initing");
     }

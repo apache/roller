@@ -26,10 +26,10 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -46,6 +46,7 @@ import org.jdom.input.SAXBuilder;
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
     private JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
     /**
      * The logger instance for this class.
@@ -56,14 +57,14 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     /**
      * Creates a new instance of JPABookmarkManagerImpl
      */
-    public JPABookmarkManagerImpl 
-            (JPAPersistenceStrategy strategy) {
+   @com.google.inject.Inject
+   public JPABookmarkManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Bookmark Manager");
-
+        this.roller = roller;
         this.strategy = strategy;
     }
 
-    public void saveBookmark(WeblogBookmark bookmark) throws RollerException {
+    public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
         boolean exists = getBookmark(bookmark.getId()) != null;        
         if (!exists) {
             // New object make sure that relationship is set on managed copy of other side
@@ -73,30 +74,30 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
 
         // update weblog last modified date (date is updated by saveWebsite())
-        RollerFactory.getRoller().getUserManager().
+        roller.getUserManager().
             saveWebsite(bookmark.getWebsite());
     }
 
-    public WeblogBookmark getBookmark(String id) throws RollerException {
+    public WeblogBookmark getBookmark(String id) throws WebloggerException {
         return (WeblogBookmark) strategy.load(WeblogBookmark.class, id);
     }
 
-    public void removeBookmark(WeblogBookmark bookmark) throws RollerException {
+    public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
         //Now remove it from database
         this.strategy.remove(bookmark);
         //Remove the bookmark from its parent folder
         bookmark.getFolder().getBookmarks().remove(bookmark);
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager()
+        roller.getUserManager()
                 .saveWebsite(bookmark.getWebsite());
     }
 
-    public void saveFolder(WeblogBookmarkFolder folder) throws RollerException {
+    public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
         
         if(folder.getId() == null || this.getFolder(folder.getId()) == null) {
             // New folder, so make sure name is unique
             if (isDuplicateFolderName(folder)) {
-                throw new RollerException("Duplicate folder name");
+                throw new WebloggerException("Duplicate folder name");
             }
 
             // And If it has a parent, maintain relationship from both sides
@@ -109,10 +110,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        roller.getUserManager().saveWebsite(folder.getWebsite());
     }
 
-    public void removeFolder(WeblogBookmarkFolder folder) throws RollerException {
+    public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
         this.strategy.remove(folder);
         WeblogBookmarkFolder parent = folder.getParent();
         if (parent != null) {
@@ -120,16 +121,16 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         }
 
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().
+        roller.getUserManager().
             saveWebsite(folder.getWebsite());
     }
     
     public void moveFolder(WeblogBookmarkFolder srcFolder, WeblogBookmarkFolder destFolder)
-            throws RollerException {
+            throws WebloggerException {
         
         // TODO: this check should be made before calling this method?
         if (destFolder.descendentOf(srcFolder)) {
-            throw new RollerException(
+            throw new WebloggerException(
                     "ERROR cannot move parent folder into it's own child");
         }
         
@@ -157,7 +158,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }    
 
     // updates the paths of all descendents of the given folder
-    private void updatePathTree(WeblogBookmarkFolder folder) throws RollerException {
+    private void updatePathTree(WeblogBookmarkFolder folder) throws WebloggerException {
         
         log.debug("Updating path tree for folder "+folder.getPath());
         
@@ -188,14 +189,14 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     /**
      * Retrieve folder and lazy-load it's sub-folders and bookmarks.
      */
-    public WeblogBookmarkFolder getFolder(String id) throws RollerException {
+    public WeblogBookmarkFolder getFolder(String id) throws WebloggerException {
         return (WeblogBookmarkFolder) strategy.load(WeblogBookmarkFolder.class, id);
     }
 
     
     public void importBookmarks(
             Weblog website, String folderName, String opml)
-            throws RollerException {
+            throws WebloggerException {
         String msg = "importBookmarks";
         try {
             // Build JDOC document OPML string
@@ -220,7 +221,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             }
 
         } catch (Exception ex) {
-            throw new RollerException(ex);
+            throw new WebloggerException(ex);
         }
     }
 
@@ -229,7 +230,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     // that is done by importBookmarks()
     private void importOpmlElement(
             Weblog website, Element elem, WeblogBookmarkFolder parent)
-            throws RollerException {
+            throws WebloggerException {
         String text = elem.getAttributeValue("text");
         String title = elem.getAttributeValue("title");
         String desc = elem.getAttributeValue("description");
@@ -285,7 +286,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
 
     public WeblogBookmarkFolder getFolder(Weblog website, String path)
-            throws RollerException {
+            throws WebloggerException {
 
         if (path == null || path.trim().equals("/")) {
             return getRootFolder(website);
@@ -314,7 +315,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder, boolean)
      */
     public List getBookmarks(WeblogBookmarkFolder folder, boolean subfolders) 
-            throws RollerException {
+            throws WebloggerException {
         Query query = null;
         List results = null;
 
@@ -337,9 +338,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public WeblogBookmarkFolder getRootFolder(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         if (website == null)
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         
         Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite&ParentNull");
         q.setParameter(1, website);
@@ -351,9 +352,9 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public List getAllFolders(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         if (website == null)
-            throw new RollerException("Website is null");
+            throw new WebloggerException("Website is null");
         
         Query q = strategy.getNamedQuery("WeblogBookmarkFolder.getByWebsite");
         q.setParameter(1, website);
@@ -365,7 +366,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      * make sure the given folder doesn't already exist.
      */
     private boolean isDuplicateFolderName(WeblogBookmarkFolder folder) 
-        throws RollerException {
+        throws WebloggerException {
 
         // ensure that no sibling categories share the same name
         WeblogBookmarkFolder parent = folder.getParent();

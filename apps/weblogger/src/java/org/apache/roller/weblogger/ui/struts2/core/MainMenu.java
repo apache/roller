@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -75,7 +75,7 @@ public class MainMenu extends UIAction {
             } else {
                 addError("yourWebsites.permNotFound");
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error handling invitation accept - "+getInviteId(), ex);
             // TODO: i18n
             addError("invite accept failed.");
@@ -100,7 +100,7 @@ public class MainMenu extends UIAction {
             } else {
                 addError("yourWebsites.permNotFound");
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error handling invitation decline - "+getInviteId(), ex);
             // TODO: i18n
             addError("invite decline failed.");
@@ -129,7 +129,7 @@ public class MainMenu extends UIAction {
             }
             
             addMessage("yourWebsites.resigned", perms.getWebsite().getHandle());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error doing weblog resign - "+getWebsiteId(), ex);
             // TODO: i18n
             addError("resignation failed.");

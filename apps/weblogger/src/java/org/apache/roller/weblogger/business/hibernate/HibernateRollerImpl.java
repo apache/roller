@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerImpl;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
+import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
@@ -41,7 +42,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
  * A Hibernate specific implementation of the Roller business layer.
  */
 public class HibernateRollerImpl extends RollerImpl {    
-    static final long serialVersionUID = 5256135928578074652L;
     private static Log mLogger = LogFactory.getLog(HibernateRollerImpl.class);    
     
     // a persistence utility class
@@ -50,19 +50,20 @@ public class HibernateRollerImpl extends RollerImpl {
     @com.google.inject.Inject
     public HibernateRollerImpl(
         HibernatePersistenceStrategy strategy,
-        AutoPingManager   autoPingManager,
-        BookmarkManager   bookmarkManager,
-        FileManager       fileManager,
-        IndexManager      indexManager,
-        PingQueueManager  pingQueueManager,
-        PingTargetManager pingTargetManager,
-        PluginManager     pluginManager,
-        PropertiesManager propertiesManager,
-        RefererManager    refererManager,
-        ThemeManager      themeManager,
-        ThreadManager     threadManager,
-        UserManager       userManager,
-        WeblogManager     weblogManager) throws RollerException {
+        AutoPingManager      autoPingManager,
+        BookmarkManager      bookmarkManager,
+        FileManager          fileManager,
+        IndexManager         indexManager,
+        PingQueueManager     pingQueueManager,
+        PingTargetManager    pingTargetManager,
+        PluginManager        pluginManager,
+        PropertiesManager    propertiesManager,
+        RefererManager       refererManager,
+        ReferrerQueueManager refererQueueManager,
+        ThemeManager         themeManager,
+        ThreadManager        threadManager,
+        UserManager          userManager,
+        WeblogManager        weblogManager) throws WebloggerException {
         
         super(
             autoPingManager,
@@ -74,6 +75,7 @@ public class HibernateRollerImpl extends RollerImpl {
             pluginManager,
             propertiesManager,
             refererManager,
+            refererQueueManager,
             themeManager,
             threadManager,
             userManager,
@@ -81,7 +83,7 @@ public class HibernateRollerImpl extends RollerImpl {
         this.strategy = strategy;
     }
         
-    public void flush() throws RollerException {
+    public void flush() throws WebloggerException {
         this.strategy.flush();
     }    
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -67,7 +67,7 @@ public class TemplateEdit extends UIAction {
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             setTemplate(mgr.getPage(getBean().getId()));
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up template - "+getBean().getId(), ex);
         }
     }
@@ -139,7 +139,7 @@ public class TemplateEdit extends UIAction {
             // success message
             addMessage("pageForm.save.success", template.getName());
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error updating page - "+getBean().getId(), ex);
             // TODO: i18n
             addError("Error saving template");
@@ -158,7 +158,7 @@ public class TemplateEdit extends UIAction {
                 if(umgr.getPageByName(getActionWeblog(), getBean().getName()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getName());
                 }
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error checking page name uniqueness", ex);
             }
         }
@@ -171,7 +171,7 @@ public class TemplateEdit extends UIAction {
                 if(umgr.getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getLink());
                 }
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error checking page link uniqueness", ex);
             }
         }

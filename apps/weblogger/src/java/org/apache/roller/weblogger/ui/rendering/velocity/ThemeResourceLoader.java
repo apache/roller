@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -97,7 +97,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             mLogger.error(msg, tnfe);
             throw new ResourceNotFoundException(msg);
             
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             String msg = "RollerResourceLoader Error: " + re.getMessage();
             mLogger.error( msg, re );
             throw new ResourceNotFoundException(msg);
@@ -137,7 +137,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             
         } catch (ThemeNotFoundException tnfe) {
             // ignore
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             // we don't like to see this happen, but oh well
         }
         

@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.User;
@@ -230,7 +230,7 @@ public class CommentTest extends TestCase {
             try {
                 wmgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(entry));
                 TestUtils.endSession(true);
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 ex = e;
             }
             assertNull(ex);
@@ -254,7 +254,7 @@ public class CommentTest extends TestCase {
                 weblog = TestUtils.getManagedWebsite(weblog);
                 umgr.removeWebsite(weblog);
                 TestUtils.endSession(true);
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw); 
                 e.printStackTrace(pw);

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.PluginManager;
 import org.apache.roller.weblogger.business.Roller;
@@ -76,7 +76,7 @@ public class OldPageHelper {
                       Date date,WeblogBookmarkFolder folder,
                       String pageName,
                       PageContext pageContext,
-                      WeblogPageRequest pageRequest) throws RollerException {
+                      WeblogPageRequest pageRequest) throws WebloggerException {
         
         // general request objects
         mRequest = request;

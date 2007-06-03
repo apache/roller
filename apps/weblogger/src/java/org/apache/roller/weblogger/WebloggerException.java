@@ -16,26 +16,49 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger;
 
-import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.RollerException;
 
 
 /**
- * Thrown from the FileManager if a file path is considered invalid for some
- * reason, like it represents a directory instead of a file.
+ * A base exception class for Roller Weblogger.
  */
-public class FilePathException extends WebloggerException {
+public class WebloggerException extends RollerException {
     
-    public FilePathException(String s) {
+    
+    public WebloggerException() {
+        super();
+    }
+    
+    
+    /**
+     * Construct WebloggerException with message string.
+     *
+     * @param s Error message string.
+     */
+    public WebloggerException(String s) {
         super(s);
     }
     
-    public FilePathException(String s, Throwable t) {
+    
+    /**
+     * Construct WebloggerException, wrapping existing throwable.
+     *
+     * @param s Error message
+     * @param t Existing connection to wrap.
+     */
+    public WebloggerException(String s, Throwable t) {
         super(s, t);
     }
     
-    public FilePathException(Throwable t) {
+    
+    /**
+     * Construct WebloggerException, wrapping existing throwable.
+     *
+     * @param t Existing exception to be wrapped.
+     */
+    public WebloggerException(Throwable t) {
         super(t);
     }
     

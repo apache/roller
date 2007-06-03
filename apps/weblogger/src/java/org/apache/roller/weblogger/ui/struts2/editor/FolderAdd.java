@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -66,7 +66,7 @@ public class FolderAdd extends UIAction {
             if(!StringUtils.isEmpty(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up folder - "+getFolderId(), ex);
         }
     }

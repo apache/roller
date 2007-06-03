@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
@@ -91,7 +91,7 @@ public class RollerResourceLoader extends ResourceLoader {
             // This rethrows as a Runtime exception after logging.
             mLogger.error(uex);
             throw new RuntimeException(uex);
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             String msg = "RollerResourceLoader Error: " +
                     "database problem trying to load resource " + name;
             mLogger.error( msg, re );
@@ -123,7 +123,7 @@ public class RollerResourceLoader extends ResourceLoader {
                         " vs. page=" + page.getLastModified().getTime());
             }
             return page.getLastModified().getTime();
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             mLogger.error( "Error " + i_operation, re );
         }
         return 0;

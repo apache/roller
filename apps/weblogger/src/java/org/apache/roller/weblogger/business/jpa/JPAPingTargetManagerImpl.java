@@ -28,9 +28,10 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -49,14 +50,16 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         JPAPingTargetManagerImpl.class);
 
     private JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
-    public JPAPingTargetManagerImpl(
-            JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    public JPAPingTargetManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+        this.roller = roller;
         this.strategy = strategy;
     }
 
     public void removePingTarget(PingTarget pingTarget) 
-            throws RollerException {
+            throws WebloggerException {
         // remove contents and then target
         this.removePingTargetContents(pingTarget);
         this.strategy.remove(pingTarget);
@@ -67,7 +70,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
      * reference the given ping target.
      */
     private void removePingTargetContents(PingTarget ping) 
-            throws RollerException {
+            throws WebloggerException {
         // Remove the website's ping queue entries
         Query q = strategy.getNamedUpdate("PingQueueEntry.removeByPingTarget");
         q.setParameter(1, ping);
@@ -80,24 +83,24 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     public void removeAllCustomPingTargets()
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedUpdate(
             "PingTarget.removeByWebsiteNotNull");
         q.executeUpdate();
     }
 
     public void savePingTarget(PingTarget pingTarget)
-            throws RollerException {
+            throws WebloggerException {
         strategy.store(pingTarget);
     }
 
     public PingTarget getPingTarget(String id)
-            throws RollerException {
+            throws WebloggerException {
         return (PingTarget)strategy.load(PingTarget.class, id);
     }
 
     public boolean isNameUnique(PingTarget pingTarget) 
-            throws RollerException {
+            throws WebloggerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
         
@@ -130,7 +133,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     
     public boolean isUrlWellFormed(PingTarget pingTarget) 
-            throws RollerException {
+            throws WebloggerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
@@ -148,7 +151,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
 
     
     public boolean isHostnameKnown(PingTarget pingTarget) 
-            throws RollerException {
+            throws WebloggerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
@@ -165,14 +168,14 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     public List getCommonPingTargets()
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "PingTarget.getByWebsiteNullOrderByName");
         return q.getResultList();
     }
 
     public List getCustomPingTargets(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "PingTarget.getByWebsiteOrderByName");
         q.setParameter(1, website);

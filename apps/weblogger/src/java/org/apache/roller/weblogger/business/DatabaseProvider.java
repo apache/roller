@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 /**
@@ -30,39 +30,47 @@ import org.apache.roller.weblogger.config.RollerConfig;
  * database.jdbc.password=
  * </pre>
  */
-public class DatabaseProvider  {
+@com.google.inject.Singleton
+public abstract class DatabaseProvider  {
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
     
-    private static DatabaseProvider singletonInstance = null;
+    private static DatabaseProvider databaseProvider = null;
     
-    private DataSource dataSource = null;
+    protected ConfigurationType type = ConfigurationType.JNDI_NAME; 
     
-    private ConfigurationType type = ConfigurationType.JNDI_NAME; 
+    protected String jndiName = null; 
+    protected DataSource dataSource = null;
     
-    private String jndiName = null; 
+    protected String jdbcDriverClass = null;
+    protected String jdbcConnectionURL = null;
+    protected String jdbcPassword = null;
+    protected String jdbcUsername = null;
+    protected Properties props = null;
     
-    private String jdbcDriverClass = null;
-    private String jdbcConnectionURL = null;
-    private String jdbcPassword = null;
-    private String jdbcUsername = null;
-    private Properties props = null;
-   
-    /**
-     * Reads configuraiton, loads driver or locates data-source and attempts
-     * to get test connecton so that we can fail early.
-     */ 
-    private DatabaseProvider() throws RollerException {
-        String connectionTypeString = 
-                RollerConfig.getProperty("database.configurationType"); 
-        if ("jdbc".equals(connectionTypeString)) {
-            type = ConfigurationType.JDBC_PROPERTIES;
-        }
-        jndiName =          RollerConfig.getProperty("database.jndi.name");
-        jdbcDriverClass =   RollerConfig.getProperty("database.jdbc.driverClass");
-        jdbcConnectionURL = RollerConfig.getProperty("database.jdbc.connectionURL");
-        jdbcUsername =      RollerConfig.getProperty("database.jdbc.username");
-        jdbcPassword =      RollerConfig.getProperty("database.jdbc.password");
+    // Singleton
+    protected DatabaseProvider() {}
+    
+    
+    // Needed by HibernateConnectionProvider, it's not instantiated by Guice
+    public static DatabaseProvider getDatabaseProvider() {
+        return databaseProvider;
+    }
+    
+    
+    @com.google.inject.Inject
+    private void setDatabaseProvider(DatabaseProvider dbprovider) {
+        databaseProvider = dbprovider;
+    }
+    
+    
+    protected void init(
+        ConfigurationType type,
+        String jndiName, 
+        String jdbcDriverClass,
+        String jdbcConnectionURL,
+        String jdbcUsername,
+        String jdbcPassword) throws WebloggerException {        
         
         // init now so we fail early
         if (getType() == ConfigurationType.JDBC_PROPERTIES) {
@@ -70,7 +78,7 @@ public class DatabaseProvider  {
             try {
                 Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
-                throw new RollerException(
+                throw new WebloggerException(
                    "Cannot load specified JDBC driver class [" +getJdbcDriverClass()+ "]", ex);
             }
             if (getJdbcUsername() != null || getJdbcPassword() != null) {
@@ -85,7 +93,7 @@ public class DatabaseProvider  {
                 InitialContext ic = new InitialContext();
                 dataSource = (DataSource)ic.lookup(name);
             } catch (NamingException ex) {
-                throw new RollerException(
+                throw new WebloggerException(
                     "ERROR looking up data-source with JNDI name: " + name, ex);
             }            
         }
@@ -93,19 +101,10 @@ public class DatabaseProvider  {
             Connection testcon = getConnection();
             testcon.close();
         } catch (Throwable t) {
-            throw new RollerException("ERROR unable to obtain connection", t);
+            throw new WebloggerException("ERROR unable to obtain connection", t);
         }
     }
     
-    /**
-     * Get global database provider singlton, instantiating if necessary.
-     */
-    public static DatabaseProvider getDatabaseProvider() throws RollerException {
-        if (singletonInstance == null) {
-            singletonInstance = new DatabaseProvider();
-        }
-        return singletonInstance;
-    }
     
     /**
      * Get database connection from data-source or driver manager, depending 

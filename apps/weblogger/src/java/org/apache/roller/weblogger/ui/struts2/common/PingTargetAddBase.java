@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.common;
 
 import org.apache.commons.logging.Log;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -68,7 +68,7 @@ public abstract class PingTargetAddBase extends UIAction {
             
             return SUCCESS;
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             getLogger().error("Error adding ping target", ex);
             // TODO: i18n
             addError("Error adding ping target.");
@@ -94,7 +94,7 @@ public abstract class PingTargetAddBase extends UIAction {
             } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
                 addError("pingTarget.unknownHost");
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             getLogger().error("Error validating ping target", ex);
             // TODO: i18n
             addError("Error doing ping target validation");

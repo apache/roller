@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -36,6 +36,6 @@ public interface Model {
     /**
      * Initialize.
      */
-    public void init(Map params) throws RollerException;
+    public void init(Map params) throws WebloggerException;
     
 }

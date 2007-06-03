@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
@@ -64,7 +64,7 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
         try {
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
             this.data = wMgr.getWeblogEntry(this.data.getId());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             mLogger.error("Error getting weblogentry object", ex);
             return;
         }

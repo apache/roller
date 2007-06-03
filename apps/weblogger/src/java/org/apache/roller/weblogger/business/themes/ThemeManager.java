@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.business.themes;
 
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -35,10 +35,10 @@ public interface ThemeManager {
      *
      * @return Theme The Theme object with the given id.
      * @throws ThemeNotFoundException If the named theme cannot be found.
-     * @throws RollerException If there is some kind of fatal backend error.
+     * @throws WebloggerException If there is some kind of fatal backend error.
      **/
     public SharedTheme getTheme(String id)
-        throws ThemeNotFoundException, RollerException;
+        throws ThemeNotFoundException, WebloggerException;
     
     
     /**
@@ -46,10 +46,10 @@ public interface ThemeManager {
      *
      * @param weblog The weblog to get the theme for.
      * @return WeblogTheme The theme to be used for the given weblog.
-     * @throws RollerException If there is some kind of fatal backend error.
+     * @throws WebloggerException If there is some kind of fatal backend error.
      */
     public WeblogTheme getTheme(Weblog weblog)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -67,9 +67,9 @@ public interface ThemeManager {
      * @param weblog The weblog to import the theme into.
      * @param theme The theme that should be imported.
      *
-     * @throws RollerException If there is some kind of error in saving.
+     * @throws WebloggerException If there is some kind of error in saving.
      */
     public void importTheme(Weblog website, SharedTheme theme) 
-        throws RollerException;
+        throws WebloggerException;
     
 }

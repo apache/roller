@@ -18,14 +18,14 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * Thrown from the FileManager if there is some kind of IO exception while
  * working on a file, such as during a save or delete.
  */
-public class FileIOException extends RollerException {
+public class FileIOException extends WebloggerException {
     
     public FileIOException(String s) {
         super(s);

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -84,7 +84,7 @@ public class PreviewResourceServlet extends HttpServlet {
 
             weblog = resourceRequest.getWeblog();
             if(weblog == null) {
-                throw new RollerException("unable to lookup weblog: "+
+                throw new WebloggerException("unable to lookup weblog: "+
                         resourceRequest.getWeblogHandle());
             }
 

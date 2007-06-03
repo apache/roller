@@ -18,10 +18,11 @@
 
 package org.apache.roller.weblogger.business.hibernate; 
 
-import org.hibernate.Criteria; 
-import org.hibernate.HibernateException; 
-import org.hibernate.Session; 
-import org.hibernate.criterion.Expression; 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -61,23 +62,23 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public AutoPing getAutoPing(String id) throws RollerException {
+    public AutoPing getAutoPing(String id) throws WebloggerException {
         return (AutoPing) strategy.load(id, AutoPing.class);
     }
     
     
-    public void saveAutoPing(AutoPing autoPing) throws RollerException {
+    public void saveAutoPing(AutoPing autoPing) throws WebloggerException {
         strategy.store(autoPing);
     }
     
     
-    public void removeAutoPing(AutoPing autoPing)  throws RollerException {
+    public void removeAutoPing(AutoPing autoPing)  throws WebloggerException {
         //TODO: first remove all related category restrictions (category restrictions are not yet implemented)
         strategy.remove(autoPing);
     }
     
     
-    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws RollerException {
+    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException {
         try {
             Session session = strategy.getSession();
             Criteria criteria = session.createCriteria(AutoPing.class);
@@ -91,12 +92,12 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
             // This should have at most one element, but we remove them all regardless.
             this.removeAutoPings(matches);
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
-    public void removeAutoPings(Collection autopings) throws RollerException {
+    public void removeAutoPings(Collection autopings) throws WebloggerException {
         
         // just go through the list and remove each auto ping
         Iterator pings = autopings.iterator();
@@ -106,19 +107,19 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public void removeAllAutoPings() throws RollerException {
+    public void removeAllAutoPings() throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(AutoPing.class);
             List allAutoPings = criteria.list();
             this.removeAutoPings(allAutoPings);
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
-    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException {
+    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         if (PingConfig.getSuspendPingProcessing()) {
             if (log.isDebugEnabled()) log.debug("Ping processing is suspended.  No auto pings will be queued.");
             return;
@@ -134,7 +135,7 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     }
     
     
-    public List getAutoPingsByWebsite(Weblog website) throws RollerException {
+    public List getAutoPingsByWebsite(Weblog website) throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(AutoPing.class);
@@ -143,12 +144,12 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
             criteria.add(Expression.eq("website", website));
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
-    public List getAutoPingsByTarget(PingTarget pingTarget) throws RollerException {
+    public List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(AutoPing.class);
@@ -157,12 +158,12 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
             criteria.add(Expression.eq("pingTarget", pingTarget));
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
-    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException {
+    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(AutoPing.class);
@@ -171,12 +172,12 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
             criteria.add(Expression.eq("website", changedWeblogEntry.getWebsite()));
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
-    public List getCategoryRestrictions(AutoPing autoPing) throws RollerException {
+    public List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException {
         return Collections.EMPTY_LIST;
     }
     

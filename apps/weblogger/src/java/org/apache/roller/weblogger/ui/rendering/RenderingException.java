@@ -18,13 +18,13 @@
 
 package org.apache.roller.weblogger.ui.rendering;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * A generic Roller rendering exception.
  */
-public class RenderingException extends RollerException {
+public class RenderingException extends WebloggerException {
     
     public RenderingException(String s) {
         super(s);

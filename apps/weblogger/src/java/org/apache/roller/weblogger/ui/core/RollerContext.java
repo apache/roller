@@ -36,7 +36,7 @@ import org.acegisecurity.userdetails.jdbc.JdbcDaoImpl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
 import org.apache.roller.weblogger.business.utils.UpgradeDatabase;
@@ -168,6 +168,11 @@ public class RollerContext extends ContextLoaderListener
      * Trigger any database upgrade work that needs to be done.
      */
     private void upgradeDatabaseIfNeeded() throws Exception {        
+        
+        // TODO_GUICE: elimiate the need for RollerFactory.getInjector()
+        // This should cause injection of DatabaseProvider singleton
+        RollerFactory.getInjector().getInstance(DatabaseProvider.class);
+        
         Connection con = DatabaseProvider.getDatabaseProvider().getConnection();
         UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
         con.close();
@@ -203,7 +208,7 @@ public class RollerContext extends ContextLoaderListener
             RuntimeSingleton.init(velocityProps);
             
         } catch (Exception e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
         
     }
@@ -211,7 +216,7 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Setup Acegi security features.
      */
-    protected void initializeSecurityFeatures(ServletContext context) throws RollerException { 
+    protected void initializeSecurityFeatures(ServletContext context) throws WebloggerException { 
 
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);

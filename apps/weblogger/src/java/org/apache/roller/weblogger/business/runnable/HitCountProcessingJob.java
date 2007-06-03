@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -91,7 +91,7 @@ public class HitCountProcessingJob implements Job {
                 try {
                     weblog = umgr.getWebsiteByHandle(key);
                     wmgr.incrementHitCount(weblog, ((Long)hitsTally.get(key)).intValue());
-                } catch (RollerException ex) {
+                } catch (WebloggerException ex) {
                     log.error(ex);
                 }
             }
@@ -103,7 +103,7 @@ public class HitCountProcessingJob implements Job {
             
             log.debug("Completed: "+ (endTime-startTime)/1000 + " secs");
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error persisting updated hit counts", ex);
         } finally {
             // release session

@@ -29,7 +29,7 @@ import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -75,12 +75,12 @@ public class SearchResultsModel extends PageModel {
     private String errorMessage = null;
     
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a searchRequest object
         searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
         if(searchRequest == null) {
-            throw new RollerException("expected searchRequest from init data");
+            throw new WebloggerException("expected searchRequest from init data");
         }
         
         // let parent initialize
@@ -143,7 +143,7 @@ public class SearchResultsModel extends PageModel {
         return pager;
     }
     
-    private void convertHitsToEntries(Hits hits) throws RollerException {
+    private void convertHitsToEntries(Hits hits) throws WebloggerException {
         
         // determine offset
         this.offset = searchRequest.getPageNum() * RESULTS_PER_PAGE;
@@ -201,7 +201,7 @@ public class SearchResultsModel extends PageModel {
                 this.categories = categories;
             }
         } catch(IOException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     

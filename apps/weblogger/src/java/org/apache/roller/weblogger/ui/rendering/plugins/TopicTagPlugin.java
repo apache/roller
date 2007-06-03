@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.plugins;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.context.Context;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -132,7 +132,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * @param ctx  Plugins may place objects into the Velocity Context.
      * @see PagWeblogEntryPluginit(org.apache.roller.weblogger.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public void init(Weblog website) throws RollerException
+    public void init(Weblog website) throws WebloggerException
     {
         if (mLogger.isDebugEnabled())
         {
@@ -162,13 +162,13 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         catch (PatternSyntaxException e)
         {
-            throw new RollerException("Invalid regular expression for topic tags with bookmark '" +
+            throw new WebloggerException("Invalid regular expression for topic tags with bookmark '" +
                 tagRegexWithBookmark + "': " + e.getMessage());
         }
         int groupCount = tagPatternWithBookmark.matcher("").groupCount();
         if (groupCount != 2)
         {
-            throw new RollerException("Regular expression for topic tags with bookmark '" + tagRegexWithBookmark +
+            throw new WebloggerException("Regular expression for topic tags with bookmark '" + tagRegexWithBookmark +
                 "' contains wrong number of capture groups.  Must have exactly 2.  Contains " + groupCount);
         }
 
@@ -178,13 +178,13 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         catch (PatternSyntaxException e)
         {
-            throw new RollerException("Invalid regular expression for topic tags without bookmark '" +
+            throw new WebloggerException("Invalid regular expression for topic tags without bookmark '" +
                 tagRegexWithoutBookmark + "': " + e.getMessage());
         }
         groupCount = tagPatternWithoutBookmark.matcher("").groupCount();
         if (groupCount != 1)
         {
-            throw new RollerException("Regular expression for topic tags without bookmark '" + tagRegexWithoutBookmark +
+            throw new WebloggerException("Regular expression for topic tags without bookmark '" + tagRegexWithoutBookmark +
                 "' contains wrong number of capture groups.  Must have exactly 1.  Contains " + groupCount);
         }
 
@@ -304,7 +304,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * If ignoreBookmarks property is set, an empty map is returned.
      * @return map of the user's bookmarks (type BookmarkData), keyed by name (type String).
      */
-    protected Map buildBookmarkMap(Weblog website) throws RollerException
+    protected Map buildBookmarkMap(Weblog website) throws WebloggerException
     {
         Map bookmarkMap = new HashMap();
         if (RollerConfig.getBooleanProperty("plugins.topictag.ignoreBookmarks")) {

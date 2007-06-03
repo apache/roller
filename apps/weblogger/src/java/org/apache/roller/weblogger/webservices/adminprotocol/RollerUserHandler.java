@@ -25,7 +25,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
 import org.jdom.JDOMException;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -94,7 +94,7 @@ class RollerUserHandler extends Handler {
             EntrySet es = toUserEntrySet((User[])users.toArray(new User[0]));
             
             return es;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get user collection", re);
         }
     }
@@ -164,7 +164,7 @@ class RollerUserHandler extends Handler {
                 userDatas.add(ud);
             }
             return toUserEntrySet((User[])userDatas.toArray(new User[0]));
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not create users: " + c, re);
         }
     }
@@ -210,7 +210,7 @@ class RollerUserHandler extends Handler {
             mgr.saveUser(ud);
             getRoller().flush();
             CacheManager.invalidate(ud);
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: could not update user data", re);
         }
     }
@@ -229,7 +229,7 @@ class RollerUserHandler extends Handler {
             getRoller().getUserManager().removeUser(ud);
             getRoller().flush();
             CacheManager.invalidate(ud);
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: could not delete user data", re);
         }
         

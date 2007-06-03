@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -77,7 +77,7 @@ public class ThreadManagerImpl implements ThreadManager {
                     
                 } catch (ClassCastException ex) {
                     log.warn("Task does not extend RollerTask class", ex);
-                } catch (RollerException ex) {
+                } catch (WebloggerException ex) {
                     log.error("Error scheduling task", ex);
                 } catch (Exception ex) {
                     log.error("Error instantiating task", ex);

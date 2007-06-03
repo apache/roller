@@ -30,7 +30,7 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -108,7 +108,7 @@ public class SearchServlet extends HttpServlet {
             
             // if still null then that's a problem
             if(page == null) {
-                throw new RollerException("Could not lookup default page "+
+                throw new WebloggerException("Could not lookup default page "+
                         "for weblog "+weblog.getHandle());
             }
         } catch(Exception e) {
@@ -162,7 +162,7 @@ public class SearchServlet extends HttpServlet {
             searchModel.init(initData);
             model.put("searchResults", searchModel);
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
             
             if(!response.isCommitted()) response.reset();

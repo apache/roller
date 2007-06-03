@@ -19,7 +19,7 @@ package org.apache.roller.weblogger.planet.business.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.planet.business.Planet;
@@ -30,32 +30,22 @@ import org.apache.roller.planet.business.hibernate.HibernatePlanetImpl;
  */
 public class HibernateRollerPlanetImpl extends HibernatePlanetImpl {
     private static Log log = LogFactory.getLog(HibernateRollerPlanetImpl.class);
+
+    // TODO_GUICE
     
-    public HibernateRollerPlanetImpl() throws RollerException {
+    
+    public HibernateRollerPlanetImpl(HibernatePersistenceStrategy strategy) throws PlanetException {
         super();
     }
     
-    protected HibernatePersistenceStrategy getStrategy() throws RollerException {
-        try {
-            String dialect =  
-                RollerConfig.getProperty("hibernate.dialect");
-            String connectionProvider = 
-                RollerConfig.getProperty("hibernate.connectionProvider");
-            return new HibernatePersistenceStrategy(
-                "/planet-hibernate.cfg.xml", dialect, connectionProvider);
-
-        } catch(Throwable t) {
-            // if this happens then we are screwed
-            log.fatal("Error initializing Hibernate", t);
-            throw new RollerException(t);
-        }        
-    }
-    
+    protected HibernatePersistenceStrategy getStrategy() throws PlanetException {
+        return strategy;
+    }    
     
     /**
      * Instantiates and returns an instance of HibernatePlanetImpl.
      */
-    public static Planet instantiate() throws RollerException {
+    public static Planet instantiate() throws PlanetException {
         if (me == null) {
             log.debug("Instantiating HibernatePlanetImpl");
             me = new HibernatePlanetImpl();

@@ -27,7 +27,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.DisplayGroup;
@@ -35,13 +35,12 @@ import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
 /**
  * Hibernate implementation of the PropertiesManager.
- */
+ */ 
 public class HibernatePropertiesManagerImpl implements PropertiesManager {
     
     public static final long serialVersionUID = -4326713177137796936L;
@@ -49,15 +48,17 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     private static Log log = LogFactory.getLog(HibernatePropertiesManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     
     /** 
      * Creates a new instance of HibernatePropertiesManagerImpl
      */
-    public HibernatePropertiesManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject
+    public HibernatePropertiesManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Properties Manager");
-        
+        this.roller = roller;        
         this.strategy = strat;
         
         // TODO: and new method initialize(props)
@@ -68,11 +69,11 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     /** 
      * Retrieve a single property by name.
      */
-    public RuntimeConfigProperty getProperty(String name) throws RollerException {
+    public RuntimeConfigProperty getProperty(String name) throws WebloggerException {
         try {
             return (RuntimeConfigProperty) strategy.load(name, RuntimeConfigProperty.class);
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
@@ -85,7 +86,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
      * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
-    public Map getProperties() throws RollerException {
+    public Map getProperties() throws WebloggerException {
         
         HashMap props = new HashMap();
         
@@ -107,7 +108,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
                 props.put(prop.getName(), prop);
             }
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
         
         return props;
@@ -117,7 +118,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     /**
      * Save a single property.
      */
-    public void saveProperty(RuntimeConfigProperty property) throws RollerException {
+    public void saveProperty(RuntimeConfigProperty property) throws WebloggerException {
         
         this.strategy.store(property);
     }
@@ -126,7 +127,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     /**
      * Save all properties.
      */
-    public void saveProperties(Map properties) throws RollerException {
+    public void saveProperties(Map properties) throws WebloggerException {
         
         // just go through the list and saveProperties each property
         Iterator props = properties.values().iterator();

@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.business.referrers;
 
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -31,51 +31,51 @@ public interface RefererManager {
     /**
      * Store the referer.
      */
-    public void saveReferer(WeblogReferrer referer) throws RollerException;    
+    public void saveReferer(WeblogReferrer referer) throws WebloggerException;    
     
     /**
      * Remove a single referer.
      */
-    public void removeReferer(WeblogReferrer referer) throws RollerException;    
+    public void removeReferer(WeblogReferrer referer) throws WebloggerException;    
     
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void clearReferrers() throws RollerException;    
+    public void clearReferrers() throws WebloggerException;    
     
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void clearReferrers(Weblog website) throws RollerException;    
+    public void clearReferrers(Weblog website) throws WebloggerException;    
     
     /**
      * Retrieve referer by id.
      */
-    public WeblogReferrer getReferer(String id) throws RollerException;    
+    public WeblogReferrer getReferer(String id) throws WebloggerException;    
     
     /**
      * Get all referers for specified weblog.
      * @param weblog
      * @return List of type RefererData
      */
-    public List getReferers(Weblog weblog) throws RollerException;    
+    public List getReferers(Weblog weblog) throws WebloggerException;    
     
     /**
      * Get all referers for specified user that were made today.
      * @param userName Name of user.
      * @return List of type RefererData
      */
-    public List getTodaysReferers(Weblog website) throws RollerException;    
+    public List getTodaysReferers(Weblog website) throws WebloggerException;    
     
     /**
      * Get referers for a specified date.
      * @param userName Name of user.
      * @param date YYYYMMDD format of day's date.
      * @return List of type RefererData.
-     * @throws RollerException
+     * @throws WebloggerException
      */
     public List getReferersToDate(Weblog website, String date) 
-        throws RollerException;    
+        throws WebloggerException;    
         
     /**
      * Returns hot weblogs as StatCount objects, in descending order by today's hits.
@@ -85,35 +85,35 @@ public interface RefererManager {
      * @return List of StatCount objects.
      */
     public List getHotWeblogs(int sinceDays, int offset, int length) 
-        throws RollerException; 
+        throws WebloggerException; 
 
     /**
      * Get referers that refer to a specific weblog entry.
      * @param entryid Weblog entry ID
      * @return List of RefererData objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public List getReferersToEntry(String entryid) throws RollerException;   
+    public List getReferersToEntry(String entryid) throws WebloggerException;   
     
     /** 
      * Get user's day hits 
      */
-    public int getDayHits(Weblog website) throws RollerException;    
+    public int getDayHits(Weblog website) throws WebloggerException;    
     
     /** 
      * Get user's all-time total hits 
      */
-    public int getTotalHits(Weblog website) throws RollerException;    
+    public int getTotalHits(Weblog website) throws WebloggerException;    
     
     /**
      * Apply ignoreWord/spam filters to all referers in system.
      */
-    public void applyRefererFilters() throws RollerException;    
+    public void applyRefererFilters() throws WebloggerException;    
     
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
-    public void applyRefererFilters(Weblog website) throws RollerException;    
+    public void applyRefererFilters(Weblog website) throws WebloggerException;    
     
     /**
      * Process an incoming referer.

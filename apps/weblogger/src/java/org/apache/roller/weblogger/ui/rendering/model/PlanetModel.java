@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -56,12 +56,12 @@ public class PlanetModel implements Model {
         return "planet";
     }
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         this.weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(this.weblogRequest == null) {
-            throw new RollerException("expected weblogRequest from init data");
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {

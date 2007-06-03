@@ -57,7 +57,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.activation.FileTypeMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -162,13 +162,13 @@ public class RollerAtomHandler implements AtomHandler {
         List perms = null;
         try {
             perms = roller.getUserManager().getAllPermissions(user);
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Getting user's weblogs", re);
         }
         String accept = null;
         try {
             accept = getAcceptedContentTypeRange();
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Getting site's accept range", re);
         }
         if (perms != null) {
@@ -245,7 +245,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Build accept range by taking things that appear to be content-type rules 
      * from site's file-upload allowed extensions.
      */
-    private String getAcceptedContentTypeRange() throws RollerException {
+    private String getAcceptedContentTypeRange() throws WebloggerException {
         StringBuffer sb = new StringBuffer();
         Roller roller = RollerFactory.getRoller();
         Map config = roller.getPropertiesManager().getProperties();        
@@ -369,7 +369,7 @@ public class RollerAtomHandler implements AtomHandler {
             log.debug("Exiting");
             return feed;
         
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Getting entry collection");
         }
     }
@@ -476,7 +476,7 @@ public class RollerAtomHandler implements AtomHandler {
             log.debug("Existing");
             return feed;
        
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Getting resource collection");
         }
     }
@@ -517,7 +517,7 @@ public class RollerAtomHandler implements AtomHandler {
             log.debug("Exiting");
             return createAtomEntry(rollerEntry);
 
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Posting entry", re);
         }
     }
@@ -555,7 +555,7 @@ public class RollerAtomHandler implements AtomHandler {
                 }
             }
             throw new AtomNotFoundException("Cannot find specified entry/resource");
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Getting entry");
         }
     }
@@ -589,7 +589,7 @@ public class RollerAtomHandler implements AtomHandler {
             }
             throw new AtomNotFoundException("Cannot find specified entry/resource");
             
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Updating entry");
         }
     }
@@ -641,7 +641,7 @@ public class RollerAtomHandler implements AtomHandler {
             }
             throw new AtomNotFoundException("cannot find specified entry/resource");
             
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("deleting entry");
         }
     }
@@ -707,7 +707,7 @@ public class RollerAtomHandler implements AtomHandler {
             }
             throw new AtomException("Incorrect path information");
         
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new AtomException("Posting media");
         }
     }
@@ -1091,7 +1091,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Copy fields from ROME entry to Roller entry.
      */
-    private void copyToRollerEntry(Entry entry,WeblogEntry rollerEntry) throws RollerException {
+    private void copyToRollerEntry(Entry entry,WeblogEntry rollerEntry) throws WebloggerException {
         
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
@@ -1181,7 +1181,7 @@ public class RollerAtomHandler implements AtomHandler {
         return path;
     }
     
-    private void reindexEntry(WeblogEntry entry) throws RollerException {
+    private void reindexEntry(WeblogEntry entry) throws WebloggerException {
         IndexManager manager = roller.getIndexManager();
         
         // TODO: figure out what's up here and at WeblogEntryFormAction line 696

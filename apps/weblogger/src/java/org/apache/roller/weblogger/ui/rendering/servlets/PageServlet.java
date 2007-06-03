@@ -33,7 +33,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
@@ -149,7 +149,7 @@ public class PageServlet extends HttpServlet {
             
             weblog = pageRequest.getWeblog();
             if(weblog == null) {
-                throw new RollerException("unable to lookup weblog: "+
+                throw new WebloggerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
             }
             
@@ -333,7 +333,7 @@ public class PageServlet extends HttpServlet {
                 // tags specified.  make sure they exist.
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 invalid = !wmgr.getTagComboExists(pageRequest.getTags(), (isSiteWide) ? null : weblog);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 invalid = true;
             }
         }
@@ -406,7 +406,7 @@ public class PageServlet extends HttpServlet {
             // ick, gotta load pre-3.0 model stuff as well :(
             ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error loading model objects for page", ex);
             
             if(!response.isCommitted()) response.reset();

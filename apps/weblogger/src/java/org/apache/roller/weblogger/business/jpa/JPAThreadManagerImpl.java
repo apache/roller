@@ -24,11 +24,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.TaskLock;
 
 
@@ -43,13 +43,16 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     private static final Log log = LogFactory.getLog(JPAThreadManagerImpl.class);
 
     private final JPAPersistenceStrategy strategy;
+    private Roller roller = null;
 
 
-    public JPAThreadManagerImpl(JPAPersistenceStrategy strat) {
+    @com.google.inject.Inject
+    public JPAThreadManagerImpl(Roller roller, JPAPersistenceStrategy strat) {
         super();
 
         log.debug("Instantiating JPA Thread Manager");
 
+        this.roller = roller;
         this.strategy = strat;
     }
 
@@ -73,10 +76,10 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
                 // save it and flush
                 this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
+                roller.flush();
             }
 
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.warn("Error getting or inserting TaskLock", ex);
             return false;
         }
@@ -125,7 +128,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
                 return false;
             }
 
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.warn("Error getting TaskLock", ex);
             return false;
         }
@@ -153,7 +156,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     }
     
 
-    private TaskLock getTaskLockByName(String name) throws RollerException {
+    private TaskLock getTaskLockByName(String name) throws WebloggerException {
         // do lookup
         Query q = strategy.getNamedQuery("TaskLock.getByName");
         q.setParameter(1, name);
@@ -165,7 +168,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     }
 
     
-    private void saveTaskLock(TaskLock data) throws RollerException {
+    private void saveTaskLock(TaskLock data) throws WebloggerException {
         this.strategy.store(data);
     }
 

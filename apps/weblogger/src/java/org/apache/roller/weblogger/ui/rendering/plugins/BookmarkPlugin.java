@@ -27,7 +27,7 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
@@ -65,7 +65,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(Weblog website) throws RollerException {}
+    public void init(Weblog website) throws WebloggerException {}
     
     
     public String render(WeblogEntry entry, String str) {
@@ -75,9 +75,9 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
             WeblogBookmarkFolder rootFolder = bMgr.getRootFolder(entry.getWebsite());
             text = matchBookmarks(text, rootFolder);
             text = lookInFolders(text, rootFolder.getFolders());
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             // nothing much I can do, go with default "Weblog" value
-            // could be RollerException or NullPointerException
+            // could be WebloggerException or NullPointerException
             mLogger.warn(e);
         }
         return text;

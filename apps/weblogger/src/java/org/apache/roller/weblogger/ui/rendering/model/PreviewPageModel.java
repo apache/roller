@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -39,12 +39,12 @@ public class PreviewPageModel extends PageModel {
     /** 
      * Init model.
      */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(weblogRequest == null) {
-            throw new RollerException("expected weblogRequest from init data");
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         // PreviewPageModel only works on preview requests, so cast weblogRequest
@@ -52,7 +52,7 @@ public class PreviewPageModel extends PageModel {
         if(weblogRequest instanceof WeblogPreviewRequest) {
             this.previewRequest = (WeblogPreviewRequest) weblogRequest;
         } else {
-            throw new RollerException("weblogRequest is not a WeblogPreviewRequest."+
+            throw new WebloggerException("weblogRequest is not a WeblogPreviewRequest."+
                     "  PreviewPageModel only supports preview requests.");
         }
         

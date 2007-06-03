@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.themes;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,9 +31,9 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -54,6 +53,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class ThemeManagerImpl implements ThemeManager {
     
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
+    private Roller roller = null;
     
     // directory where themes are kept
     private String themeDir = null;
@@ -61,8 +61,9 @@ public class ThemeManagerImpl implements ThemeManager {
     // the Map contains ... (theme id, Theme)
     private Map themes = null;
     
-    
-    public ThemeManagerImpl() {
+    @com.google.inject.Inject
+    public ThemeManagerImpl(Roller roller) {
+        this.roller = roller;
         
         log.debug("Initializing ThemeManagerImpl");
         
@@ -97,7 +98,7 @@ public class ThemeManagerImpl implements ThemeManager {
      * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(java.lang.String)
      */
     public SharedTheme getTheme(String id) 
-            throws ThemeNotFoundException, RollerException {
+            throws ThemeNotFoundException, WebloggerException {
         
         // try to lookup theme from library
         SharedTheme theme = (SharedTheme) this.themes.get(id);
@@ -114,7 +115,7 @@ public class ThemeManagerImpl implements ThemeManager {
     /**
      * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(weblog)
      */
-    public WeblogTheme getTheme(Weblog weblog) throws RollerException {
+    public WeblogTheme getTheme(Weblog weblog) throws WebloggerException {
         
         if(weblog == null)
             return null;
@@ -128,7 +129,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
         // otherwise we are returning a WeblogSharedTheme
         } else {
-            ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+            ThemeManager themeMgr = roller.getThemeManager();
             SharedTheme staticTheme =
                     (SharedTheme) this.themes.get(weblog.getEditorTheme());
             if(staticTheme != null) {
@@ -163,12 +164,12 @@ public class ThemeManagerImpl implements ThemeManager {
      * @see org.apache.roller.weblogger.model.ThemeManager#importTheme(website, theme)
      */
     public void importTheme(Weblog website, SharedTheme theme)
-            throws RollerException {
+            throws WebloggerException {
         
         log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
         
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = roller.getUserManager();
             
             Set importedActionTemplates = new HashSet();
             ThemeTemplate themeTemplate = null;
@@ -240,7 +241,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
             
             // now lets import all the theme resources
-            FileManager fileMgr = RollerFactory.getRoller().getFileManager();
+            FileManager fileMgr = roller.getFileManager();
             
             List resources = theme.getResources();
             Iterator iterat = resources.iterator();
@@ -264,7 +265,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
         } catch (Exception e) {
             log.error("ERROR importing theme", e);
-            throw new RollerException( e );
+            throw new WebloggerException( e );
         }
     }
     

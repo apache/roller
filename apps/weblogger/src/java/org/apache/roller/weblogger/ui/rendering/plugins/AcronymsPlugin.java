@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
@@ -72,7 +72,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(Weblog website) throws RollerException {}
+    public void init(Weblog website) throws WebloggerException {}
     
     
     public String render(WeblogEntry entry, String str) {
@@ -123,7 +123,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
      * Look for any _acronyms Page and parse it into Properties.
      * @param website
      * @return
-     * @throws RollerException
+     * @throws WebloggerException
      */
     private Properties loadAcronyms(Weblog website) {
         Properties acronyms = new Properties();
@@ -134,7 +134,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
             if (acronymsPage != null) {
                 acronyms = parseAcronymPage(acronymsPage, acronyms);
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             // not much we can do about it
             mLogger.warn(e);
         }

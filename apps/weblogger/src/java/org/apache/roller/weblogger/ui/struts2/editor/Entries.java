@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -106,7 +106,7 @@ public class Entries extends UIAction {
                 setFirstEntry((WeblogEntry)entries.get(0));
                 setLastEntry((WeblogEntry)entries.get(entries.size()-1));
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up entries", ex);
             // TODO: i18n
             addError("Error looking up entries");

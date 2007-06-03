@@ -24,7 +24,7 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
@@ -42,24 +42,24 @@ public interface PropertiesManager {
     /** 
      * Save a single property 
      */
-    public void saveProperty(RuntimeConfigProperty property) throws RollerException;
+    public void saveProperty(RuntimeConfigProperty property) throws WebloggerException;
     
     
     /** 
      * Save a list of properties 
      */
-    public void saveProperties(Map properties) throws RollerException;
+    public void saveProperties(Map properties) throws WebloggerException;
     
     
     /** 
      * Retrieve a single property by name 
      */
-    public RuntimeConfigProperty getProperty(String name) throws RollerException;
+    public RuntimeConfigProperty getProperty(String name) throws WebloggerException;
     
     
     /** 
      * Retrieve a list of all properties 
      */
-    public Map getProperties() throws RollerException;
+    public Map getProperties() throws WebloggerException;
     
 }

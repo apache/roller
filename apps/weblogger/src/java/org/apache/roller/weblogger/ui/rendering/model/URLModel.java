@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -63,12 +63,12 @@ public class URLModel implements Model {
         return "url";
     }
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(weblogRequest == null) {
-            throw new RollerException("Expected 'weblogRequest' init param!");
+            throw new WebloggerException("Expected 'weblogRequest' init param!");
         }
         
         this.weblog = weblogRequest.getWeblog();
@@ -275,7 +275,7 @@ public class URLModel implements Model {
             if(entry != null) {
                 return URLUtilities.getEntryEditURL(weblog.getHandle(), entry.getId(), false);
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up entry by anchor - "+anchor, ex);
         }
         return null;

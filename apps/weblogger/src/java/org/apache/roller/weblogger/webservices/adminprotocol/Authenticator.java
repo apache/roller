@@ -16,7 +16,7 @@
 package org.apache.roller.weblogger.webservices.adminprotocol;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -99,7 +99,7 @@ abstract class Authenticator {
             }
             
             return ud;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get user: " + name, re);
         }
     }

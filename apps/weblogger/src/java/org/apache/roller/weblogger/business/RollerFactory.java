@@ -24,6 +24,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -32,25 +34,16 @@ import org.apache.roller.weblogger.config.RollerConfig;
  */
 public abstract class RollerFactory implements Module {
     private static Log log = LogFactory.getLog(RollerFactory.class);
-    private static Injector injector = null;
-       
     
-    private static final String DEFAULT_IMPL =
-        "org.apache.roller.business.jpa.JPARollerImpl";
-        //"org.apache.roller.business.hibernate.HibernateRollerImpl";
-        //"org.apache.roller.business.datamapper.jpa.JPARollerImpl";
-    
+    private static Injector injector = null;   
     private static Roller rollerInstance = null;
-    
-    
-   
+       
     // non-instantiable
-    private RollerFactory() {
-        // hello all you beautiful people
-    }
+    private RollerFactory() {} // hello all you beautiful people
     
-
+    
     static { 
+
         String moduleClassname = RollerConfig.getProperty("guice.backend.module");
         try {
             Class moduleClass = Class.forName(moduleClassname);
@@ -60,6 +53,29 @@ public abstract class RollerFactory implements Module {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
         }
+        
+        try {
+            // Initialize common targets from the configuration
+            PingConfig.initializeCommonTargets();
+            
+            // Initialize ping variants
+            PingConfig.initializePingVariants();
+            
+            // Remove custom ping targets if they have been disallowed
+            if (PingConfig.getDisallowCustomTargets()) {
+                log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
+                RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
+            }
+            
+            // Remove all autoping configurations if ping usage has been disabled.
+            if (PingConfig.getDisablePingUsage()) {
+                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+                RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
+            }
+        } catch (WebloggerException e) {
+            log.error("ERROR configing ping managers", e);
+        }
+            
     }
     
     
@@ -67,7 +83,14 @@ public abstract class RollerFactory implements Module {
      * Static accessor for the instance of Roller
      */
     public static Roller getRoller() {
-        return injector.getInstance(Roller.class);
+        return getInjector().getInstance(Roller.class);
     }    
+
+    /**
+     * TODO: elimiate the need for RollerFactory.getInjector()
+     */
+    public static Injector getInjector() {
+        return injector;
+    }
 }
 

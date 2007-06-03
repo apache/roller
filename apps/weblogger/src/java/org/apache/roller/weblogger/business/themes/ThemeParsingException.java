@@ -18,13 +18,13 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * Thrown when there is a problem parsing a given theme xml descriptor.
  */
-public class ThemeParsingException extends RollerException {
+public class ThemeParsingException extends WebloggerException {
     
     
     public ThemeParsingException(String s,Throwable t) {

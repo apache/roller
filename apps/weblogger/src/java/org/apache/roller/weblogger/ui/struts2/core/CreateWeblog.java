@@ -23,7 +23,7 @@ import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -74,7 +74,7 @@ public class CreateWeblog extends UIAction {
                     return "menu";
                 }
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("error checking for existing weblogs count", ex);
         }
         
@@ -102,7 +102,7 @@ public class CreateWeblog extends UIAction {
                     return "menu";
                 }
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("error checking for existing weblogs count", ex);
         }
         
@@ -137,7 +137,7 @@ public class CreateWeblog extends UIAction {
                 
                 return SUCCESS;
                 
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 log.error("ERROR adding weblog", e);
                 // TODO: error handling
                 addError(e.getMessage());
@@ -172,7 +172,7 @@ public class CreateWeblog extends UIAction {
                 // reset handle
                 getBean().setHandle(null);
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("error checking for weblog", ex);
             // TODO: i18n
             addError("unexpected error");

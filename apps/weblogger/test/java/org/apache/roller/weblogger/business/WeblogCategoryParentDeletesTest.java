@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.business;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -99,7 +99,7 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
             UserManager umgr = RollerFactory.getRoller().getUserManager();
             umgr.removeWebsite(TestUtils.getManagedWebsite(testWeblog));
             TestUtils.endSession(true);
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             ex = e;
         }
         assertNull(ex);

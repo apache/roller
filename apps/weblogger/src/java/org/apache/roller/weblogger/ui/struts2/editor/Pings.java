@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -84,7 +84,7 @@ public class Pings extends UIAction {
         // load selected ping target, if possible
         if(getPingTargetId() != null) try {
             setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up ping target - "+getPingTargetId(), ex);
         }
         
@@ -97,7 +97,7 @@ public class Pings extends UIAction {
                 setCustomPingTargets(pingTargetMgr.getCustomPingTargets(getActionWeblog()));
             }
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error loading ping target lists for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error loading ping targets");
@@ -217,7 +217,7 @@ public class Pings extends UIAction {
         List autopings = Collections.EMPTY_LIST;
         try {
             autopings = autoPingMgr.getAutoPingsByWebsite(getActionWeblog());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up auto pings for weblog - "+getActionWeblog().getHandle(), ex);
         }
         

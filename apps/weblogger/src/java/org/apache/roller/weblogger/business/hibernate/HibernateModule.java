@@ -21,12 +21,14 @@ package org.apache.roller.weblogger.business.hibernate;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
 import org.apache.roller.weblogger.business.PluginManager;
 import org.apache.roller.weblogger.business.PluginManagerImpl;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.RollerDatabaseProvider;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -49,7 +51,11 @@ public class HibernateModule implements Module {
 
     public void configure(Binder binder) {
         
-        binder.bind(Roller.class).to(HibernateRollerImpl.class);
+        binder.bind(Roller.class).to(              HibernateRollerImpl.class);
+        
+        binder.bind(DatabaseProvider.class).to(    RollerDatabaseProvider.class);
+        
+        //binder.bind(HibernatePersistenceStrategy.class).to(RollerHibernateAutoPingManagerImpl.class);
         
         binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);   
         binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);  

@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -73,12 +73,12 @@ public class SiteModel implements Model {
         return "site";
     }
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         this.weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(this.weblogRequest == null) {
-            throw new RollerException("expected weblogRequest from init data");
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         if (weblogRequest instanceof WeblogPageRequest) {
@@ -562,7 +562,7 @@ public class SiteModel implements Model {
             Roller roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             count = mgr.getCommentCount();            
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting comment count for site ", e);
         }
         return count;
@@ -575,7 +575,7 @@ public class SiteModel implements Model {
             Roller roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             count = mgr.getEntryCount();            
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting entry count for site", e);
         }
         return count;
@@ -588,7 +588,7 @@ public class SiteModel implements Model {
             Roller roller = RollerFactory.getRoller();
             UserManager mgr = roller.getUserManager();
             count = mgr.getWeblogCount();            
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting weblog count for site", e);
         }
         return count;
@@ -601,7 +601,7 @@ public class SiteModel implements Model {
             Roller roller = RollerFactory.getRoller();
             UserManager mgr = roller.getUserManager();
             count = mgr.getUserCount();            
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting user count for site", e);
         }
         return count;

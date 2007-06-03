@@ -31,7 +31,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -99,7 +99,7 @@ public class ContextLoader {
             HttpServletRequest  request,
             HttpServletResponse response,
             PageContext pageContext,
-            WeblogPageRequest pageRequest) throws RollerException {
+            WeblogPageRequest pageRequest) throws WebloggerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
@@ -169,7 +169,7 @@ public class ContextLoader {
             ctx.put("pages", pageModel.getPages());
             
         } catch (Exception e) {
-            throw new RollerException("ERROR creating Page Model",e);
+            throw new WebloggerException("ERROR creating Page Model",e);
         }
         
         // Add page helper to context
@@ -206,7 +206,7 @@ public class ContextLoader {
             Map ctx,
             Weblog weblog,
             Locale locale,
-            HttpServletRequest request) throws RollerException {
+            HttpServletRequest request) throws WebloggerException {
         
         // weblog cannot be null
         if(weblog == null)
@@ -270,7 +270,7 @@ public class ContextLoader {
     private static void loadCommentValues(
             
             Map ctx,
-            HttpServletRequest request,WeblogEntry entry) throws RollerException {
+            HttpServletRequest request,WeblogEntry entry) throws WebloggerException {
         
         mLogger.debug("Loading comment values");
         
@@ -317,7 +317,7 @@ public class ContextLoader {
             HttpServletRequest request,
             Weblog website,
             WeblogCategory category)
-            throws RollerException {
+            throws WebloggerException {
         
         mLogger.debug("Loading rss values");
         
@@ -358,7 +358,7 @@ public class ContextLoader {
             Map ctx,
             HttpServletRequest request,
             Weblog website,
-            ThemeTemplate page) throws RollerException {
+            ThemeTemplate page) throws WebloggerException {
         
         mLogger.debug("Loading utility objects");
         
@@ -396,7 +396,7 @@ public class ContextLoader {
             Map ctx,
             HttpServletRequest request,
             Weblog   website,
-            String locale) throws RollerException {
+            String locale) throws WebloggerException {
         
         mLogger.debug("Loading path values");
         
@@ -416,7 +416,7 @@ public class ContextLoader {
             URL absUrl = new URL(RollerRuntimeConfig.getAbsoluteContextURL());
             ctx.put("host", absUrl.getHost());
         } catch (MalformedURLException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     

@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.jdom.Document;
@@ -97,7 +97,7 @@ public class Trackback {
      * Sends trackback from entry to remote URL.
      * See Trackback spec for details: http://www.sixapart.com/pronet/docs/trackback_spec
      */
-    public RollerMessages send() throws RollerException {
+    public RollerMessages send() throws WebloggerException {
         
         RollerMessages messages = new RollerMessages();
         

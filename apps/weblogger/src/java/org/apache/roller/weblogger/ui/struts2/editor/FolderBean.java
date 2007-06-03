@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
 
@@ -57,7 +57,7 @@ public class FolderBean {
     }
     
     
-    public void copyTo(WeblogBookmarkFolder dataHolder) throws RollerException {
+    public void copyTo(WeblogBookmarkFolder dataHolder) throws WebloggerException {
         
         if(!dataHolder.getName().equals(this.name)) {
             dataHolder.updateName(this.name);

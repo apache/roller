@@ -22,12 +22,12 @@ import java.io.StringBufferInputStream;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.hibernate.cfg.Environment;
 import org.xml.sax.EntityResolver;
@@ -43,12 +43,9 @@ import org.xml.sax.InputSource;
  */
 @com.google.inject.Singleton
 public class HibernatePersistenceStrategy {
-    
-    static final long serialVersionUID = 2561090040518169098L;
+    private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
     protected static SessionFactory sessionFactory = null;
-    
-    private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
     /** No-op so XML parser doesn't hit the network looking for Hibernate DTDs */
     private EntityResolver noOpEntityResolver = new EntityResolver() {
@@ -63,15 +60,16 @@ public class HibernatePersistenceStrategy {
      * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
      * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
      */
-    public HibernatePersistenceStrategy() throws RollerException {
+    protected HibernatePersistenceStrategy() throws WebloggerException {        
         String dialect =  
             RollerConfig.getProperty("hibernate.dialect");
         String connectionProvider = 
-            RollerConfig.getProperty("hibernate.connectionProvider");
-        String configuration = 
-            RollerConfig.getProperty("hibernate.configuration");
-        
-        // Read Hibernate config file specified by Roller config
+            RollerConfig.getProperty("hibernate.connectionProvider");        
+        String configuration = "hibernate.cfg.xml";
+        init(dialect, connectionProvider, configuration);
+    }   
+    
+    protected void init(String dialect, String connectionProvider, String configuration) {
         Configuration config = new Configuration();
         config.configure(configuration);
 
@@ -104,7 +102,7 @@ public class HibernatePersistenceStrategy {
     }
     
     
-    public void flush() throws RollerException {
+    public void flush() throws WebloggerException {
         
         Session session = getSession();
         try {
@@ -121,7 +119,7 @@ public class HibernatePersistenceStrategy {
             release();
             
             // wrap and rethrow so caller knows something bad happened
-            throw new RollerException(t);
+            throw new WebloggerException(t);
         }
     }
     
@@ -172,10 +170,10 @@ public class HibernatePersistenceStrategy {
     /**
      * Retrieve object.  We return null if the object is not found.
      */
-    public Object load(String id, Class clazz) throws RollerException {
+    public Object load(String id, Class clazz) throws WebloggerException {
         
         if(id == null || clazz == null) {
-            throw new RollerException("Cannot load objects when value is null");
+            throw new WebloggerException("Cannot load objects when value is null");
         }
         
         return (Object) getSession().get(clazz, id);

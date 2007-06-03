@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -116,7 +116,7 @@ public class PingConfig {
                 logger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             logger.error("ERROR configing ping managers", e);
         }
     }
@@ -204,7 +204,7 @@ public class PingConfig {
      *
      * @see org.apache.roller.weblogger.ui.core.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    public static void initializeCommonTargets() throws RollerException {
+    public static void initializeCommonTargets() throws WebloggerException {
         String configuredVal = RollerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
             if (logger.isDebugEnabled()) {

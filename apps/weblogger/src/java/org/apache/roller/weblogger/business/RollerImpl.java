@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -43,39 +43,56 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 public abstract class RollerImpl implements Roller {
     private static Log mLogger = LogFactory.getLog(RollerImpl.class);
     
-    private AutoPingManager   autoPingManager = null;
-    private BookmarkManager   bookmarkManager = null;
-    private FileManager       fileManager = null;
-    private IndexManager      indexManager = null;
-    private PingQueueManager  pingQueueManager = null;
-    private PingTargetManager pingTargetManager = null;
-    private PluginManager     pluginManager = null;
-    private PropertiesManager propertiesManager = null;
-    private RefererManager    refererManager = null;
-    private ThemeManager      themeManager = null;
-    private ThreadManager     threadManager = null;
-    private UserManager       userManager = null;
-    private WeblogManager     weblogManager = null;
+    private AutoPingManager      autoPingManager = null;
+    private BookmarkManager      bookmarkManager = null;
+    private FileManager          fileManager = null;
+    private IndexManager         indexManager = null;
+    private PingQueueManager     pingQueueManager = null;
+    private PingTargetManager    pingTargetManager = null;
+    private PluginManager        pluginManager = null;
+    private PropertiesManager    propertiesManager = null;
+    private RefererManager       refererManager = null;
+    private ReferrerQueueManager refererQueueManager = null;
+    private ThemeManager         themeManager = null;
+    private ThreadManager        threadManager = null;
+    private UserManager          userManager = null;
+    private WeblogManager        weblogManager = null;
             
     private String version = null;
     private String buildTime = null;
     private String buildUser = null;
     
     public RollerImpl(
-        AutoPingManager   autoPingManager,
-        BookmarkManager   bookmarkManager,
-        FileManager       fileManager,
-        IndexManager      indexManager,
-        PingQueueManager  pingQueueManager,
-        PingTargetManager pingTargetManager,
-        PluginManager     pluginManager,
-        PropertiesManager propertiesManager,
-        RefererManager    refererManager,
-        ThemeManager      themeManager,
-        ThreadManager     threadManager,
-        UserManager       userManager,
-        WeblogManager     weblogManager) throws RollerException {
+        AutoPingManager      autoPingManager,
+        BookmarkManager      bookmarkManager,
+        FileManager          fileManager,
+        IndexManager         indexManager,
+        PingQueueManager     pingQueueManager,
+        PingTargetManager    pingTargetManager,
+        PluginManager        pluginManager,
+        PropertiesManager    propertiesManager,
+        RefererManager       refererManager,
+        ReferrerQueueManager refererQueueManager, 
+        ThemeManager         themeManager,
+        ThreadManager        threadManager,
+        UserManager          userManager,
+        WeblogManager        weblogManager) throws WebloggerException { 
                 
+        this.autoPingManager     = autoPingManager;
+        this.bookmarkManager     = bookmarkManager;
+        this.fileManager         = fileManager;
+        this.indexManager        = indexManager;
+        this.pingQueueManager    = pingQueueManager;
+        this.pingTargetManager   = pingTargetManager;
+        this.pluginManager       = pluginManager;
+        this.propertiesManager   = propertiesManager;
+        this.refererManager      = refererManager;
+        this.refererQueueManager = refererQueueManager;
+        this.themeManager        = themeManager;
+        this.threadManager       = threadManager;
+        this.userManager         = userManager;
+        this.weblogManager       = weblogManager;
+            
         Properties props = new Properties();
         try {
             props.load(getClass().getResourceAsStream("/version.properties"));
@@ -125,7 +142,7 @@ public abstract class RollerImpl implements Roller {
      * @see org.apache.roller.weblogger.business.referrers.ReferrerQueueManager
      */
     public ReferrerQueueManager getReferrerQueueManager() {
-        return ReferrerQueueManagerImpl.getInstance();
+        return refererQueueManager;
     }
     
     
