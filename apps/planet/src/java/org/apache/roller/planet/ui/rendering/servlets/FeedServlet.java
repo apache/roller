@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -77,13 +77,13 @@ public class FeedServlet extends HttpServlet {
             
             planet = feedRequest.getPlanet();
             if(planet == null) {
-                throw new RollerException("unable to lookup planet: "+
+                throw new PlanetException("unable to lookup planet: "+
                         feedRequest.getPlanetHandle());
             }
             
             group = feedRequest.getGroup();
             if(group == null) {
-                throw new RollerException("unable to lookup group: "+
+                throw new PlanetException("unable to lookup group: "+
                         feedRequest.getGroupHandle());
             }
 
@@ -121,7 +121,7 @@ public class FeedServlet extends HttpServlet {
             String feedModels = PlanetConfig.getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);
 
-        } catch (RollerException ex) {
+        } catch (PlanetException ex) {
             log.error("ERROR loading model for page", ex);
 
             if(!response.isCommitted()) response.reset();

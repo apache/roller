@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.rendering.model;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
@@ -55,7 +55,7 @@ public class SiteURLModel implements Model {
         return "url";
     }
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws PlanetException {
         
         // grab a reference to the url strategy
         this.urlStrategy = PlanetFactory.getPlanet().getURLStrategy();

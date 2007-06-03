@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.admin.struts2;
 import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -67,7 +67,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
                 group = new PlanetGroupData();
                 group.setPlanet(planet);
             } else {
-                throw new RollerException("could not determine planet "+getPlanetid());
+                throw new PlanetException("could not determine planet "+getPlanetid());
             }
         }
     }
@@ -91,7 +91,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
             
             // call setGroupid() just in case this was a new group with no id yet
             setGroupid(this.group.getId());
-        } catch (RollerException ex) {
+        } catch (PlanetException ex) {
             log.error("Error saving planet group", ex);
             setError("PlanetGroupForm.error.saveFailed");
             return INPUT;
@@ -126,7 +126,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
             setError("PlanetGroupForm.error.subscriptionNull");
             return INPUT;
             
-        } catch (RollerException ex) {
+        } catch (PlanetException ex) {
             log.error("Unable to lookup planet group", ex);
             setError("PlanetGroupForm.error.subscriptionDeleteFailed", getSubid());
             return INPUT;

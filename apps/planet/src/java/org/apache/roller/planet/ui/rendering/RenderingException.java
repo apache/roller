@@ -18,13 +18,13 @@
 
 package org.apache.roller.planet.ui.rendering;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 
 
 /**
  * A generic Roller rendering exception.
  */
-public class RenderingException extends RollerException {
+public class RenderingException extends PlanetException {
     
     public RenderingException(String s) {
         super(s);

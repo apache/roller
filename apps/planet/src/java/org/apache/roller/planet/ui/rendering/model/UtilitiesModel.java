@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.planet.util.RegexUtil;
 import org.apache.roller.planet.util.Utilities;
@@ -98,7 +98,7 @@ public class UtilitiesModel implements Model {
     
     
     /** Init page model based on request */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws PlanetException {
     }
     
         

@@ -18,7 +18,7 @@
 
 package org.apache.roller.planet.business;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PropertiesManager;
 
 
@@ -66,7 +66,7 @@ public interface Planet {
     /**
      * Flush object states.
      */
-    public void flush() throws RollerException;
+    public void flush() throws PlanetException;
     
     
     /**
