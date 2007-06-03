@@ -81,7 +81,7 @@ public class PlanetEntryData implements Serializable, Comparable {
     public PlanetEntryData(
             WeblogEntryData rollerEntry,
             PlanetSubscriptionData sub,
-            Map pagePlugins) throws RollerException {
+            Map pagePlugins) throws PlanetException {
         setSubscription(sub);
         initFromRollerEntry(rollerEntry, pagePlugins);
     }
@@ -150,7 +150,7 @@ public class PlanetEntryData implements Serializable, Comparable {
      */
     /*
     private void initFromRollerEntry(WeblogEntryData rollerEntry, Map pagePlugins)
-    throws RollerException {
+    throws PlanetException {
         Roller roller = RollerFactory.getRoller();
         PluginManager ppmgr = roller.getPagePluginManager();
         

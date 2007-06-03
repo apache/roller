@@ -18,14 +18,14 @@
 
 package org.apache.roller.planet.ui.rendering.util;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 
 
 /**
  * An InvalidRequestException is thrown by the ParsedRequest class or any of
  * its subclasses when the request being parsed is invalid in any way.
  */
-public class InvalidRequestException extends RollerException {
+public class InvalidRequestException extends PlanetException {
     
     public InvalidRequestException(String msg) {
         super(msg);

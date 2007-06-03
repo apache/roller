@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.planet.PlanetException;
+import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
@@ -63,7 +63,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Retrieve a single property by name.
      */
-    public PropertyData getProperty(String name) throws RollerException {
+    public PropertyData getProperty(String name) throws PlanetException {
         return (PropertyData)strategy.load(PropertyData.class, name);
     }
     
@@ -75,7 +75,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
      * uses the property name as the key and the PropertyData object
      * as the value.
      */
-    public Map getProperties() throws RollerException {
+    public Map getProperties() throws PlanetException {
         
         HashMap props = new HashMap();
         List list = strategy.getNamedQuery("PropertyData.getAll").getResultList();
@@ -100,7 +100,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Save a single property.
      */
-    public void saveProperty(PropertyData property) throws RollerException {
+    public void saveProperty(PropertyData property) throws PlanetException {
         
         strategy.store(property);
     }
@@ -109,7 +109,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Save all properties.
      */
-    public void saveProperties(Map properties) throws RollerException {
+    public void saveProperties(Map properties) throws PlanetException {
         
         // just go through the list and saveProperties each property
         Iterator props = properties.values().iterator();

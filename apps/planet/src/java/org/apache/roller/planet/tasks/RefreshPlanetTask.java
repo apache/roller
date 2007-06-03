@@ -20,7 +20,7 @@ package org.apache.roller.planet.tasks;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
@@ -48,7 +48,7 @@ public class RefreshPlanetTask extends PlanetTask {
             planet.flush();
             planet.release();
             
-        } catch (RollerException e) {
+        } catch (PlanetException e) {
             log.error("ERROR refreshing planet", e);
         }
     }

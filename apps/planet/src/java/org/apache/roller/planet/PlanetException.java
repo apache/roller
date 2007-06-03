@@ -16,26 +16,50 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.ui.rendering.model;
+package org.apache.roller.planet;
 
-import java.util.Map;
-import org.apache.roller.planet.PlanetException;
+import org.apache.roller.RollerException;
 
 
 /**
- * Represents a set of functionality to be used at rendering.
+ * A base exception class for Roller Planet.
  */
-public interface Model {
+public class PlanetException extends RollerException {
+    
+    
+    public PlanetException() {
+        super();
+    }
+    
     
     /**
-     * Name to be used when referring to this model.
+     * Construct PlanetException with message string.
+     *
+     * @param s Error message string.
      */
-    public String getModelName();
+    public PlanetException(String s) {
+        super(s);
+    }
     
     
     /**
-     * Initialize.
+     * Construct PlanetException, wrapping existing throwable.
+     *
+     * @param s Error message
+     * @param t Existing connection to wrap.
      */
-    public void init(Map params) throws PlanetException;
+    public PlanetException(String s, Throwable t) {
+        super(s, t);
+    }
+    
+    
+    /**
+     * Construct PlanetException, wrapping existing throwable.
+     *
+     * @param t Existing exception to be wrapped.
+     */
+    public PlanetException(Throwable t) {
+        super(t);
+    }
     
 }

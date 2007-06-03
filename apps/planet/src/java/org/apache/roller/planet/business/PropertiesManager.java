@@ -19,7 +19,7 @@
 package org.apache.roller.planet.business;
 
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.pojos.PropertyData;
 
 
@@ -31,24 +31,24 @@ public interface PropertiesManager extends Manager {
     /** 
      * Save a single property 
      */
-    public void saveProperty(PropertyData property) throws RollerException;
+    public void saveProperty(PropertyData property) throws PlanetException;
     
     
     /** 
      * Save a list of properties 
      */
-    public void saveProperties(Map properties) throws RollerException;
+    public void saveProperties(Map properties) throws PlanetException;
     
     
     /** 
      * Retrieve a single property by name 
      */
-    public PropertyData getProperty(String name) throws RollerException;
+    public PropertyData getProperty(String name) throws PlanetException;
     
     
     /** 
      * Retrieve a list of all properties 
      */
-    public Map getProperties() throws RollerException;
+    public Map getProperties() throws PlanetException;
     
 }

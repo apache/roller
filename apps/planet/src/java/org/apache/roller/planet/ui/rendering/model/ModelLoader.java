@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.rendering.model;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.util.Utilities;
 
 
@@ -41,7 +41,7 @@ public class ModelLoader {
      */
     public static void loadModels(String modelsString, Map model, 
                                    Map initData, boolean fail) 
-            throws RollerException {
+            throws PlanetException {
         
         String[] models = Utilities.stringToStringArray(modelsString, ",");
         for(int i=0; i < models.length; i++) {
@@ -50,7 +50,7 @@ public class ModelLoader {
                 Model pageModel = (Model) modelClass.newInstance();
                 pageModel.init(initData);
                 model.put(pageModel.getModelName(), pageModel);
-            } catch (RollerException re) {
+            } catch (PlanetException re) {
                 if(fail) {
                     throw re;
                 } else {
@@ -58,19 +58,19 @@ public class ModelLoader {
                 }
             } catch (ClassNotFoundException cnfe) {
                 if(fail) {
-                    throw new RollerException("Error finding model: " + models[i], cnfe);
+                    throw new PlanetException("Error finding model: " + models[i], cnfe);
                 } else {
                     log.warn("Error finding model: " + models[i]);
                 }
             } catch (InstantiationException ie) {
                 if(fail) {
-                    throw new RollerException("Error insantiating model: " + models[i], ie);
+                    throw new PlanetException("Error insantiating model: " + models[i], ie);
                 } else {
                     log.warn("Error insantiating model: " + models[i]);
                 }
             } catch (IllegalAccessException iae) {
                 if(fail) {
-                    throw new RollerException("Error accessing model: " + models[i], iae);
+                    throw new PlanetException("Error accessing model: " + models[i], iae);
                 } else {
                     log.warn("Error accessing model: " + models[i]);
                 }

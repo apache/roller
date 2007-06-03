@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
@@ -38,13 +38,13 @@ public class StaticPlanetModel {
     PlanetManager planetManager = null;
     
     
-    public StaticPlanetModel() throws RollerException {
+    public StaticPlanetModel() throws PlanetException {
         Planet planet = PlanetFactory.getPlanet();
         planetManager = planet.getPlanetManager();
     }
         
     // TODO: replace this with something equivalent
-//    public PlanetConfigData getConfiguration() throws RollerException {
+//    public PlanetConfigData getConfiguration() throws PlanetException {
 //        return planetManager.getConfiguration();
 //    }
        
@@ -69,28 +69,28 @@ public class StaticPlanetModel {
     }
        
     // removed now that groups must be part of a planet, this method no longer makes sense
-//    public List getGroups() throws RollerException {
+//    public List getGroups() throws PlanetException {
 //        return planetManager.getGroups();
 //    }
     
     // removed now that groups must be part of a planet, this method no longer makes sense
-//    public PlanetGroupData getGroup(String handle) throws RollerException {
+//    public PlanetGroupData getGroup(String handle) throws PlanetException {
 //        return planetManager.getGroup(handle);
 //    }
     
     
     public List getAggregation(
-            PlanetGroupData group, int maxEntries) throws RollerException {
+            PlanetGroupData group, int maxEntries) throws PlanetException {
         return planetManager.getEntries(group, 0, maxEntries);
     }
     
     
-    public Iterator getAllSubscriptions() throws RollerException {
+    public Iterator getAllSubscriptions() throws PlanetException {
         return planetManager.getSubscriptions().iterator();
     }
     
     
-    public int getSubscriptionCount() throws RollerException {
+    public int getSubscriptionCount() throws PlanetException {
         return planetManager.getSubscriptionCount();
     } 
 }

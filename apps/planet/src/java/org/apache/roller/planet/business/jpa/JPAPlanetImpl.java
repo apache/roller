@@ -23,11 +23,11 @@ import java.util.Properties;
 import org.apache.roller.planet.business.DatabaseProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetConfig;
@@ -58,14 +58,14 @@ public class JPAPlanetImpl implements Planet {
     protected FeedFetcher feedFetcher = null;
     
         
-    protected JPAPlanetImpl() throws RollerException {
+    protected JPAPlanetImpl() throws PlanetException {
         
         strategy = getStrategy();
         
         try {
             String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
             if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
-                throw new RollerException("No FeedFetcher configured!!!");
+                throw new PlanetException("No FeedFetcher configured!!!");
             }
             
             Class fetchClass = Class.forName(feedFetchClass);
@@ -75,12 +75,12 @@ public class JPAPlanetImpl implements Planet {
             setFeedFetcher(feedFetcher); 
             
         } catch (Exception e) {
-            throw new RollerException("Error initializing feed fetcher", e);
+            throw new PlanetException("Error initializing feed fetcher", e);
         }
         
     }
     
-    protected JPAPersistenceStrategy getStrategy() throws RollerException {
+    protected JPAPersistenceStrategy getStrategy() throws PlanetException {
         
         // Add OpenJPA, Toplink and Hibernate properties to Roller config.
         Properties props = new Properties();
@@ -112,7 +112,7 @@ public class JPAPlanetImpl implements Planet {
     /**
      * Instantiates and returns an instance of JPAPlanetImpl.
      */
-    public static Planet instantiate() throws RollerException {
+    public static Planet instantiate() throws PlanetException {
         if (me == null) {
             log.debug("Instantiating JPAPlanetImpl");
             me = new JPAPlanetImpl();
@@ -130,7 +130,7 @@ public class JPAPlanetImpl implements Planet {
         log.info("Using URLStrategy: " + urlStrategy.getClass().getName());
     }
     
-        public void flush() throws RollerException {
+        public void flush() throws PlanetException {
         this.strategy.flush();
     }
 

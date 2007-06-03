@@ -23,7 +23,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
@@ -130,7 +130,7 @@ public class PlanetContext extends ContextLoaderListener
         PlanetFactory.getPlanet().setURLStrategy(urlStrategy);
     }        
     
-    private void upgradeDatabaseIfNeeded() throws RollerException {
+    private void upgradeDatabaseIfNeeded() throws PlanetException {
         
 //        try {
 //            Connection con = // get connection somehow

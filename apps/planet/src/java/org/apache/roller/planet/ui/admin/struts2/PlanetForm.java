@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.admin.struts2;
 import com.opensymphony.xwork2.Preparable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -88,7 +88,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
                 
                 // need to set planetid attribute
                 setPlanetid(this.planet.getId());
-            } catch (RollerException ex) {
+            } catch (PlanetException ex) {
                 log.error("Error saving planet ", ex);
                 setError("PlanetForm.error.saveFailed");
                 return INPUT;
@@ -121,7 +121,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
                 
                 setSuccess("PlanetForm.message.groupDeleteSucceeded", group.getHandle());
                 return INPUT;
-            } catch (RollerException ex) {
+            } catch (PlanetException ex) {
                 log.error("Error deleting planet group", ex);
                 setError("PlanetForm.error.groupDeleteFailed", getGroupid());
                 return INPUT;

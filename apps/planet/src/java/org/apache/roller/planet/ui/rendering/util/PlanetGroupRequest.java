@@ -21,7 +21,7 @@ package org.apache.roller.planet.ui.rendering.util;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -95,7 +95,7 @@ public class PlanetGroupRequest extends PlanetRequest {
             try {
                 PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
                 group = mgr.getGroup(getPlanet(), groupHandle);
-            } catch (RollerException ex) {
+            } catch (PlanetException ex) {
                 log.error("Error looking up group "+groupHandle, ex);
             }
         }
