@@ -21,10 +21,10 @@ package org.apache.roller.weblogger.ui.core.tags.calendar;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.ui.core.tags.HybridTag;
 import org.apache.roller.weblogger.util.DateUtil;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,13 +35,14 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
 
 
 /**
  * Calendar tag.
  * @jsp.tag name="Calendar"
  */
-public class CalendarTag extends HybridTag {
+public class CalendarTag extends TagSupport {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(CalendarTag.class);
     
@@ -329,6 +330,40 @@ public class CalendarTag extends HybridTag {
             mDayNames[dnum] = dayFormatter.format(dayNameCal.getTime());
             dayNameCal.add(Calendar.DATE, 1);
         }
+    }
+    
+    
+    public String toString() {
+        String ret = null;
+        try {
+            StringWriter sw = new StringWriter();
+            doStartTag( new PrintWriter( sw, true ));
+            // See, design precludes contents
+            doEndTag( new PrintWriter( sw, true ));
+            ret = sw.toString();
+        } catch (Exception e) {
+            ret = "Exception in tag";
+            mLogger.error(ret,e);
+        }
+        return ret;
+    }
+    
+    public String emit() {
+        return toString();
+    }
+    
+    public int doStartTag() throws JspException {
+        return doStartTag( new PrintWriter( pageContext.getOut(), true) );
+    }
+    
+    
+    public int doEndTag() throws JspException {
+        return doEndTag( new PrintWriter( pageContext.getOut(), true) );
+    }
+    
+    /** Default processing of the end tag returning EVAL_PAGE. */
+    public int doEndTag( PrintWriter pw ) throws JspException {
+        return EVAL_PAGE;
     }
     
 }
