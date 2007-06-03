@@ -30,16 +30,21 @@ import org.apache.roller.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.FileManager;
+import org.apache.roller.weblogger.business.PluginManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerImpl;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -73,7 +78,39 @@ public class JPARollerImpl extends RollerImpl {
      * Single constructor.
      * @throws org.apache.roller.RollerException on any error
      */
-    protected JPARollerImpl() throws RollerException {
+    @com.google.inject.Inject
+    public JPARollerImpl(
+        JPAPersistenceStrategy strategy,
+        AutoPingManager   autoPingManager,
+        BookmarkManager   bookmarkManager,
+        FileManager       fileManager,
+        IndexManager      indexManager,
+        PingQueueManager  pingQueueManager,
+        PingTargetManager pingTargetManager,
+        PluginManager     pluginManager,
+        PropertiesManager propertiesManager,
+        RefererManager    refererManager,
+        ThemeManager      themeManager,
+        ThreadManager     threadManager,
+        UserManager       userManager,
+        WeblogManager     weblogManager) throws RollerException {
+        
+        super(
+            autoPingManager,
+            bookmarkManager,
+            fileManager,
+            indexManager,
+            pingQueueManager,
+            pingTargetManager,
+            pluginManager,
+            propertiesManager,
+            refererManager,
+            themeManager,
+            threadManager,
+            userManager,
+            weblogManager); 
+        this.strategy = strategy;
+    
         
         // Add OpenJPA, Toplink and Hibernate properties to Roller config.
         Properties props = new Properties();
@@ -125,7 +162,7 @@ public class JPARollerImpl extends RollerImpl {
      * @throws org.apache.roller.RollerException on any error
      * @return the singleton
      */
-    public static Roller instantiate() throws RollerException {
+    /*public static Roller instantiate() throws RollerException {
         logger.debug("Instantiating JPARollerImpl");
         Roller roller = new JPARollerImpl();
 
@@ -134,7 +171,7 @@ public class JPARollerImpl extends RollerImpl {
         roller.getIndexManager();
         roller.getThemeManager();          
         return roller;
-    }
+    }*/
     
     public void flush() throws RollerException {
         this.strategy.flush();

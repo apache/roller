@@ -94,6 +94,6 @@
 <br />
 
 <s:submit key="userRegister.button.save" />
-<s:submit key="userSettings.button.cancel" action="register!cancel" />
+<input type="button" value="<s:text name="userSettings.button.cancel"/>" onclick="window.location='<s:url value="/"/>'" />
     
 </s:form>

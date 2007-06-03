@@ -71,7 +71,7 @@ public class WeblogRemove extends UIAction {
             CacheManager.invalidate(getActionWeblog());
             
             // TODO: i18n
-            addMessage("Successfully removed weblog ["+getActionWeblog().getName()+"]");
+            addMessage("Successfully removed weblog - "+getActionWeblog().getName());
             
             return SUCCESS;
             
@@ -82,6 +82,7 @@ public class WeblogRemove extends UIAction {
         }
         
         return "confirm";
+        
     }
     
 }

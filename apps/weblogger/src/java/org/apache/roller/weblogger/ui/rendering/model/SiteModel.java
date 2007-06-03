@@ -206,6 +206,7 @@ public class SiteModel implements Model {
         
         return new CommentsPager(
             pagerUrl,
+            null,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 

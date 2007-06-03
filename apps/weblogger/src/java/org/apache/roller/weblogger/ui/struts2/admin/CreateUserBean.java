@@ -30,6 +30,7 @@ public class CreateUserBean {
     private String id = null;
     private String userName = null;
     private String password = null;
+    private String screenName = null;
     private String fullName = null;
     private String emailAddress = null;
     private String locale = null;
@@ -63,7 +64,15 @@ public class CreateUserBean {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public String getScreenName() {
+        return screenName;
+    }
 
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+    
     public String getFullName() {
         return fullName;
     }
@@ -123,6 +132,7 @@ public class CreateUserBean {
     
     public void copyTo(User dataHolder, Locale locale) {
         
+        dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
@@ -137,6 +147,7 @@ public class CreateUserBean {
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();
         this.password = dataHolder.getPassword();
+        this.screenName = dataHolder.getScreenName();
         this.fullName = dataHolder.getFullName();
         this.emailAddress = dataHolder.getEmailAddress();
         this.locale = dataHolder.getLocale();

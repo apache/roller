@@ -48,6 +48,9 @@ public class SharedThemeFromDir extends SharedTheme {
     // the filesystem directory where we should read this theme from
     private String themeDir = null;
     
+    // the theme preview image
+    private ThemeResource previewImage = null;
+    
     // we keep templates in a Map for faster lookups by name
     // the Map contains ... (template name, ThemeTemplate)
     private Map templatesByName = new HashMap();
@@ -74,6 +77,14 @@ public class SharedThemeFromDir extends SharedTheme {
         loadThemeFromDisk();
     }
 
+    
+    /**
+     * Get a resource representing the preview image for this theme.
+     */
+    public ThemeResource getPreviewImage() {
+        return this.previewImage;
+    }
+    
     
     /**
      * Get the collection of all templates associated with this Theme.
@@ -200,6 +211,14 @@ public class SharedThemeFromDir extends SharedTheme {
         setCustomStylesheet(themeMetadata.getCustomStylesheet());
         setLastModified(new Date());
         setEnabled(true);
+        
+        // load resource representing preview image
+        File previewFile = new File(this.themeDir + File.separator + themeMetadata.getPreviewImage());
+        if(!previewFile.exists() || !previewFile.canRead()) {
+            log.warn("Couldn't read preview image file ["+themeMetadata.getPreviewImage()+"]");
+        } else {
+            this.previewImage = new SharedThemeResourceFromDir(themeMetadata.getPreviewImage(), previewFile);
+        }
         
         // go through static resources and add them to the theme
         String resourcePath = null;

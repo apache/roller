@@ -24,18 +24,18 @@
   <title>$utils.escapeXML($utils.removeHTML($model.weblog.name))</title>
   <link>$url.home</link>
   #if($model.tags)
-  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rssByTags($model.tags, $model.excerpts)" />
+    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rssByTags($model.tags, $model.excerpts)" />
   #elseif($model.categoryPath)
-  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryPath, $model.excerpts)" />
+    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryPath, $model.excerpts)" />
   #else
-  <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss" />
+    <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss" />
   #end
   <description>$utils.escapeXML($model.weblog.description)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
   <generator>Apache Roller (incubating) $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($entries = $model.getWeblogEntries())
+  #set($entries = $model.weblogEntriesPager.items)
   #showEntriesRSS20($entries)
 </channel>
 </rss>

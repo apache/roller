@@ -18,9 +18,9 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle">
-   <s:text name="customPingTargets.subtitle" >
-       <s:param value="actionWeblog.handle" />
-   </s:text>
+    <s:text name="customPingTargets.subtitle" >
+        <s:param value="actionWeblog.handle" />
+    </s:text>
 </p>  
 
 <s:if test="getProp('pings.disallowCustomTargets')">
@@ -84,12 +84,10 @@
 
 </table>
 
-<br />
-
-<div class="control">
+<div style="padding: 4px; font-weight: bold;">
     <s:url id="addPing" action="customPingTargetAdd">
         <s:param name="weblog" value="actionWeblog.handle" />
     </s:url>
-    <s:a href="%{addPing}">Add Ping Target</s:a>
+    <img src='<s:url value="/images/add.png"/>' border="0"alt="icon" /><s:a href="%{addPing}">Add Ping Target</s:a>
 </div>
 </s:else>

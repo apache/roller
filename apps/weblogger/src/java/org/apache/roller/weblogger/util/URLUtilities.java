@@ -416,9 +416,40 @@ public final class URLUtilities {
             url.append(RollerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/logout-redirect.rol");
+        url.append("/roller-ui/logout.rol");
         
         return url.toString();
+    }
+    
+    
+    /**
+     * Get a url to a UI action in a given namespace, optionally specifying
+     * a weblogHandle parameter if that is needed by the action.
+     */
+    public static final String getActionURL(String action,
+                                            String namespace,
+                                            String weblogHandle,
+                                            boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append(namespace);
+        url.append("/").append(action).append(".rol");
+        
+        if(weblogHandle != null) {
+            Map params = new HashMap();
+            params.put("weblog", weblogHandle);
+            
+            return url.toString() + getQueryString(params);
+        } else {
+            return url.toString();
+        }
     }
     
     
@@ -484,7 +515,7 @@ public final class URLUtilities {
             url.append(RollerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/admin/weblogConfig.rol");
+        url.append("/roller-ui/authoring/weblogConfig.rol");
         
         Map params = new HashMap();
         params.put("weblog", weblogHandle);

@@ -23,194 +23,105 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.weblogger.pojos.CommentData
+ * Pojo safety wrapper for WeblogEntryComment object.
  */
 public class CommentDataWrapper {
-
+    
     // keep a reference to the wrapped pojo
-    private WeblogEntryComment pojo = null;
-
+    private final WeblogEntryComment pojo;
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private CommentDataWrapper(WeblogEntryComment toWrap) {
         this.pojo = toWrap;
     }
-
+    
+    
     // wrap the given pojo if it is not null
     public static CommentDataWrapper wrap(WeblogEntryComment toWrap) {
         if(toWrap != null)
             return new CommentDataWrapper(toWrap);
-
+        
         return null;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getId()
-    {   
+    
+    
+    public String getId() {
         return this.pojo.getId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper getWeblogEntry()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
+    
+    
+    public WeblogEntryDataWrapper getWeblogEntry() {
+        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getName()
-    {   
+    
+    
+    public String getName() {
         return StringEscapeUtils.escapeHtml(this.pojo.getName());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getEmail()
-    {   
+    
+    
+    public String getEmail() {
         return StringEscapeUtils.escapeHtml(this.pojo.getEmail());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getUrl()
-    {   
+    
+    
+    public String getUrl() {
         return StringEscapeUtils.escapeHtml(this.pojo.getUrl());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getContent()
-    {   
+    
+    
+    public String getContent() {
         return StringEscapeUtils.escapeHtml(this.pojo.getContent());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.sql.Timestamp getPostTime()
-    {   
+    
+    
+    public java.sql.Timestamp getPostTime() {
         return this.pojo.getPostTime();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getStatus()
-    {   
+    
+    
+    public String getStatus() {
         return this.pojo.getStatus();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getNotify()
-    {   
+    
+    
+    public Boolean getNotify() {
         return this.pojo.getNotify();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getRemoteHost()
-    {   
+    
+    
+    public String getRemoteHost() {
         return this.pojo.getRemoteHost();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getReferrer()
-    {   
+    
+    
+    public String getReferrer() {
         return StringEscapeUtils.escapeHtml(this.pojo.getReferrer());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getUserAgent()
-    {   
+    
+    
+    public String getUserAgent() {
         return this.pojo.getUserAgent();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getSpam()
-    {   
+    
+    
+    public Boolean getSpam() {
         return this.pojo.getSpam();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getPending()
-    {   
+    
+    
+    public Boolean getPending() {
         return this.pojo.getPending();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.Boolean getApproved()
-    {   
+    
+    
+    public Boolean getApproved() {
         return this.pojo.getApproved();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getTimestamp()
-    {   
+    
+    
+    public String getTimestamp() {
         return this.pojo.getTimestamp();
     }
-
-    /**
-     * this is a special method to access the original pojo
-     * we don't really want to do this, but it's necessary
-     * because some parts of the rendering process still need the
-     * orginal pojo object
-     */
-    public org.apache.roller.weblogger.pojos.WeblogEntryComment getPojo() {
-        return this.pojo;
-    }
-
+    
 }

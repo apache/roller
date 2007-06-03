@@ -43,8 +43,7 @@
             <td class="label"><s:text name="pageForm.name" />&nbsp;</td>
             <td class="field">
                 <s:if test="template.required">
-                    <span class="fixedAttr"><s:property value="bean.name"/></span>
-                    <s:hidden name="bean.name" />
+                    <s:textfield name="bean.name" size="50" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
                     <s:textfield name="bean.name" size="50"/>
@@ -84,13 +83,7 @@
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
                 <td class="field">
-                    <s:if test="template.required">
-                        <span class="fixedAttr"><s:property value="bean.link"/></span>
-                        <s:hidden name="bean.link" />
-                    </s:if>
-                    <s:else>
-                        <s:textfield name="bean.link" size="50" onkeyup="updatePageURLDisplay()" />
-                    </s:else>
+                    <s:textfield name="bean.link" size="50" onkeyup="updatePageURLDisplay()" />
                     <br />
                     <s:property value="actionWeblog.absoluteURL" />/page/<span id="linkPreview" style="color:red"><s:property value="bean.link" /></span>
                     <s:if test="template.link != null">[<a id="launchLink" onClick="launchPage()"><s:text name="pageForm.launch" /></a>]</s:if>
@@ -103,8 +96,7 @@
             <td class="label" valign="top" style="padding-top: 4px"><s:text name="pageForm.description" />&nbsp;</td>
             <td class="field">
                 <s:if test="template.required">
-                    <span class="fixedAttr"><s:property value="bean.description"/></span>
-                    <s:hidden name="bean.description" />
+                    <s:textarea name="bean.description" cols="50" rows="2" readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
                     <s:textarea name="bean.description" cols="50" rows="2" />
@@ -143,8 +135,8 @@
     <table style="width:100%">
         <tr>
             <td>
-                <s:submit key="pageForm.save" /></input>
-                <s:submit key="application.done" action="templates" /></input>
+                <s:submit key="pageForm.save" />
+                <input type="button" value="<s:text name="application.done"/>" onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
             </td>
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->

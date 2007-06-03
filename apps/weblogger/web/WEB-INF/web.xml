@@ -18,6 +18,13 @@
         <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
     </filter>
     
+    <!-- This is really strange, but for some reason it's needed to prevent
+         some problems with the file uploads not working intermittently -->
+    <filter>
+        <filter-name>struts2-cleanup</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
+    </filter>
+    
     <filter>
         <filter-name>securityFilter</filter-name>
         <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
@@ -152,6 +159,13 @@
     
     <!-- Struts2 -->
     <filter-mapping>
+        <filter-name>struts2-cleanup</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    
+    <filter-mapping>
         <filter-name>struts2</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
@@ -237,6 +251,12 @@
     <servlet>
         <servlet-name>PreviewResourceServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewResourceServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>PreviewThemeImageServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewThemeImageServlet</servlet-class>
         <load-on-startup>9</load-on-startup>
     </servlet>
     
@@ -341,6 +361,11 @@
     <servlet-mapping>
         <servlet-name>PreviewResourceServlet</servlet-name>
         <url-pattern>/roller-ui/authoring/previewresource/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>PreviewThemeImageServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/previewtheme</url-pattern>
     </servlet-mapping>
     
     
@@ -451,22 +476,12 @@
     
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
-        <location>/roller-ui/error.rol</location>
-    </error-page>
-    
-    <error-page>
-        <error-code>403</error-code>
-        <location>/roller-ui/403.rol</location>
+        <location>/WEB-INF/jsps/errors/error.jsp</location>
     </error-page>
     
     <error-page>
         <error-code>404</error-code>
-        <location>/roller-ui/404.rol</location>
-    </error-page>
-    
-    <error-page>
-        <error-code>400</error-code>
-        <location>/roller-ui/login-redirect.rol</location>
+        <location>/WEB-INF/jsps/errors/404.jsp</location>
     </error-page>
     
 

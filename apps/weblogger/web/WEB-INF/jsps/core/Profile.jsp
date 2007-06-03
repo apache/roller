@@ -20,69 +20,68 @@
 <p class="subtitle"><s:text name="yourProfile.description" /></p>
 
 <s:form action="profile!save">
-    <s:hidden name="bean.userName" />
     
-<table class="formtable">
-
-<tr>
-    <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-    <td class="field"><span class="fixedAttr"><s:property value="bean.userName"/></span></td>
-    <td class="description"><s:text name="yourProfile.tip.userName" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-    <td class="field">
-        <s:password name="bean.passwordText" size="20" maxlength="20" />
-    </td>
-    <td class="description"><s:text name="userRegister.tip.password" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-    <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
-    <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-    <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.screenName" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-    <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.fullName" /></td>
-</tr>
+    <table class="formtable">
+        
+        <tr>
+            <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
+            <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" /></td>
+            <td class="description"><s:text name="yourProfile.tip.userName" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
+            <td class="field">
+                <s:password name="bean.passwordText" size="20" maxlength="20" />
+            </td>
+            <td class="description"><s:text name="userRegister.tip.password" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
+            <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
+            <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
+            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
+            <td class="description"><s:text name="userRegister.tip.screenName" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
+            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
+            <td class="description"><s:text name="userRegister.tip.fullName" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
+            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
+            <td class="description"><s:text name="userRegister.tip.email" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
+            <td class="field">
+                <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
+            </td>
+            <td class="description"><s:text name="userRegister.tip.locale" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
+            <td class="field">
+                <s:select name="bean.timeZone" size="1" list="timeZonesList" />
+            </td>
+            <td class="description"><s:text name="userRegister.tip.timeZone" /></td>
+        </tr>
+        
+    </table>
     
-<tr>
-    <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-    <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
-    <td class="description"><s:text name="userRegister.tip.email" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
-    <td class="field">
-       <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-    </td>
-    <td class="description"><s:text name="userRegister.tip.locale" /></td>
-</tr>
+    <br />
     
-<tr>
-    <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
-    <td class="field">
-       <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-    </td>
-    <td class="description"><s:text name="userRegister.tip.timeZone" /></td>
-</tr>
+    <s:submit key="userSettings.button.save" />
+    <input type="button" value="<s:text name="userSettings.button.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
     
-</table>
-
-<br />
-
-<s:submit key="userSettings.button.save" />
-<s:submit key="userSettings.button.cancel" action="profile!cancel" />
-
 </s:form>

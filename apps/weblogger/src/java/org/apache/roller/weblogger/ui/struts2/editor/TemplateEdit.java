@@ -149,11 +149,6 @@ public class TemplateEdit extends UIAction {
     }
     
     
-    public String cancel() {
-        return "cancel";
-    }
-    
-    
     private void myValidate() {
         
         // if name changed make sure there isn't a conflict

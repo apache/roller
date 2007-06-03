@@ -22,12 +22,13 @@ import java.io.StringBufferInputStream;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.config.RollerConfig;
 import org.hibernate.cfg.Environment;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -40,6 +41,7 @@ import org.xml.sax.InputSource;
  * manager implementations by providing a set of basic persistence methods
  * that can be easily reused.
  */
+@com.google.inject.Singleton
 public class HibernatePersistenceStrategy {
     
     static final long serialVersionUID = 2561090040518169098L;
@@ -61,11 +63,17 @@ public class HibernatePersistenceStrategy {
      * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
      * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
      */
-    public HibernatePersistenceStrategy(String configResource, String dialect, String connectionProvider) {
+    public HibernatePersistenceStrategy() throws RollerException {
+        String dialect =  
+            RollerConfig.getProperty("hibernate.dialect");
+        String connectionProvider = 
+            RollerConfig.getProperty("hibernate.connectionProvider");
+        String configuration = 
+            RollerConfig.getProperty("hibernate.configuration");
         
         // Read Hibernate config file specified by Roller config
         Configuration config = new Configuration();
-        config.configure(configResource);
+        config.configure(configuration);
 
         // Add dialect specified by Roller config and our connection provider
         Properties props = new Properties();

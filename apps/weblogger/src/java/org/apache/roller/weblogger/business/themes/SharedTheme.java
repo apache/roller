@@ -48,6 +48,8 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
     
     public abstract List getResources();
     
+    public abstract ThemeResource getPreviewImage();
+    
     
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)

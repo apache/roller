@@ -22,74 +22,45 @@ import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 
 
 /**
- * Generated wrapper for class: org.apache.roller.weblogger.pojos.EntryAttributeData
+ * Pojo safety wrapper for WeblogEntryAttribute object.
  */
 public class EntryAttributeDataWrapper {
-
+    
     // keep a reference to the wrapped pojo
-    private WeblogEntryAttribute pojo = null;
-
+    private final WeblogEntryAttribute pojo;
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private EntryAttributeDataWrapper(WeblogEntryAttribute toWrap) {
         this.pojo = toWrap;
     }
-
+    
+    
     // wrap the given pojo if it is not null
     public static EntryAttributeDataWrapper wrap(WeblogEntryAttribute toWrap) {
         if(toWrap != null)
             return new EntryAttributeDataWrapper(toWrap);
-
+        
         return null;
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getId()
-    {   
+    
+    
+    public String getId() {
         return this.pojo.getId();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
-     *
-     * This method returns another pojo so we need to wrap the returned pojo.
-     */
-    public org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper getEntry()
-    {
-        return org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper.wrap(this.pojo.getEntry());
+    
+    
+    public WeblogEntryDataWrapper getEntry() {
+        return WeblogEntryDataWrapper.wrap(this.pojo.getEntry());
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getName()
-    {   
+    
+    
+    public String getName() {
         return this.pojo.getName();
     }
-
-    /**
-     * pojo method tagged with @roller.wrapPojoMethod type="simple"
-     *
-     * Simply returns the same value that the pojo would have returned.
-     */
-    public java.lang.String getValue()
-    {   
+    
+    
+    public String getValue() {
         return this.pojo.getValue();
     }
-
-    /**
-     * this is a special method to access the original pojo
-     * we don't really want to do this, but it's necessary
-     * because some parts of the rendering process still need the
-     * orginal pojo object
-     */
-    public org.apache.roller.weblogger.pojos.WeblogEntryAttribute getPojo() {
-        return this.pojo;
-    }
-
+    
 }

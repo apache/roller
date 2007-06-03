@@ -20,7 +20,7 @@
 <script type="text/javascript">
 <!--
 function previewImage(element, theme) {
-    element.src="<s:property value="siteURL" />/themes/" + theme + "/sm-theme-" + theme + ".png";
+    element.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
 }
 
 function fullPreview(selector) {
@@ -75,14 +75,14 @@ function updateThemeChooser(selected) {
         <tr>
             <td width="50%">
                 <div id="sharedChooser" class="chooser">
-                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared" <s:if test="!customTheme">checked="true"</s:if> onchange="updateThemeChooser(this)" />&nbsp;Shared Theme</h2>
-                    This option is for users who don't want to fuss with designing their weblog on their own and prefer the easier option of using a predefined theme.
+                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared" <s:if test="!customTheme">checked="true"</s:if> onchange="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.sharedTheme" /></h2>
+                    <s:text name="themeEditor.sharedThemeDescription" />
                 </div>
             </td>
             <td width="50%">
                 <div id="customChooser" class="chooser">
-                    <h2><input id="customRadio" type="radio" name="themeType" value="custom" <s:if test="customTheme">checked="true"</s:if> onchange="updateThemeChooser(this)" />&nbsp;Custom Theme</h2>
-                    This option is for the creative bloggers who want to be able to create a blog design of their own.  Beware though, managing a blog design of your own takes a bit of effort.
+                    <h2><input id="customRadio" type="radio" name="themeType" value="custom" <s:if test="customTheme">checked="true"</s:if> onchange="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.customTheme" /></h2>
+                    <s:text name="themeEditor.customThemeDescription" />
                 </div>
             </td>
         </tr>
@@ -107,16 +107,17 @@ function updateThemeChooser(selected) {
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview(document.getElementById('sharedSelector'))">See how your blog will look with this theme.</a><br/>
-            How can you know if this is really the theme for you until you see it on your blog right?  Click the link above to launch a full page preview of how your blog will look with the selected theme.
+            &raquo; <a href="#" onclick="fullPreview(document.getElementById('sharedSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+            <s:text name="themeEditor.previewDescription" />
         </p>
-        <s:if test="actionWeblog.theme.customStylesheet != null">
+        
+        <s:if test="!customTheme && actionWeblog.theme.customStylesheet != null">
             <p>
                 <s:url action="stylesheetEdit" id="stylesheetEdit" >
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                 </s:url>
-                &raquo; <s:a href="%{stylesheetEdit}">Modify the styling of your selected theme.</s:a><br/>
-                If you are happy with your theme but want to make a few styling choices of your own such as choosing different fonts, colors, etc, then try making your own stylesheet or borrow one from someoone else using your theme.
+                &raquo; <s:a href="%{stylesheetEdit}"><s:text name="themeEditor.customStylesheetLink" /></s:a><br/>
+                <s:text name="themeEditor.customStylesheetDescription" />
             </p>
         </s:if>
         <p><s:submit key="themeEditor.save" /></p>
@@ -124,8 +125,8 @@ function updateThemeChooser(selected) {
     
     <div id="customOptioner" class="optioner" style="display:none;">
         <p>
-            <s:checkbox name="importTheme" />I want to copy the templates from the selected theme into my weblog.<br/>
-            <span class="warning">WARNING: this operation may overwrite some of your existing templates.</span>
+            <s:checkbox name="importTheme" /><s:text name="themeEditor.import" /><br/>
+            <span class="warning"><s:text name="themeEditor.importWarning" /></span>
         </p>
         <p>
             <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('customPreviewImg'), this[selectedIndex].value)"/>
@@ -138,8 +139,8 @@ function updateThemeChooser(selected) {
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview(document.getElementById('customSelector'))">See how your blog will look with this theme.</a><br/>
-            How can you know if this is really the theme for you until you see it on your blog right?  Click the link above to launch a full page preview of how your blog will look with the selected theme.
+            &raquo; <a href="#" onclick="fullPreview(document.getElementById('customSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+            <s:text name="themeEditor.previewDescription" />
         </p>
         <p><s:submit key="themeEditor.save" /></p>
     </div>

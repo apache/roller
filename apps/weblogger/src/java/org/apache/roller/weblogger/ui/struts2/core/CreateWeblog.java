@@ -87,12 +87,6 @@ public class CreateWeblog extends UIAction {
     }
     
     
-    @SkipValidation
-    public String cancel() {
-        return "cancel";
-    }
-    
-    
     public String save() {
         
         User user = getAuthenticatedUser();
