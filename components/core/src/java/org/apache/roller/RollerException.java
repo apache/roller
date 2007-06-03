@@ -25,9 +25,9 @@ import java.io.PrintWriter;
 /**
  * Base Roller exception class.
  */
-public class RollerException extends Exception {
+public abstract class RollerException extends Exception {
     
-    private Throwable mRootCause = null;
+    private final Throwable mRootCause;
     
     
     /**
@@ -35,6 +35,7 @@ public class RollerException extends Exception {
      */
     public RollerException() {
         super();
+        mRootCause = null;
     }
     
     
@@ -44,6 +45,7 @@ public class RollerException extends Exception {
      */
     public RollerException(String s) {
         super(s);
+        mRootCause = null;
     }
     
     
