@@ -19,7 +19,7 @@ package org.apache.roller.weblogger.planet.business.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.planet.business.Planet;
@@ -31,11 +31,11 @@ import org.apache.roller.planet.business.hibernate.HibernatePlanetImpl;
 public class HibernateRollerPlanetImpl extends HibernatePlanetImpl {
     private static Log log = LogFactory.getLog(HibernateRollerPlanetImpl.class);
     
-    public HibernateRollerPlanetImpl() throws RollerException {
+    public HibernateRollerPlanetImpl() throws PlanetException {
         super();
     }
     
-    protected HibernatePersistenceStrategy getStrategy() throws RollerException {
+    protected HibernatePersistenceStrategy getStrategy() throws PlanetException {
         try {
             String dialect =  
                 RollerConfig.getProperty("hibernate.dialect");
@@ -47,7 +47,7 @@ public class HibernateRollerPlanetImpl extends HibernatePlanetImpl {
         } catch(Throwable t) {
             // if this happens then we are screwed
             log.fatal("Error initializing Hibernate", t);
-            throw new RollerException(t);
+            throw new PlanetException(t);
         }        
     }
     
@@ -55,7 +55,7 @@ public class HibernateRollerPlanetImpl extends HibernatePlanetImpl {
     /**
      * Instantiates and returns an instance of HibernatePlanetImpl.
      */
-    public static Planet instantiate() throws RollerException {
+    public static Planet instantiate() throws PlanetException {
         if (me == null) {
             log.debug("Instantiating HibernatePlanetImpl");
             me = new HibernateRollerPlanetImpl();

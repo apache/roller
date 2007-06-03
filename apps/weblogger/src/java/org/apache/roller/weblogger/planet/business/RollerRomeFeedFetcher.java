@@ -30,7 +30,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.RomeFeedFetcher;
@@ -60,7 +60,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
     protected Set getNewEntries(PlanetSubscriptionData sub,
                                 com.sun.syndication.fetcher.FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
-            throws RollerException {
+            throws PlanetException {
         
         String localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
         
