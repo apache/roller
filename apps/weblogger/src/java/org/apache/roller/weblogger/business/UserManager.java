@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.business;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -41,27 +41,27 @@ public interface UserManager {
      * if the new user is the first user and give that user the admin role if so.
      *
      * @param newUser User object to be added.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
-    public void addUser(User newUser) throws RollerException;
+    public void addUser(User newUser) throws WebloggerException;
     
     
     /**
      * Save a user.
      *
      * @param user User to be saved.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
-    public void saveUser(User user) throws RollerException;
+    public void saveUser(User user) throws WebloggerException;
     
     
     /**
      * Remove a user.
      *
      * @param user User to be removed.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
-    public void removeUser(User user) throws RollerException;
+    public void removeUser(User user) throws WebloggerException;
     
     
     /**
@@ -69,9 +69,9 @@ public interface UserManager {
      * 
      * @param id ID of user to lookup.
      * @returns UsUserhe user, or null if not found.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
-    public User getUser(String id) throws RollerException;
+    public User getUser(String id) throws WebloggerException;
     
     
     /**
@@ -82,9 +82,9 @@ public interface UserManager {
      * 
      * @param userName User Name of user to lookup.
      * @returns UsUserhe user, or null if not found or is disabled.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
-    public User getUserByUserName(String userName) throws RollerException;
+    public User getUserByUserName(String userName) throws WebloggerException;
     
     
     /**
@@ -93,10 +93,10 @@ public interface UserManager {
      * @param userName User Name of user to lookup.
      * @returns UsUserhe user, or null if not found or doesn't match 
      *   the proper enabled status.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
     public User getUserByUserName(String userName, Boolean enabled)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -113,7 +113,7 @@ public interface UserManager {
      * @param offset The index of the first result to return.
      * @param length The number of results to return.
      * @returns List A list of UserDatUsers which match the criteria.
-     * @throws RollerException If there is a problem.
+     * @throws WebloggerException If there is a problem.
      */
     public List getUsers(
             Weblog weblog,
@@ -121,7 +121,7 @@ public interface UserManager {
             Date    startDate,
             Date    endDate,
             int     offset,
-            int     length) throws RollerException;
+            int     length) throws WebloggerException;
     
     
     /**
@@ -134,7 +134,7 @@ public interface UserManager {
      * @return List of (up to length) users that match startsWith string
      */
     public List getUsersStartingWith(String startsWith,
-            Boolean enabled, int offset, int length) throws RollerException;
+            Boolean enabled, int offset, int length) throws WebloggerException;
     
     
     /**
@@ -142,14 +142,14 @@ public interface UserManager {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUserNameLetterMap() throws RollerException;
+    public Map getUserNameLetterMap() throws WebloggerException;
     
     
     /** 
      * Get collection of users whose names begin with specified letter 
      */
     public List getUsersByLetter(char letter, int offset, int length) 
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -157,32 +157,32 @@ public interface UserManager {
      * creates categories and other objects required for new website.
      * @param newWebsite New website to be created, must have creator.
      */
-    public void addWebsite(Weblog newWebsite) throws RollerException;
+    public void addWebsite(Weblog newWebsite) throws WebloggerException;
     
     
     /**
      * Store a single weblog.
      */
-    public void saveWebsite(Weblog data) throws RollerException;
+    public void saveWebsite(Weblog data) throws WebloggerException;
     
     
     /**
      * Remove website object.
      */
-    public void removeWebsite(Weblog website) throws RollerException;
+    public void removeWebsite(Weblog website) throws WebloggerException;
     
     
     /**
      * Get website object by name.
      */
-    public Weblog getWebsite(String id) throws RollerException;
+    public Weblog getWebsite(String id) throws WebloggerException;
     
     
     /**
      * Get website specified by handle (or null if enabled website not found).
      * @param handle  Handle of website
      */
-    public Weblog getWebsiteByHandle(String handle) throws RollerException;
+    public Weblog getWebsiteByHandle(String handle) throws WebloggerException;
     
     
     /**
@@ -190,7 +190,7 @@ public interface UserManager {
      * @param handle  Handle of website
      */
     public Weblog getWebsiteByHandle(String handle, Boolean enabled)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -212,7 +212,7 @@ public interface UserManager {
             Date     endDate,
             int      offset,
             int      length)
-            throws RollerException;
+            throws WebloggerException;
     
     
     /**
@@ -228,7 +228,7 @@ public interface UserManager {
             Date endDate,
             int  offset,
             int  length)
-            throws RollerException;
+            throws WebloggerException;
     
     
     /**
@@ -236,32 +236,32 @@ public interface UserManager {
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    public Map getWeblogHandleLetterMap() throws RollerException;
+    public Map getWeblogHandleLetterMap() throws WebloggerException;
     
     
     /** 
      * Get collection of weblogs whose handles begin with specified letter 
      */
     public List getWeblogsByLetter(char letter, int offset, int length) 
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
      * Save permissions object.
      */
-    public void savePermissions(WeblogPermission perms) throws RollerException;
+    public void savePermissions(WeblogPermission perms) throws WebloggerException;
     
     
     /**
      * Remove permissions object.
      */
-    public void removePermissions(WeblogPermission perms) throws RollerException;
+    public void removePermissions(WeblogPermission perms) throws WebloggerException;
     
     
     /**
      * Get permissions object by id.
      */
-    public WeblogPermission getPermissions(String id) throws RollerException;
+    public WeblogPermission getPermissions(String id) throws WebloggerException;
     
     
     /**
@@ -269,7 +269,7 @@ public interface UserManager {
      * @param user User (not null)
      * @returns List of PermissionsData objects.
      */
-    public List getPendingPermissions(User user) throws RollerException;
+    public List getPendingPermissions(User user) throws WebloggerException;
     
     
     /**
@@ -277,7 +277,7 @@ public interface UserManager {
      * @param website Website (not null)
      * @returns List of PermissionsData objects.
      */
-    public List getPendingPermissions(Weblog user) throws RollerException;
+    public List getPendingPermissions(Weblog user) throws WebloggerException;
     
     
     /**
@@ -287,7 +287,7 @@ public interface UserManager {
      * @return        PermissionsData object
      */
     public WeblogPermission getPermissions(Weblog website, User user)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -295,7 +295,7 @@ public interface UserManager {
      * @param website Website (not null)
      * @return        PermissionsData object
      */
-    public List getAllPermissions(Weblog website) throws RollerException;
+    public List getAllPermissions(Weblog website) throws WebloggerException;
     
     
     /**
@@ -303,7 +303,7 @@ public interface UserManager {
      * @param user User (not null)
      * @return     PermissionsData object
      */
-    public List getAllPermissions(User user) throws RollerException;
+    public List getAllPermissions(User user) throws WebloggerException;
     
     
     /**
@@ -314,7 +314,7 @@ public interface UserManager {
      * @return        New PermissionsData object, with pending=true
      */
     public WeblogPermission inviteUser(Weblog website, User user, short perms)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -323,7 +323,7 @@ public interface UserManager {
      * @param user    User to be retired (persistent instance)
      */
     public void retireUser(Weblog website, User user)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
@@ -332,61 +332,61 @@ public interface UserManager {
      * @param user    User for whom the role is to be revoked
      */
     public void revokeRole(String roleName, User user)
-        throws RollerException;
+        throws WebloggerException;
 
     /**
      * Store page.
      */
-    public void savePage(WeblogTemplate data) throws RollerException;
+    public void savePage(WeblogTemplate data) throws WebloggerException;
     
     
     /**
      * Remove page.
      */
-    public void removePage(WeblogTemplate page) throws RollerException;
+    public void removePage(WeblogTemplate page) throws WebloggerException;
     
     
     /**
      * Get page by id.
      */
-    public WeblogTemplate getPage(String id) throws RollerException;
+    public WeblogTemplate getPage(String id) throws WebloggerException;
     
     
     /**
      * Get user's page by action.
      */
-    public WeblogTemplate getPageByAction(Weblog w, String a) throws RollerException;
+    public WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
     
     
     /**
      * Get user's page by name.
      */
-    public WeblogTemplate getPageByName(Weblog w, String p) throws RollerException;
+    public WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
     
     
     /**
      * Get website's page by link.
      */
     public WeblogTemplate getPageByLink(Weblog w, String p)
-        throws RollerException;
+        throws WebloggerException;
     
     
     /**
      * Get website's pages
      */
-    public List getPages(Weblog w) throws RollerException;
+    public List getPages(Weblog w) throws WebloggerException;
    
     
     /**
      * Get count of active weblogs
      */    
-    public long getWeblogCount() throws RollerException;
+    public long getWeblogCount() throws WebloggerException;
 
     
     /**
      * Get count of enabled users
      */    
-    public long getUserCount() throws RollerException; 
+    public long getUserCount() throws WebloggerException; 
     
     
     /**
@@ -399,17 +399,17 @@ public interface UserManager {
      * get a user by activation code
      * @param activationCode
      * @return
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public User getUserByActivationCode(String activationCode) throws RollerException;
+    public User getUserByActivationCode(String activationCode) throws WebloggerException;
     
     /**
      * get a user by password request code
      * @param passwordRequestCode
      * @return
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    //public User getUserByPasswordRequestCode(String passwordRequestCode) throws RollerException;
+    //public User getUserByPasswordRequestCode(String passwordRequestCode) throws WebloggerException;
 
 
 }

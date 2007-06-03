@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -59,24 +59,24 @@ public class WebsiteDataWrapper {
     
     
     public TemplateWrapper getPageByAction(String action)
-            throws RollerException {
+            throws WebloggerException {
         return TemplateWrapper.wrap(this.pojo.getPageByAction(action));
     }
     
     
     public TemplateWrapper getPageByName(String name)
-            throws RollerException {
+            throws WebloggerException {
         return TemplateWrapper.wrap(this.pojo.getPageByName(name));
     }
     
     
     public TemplateWrapper getPageByLink(String link)
-            throws RollerException {
+            throws WebloggerException {
         return TemplateWrapper.wrap(this.pojo.getPageByLink(link));
     }
     
     
-    public List getPages() throws RollerException {
+    public List getPages() throws WebloggerException {
         
         List initialCollection = this.pojo.getPages();
         

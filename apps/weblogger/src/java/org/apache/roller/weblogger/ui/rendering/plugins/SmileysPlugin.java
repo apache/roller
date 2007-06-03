@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -77,7 +77,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      * later use.  Need an HttpServletRequest though so that we can
      * get the ServletContext Path.  But only do it once.
      */
-    public synchronized void init(Weblog website) throws RollerException {
+    public synchronized void init(Weblog website) throws WebloggerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
             String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();

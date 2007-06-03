@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -48,7 +48,7 @@ public class ModelLoader {
             HttpServletRequest  request,
             HttpServletResponse response,
             PageContext pageContext,
-            WeblogPageRequest pageRequest) throws RollerException {
+            WeblogPageRequest pageRequest) throws WebloggerException {
         
         // Only load old models if it's enabled     
         if (RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) { 
@@ -67,7 +67,7 @@ public class ModelLoader {
         if (weblog.getPageModels() != null) {
             try {
                 loadModels(weblog.getPageModels(), model, initData, false);
-            } catch(RollerException ex) {
+            } catch(WebloggerException ex) {
                 // shouldn't happen, but log it just in case
                 log.error("Error loading weblog custom models", ex);
             }
@@ -83,7 +83,7 @@ public class ModelLoader {
      */
     public static void loadModels(String modelsString, Map model, 
                                    Map initData, boolean fail) 
-            throws RollerException {
+            throws WebloggerException {
         
         String[] models = Utilities.stringToStringArray(modelsString, ",");
         for(int i=0; i < models.length; i++) {
@@ -92,7 +92,7 @@ public class ModelLoader {
                 Model pageModel = (Model) modelClass.newInstance();
                 pageModel.init(initData);
                 model.put(pageModel.getModelName(), pageModel);
-            } catch (RollerException re) {
+            } catch (WebloggerException re) {
                 if(fail) {
                     throw re;
                 } else {
@@ -100,19 +100,19 @@ public class ModelLoader {
                 }
             } catch (ClassNotFoundException cnfe) {
                 if(fail) {
-                    throw new RollerException("Error finding model: " + models[i], cnfe);
+                    throw new WebloggerException("Error finding model: " + models[i], cnfe);
                 } else {
                     log.warn("Error finding model: " + models[i]);
                 }
             } catch (InstantiationException ie) {
                 if(fail) {
-                    throw new RollerException("Error insantiating model: " + models[i], ie);
+                    throw new WebloggerException("Error insantiating model: " + models[i], ie);
                 } else {
                     log.warn("Error insantiating model: " + models[i]);
                 }
             } catch (IllegalAccessException iae) {
                 if(fail) {
-                    throw new RollerException("Error accessing model: " + models[i], iae);
+                    throw new WebloggerException("Error accessing model: " + models[i], iae);
                 } else {
                     log.warn("Error accessing model: " + models[i]);
                 }

@@ -18,14 +18,14 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * Thrown from the FileManager if a file path is considered invalid for some
  * reason, like it represents a directory instead of a file.
  */
-public class FilePathException extends RollerException {
+public class FilePathException extends WebloggerException {
     
     public FilePathException(String s) {
         super(s);

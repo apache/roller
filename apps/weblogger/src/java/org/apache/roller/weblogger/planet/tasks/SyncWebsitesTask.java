@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.URLUtilities;
 
@@ -83,7 +84,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     }
     
     
-    public void init() throws RollerException {
+    public void init() throws WebloggerException {
         
         // get relevant props
         Properties props = this.getTaskProperties();

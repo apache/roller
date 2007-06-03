@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.Query;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 /*
  * JPAAutoPingManagerImpl.java
@@ -61,20 +61,20 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         this.strategy = strategy;
     }
 
-    public AutoPing getAutoPing(String id) throws RollerException {
+    public AutoPing getAutoPing(String id) throws WebloggerException {
         return (AutoPing)strategy.load(AutoPing.class, id);
     }
 
-    public void saveAutoPing(AutoPing autoPing) throws RollerException {
+    public void saveAutoPing(AutoPing autoPing) throws WebloggerException {
         strategy.store(autoPing);
     }
 
-    public void removeAutoPing(AutoPing autoPing) throws RollerException {
+    public void removeAutoPing(AutoPing autoPing) throws WebloggerException {
         strategy.remove(autoPing);
     }
 
     public void removeAutoPing(PingTarget pingTarget, Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Website");
         q.setParameter(1, pingTarget);
         q.setParameter(2, website);
@@ -82,18 +82,18 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public void removeAutoPings(Collection autopings) 
-            throws RollerException {
+            throws WebloggerException {
         strategy.removeAll(autopings);
     }
 
     public void removeAllAutoPings() 
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedUpdate("AutoPing.getAll");
         removeAutoPings(q.getResultList());
     }
 
     public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry)
-            throws RollerException {
+            throws WebloggerException {
         if (PingConfig.getSuspendPingProcessing()) {
             if (logger.isDebugEnabled())
                 logger.debug("Ping processing is suspended." +
@@ -111,28 +111,28 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     }
 
     public List getAutoPingsByWebsite(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedQuery("AutoPing.getByWebsite");
         q.setParameter(1, website);
         return q.getResultList();
     }
 
     public List getAutoPingsByTarget(PingTarget pingTarget) 
-            throws RollerException {
+            throws WebloggerException {
         Query q = strategy.getNamedQuery("AutoPing.getByPingTarget");
         q.setParameter(1, pingTarget);
         return q.getResultList();
     }
 
     public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) 
-            throws RollerException {
+            throws WebloggerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
         //        return (List)strategy.newQuery(AutoPing.class, "AutoPing.getByWebsite")
         //            .execute(changedWeblogEntry.getWebsite());
     }
 
     public List getCategoryRestrictions(AutoPing autoPing)
-            throws RollerException {
+            throws WebloggerException {
         return Collections.EMPTY_LIST;
     }
 

@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
@@ -79,7 +79,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
             try {
                 UserManager uMgr = RollerFactory.getRoller().getUserManager();
                 this.website = uMgr.getWebsite(this.website.getId());
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 mLogger.error("Error getting website object", ex);
                 return;
             }

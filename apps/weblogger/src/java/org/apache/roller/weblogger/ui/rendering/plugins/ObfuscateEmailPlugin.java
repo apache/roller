@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -57,7 +57,7 @@ public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(Weblog website) throws RollerException {}
+    public void init(Weblog website) throws WebloggerException {}
     
     
     public String render(WeblogEntry entry, String str) {

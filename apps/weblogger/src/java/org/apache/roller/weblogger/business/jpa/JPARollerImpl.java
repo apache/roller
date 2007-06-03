@@ -26,8 +26,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -71,9 +71,9 @@ public class JPARollerImpl extends RollerImpl {
     
     /**
      * Single constructor.
-     * @throws org.apache.roller.RollerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    protected JPARollerImpl() throws RollerException {
+    protected JPARollerImpl() throws WebloggerException {
         
         // Add OpenJPA, Toplink and Hibernate properties to Roller config.
         Properties props = new Properties();
@@ -122,15 +122,15 @@ public class JPARollerImpl extends RollerImpl {
 
     /**
      * Construct and return the singleton instance of the class.
-     * @throws org.apache.roller.RollerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      * @return the singleton
      */
-    public static Roller instantiate() throws RollerException {
+    public static Roller instantiate() throws WebloggerException {
         logger.debug("Instantiating JPARollerImpl");
         return new JPARollerImpl();
     }
     
-    public void flush() throws RollerException {
+    public void flush() throws WebloggerException {
         this.strategy.flush();
     }
 
@@ -283,22 +283,22 @@ public class JPARollerImpl extends RollerImpl {
      * @param resourceName The name of the resource containing properties
      * @param cl Classloeder to be used to locate the resouce
      * @return A properties object
-     * @throws RollerException
+     * @throws WebloggerException
      */
     private static Properties loadPropertiesFromResourceName(
-            String resourceName, ClassLoader cl) throws RollerException {
+            String resourceName, ClassLoader cl) throws WebloggerException {
         Properties props = new Properties();
         InputStream in = null;
         in = cl.getResourceAsStream(resourceName);
         if (in == null) {
             //TODO: Check how i18n is done in roller
-            throw new RollerException(
+            throw new WebloggerException(
                     "Could not locate properties to load " + resourceName);
         }
         try {
             props.load(in);
         } catch (IOException ioe) {
-            throw new RollerException(
+            throw new WebloggerException(
                     "Could not load properties from " + resourceName);
         } finally {
             if (in != null) {

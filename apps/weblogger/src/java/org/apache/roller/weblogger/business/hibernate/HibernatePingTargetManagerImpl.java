@@ -27,7 +27,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Iterator;
@@ -61,7 +61,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public void removePingTarget(PingTarget pingTarget) throws RollerException {
+    public void removePingTarget(PingTarget pingTarget) throws WebloggerException {
         // remove contents and then target
         this.removePingTargetContents(pingTarget);
         this.strategy.remove(pingTarget);
@@ -73,7 +73,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
      * reference the given ping target.
      */
     private void removePingTargetContents(PingTarget ping) 
-            throws RollerException {
+            throws WebloggerException {
         
         Session session = this.strategy.getSession();
         
@@ -99,7 +99,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     /**
      * @see org.apache.roller.weblogger.model.PingTargetManager#removeAllCustomPingTargets()
      */
-    public void removeAllCustomPingTargets() throws RollerException {
+    public void removeAllCustomPingTargets() throws WebloggerException {
         
         try {
             Session session = strategy.getSession();
@@ -108,13 +108,13 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
             List allCustomTargets = criteria.list();
             removeTargets(allCustomTargets);
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     
     
     // Private helper to remove a collection of targets.
-    private void removeTargets(Collection customTargets) throws RollerException {
+    private void removeTargets(Collection customTargets) throws WebloggerException {
         
         // just go through the list and remove each auto ping
         Iterator targets = customTargets.iterator();
@@ -124,17 +124,17 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public void savePingTarget(PingTarget pingTarget) throws RollerException {
+    public void savePingTarget(PingTarget pingTarget) throws WebloggerException {
         strategy.store(pingTarget);
     }
     
     
-    public PingTarget getPingTarget(String id) throws RollerException {
+    public PingTarget getPingTarget(String id) throws WebloggerException {
         return (PingTarget) strategy.load(id, PingTarget.class);
     }
 
     
-    public boolean isNameUnique(PingTarget pingTarget) throws RollerException {
+    public boolean isNameUnique(PingTarget pingTarget) throws WebloggerException {
         String name = pingTarget.getName();
         if (name == null || name.trim().length() == 0) return false;
         
@@ -163,7 +163,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public boolean isUrlWellFormed(PingTarget pingTarget) throws RollerException {
+    public boolean isUrlWellFormed(PingTarget pingTarget) throws WebloggerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
@@ -178,7 +178,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public boolean isHostnameKnown(PingTarget pingTarget) throws RollerException {
+    public boolean isHostnameKnown(PingTarget pingTarget) throws WebloggerException {
         String url = pingTarget.getPingUrl();
         if (url == null || url.trim().length() == 0) return false;
         try {
@@ -198,7 +198,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     /**
      * @see org.apache.roller.weblogger.model.PingTargetManager#getCommonPingTargets()
      */
-    public List getCommonPingTargets() throws RollerException {
+    public List getCommonPingTargets() throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(PingTarget.class);
@@ -206,7 +206,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
             criteria.addOrder(Order.asc("name"));
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
         
     }
@@ -215,7 +215,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     /**
      * @see org.apache.roller.weblogger.model.PingTargetManager#getCustomPingTargets(org.apache.roller.weblogger.pojos.WebsiteData)
      */
-    public List getCustomPingTargets(Weblog website) throws RollerException {
+    public List getCustomPingTargets(Weblog website) throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(PingTarget.class);
@@ -223,7 +223,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
             criteria.addOrder(Order.asc("name"));
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     

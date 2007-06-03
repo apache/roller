@@ -28,7 +28,7 @@ import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.Roller;
@@ -363,7 +363,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             returnStruct.put("url", fileLink);
             return returnStruct;
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             String msg = "ERROR in MetaWeblogAPIHandler.newMediaObject";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);

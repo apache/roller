@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -96,7 +96,7 @@ public class FeedServlet extends HttpServlet {
 
             weblog = feedRequest.getWeblog();
             if(weblog == null) {
-                throw new RollerException("unable to lookup weblog: "+
+                throw new WebloggerException("unable to lookup weblog: "+
                         feedRequest.getWeblogHandle());
             }
 
@@ -194,7 +194,7 @@ public class FeedServlet extends HttpServlet {
                 // tags specified.  make sure they exist.
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 invalid = !wmgr.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 invalid = true;
             }
         }
@@ -241,7 +241,7 @@ public class FeedServlet extends HttpServlet {
                 ModelLoader.loadModels(SearchResultsFeedModel.class.getName(), model, initData, true);
             }                        
 
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("ERROR loading model for page", ex);
 
             if(!response.isCommitted()) response.reset();

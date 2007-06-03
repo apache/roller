@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
@@ -155,7 +155,7 @@ public class PlanetFeedServlet extends HttpServlet {
             }
             model.put("entryCount", new Integer(entryCount));
             
-        } catch (RollerException ex) {
+        } catch (Exception ex) {
             log.error("Error loading model objects for page", ex);
             
             if(!response.isCommitted()) response.reset();

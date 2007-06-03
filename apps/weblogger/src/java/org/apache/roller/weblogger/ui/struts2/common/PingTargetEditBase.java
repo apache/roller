@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.common;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -53,7 +53,7 @@ public abstract class PingTargetEditBase extends UIAction {
             
             try {
                 setPingTarget(pingTargetMgr.getPingTarget(getBean().getId()));
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 getLogger().error("Error looking up ping target - "+getBean().getId());
             }
             
@@ -110,7 +110,7 @@ public abstract class PingTargetEditBase extends UIAction {
             
             addMessage("pingTarget.saved");
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             getLogger().error("Error saving ping target", ex);
             // TODO: i18n
             addError("Error saving ping target.");
@@ -136,7 +136,7 @@ public abstract class PingTargetEditBase extends UIAction {
             } else if (!pingTargetMgr.isHostnameKnown(pingTarget)) {
                 addError("pingTarget.unknownHost");
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             getLogger().error("Error validating ping target", ex);
             // TODO: i18n
             addError("Error doing ping target validation");

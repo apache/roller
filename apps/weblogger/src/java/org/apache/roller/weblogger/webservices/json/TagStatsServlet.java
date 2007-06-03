@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -112,8 +112,8 @@ public class TagStatsServlet extends HttpServlet {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
                     website = umgr.getWebsiteByHandle(handle, Boolean.TRUE);
                     if (website == null)
-                        throw new RollerException();                
-                } catch (RollerException ex) {
+                        throw new WebloggerException();                
+                } catch (WebloggerException ex) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Weblog handle not found.");
                     return;
                 }    
@@ -143,7 +143,7 @@ public class TagStatsServlet extends HttpServlet {
             response.getWriter().println("\n  ]\n}");
             
             response.flushBuffer();
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             throw new ServletException(e.getMessage());
         }
     }

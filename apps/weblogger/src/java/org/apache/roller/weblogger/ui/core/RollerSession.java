@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -95,7 +95,7 @@ public class RollerSession
                     if(user != null && user.getEnabled().booleanValue()) {
                         rollerSession.setAuthenticatedUser(user);
                     }
-                } catch (RollerException e) {
+                } catch (WebloggerException e) {
                     log.error("ERROR: getting user object",e);
                 }
             }
@@ -143,7 +143,7 @@ public class RollerSession
             try {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
                 authenticUser = mgr.getUser(userId);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.warn("Error looking up authenticated user "+userId, ex);
             }
         }
@@ -163,7 +163,7 @@ public class RollerSession
     /**
      * Does our authenticated user have the global admin role?
      */
-    public boolean isGlobalAdminUser() throws RollerException {
+    public boolean isGlobalAdminUser() throws WebloggerException {
         
         User user = getAuthenticatedUser();
         if (user != null && user.hasRole("admin")
@@ -176,7 +176,7 @@ public class RollerSession
      * Is session's authenticated user authorized to work in current website?
      */
     public boolean isUserAuthorized(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         
         User user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
@@ -189,7 +189,7 @@ public class RollerSession
      * Is session's authenticated user authorized to post in current weblog?
      */
     public boolean isUserAuthorizedToAuthor(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         
         User user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())
@@ -202,7 +202,7 @@ public class RollerSession
      * Is session's authenticated user authorized to admin current weblog?
      */
     public boolean isUserAuthorizedToAdmin(Weblog website)
-            throws RollerException {
+            throws WebloggerException {
         
         User user = getAuthenticatedUser();
         if (user != null && user.getEnabled().booleanValue())

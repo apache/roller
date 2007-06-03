@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -108,7 +108,7 @@ public class Comments extends UIAction {
                 setLastComment((WeblogEntryComment)comments.get(comments.size()-1));
                 loadNextPrevLinks(isMoreResults());
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
             // TODO: i18n
             addError("Error looking up comments");
@@ -156,7 +156,7 @@ public class Comments extends UIAction {
                 setBulkDeleteCount(allMatchingComments.size());
             }
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
             // TODO: i18n
             addError("Error looking up comments");
@@ -189,7 +189,7 @@ public class Comments extends UIAction {
             
             return execute();
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error doing bulk delete", ex);
             // TODO: i18n
             addError("Bulk delete failed due to unexpected error");

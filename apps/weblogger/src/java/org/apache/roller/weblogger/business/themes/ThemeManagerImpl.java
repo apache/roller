@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -97,7 +97,7 @@ public class ThemeManagerImpl implements ThemeManager {
      * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(java.lang.String)
      */
     public SharedTheme getTheme(String id) 
-            throws ThemeNotFoundException, RollerException {
+            throws ThemeNotFoundException, WebloggerException {
         
         // try to lookup theme from library
         SharedTheme theme = (SharedTheme) this.themes.get(id);
@@ -114,7 +114,7 @@ public class ThemeManagerImpl implements ThemeManager {
     /**
      * @see org.apache.roller.weblogger.model.ThemeManager#getTheme(weblog)
      */
-    public WeblogTheme getTheme(Weblog weblog) throws RollerException {
+    public WeblogTheme getTheme(Weblog weblog) throws WebloggerException {
         
         if(weblog == null)
             return null;
@@ -163,7 +163,7 @@ public class ThemeManagerImpl implements ThemeManager {
      * @see org.apache.roller.weblogger.model.ThemeManager#importTheme(website, theme)
      */
     public void importTheme(Weblog website, SharedTheme theme)
-            throws RollerException {
+            throws WebloggerException {
         
         log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
         
@@ -264,7 +264,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
         } catch (Exception e) {
             log.error("ERROR importing theme", e);
-            throw new RollerException( e );
+            throw new WebloggerException( e );
         }
     }
     

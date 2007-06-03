@@ -160,7 +160,7 @@ public class FolderFunctionalityTest extends TestCase {
     
     
     /** 
-     * Ensure that duplicate folder name will throw RollerException 
+     * Ensure that duplicate folder name will throw WebloggerException 
      */
     public void testUniquenessOfFolderNames() throws Exception {
         

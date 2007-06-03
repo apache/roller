@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -60,7 +60,7 @@ public class TemplateRemove extends UIAction {
         if(getRemoveId() != null) try {
             UserManager umgr = RollerFactory.getRoller().getUserManager();
             setTemplate(umgr.getPage(getRemoveId()));
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up template by id - "+getRemoveId(), ex);
             // TODO: i18n
             addError("Could not find template to remove - "+getRemoveId());

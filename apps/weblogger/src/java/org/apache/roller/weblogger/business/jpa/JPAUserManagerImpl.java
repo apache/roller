@@ -23,7 +23,7 @@ import javax.persistence.NoResultException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -44,7 +44,7 @@ import java.util.TreeMap;
 import java.util.Collection;
 import java.util.Comparator;
 import javax.persistence.Query;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 /*
  * JPAUserManagerImpl.java
@@ -77,13 +77,13 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Update existing website.
      */
-    public void saveWebsite(Weblog website) throws RollerException {
+    public void saveWebsite(Weblog website) throws WebloggerException {
         
         website.setLastModified(new java.util.Date());
         strategy.store(website);
     }
     
-    public void removeWebsite(Weblog weblog) throws RollerException {
+    public void removeWebsite(Weblog weblog) throws WebloggerException {
         
         // remove contents first, then remove website
         this.removeWebsiteContents(weblog);
@@ -98,7 +98,7 @@ public class JPAUserManagerImpl implements UserManager {
      * TODO BACKEND: use manager methods instead of queries here
      */
     private void removeWebsiteContents(Weblog website)
-    throws  RollerException {
+    throws  WebloggerException {
         
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
@@ -218,7 +218,7 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy.flush();
     }
     
-    protected void updateTagAggregates(List tags) throws RollerException {
+    protected void updateTagAggregates(List tags) throws WebloggerException {
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
             TagStat stat = (TagStat) iter.next();            
             Query query = strategy.getNamedUpdate(
@@ -231,11 +231,11 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
     
-    public void saveUser(User data) throws RollerException {
+    public void saveUser(User data) throws WebloggerException {
         this.strategy.store(data);
     }
     
-    public void removeUser(User user) throws RollerException {
+    public void removeUser(User user) throws WebloggerException {
         //remove permissions
         // make sure that both sides of the relationship are maintained
         for (Iterator iterator = user.getPermissions().iterator(); iterator.hasNext();) {
@@ -256,7 +256,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     public void savePermissions(WeblogPermission perms)
-    throws RollerException {
+    throws WebloggerException {
         if (getPermissions(perms.getId()) == null) { 
             // This is a new object make sure that relationship is set on managed
             // copy of other side
@@ -270,7 +270,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     public void removePermissions(WeblogPermission perms)
-    throws RollerException {
+    throws WebloggerException {
         this.strategy.remove(perms);
         // make sure that relationship is set on managed
         // copy of other side
@@ -284,7 +284,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * @see org.apache.roller.weblogger.model.UserManager#storePage(org.apache.roller.weblogger.pojos.WeblogTemplate)
      */
-    public void savePage(WeblogTemplate page) throws RollerException {
+    public void savePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.store(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -292,17 +292,17 @@ public class JPAUserManagerImpl implements UserManager {
         .saveWebsite(page.getWebsite());
     }
     
-    public void removePage(WeblogTemplate page) throws RollerException {
+    public void removePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.remove(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
         RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
     
-    public void addUser(User newUser) throws RollerException {
+    public void addUser(User newUser) throws WebloggerException {
         
         if(newUser == null)
-            throw new RollerException("cannot add null user");
+            throw new WebloggerException("cannot add null user");
         
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
@@ -319,7 +319,7 @@ public class JPAUserManagerImpl implements UserManager {
         
         if(getUserByUserName(newUser.getUserName()) != null ||
                 getUserByUserName(newUser.getUserName().toLowerCase()) != null) {
-            throw new RollerException("error.add.user.userNameInUse");
+            throw new WebloggerException("error.add.user.userNameInUse");
         }
         
         newUser.grantRole("editor");
@@ -330,7 +330,7 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy.store(newUser);
     }
     
-    public void addWebsite(Weblog newWeblog) throws RollerException {
+    public void addWebsite(Weblog newWeblog) throws WebloggerException {
         
         this.strategy.store(newWeblog);
         this.strategy.flush();
@@ -338,7 +338,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     private void addWeblogContents(Weblog newWeblog)
-    throws RollerException {
+    throws WebloggerException {
         
         // grant weblog creator ADMIN permissions
         WeblogPermission perms = new WeblogPermission();
@@ -431,10 +431,10 @@ public class JPAUserManagerImpl implements UserManager {
      * TODO BACKEND: do we really need this?  can't we just use storePermissions()?
      */
     public WeblogPermission inviteUser(Weblog website,
-            User user, short mask) throws RollerException {
+            User user, short mask) throws WebloggerException {
         
-        if (website == null) throw new RollerException("Website cannot be null");
-        if (user == null) throw new RollerException("User cannot be null");
+        if (website == null) throw new WebloggerException("Website cannot be null");
+        if (user == null) throw new WebloggerException("User cannot be null");
         
         WeblogPermission perms = new WeblogPermission();
         perms.setWebsite(website);
@@ -450,10 +450,10 @@ public class JPAUserManagerImpl implements UserManager {
      *
      * TODO: replace this with a domain model method like weblog.retireUser(user)
      */
-    public void retireUser(Weblog website, User user) throws RollerException {
+    public void retireUser(Weblog website, User user) throws WebloggerException {
         
-        if (website == null) throw new RollerException("Website cannot be null");
-        if (user == null) throw new RollerException("User cannot be null");
+        if (website == null) throw new WebloggerException("Website cannot be null");
+        if (user == null) throw new WebloggerException("User cannot be null");
         
         Iterator perms = website.getPermissions().iterator();
         WeblogPermission target = null;
@@ -464,13 +464,13 @@ public class JPAUserManagerImpl implements UserManager {
                 break;
             }
         }
-        if (target == null) throw new RollerException("User not member of website");
+        if (target == null) throw new WebloggerException("User not member of website");
         
         website.removePermission(target);
         this.strategy.remove(target);
     }
     
-    public void revokeRole(String roleName, User user) throws RollerException {
+    public void revokeRole(String roleName, User user) throws WebloggerException {
         Collection roles = user.getRoles();
         Iterator iter = roles.iterator();
         while (iter.hasNext()) {
@@ -482,11 +482,11 @@ public class JPAUserManagerImpl implements UserManager {
         }
     }
     
-    public Weblog getWebsite(String id) throws RollerException {
+    public Weblog getWebsite(String id) throws WebloggerException {
         return (Weblog) this.strategy.load(Weblog.class, id);
     }
     
-    public Weblog getWebsiteByHandle(String handle) throws RollerException {
+    public Weblog getWebsiteByHandle(String handle) throws WebloggerException {
         return getWebsiteByHandle(handle, Boolean.TRUE);
     }
     
@@ -494,10 +494,10 @@ public class JPAUserManagerImpl implements UserManager {
      * Return website specified by handle.
      */
     public Weblog getWebsiteByHandle(String handle, Boolean enabled)
-    throws RollerException {
+    throws WebloggerException {
         
         if (handle==null )
-            throw new RollerException("Handle cannot be null");
+            throw new WebloggerException("Handle cannot be null");
         
         // check cache first
         // NOTE: if we ever allow changing handles then this needs updating
@@ -545,7 +545,7 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public List getWebsites(
             User user, Boolean enabled, Boolean active,
-            Date startDate, Date endDate, int offset, int length) throws RollerException {
+            Date startDate, Date endDate, int offset, int length) throws WebloggerException {
         
         //if (endDate == null) endDate = new Date();
                       
@@ -611,19 +611,19 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
     
-    public User getUser(String id) throws RollerException {
+    public User getUser(String id) throws WebloggerException {
         return (User)this.strategy.load(User.class, id);
     }
     
-    public User getUserByUserName(String userName) throws RollerException {
+    public User getUserByUserName(String userName) throws WebloggerException {
         return getUserByUserName(userName, Boolean.TRUE);
     }
     
     public User getUserByUserName(String userName, Boolean enabled)
-    throws RollerException {
+    throws WebloggerException {
         
         if (userName==null )
-            throw new RollerException("userName cannot be null");
+            throw new WebloggerException("userName cannot be null");
         
         // check cache first
         // NOTE: if we ever allow changing usernames then this needs updating
@@ -676,7 +676,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     public List getUsers(Weblog weblog, Boolean enabled, Date startDate,
             Date endDate, int offset, int length)
-            throws RollerException {
+            throws WebloggerException {
         Query query = null;
         List results = null;
         
@@ -733,13 +733,13 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
     
-    public List getUsers(int offset, int length) throws RollerException {
+    public List getUsers(int offset, int length) throws WebloggerException {
         return getUsers(Boolean.TRUE, null, null, offset, length);
     }
     
     public List getUsers(Boolean enabled, Date startDate, Date endDate,
             int offset, int length)
-            throws RollerException {
+            throws WebloggerException {
         Query query = null;
         List results = null;
         boolean setRange = offset != 0 || length != -1;
@@ -789,7 +789,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get users of a website
      */
-    public List getUsers(Weblog website, Boolean enabled, int offset, int length) throws RollerException {
+    public List getUsers(Weblog website, Boolean enabled, int offset, int length) throws WebloggerException {
         Query query = null;
         List results = null;
         boolean setRange = offset != 0 || length != -1;
@@ -825,7 +825,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     public List getUsersStartingWith(String startsWith, Boolean enabled,
-            int offset, int length) throws RollerException {
+            int offset, int length) throws WebloggerException {
         Query query = null;
         
         if (enabled != null) {
@@ -858,7 +858,7 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
     
-    public WeblogTemplate getPage(String id) throws RollerException {
+    public WeblogTemplate getPage(String id) throws WebloggerException {
         // Don't hit database for templates stored on disk
         if (id != null && id.endsWith(".vm")) return null;
         
@@ -869,13 +869,13 @@ public class JPAUserManagerImpl implements UserManager {
      * Use JPA directly because Roller's Query API does too much allocation.
      */
     public WeblogTemplate getPageByLink(Weblog website, String pagelink)
-    throws RollerException {
+    throws WebloggerException {
         
         if (website == null)
-            throw new RollerException("userName is null");
+            throw new WebloggerException("userName is null");
         
         if (pagelink == null)
-            throw new RollerException("Pagelink is null");
+            throw new WebloggerException("Pagelink is null");
         
         Query query = strategy.getNamedQuery("WeblogTemplate.getByWebsite&Link");
         query.setParameter(1, website);
@@ -891,13 +891,13 @@ public class JPAUserManagerImpl implements UserManager {
      * @see org.apache.roller.weblogger.model.UserManager#getPageByAction(Weblog, java.lang.String)
      */
     public WeblogTemplate getPageByAction(Weblog website, String action)
-            throws RollerException {
+            throws WebloggerException {
         
         if (website == null)
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         
         if (action == null)
-            throw new RollerException("Action name is null");
+            throw new WebloggerException("Action name is null");
         
         
         Query query = strategy.getNamedQuery("WeblogTemplate.getByAction"); 
@@ -914,13 +914,13 @@ public class JPAUserManagerImpl implements UserManager {
      * @see org.apache.roller.weblogger.model.UserManager#getPageByName(Weblog, java.lang.String)
      */
     public WeblogTemplate getPageByName(Weblog website, String pagename)
-    throws RollerException {
+    throws WebloggerException {
         
         if (website == null)
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         
         if (pagename == null)
-            throw new RollerException("Page name is null");
+            throw new WebloggerException("Page name is null");
         
         Query query = strategy.getNamedQuery("WeblogTemplate.getByWebsite&Name");
         query.setParameter(1, website);
@@ -935,9 +935,9 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * @see org.apache.roller.weblogger.model.UserManager#getPages(Weblog)
      */
-    public List getPages(Weblog website) throws RollerException {
+    public List getPages(Weblog website) throws WebloggerException {
         if (website == null)
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         Query q = strategy.getNamedQuery(
                 "WeblogTemplate.getByWebsiteOrderByName");
         q.setParameter(1, website);
@@ -945,7 +945,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     public WeblogPermission getPermissions(String inviteId)
-    throws RollerException {
+    throws WebloggerException {
         return (WeblogPermission)this.strategy.load(
                 WeblogPermission.class, inviteId);
     }
@@ -954,7 +954,7 @@ public class JPAUserManagerImpl implements UserManager {
      * Return permissions for specified user in website
      */
     public WeblogPermission getPermissions(
-            Weblog website, User user) throws RollerException {
+            Weblog website, User user) throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogPermission.getByWebsiteAndUser");
         q.setParameter(1, website);
@@ -969,7 +969,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get pending permissions for user
      */
-    public List getPendingPermissions(User user) throws RollerException {
+    public List getPendingPermissions(User user) throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogPermission.getByUserAndPending");
         q.setParameter(1, user);
@@ -980,7 +980,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get pending permissions for website
      */
-    public List getPendingPermissions(Weblog website) throws RollerException {
+    public List getPendingPermissions(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogPermission.getByWebsiteAndPending");
         q.setParameter(1, website);
@@ -991,7 +991,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get all permissions of a website (pendings not including)
      */
-    public List getAllPermissions(Weblog website) throws RollerException {
+    public List getAllPermissions(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogPermission.getByWebsiteAndPending");
         q.setParameter(1, website);
@@ -1002,7 +1002,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get all permissions of a user.
      */
-    public List getAllPermissions(User user) throws RollerException {
+    public List getAllPermissions(User user) throws WebloggerException {
         Query q = strategy.getNamedQuery(
                 "WeblogPermission.getByUserAndPending");
         q.setParameter(1, user);
@@ -1012,7 +1012,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void release() {}
     
-    public Map getUserNameLetterMap() throws RollerException {
+    public Map getUserNameLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map results = new TreeMap();
         Query query = strategy.getNamedQuery(
@@ -1028,7 +1028,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     public List getUsersByLetter(char letter, int offset, int length)
-    throws RollerException {
+    throws WebloggerException {
         Query query = strategy.getNamedQuery(
                 "User.getByUserNameOrderByUserName");
         query.setParameter(1, letter + "%");
@@ -1041,7 +1041,7 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
     
-    public Map getWeblogHandleLetterMap() throws RollerException {
+    public Map getWeblogHandleLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map results = new TreeMap();
         Query query = strategy.getNamedQuery(
@@ -1057,7 +1057,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     public List getWeblogsByLetter(char letter, int offset, int length)
-    throws RollerException {
+    throws WebloggerException {
         Query query = strategy.getNamedQuery(
                 "Weblog.getByLetterOrderByHandle");
         query.setParameter(1, letter + "%");
@@ -1072,7 +1072,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     public List getMostCommentedWebsites(Date startDate, Date endDate,
             int offset, int length)
-            throws RollerException {
+            throws WebloggerException {
         
         Query query = null;
         
@@ -1118,7 +1118,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get count of weblogs, active and inactive
      */
-    public long getWeblogCount() throws RollerException {
+    public long getWeblogCount() throws WebloggerException {
         long ret = 0;
         List results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct").getResultList();
@@ -1132,7 +1132,7 @@ public class JPAUserManagerImpl implements UserManager {
     /**
      * Get count of users, enabled only
      */
-    public long getUserCount() throws RollerException {
+    public long getUserCount() throws WebloggerException {
         long ret = 0;
         Query q = strategy.getNamedQuery("User.getCountEnabledDistinct");
         q.setParameter(1, Boolean.TRUE);
@@ -1142,9 +1142,9 @@ public class JPAUserManagerImpl implements UserManager {
         return ret;
     }
     
-	public User getUserByActivationCode(String activationCode) throws RollerException {
+	public User getUserByActivationCode(String activationCode) throws WebloggerException {
 		if (activationCode == null)
-			throw new RollerException("activationcode is null");
+			throw new WebloggerException("activationcode is null");
         Query q = strategy.getNamedQuery("User.getUserByActivationCode");
         q.setParameter(1, activationCode);
         try {

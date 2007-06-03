@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
@@ -48,12 +48,12 @@ public class FeedModel implements Model {
     private Weblog weblog = null;
     
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(weblogRequest == null) {
-            throw new RollerException("expected weblogRequest from init data");
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         // PageModel only works on page requests, so cast weblogRequest
@@ -61,7 +61,7 @@ public class FeedModel implements Model {
         if(weblogRequest instanceof WeblogFeedRequest) {
             this.feedRequest = (WeblogFeedRequest) weblogRequest;
         } else {
-            throw new RollerException("weblogRequest is not a WeblogFeedRequest."+
+            throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
         }
         

@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.plugins;
 
 import org.apache.commons.logging.Log;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -53,7 +53,7 @@ public abstract class SearchPluginBase {
      *
      * @see org.apache.roller.weblogger.model.PagePlugin#init(WebsiteData, Object, String baseUrl, org.apache.velocity.context.Context)
      */
-    public void init(Weblog website) throws RollerException {
+    public void init(Weblog website) throws WebloggerException {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug(getClass().getName() + "; version:  " + getVersion() + "; base version " + baseVersion);
         }

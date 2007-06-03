@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -86,18 +86,18 @@ public class SearchResultsFeedModel implements Model {
     }
 
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(weblogRequest == null) {
-            throw new RollerException("expected weblogRequest from init data");
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         if(weblogRequest instanceof WeblogFeedRequest) {
             this.feedRequest = (WeblogFeedRequest) weblogRequest;
         } else {
-            throw new RollerException("weblogRequest is not a WeblogFeedRequest."+
+            throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
         }
                 
@@ -154,7 +154,7 @@ public class SearchResultsFeedModel implements Model {
         return pager;
     }
     
-    private void convertHitsToEntries(Hits hits) throws RollerException {
+    private void convertHitsToEntries(Hits hits) throws WebloggerException {
         
         // determine offset
         this.offset = feedRequest.getPage() * this.entryCount;
@@ -212,7 +212,7 @@ public class SearchResultsFeedModel implements Model {
                 this.categories = categories;
             }
         } catch(IOException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
     

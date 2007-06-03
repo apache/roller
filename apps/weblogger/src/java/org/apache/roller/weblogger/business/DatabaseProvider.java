@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 /**
@@ -52,7 +52,7 @@ public class DatabaseProvider  {
      * Reads configuraiton, loads driver or locates data-source and attempts
      * to get test connecton so that we can fail early.
      */ 
-    private DatabaseProvider() throws RollerException {
+    private DatabaseProvider() throws WebloggerException {
         String connectionTypeString = 
                 RollerConfig.getProperty("database.configurationType"); 
         if ("jdbc".equals(connectionTypeString)) {
@@ -70,7 +70,7 @@ public class DatabaseProvider  {
             try {
                 Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
-                throw new RollerException(
+                throw new WebloggerException(
                    "Cannot load specified JDBC driver class [" +getJdbcDriverClass()+ "]", ex);
             }
             if (getJdbcUsername() != null || getJdbcPassword() != null) {
@@ -85,7 +85,7 @@ public class DatabaseProvider  {
                 InitialContext ic = new InitialContext();
                 dataSource = (DataSource)ic.lookup(name);
             } catch (NamingException ex) {
-                throw new RollerException(
+                throw new WebloggerException(
                     "ERROR looking up data-source with JNDI name: " + name, ex);
             }            
         }
@@ -93,14 +93,14 @@ public class DatabaseProvider  {
             Connection testcon = getConnection();
             testcon.close();
         } catch (Throwable t) {
-            throw new RollerException("ERROR unable to obtain connection", t);
+            throw new WebloggerException("ERROR unable to obtain connection", t);
         }
     }
     
     /**
      * Get global database provider singlton, instantiating if necessary.
      */
-    public static DatabaseProvider getDatabaseProvider() throws RollerException {
+    public static DatabaseProvider getDatabaseProvider() throws WebloggerException {
         if (singletonInstance == null) {
             singletonInstance = new DatabaseProvider();
         }

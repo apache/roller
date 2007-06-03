@@ -28,7 +28,7 @@ import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.util.UUIDGenerator;
@@ -306,9 +306,9 @@ public class User
      * @param new2 Confirm this matches new password
      * @author Dave Johnson
      */
-    public void resetPassword(Roller roller, String new1, String new2) throws RollerException {
+    public void resetPassword(Roller roller, String new1, String new2) throws WebloggerException {
         if (!new1.equals(new2)) {
-            throw new RollerException("newUser.error.mismatchedPasswords");
+            throw new WebloggerException("newUser.error.mismatchedPasswords");
         }
         
         String encrypt = RollerConfig.getProperty("passwds.encryption.enabled");
@@ -355,7 +355,7 @@ public class User
     /**
      * Grant to user role specified by role name.
      */
-    public void grantRole(String roleName) throws RollerException {
+    public void grantRole(String roleName) throws WebloggerException {
         if (!hasRole(roleName)) {
             UserRole role = new UserRole(null, this, roleName);
             getRoles().add(role);

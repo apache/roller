@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.pings;
 
 import java.util.Collection;
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -37,18 +37,18 @@ public interface AutoPingManager {
      * Store an auto ping configuration.
      *
      * @param autoPing the auto ping configuration
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void saveAutoPing(AutoPing autoPing) throws RollerException;
+    public void saveAutoPing(AutoPing autoPing) throws WebloggerException;
     
     
     /**
      * Remove the auto ping configuration with given id.
      *
      * @param autoPing the auto ping configuration to remove
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void removeAutoPing(AutoPing autoPing) throws RollerException;
+    public void removeAutoPing(AutoPing autoPing) throws WebloggerException;
     
     
     /**
@@ -57,26 +57,26 @@ public interface AutoPingManager {
      *
      * @param pingTarget the ping target
      * @param website    the website
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws RollerException;
+    public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException;
     
     
     /**
      * Remove a collection of auto ping configurations.
      * 
      * @param autopings a <code>Collection</code> of <code>AAutoPing/code> objects
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void removeAutoPings(Collection autopings) throws RollerException;
+    public void removeAutoPings(Collection autopings) throws WebloggerException;
     
     
     /**
      * Remove all auto ping configurations for all websites.
      *
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void removeAllAutoPings() throws RollerException;
+    public void removeAllAutoPings() throws WebloggerException;
     
     
     /**
@@ -84,9 +84,9 @@ public interface AutoPingManager {
      *
      * @param id the id of the auto ping configuration to retrieve.
      * @return the auto ping configuration with specified id or null if not found
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public AutoPing getAutoPing(String id) throws RollerException;
+    public AutoPing getAutoPing(String id) throws WebloggerException;
     
     
     /**
@@ -95,7 +95,7 @@ public interface AutoPingManager {
      * @param website
      * @return a list of auto ping configurations for the given website as <code>AuAutoPingcode> objects.
      */
-    public List getAutoPingsByWebsite(Weblog website) throws RollerException;
+    public List getAutoPingsByWebsite(Weblog website) throws WebloggerException;
     
     
     /**
@@ -104,7 +104,7 @@ public interface AutoPingManager {
      * @param pingTarget
      * @return a list of auto ping configurations for the given target as <code>AuAutoPingcode> objects.
      */
-    public List getAutoPingsByTarget(PingTarget pingTarget) throws RollerException;
+    public List getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -113,7 +113,7 @@ public interface AutoPingManager {
      * @param changedWeblogEntry the entry that has been created or changed
      * @return a list of the ping configurations that should be applied due to this change
      */
-    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException;
+    public List getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
     
     
     /**
@@ -123,7 +123,7 @@ public interface AutoPingManager {
      *
      * @param changedWeblogEntry the entry that has been created or changed
      */
-    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws RollerException;
+    public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException;
     
     
     /**
@@ -134,7 +134,7 @@ public interface AutoPingManager {
      *         will be empty if there are no restrictions (meaning that the auto ping configuration applies to changes
      *         in any category of the website).
      */
-    public List getCategoryRestrictions(AutoPing autoPing) throws RollerException;
+    public List getCategoryRestrictions(AutoPing autoPing) throws WebloggerException;
     
     
     /**

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -63,7 +63,7 @@ public abstract class PingTargetsBase extends UIAction {
             try {
                 PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
                 setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 getLogger().error("Error looking up ping target - "+getPingTargetId(), ex);
             }
         }
@@ -114,7 +114,7 @@ public abstract class PingTargetsBase extends UIAction {
                 // TODO: i18n
                 addMessage("Successfully deleted ping target: "+getPingTarget().getName());
                 
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 getLogger().error("Error deleting ping target - "+getPingTargetId(), ex);
                 // TODO: i18n
                 addError("Error deleting ping target - "+getPingTargetId());

@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -161,7 +161,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             try {
                 // flush changes
                 RollerFactory.getRoller().flush();
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 mLogger.error("ERROR commiting referrer", ex);
             }
         }

@@ -22,7 +22,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -188,7 +188,7 @@ public class WeblogRequest extends ParsedRequest {
             try {
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
                 weblog = umgr.getWebsiteByHandle(weblogHandle, Boolean.TRUE);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error looking up weblog "+weblogHandle, ex);
             }
         }

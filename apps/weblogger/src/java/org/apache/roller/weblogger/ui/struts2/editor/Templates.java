@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -92,7 +92,7 @@ public class Templates extends UIAction {
             }
             setAvailableActions(availableActions);
 
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting templates for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error getting template list");
@@ -148,7 +148,7 @@ public class Templates extends UIAction {
             setNewTmplName(null);
             setNewTmplAction(null);
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error adding new template for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error adding new template");
@@ -180,7 +180,7 @@ public class Templates extends UIAction {
             if(existingPage != null) {
                 addError("pagesForm.error.alreadyExists", getNewTmplName());
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error checking for existing template", ex);
         }
     }

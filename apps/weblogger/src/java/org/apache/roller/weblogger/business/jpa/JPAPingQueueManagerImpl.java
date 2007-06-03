@@ -24,9 +24,9 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -55,25 +55,25 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     }
 
     public PingQueueEntry getQueueEntry(String id) 
-            throws RollerException {
+            throws WebloggerException {
         return (PingQueueEntry)strategy.load(
             PingQueueEntry.class, id);
     }
 
     public void saveQueueEntry(PingQueueEntry pingQueueEntry) 
-            throws RollerException {
+            throws WebloggerException {
         log.debug("Storing ping queue entry: " + pingQueueEntry);
         strategy.store(pingQueueEntry);
     }
 
     public void removeQueueEntry(PingQueueEntry pingQueueEntry) 
-            throws RollerException {
+            throws WebloggerException {
         log.debug("Removing ping queue entry: " + pingQueueEntry);
         strategy.remove(pingQueueEntry);
     }
 
     
-    public void addQueueEntry(AutoPing autoPing) throws RollerException {
+    public void addQueueEntry(AutoPing autoPing) throws WebloggerException {
         log.debug("Creating new ping queue entry for auto ping configuration: " 
             + autoPing);
         
@@ -94,7 +94,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     }
 
     public List getAllQueueEntries() 
-            throws RollerException {
+            throws WebloggerException {
         return (List)strategy.getNamedQuery(
                 "PingQueueEntry.getAllOrderByEntryTime").getResultList();
     }
@@ -102,7 +102,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     // private helper to determine if an has already been queued 
     // for the same website and ping target.
     private boolean isAlreadyQueued(AutoPing autoPing) 
-        throws RollerException {
+        throws WebloggerException {
         // first, determine if an entry already exists
         Query q = strategy.getNamedQuery("PingQueueEntry.getByPingTarget&Website");
         q.setParameter(1, autoPing.getPingTarget());

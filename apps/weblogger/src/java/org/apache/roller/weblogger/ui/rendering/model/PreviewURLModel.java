@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
@@ -37,12 +37,12 @@ public class PreviewURLModel extends URLModel {
     private String locale = null;
     
     
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(weblogRequest == null) {
-            throw new RollerException("Expected 'weblogRequest' init param!");
+            throw new WebloggerException("Expected 'weblogRequest' init param!");
         }
         
         // PreviewURLModel only works on preview requests, so cast weblogRequest
@@ -50,7 +50,7 @@ public class PreviewURLModel extends URLModel {
         if(weblogRequest instanceof WeblogPreviewRequest) {
             this.previewRequest = (WeblogPreviewRequest) weblogRequest;
         } else {
-            throw new RollerException("weblogRequest is not a WeblogPreviewRequest."+
+            throw new WebloggerException("weblogRequest is not a WeblogPreviewRequest."+
                     "  PreviewURLModel only supports preview requests.");
         }
         

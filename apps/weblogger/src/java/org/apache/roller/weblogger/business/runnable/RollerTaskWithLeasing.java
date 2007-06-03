@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.runnable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 
 
@@ -36,7 +36,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
     /**
      * Run the task.
      */
-    public abstract void runTask() throws RollerException;
+    public abstract void runTask() throws WebloggerException;
     
     
     /**

@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerImpl;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
@@ -59,7 +59,7 @@ public class HibernateRollerImpl extends RollerImpl {
     private ThreadManager     threadManager = null;
     
     
-    protected HibernateRollerImpl() throws RollerException {
+    protected HibernateRollerImpl() throws WebloggerException {
         try {
             String dialect =  
                 RollerConfig.getProperty("hibernate.dialect");
@@ -70,7 +70,7 @@ public class HibernateRollerImpl extends RollerImpl {
         } catch(Throwable t) {
             // if this happens then we are screwed
             mLogger.fatal("Error initializing Hibernate", t);
-            throw new RollerException(t);
+            throw new WebloggerException(t);
         }
     }
     
@@ -78,13 +78,13 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * Instantiates and returns an instance of HibernateRollerImpl.
      */
-    public static Roller instantiate() throws RollerException {
+    public static Roller instantiate() throws WebloggerException {
         mLogger.debug("Instantiating HibernateRollerImpl");
         return new HibernateRollerImpl();
     }
     
     
-    public void flush() throws RollerException {
+    public void flush() throws WebloggerException {
         this.strategy.flush();
     }
     

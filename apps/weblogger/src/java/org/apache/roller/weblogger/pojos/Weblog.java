@@ -33,7 +33,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.commons.logging.Log;
@@ -193,7 +193,7 @@ public class Weblog implements Serializable {
             // let the ThemeManager handle it
             ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
             return themeMgr.getTheme(this);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting theme for weblog - "+getHandle(), ex);
         }
         
@@ -205,7 +205,7 @@ public class Weblog implements Serializable {
     /**
      * Lookup the default page for this website.
      */
-    public ThemeTemplate getDefaultPage() throws RollerException {
+    public ThemeTemplate getDefaultPage() throws WebloggerException {
         
         // look for the page in our Theme
         Theme weblogTheme = getTheme();
@@ -222,7 +222,7 @@ public class Weblog implements Serializable {
      * 
      * @roller.wrapPojoMethod type="pojo"
      */
-    public ThemeTemplate getPageByAction(String action) throws RollerException {
+    public ThemeTemplate getPageByAction(String action) throws WebloggerException {
         
         if(action == null)
             return null;
@@ -241,7 +241,7 @@ public class Weblog implements Serializable {
      * Lookup a Template for this website by name.
      * @roller.wrapPojoMethod type="pojo"
      */
-    public ThemeTemplate getPageByName(String name) throws RollerException {
+    public ThemeTemplate getPageByName(String name) throws WebloggerException {
         
         if(name == null)
             return null;
@@ -260,7 +260,7 @@ public class Weblog implements Serializable {
      * Lookup a template for this website by link.
      * @roller.wrapPojoMethod type="pojo"
      */
-    public ThemeTemplate getPageByLink(String link) throws RollerException {
+    public ThemeTemplate getPageByLink(String link) throws WebloggerException {
         
         if(link == null)
             return null;
@@ -279,7 +279,7 @@ public class Weblog implements Serializable {
      * Get a list of all pages that are part of this website.
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.Template"
      */
-    public List getPages() throws RollerException {
+    public List getPages() throws WebloggerException {
         
         // look for the pages in our Theme
         Theme weblogTheme = getTheme();
@@ -1020,7 +1020,7 @@ public class Weblog implements Serializable {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             entry = wmgr.getWeblogEntryByAnchor(this, anchor);
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             this.log.error("ERROR: getting entry by anchor");
         }
         return entry;
@@ -1036,7 +1036,7 @@ public class Weblog implements Serializable {
 //        try {           
             WeblogCategory category = this.getDefaultCategory();
             ret = category.getWeblogCategories();
-//        } catch (RollerException e) {
+//        } catch (WebloggerException e) {
 //            log.error("ERROR: fetching categories", e);
 //        }
         return ret;
@@ -1060,7 +1060,7 @@ public class Weblog implements Serializable {
                 category = this.getDefaultCategory();
             }
             ret = category.getWeblogCategories();
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: fetching categories for path: " + categoryPath, e);
         }
         return ret;
@@ -1082,7 +1082,7 @@ public class Weblog implements Serializable {
             } else {
                 category = this.getDefaultCategory();
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: fetching category at path: " + categoryPath, e);
         }
         return category;
@@ -1118,7 +1118,7 @@ public class Weblog implements Serializable {
                     null, 
                     0,
                     length); 
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
         return recentEntries;
@@ -1157,7 +1157,7 @@ public class Weblog implements Serializable {
                     null, 
                     0,
                     length); 
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
         return recentEntries;
@@ -1186,7 +1186,7 @@ public class Weblog implements Serializable {
                     true,          // we want reverse chrono order
                     0,             // offset
                     length);       // length
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: getting recent comments", e);
         }
         return recentComments;
@@ -1210,7 +1210,7 @@ public class Weblog implements Serializable {
             } else {
                 return bmgr.getFolder(this, folderName);
             }
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             log.error("ERROR: fetching folder for weblog", re);
         }
         return ret;
@@ -1228,7 +1228,7 @@ public class Weblog implements Serializable {
             RefererManager rmgr = roller.getRefererManager();
             return rmgr.getTodaysReferers(this);
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("PageModel getTodaysReferers()", e);
         }
         return (referers == null ? Collections.EMPTY_LIST : referers);        
@@ -1249,7 +1249,7 @@ public class Weblog implements Serializable {
             
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting weblog hit count", e);
         }
         return 0;
@@ -1296,7 +1296,7 @@ public class Weblog implements Serializable {
             Roller roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             count = mgr.getCommentCount(this);            
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting comment count for weblog " + this.getName(), e);
         }
         return count;
@@ -1314,7 +1314,7 @@ public class Weblog implements Serializable {
             Roller roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             count = mgr.getEntryCount(this);            
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting entry count for weblog " + this.getName(), e);
         }
         return count;

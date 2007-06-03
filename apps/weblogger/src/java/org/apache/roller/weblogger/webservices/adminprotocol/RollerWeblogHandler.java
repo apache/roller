@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -107,7 +107,7 @@ class RollerWeblogHandler extends Handler {
             EntrySet c = toWeblogEntrySet((User[])users.toArray(new User[0]));
             
             return c;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get weblog collection", re);
         }
     }
@@ -206,7 +206,7 @@ class RollerWeblogHandler extends Handler {
             }
             
             return toWeblogEntrySet((Weblog[])websiteDatas.toArray(new Weblog[0]));
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not create weblogs: " + c, re);
         }
     }
@@ -253,7 +253,7 @@ class RollerWeblogHandler extends Handler {
             mgr.saveWebsite(wd);
             getRoller().flush();
             CacheManager.invalidate(wd);
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not update website data", re);
         }
     }
@@ -273,7 +273,7 @@ class RollerWeblogHandler extends Handler {
             CacheManager.invalidate(wd);
             
             return es;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not delete entry: " + handle, re);
         }
     }

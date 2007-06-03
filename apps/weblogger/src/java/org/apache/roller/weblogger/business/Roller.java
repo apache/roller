@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -124,7 +124,7 @@ public interface Roller {
     /**
      * Flush object states.
      */
-    public void flush() throws RollerException;
+    public void flush() throws WebloggerException;
     
     
     /**

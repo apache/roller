@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -64,7 +64,7 @@ public class CategoryEdit extends UIAction {
             if(!StringUtils.isEmpty(getBean().getId())) {
                 setCategory(wmgr.getWeblogCategory(getBean().getId()));
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up category", ex);
         }
     }

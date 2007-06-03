@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 
@@ -69,7 +69,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
     }
     
     
-    public void init() throws RollerException {
+    public void init() throws WebloggerException {
         
         // get relevant props
         Properties props = this.getTaskProperties();
@@ -122,7 +122,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
             
             log.info("task completed");
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error while checking for referer turnover", e);
         } catch (Exception ee) {
             log.error("unexpected exception", ee);
@@ -143,7 +143,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
             task.init();
             task.run();
             System.exit(0);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             ex.printStackTrace();
             System.exit(-1);
         }

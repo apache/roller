@@ -28,7 +28,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
@@ -253,7 +253,7 @@ public class EntryBean {
     }
     
     
-    public void copyTo(WeblogEntry entry) throws RollerException {
+    public void copyTo(WeblogEntry entry) throws WebloggerException {
         
         entry.setTitle(getTitle());
         entry.setStatus(getStatus());
@@ -268,19 +268,19 @@ public class EntryBean {
             try {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 cat = wmgr.getWeblogCategory(getCategoryId());
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error getting category by id", ex);
             }
             
             if(cat == null) {
-                throw new RollerException("Category could not be found - "+getCategoryId());
+                throw new WebloggerException("Category could not be found - "+getCategoryId());
             } else if(!entry.getWebsite().equals(cat.getWebsite())) {
-                throw new RollerException("Illegal category, not owned by action weblog");
+                throw new WebloggerException("Illegal category, not owned by action weblog");
             } else {
                 entry.setCategory(cat);
             }
         } else {
-            throw new RollerException("No category specified");
+            throw new WebloggerException("No category specified");
         }
         
         // join values from all plugins into a single string

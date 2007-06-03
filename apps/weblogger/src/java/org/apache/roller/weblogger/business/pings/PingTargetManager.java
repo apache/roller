@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.business.pings;
 
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -36,24 +36,24 @@ public interface PingTargetManager {
      * Store a ping target.
      *
      * @param pingTarget ping target data object.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void savePingTarget(PingTarget pingTarget) throws RollerException;
+    public void savePingTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
      * Remove a ping target.
      *
      * @param id id of the ping target to be removed
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void removePingTarget(PingTarget pingTarget) throws RollerException;
+    public void removePingTarget(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
      * Remove all custom targets (regardless of website).
      */
-    public void removeAllCustomPingTargets() throws RollerException;
+    public void removeAllCustomPingTargets() throws WebloggerException;
     
     
     /**
@@ -61,18 +61,18 @@ public interface PingTargetManager {
      *
      * @param id id of the ping target to be retrieved.
      * @return the ping target whose id is specified.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public PingTarget getPingTarget(String id) throws RollerException;
+    public PingTarget getPingTarget(String id) throws WebloggerException;
     
     
     /**
      * Get a list of the common (shared) ping targets.
      * 
      * @return the list of common ping targets as a <code>List</code> of {@link PPingTarget objects
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public List getCommonPingTargets() throws RollerException;
+    public List getCommonPingTargets() throws WebloggerException;
     
     
     /**
@@ -80,9 +80,9 @@ public interface PingTargetManager {
      * 
      * @param website the website whose custom targets should be returned.
      * @return the list of custom ping targets for the given website as a <code>List</code> of {@link PiPingTarget         objects
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public List getCustomPingTargets(Weblog website) throws RollerException;
+    public List getCustomPingTargets(Weblog website) throws WebloggerException;
     
     
     /**
@@ -93,9 +93,9 @@ public interface PingTargetManager {
      *
      * @param pingTarget
      * @return true if the name is unique in the appropriate set (custom or common) ping targets.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public boolean isNameUnique(PingTarget pingTarget) throws RollerException;
+    public boolean isNameUnique(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -104,9 +104,9 @@ public interface PingTargetManager {
      *
      * @param pingTarget
      * @return true if the <code>pingUrl</code> property of the ping target is a well-formed url.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public boolean isUrlWellFormed(PingTarget pingTarget) throws RollerException;
+    public boolean isUrlWellFormed(PingTarget pingTarget) throws WebloggerException;
     
     
     /**
@@ -117,9 +117,9 @@ public interface PingTargetManager {
      * @param pingTarget
      * @return true if the <code>pingUrl</code> (is well-formed and) the <code>host</code> portion of the url of the
      *         ping target is a valid IP address or a hostname that can be resolved on the server.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public boolean isHostnameKnown(PingTarget pingTarget) throws RollerException;
+    public boolean isHostnameKnown(PingTarget pingTarget) throws WebloggerException;
     
     
     /**

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -141,7 +141,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             && nextEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 nextEntry = null;
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: getting next entry", e);
         }
 
@@ -159,7 +159,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             && prevEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 prevEntry = null;
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR: getting prev entry", e);
         }
 

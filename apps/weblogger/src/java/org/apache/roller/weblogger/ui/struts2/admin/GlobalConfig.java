@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -77,7 +77,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
             // just grab our properties map and make it available to the action
             PropertiesManager mgr = RollerFactory.getRoller().getPropertiesManager();
             setProperties(mgr.getProperties());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting runtime properties map", ex);
             // TODO: i18n
             addError("Unexpected error accessing Roller properties");
@@ -151,7 +151,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
             // notify user of our success
             addMessage("weblogEdit.changesSaved");
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error saving roller properties", ex);
             // TODO: i18n
             addError("error.update.rollerConfig");

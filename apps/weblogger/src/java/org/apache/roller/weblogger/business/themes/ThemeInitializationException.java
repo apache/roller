@@ -18,13 +18,13 @@
 
 package org.apache.roller.weblogger.business.themes;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * Thrown when there is a problem initalizing a theme object.
  */
-public class ThemeInitializationException extends RollerException {
+public class ThemeInitializationException extends WebloggerException {
     
     
     public ThemeInitializationException(String s,Throwable t) {

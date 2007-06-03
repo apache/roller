@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
@@ -71,7 +71,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         try {
             UserManager uMgr = RollerFactory.getRoller().getUserManager();
             this.website = uMgr.getWebsite(this.website.getId());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             mLogger.error("Error getting website object", ex);
             return;
         }
