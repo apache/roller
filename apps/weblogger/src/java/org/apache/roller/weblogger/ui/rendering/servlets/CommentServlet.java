@@ -20,22 +20,12 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -46,10 +36,8 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.ui.rendering.util.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.util.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.util.DefaultCommentAuthenticator;
@@ -60,9 +48,7 @@ import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.URLUtilities;
-import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 
@@ -77,15 +63,10 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  *
  * If email notification is turned on, each new comment will result in an
  * email sent to the blog owner and all who have commented on the same post.
- *
- * @web.servlet name="CommentServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/comment/*"
  */
 public class CommentServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(CommentServlet.class);
-    
-    private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
     
     private CommentAuthenticator     authenticator = null;
     private CommentValidationManager commentValidationManager = null;
@@ -157,8 +138,7 @@ public class CommentServlet extends HttpServlet {
      * The CommentServlet does not support GET requests, it's a 404.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException {
-        
+            throws IOException, ServletException {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
     
@@ -169,7 +149,7 @@ public class CommentServlet extends HttpServlet {
      * Here we handle incoming comment postings.
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException {
+            throws IOException, ServletException {
         
         String error = null;
         String dispatch_url = null;
@@ -237,7 +217,7 @@ public class CommentServlet extends HttpServlet {
         }
         
         
-        log.debug("Doing comment posting for entry = "+entry.getPermaLink());
+        log.debug("Doing comment posting for entry = "+entry.getPermalink());
         
         // collect input from request params and construct new comment object
         // fields: name, email, url, content, notify
@@ -307,14 +287,21 @@ public class CommentServlet extends HttpServlet {
                     mgr.saveComment(comment);
                     RollerFactory.getRoller().flush();
                     
-                    // Send email notifications, but only to subscribers if comment is 100% valid
+                    // Send email notifications only to subscribers if comment is 100% valid
                     boolean notifySubscribers = (validationScore == 100);
-                    String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                    sendEmailNotification(comment, notifySubscribers, messages, rootURL, messageUtils);
+                    MailUtil.sendEmailNotification(comment, messages, messageUtils, notifySubscribers);
                     
                     // only re-index/invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {
-                        reindexEntry(entry);
+                        IndexManager manager = RollerFactory.getRoller().getIndexManager();
+                        
+                        // remove entry before (re)adding it, or in case it isn't Published
+                        manager.removeEntryIndexOperation(entry);
+                        
+                        // if published, index the entry
+                        if (entry.isPublished()) {
+                            manager.addEntryIndexOperation(entry);
+                        }
                         
                         // Clear all caches associated with comment
                         CacheManager.invalidate(comment);
@@ -344,313 +331,6 @@ public class CommentServlet extends HttpServlet {
         RequestDispatcher dispatcher =
                 request.getRequestDispatcher(dispatch_url);
         dispatcher.forward(request, response);
-    }
-    
-    
-    /**
-     * Re-index the WeblogEntry so that the new comment gets indexed.
-     */
-    private void reindexEntry(WeblogEntry entry)
-    throws WebloggerException {
-        
-        IndexManager manager = RollerFactory.getRoller().getIndexManager();
-        
-        // remove entry before (re)adding it, or in case it isn't Published
-        manager.removeEntryIndexOperation(entry);
-        
-        // if published, index the entry
-        if (entry.isPublished()) {
-            manager.addEntryIndexOperation(entry);
-        }
-    }
-    
-    
-    /**
-     * Send email notification of new or newly approved comment.
-     * TODO: Make the addressing options configurable on a per-website basis.
-     *
-     * @param commentObject      The new comment
-     * @param notifySubscribers  True if subscribers are to be notified
-     * @param messages           Messages to be included in e-mail (or null). 
-     *                           Errors will be assumed to be "validation errors" 
-     *                           and messages will be assumed to be "from the system"
-     * @param rootURL            Root URL of the Roller site
-     */
-    public static void sendEmailNotification(
-            WeblogEntryComment commentObject, boolean notifySubscribers,
-            RollerMessages messages, String rootURL, I18nMessages resources) {
-        
-        WeblogEntry entry = commentObject.getWeblogEntry();
-        Weblog site = entry.getWebsite();
-        User user = entry.getCreator();
-        
-        // Send e-mail to owner and subscribed users (if enabled)
-        boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        if (notify && site.getEmailComments().booleanValue()) {
-            log.debug("Comment notification enabled ... preparing email");
-            
-            // Determine message and addressing options from init parameters
-            boolean hideCommenterAddrs = RollerConfig.getBooleanProperty(
-                    "comment.notification.hideCommenterAddresses");
-            
-            //------------------------------------------
-            // --- Determine the "from" address
-            // --- Use either the site configured from address or the user's address
-            
-            String from =
-                    (StringUtils.isEmpty(site.getEmailFromAddress()))
-                    ? user.getEmailAddress()
-                    : site.getEmailFromAddress();
-            
-            //------------------------------------------
-            // --- Build list of email addresses to send notification to
-            
-            List comments = entry.getComments(true, true);
-            
-            Set subscribers = new TreeSet();
-            
-            // If we are to notify subscribers, then...
-            if (notifySubscribers) {
-                log.debug("Sending notification email to all subscribers");
-                
-                // Get all the subscribers to this comment thread
-                for (Iterator it = comments.iterator(); it.hasNext();) {
-                    WeblogEntryComment comment = (WeblogEntryComment) it.next();
-                    if (!StringUtils.isEmpty(comment.getEmail())) {
-                        // If user has commented twice,
-                        // count the most recent notify setting
-                        if (comment.getNotify().booleanValue()) {
-                            // only add those with valid email
-                            if (comment.getEmail().matches(EMAIL_ADDR_REGEXP)) {
-                                subscribers.add(comment.getEmail());
-                            }
-                        } else {
-                            // remove user who doesn't want to be notified
-                            subscribers.remove(comment.getEmail());
-                        }
-                    }
-                }
-            } else {
-                log.debug("Sending notification email only to weblog owner");
-            }
-            
-            // Form array of commenter addrs
-            String[] commenterAddrs = (String[])subscribers.toArray(new String[0]);
-            
-            //------------------------------------------
-            // --- Form the messages to be sent -
-            // Build separate owner and commenter (aka subscriber) messages
-            
-            // Determine with mime type to use for e-mail
-            StringBuffer msg = new StringBuffer();
-            StringBuffer ownermsg = new StringBuffer();
-            boolean escapeHtml = RollerRuntimeConfig.getBooleanProperty("users.comments.escapehtml");
-            
-            // first the commenter message
-            
-            if (!escapeHtml) {
-                msg.append("<html><body style=\"background: white; ");
-                msg.append(" color: black; font-size: 12px\">");
-            }
-            
-            if (!StringUtils.isEmpty(commentObject.getName())) {
-                msg.append(commentObject.getName() + " "
-                        + resources.getString("email.comment.wrote")+": ");
-            } else {
-                msg.append(resources.getString("email.comment.anonymous")+": ");
-            }
-            
-            msg.append((escapeHtml) ? "\n\n" : "<br /><br />");
-            
-            msg.append((escapeHtml) ? Utilities.escapeHTML(commentObject.getContent())
-            : UtilitiesModel.transformToHTMLSubset(Utilities.escapeHTML(commentObject.getContent())));
-            
-            msg.append((escapeHtml) ? "\n\n----\n"
-                    : "<br /><br /><hr /><span style=\"font-size: 11px\">");
-            msg.append(resources.getString("email.comment.respond") + ": ");
-            msg.append((escapeHtml) ? "\n" : "<br />");
-            
-            // Build link back to comment
-            StringBuffer commentURL = new StringBuffer(rootURL);
-            commentURL.append(entry.getPermaLink());
-            commentURL.append("#comments");
-            
-            if (escapeHtml) {
-                msg.append(commentURL.toString());
-            } else {
-                msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
-            }
-            
-            // next the owner message
-            
-            // First, list any messages from the system that were passed in:
-            if (messages.getMessageCount() > 0) {
-                ownermsg.append((escapeHtml) ? "" : "<p>");
-                ownermsg.append(resources.getString("commentServlet.email.thereAreSystemMessages"));
-                ownermsg.append((escapeHtml) ? "\n\n" : "</p>");
-                ownermsg.append((escapeHtml) ? "" : "<ul>");
-            }
-            for (Iterator it = messages.getMessages(); it.hasNext();) {
-                RollerMessage rollerMessage = (RollerMessage)it.next();
-                ownermsg.append((escapeHtml) ? "" : "<li>");
-                ownermsg.append(MessageFormat.format(resources.getString(rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
-                ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
-            }
-            if (messages.getMessageCount() > 0) {
-                ownermsg.append((escapeHtml) ? "\n\n" : "</ul>");
-            }
-            
-            // Next, list any validation error messages that were passed in:
-            if (messages.getErrorCount() > 0) {
-                ownermsg.append((escapeHtml) ? "" : "<p>");
-                ownermsg.append(resources.getString("commentServlet.email.thereAreErrorMessages"));
-                ownermsg.append((escapeHtml) ? "\n\n" : "</p>");
-                ownermsg.append((escapeHtml) ? "" : "<ul>");
-            }
-            for (Iterator it = messages.getErrors(); it.hasNext();) {
-                RollerMessage rollerMessage = (RollerMessage)it.next();
-                ownermsg.append((escapeHtml) ? "" : "<li>");
-                ownermsg.append(MessageFormat.format(resources.getString(rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
-                ownermsg.append((escapeHtml) ? "\n\n" : "</li>");
-            }
-            if (messages.getErrorCount() > 0) {
-                ownermsg.append((escapeHtml) ? "\n\n" : "</ul>");
-            }
-            
-            ownermsg.append(msg);
-            
-            // add link to weblog edit page so user can login to manage comments
-            ownermsg.append((escapeHtml) ? "\n\n----\n" :
-                "<br /><br /><hr /><span style=\"font-size: 11px\">");
-            ownermsg.append("Link to comment management page:");
-            ownermsg.append((escapeHtml) ? "\n" : "<br />");
-            
-            StringBuffer deleteURL = new StringBuffer(rootURL);
-            deleteURL.append("/roller-ui/authoring/comments.rol?entryId=" + entry.getId());
-            
-            if (escapeHtml) {
-                ownermsg.append(deleteURL.toString());
-            } else {
-                ownermsg.append(
-                        "<a href=\"" + deleteURL + "\">" + deleteURL + "</a></span>");
-                msg.append("</Body></html>");
-                ownermsg.append("</Body></html>");
-            }
-            
-            String subject = null;
-            if ((subscribers.size() > 1) ||
-                    (StringUtils.equals(commentObject.getEmail(), user.getEmailAddress()))) {
-                subject= "RE: "+resources.getString("email.comment.title")+": ";
-            } else {
-                subject = resources.getString("email.comment.title") + ": ";
-            }
-            subject += entry.getTitle();
-            
-            //------------------------------------------
-            // --- Send message to email recipients
-            try {
-                boolean isHtml = !escapeHtml;
-                // Send separate messages to owner and commenters
-                sendMessage(
-                    from, new String[]{user.getEmailAddress()}, null, 
-                    null, subject, ownermsg.toString(), isHtml);
-                if (notifySubscribers && commenterAddrs.length > 0) {
-                    // If hiding commenter addrs, they go in Bcc: otherwise in the To: of the second message
-                    String[] to = hideCommenterAddrs ? null : commenterAddrs;
-                    String[] bcc = hideCommenterAddrs ? commenterAddrs : null;
-                    sendMessage(from, to, null, bcc, subject, msg.toString(), isHtml);
-
-                }
-            } catch (Exception e) {
-                log.warn("Exception sending comment mail: " + e.getMessage());
-                // This will log the stack trace if debug is enabled
-                if (log.isDebugEnabled()) {
-                    log.debug(e);
-                }
-            }
-            
-            log.debug("Done sending email message");
-            
-        } // if email enabled
-    }
-    
-    
-    /**
-     * Send message to author of approved comment
-     *
-     * TODO: Make the addressing options configurable on a per-website basis.
-     */
-    public static void sendEmailApprovalNotification(WeblogEntryComment cd, String rootURL, I18nMessages resources) {
-        
-        WeblogEntry entry = cd.getWeblogEntry();
-        Weblog site = entry.getWebsite();
-        User user = entry.getCreator();
-        
-        // Only send email if email notificaiton is enabled
-        boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        if (notify && site.getEmailComments().booleanValue()) {
-            log.debug("Comment notification enabled ... preparing email");
-            
-            
-            
-            //------------------------------------------
-            // --- Determine the "from" address
-            // --- Use either the site configured from address or the user's address
-            
-            String from =
-                    (StringUtils.isEmpty(site.getEmailFromAddress()))
-                    ? user.getEmailAddress()
-                    : site.getEmailFromAddress();
-            
-            //------------------------------------------
-            // --- Form the message to be sent -
-            
-            String subject = resources.getString("email.comment.commentApproved");
-            
-            StringBuffer msg = new StringBuffer();
-            msg.append(resources.getString("email.comment.commentApproved"));
-            msg.append("\n\n");
-            
-            // Build link back to comment
-            StringBuffer commentURL = new StringBuffer();
-            commentURL.append(entry.getPermalink());
-            commentURL.append("#comments");
-            msg.append(commentURL.toString());
-            
-            //------------------------------------------
-            // --- Send message to author of approved comment
-            try {
-                String[] cc = null;
-                String[] bcc = null;
-                sendMessage(from,
-                        new String[] {cd.getEmail()},
-                        null, // cc
-                        null, // bcc
-                        subject, msg.toString(), false);
-            } catch (Exception e) {
-                log.warn("Exception sending comment mail: " + e.getMessage());
-                // This will log the stack trace if debug is enabled
-                if (log.isDebugEnabled()) {
-                    log.debug(e);
-                }
-            }
-            
-            log.debug("Done sending email message");
-            
-        } // if email enabled
-    }
-    
-    
-    /*
-     * This is somewhat ridiculous, but avoids duplicating a bunch of logic
-     * in the already messy sendEmailNotification.
-     */
-    static void sendMessage(String from, String[] to, String[] cc, String[] bcc, String subject,
-            String msg, boolean isHtml) throws MessagingException {
-        if (isHtml)
-            MailUtil.sendHTMLMessage(from, to, cc, bcc, subject, msg);
-        else
-            MailUtil.sendTextMessage(from, to, cc, bcc, subject, msg);
     }
     
 }
