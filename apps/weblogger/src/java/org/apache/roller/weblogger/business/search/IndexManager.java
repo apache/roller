@@ -17,7 +17,7 @@
 */
 package org.apache.roller.weblogger.business.search;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -33,16 +33,16 @@ public interface IndexManager
     public abstract boolean isInconsistentAtStartup();
     
     /** Remove user from index, returns immediately and operates in background */
-    public void removeWebsiteIndex(Weblog website) throws RollerException;
+    public void removeWebsiteIndex(Weblog website) throws WebloggerException;
     
     /** Remove entry from index, returns immediately and operates in background */
-    public void removeEntryIndexOperation(WeblogEntry entry) throws RollerException;
+    public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
     
     /** Add entry to index, returns immediately and operates in background */
-    public void addEntryIndexOperation(WeblogEntry entry) throws RollerException;
+    public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
     
     /** R-index entry, returns immediately and operates in background */
-    public void addEntryReIndexOperation(WeblogEntry entry) throws RollerException;
+    public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException;
     
     /** Execute operation immediately */
     public abstract void executeIndexOperationNow(final IndexOperation op);
@@ -55,8 +55,8 @@ public interface IndexManager
     /** Shutdown to be called on application shutdown */
     public abstract void shutdown();
 
-    public abstract void rebuildWebsiteIndex(Weblog website) throws RollerException;
+    public abstract void rebuildWebsiteIndex(Weblog website) throws WebloggerException;
 
-    public abstract void rebuildWebsiteIndex() throws RollerException;
+    public abstract void rebuildWebsiteIndex() throws WebloggerException;
 
 }

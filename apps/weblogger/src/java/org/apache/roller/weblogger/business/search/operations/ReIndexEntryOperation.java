@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.Roller;
@@ -68,7 +68,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
         try {
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
             this.data = wMgr.getWeblogEntry(this.data.getId());
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             mLogger.error("Error getting weblogentry object", ex);
             return;
         }

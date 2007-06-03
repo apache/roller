@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.themes;
 
 import java.util.Date;
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
@@ -75,13 +75,13 @@ public class WeblogCustomTheme extends WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
-    public List getTemplates() throws RollerException {
+    public List getTemplates() throws WebloggerException {
         UserManager userMgr = RollerFactory.getRoller().getUserManager();
         return userMgr.getPages(this.weblog);
     }
     
     
-    public ThemeTemplate getDefaultTemplate() throws RollerException {
+    public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         UserManager userMgr = RollerFactory.getRoller().getUserManager();
         return userMgr.getPageByAction(this.weblog, ThemeTemplate.ACTION_WEBLOG);
     }
@@ -91,7 +91,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) throws RollerException {
+    public ThemeTemplate getTemplateByAction(String action) throws WebloggerException {
         if(action == null)
             return null;
         
@@ -104,7 +104,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByName(String name) throws RollerException {
+    public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
         if(name == null)
             return null;
         
@@ -117,7 +117,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws RollerException {
+    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
         if(link == null)
             return null;
         
@@ -137,7 +137,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         try {
             FileManager fileMgr = RollerFactory.getRoller().getFileManager();
             resource = fileMgr.getFile(this.weblog, path);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             // ignored, resource considered not found
         }
         

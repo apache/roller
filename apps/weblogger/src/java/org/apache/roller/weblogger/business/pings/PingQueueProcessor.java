@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -50,7 +50,7 @@ public class PingQueueProcessor {
     }
     
     
-    private PingQueueProcessor() throws RollerException {
+    private PingQueueProcessor() throws WebloggerException {
         pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
     }
     
@@ -58,9 +58,9 @@ public class PingQueueProcessor {
     /**
      * Initialize the singleton.  This is called during <code>RollerContext</code> initialization.
      *
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public static synchronized void init() throws RollerException {
+    public static synchronized void init() throws WebloggerException {
         if (theInstance != null) {
             logger.warn("Ignoring duplicate initialization of PingQueueProcessor!");
             return;
@@ -113,10 +113,10 @@ public class PingQueueProcessor {
      * Process an individual ping queue entry.
      *
      * @param pingQueueEntry     the ping queue entry
-     * @throws RollerException only if there are problems processing the queue.  Exceptions from sending pings are
+     * @throws WebloggerException only if there are problems processing the queue.  Exceptions from sending pings are
      *                         handled, not thrown.
      */
-    private void processQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException {
+    private void processQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException {
         if (logger.isDebugEnabled()) logger.debug("Processing ping queue entry: " + pingQueueEntry);
         
         PingTarget pingTarget = pingQueueEntry.getPingTarget();
@@ -152,10 +152,10 @@ public class PingQueueProcessor {
      *
      * @param pingQueueEntry the ping queue entry
      * @param ex             the exception that occurred on the ping attempt
-     * @throws RollerException
+     * @throws WebloggerException
      */
     private void handlePingError(PingQueueEntry pingQueueEntry, Exception ex)
-            throws RollerException {
+            throws WebloggerException {
         
         if ((pingQueueEntry.incrementAttempts() < PingConfig.getMaxPingAttempts()) && WeblogUpdatePinger.shouldRetry(ex)) {
             // We have attempts remaining, and it looks like we should retry,

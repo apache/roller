@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
@@ -84,7 +84,7 @@ public final class RollerFactory {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("ERROR configing ping managers", e);
         }
     }

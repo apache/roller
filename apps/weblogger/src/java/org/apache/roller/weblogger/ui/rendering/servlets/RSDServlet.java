@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
@@ -81,7 +81,7 @@ public class RSDServlet extends HttpServlet {
             // now make sure the specified weblog really exists
             weblog = weblogRequest.getWeblog();
             if(weblog == null) {
-                throw new RollerException("Unable to lookup weblog: "+
+                throw new WebloggerException("Unable to lookup weblog: "+
                         weblogRequest.getWeblogHandle());
             }
             

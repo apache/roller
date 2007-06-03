@@ -26,7 +26,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import java.sql.Timestamp;
@@ -53,24 +53,24 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     }
     
     
-    public PingQueueEntry getQueueEntry(String id) throws RollerException {
+    public PingQueueEntry getQueueEntry(String id) throws WebloggerException {
         return (PingQueueEntry) strategy.load(id, PingQueueEntry.class);
     }
     
     
-    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException {
+    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException {
         log.debug("Storing ping queue entry: " + pingQueueEntry);
         strategy.store(pingQueueEntry);
     }
     
     
-    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException {
+    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException {
         log.debug("Removing ping queue entry: " + pingQueueEntry);
         strategy.remove(pingQueueEntry);
     }
     
     
-    public void addQueueEntry(AutoPing autoPing) throws RollerException {
+    public void addQueueEntry(AutoPing autoPing) throws WebloggerException {
         log.debug("Creating new ping queue entry for auto ping configuration: " + autoPing);
         
         // First check if there is an existing ping queue entry for the same target and website
@@ -86,7 +86,7 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     }
     
     
-    public List getAllQueueEntries() throws RollerException {
+    public List getAllQueueEntries() throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(PingQueueEntry.class);
@@ -94,13 +94,13 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException("ERROR retrieving queue entries.", e);
+            throw new WebloggerException("ERROR retrieving queue entries.", e);
         }
     }
     
     
     // private helper to determine if an has already been queued for the same website and ping target.
-    private boolean isAlreadyQueued(AutoPing autoPing) throws RollerException {
+    private boolean isAlreadyQueued(AutoPing autoPing) throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy).getSession();
             Criteria criteria = session.createCriteria(PingQueueEntry.class);
@@ -108,7 +108,7 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
             criteria.add(Expression.eq("website", autoPing.getWebsite()));
             return !criteria.list().isEmpty();
         } catch (HibernateException e) {
-            throw new RollerException("ERROR determining if preexisting queue entry is present.",e);
+            throw new WebloggerException("ERROR determining if preexisting queue entry is present.",e);
         }
     }
     

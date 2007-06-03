@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.util.DateUtil;
 
@@ -42,7 +42,7 @@ public abstract class RollerTask implements Runnable {
     /**
      * Initialization.  Run once before the task is started.
      */
-    public void init() throws RollerException {
+    public void init() throws WebloggerException {
         // no-op by default
     }
     

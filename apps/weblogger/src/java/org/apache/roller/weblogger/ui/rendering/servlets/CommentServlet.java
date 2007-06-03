@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -211,14 +211,14 @@ public class CommentServlet extends HttpServlet {
             weblog = uMgr.getWebsiteByHandle(commentRequest.getWeblogHandle());
             
             if(weblog == null) {
-                throw new RollerException("unable to lookup weblog: "+
+                throw new WebloggerException("unable to lookup weblog: "+
                         commentRequest.getWeblogHandle());
             }
             
             // lookup entry specified by comment request
             entry = commentRequest.getWeblogEntry();
             if(entry == null) {
-                throw new RollerException("unable to lookup entry: "+
+                throw new WebloggerException("unable to lookup entry: "+
                         commentRequest.getWeblogAnchor());
             }
             
@@ -324,7 +324,7 @@ public class CommentServlet extends HttpServlet {
                     cf = new WeblogEntryCommentForm();
                 }
                 
-            } catch (RollerException re) {
+            } catch (WebloggerException re) {
                 log.error("Error saving comment", re);
                 error = re.getMessage();
             }
@@ -351,7 +351,7 @@ public class CommentServlet extends HttpServlet {
      * Re-index the WeblogEntry so that the new comment gets indexed.
      */
     private void reindexEntry(WeblogEntry entry)
-    throws RollerException {
+    throws WebloggerException {
         
         IndexManager manager = RollerFactory.getRoller().getIndexManager();
         

@@ -18,13 +18,13 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * Thrown from the FileManager if a file path does not exist.
  */
-public class FileNotFoundException extends RollerException {
+public class FileNotFoundException extends WebloggerException {
     
     public FileNotFoundException(String s) {
         super(s);

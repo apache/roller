@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.themes;
 
 import java.io.Serializable;
 import java.util.Date;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 
 
@@ -71,7 +71,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         if(decoratorName != null && !id.equals(decoratorName)) {
             try {
                 return myTheme.getTemplateByName(decoratorName);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 // some kind of error getting decorator
             }
         }

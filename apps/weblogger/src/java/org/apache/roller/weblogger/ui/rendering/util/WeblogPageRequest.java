@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -333,7 +333,7 @@ public class WeblogPageRequest extends WeblogRequest {
             try {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry "+weblogAnchor, ex);
             }
         }
@@ -351,7 +351,7 @@ public class WeblogPageRequest extends WeblogRequest {
             try {
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
                 weblogPage = getWeblog().getPageByLink(weblogPageName);                
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }
         }
@@ -369,7 +369,7 @@ public class WeblogPageRequest extends WeblogRequest {
             try {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);
             }
         }

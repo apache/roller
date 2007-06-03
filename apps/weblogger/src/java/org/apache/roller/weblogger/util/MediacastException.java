@@ -9,13 +9,13 @@
 
 package org.apache.roller.weblogger.util;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * An exception thrown when dealing with Mediacast files.
  */
-public class MediacastException extends RollerException {
+public class MediacastException extends WebloggerException {
     
     private int errorCode = 0;
     private String errorKey = null;

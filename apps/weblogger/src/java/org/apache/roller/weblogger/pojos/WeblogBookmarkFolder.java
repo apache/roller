@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.util.UUIDGenerator;
@@ -313,7 +313,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     /** 
      * Add a bookmark to this folder.
      */
-    public void addBookmark(WeblogBookmark bookmark) throws RollerException {
+    public void addBookmark(WeblogBookmark bookmark) throws WebloggerException {
         bookmark.setFolder(this);
         getBookmarks().add(bookmark);
     }
@@ -324,7 +324,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
      *
      * @param subfolders
      */
-    public List retrieveBookmarks(boolean subfolders) throws RollerException {
+    public List retrieveBookmarks(boolean subfolders) throws WebloggerException {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         return bmgr.getBookmarks(this, subfolders);
     }
@@ -367,7 +367,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     
     // convenience method for updating the folder name, which triggers a path tree rebuild
-    public void updateName(String newName) throws RollerException {
+    public void updateName(String newName) throws WebloggerException {
         
         // update name
         setName(newName);
@@ -388,7 +388,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
     
     // update the path tree for a given folder
     public static void updatePathTree(WeblogBookmarkFolder folder) 
-            throws RollerException {
+            throws WebloggerException {
         
         log.debug("Updating path tree for folder "+folder.getPath());
         

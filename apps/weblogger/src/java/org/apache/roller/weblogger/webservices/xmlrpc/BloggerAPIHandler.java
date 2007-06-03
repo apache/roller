@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -151,7 +151,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             flushPageCache(page.getWebsite());
             
             return true;
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             String msg = "ERROR in BlooggerAPIHander.setTemplate";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION,msg);
@@ -248,7 +248,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             result.put("firstname", firstname);
             
             return result;
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             String msg = "ERROR in BlooggerAPIHander.getInfo";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION,msg);

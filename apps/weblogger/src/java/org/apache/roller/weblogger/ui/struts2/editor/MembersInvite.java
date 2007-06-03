@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -97,7 +97,7 @@ public class MembersInvite extends UIAction {
             if (user == null) {
                 addError("inviteMember.error.userNotFound");
             }
-        } catch(RollerException ex) {
+        } catch(WebloggerException ex) {
             log.error("Error looking up user by id - "+getUserName(), ex);
             // TODO: i18n
             addError("Error looking up invitee");
@@ -118,7 +118,7 @@ public class MembersInvite extends UIAction {
                 addError("inviteMember.error.userAlreadyMember");
             }
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up permissions for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error checking existing permissions");
@@ -134,7 +134,7 @@ public class MembersInvite extends UIAction {
             
             try {
                 MailUtil.sendWeblogInvitation(getActionWeblog(), user);
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 // TODO: this should be an error except that struts2 misbehaves
                 // when we chain this action to the next one thinking that an error
                 // means that validation broke during the chain

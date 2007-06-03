@@ -18,14 +18,14 @@
 
 package org.apache.roller.weblogger.util;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
  * An exception thrown when a Trackback is formed for a url which is disallowed
  * by the system administrator.
  */
-public class TrackbackNotAllowedException extends RollerException {
+public class TrackbackNotAllowedException extends WebloggerException {
     
     public TrackbackNotAllowedException(String url) {
         super(url);

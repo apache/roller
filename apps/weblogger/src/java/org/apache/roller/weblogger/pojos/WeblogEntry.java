@@ -44,7 +44,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
@@ -429,7 +429,7 @@ public class WeblogEntry implements Serializable {
             att.setValue(value);
         }
     }
-    public void onRemoveEntryAttribute(WeblogEntryAttribute att) throws RollerException {
+    public void onRemoveEntryAttribute(WeblogEntryAttribute att) throws WebloggerException {
         attMap.remove(att.getName());
     }
     //-------------------------------------------------------------------------
@@ -637,7 +637,7 @@ public class WeblogEntry implements Serializable {
          return tagSet;
      }
      
-     private void setTags(Set tagSet) throws RollerException
+     private void setTags(Set tagSet) throws WebloggerException
      {
          this.tagSet = tagSet;
          this.removedTags = new HashSet();
@@ -648,9 +648,9 @@ public class WeblogEntry implements Serializable {
      * Roller lowercases all tags based on locale because there's not a 1:1 mapping
      * between uppercase/lowercase characters across all languages.  
      * @param name
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void addTag(String name) throws RollerException {
+    public void addTag(String name) throws WebloggerException {
         Locale locale = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
         name = Utilities.normalizeTag(name, locale);
         if(name.length() == 0)
@@ -673,7 +673,7 @@ public class WeblogEntry implements Serializable {
         addedTags.add(name);
     }
 
-    public void onRemoveTag(String name) throws RollerException {
+    public void onRemoveTag(String name) throws WebloggerException {
         removedTags.add(name);
     }
 
@@ -685,7 +685,7 @@ public class WeblogEntry implements Serializable {
         return removedTags;
     }
 
-    public void updateTags(List tags) throws RollerException {
+    public void updateTags(List tags) throws WebloggerException {
         
         if(tags == null)
             return;
@@ -735,7 +735,7 @@ public class WeblogEntry implements Serializable {
         return sb.toString();
     }
 
-    public void setTagsAsString(String tags) throws RollerException {
+    public void setTagsAsString(String tags) throws WebloggerException {
         if (tags == null) {
             tagSet.clear();
             return;
@@ -864,7 +864,7 @@ public class WeblogEntry implements Serializable {
                     false, // we want chrono order
                     0,    // offset
                     -1);   // no limit
-        } catch (RollerException alreadyLogged) {}
+        } catch (WebloggerException alreadyLogged) {}
         return list;
     }
     
@@ -890,7 +890,7 @@ public class WeblogEntry implements Serializable {
         List referers = null;
         try {
             referers = RollerFactory.getRoller().getRefererManager().getReferersToEntry(getId());
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             mLogger.error("Unexpected exception", e);
         }
         return referers;
@@ -975,7 +975,7 @@ public class WeblogEntry implements Serializable {
     }
     
     /** Create anchor for weblog entry, based on title or text */
-    protected String createAnchor() throws RollerException {
+    protected String createAnchor() throws WebloggerException {
         return RollerFactory.getRoller().getWeblogManager().createAnchor(this);
     }
     
@@ -1110,7 +1110,7 @@ public class WeblogEntry implements Serializable {
     /**
      * Determine if the specified user has permissions to edit this entry.
      */
-    public boolean hasWritePermissions(User user) throws RollerException {
+    public boolean hasWritePermissions(User user) throws WebloggerException {
         
         // global admins can hack whatever they want
         if(user.hasRole("admin")) {

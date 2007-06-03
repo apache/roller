@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.roller.business.jpa.JPAPersistenceStrategy;
 
 
 /*
@@ -69,7 +68,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Retrieve a single property by name.
      */
-    public RuntimeConfigProperty getProperty(String name) throws RollerException {
+    public RuntimeConfigProperty getProperty(String name) throws WebloggerException {
         return (RuntimeConfigProperty) strategy
             .load(RuntimeConfigProperty.class,name);
     }
@@ -82,7 +81,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
-    public Map getProperties() throws RollerException {
+    public Map getProperties() throws WebloggerException {
 
         HashMap props = new HashMap();
         List list = (List) strategy.getNamedQuery("RuntimeConfigProperty.getAll").getResultList();
@@ -107,7 +106,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Save a single property.
      */
     public void saveProperty(RuntimeConfigProperty property) 
-            throws RollerException {
+            throws WebloggerException {
         this.strategy.store(property);
     }
 
@@ -115,7 +114,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     /**
      * Save all properties.
      */
-    public void saveProperties(Map properties) throws RollerException {
+    public void saveProperties(Map properties) throws WebloggerException {
 
         // just go through the list and saveProperties each property
         Iterator props = properties.values().iterator();

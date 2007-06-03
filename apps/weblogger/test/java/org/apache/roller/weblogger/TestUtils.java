@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -93,7 +93,7 @@ public final class TestUtils {
         User user = mgr.getUserByUserName(username);
         
         if(user == null)
-            throw new RollerException("error inserting new user");
+            throw new WebloggerException("error inserting new user");
         
         return user;
     }
@@ -146,7 +146,7 @@ public final class TestUtils {
         Weblog weblog = mgr.getWebsiteByHandle(handle);
         
         if(weblog == null)
-            throw new RollerException("error setting up weblog");
+            throw new WebloggerException("error setting up weblog");
         
         return weblog;
     }
@@ -211,7 +211,7 @@ public final class TestUtils {
         WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
         
         if(cat == null)
-            throw new RollerException("error setting up weblog category");
+            throw new WebloggerException("error setting up weblog category");
         
         return cat;
     }
@@ -266,7 +266,7 @@ public final class TestUtils {
         WeblogEntry entry = mgr.getWeblogEntry(testEntry.getId());
         
         if(entry == null)
-            throw new RollerException("error setting up weblog entry");
+            throw new WebloggerException("error setting up weblog entry");
         
         return entry;
     }
@@ -316,7 +316,7 @@ public final class TestUtils {
         WeblogEntryComment comment = mgr.getComment(testComment.getId());
         
         if(comment == null)
-            throw new RollerException("error setting up comment");
+            throw new WebloggerException("error setting up comment");
         
         return comment;
     }
@@ -360,7 +360,7 @@ public final class TestUtils {
         PingTarget ping = pingMgr.getPingTarget(testPing.getId());
         
         if(ping == null)
-            throw new RollerException("error setting up ping target");
+            throw new WebloggerException("error setting up ping target");
         
         return ping;
     }
@@ -402,7 +402,7 @@ public final class TestUtils {
         autoPing = mgr.getAutoPing(autoPing.getId());
         
         if(autoPing == null)
-            throw new RollerException("error setting up auto ping");
+            throw new WebloggerException("error setting up auto ping");
         
         return autoPing;
     }
@@ -446,7 +446,7 @@ public final class TestUtils {
         testCount = mgr.getHitCount(testCount.getId());
         
         if(testCount == null)
-            throw new RollerException("error setting up hit count");
+            throw new WebloggerException("error setting up hit count");
         
         return testCount;
     }
@@ -494,7 +494,7 @@ public final class TestUtils {
         WeblogBookmarkFolder cat = mgr.getFolder(testFolder.getId());
         
         if(testFolder == null)
-            throw new RollerException("error setting up weblog folder");
+            throw new WebloggerException("error setting up weblog folder");
         
         return testFolder;
     }
@@ -520,7 +520,7 @@ public final class TestUtils {
     /**
      * Convenience method that returns managed copy of given user.
      */
-    public static User getManagedUser(User user) throws RollerException {
+    public static User getManagedUser(User user) throws WebloggerException {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         return mgr.getUser(user.getId());
     }
@@ -528,7 +528,7 @@ public final class TestUtils {
     /**
      * Convenience method that returns managed copy of given website.
      */
-    public static Weblog getManagedWebsite(Weblog website) throws RollerException {
+    public static Weblog getManagedWebsite(Weblog website) throws WebloggerException {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         return mgr.getWebsite(website.getId());
     }
@@ -536,7 +536,7 @@ public final class TestUtils {
     /**
      * Convenience method that returns managed copy of given WeblogEntry.
      */
-    public static WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) throws RollerException {
+    public static WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) throws WebloggerException {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         return mgr.getWeblogEntry(weblogEntry.getId());
     }

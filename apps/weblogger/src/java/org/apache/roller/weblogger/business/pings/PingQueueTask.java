@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.Roller;
@@ -76,7 +76,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
     }
     
     
-    public void init() throws RollerException {
+    public void init() throws WebloggerException {
         
         // get relevant props
         Properties props = this.getTaskProperties();
@@ -131,7 +131,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             
             log.debug("task completed");
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error while processing ping queue", e);
         } catch (Exception ee) {
             log.error("unexpected exception", ee);
@@ -152,7 +152,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             task.init();
             task.run();
             System.exit(0);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             ex.printStackTrace();
             System.exit(-1);
         }

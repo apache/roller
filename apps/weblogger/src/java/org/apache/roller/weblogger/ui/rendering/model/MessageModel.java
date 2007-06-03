@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
@@ -41,12 +41,12 @@ public class MessageModel implements Model {
     
     
     /** Init page model based on request */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(weblogRequest == null) {
-            throw new RollerException("expected weblogRequest from init data");
+            throw new WebloggerException("expected weblogRequest from init data");
         }
         
         // get messages util based on desired locale

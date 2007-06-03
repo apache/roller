@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -121,7 +121,7 @@ public class TrackbackServlet extends HttpServlet {
                 weblog = uMgr.getWebsiteByHandle(trackbackRequest.getWeblogHandle());
                 
                 if (weblog == null) {
-                    throw new RollerException("unable to lookup weblog: "+
+                    throw new WebloggerException("unable to lookup weblog: "+
                             trackbackRequest.getWeblogHandle());
                 }
                 
@@ -130,7 +130,7 @@ public class TrackbackServlet extends HttpServlet {
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
                 
                 if (entry == null) {
-                    throw new RollerException("unable to lookup entry: "+
+                    throw new WebloggerException("unable to lookup entry: "+
                             trackbackRequest.getWeblogAnchor());
                 }
                 

@@ -26,7 +26,7 @@ import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -158,7 +158,7 @@ public class Register extends UIAction implements ServletRequestAware {
                     }
                     // In more unlikely event that three retries isn't enough
                     if (activationCode == null){
-                        throw new RollerException("error.add.user.activationCodeInUse");
+                        throw new WebloggerException("error.add.user.activationCodeInUse");
                     }
                 }
                 ud.setActivationCode(activationCode);
@@ -173,7 +173,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 try {
                     // send activation mail to the user
                     MailUtil.sendUserActivationEmail(ud);
-                } catch (RollerException ex) {
+                } catch (WebloggerException ex) {
                     log.error("Error sending activation email to - "+ud.getEmailAddress(), ex);
                 }
                 
@@ -190,7 +190,7 @@ public class Register extends UIAction implements ServletRequestAware {
             
             return SUCCESS;
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error adding new user", ex);
             // TODO: i18n
             addError("Error adding new user");
@@ -224,7 +224,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 }
             }
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             addError(e.getMessage());
             log.error("ERROR in activateUser", e);
         }
@@ -284,7 +284,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 // reset user name
                 getBean().setUserName(null);
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("error checking for user", ex);
             // TODO: i18n
             addError("unexpected error");

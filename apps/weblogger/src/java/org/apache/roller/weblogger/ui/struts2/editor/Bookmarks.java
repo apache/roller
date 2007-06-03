@@ -27,7 +27,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -88,7 +88,7 @@ public class Bookmarks extends UIAction {
             } else {
                 setFolder(bmgr.getRootFolder(getActionWeblog()));
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error looking up folder", ex);
         }
     }
@@ -124,7 +124,7 @@ public class Bookmarks extends UIAction {
                 }
                 setFolderPath(folderPath);
             }
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error building folders list", ex);
             // TODO: i18n
             addError("Error building folders list");
@@ -175,7 +175,7 @@ public class Bookmarks extends UIAction {
             // notify caches
             CacheManager.invalidate(getActionWeblog());
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error doing folder/bookmark deletes", ex);
             // TODO: i18n
             addError("Error doing folder/bookmark deletes");
@@ -229,7 +229,7 @@ public class Bookmarks extends UIAction {
             // notify caches
             CacheManager.invalidate(getActionWeblog());
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error doing folder/bookmark move", e);
             addError("bookmarksForm.error.move");
         }

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -75,7 +75,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     }
     
     
-    public void init() throws RollerException {
+    public void init() throws WebloggerException {
         
         // get relevant props
         Properties props = this.getTaskProperties();
@@ -172,7 +172,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
                 searchMgr.addEntryReIndexOperation(entry);
             }
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             log.error("Error getting scheduled entries", e);
         } catch(Exception e) {
             log.error("Unexpected exception running task", e);
@@ -195,7 +195,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             task.init();
             task.run();
             System.exit(0);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             ex.printStackTrace();
             System.exit(-1);
         }

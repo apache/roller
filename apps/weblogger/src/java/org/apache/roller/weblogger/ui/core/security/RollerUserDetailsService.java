@@ -6,7 +6,7 @@ import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -28,7 +28,7 @@ public class RollerUserDetailsService implements UserDetailsService {
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
             userData = umgr.getUserByUserName(userName, Boolean.TRUE); 
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         } 
         

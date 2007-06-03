@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -77,7 +77,7 @@ public class UserDataServlet extends HttpServlet {
                 response.getWriter().println(user.getEmailAddress());
             }
             response.flushBuffer();
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             throw new ServletException(e.getMessage());
         }
     }

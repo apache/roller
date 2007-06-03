@@ -35,7 +35,7 @@ import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MailProvider;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -66,11 +66,11 @@ public class MailUtil {
      * Send an email notice that a new pending entry has been submitted.
      */
     public static void sendPendingEntryNotice(WeblogEntry entry) 
-            throws RollerException {
+            throws WebloggerException {
         
         Session mailSession = MailProvider.getMailProvider().getSession();
         if(mailSession == null) {
-            throw new RollerException("Couldn't get mail Session");
+            throw new WebloggerException("Couldn't get mail Session");
         }
         
         try {
@@ -136,11 +136,11 @@ public class MailUtil {
      */
     public static void sendWeblogInvitation(Weblog website, 
                                             User user)
-            throws RollerException {
+            throws WebloggerException {
         
         Session mailSession = MailProvider.getMailProvider().getSession();
         if(mailSession == null) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
+            throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
         }
         
@@ -183,7 +183,7 @@ public class MailUtil {
             MailUtil.sendTextMessage(
                     from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
+            throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "due to Roller configuration or mail server problem.", e);
         }
     }
@@ -193,11 +193,11 @@ public class MailUtil {
      * Send a weblog invitation email.
      */
     public static void sendUserActivationEmail(User user)
-            throws RollerException {
+            throws WebloggerException {
         
         Session mailSession = MailProvider.getMailProvider().getSession();
         if(mailSession == null) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
+            throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
         }
         
@@ -231,7 +231,7 @@ public class MailUtil {
             
             sendHTMLMessage(from, to, cc, bcc, subject, content);
         } catch (MessagingException e) {
-            throw new RollerException("ERROR: Problem sending activation email.", e);
+            throw new WebloggerException("ERROR: Problem sending activation email.", e);
         }
     }
     
@@ -265,7 +265,7 @@ public class MailUtil {
         Session session = null;
         try {
             mailProvider = MailProvider.getMailProvider(); 
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             // The MailProvider should have been constructed long before 
             // we get to this point, so this should never ever happen
             throw new RuntimeException("ERROR getting mail provider", ex);

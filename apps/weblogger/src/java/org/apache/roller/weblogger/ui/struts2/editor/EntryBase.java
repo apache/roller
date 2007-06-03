@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PluginManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryPlugin;
@@ -56,7 +56,7 @@ public abstract class EntryBase extends UIAction {
         if (entry.isPublished()) {
             try {
                 manager.addEntryReIndexOperation(entry);
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.warn("Trouble triggering entry indexing", ex);
             }
         }
@@ -67,7 +67,7 @@ public abstract class EntryBase extends UIAction {
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
      * @return List of WeblogEntryData objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
     public List<WeblogEntry> getRecentPublishedEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -85,7 +85,7 @@ public abstract class EntryBase extends UIAction {
                     null,
                     null,
                     0, 20);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting entries list", ex);
         }
         return entries;
@@ -96,7 +96,7 @@ public abstract class EntryBase extends UIAction {
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
      * @return List of WeblogEntryData objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
     public List<WeblogEntry> getRecentScheduledEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -114,7 +114,7 @@ public abstract class EntryBase extends UIAction {
                     null,
                     null,
                     0, 20);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting entries list", ex);
         }
         return entries;
@@ -124,7 +124,7 @@ public abstract class EntryBase extends UIAction {
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
      * @return List of WeblogEntryData objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
     public List<WeblogEntry> getRecentDraftEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -142,7 +142,7 @@ public abstract class EntryBase extends UIAction {
                     null,
                     null,
                     0, 20);  // maxEntries
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting entries list", ex);
         }
         return entries;
@@ -152,7 +152,7 @@ public abstract class EntryBase extends UIAction {
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
      * @return List of WeblogEntryData objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
     public List<WeblogEntry> getRecentPendingEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
@@ -170,7 +170,7 @@ public abstract class EntryBase extends UIAction {
                     null,
                     null,
                     0, 20);
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error getting entries list", ex);
         }
         return entries;

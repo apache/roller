@@ -46,7 +46,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.MockRollerContext;
-import org.apache.roller.weblogger.ui.core.RollerRequest;
 import org.apache.roller.weblogger.util.RegexUtil;
 import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
@@ -158,8 +157,6 @@ public class RollerXmlRpcServerTest extends TestCase {
             
             mockRequest = mockFactory.getMockRequest();
             mockRequest.setContextPath("/roller");
-            RollerRequest.getRollerRequest(
-                    mockRequest, mockFactory.getMockServletContext());
             
             servletTestModule = new ServletTestModule(mockFactory);
             servletTestModule.createServlet(XmlRpcServlet.class);

@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -74,7 +75,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
         return this.leaseTime;
     }
     
-    public void init() throws RollerException {
+    public void init() throws WebloggerException {
         
         // get relevant props
         Properties props = this.getTaskProperties();

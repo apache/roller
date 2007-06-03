@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.util.UUIDGenerator;
@@ -283,9 +283,9 @@ public class WeblogCategory implements Serializable {
      *
      * @param subcats True if entries from sub-categories are to be returned.
      * @return List of WeblogEntryData objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public List retrieveWeblogEntries(boolean subcats) throws RollerException {
+    public List retrieveWeblogEntries(boolean subcats) throws WebloggerException {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
     }
@@ -359,7 +359,7 @@ public class WeblogCategory implements Serializable {
     public boolean isInUse() {
         try {
             return RollerFactory.getRoller().getWeblogManager().isWeblogCategoryInUse(this);
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             throw new RuntimeException(e);
         }
     }
@@ -368,7 +368,7 @@ public class WeblogCategory implements Serializable {
     
     
     // convenience method for updating the category name, which triggers a path tree rebuild
-    public void updateName(String newName) throws RollerException {
+    public void updateName(String newName) throws WebloggerException {
         
         // update name
         setName(newName);
@@ -389,7 +389,7 @@ public class WeblogCategory implements Serializable {
     
     // updates the paths of all descendents of the given category
     public static void updatePathTree(WeblogCategory cat) 
-            throws RollerException {
+            throws WebloggerException {
         
         log.debug("Updating path tree for category "+cat.getPath());
         

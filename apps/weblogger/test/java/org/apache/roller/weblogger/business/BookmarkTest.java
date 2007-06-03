@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.Roller;
@@ -288,7 +288,7 @@ public class BookmarkTest extends TestCase {
                 // Move folder into one of it's children
                 bmgr.moveFolder(f1, f3);
                 TestUtils.endSession(true);
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 safe = true;
             }
             assertTrue(safe);

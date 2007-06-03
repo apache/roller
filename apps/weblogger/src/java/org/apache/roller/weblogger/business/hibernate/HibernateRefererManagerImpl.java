@@ -35,7 +35,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.type.Type;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
@@ -78,11 +78,11 @@ public class HibernateRefererManagerImpl implements RefererManager {
         strategy = strat;
     }
     
-    public void saveReferer(WeblogReferrer referer) throws RollerException {
+    public void saveReferer(WeblogReferrer referer) throws WebloggerException {
         strategy.store(referer);
     }
         
-    public void removeReferer(WeblogReferrer referer) throws RollerException {
+    public void removeReferer(WeblogReferrer referer) throws WebloggerException {
         strategy.remove(referer);
     }
         
@@ -91,7 +91,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      *
      * TODO: do we really need dialect specific queries?
      */
-    public void clearReferrers() throws RollerException {
+    public void clearReferrers() throws WebloggerException {
         
         if (log.isDebugEnabled()) {
             log.debug("clearReferrers");
@@ -121,7 +121,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      *
      * TODO: do we really need dialect specific queries?
      */
-    public void clearReferrers(Weblog website) throws RollerException {
+    public void clearReferrers(Weblog website) throws WebloggerException {
         
         if (log.isDebugEnabled()) {
             log.debug("clearReferrers");
@@ -148,7 +148,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Apply ignoreWord/spam filters to all referers in system.
      */
-    public void applyRefererFilters() throws RollerException {
+    public void applyRefererFilters() throws WebloggerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -174,16 +174,16 @@ public class HibernateRefererManagerImpl implements RefererManager {
             }
 
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
-    public void applyRefererFilters(Weblog website) throws RollerException {
+    public void applyRefererFilters(Weblog website) throws WebloggerException {
         
-        if (null == website) throw new RollerException("website is null");
+        if (null == website) throw new WebloggerException("website is null");
         if (null == website.getBlacklist()) return;
         
         try {
@@ -207,7 +207,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             }
             
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }   
     
@@ -215,7 +215,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
     protected List getExistingReferers(Weblog website, String dateString,
-            String permalink) throws RollerException {
+            String permalink) throws WebloggerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -227,7 +227,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
@@ -235,7 +235,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
     protected List getMatchingReferers(Weblog website, String requestUrl,
-            String refererUrl) throws RollerException {
+            String refererUrl) throws WebloggerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -247,7 +247,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
        
@@ -255,7 +255,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * Returns hot weblogs as StatCount objects, in descending order by today's hits.
      */
     public List getHotWeblogs(int sinceDays, int offset, int length)
-        throws RollerException {
+        throws WebloggerException {
         // TODO: ATLAS getDaysPopularWebsites DONE TESTED
         String msg = "Getting hot weblogs";
         ArrayList result = new ArrayList();
@@ -303,7 +303,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
         } catch (Throwable pe) {
             log.error(msg, pe);
-            throw new RollerException(msg, pe);
+            throw new WebloggerException(msg, pe);
         }
     }
     
@@ -311,7 +311,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * Use raw SQL because Hibernate can't handle the query.
      */
-    protected int getHits(Weblog website, String type) throws RollerException {
+    protected int getHits(Weblog website, String type) throws WebloggerException {
         int hits = 0;
         if (log.isDebugEnabled()) {
             log.debug("getHits: " + website.getName());
@@ -334,7 +334,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             q.setParameters(args, types);
             results = q.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
         Object[] resultsArray = (Object[]) results.get(0);
         
@@ -356,9 +356,9 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * @see org.apache.roller.weblogger.pojos.RefererManager#getReferers(java.lang.String)
      */
-    public List getReferers(Weblog website) throws RollerException {
+    public List getReferers(Weblog website) throws WebloggerException {
         if (website==null )
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -368,16 +368,16 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
     /**
      * @see org.apache.roller.weblogger.pojos.RefererManager#getTodaysReferers(String)
      */
-    public List getTodaysReferers(Weblog website) throws RollerException {
+    public List getTodaysReferers(Weblog website) throws WebloggerException {
         if (website==null )
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -388,7 +388,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
        
@@ -399,12 +399,12 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * org.apache.roller.weblogger.pojos.WebsiteData, java.lang.String)
      */
     public List getReferersToDate(Weblog website, String date)
-            throws RollerException {
+            throws WebloggerException {
         if (website==null )
-            throw new RollerException("website is null");
+            throw new WebloggerException("website is null");
         
         if (date==null )
-            throw new RollerException("Date is null");
+            throw new WebloggerException("Date is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -416,7 +416,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
@@ -424,9 +424,9 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * @see org.apache.roller.weblogger.pojos.RefererManager#getReferersToEntry(
      * java.lang.String, java.lang.String)
      */
-    public List getReferersToEntry(String entryid) throws RollerException {
+    public List getReferersToEntry(String entryid) throws WebloggerException {
         if (null == entryid)
-            throw new RollerException("entryid is null");
+            throw new WebloggerException("entryid is null");
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -441,7 +441,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
@@ -449,7 +449,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
      * Query for collection of referers.
      */
     protected List getReferersToWebsite(Weblog website, String refererUrl)
-            throws RollerException {
+            throws WebloggerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -459,7 +459,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
@@ -470,7 +470,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                                             String requestUrl,
                                             String title,
                                             String excerpt)
-            throws RollerException {
+            throws WebloggerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
@@ -489,22 +489,22 @@ public class HibernateRefererManagerImpl implements RefererManager {
             
             return criteria.list();
         } catch (HibernateException e) {
-            throw new RollerException(e);
+            throw new WebloggerException(e);
         }
     }
         
-    public int getDayHits(Weblog website) throws RollerException {
+    public int getDayHits(Weblog website) throws WebloggerException {
         return getHits(website, DAYHITS);
     }
         
-    public int getTotalHits(Weblog website) throws RollerException {
+    public int getTotalHits(Weblog website) throws WebloggerException {
         return getHits(website, TOTALHITS);
     }
         
     /**
      * @see org.apache.roller.weblogger.pojos.RefererManager#retrieveReferer(java.lang.String)
      */
-    public WeblogReferrer getReferer(String id) throws RollerException {
+    public WeblogReferrer getReferer(String id) throws WebloggerException {
         return (WeblogReferrer)strategy.load(id,WeblogReferrer.class);
     }
     
@@ -536,7 +536,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             }
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             // problem looking up website, gotta bail
             log.error("Error looking up website object", re);
             return;
@@ -639,7 +639,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                     saveReferer(ref);
                 }
             }
-        } catch (RollerException pe) {
+        } catch (WebloggerException pe) {
             log.error(pe);
         } catch (NullPointerException npe) {
             log.error(npe);

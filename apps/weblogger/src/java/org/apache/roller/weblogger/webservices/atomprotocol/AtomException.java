@@ -18,7 +18,7 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import javax.servlet.http.HttpServletResponse;
-import org.apache.roller.RollerException; 
+import org.apache.roller.weblogger.WebloggerException; 
 
 /**
  * Exception thrown by AtomHandler.

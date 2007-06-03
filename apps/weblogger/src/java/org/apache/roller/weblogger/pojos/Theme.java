@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.pojos;
 
 import java.util.Date;
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
@@ -69,34 +69,34 @@ public interface Theme {
     /**
      * Get the list of all templates associated with this Theme.
      */
-    public List getTemplates() throws RollerException;
+    public List getTemplates() throws WebloggerException;
     
     
     /**
      * Lookup the default template for the Theme.
      */
-    public ThemeTemplate getDefaultTemplate() throws RollerException;
+    public ThemeTemplate getDefaultTemplate() throws WebloggerException;
     
     
     /**
      * Lookup a template by action.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByAction(String action) throws RollerException;
+    public ThemeTemplate getTemplateByAction(String action) throws WebloggerException;
     
     
     /**
      * Lookup a template by name.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByName(String name) throws RollerException;
+    public ThemeTemplate getTemplateByName(String name) throws WebloggerException;
     
     
     /**
      * Lookup a template by link.
      * Returns null if the template cannot be found.
      */
-    public ThemeTemplate getTemplateByLink(String link) throws RollerException;
+    public ThemeTemplate getTemplateByLink(String link) throws WebloggerException;
     
     
     /**

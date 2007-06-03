@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.business.pings;
 
 import java.util.List;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 
@@ -38,25 +38,25 @@ public interface PingQueueManager {
      *
      * @param autoPing auto ping configuration for the ping request to be queued.
      */
-    public void addQueueEntry(AutoPing autoPing) throws RollerException;
+    public void addQueueEntry(AutoPing autoPing) throws WebloggerException;
     
     
     /**
      * Store the given queue entry.
      *
      * @param pingQueueEntry update the given queue entry
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException;
+    public void saveQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
     
     
     /**
      * Remove a queue entry.
      *
      * @param pingQueueEntry the entry to be removed.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws RollerException;
+    public void removeQueueEntry(PingQueueEntry pingQueueEntry) throws WebloggerException;
     
     
     /**
@@ -64,18 +64,18 @@ public interface PingQueueManager {
      *
      * @param id the unique id of the entry.
      * @return the queue entry with the specified id.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public PingQueueEntry getQueueEntry(String id) throws RollerException;
+    public PingQueueEntry getQueueEntry(String id) throws WebloggerException;
     
     
     /**
      * Get all of the queue entries.
      * 
      * @return the queue as a <code>List</code> of {@link PPingQueueEntry objects.
-     * @throws RollerException
+     * @throws WebloggerException
      */
-    public List getAllQueueEntries() throws RollerException;
+    public List getAllQueueEntries() throws WebloggerException;
     
     
     /**

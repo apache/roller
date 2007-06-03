@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -102,7 +102,7 @@ public class UtilitiesModel implements Model {
     
     
     /** Init page model based on request */
-    public void init(Map initData) throws RollerException {
+    public void init(Map initData) throws WebloggerException {
         
         // extract request object
         this.request = (HttpServletRequest) initData.get("request");        

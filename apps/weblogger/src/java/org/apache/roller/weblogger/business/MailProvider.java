@@ -10,7 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 /**
@@ -34,7 +34,7 @@ public class MailProvider {
 
         
     /** Creates a new instance of MailProvider */
-    public MailProvider() throws RollerException {
+    public MailProvider() throws WebloggerException {
         String connectionTypeString = RollerConfig.getProperty("mail.configurationType"); 
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
@@ -56,7 +56,7 @@ public class MailProvider {
                 Context ctx = (Context) new InitialContext().lookup(name);
                 session = (Session)ctx.lookup(name);        
             } catch (NamingException ex) {
-                throw new RollerException("ERROR looking up mail-session with JNDI name: " + name);
+                throw new WebloggerException("ERROR looking up mail-session with JNDI name: " + name);
             }
         } else {
             Properties props = new Properties();
@@ -69,12 +69,12 @@ public class MailProvider {
             Transport transport = getTransport();
             transport.close();
         } catch (Throwable t) {
-            throw new RollerException("ERROR connecting to mail server", t);
+            throw new WebloggerException("ERROR connecting to mail server", t);
         }
         
     }
     
-    public static MailProvider getMailProvider() throws RollerException {
+    public static MailProvider getMailProvider() throws WebloggerException {
         if (singletonInstance == null) {
             singletonInstance = new MailProvider();
         }

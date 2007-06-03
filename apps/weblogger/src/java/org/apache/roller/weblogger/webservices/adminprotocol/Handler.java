@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -208,7 +208,7 @@ abstract class Handler {
             }
             
             return wd;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get weblog: " + handle, re);
         }
     }
@@ -225,7 +225,7 @@ abstract class Handler {
             }
             
             return ud;
-        } catch (RollerException re) {
+        } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get user: " + name, re);
         }
     }

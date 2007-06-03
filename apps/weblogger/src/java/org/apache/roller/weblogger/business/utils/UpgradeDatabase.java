@@ -26,7 +26,7 @@ import java.sql.Statement;
 import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
@@ -45,7 +45,7 @@ public class UpgradeDatabase {
      * Upgrade database if dbVersion is older than desiredVersion.
      */
     public static void upgradeDatabase(Connection con, String desiredVersion)
-            throws RollerException {
+            throws WebloggerException {
         
         int myVersion = 0;
         int dbversion = -1;
@@ -149,7 +149,7 @@ public class UpgradeDatabase {
     /**
      * Upgrade database for Roller 1.3.0
      */
-    private static void upgradeTo130(Connection con) throws RollerException {
+    private static void upgradeTo130(Connection con) throws WebloggerException {
         try {
             /*
              * The new theme management code is going into place and it uses
@@ -179,7 +179,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 130", e);
-            throw new RollerException("Problem upgrading database to version 130", e);
+            throw new WebloggerException("Problem upgrading database to version 130", e);
         }
         
         // If someone is upgrading to 1.3.x then we are setting the db version
@@ -190,7 +190,7 @@ public class UpgradeDatabase {
     /**
      * Upgrade database for Roller 2.0.0
      */
-    private static void upgradeTo200(Connection con) throws RollerException {
+    private static void upgradeTo200(Connection con) throws WebloggerException {
         try {
             mLogger.info("Doing upgrade to 200 ...");
             mLogger.info("Populating roller_user_permissions table");
@@ -255,7 +255,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 200", e);
-            throw new RollerException("Problem upgrading database to version 200", e);
+            throw new WebloggerException("Problem upgrading database to version 200", e);
         }
         
         UpgradeDatabase.updateDatabaseVersion(con, 200);
@@ -265,7 +265,7 @@ public class UpgradeDatabase {
     /**
      * Upgrade database for Roller 2.1.0
      */
-    private static void upgradeTo210(Connection con) throws RollerException {
+    private static void upgradeTo210(Connection con) throws WebloggerException {
         try {
             /*
              * For Roller 2.1.0 we are going to standardize some of the
@@ -361,7 +361,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 210", e);
-            throw new RollerException("Problem upgrading database to version 210", e);
+            throw new WebloggerException("Problem upgrading database to version 210", e);
         }
         
         UpgradeDatabase.updateDatabaseVersion(con, 210);
@@ -371,7 +371,7 @@ public class UpgradeDatabase {
     /**
      * Upgrade database for Roller 3.0.0
      */
-    private static void upgradeTo300(Connection con) throws RollerException {
+    private static void upgradeTo300(Connection con) throws WebloggerException {
         try {
             /*
              * For Roller 3.0.0 we are allowing each weblogentry to track a
@@ -432,7 +432,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 300", e);
-            throw new RollerException("Problem upgrading database to version 300", e);
+            throw new WebloggerException("Problem upgrading database to version 300", e);
         }
         
         UpgradeDatabase.updateDatabaseVersion(con, 300);
@@ -442,7 +442,7 @@ public class UpgradeDatabase {
     /**
      * Upgrade database for Roller 3.2.0
      */
-    private static void upgradeTo320(Connection con) throws RollerException {
+    private static void upgradeTo320(Connection con) throws WebloggerException {
         
         mLogger.info("Doing upgrade to 320 ...");
         
@@ -500,7 +500,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 320", e);
-            throw new RollerException("Problem upgrading database to version 320", e);
+            throw new WebloggerException("Problem upgrading database to version 320", e);
         }
         
         
@@ -649,7 +649,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 320", e);
-            throw new RollerException("Problem upgrading database to version 320", e);
+            throw new WebloggerException("Problem upgrading database to version 320", e);
         }
         
         // finally, upgrade db version string to 320
@@ -660,7 +660,7 @@ public class UpgradeDatabase {
     /**
      * Upgrade database for Roller 4.0.0
      */
-    private static void upgradeTo400(Connection con) throws RollerException {
+    private static void upgradeTo400(Connection con) throws WebloggerException {
         
         mLogger.info("Doing upgrade to 400 ...");
         
@@ -714,7 +714,7 @@ public class UpgradeDatabase {
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 400", e);
-            throw new RollerException("Problem upgrading database to version 400", e);
+            throw new WebloggerException("Problem upgrading database to version 400", e);
         }
         
         // finally, upgrade db version string to 400
@@ -728,7 +728,7 @@ public class UpgradeDatabase {
      * This should only be called once for new installations
      */
     private static void setDatabaseVersion(Connection con, int version)
-            throws RollerException {
+            throws WebloggerException {
         
         try {
             Statement stmt = con.createStatement();
@@ -737,7 +737,7 @@ public class UpgradeDatabase {
             
             mLogger.debug("Set database verstion to "+version);
         } catch(SQLException se) {
-            throw new RollerException("Error setting database version.", se);
+            throw new WebloggerException("Error setting database version.", se);
         }
     }
     
@@ -746,7 +746,7 @@ public class UpgradeDatabase {
      * Update the existing database.version property
      */
     private static void updateDatabaseVersion(Connection con, int version)
-            throws RollerException {
+            throws WebloggerException {
         
         try {
             Statement stmt = con.createStatement();
@@ -756,7 +756,7 @@ public class UpgradeDatabase {
             
             mLogger.debug("Updated database verstion to "+version);
         } catch(SQLException se) {
-            throw new RollerException("Error setting database version.", se);
+            throw new WebloggerException("Error setting database version.", se);
         }
     }
 }

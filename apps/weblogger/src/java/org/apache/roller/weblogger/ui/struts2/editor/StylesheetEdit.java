@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -86,7 +86,7 @@ public class StylesheetEdit extends UIAction {
                     mgr.savePage(stylesheet);
                     RollerFactory.getRoller().flush();
                 }
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 log.error("Error finding/adding stylesheet tempalate from weblog - "+getActionWeblog().getHandle(), ex);
             }
         }
@@ -137,7 +137,7 @@ public class StylesheetEdit extends UIAction {
             // success message
             addMessage("pageForm.save.success", stylesheet.getName());
             
-        } catch (RollerException ex) {
+        } catch (WebloggerException ex) {
             log.error("Error updating stylesheet template for weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
             addError("Error saving template");

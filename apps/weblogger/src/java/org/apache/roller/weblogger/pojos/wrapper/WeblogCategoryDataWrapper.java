@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -104,7 +104,7 @@ public class WeblogCategoryDataWrapper {
     
     
     public List retrieveWeblogEntries(boolean subcats)
-            throws RollerException {
+            throws WebloggerException {
         
         List initialCollection = this.pojo.retrieveWeblogEntries(subcats);
         

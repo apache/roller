@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
@@ -117,7 +117,7 @@ public class FolderDataWrapper {
     
     
     public List retrieveBookmarks(boolean subfolders)
-            throws RollerException {
+            throws WebloggerException {
         
         List initialCollection = this.pojo.retrieveBookmarks(subfolders);
         

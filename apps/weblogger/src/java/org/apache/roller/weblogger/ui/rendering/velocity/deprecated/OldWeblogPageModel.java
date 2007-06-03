@@ -33,7 +33,7 @@ import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
@@ -134,7 +134,7 @@ public class OldWeblogPageModel {
             List pages = Collections.EMPTY_LIST;
             try {
                 pages = mWebsite.getPages();
-            } catch (RollerException ex) {
+            } catch (WebloggerException ex) {
                 mLogger.error("error getting weblog pages", ex);
             }
             
@@ -182,7 +182,7 @@ public class OldWeblogPageModel {
                 tops.add(i,FolderDataWrapper.wrap((WeblogBookmarkFolder) it.next()));
                 i++;
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             tops = new ArrayList();
         }
         return tops;
@@ -200,7 +200,7 @@ public class OldWeblogPageModel {
         try {
             WeblogEntry entry = mWeblogMgr.getWeblogEntry(entryId);
             return entry.getComments(noSpam, approvedOnly).size();
-        } catch (RollerException alreadyLogged) {}
+        } catch (WebloggerException alreadyLogged) {}
         return 0;
     }
     
@@ -233,7 +233,7 @@ public class OldWeblogPageModel {
             
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
             
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             mLogger.error("PageModel getDayHits()", e);
         }
         return 0;
@@ -247,7 +247,7 @@ public class OldWeblogPageModel {
             return FolderDataWrapper.wrap(
                     mBookmarkMgr.getFolder(
                     mUserMgr.getWebsiteByHandle(mWebsite.getHandle()), folderPath));
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             mLogger.error("PageModel getFolder()", e);
         }
         return null;
@@ -269,7 +269,7 @@ public class OldWeblogPageModel {
             page = TemplateWrapper.wrap(website.getPageByName(pageName));
         } catch (NullPointerException npe) {
             mLogger.warn(npe.getMessage());
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             mLogger.error("ERROR getting user's page by name: " + e.getMessage(),e);
         }
         return page;
@@ -643,7 +643,7 @@ public class OldWeblogPageModel {
                 } else {
                     mCategories.put("zzz_null_zzz", ret);
                 }
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 mLogger.error(e);
             }
         }
@@ -686,7 +686,7 @@ public class OldWeblogPageModel {
                         mNextEntry.getPubTime().after( new Date() )) {
                     mNextEntry = null;
                 }
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 mLogger.error("PageModel.getNextEntry)", e);
             }
         }
@@ -712,7 +712,7 @@ public class OldWeblogPageModel {
                 
                 if(prevEntry != null)
                     mPreviousEntry = WeblogEntryDataWrapper.wrap(prevEntry);
-            } catch (RollerException e) {
+            } catch (WebloggerException e) {
                 mLogger.error("PageModel.getPreviousEntry)", e);
             }
         }
@@ -773,7 +773,7 @@ public class OldWeblogPageModel {
             
             if(folder != null)
                 return FolderDataWrapper.wrap(folder);
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             mLogger.error(e);
         }
         
@@ -807,7 +807,7 @@ public class OldWeblogPageModel {
             while(it.hasNext()) {
                 recentComments.add(CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
             }
-        } catch (RollerException e) {
+        } catch (WebloggerException e) {
             mLogger.error(e);
         }
         return recentComments;

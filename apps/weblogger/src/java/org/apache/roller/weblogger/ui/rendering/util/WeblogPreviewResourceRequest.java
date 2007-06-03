@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.util;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -88,7 +88,7 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
                 theme = themeMgr.getTheme(themeName);
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it
-            } catch(RollerException re) {
+            } catch(WebloggerException re) {
                 log.error("Error looking up theme "+themeName, re);
             }
         }

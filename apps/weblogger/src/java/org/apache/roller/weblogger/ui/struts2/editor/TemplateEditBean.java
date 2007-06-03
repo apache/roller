@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Locale;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 

@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
@@ -110,7 +110,7 @@ public class ThemeEdit extends UIAction {
                     ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
                     SharedTheme importTheme = themeMgr.getTheme(getImportThemeId());
                     themeMgr.importTheme(getActionWeblog(), importTheme);
-                } catch(RollerException re) {
+                } catch(WebloggerException re) {
                     log.error("Error customizing theme for weblog - "+getActionWeblog().getHandle(), re);
                     // TODO: i18n
                     addError("Error importing theme");
@@ -155,7 +155,7 @@ public class ThemeEdit extends UIAction {
                 // TODO: i18n
                 addMessage("Successfully updated theme");
                 
-            } catch(RollerException re) {
+            } catch(WebloggerException re) {
                 log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
                 addError("Error setting theme");
             }
