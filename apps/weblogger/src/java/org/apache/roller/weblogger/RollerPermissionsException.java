@@ -17,6 +17,8 @@
 */
 package org.apache.roller.weblogger;
 
+import org.apache.roller.RollerException;
+
 /**
  * Thrown when persistence session user lacks one or more required permissions.
  */ 
