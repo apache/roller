@@ -51,35 +51,18 @@ import org.apache.roller.planet.PlanetException;
 public abstract class DatabaseProvider  {
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
-    
-    private static DatabaseProvider databaseProvider = null;
-    
-    protected ConfigurationType type = ConfigurationType.JNDI_NAME; 
+        
+    protected ConfigurationType type = ConfigurationType.JNDI_NAME;
     
     protected String jndiName = null; 
-    protected DataSource dataSource = null;
+    protected DataSource dataSource = null;  
     
     protected String jdbcDriverClass = null;
     protected String jdbcConnectionURL = null;
     protected String jdbcPassword = null;
     protected String jdbcUsername = null;
     protected Properties props = null;
-    
-    // Singleton
-    protected DatabaseProvider() {}
-    
-    
-    // Needed by HibernateConnectionProvider, it's not instantiated by Guice
-    public static DatabaseProvider getDatabaseProvider() {
-        return databaseProvider;
-    }
-    
-    
-    @com.google.inject.Inject
-    private void setDatabaseProvider(DatabaseProvider dbprovider) {
-        databaseProvider = dbprovider;
-    }
-    
+   
     
     protected void init(
         ConfigurationType type,

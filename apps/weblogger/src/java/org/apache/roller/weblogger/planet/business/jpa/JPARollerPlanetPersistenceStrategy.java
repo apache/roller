@@ -41,7 +41,8 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
      * Construct by finding using DatabaseProvider and RollerConfig.
      * @throws org.apache.roller.PlanetException on any error
      */
-    public JPARollerPlanetPersistenceStrategy() throws PlanetException { 
+    @com.google.inject.Inject
+    public JPARollerPlanetPersistenceStrategy(DatabaseProvider dbProvider) throws PlanetException { 
         
         // Pull in any properties defined in JMAEMF.properties config file
         Properties emfProps = loadPropertiesFromResourceName(
@@ -58,7 +59,6 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
             }
         }
         
-        DatabaseProvider dbProvider = DatabaseProvider.getDatabaseProvider();
         if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
             // We're doing JNDI, so set OpenJPA JNDI name property
             String jndiName = "java:comp/env/" + dbProvider.getJndiName();

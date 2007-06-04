@@ -62,7 +62,8 @@ public class JPAPersistenceStrategy {
      * Construct by finding JPA EntityManagerFactory.
      * @throws org.apache.roller.PlanetException on any error
      */
-    public JPAPersistenceStrategy() throws PlanetException { 
+    @com.google.inject.Inject 
+    public JPAPersistenceStrategy(DatabaseProvider dbProvider) throws PlanetException { 
         
         // Pull in any properties defined in JMAEMF.properties config file
         Properties emfProps = loadPropertiesFromResourceName(
@@ -79,7 +80,6 @@ public class JPAPersistenceStrategy {
             }
         }
         
-        DatabaseProvider dbProvider = DatabaseProvider.getDatabaseProvider();
         if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
             // We're doing JNDI, so set OpenJPA JNDI name property
             String jndiName = "java:comp/env/" + dbProvider.getJndiName();

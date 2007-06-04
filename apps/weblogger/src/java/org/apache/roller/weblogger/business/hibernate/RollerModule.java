@@ -56,7 +56,7 @@ public class RollerModule implements Module {
         binder.bind(Roller.class).to(HibernateRollerImpl.class);
         
         binder.bind(HibernatePersistenceStrategy.class);       
-        binder.bind(org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy.class);   
+        binder.bind(org.apache.roller.weblogger.planet.business.hibernate.HibernateRollerPlanetPersistenceStrategy.class);     
         
         binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);   
         binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);  

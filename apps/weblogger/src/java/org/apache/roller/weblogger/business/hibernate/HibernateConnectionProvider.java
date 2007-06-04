@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.RollerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.connection.ConnectionProvider;
 
@@ -22,11 +22,14 @@ public class HibernateConnectionProvider implements ConnectionProvider {
     private DatabaseProvider databaseProvider = null;
     
     /** No-op: we get our configuration from Roller's DatabaseProvider */
-    public void configure(Properties properties) throws HibernateException {}
+    public void configure(Properties properties) throws HibernateException {
+        // This class is created by Hibermate, so we do self-injection here
+        databaseProvider = RollerFactory.getInjector().getInstance(DatabaseProvider.class);
+    }
 
     /** Get connecetion from Roller's Database provider */
     public Connection getConnection() throws SQLException {
-        return DatabaseProvider.getDatabaseProvider().getConnection();
+        return databaseProvider.getConnection();
     }
 
     /** Close connection by calling connection.close() */

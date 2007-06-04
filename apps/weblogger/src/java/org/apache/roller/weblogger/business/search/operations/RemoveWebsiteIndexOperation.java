@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
@@ -48,6 +48,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     //~ Instance fields ========================================================
     
     private Weblog website;
+    private Roller roller;
     
     //~ Constructors ===========================================================
     
@@ -55,8 +56,9 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
      * Create a new operation that will recreate an index.
      * @param website The website to rebuild the index for, or null for all sites.
      */
-    public RemoveWebsiteIndexOperation(IndexManagerImpl mgr, Weblog website) {
+    public RemoveWebsiteIndexOperation(Roller roller, IndexManagerImpl mgr, Weblog website) {
         super(mgr);
+        this.roller = roller;
         this.website = website;
     }
     
@@ -69,7 +71,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         try {
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            UserManager uMgr = roller.getUserManager();
             this.website = uMgr.getWebsite(this.website.getId());
         } catch (WebloggerException ex) {
             mLogger.error("Error getting website object", ex);

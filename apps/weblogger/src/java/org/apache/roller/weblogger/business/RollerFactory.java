@@ -42,7 +42,6 @@ public abstract class RollerFactory implements Module {
     
     
     static { 
-
         String moduleClassname = RollerConfig.getProperty("guice.backend.module");
         try {
             Class moduleClass = Class.forName(moduleClassname);
@@ -51,9 +50,29 @@ public abstract class RollerFactory implements Module {
         } catch (Throwable e) {                
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
-        }
-        
-        try {
+        }            
+    }
+    
+    
+    /**
+     * Static accessor for the instance of Roller
+     */
+    public static Roller getRoller() {
+        return injector.getInstance(Roller.class);
+    }    
+
+    /**
+     * TODO_GUICE: elimiate the need for RollerFactory.getInjector()
+     */
+    public static Injector getInjector() {
+        return injector;
+    }
+    
+    /**
+     * TODO_GUICE: figure out the right place for this ping and search init
+     */
+    public static void bootstrap() {
+       try {
             // Initialize common targets from the configuration
             PingConfig.initializeCommonTargets();
             
@@ -71,25 +90,12 @@ public abstract class RollerFactory implements Module {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
             }
+            
+            RollerFactory.getRoller().getIndexManager().bootstrap();
+            
         } catch (WebloggerException e) {
             log.error("ERROR configing ping managers", e);
         }
-            
-    }
-    
-    
-    /**
-     * Static accessor for the instance of Roller
-     */
-    public static Roller getRoller() {
-        return injector.getInstance(Roller.class);
-    }    
-
-    /**
-     * TODO: elimiate the need for RollerFactory.getInjector()
-     */
-    public static Injector getInjector() {
-        return injector;
     }
 }
 

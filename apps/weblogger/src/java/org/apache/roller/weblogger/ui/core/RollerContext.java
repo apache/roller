@@ -117,7 +117,7 @@ public class RollerContext extends ContextLoaderListener
         // is set to ${webapp.context}
         RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
         
-        try {
+        try {        
             // Parts of database upgrade are not included in migration scripts
             upgradeDatabaseIfNeeded();
             
@@ -129,6 +129,9 @@ public class RollerContext extends ContextLoaderListener
             
             // This will cause instantiation and initialziation of Roller impl
             Roller roller = RollerFactory.getRoller();
+            
+            // TODO_GUICE: eliminate need this RollerFactory.bootstrap()
+            RollerFactory.bootstrap();
             
             // And this will schedule all configured tasks
             roller.getThreadManager().startTasks();
@@ -167,13 +170,13 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Trigger any database upgrade work that needs to be done.
      */
-    private void upgradeDatabaseIfNeeded() throws Exception {        
+    private void upgradeDatabaseIfNeeded() throws Exception {  
         
-        // TODO_GUICE: elimiate the need for RollerFactory.getInjector()
-        // This should cause injection of DatabaseProvider singleton
-        RollerFactory.getInjector().getInstance(DatabaseProvider.class);
+        // TODO_GUICE: address this little ugliness after table auto-create/update is in place
+        DatabaseProvider databaseProvider = 
+            RollerFactory.getInjector().getInstance(DatabaseProvider.class);
         
-        Connection con = DatabaseProvider.getDatabaseProvider().getConnection();
+        Connection con = databaseProvider.getConnection();
         UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
         con.close();
     }

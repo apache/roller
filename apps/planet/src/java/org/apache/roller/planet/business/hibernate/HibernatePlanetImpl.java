@@ -58,6 +58,7 @@ public class HibernatePlanetImpl implements Planet {
      * Create HibernatePlanetImpl using Hibernate XML config file or config
      * file plus JDBC overrides from planet-custom.properties.
      */
+    @com.google.inject.Inject 
     public HibernatePlanetImpl(
             HibernatePersistenceStrategy strategy, 
             PlanetManager     planetManager, 

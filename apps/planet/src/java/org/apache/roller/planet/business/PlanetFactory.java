@@ -37,8 +37,7 @@ public abstract class PlanetFactory {
      * Let's just be doubling certain this class cannot be instantiated.
      */
     private PlanetFactory() {} // hello planetary citizens
-    
-    
+        
     static { 
 
         String moduleClassname = PlanetConfig.getProperty("guice.backend.module");
@@ -51,12 +50,18 @@ public abstract class PlanetFactory {
             throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
         }
     }
-    
-        
+            
     /**
      * Static accessor for the instance of Roller
      */
     public static Planet getPlanet() {
         return injector.getInstance(Planet.class);
     }     
+    
+    /**
+     * TODO_GUICE: elimiate the need for PlanetFactory.getInjector()
+     */
+    public static Injector getInjector() {
+        return injector;
+    }
 }
