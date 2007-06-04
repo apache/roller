@@ -99,7 +99,12 @@ public class PingConfig {
     // This is initialized once at startup, and referenced when pings are made.
     private static final Map configuredVariants = new HashMap();
     
-    
+    // Pattern used to parse common ping targets as well as ping variants.
+    // Each initial commmon ping target is specified in the format {{name}{url}}
+    // Ping variants are also specified in a nested brace format {{url}{options}}
+    private static final Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
+
+    /*    
     static {
         try {
             // Initialize common targets from the configuration
@@ -119,7 +124,7 @@ public class PingConfig {
         } catch (WebloggerException e) {
             logger.error("ERROR configing ping managers", e);
         }
-    }
+    }*/
 
 
     // Inhibit construction
@@ -188,11 +193,6 @@ public class PingConfig {
     public static boolean getSuspendPingProcessing() {
         return RollerRuntimeConfig.getBooleanProperty(PINGS_SUSPEND_PING_PROCESSING_PROP);
     }
-
-    // Pattern used to parse common ping targets as well as ping variants.
-    // Each initial commmon ping target is specified in the format {{name}{url}}
-    // Ping variants are also specified in a nested brace format {{url}{options}}
-    private static final Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
 
     /**
      * Initialize the common ping targets from the configuration properties. If the current list of common ping targets

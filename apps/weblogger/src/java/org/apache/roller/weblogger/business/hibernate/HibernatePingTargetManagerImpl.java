@@ -47,6 +47,7 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
+@com.google.inject.Singleton
 public class HibernatePingTargetManagerImpl implements PingTargetManager {
     
     static final long serialVersionUID = 121008492583382718L;

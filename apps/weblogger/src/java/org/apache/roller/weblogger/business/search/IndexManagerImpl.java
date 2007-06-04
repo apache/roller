@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Mindaugas Idzelis (min@idzelis.com)
  * @author mraible (formatting and making indexDir configurable)
  */
+@com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
     //~ Static fields/initializers
     // =============================================

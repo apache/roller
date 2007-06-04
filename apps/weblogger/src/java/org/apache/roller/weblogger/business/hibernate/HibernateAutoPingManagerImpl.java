@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.business.pings.PingQueueManager;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
+@com.google.inject.Singleton
 public class HibernateAutoPingManagerImpl implements AutoPingManager {
     
     private Roller roller;

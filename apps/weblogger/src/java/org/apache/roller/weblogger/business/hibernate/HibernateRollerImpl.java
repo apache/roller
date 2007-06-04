@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 /**
  * A Hibernate specific implementation of the Roller business layer.
  */
+@com.google.inject.Singleton
 public class HibernateRollerImpl extends RollerImpl {    
     private static Log mLogger = LogFactory.getLog(HibernateRollerImpl.class);    
     

@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.business.Roller;
  * Created on May 29, 2006, 2:06 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */

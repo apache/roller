@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 /**
  * Hibernate implementation of the PropertiesManager.
  */ 
+@com.google.inject.Singleton
 public class HibernatePropertiesManagerImpl implements PropertiesManager {
     
     public static final long serialVersionUID = -4326713177137796936L;

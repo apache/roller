@@ -33,6 +33,7 @@ import org.apache.roller.planet.business.URLStrategy;
 /**
  * A Hibernate specific implementation of the Roller Planet business layer.
  */
+@com.google.inject.Singleton
 public class HibernatePlanetImpl implements Planet {   
     
     private static Log log = LogFactory.getLog(HibernatePlanetImpl.class);

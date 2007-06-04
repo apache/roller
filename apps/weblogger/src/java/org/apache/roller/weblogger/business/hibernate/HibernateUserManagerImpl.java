@@ -66,6 +66,7 @@ import org.hibernate.Query;
 /**
  * Hibernate implementation of the UserManager.
  */    
+@com.google.inject.Singleton
 public class HibernateUserManagerImpl implements UserManager {
     
     static final long serialVersionUID = -5128460637997081121L;    

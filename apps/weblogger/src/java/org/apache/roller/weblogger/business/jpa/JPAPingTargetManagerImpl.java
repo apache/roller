@@ -43,6 +43,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Created on May 29, 2006, 2:24 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAPingTargetManagerImpl implements PingTargetManager {
     
     /** The logger instance for this class. */

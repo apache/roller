@@ -36,6 +36,8 @@
     
     <fileset id="core-jars" dir="${tools}">
         <include name="lib/commons-id-0.1-SNAPSHOT.jar"/>
+        <include name="lib/guice-1.0.jar"/>
+        <include name="lib/commons-logging-1.0.4.jar"/>
     </fileset>
     
     <path id="core.path">

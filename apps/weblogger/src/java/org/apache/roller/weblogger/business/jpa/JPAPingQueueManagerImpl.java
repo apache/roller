@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
  * Created on May 28, 2006, 4:11 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAPingQueueManagerImpl implements PingQueueManager {
 
     private static Log log = LogFactory.getLog(

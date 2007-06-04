@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.config.RollerConfig;
 /**
  * Manage Roller's thread use.
  */
+@com.google.inject.Singleton
 public class ThreadManagerImpl implements ThreadManager {
     
     private static final Log log = LogFactory.getLog(ThreadManagerImpl.class);

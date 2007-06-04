@@ -29,8 +29,8 @@ import java.security.PrivilegedAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.util.DatabaseProvider;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -42,6 +42,7 @@ import javax.persistence.Query;
 /**
  * Responsible for the lowest-level interaction with the JPA API.
  */
+@com.google.inject.Singleton
 public class JPAPersistenceStrategy {
     private static Log logger = 
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);

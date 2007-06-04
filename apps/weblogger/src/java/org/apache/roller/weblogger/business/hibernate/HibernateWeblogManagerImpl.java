@@ -65,6 +65,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Hibernate implementation of the WeblogManager.
  */
+@com.google.inject.Singleton
 public class HibernateWeblogManagerImpl implements WeblogManager {
     
     static final long serialVersionUID = -3730860865389981439L;

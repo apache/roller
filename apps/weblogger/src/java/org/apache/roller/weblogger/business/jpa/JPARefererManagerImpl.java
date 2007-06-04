@@ -51,6 +51,7 @@ import org.apache.roller.weblogger.util.Utilities;
 /*
  * JPARefererManagerImpl.java
  */
+@com.google.inject.Singleton
 public class JPARefererManagerImpl implements RefererManager {
 
     private static Log log = LogFactory.getLog(

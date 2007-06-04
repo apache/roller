@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;

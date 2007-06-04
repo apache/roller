@@ -43,6 +43,7 @@ import org.apache.roller.weblogger.business.Roller;
  * Created on May 29, 2006, 11:29 AM
  *
  */
+@com.google.inject.Singleton
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     private JPAPersistenceStrategy strategy;

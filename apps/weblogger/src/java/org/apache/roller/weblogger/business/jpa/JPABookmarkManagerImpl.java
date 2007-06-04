@@ -43,6 +43,7 @@ import org.jdom.input.SAXBuilder;
  * Created on May 31, 2006, 3:49 PM
  *
  */
+@com.google.inject.Singleton
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
     private JPAPersistenceStrategy strategy;

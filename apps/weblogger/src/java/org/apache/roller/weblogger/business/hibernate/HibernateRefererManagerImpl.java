@@ -57,6 +57,7 @@ import org.hibernate.dialect.DerbyDialect;
 /**
  * Hibernate implementation of the RefererManager.
  */
+@com.google.inject.Singleton
 public class HibernateRefererManagerImpl implements RefererManager {
     
     static final long serialVersionUID = -4966091850482256435L;

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business;
+package org.apache.roller.util;
 
 import org.apache.roller.RollerException;
 

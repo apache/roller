@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.TaskLock;
  * This implementation extends the base ThreadManagerImpl class and provides
  * locking abilities which are managed through the database.
  */
+@com.google.inject.Singleton
 public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
     private static final Log log = LogFactory.getLog(JPAThreadManagerImpl.class);

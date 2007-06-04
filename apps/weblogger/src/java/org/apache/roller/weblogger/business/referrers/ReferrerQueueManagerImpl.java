@@ -58,6 +58,7 @@ import org.apache.roller.weblogger.config.RollerConfig;
  *
  * @author Allen Gilliland
  */
+@com.google.inject.Singleton
 public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     
     private static Log mLogger = LogFactory.getLog(ReferrerQueueManagerImpl.class);

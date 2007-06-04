@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.connection.ConnectionProvider;

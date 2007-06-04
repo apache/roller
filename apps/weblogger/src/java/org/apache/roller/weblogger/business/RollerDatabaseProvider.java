@@ -1,15 +1,12 @@
 package org.apache.roller.weblogger.business;
 
-import java.sql.Connection;
-import java.util.Properties;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.weblogger.business.DatabaseProvider.ConfigurationType;
+import org.apache.roller.util.DatabaseProvider;
+import org.apache.roller.util.DatabaseProvider.ConfigurationType;
 import org.apache.roller.weblogger.config.RollerConfig;
+
 
 /**
  * Encapsulates Roller database configuration via JDBC properties or JNDI.
@@ -42,12 +39,11 @@ public class RollerDatabaseProvider extends DatabaseProvider {
         if ("jdbc".equals(connectionTypeString)) {
             type = ConfigurationType.JDBC_PROPERTIES;
         }
-        jndiName =          RollerConfig.getProperty("database.jndi.name");
-        jdbcDriverClass =   RollerConfig.getProperty("database.jdbc.driverClass");
-        jdbcConnectionURL = RollerConfig.getProperty("database.jdbc.connectionURL");
-        jdbcUsername =      RollerConfig.getProperty("database.jdbc.username");
-        jdbcPassword =      RollerConfig.getProperty("database.jdbc.password");
-        
-        init(type, jndiName, jdbcDriverClass, jdbcConnectionURL, jdbcUsername, jdbcPassword);
+        init(type, 
+            RollerConfig.getProperty("database.jndi.name"),
+            RollerConfig.getProperty("database.jdbc.driverClass"),
+            RollerConfig.getProperty("database.jdbc.connectionURL"),
+            RollerConfig.getProperty("database.jdbc.username"),
+            RollerConfig.getProperty("database.jdbc.password"));
     }
 }

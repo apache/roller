@@ -41,6 +41,7 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 /**
  * Hibernate implementation of the PlanetManager.
  */
+@com.google.inject.Singleton
 public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);

@@ -36,8 +36,8 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.DatabaseProvider;
 import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.util.DatabaseProvider;
 
 
 /**
@@ -64,7 +64,10 @@ public class JPAPersistenceStrategy {
      */
     @com.google.inject.Inject 
     public JPAPersistenceStrategy(DatabaseProvider dbProvider) throws PlanetException { 
-        
+       init(dbProvider);
+    }
+    
+    protected void init(DatabaseProvider dbProvider) throws PlanetException {
         // Pull in any properties defined in JMAEMF.properties config file
         Properties emfProps = loadPropertiesFromResourceName(
            "JPAEMF.properties", getContextClassLoader());

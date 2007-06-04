@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.business;
+package org.apache.roller.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,7 +27,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.PlanetException;
+
 
 /**
  * Encapsulates Roller database configuration via JDBC properties or JNDI.
@@ -70,7 +70,14 @@ public abstract class DatabaseProvider  {
         String jdbcDriverClass,
         String jdbcConnectionURL,
         String jdbcUsername,
-        String jdbcPassword) throws DatabaseProviderException {        
+        String jdbcPassword) throws DatabaseProviderException { 
+        
+        this.type              = type;
+        this.jndiName          = jndiName;
+        this.jdbcDriverClass   = jdbcDriverClass;
+        this.jdbcConnectionURL = jdbcConnectionURL;
+        this.jdbcUsername      = jdbcUsername;
+        this.jdbcPassword      = jdbcPassword;
         
         // init now so we fail early
         if (getType() == ConfigurationType.JDBC_PROPERTIES) {

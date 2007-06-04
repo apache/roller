@@ -52,6 +52,7 @@ import org.apache.roller.weblogger.business.Roller;
  * Created on May 29, 2006, 3:15 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAUserManagerImpl implements UserManager {
     
     /** The logger instance for this class. */

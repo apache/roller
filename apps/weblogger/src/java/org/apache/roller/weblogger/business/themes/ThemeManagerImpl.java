@@ -50,6 +50,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * This particular implementation reads theme data off the filesystem 
  * and assumes that those themes are not changable at runtime.
  */
+@com.google.inject.Singleton
 public class ThemeManagerImpl implements ThemeManager {
     
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);

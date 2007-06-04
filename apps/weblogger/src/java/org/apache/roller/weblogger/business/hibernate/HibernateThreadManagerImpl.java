@@ -39,6 +39,7 @@ import org.hibernate.criterion.Expression;
  * This implementation extends the base ThreadManagerImpl class and provides
  * leasing abilities which are managed through the database.
  */
+@com.google.inject.Singleton
 public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
     private static Log log = LogFactory.getLog(HibernateThreadManagerImpl.class);

@@ -65,6 +65,7 @@ import org.apache.roller.weblogger.util.DateUtil;
  * Created on May 31, 2006, 4:08 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
     
     protected static Log log = LogFactory.getLog(

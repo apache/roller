@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.business.Roller;
 /**
  * Hibernate implementation of the BookmarkManager.
  */
+@com.google.inject.Singleton
 public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     static final long serialVersionUID = 5286654557062382772L;
