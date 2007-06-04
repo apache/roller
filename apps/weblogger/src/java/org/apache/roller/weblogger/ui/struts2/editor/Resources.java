@@ -299,42 +299,11 @@ public final class Resources extends UIAction {
     }
     
     
-    public class WeblogResourceComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            ThemeResource r1 = (ThemeResource)o1;
-            ThemeResource r2 = (ThemeResource)o2;
-            
-            // consider directories so they go to the top of the list
-            if(r1.isDirectory() && r2.isDirectory()) {
-                // if we have 2 directories then just go by name
-                return r1.getPath().compareTo(r2.getPath());
-            } else if(r1.isDirectory()) {
-                // directories go before files
-                return -1;
-            } else if(r2.isDirectory()) {
-                // directories go before files
-                return 1;
-            } else {
-                // if we have 2 files then just go by name
-                return r1.getPath().compareTo(r2.getPath());
-            }
-        }
-        public boolean equals(Object o1, Object o2) {
-            ThemeResource r1 = (ThemeResource)o1;
-            ThemeResource r2 = (ThemeResource)o2;
-            
-            // need to be same type to be equals, i.e both files or directories
-            if((r1.isDirectory() && !r2.isDirectory()) ||
-                    (r1.isFile() && !r2.isFile())) {
-                return false;
-            }
-            
-            // after that it's just a matter of comparing paths
-            return r1.getPath().equals(r2.getPath());
-        }
+    public String getResourceURL(String path) {
+        return URLUtilities.getWeblogResourceURL(getActionWeblog(), path, false);
     }
     
-
+    
     public String getPath() {
         return path;
     }
@@ -409,6 +378,42 @@ public final class Resources extends UIAction {
 
     public void setUploadedFilesFileName(String[] uploadedFilesFileName) {
         this.uploadedFilesFileName = uploadedFilesFileName;
+    }
+    
+    
+    public class WeblogResourceComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            ThemeResource r1 = (ThemeResource)o1;
+            ThemeResource r2 = (ThemeResource)o2;
+            
+            // consider directories so they go to the top of the list
+            if(r1.isDirectory() && r2.isDirectory()) {
+                // if we have 2 directories then just go by name
+                return r1.getPath().compareTo(r2.getPath());
+            } else if(r1.isDirectory()) {
+                // directories go before files
+                return -1;
+            } else if(r2.isDirectory()) {
+                // directories go before files
+                return 1;
+            } else {
+                // if we have 2 files then just go by name
+                return r1.getPath().compareTo(r2.getPath());
+            }
+        }
+        public boolean equals(Object o1, Object o2) {
+            ThemeResource r1 = (ThemeResource)o1;
+            ThemeResource r2 = (ThemeResource)o2;
+            
+            // need to be same type to be equals, i.e both files or directories
+            if((r1.isDirectory() && !r2.isDirectory()) ||
+                    (r1.isFile() && !r2.isFile())) {
+                return false;
+            }
+            
+            // after that it's just a matter of comparing paths
+            return r1.getPath().equals(r2.getPath());
+        }
     }
     
 }
