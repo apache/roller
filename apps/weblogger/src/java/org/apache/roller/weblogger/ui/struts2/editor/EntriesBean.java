@@ -35,12 +35,7 @@ public class EntriesBean {
     private String text = null;
     private String status = "ALL";
     private String sortBy = "updateTime";
-    
-    /** max entries displayed per page */
-    private int count = 30;
-    
-    /** offset into current query results */
-    private int offset = 0;
+    private int page = 0;
     
     
     public EntriesBean() {
@@ -112,20 +107,12 @@ public class EntriesBean {
         this.sortBy = sortBy;
     }
     
-    public int getCount() {
-        return count;
+    public int getPage() {
+        return page;
     }
-    
-    public void setCount(int count) {
-        this.count = count;
-    }
-    
-    public int getOffset() {
-        return offset;
-    }
-    
-    public void setOffset(int offset) {
-        this.offset = offset;
+
+    public void setPage(int page) {
+        this.page = page;
     }
     
     
@@ -139,8 +126,7 @@ public class EntriesBean {
         buf.append("catPath = ").append(getCategoryPath()).append("\n");
         buf.append("tags = ").append(getTagsAsString()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
-        buf.append("offset = ").append(getOffset()).append("\n");
-        buf.append("count = ").append(getCount()).append("\n");
+        buf.append("page = ").append(getPage()).append("\n");
         
         return buf.toString();
     }
