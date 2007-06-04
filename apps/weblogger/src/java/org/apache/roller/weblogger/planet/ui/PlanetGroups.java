@@ -164,6 +164,8 @@ public class PlanetGroups extends PlanetUIAction {
         if(getBean().getHandle() != null && "all".equals(getBean().getHandle())) {
             addError("planetGroups.error.nameReserved");
         }
+        
+        // make sure duplicate group handles are prevented
     }
     
     

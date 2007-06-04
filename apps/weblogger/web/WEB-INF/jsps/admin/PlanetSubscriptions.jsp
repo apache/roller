@@ -72,13 +72,16 @@
         &nbsp;
         <input type="button" 
                value='<s:text name="planetSubscriptions.button.cancel" />' 
-               onclick="window.location('')"/>
+               onclick="window.location='<s:url action="planetSubscriptions" />'"/>
         
-        <s:if test="subscription != null" >
+        <s:if test="bean.id != null" >
             &nbsp;&nbsp;
+            <s:url id="deleteUrl" action="planetSubscriptions!delete">
+                <s:param name="bean.id" value="%{bean.id}" />
+            </s:url>
             <input type="button" 
                    value='<s:text name="planetSubscriptions.button.delete" />' 
-                   onclick="window.location('')" />
+                   onclick="window.location='<s:url value="%{deleteUrl}" />'" />
         </s:if>
     </div>
     
@@ -125,7 +128,7 @@
         </td>
         
         <td class="rollertable">
-            <s:url id="subUrl" action="planetSubscritions">
+            <s:url id="subUrl" action="planetSubscriptions">
                 <s:param name="bean.id" value="#sub.id" />
                 <s:param name="groupHandle" value="%{groupHandle}" />
             </s:url>
