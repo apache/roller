@@ -35,7 +35,7 @@
     
     <div style="float:left;">
         <s:text name="weblogEntryQuery.nowShowing">
-            <s:param value="entries.size()" />
+            <s:param value="pager.items.size()" />
         </s:text>
     </div>
     <div style="float:right;">
@@ -50,39 +50,36 @@
     <%-- Next / previous links --%>
     <%-- ============================================================= --%>
     
-    <%--
-    <c:choose>
-        <c:when test="${!empty model.prevLink && !empty model.nextLink}">
-            <br /><center>
-                &laquo;
-                <a href='<s:property value="${model.prevLink}" />'>
-                <s:text name="weblogEntryQuery.prev" /></a>
-                | <a href='<s:property value="${model.nextLink}" />'>
-                <s:text name="weblogEntryQuery.next" /></a>
-                &raquo;
-            </center><br />
-        </c:when>
-        <c:when test="${!empty model.prevLink}">
-            <br /><center>
-                &laquo;
-                <a href='<s:property value="${model.prevLink}" />'>
-                <s:text name="weblogEntryQuery.prev" /></a>
-                | <s:text name="weblogEntryQuery.next" />
-                &raquo;
-            </center><br />
-        </c:when>
-        <c:when test="${!empty model.nextLink}">
-            <br /><center>
-                &laquo;
-                <s:text name="weblogEntryQuery.prev" />
-                | <a class="" href='<s:property value="${model.nextLink}" />'>
-                <s:text name="weblogEntryQuery.next" /></a>
-                &raquo;
-            </center><br />
-        </c:when>
-        <c:otherwise><br /></c:otherwise>
-    </c:choose>
-    --%>
+    <s:if test="pager.prevLink != null && pager.nextLink != null">
+        <br /><center>
+            &laquo;
+            <a href='<s:property value="pager.prevLink" />'>
+            <s:text name="weblogEntryQuery.prev" /></a>
+            | <a href='<s:property value="pager.nextLink" />'>
+            <s:text name="weblogEntryQuery.next" /></a>
+            &raquo;
+        </center><br />
+    </s:if>
+    <s:elseif test="pager.prevLink != null">
+        <br /><center>
+            &laquo;
+            <a href='<s:property value="pager.prevLink" />'>
+            <s:text name="weblogEntryQuery.prev" /></a>
+            | <s:text name="weblogEntryQuery.next" />
+            &raquo;
+        </center><br />
+    </s:elseif>
+    <s:elseif test="pager.nextLink != null">
+        <br /><center>
+            &laquo;
+            <s:text name="weblogEntryQuery.prev" />
+            | <a class="" href='<s:property value="pager.nextLink" />'>
+            <s:text name="weblogEntryQuery.next" /></a>
+            &raquo;
+        </center><br />
+    </s:elseif>
+    <s:else><br /></s:else>
+    
 </div> <%-- class="tablenav" --%>
 
 
@@ -118,7 +115,7 @@
     </th>
 </tr>
 
-<s:iterator id="post" value="entries">
+<s:iterator id="post" value="pager.items">
     <%-- <td> with style if comment is spam or pending --%>               
     <s:if test="#post.status == 'DRAFT'">
         <tr class="draftentry"> 
@@ -131,11 +128,11 @@
     </s:else>
     
     <td>
-        <s:property value="#post.pubTime" />
+        <s:date name="#post.pubTime" format="MM/dd/yy hh:mm a" />
     </td>
     
     <td>
-        <s:property value="#post.updateTime" />
+        <s:date name="#post.updateTime" format="MM/dd/yy hh:mm a" />
     </td>
     
     <td>
@@ -165,7 +162,7 @@
 
 </table>
 
-<s:if test="entries.isEmpty">
+<s:if test="pager.items.isEmpty">
     <s:text name="weblogEntryQuery.noneFound" />
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 </s:if>
