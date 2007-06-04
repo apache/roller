@@ -124,6 +124,9 @@ public class RollerContext extends ContextLoaderListener
             // trigger bootstrapping process
             RollerFactory.bootstrap();
             
+            // flush any changes made during bootstrapping
+            RollerFactory.getRoller().flush();
+            
             // Initialize Acegi based on Roller configuration
             initializeSecurityFeatures(servletContext);
             
