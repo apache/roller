@@ -36,8 +36,7 @@ public class CommentsBean {
     private Date endDate = null;
     private String spamString = "ALL";
     private String approvedString = "ALL";
-    private int count = 30;
-    private int offset = 0;
+    private int page = 0;
     
     private String[] approvedComments = new String[0];
     private String[] spamComments = new String[0];
@@ -96,22 +95,6 @@ public class CommentsBean {
         }
     }
     
-    
-    public int getCount() {
-        return count;
-    }
-    
-    public void setCount(int count) {
-        this.count = count;
-    }
-    
-    public int getOffset() {
-        return offset;
-    }
-    
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
     
     public String getSpamString() {
         return spamString;
@@ -183,6 +166,22 @@ public class CommentsBean {
 
     public void setDeleteComments(String[] deleteComments) {
         this.deleteComments = deleteComments;
+    }
+
+    public String getApprovedString() {
+        return approvedString;
+    }
+
+    public void setApprovedString(String approvedString) {
+        this.approvedString = approvedString;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
     
 }

@@ -18,11 +18,15 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -30,9 +34,11 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -43,26 +49,20 @@ public class Comments extends UIAction {
     
     private static Log log = LogFactory.getLog(Comments.class);
     
+    // number of comments to show per page
+    private static final int COUNT = 2;
+    
     // bean for managing submitted data
     private CommentsBean bean = new CommentsBean();
     
-    // list of comments to display
-    private List comments = Collections.EMPTY_LIST;
+    // pager for the comments we are viewing
+    private CommentsPager pager = null;
     
     // first comment in the list
     private WeblogEntryComment firstComment = null;
     
     // last comment in the list
     private WeblogEntryComment lastComment = null;
-    
-    // are there more results for the query?
-    private boolean moreResults = false;
-    
-    // link to previous page of results
-    private String prevLink = null;
-    
-    // linke to next page of results
-    private String nextLink = null;
     
     // indicates number of comments that would be deleted by bulk removal
     // a non-zero value here indicates bulk removal is a valid option
@@ -84,9 +84,11 @@ public class Comments extends UIAction {
     
     public void loadComments() {
         
+        List comments = Collections.EMPTY_LIST;
+        boolean hasMore = false;
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List comments = wmgr.getComments(
+            comments = wmgr.getComments(
                     getActionWeblog(),
                     null,
                     getBean().getSearchString(),
@@ -94,27 +96,60 @@ public class Comments extends UIAction {
                     getBean().getEndDate(),
                     getBean().getStatus(),
                     true, // reverse  chrono order
-                    getBean().getOffset(),
-                    getBean().getCount() + 1);
+                    getBean().getPage() * COUNT,
+                    COUNT + 1);
             
             if(comments != null && comments.size() > 0) {
-                if(comments.size() > getBean().getCount()) {
+                if(comments.size() > COUNT) {
                     comments.remove(comments.size()-1);
-                    setMoreResults(true);
+                    hasMore = true;
                 }
                 
-                setComments(comments);
                 setFirstComment((WeblogEntryComment)comments.get(0));
                 setLastComment((WeblogEntryComment)comments.get(comments.size()-1));
-                loadNextPrevLinks(isMoreResults());
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up comments", ex);
             // TODO: i18n
             addError("Error looking up comments");
         }
+        
+        // build comments pager
+        String baseUrl = buildBaseUrl();
+        setPager(new CommentsPager(baseUrl, getBean().getPage(), comments, hasMore));
     }
-
+    
+    
+    // use the action data to build a url representing this action, including query data
+    private String buildBaseUrl() {
+        
+        Map<String, String> params = new HashMap();
+        
+        SimpleDateFormat dojoFormat = new SimpleDateFormat("yyyy-MM-dd", getLocale());
+        SimpleDateFormat stdFormat = new SimpleDateFormat("MM/dd/yy", getLocale());
+        
+        if(!StringUtils.isEmpty(getBean().getSearchString())) {
+            params.put("bean.searchString", getBean().getSearchString());
+        }
+        if(getBean().getStartDate() != null) {
+            params.put("bean.startDate", stdFormat.format(getBean().getStartDate()));
+            params.put("dojo.bean.startDate", dojoFormat.format(getBean().getStartDate()));
+        }
+        if(getBean().getEndDate() != null) {
+            params.put("bean.endDate", stdFormat.format(getBean().getEndDate()));
+            params.put("dojo.bean.endDate", dojoFormat.format(getBean().getEndDate()));
+        }
+        if(!StringUtils.isEmpty(getBean().getApprovedString())) {
+            params.put("bean.approvedString", getBean().getApprovedString());
+        }
+        if(!StringUtils.isEmpty(getBean().getSpamString())) {
+            params.put("bean.spamString", getBean().getSpamString());
+        }
+        
+        return URLUtilities.getActionURL("comments", "/roller-ui/authoring", 
+                getActionWeblog().getHandle(), params, false);
+    }
+    
     
     public String execute() {
         
@@ -122,7 +157,7 @@ public class Comments extends UIAction {
         loadComments();
         
         // load bean data using comments list
-        getBean().loadCheckboxes(getComments());
+        getBean().loadCheckboxes(getPager().getItems());
         
         return LIST;
     }
@@ -137,7 +172,7 @@ public class Comments extends UIAction {
         loadComments();
         
         // load bean data using comments list
-        getBean().loadCheckboxes(getComments());
+        getBean().loadCheckboxes(getPager().getItems());
         
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
@@ -152,7 +187,7 @@ public class Comments extends UIAction {
                     0,
                     -1);
             
-            if(allMatchingComments.size() > getBean().getCount()) {
+            if(allMatchingComments.size() > COUNT) {
                 setBulkDeleteCount(allMatchingComments.size());
             }
             
@@ -303,11 +338,6 @@ public class Comments extends UIAction {
     }
     
     
-    private void loadNextPrevLinks(boolean moreResults) {
-        
-    }
-    
-    
     public List getCommentStatusOptions() {
         
         List opts = new ArrayList();
@@ -340,14 +370,6 @@ public class Comments extends UIAction {
         this.bean = bean;
     }
 
-    public List getComments() {
-        return comments;
-    }
-
-    public void setComments(List comments) {
-        this.comments = comments;
-    }
-
     public int getBulkDeleteCount() {
         return bulkDeleteCount;
     }
@@ -372,28 +394,12 @@ public class Comments extends UIAction {
         this.lastComment = lastComment;
     }
 
-    public String getPrevLink() {
-        return prevLink;
+    public CommentsPager getPager() {
+        return pager;
     }
 
-    public void setPrevLink(String prevLink) {
-        this.prevLink = prevLink;
-    }
-
-    public String getNextLink() {
-        return nextLink;
-    }
-
-    public void setNextLink(String nextLink) {
-        this.nextLink = nextLink;
-    }
-
-    public boolean isMoreResults() {
-        return moreResults;
-    }
-
-    public void setMoreResults(boolean moreResults) {
-        this.moreResults = moreResults;
+    public void setPager(CommentsPager pager) {
+        this.pager = pager;
     }
     
 }

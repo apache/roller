@@ -78,7 +78,7 @@ function handleCommentResponse() {
 
 <p class="pagetip"><s:text name="commentManagement.globalTip" /></p>
 
-<s:if test="comments.isEmpty">
+<s:if test="pager.items.isEmpty">
     <s:text name="commentManagement.noCommentsFound" />
 </s:if>
 
@@ -105,7 +105,7 @@ function handleCommentResponse() {
     
     <div style="float:left;">
         <s:text name="commentManagement.nowShowing">
-            <s:param value="comments.size()" />
+            <s:param value="pager.items.size()" />
         </s:text>
     </div>
     <div style="float:right;">
@@ -120,30 +120,30 @@ function handleCommentResponse() {
     <%-- Next / previous links --%>
     <%-- ============================================================= --%>
         
-    <s:if test="prevLink != null && nextLink != null">
+    <s:if test="pager.prevLink != null && pager.nextLink != null">
         <br /><center>
             &laquo;
-            <a href='<s:property value="prevLink" />'>
+            <a href='<s:property value="pager.prevLink" />'>
             <s:text name="commentManagement.prev" /></a>
-            | <a href='<s:property value="nextLink" />'>
+            | <a href='<s:property value="pager.nextLink" />'>
             <s:text name="commentManagement.next" /></a>
             &raquo;
         </center><br />
     </s:if>
-    <s:elseif test="prevLink != null">
+    <s:elseif test="pager.prevLink != null">
         <br /><center>
             &laquo;
-            <a href='<s:property value="prevLink" />'>
+            <a href='<s:property value="pager.prevLink" />'>
             <s:text name="commentManagement.prev" /></a>
             | <s:text name="commentManagement.next" />
             &raquo;
         </center><br />
     </s:elseif>
-    <s:elseif test="nextLink != null">
+    <s:elseif test="pager.nextLink != null">
         <br /><center>
             &laquo;
             <s:text name="commentManagement.prev" />
-            | <a class="" href='<s:property value="nextLink" />'>
+            | <a class="" href='<s:property value="pager.nextLink" />'>
             <s:text name="commentManagement.next" /></a>
             &raquo;
         </center><br />
@@ -222,7 +222,7 @@ function handleCommentResponse() {
 <%-- Loop through comments --%>
 <%-- ========================================================= --%>
 
-<s:iterator id="comment" value="comments" status="rowstatus">
+<s:iterator id="comment" value="pager.items" status="rowstatus">
 <tr>
     <td>
         <%-- a bit funky to use checkbox list here, but using checkbox didn't work for me :(
