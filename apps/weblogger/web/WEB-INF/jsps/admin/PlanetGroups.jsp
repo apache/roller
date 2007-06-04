@@ -55,9 +55,12 @@
         
         <s:if test="group != null" >
             &nbsp;&nbsp;
+            <s:url id="deleteUrl" action="planetGroups!delete">
+                <s:param name="bean.id" value="%{bean.id}" />
+            </s:url>
             <input type="button" 
                    value='<s:text name="planetGroups.button.delete" />' 
-                   onclick="window.location('')" />
+                   onclick="window.location='<s:url value="%{deleteUrl}"/>'" />
         </s:if>
     </div>
     
@@ -93,11 +96,11 @@
     </s:else>
     
     <td class="rollertable">
-        <s:property value="group.title" />
+        <s:property value="#group.title" />
     </td>
     
     <td class="rollertable">
-        <s:property value="group.handle" />
+        <s:property value="#group.handle" />
     </td>
     
     <td class="rollertable">
