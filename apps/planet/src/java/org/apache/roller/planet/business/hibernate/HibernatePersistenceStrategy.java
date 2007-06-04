@@ -18,20 +18,17 @@
 
 package org.apache.roller.planet.business.hibernate;
 
-import java.io.StringBufferInputStream;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.PlanetException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.hibernate.cfg.Environment;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
 
 
 /**
@@ -43,16 +40,8 @@ import org.xml.sax.InputSource;
  */
 @com.google.inject.Singleton
 public class HibernatePersistenceStrategy {
-    private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
-    
-    protected static SessionFactory sessionFactory = null;
-    
-    /** No-op so XML parser doesn't hit the network looking for Hibernate DTDs */
-    private EntityResolver noOpEntityResolver = new EntityResolver() {
-        public InputSource resolveEntity(String publicId, String systemId) {
-            return new InputSource(new StringBufferInputStream(""));
-        }
-    };
+    private static final Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
+    private SessionFactory sessionFactory = null;
     
     /**
      * Persistence strategy configures itself by using Roller properties:
@@ -79,7 +68,7 @@ public class HibernatePersistenceStrategy {
         props.put(Environment.CONNECTION_PROVIDER, connectionProvider);
         config.mergeProperties(props);
         
-        this.sessionFactory = config.buildSessionFactory(); 
+        sessionFactory = config.buildSessionFactory(); 
     }
     
     

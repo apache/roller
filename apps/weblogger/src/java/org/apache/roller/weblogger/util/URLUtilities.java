@@ -429,6 +429,7 @@ public final class URLUtilities {
     public static final String getActionURL(String action,
                                             String namespace,
                                             String weblogHandle,
+                                            Map<String, String> parameters,
                                             boolean absolute) {
         
         StringBuffer url = new StringBuffer();
@@ -442,10 +443,18 @@ public final class URLUtilities {
         url.append(namespace);
         url.append("/").append(action).append(".rol");
         
+        // put weblog handle parameter, if necessary
+        Map<String, String> params = new HashMap();
         if(weblogHandle != null) {
-            Map params = new HashMap();
             params.put("weblog", weblogHandle);
-            
+        }
+        
+        // add custom parameters if they exist
+        if(parameters != null) {
+            params.putAll(parameters);
+        }
+        
+        if(!params.isEmpty()) {
             return url.toString() + getQueryString(params);
         } else {
             return url.toString();

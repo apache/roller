@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.ui.rendering.util.CommentValidationManager;
 import org.apache.roller.weblogger.ui.rendering.util.TrackbackLinkbackCommentValidator;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogTrackbackRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -191,9 +192,9 @@ public class TrackbackServlet extends HttpServlet {
                     }
                     
                     // Send email notifications
-                    String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
-                    CommentServlet.sendEmailNotification(comment, validationScore == 100, messages, rootURL, 
-                            I18nMessages.getMessages(trackbackRequest.getLocaleInstance()));
+                    MailUtil.sendEmailNotification(comment, messages, 
+                            I18nMessages.getMessages(trackbackRequest.getLocaleInstance()),
+                            validationScore == 100);
                     
                     if(WeblogEntryComment.PENDING.equals(comment.getStatus())) {
                         pw.println(this.getSuccessResponse("Trackback submitted to moderator"));

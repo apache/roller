@@ -20,12 +20,16 @@ package org.apache.roller.weblogger.planet.ui;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.planet.config.PlanetRuntimeConfig;
+import org.apache.roller.planet.config.runtime.ConfigDef;
+import org.apache.roller.planet.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.planet.pojos.PropertyData;
 import org.apache.struts2.interceptor.ParameterAware;
 
@@ -45,11 +49,14 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     // runtime properties data
     private Map properties = Collections.EMPTY_MAP;
     
+    // the runtime config def used to populate the display
+    private ConfigDef globalConfigDef = null;
+    
     
     public PlanetConfig() {
         this.actionName = "planetConfig";
         this.desiredMenu = "admin";
-        this.pageTitle = "";
+        this.pageTitle = "planetConfig.title";
     }
     
     
@@ -72,6 +79,15 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
             setProperties(pMgr.getProperties());
         } catch (RollerException ex) {
             log.error("Error loading planet properties");
+        }
+        
+        // set config def used to draw the view
+        RuntimeConfigDefs defs = PlanetRuntimeConfig.getRuntimeConfigDefs();
+        List<ConfigDef> configDefs = defs.getConfigDefs();
+        for(ConfigDef configDef : configDefs) {
+            if("global-properties".equals(configDef.getName())) {
+                setGlobalConfigDef(configDef);
+            }
         }
     }
 
@@ -152,6 +168,14 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
 
     public void setProperties(Map properties) {
         this.properties = properties;
+    }
+    
+    public ConfigDef getGlobalConfigDef() {
+        return globalConfigDef;
+    }
+
+    public void setGlobalConfigDef(ConfigDef globalConfigDef) {
+        this.globalConfigDef = globalConfigDef;
     }
     
 }

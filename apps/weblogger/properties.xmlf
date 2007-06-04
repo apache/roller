@@ -187,7 +187,6 @@ in the "base.path" definition.
     <fileset refid="base.jars"/>
     <fileset refid="mail.jars"/>
     <fileset refid="roller-core.jars" />
-    <fileset refid="roller-planet.jars" />
     <fileset refid="xmlrpc.jars"/>
     <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
     <fileset refid="jpa.jars" />
@@ -202,6 +201,7 @@ in the "base.path" definition.
 <path id="presentation.path">
     <path refid="base.path"/>
     <fileset refid="presentation.jars"/>
+    <fileset refid="roller-planet.jars" />
     <fileset refid="struts.jars"/>
     <fileset refid="struts2.jars"/>
     <fileset refid="servlet.jars"/>
@@ -236,7 +236,7 @@ in the "base.path" definition.
        <include name="*.jar"/>
     </fileset>
     <fileset refid="commons-httpclient.jar"/>
-    <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+    <pathelement location="${ro.tools}/buildtime/junit-4.1.jar"/>
     <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant-junit.jar"/>
     <pathelement location="${ro.tools}/buildtime/derby.jar"/>
     <pathelement location="${ro.tools}/buildtime/derbyclient.jar"/>
