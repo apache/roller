@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.DatabaseProvider;
 import org.hibernate.HibernateException;
 import org.hibernate.connection.ConnectionProvider;
@@ -27,13 +26,7 @@ public class HibernateConnectionProvider implements ConnectionProvider {
 
     /** Get connecetion from Roller's Database provider */
     public Connection getConnection() throws SQLException {
-        try {
-            return DatabaseProvider.getDatabaseProvider().getConnection();
-        } catch (PlanetException ex) {
-            // The DatabaseProvider should have been constructed long before 
-            // we get to this point, so this should never ever happen
-            throw new RuntimeException("ERROR getting database provider", ex);
-        }
+        return DatabaseProvider.getDatabaseProvider().getConnection();
     }
 
     /** Close connection by calling connection.close() */

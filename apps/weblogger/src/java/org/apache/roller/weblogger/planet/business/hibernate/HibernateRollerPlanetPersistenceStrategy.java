@@ -18,32 +18,32 @@
 
 package org.apache.roller.weblogger.planet.business.hibernate;
 
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.hibernate.HibernatePersistenceStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.PlanetException;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 /**
- * Base class for Hibernate persistence implementation.
- *
- * This class serves as a helper/util class for all of the Hibernate
- * manager implementations by providing a set of basic persistence methods
- * that can be easily reused.
+ * Hibernate strategy for Planet, uses RollerConfig to get Hibernate configuration.
  */
 @com.google.inject.Singleton
-public class PlanetHibernatePersistenceStrategy extends HibernatePersistenceStrategy {
+public class HibernateRollerPlanetPersistenceStrategy extends HibernatePersistenceStrategy {
+    private static Log logger = 
+        LogFactory.getFactory().getInstance(HibernateRollerPlanetPersistenceStrategy.class); 
     
     /**
-     * Persistence strategy configures itself by using Roller properties:
-     * 'hibernate.configResource' - the resource name of Roller's Hibernate XML configuration file, 
-     * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
-     * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
+     * Persistence strategy configures itself by using 'planet-hibernate.cfg.xml' 
+     * and Roller properties: 'hibernate.dialect' - the classname of the Hibernate 
+     * dialect to be used, 'hibernate.connectionProvider - the classname of 
+     * Roller's connnection provider impl.
      */
-    protected PlanetHibernatePersistenceStrategy() throws WebloggerException {        
+    protected HibernateRollerPlanetPersistenceStrategy() throws PlanetException {        
         String dialect =  
             RollerConfig.getProperty("hibernate.dialect");
         String connectionProvider = 
             RollerConfig.getProperty("hibernate.connectionProvider");        
-        String configuration = "hibernate.cfg.xml";
+        String configuration = "planet-hibernate.cfg.xml";
         init(dialect, connectionProvider, configuration);
     }   
 }

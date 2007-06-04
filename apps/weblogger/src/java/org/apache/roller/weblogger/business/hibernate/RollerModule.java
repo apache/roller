@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.business.hibernate;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
 import org.apache.roller.weblogger.business.PluginManager;
@@ -47,15 +47,16 @@ import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
 /**
  * Guice module for configuring Hibernate as Roller-backend.
  */
-public class HibernateModule implements Module {
+public class RollerModule implements Module {
 
     public void configure(Binder binder) {
         
-        binder.bind(Roller.class).to(              HibernateRollerImpl.class);
+        binder.bind(DatabaseProvider.class).to(RollerDatabaseProvider.class);
+
+        binder.bind(Roller.class).to(HibernateRollerImpl.class);
         
-        binder.bind(DatabaseProvider.class).to(    RollerDatabaseProvider.class);
-        
-        //binder.bind(HibernatePersistenceStrategy.class).to(RollerHibernateAutoPingManagerImpl.class);
+        binder.bind(HibernatePersistenceStrategy.class);       
+        binder.bind(org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy.class);   
         
         binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);   
         binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);  
@@ -65,6 +66,7 @@ public class HibernateModule implements Module {
         binder.bind(RefererManager.class).to(      HibernateRefererManagerImpl.class);
         binder.bind(UserManager.class).to(         HibernateUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       HibernateWeblogManagerImpl.class);   
+        
         
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
         binder.bind(FileManager.class).to(         FileManagerImpl.class);   

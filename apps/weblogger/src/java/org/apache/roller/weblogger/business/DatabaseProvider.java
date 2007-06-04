@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.weblogger.business;
 
 import java.sql.Connection;
@@ -9,8 +27,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.planet.PlanetException;
 
 /**
  * Encapsulates Roller database configuration via JDBC properties or JNDI.
@@ -70,7 +87,7 @@ public abstract class DatabaseProvider  {
         String jdbcDriverClass,
         String jdbcConnectionURL,
         String jdbcUsername,
-        String jdbcPassword) throws WebloggerException {        
+        String jdbcPassword) throws DatabaseProviderException {        
         
         // init now so we fail early
         if (getType() == ConfigurationType.JDBC_PROPERTIES) {
@@ -78,7 +95,7 @@ public abstract class DatabaseProvider  {
             try {
                 Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
-                throw new WebloggerException(
+                throw new DatabaseProviderException(
                    "Cannot load specified JDBC driver class [" +getJdbcDriverClass()+ "]", ex);
             }
             if (getJdbcUsername() != null || getJdbcPassword() != null) {
@@ -93,7 +110,7 @@ public abstract class DatabaseProvider  {
                 InitialContext ic = new InitialContext();
                 dataSource = (DataSource)ic.lookup(name);
             } catch (NamingException ex) {
-                throw new WebloggerException(
+                throw new DatabaseProviderException(
                     "ERROR looking up data-source with JNDI name: " + name, ex);
             }            
         }
@@ -101,7 +118,7 @@ public abstract class DatabaseProvider  {
             Connection testcon = getConnection();
             testcon.close();
         } catch (Throwable t) {
-            throw new WebloggerException("ERROR unable to obtain connection", t);
+            throw new DatabaseProviderException("ERROR unable to obtain connection", t);
         }
     }
     

@@ -18,89 +18,45 @@
 
 package org.apache.roller.planet.business;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.config.PlanetConfig; 
-import org.apache.commons.lang.StringUtils;
-
 
 /**
- * Instantiates planet implementation.
+ * Provides access to the Planet instance.
  */
-public abstract class PlanetFactory {
-    
-    private static final String DEFAULT_IMPL =
-        "org.apache.roller.planet.business.jpa.JPAPlanetImpl";
-        //"org.apache.roller.planet.business.hibernate.HibernatePlanetImpl";
-        //"org.apache.roller.planet.business.datamapper.jpa.JPAPlanetImpl";
-    
-    private static Planet planetInstance = null;
-    
+public abstract class PlanetFactory {    
     private static Log log = LogFactory.getLog(PlanetFactory.class);
-    
-    
+    private static Planet planetInstance = null;
+    private static Injector injector = null;       
+            
     /**
-     * We instantiate the Planet implementation statically at class loading time
-     * to make absolutely sure that there is no way for our singleton to get
-     * instantiated twice.
+     * Let's just be doubling certain this class cannot be instantiated.
      */
-    static {
-        // lookup value for the roller classname to use
-        String planet_classname =
-                PlanetConfig.getProperty("persistence.planet.classname");
-        if(planet_classname == null || planet_classname.trim().length() < 1)
-            planet_classname = DEFAULT_IMPL;
-        
+    private PlanetFactory() {} // hello planetary citizens
+    
+    
+    static { 
+
+        String moduleClassname = PlanetConfig.getProperty("guice.backend.module");
         try {
-            Class planetClass = Class.forName(planet_classname);
-            java.lang.reflect.Method instanceMethod =
-                    planetClass.getMethod("instantiate", (Class[])null);
-            
-            // do the invocation
-            planetInstance = (Planet) instanceMethod.invoke(planetClass, (Object[])null);
-            
-            log.info("Using Planet Impl: " + planet_classname);
-            
-        } catch (Throwable e) {
-            
-            // uh oh
-            log.error("Error instantiating " + planet_classname, e);
-            
-            try {
-                // if we didn't already try DEFAULT_IMPL then try it now
-                if( ! DEFAULT_IMPL.equals(planet_classname)) {
-                    
-                    log.info("** Trying DEFAULT_IMPL "+DEFAULT_IMPL+" **");
-                    
-                    Class rollerClass = Class.forName(DEFAULT_IMPL);
-                    java.lang.reflect.Method instanceMethod =
-                            rollerClass.getMethod("instantiate", (Class[])null);
-                    
-                    // do the invocation
-                    planetInstance = (Planet) instanceMethod.invoke(rollerClass, (Object[])null);
-                } else {
-                    // we just do this so that the logger gets the message
-                    throw new Exception("Doh! Couldn't instantiate a planet class");
-                }
-                
-            } catch (Exception re) {
-                log.fatal("Failed to instantiate fallback planet impl", re);
-            }
+            Class moduleClass = Class.forName(moduleClassname);
+            Module module = (Module)moduleClass.newInstance();
+            injector = Guice.createInjector(module);
+        } catch (Throwable e) {                
+            // Fatal misconfiguration, cannot recover
+            throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
         }
     }
     
-    
+        
     /**
-     * Let's just be doubling certain this class cannot be instantiated.
-     * @see java.lang.Object#Object()
+     * Static accessor for the instance of Roller
      */
-    private PlanetFactory() {
-        // hello planetary citizens
-    }
-    
-    
     public static Planet getPlanet() {
-        return planetInstance;
-    }
-    
+        return injector.getInstance(Planet.class);
+    }     
 }

@@ -58,9 +58,14 @@ public class HibernatePlanetImpl implements Planet {
      * Create HibernatePlanetImpl using Hibernate XML config file or config
      * file plus JDBC overrides from planet-custom.properties.
      */
-    public HibernatePlanetImpl() throws PlanetException {
+    public HibernatePlanetImpl(
+            HibernatePersistenceStrategy strategy, 
+            PlanetManager     planetManager, 
+            PropertiesManager propertiesManager) throws PlanetException {
         
-        strategy = getStrategy();
+        this.strategy = strategy;
+        this.propertiesManager = propertiesManager;
+        this.planetManager = planetManager;
         
         try {
             String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
@@ -78,49 +83,14 @@ public class HibernatePlanetImpl implements Planet {
             throw new PlanetException("Error initializing feed fetcher", e);
         }
     }
-    
-    protected HibernatePersistenceStrategy getStrategy() throws PlanetException {
-        try {
-            String dialect =  
-                PlanetConfig.getProperty("hibernate.dialect");
-            String connectionProvider = 
-                PlanetConfig.getProperty("hibernate.connectionProvider");
-            return new HibernatePersistenceStrategy(
-                "/hibernate.cfg.xml", dialect, connectionProvider);
-
-        } catch(Throwable t) {
-            // if this happens then we are screwed
-            log.fatal("Error initializing Hibernate", t);
-            throw new PlanetException(t);
-        }        
-    }
-    
-    
-    /**
-     * Instantiates and returns an instance of HibernatePlanetImpl.
-     */
-    public static Planet instantiate() throws PlanetException {
-        if (me == null) {
-            log.debug("Instantiating HibernatePlanetImpl");
-            me = new HibernatePlanetImpl();
-        }
-        
-        return me;
-    }
-    
+       
     
     public PlanetManager getPlanetManager() {
-        if ( planetManager == null ) {
-            planetManager = new HibernatePlanetManagerImpl(strategy);  
-        }
         return planetManager;
     }
     
     
     public PropertiesManager getPropertiesManager() {
-        if ( propertiesManager == null ) {
-            propertiesManager = new HibernatePropertiesManagerImpl(strategy);  
-        }
         return propertiesManager;
     }
     

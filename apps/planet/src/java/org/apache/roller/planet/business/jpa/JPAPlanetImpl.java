@@ -58,9 +58,14 @@ public class JPAPlanetImpl implements Planet {
     protected FeedFetcher feedFetcher = null;
     
         
-    protected JPAPlanetImpl() throws PlanetException {
+    protected JPAPlanetImpl(
+            JPAPersistenceStrategy strategy, 
+            PlanetManager     planetManager, 
+            PropertiesManager propertiesManager) throws PlanetException {
         
-        strategy = getStrategy();
+        this.strategy = strategy;
+        this.propertiesManager = propertiesManager;
+        this.planetManager = planetManager;
         
         try {
             String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
@@ -80,46 +85,6 @@ public class JPAPlanetImpl implements Planet {
         
     }
     
-    protected JPAPersistenceStrategy getStrategy() throws PlanetException {
-        
-        // Add OpenJPA, Toplink and Hibernate properties to Roller config.
-        Properties props = new Properties();
-        Enumeration keys = PlanetConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = PlanetConfig.getProperty(key);
-                log.info(key + ": " + value);
-                props.setProperty(key, value);
-            }
-        }
-        
-        DatabaseProvider dbProvider = DatabaseProvider.getDatabaseProvider();
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-            return new JPAPersistenceStrategy(
-                "PlanetPU", "java:comp/env/" + dbProvider.getJndiName(), props); 
-        } else {
-            return new JPAPersistenceStrategy(
-                "PlanetPU",  
-                dbProvider.getJdbcDriverClass(),
-                dbProvider.getJdbcConnectionURL(),
-                dbProvider.getJdbcUsername(),
-                dbProvider.getJdbcPassword(), 
-                props);
-        }
-    }
-    
-    /**
-     * Instantiates and returns an instance of JPAPlanetImpl.
-     */
-    public static Planet instantiate() throws PlanetException {
-        if (me == null) {
-            log.debug("Instantiating JPAPlanetImpl");
-            me = new JPAPlanetImpl();
-        }
-        
-        return me;
-    }    
 
     public URLStrategy getURLStrategy() {
         return this.urlStrategy;
@@ -136,18 +101,11 @@ public class JPAPlanetImpl implements Planet {
 
     
     public void release() {
-
-        // release our own stuff first
-        //if (planetManager != null) planetManager.release();
-
-        // tell Datamapper to close down
         this.strategy.release();
     }
 
     
     public void shutdown() {
-
-        // do our own shutdown first
         this.release();
     }
     
@@ -155,9 +113,6 @@ public class JPAPlanetImpl implements Planet {
      * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
     public PlanetManager getPlanetManager() {
-        if ( planetManager == null ) {
-            planetManager = createPlanetManager(strategy);
-        }
         return planetManager;
     }
 
@@ -170,16 +125,9 @@ public class JPAPlanetImpl implements Planet {
      * @see org.apache.roller.business.Roller#getBookmarkManager()
      */
     public PropertiesManager getPropertiesManager() {
-        if ( propertiesManager == null ) {
-            propertiesManager = createPropertiesManager(strategy);
-        }
         return propertiesManager;
     }
-
-    protected PropertiesManager createPropertiesManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAPropertiesManagerImpl(strategy);
-    } 
+    
     
     public FeedFetcher getFeedFetcher() {
         return this.feedFetcher;
@@ -190,5 +138,4 @@ public class JPAPlanetImpl implements Planet {
         log.info("Using FeedFetcher: " + feedFetcher.getClass().getName());
     }
     
-
 }

@@ -1,9 +1,16 @@
 
-Latest
-
-May 30, 2007
+June 1-3, 2007
+svn merge -r 543970:543971 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 543952:543970 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 543889:543952 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 543889:543952 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 543886:543889 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 543760:543886 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 542905:543760 https://svn.apache.org/repos/asf/roller/trunk
 svn merge -r 542748:542905 https://svn.apache.org/repos/asf/roller/trunk
 svn merge -r 541742:542748 https://svn.apache.org/repos/asf/roller/trunk
+svn merge -r 539779:541742 https://svn.apache.org/repos/asf/roller/trunk
 
 May 25, 2007
 svn merge -r 539779:541742 https://svn.apache.org/repos/asf/roller/trunk
+

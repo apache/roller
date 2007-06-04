@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.planet.business;
 
 import java.sql.Connection;
@@ -10,12 +28,11 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.config.PlanetConfig;
 
 /**
  * Encapsulates Roller database configuration via JDBC properties or JNDI.
  *
- * <p>Reads configuration properties from PlanetConfig:</p>
+ * <p>Reads configuration properties from RollerConfig:</p>
  * <pre>
  * # Specify database configuration type of 'jndi' or 'jdbc'
  * database.configurationType=jndi
@@ -30,62 +47,70 @@ import org.apache.roller.planet.config.PlanetConfig;
  * database.jdbc.password=
  * </pre>
  */
-public class DatabaseProvider  {
+@com.google.inject.Singleton
+public abstract class DatabaseProvider  {
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
     
-    private static DatabaseProvider singletonInstance = null;
+    private static DatabaseProvider databaseProvider = null;
     
-    private DataSource dataSource = null;
+    protected ConfigurationType type = ConfigurationType.JNDI_NAME; 
     
-    private ConfigurationType type = ConfigurationType.JNDI_NAME; 
+    protected String jndiName = null; 
+    protected DataSource dataSource = null;
     
-    private String jndiName = null; 
+    protected String jdbcDriverClass = null;
+    protected String jdbcConnectionURL = null;
+    protected String jdbcPassword = null;
+    protected String jdbcUsername = null;
+    protected Properties props = null;
     
-    private String jdbcDriverClass = null;
-    private String jdbcConnectionURL = null;
-    private String jdbcPassword = null;
-    private String jdbcUsername = null;
-    private Properties props = null;
-   
-    /**
-     * Reads configuraiton, loads driver or locates data-source and attempts
-     * to get test connecton so that we can fail early.
-     */ 
-    private DatabaseProvider() throws PlanetException {
-        String connectionTypeString = 
-                PlanetConfig.getProperty("database.configurationType"); 
-        if ("jdbc".equals(connectionTypeString)) {
-            type = ConfigurationType.JDBC_PROPERTIES;
-        }
-        jndiName =          PlanetConfig.getProperty("database.jndi.name");
-        jdbcDriverClass =   PlanetConfig.getProperty("database.jdbc.driverClass");
-        jdbcConnectionURL = PlanetConfig.getProperty("database.jdbc.connectionURL");
-        jdbcUsername =      PlanetConfig.getProperty("database.jdbc.username");
-        jdbcPassword =      PlanetConfig.getProperty("database.jdbc.password");
+    // Singleton
+    protected DatabaseProvider() {}
+    
+    
+    // Needed by HibernateConnectionProvider, it's not instantiated by Guice
+    public static DatabaseProvider getDatabaseProvider() {
+        return databaseProvider;
+    }
+    
+    
+    @com.google.inject.Inject
+    private void setDatabaseProvider(DatabaseProvider dbprovider) {
+        databaseProvider = dbprovider;
+    }
+    
+    
+    protected void init(
+        ConfigurationType type,
+        String jndiName, 
+        String jdbcDriverClass,
+        String jdbcConnectionURL,
+        String jdbcUsername,
+        String jdbcPassword) throws DatabaseProviderException {        
         
         // init now so we fail early
-        if (type == ConfigurationType.JDBC_PROPERTIES) {
+        if (getType() == ConfigurationType.JDBC_PROPERTIES) {
             log.info("Using 'jdbc' properties based configuration");
             try {
-                Class.forName(jdbcDriverClass);
+                Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
-                throw new PlanetException(
-                   "Cannot load specified JDBC driver class [" +jdbcDriverClass+ "]", ex);
+                throw new DatabaseProviderException(
+                   "Cannot load specified JDBC driver class [" +getJdbcDriverClass()+ "]", ex);
             }
-            if (jdbcUsername != null || jdbcPassword != null) {
+            if (getJdbcUsername() != null || getJdbcPassword() != null) {
                 props = new Properties();
-                if (jdbcUsername != null) props.put("user", jdbcUsername);
-                if (jdbcPassword != null) props.put("password", jdbcPassword);
+                if (getJdbcUsername() != null) props.put("user", getJdbcUsername());
+                if (getJdbcPassword() != null) props.put("password", getJdbcPassword());
             }
         } else {
             log.info("Using 'jndi' based configuration");
-            String name = "java:comp/env/" + jndiName;
+            String name = "java:comp/env/" + getJndiName();
             try {
                 InitialContext ic = new InitialContext();
                 dataSource = (DataSource)ic.lookup(name);
             } catch (NamingException ex) {
-                throw new PlanetException(
+                throw new DatabaseProviderException(
                     "ERROR looking up data-source with JNDI name: " + name, ex);
             }            
         }
@@ -93,32 +118,23 @@ public class DatabaseProvider  {
             Connection testcon = getConnection();
             testcon.close();
         } catch (Throwable t) {
-            throw new PlanetException("ERROR unable to obtain connection", t);
+            throw new DatabaseProviderException("ERROR unable to obtain connection", t);
         }
     }
     
-    /**
-     * Get global database provider singlton, instantiating if necessary.
-     */
-    public static DatabaseProvider getDatabaseProvider() throws PlanetException {
-        if (singletonInstance == null) {
-            singletonInstance = new DatabaseProvider();
-        }
-        return singletonInstance;
-    }
     
     /**
      * Get database connection from data-source or driver manager, depending 
      * on which is configured.
      */
     public Connection getConnection() throws SQLException {
-        if (type == ConfigurationType.JDBC_PROPERTIES) {
-            return DriverManager.getConnection(jdbcConnectionURL, props);
+        if (getType() == ConfigurationType.JDBC_PROPERTIES) {
+            return DriverManager.getConnection(getJdbcConnectionURL(), props);
         } else {
             return dataSource.getConnection();
         }
-    }
-    
+    } 
+
     public ConfigurationType getType() {
         return type;
     }

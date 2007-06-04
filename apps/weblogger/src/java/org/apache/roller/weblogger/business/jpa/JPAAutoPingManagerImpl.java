@@ -51,8 +51,8 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     /**
      * The logger instance for this class.
      */
-    private static Log logger = LogFactory
-            .getFactory().getInstance(JPAAutoPingManagerImpl.class);
+    private static Log logger = 
+        LogFactory.getFactory().getInstance(JPAAutoPingManagerImpl.class);
 
     /**
      * Creates a new instance of JPAAutoPingManagerImpl

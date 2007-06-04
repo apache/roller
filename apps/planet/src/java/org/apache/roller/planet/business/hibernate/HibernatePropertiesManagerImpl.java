@@ -53,6 +53,7 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     /**
      * Creates a new instance of HibernatePropertiesManagerImpl
      */
+    @com.google.inject.Inject 
     public HibernatePropertiesManagerImpl(HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Properties Manager");

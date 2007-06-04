@@ -113,52 +113,8 @@ public class JPARollerImpl extends RollerImpl {
             userManager,
             weblogManager); 
         this.strategy = strategy;
-    
-        
-        // Add OpenJPA, Toplink and Hibernate properties to Roller config.
-        Properties props = new Properties();
-        Enumeration keys = RollerConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = RollerConfig.getProperty(key);
-                logger.info(key + ": " + value);
-                props.setProperty(key, value);
-            }
-        }
-        
-        DatabaseProvider dbProvider = DatabaseProvider.getDatabaseProvider();
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-            strategy = new JPAPersistenceStrategy(
-                "RollerPU", "java:comp/env/" + dbProvider.getJndiName(), props); 
-        } else {
-            strategy = new JPAPersistenceStrategy(
-                "RollerPU",  
-                dbProvider.getJdbcDriverClass(),
-                dbProvider.getJdbcConnectionURL(),
-                dbProvider.getJdbcUsername(),
-                dbProvider.getJdbcPassword(), 
-                props);
-        }
     }
-    
-    
-    /**
-     * Construct and return the singleton instance of the class.
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
-     * @return the singleton
-     */
-    /*public static Roller instantiate() throws RollerException {
-        logger.debug("Instantiating JPARollerImpl");
-        Roller roller = new JPARollerImpl();
-
-        // Now that Roller has been instantiated, initialize individual managers
-        roller.getPropertiesManager();
-        roller.getIndexManager();
-        roller.getThemeManager();          
-        return roller;
-    }*/
-    
+        
     public void flush() throws WebloggerException {
         this.strategy.flush();
     }
@@ -166,67 +122,16 @@ public class JPARollerImpl extends RollerImpl {
     
     public void release() {
         super.release();
-
         // tell JPA to close down
         this.strategy.release();
     }
 
     
     public void shutdown() {
-
         // do our own shutdown first
         this.release();
 
         // then let parent do its thing
         super.shutdown();
-    }
-        
-    /**
-     * Loads properties from given resourceName using given class loader
-     * @param resourceName The name of the resource containing properties
-     * @param cl Classloeder to be used to locate the resouce
-     * @return A properties object
-     * @throws WebloggerException
-     */
-    private static Properties loadPropertiesFromResourceName(
-            String resourceName, ClassLoader cl) throws WebloggerException {
-        Properties props = new Properties();
-        InputStream in = null;
-        in = cl.getResourceAsStream(resourceName);
-        if (in == null) {
-            //TODO: Check how i18n is done in roller
-            throw new WebloggerException(
-                    "Could not locate properties to load " + resourceName);
-        }
-        try {
-            props.load(in);
-        } catch (IOException ioe) {
-            throw new WebloggerException(
-                    "Could not load properties from " + resourceName);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioe) {
-                }
-            }
-        }
-        
-        return props;
-    }
-    
-    /**
-     * Get the context class loader associated with the current thread. This is
-     * done in a doPrivileged block because it is a secure method.
-     * @return the current thread's context class loader.
-     */
-    private static ClassLoader getContextClassLoader() {
-        return (ClassLoader) AccessController.doPrivileged(
-                new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
-    
+    }    
 }

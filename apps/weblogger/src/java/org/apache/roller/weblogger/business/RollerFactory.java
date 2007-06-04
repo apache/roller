@@ -33,8 +33,7 @@ import org.apache.roller.weblogger.config.RollerConfig;
  * Provides access to the Roller instance.
  */
 public abstract class RollerFactory implements Module {
-    private static Log log = LogFactory.getLog(RollerFactory.class);
-    
+    private static Log log = LogFactory.getLog(RollerFactory.class);    
     private static Injector injector = null;   
     private static Roller rollerInstance = null;
        
@@ -83,7 +82,7 @@ public abstract class RollerFactory implements Module {
      * Static accessor for the instance of Roller
      */
     public static Roller getRoller() {
-        return getInjector().getInstance(Roller.class);
+        return injector.getInstance(Roller.class);
     }    
 
     /**
