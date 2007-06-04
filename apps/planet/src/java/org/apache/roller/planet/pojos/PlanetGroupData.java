@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.util.UUIDGenerator;
 
 
 /**
@@ -36,7 +37,7 @@ public class PlanetGroupData implements Serializable, Comparable {
     transient private String[] catArray = null;
     
     // attributes
-    private String id = null;
+    private String id = UUIDGenerator.generateUUID();
     private String handle = null;
     private String title = null;
     private String description = null;
@@ -71,7 +72,7 @@ public class PlanetGroupData implements Serializable, Comparable {
     
     
     /**
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"
      */
     public String getId() {
         return id;

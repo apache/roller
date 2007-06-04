@@ -18,19 +18,16 @@
 
 package org.apache.roller.planet.business.hibernate;
 
-import java.io.StringBufferInputStream;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.PlanetException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.apache.roller.planet.PlanetException;
 import org.hibernate.cfg.Environment;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
 
 
 /**
@@ -42,18 +39,12 @@ import org.xml.sax.InputSource;
  */
 public class HibernatePersistenceStrategy {
     
-    static final long serialVersionUID = 2561090040518169098L;
+    private static final long serialVersionUID = 2561090040518169098L;
     
-    protected static SessionFactory sessionFactory = null;
+    private static final Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
-    private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
+    private final SessionFactory sessionFactory;
     
-    /** No-op so XML parser doesn't hit the network looking for Hibernate DTDs */
-    private EntityResolver noOpEntityResolver = new EntityResolver() {
-        public InputSource resolveEntity(String publicId, String systemId) {
-            return new InputSource(new StringBufferInputStream(""));
-        }
-    };
     
     /**
      * Persistence strategy configures itself by using Roller properties:
@@ -61,7 +52,9 @@ public class HibernatePersistenceStrategy {
      * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
      * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
      */
-    public HibernatePersistenceStrategy(String configResource, String dialect, String connectionProvider) {
+    public HibernatePersistenceStrategy(String configResource, 
+                                        String dialect, 
+                                        String connectionProvider) {
         
         // Read Hibernate config file specified by Roller config
         Configuration config = new Configuration();
@@ -73,7 +66,7 @@ public class HibernatePersistenceStrategy {
         props.put(Environment.CONNECTION_PROVIDER, connectionProvider);
         config.mergeProperties(props);
         
-        this.sessionFactory = config.buildSessionFactory(); 
+        sessionFactory = config.buildSessionFactory(); 
     }
     
     
