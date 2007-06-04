@@ -101,13 +101,6 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl
     
     // save a Group
     public void saveGroup(PlanetGroupData group)  throws PlanetException {
-        // TODO: move this check outside this method?
-        if (group.getId() == null || getGroupById(group.getId()) == null) {
-            // If new group, make sure hadnle is unique within Planet
-            if (getGroup(group.getPlanet(), group.getHandle()) != null) {
-                throw new PlanetException("ERROR group handle already exists in Planet");
-            }
-        }
         strategy.store(group);
     }
         
