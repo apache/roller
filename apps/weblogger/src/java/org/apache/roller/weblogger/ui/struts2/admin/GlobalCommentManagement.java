@@ -49,7 +49,7 @@ public class GlobalCommentManagement extends UIAction {
     private static Log log = LogFactory.getLog(GlobalCommentManagement.class);
     
     // number of comments to show per page
-    private static final int COUNT = 2;
+    private static final int COUNT = 30;
     
     // bean for managing submitted data
     private GlobalCommentManagementBean bean = new GlobalCommentManagementBean();
