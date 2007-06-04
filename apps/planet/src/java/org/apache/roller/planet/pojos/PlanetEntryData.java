@@ -180,7 +180,7 @@ public class PlanetEntryData implements Serializable, Comparable {
     //----------------------------------------------------------- persistent fields
     
     /**
-     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="assigned"
      * @roller.wrapPojoMethod type="simple"
      */
     public String getId() {
