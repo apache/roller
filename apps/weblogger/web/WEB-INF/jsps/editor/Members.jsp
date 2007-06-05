@@ -83,22 +83,22 @@ function save() {
 	                <s:property value="#perm.user.userName" />
                 </td>               
                 <td class="rollertable">
-                    <input type="radio" onchange="dirty()" 
+                    <input type="radio" 
                         <s:if test="#perm.permissionMask == 3">checked</s:if>
                         name='perm-<s:property value="#perm.id" />' value="3" />
                 </td>
                 <td class="rollertable">
-	                <input type="radio"  onchange="dirty()"
+	                <input type="radio" 
                         <s:if test="#perm.permissionMask == 1">checked</s:if>
                         name='perm-<s:property value="#perm.id" />' value="1" />
                 </td>                
                 <td class="rollertable">
-                    <input type="radio" onchange="dirty()"
+                    <input type="radio" 
                         <s:if test="#perm.permissionMask == 0">checked</s:if>
                         name='perm-<s:property value="#perm.id" />' value="0" />
                 </td>                
                 <td class="rollertable">
-                    <input type="radio" onchange="dirty()"
+                    <input type="radio" 
                         name='perm-<s:property value="#perm.id" />' value="-1" />
                 </td>
            </tr>
