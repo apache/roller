@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 
 
 /**
@@ -161,7 +161,7 @@ public class WeblogsPager extends AbstractPager {
                 // wrap the results
                 for (Iterator it = weblogs.iterator(); it.hasNext();) {
                     Weblog website = (Weblog) it.next();
-                    results.add(WebsiteDataWrapper.wrap(website));
+                    results.add(WeblogWrapper.wrap(website));
                 }
                 
             } catch (Exception e) {

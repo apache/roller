@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
 /**
@@ -78,12 +78,12 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
                 
                 // store the entry in the collection
                 entries = new TreeMap();
-                entries.put(tmpEntry.getPubTime(),
-                        Collections.singletonList(WeblogEntryDataWrapper.wrap(tmpEntry)));
+                entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry)));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching entry", e);
         }
+
 
         
         return entries;

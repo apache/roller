@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesListPager;
@@ -87,8 +87,8 @@ public class FeedModel implements Model {
     /**
      * Get weblog being displayed.
      */
-    public WebsiteDataWrapper getWeblog() {
-        return WebsiteDataWrapper.wrap(weblog);
+    public WeblogWrapper getWeblog() {
+        return WeblogWrapper.wrap(weblog);
     }
     
     

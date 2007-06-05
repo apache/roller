@@ -28,25 +28,19 @@ function fullPreview(selector) {
     window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+selector.options[selected].value, '_preview', '');
 }
 
-function toggleThemeOptioner() {
-    // just call toggle on both theme optioner choices
-    new Effect.toggle('sharedThemeOptioner', 'appear');
-    new Effect.toggle('customThemeOptioner', 'appear');
-}
-
 function updateThemeChooser(selected) {
     if(selected.value == 'shared') {
-        selectedChooser = document.getElementById('sharedChooser');
-        selectedOptioner = document.getElementById('sharedOptioner');
+        selectedChooser = $('sharedChooser');
+        selectedOptioner = $('sharedOptioner');
         
-        otherChooser = document.getElementById('customChooser');
-        otherOptioner = document.getElementById('customOptioner');
+        otherChooser = $('customChooser');
+        otherOptioner = $('customOptioner');
     } else {
-        selectedChooser = document.getElementById('customChooser');
-        selectedOptioner = document.getElementById('customOptioner');
+        selectedChooser = $('customChooser');
+        selectedOptioner = $('customOptioner');
         
-        otherChooser = document.getElementById('sharedChooser');
-        otherOptioner = document.getElementById('sharedOptioner');
+        otherChooser = $('sharedChooser');
+        otherOptioner = $('sharedOptioner');
     }
     
     // update styling on chooser
@@ -56,8 +50,8 @@ function updateThemeChooser(selected) {
     otherChooser.style.border="1px solid grey";
     
     // update display of selected optioner
-    otherOptioner.style.display="none";
-    selectedOptioner.style.display="block";
+    otherOptioner.hide();
+    selectedOptioner.show();
 }
 -->
 </script>
@@ -92,22 +86,22 @@ function updateThemeChooser(selected) {
         <p><s:text name="themeEditor.yourCurrentTheme" />: <b><s:property value="actionWeblog.theme.name"/></b></p>
         
         <p>
-            <s:select id="sharedSelector" name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('sharedPreviewImg'), this[selectedIndex].value)"/>
+            <s:select id="sharedSelector" name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('sharedPreviewImg'), this[selectedIndex].value)"/>
         </p>
         <p>
             <img id="sharedPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
                 <s:if test="customTheme">
-                    previewImage(document.getElementById('sharedPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage($('sharedPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage(document.getElementById('sharedPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage($('sharedPreviewImg'), '<s:property value="themeId"/>');
                 </s:else>
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview(document.getElementById('sharedSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+            &raquo; <a href="#" onclick="fullPreview($('sharedSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
             <s:text name="themeEditor.previewDescription" />
         </p>
         
@@ -129,17 +123,17 @@ function updateThemeChooser(selected) {
             <span class="warning"><s:text name="themeEditor.importWarning" /></span>
         </p>
         <p>
-            <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('customPreviewImg'), this[selectedIndex].value)"/>
+            <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('customPreviewImg'), this[selectedIndex].value)"/>
         </p>
         <p>
             <img id="customPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
-            previewImage(document.getElementById('customPreviewImg'), '<s:property value="themes[0].id"/>');
+            previewImage($('customPreviewImg'), '<s:property value="themes[0].id"/>');
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview(document.getElementById('customSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+            &raquo; <a href="#" onclick="fullPreview($('customSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
             <s:text name="themeEditor.previewDescription" />
         </p>
         <p><s:submit key="themeEditor.save" /></p>
@@ -150,9 +144,9 @@ function updateThemeChooser(selected) {
 <%-- initializes the chooser/optioner display at page load time --%>
 <script type="text/javascript">
     <s:if test="customTheme">
-        updateThemeChooser(document.getElementById('customRadio'));
+        updateThemeChooser($('customRadio'));
     </s:if>
     <s:else>
-        updateThemeChooser(document.getElementById('sharedRadio'));
+        updateThemeChooser($('sharedRadio'));
     </s:else>
 </script>

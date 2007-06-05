@@ -24,21 +24,21 @@ import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
 /**
  * Pojo safety wrapper for WeblogEntryAttribute object.
  */
-public class EntryAttributeDataWrapper {
+public class WeblogEntryAttributeWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogEntryAttribute pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private EntryAttributeDataWrapper(WeblogEntryAttribute toWrap) {
+    private WeblogEntryAttributeWrapper(WeblogEntryAttribute toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static EntryAttributeDataWrapper wrap(WeblogEntryAttribute toWrap) {
+    public static WeblogEntryAttributeWrapper wrap(WeblogEntryAttribute toWrap) {
         if(toWrap != null)
-            return new EntryAttributeDataWrapper(toWrap);
+            return new WeblogEntryAttributeWrapper(toWrap);
         
         return null;
     }
@@ -49,8 +49,8 @@ public class EntryAttributeDataWrapper {
     }
     
     
-    public WeblogEntryDataWrapper getEntry() {
-        return WeblogEntryDataWrapper.wrap(this.pojo.getEntry());
+    public WeblogEntryWrapper getEntry() {
+        return WeblogEntryWrapper.wrap(this.pojo.getEntry());
     }
     
     

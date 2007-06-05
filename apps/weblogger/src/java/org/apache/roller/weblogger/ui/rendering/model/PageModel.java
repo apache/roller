@@ -29,10 +29,10 @@ import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesDayPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesMonthPager;
@@ -113,8 +113,8 @@ public class PageModel implements Model {
     /**
      * Get weblog being displayed.
      */
-    public WebsiteDataWrapper getWeblog() {
-        return WebsiteDataWrapper.wrap(weblog);
+    public WeblogWrapper getWeblog() {
+        return WeblogWrapper.wrap(weblog);
     }
     
     
@@ -138,9 +138,9 @@ public class PageModel implements Model {
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
-    public WeblogEntryDataWrapper getWeblogEntry() {
+    public WeblogEntryWrapper getWeblogEntry() {
         if(pageRequest.getWeblogEntry() != null) {
-            return WeblogEntryDataWrapper.wrap(pageRequest.getWeblogEntry());
+            return WeblogEntryWrapper.wrap(pageRequest.getWeblogEntry());
         }
         return null;
     }
@@ -149,12 +149,12 @@ public class PageModel implements Model {
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
-    public TemplateWrapper getWeblogPage() {
+    public ThemeTemplateWrapper getWeblogPage() {
         if(pageRequest.getWeblogPageName() != null) {
-            return TemplateWrapper.wrap(pageRequest.getWeblogPage());
+            return ThemeTemplateWrapper.wrap(pageRequest.getWeblogPage());
         } else {
             try {
-                return TemplateWrapper.wrap(weblog.getDefaultPage());
+                return ThemeTemplateWrapper.wrap(weblog.getDefaultPage());
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }
@@ -167,9 +167,9 @@ public class PageModel implements Model {
      * Get weblog category specified by request, or null if the category path
      * found in the request does not exist in the current weblog.
      */
-    public WeblogCategoryDataWrapper getWeblogCategory() {
+    public WeblogCategoryWrapper getWeblogCategory() {
         if(pageRequest.getWeblogCategory() != null) {
-            return WeblogCategoryDataWrapper.wrap(pageRequest.getWeblogCategory());
+            return WeblogCategoryWrapper.wrap(pageRequest.getWeblogCategory());
         }
         return null;
     }

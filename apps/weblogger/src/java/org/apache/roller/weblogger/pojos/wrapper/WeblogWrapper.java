@@ -38,41 +38,41 @@ import org.apache.roller.weblogger.util.URLUtilities;
 /**
  * Pojo safety wrapper for Weblog objects.
  */
-public class WebsiteDataWrapper {
+public class WeblogWrapper {
     
     // keep a reference to the wrapped pojo
     private final Weblog pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WebsiteDataWrapper(Weblog toWrap) {
+    private WeblogWrapper(Weblog toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WebsiteDataWrapper wrap(Weblog toWrap) {
+    public static WeblogWrapper wrap(Weblog toWrap) {
         if(toWrap != null)
-            return new WebsiteDataWrapper(toWrap);
+            return new WeblogWrapper(toWrap);
         
         return null;
     }
     
     
-    public TemplateWrapper getPageByAction(String action)
+    public ThemeTemplateWrapper getPageByAction(String action)
             throws WebloggerException {
-        return TemplateWrapper.wrap(this.pojo.getPageByAction(action));
+        return ThemeTemplateWrapper.wrap(this.pojo.getPageByAction(action));
     }
     
     
-    public TemplateWrapper getPageByName(String name)
+    public ThemeTemplateWrapper getPageByName(String name)
             throws WebloggerException {
-        return TemplateWrapper.wrap(this.pojo.getPageByName(name));
+        return ThemeTemplateWrapper.wrap(this.pojo.getPageByName(name));
     }
     
     
-    public TemplateWrapper getPageByLink(String link)
+    public ThemeTemplateWrapper getPageByLink(String link)
             throws WebloggerException {
-        return TemplateWrapper.wrap(this.pojo.getPageByLink(link));
+        return ThemeTemplateWrapper.wrap(this.pojo.getPageByLink(link));
     }
     
     
@@ -87,7 +87,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, TemplateWrapper.wrap((ThemeTemplate) it.next()));
+            wrappedCollection.add(i,ThemeTemplateWrapper.wrap((ThemeTemplate) it.next()));
             i++;
         }
         
@@ -115,8 +115,8 @@ public class WebsiteDataWrapper {
     }
     
     
-    public UserDataWrapper getCreator() {
-        return UserDataWrapper.wrap(this.pojo.getCreator());
+    public UserWrapper getCreator() {
+        return UserWrapper.wrap(this.pojo.getCreator());
     }
     
     
@@ -135,13 +135,13 @@ public class WebsiteDataWrapper {
     }
     
     
-    public WeblogCategoryDataWrapper getBloggerCategory() {
-        return WeblogCategoryDataWrapper.wrap(this.pojo.getBloggerCategory());
+    public WeblogCategoryWrapper getBloggerCategory() {
+        return WeblogCategoryWrapper.wrap(this.pojo.getBloggerCategory());
     }
     
     
-    public WeblogCategoryDataWrapper getDefaultCategory() {
-        return WeblogCategoryDataWrapper.wrap(this.pojo.getDefaultCategory());
+    public WeblogCategoryWrapper getDefaultCategory() {
+        return WeblogCategoryWrapper.wrap(this.pojo.getDefaultCategory());
     }
     
     
@@ -303,8 +303,8 @@ public class WebsiteDataWrapper {
     }
     
     
-    public WeblogEntryDataWrapper getWeblogEntry(String anchor) {
-        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry(anchor));
+    public WeblogEntryWrapper getWeblogEntry(String anchor) {
+        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(anchor));
     }
     
     
@@ -318,7 +318,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategory) it.next()));
+            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next()));
             i++;
         }
         
@@ -336,7 +336,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategory) it.next()));
+            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next()));
             i++;
         }
         
@@ -344,8 +344,8 @@ public class WebsiteDataWrapper {
     }
     
     
-    public WeblogCategoryDataWrapper getWeblogCategory(String categoryPath) {
-        return WeblogCategoryDataWrapper.wrap(this.pojo.getWeblogCategory(categoryPath));
+    public WeblogCategoryWrapper getWeblogCategory(String categoryPath) {
+        return WeblogCategoryWrapper.wrap(this.pojo.getWeblogCategory(categoryPath));
     }
     
     
@@ -359,7 +359,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry) it.next()));
+            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next()));
             i++;
         }
         
@@ -377,7 +377,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry) it.next()));
+            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next()));
             i++;
         }
         
@@ -395,7 +395,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
+            wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next()));
             i++;
         }
         
@@ -403,8 +403,8 @@ public class WebsiteDataWrapper {
     }
     
     
-    public FolderDataWrapper getBookmarkFolder(String folderName) {
-        return FolderDataWrapper.wrap(this.pojo.getBookmarkFolder(folderName));
+    public WeblogBookmarkFolderWrapper getBookmarkFolder(String folderName) {
+        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getBookmarkFolder(folderName));
     }
     
     
@@ -418,7 +418,7 @@ public class WebsiteDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,RefererDataWrapper.wrap((WeblogReferrer) it.next()));
+            wrappedCollection.add(i,WeblogReferrerWrapper.wrap((WeblogReferrer) it.next()));
             i++;
         }
         

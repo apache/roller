@@ -113,7 +113,13 @@ public class RollerContext extends ContextLoaderListener
             // Parts of database upgrade are not included in migration scripts
             upgradeDatabaseIfNeeded();
             
-            // Initialize Aceigy based on Roller configuration
+            // trigger bootstrapping process
+            RollerFactory.bootstrap();
+            
+            // flush any changes made during bootstrapping
+            RollerFactory.getRoller().flush();
+            
+            // Initialize Acegi based on Roller configuration
             initializeSecurityFeatures(servletContext);
             
             // Setup Velocity template engine

@@ -16,31 +16,40 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-
-<h2 class="error"><s:text name="error.title.403" /></h2>
-
-<c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
-<c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
-<c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
-
-<table width="80%" border="1px" style="border-collapse: collapse;">
-    <tr>
-        <td width="20%">Status Code</td>
-        <td><c:out value="${status_code}" /></td>
-    </tr>
-    <tr>
-        <td width="20%">Message</td>
-        <td><c:out value="${message}" /></td>
-    </tr>
-    <tr>
-        <td width="20%">Type</td>
-        <td><c:out value="${type}" /></td>
-    </tr>
-    <tr>
-        <td width="20%">Exception</td>
-        <td><s:text name="error.text.403" /></td>
-    </tr>
-</table>
-
-<br />
-<br />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title><s:text name="error.title.403" /></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        
+        <h2 class="error"><s:text name="error.title.403" /></h2>
+        
+        <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
+        <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
+        <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
+        
+        <table width="80%" border="1px" style="border-collapse: collapse;">
+            <tr>
+                <td width="20%">Status Code</td>
+                <td><c:out value="${status_code}" /></td>
+            </tr>
+            <tr>
+                <td width="20%">Message</td>
+                <td><c:out value="${message}" /></td>
+            </tr>
+            <tr>
+                <td width="20%">Type</td>
+                <td><c:out value="${type}" /></td>
+            </tr>
+            <tr>
+                <td width="20%">Exception</td>
+                <td><s:text name="error.text.403" /></td>
+            </tr>
+        </table>
+        
+        <br />
+        <br />
+    </body>
+</html>

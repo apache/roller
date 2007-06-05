@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -219,7 +220,7 @@ public class EntryBean {
             log.debug("pubtime vals are "+getDateString()+", "+getHours()+", "+getMinutes()+", "+getSeconds());
             
             // first convert the specified date string into an actual Date obj
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            DateFormat df = new SimpleDateFormat("MM/dd/yy", locale);
             df.setTimeZone(timezone);
             Date newDate = df.parse(getDateString());
             
@@ -327,7 +328,7 @@ public class EntryBean {
             setMinutes(cal.get(Calendar.MINUTE));
             setSeconds(cal.get(Calendar.SECOND));
             
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            DateFormat df = new SimpleDateFormat("MM/dd/yy", locale);
             df.setTimeZone(entry.getWebsite().getTimeZoneInstance());
             setDateString(df.format(entry.getPubTime()));
             

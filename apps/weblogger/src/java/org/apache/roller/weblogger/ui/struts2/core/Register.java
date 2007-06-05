@@ -121,7 +121,6 @@ public class Register extends UIAction implements ServletRequestAware {
             // copy form data into new user pojo
             User ud = new User();
             getBean().copyTo(ud); // doesn't copy password
-            ud.setId(null);
             ud.setUserName(getBean().getUserName());
             ud.setDateCreated(new java.util.Date());
             ud.setEnabled(Boolean.TRUE);

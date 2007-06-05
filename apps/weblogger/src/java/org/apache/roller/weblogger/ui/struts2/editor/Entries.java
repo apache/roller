@@ -19,8 +19,10 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -29,8 +31,10 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -40,20 +44,20 @@ public class Entries extends UIAction {
     
     private static Log log = LogFactory.getLog(Entries.class);
     
+    // number of comments to show per page
+    private static final int COUNT = 30;
+    
     // bean for managing submitted data
     private EntriesBean bean = new EntriesBean();
     
-    // list of entries to display
-    private List<WeblogEntry> entries = Collections.EMPTY_LIST;
+    // pager for the entries we are viewing
+    private EntriesPager pager = null;
     
     // first entry in the list
     private WeblogEntry firstEntry = null;
     
     // last entry in the list
     private WeblogEntry lastEntry = null;
-    
-    // are there more results for the query?
-    private boolean moreResults = false;
     
     
     public Entries() {
@@ -75,11 +79,13 @@ public class Entries extends UIAction {
             log.debug("entries bean is ...\n"+getBean().toString());
         }
         
+        List<WeblogEntry> entries = null;
+        boolean hasMore = false;
         try {
             String status = getBean().getStatus();
             
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List<WeblogEntry> entries = wmgr.getWeblogEntries(
+            entries = wmgr.getWeblogEntries(
                     getActionWeblog(),
                     null,
                     getBean().getStartDate(),
@@ -91,18 +97,17 @@ public class Entries extends UIAction {
                     getBean().getSortBy(),
                     null,
                     null,
-                    getBean().getOffset(),
-                    getBean().getCount() + 1);
+                    getBean().getPage() * COUNT,
+                    COUNT + 1);
             
             if(entries != null && entries.size() > 0) {
                 log.debug("query found "+entries.size()+" results");
                 
-                if(entries.size() > getBean().getCount()) {
+                if(entries.size() > COUNT) {
                     entries.remove(entries.size()-1);
-                    setMoreResults(true);
+                    hasMore = true;
                 }
                 
-                setEntries(entries);
                 setFirstEntry((WeblogEntry)entries.get(0));
                 setLastEntry((WeblogEntry)entries.get(entries.size()-1));
             }
@@ -112,7 +117,43 @@ public class Entries extends UIAction {
             addError("Error looking up entries");
         }
         
+        // build entries pager
+        String baseUrl = buildBaseUrl();
+        setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, hasMore));
+                
         return LIST;
+    }
+    
+    
+    // use the action data to build a url representing this action, including query data
+    private String buildBaseUrl() {
+        
+        Map<String, String> params = new HashMap();
+        
+        if(!StringUtils.isEmpty(getBean().getCategoryPath())) {
+            params.put("bean.categoryPath", getBean().getCategoryPath());
+        }
+        if(!StringUtils.isEmpty(getBean().getTagsAsString())) {
+            params.put("bean.tagsAsString", getBean().getTagsAsString());
+        }
+        if(!StringUtils.isEmpty(getBean().getText())) {
+            params.put("bean.text", getBean().getText());
+        }
+        if(!StringUtils.isEmpty(getBean().getStartDateString())) {
+            params.put("bean.startDateString", getBean().getStartDateString());
+        }
+        if(!StringUtils.isEmpty(getBean().getEndDateString())) {
+            params.put("bean.endDateString", getBean().getEndDateString());
+        }
+        if(!StringUtils.isEmpty(getBean().getStatus())) {
+            params.put("bean.status", getBean().getStatus());
+        }
+        if(!StringUtils.isEmpty(getBean().getSortBy())) {
+            params.put("bean.sortBy", getBean().getSortBy());
+        }
+        
+        return URLUtilities.getActionURL("entries", "/roller-ui/authoring", 
+                getActionWeblog().getHandle(), params, false);
     }
     
     
@@ -162,14 +203,6 @@ public class Entries extends UIAction {
         this.bean = bean;
     }
 
-    public List<WeblogEntry> getEntries() {
-        return entries;
-    }
-
-    public void setEntries(List<WeblogEntry> entries) {
-        this.entries = entries;
-    }
-
     public WeblogEntry getFirstEntry() {
         return firstEntry;
     }
@@ -186,12 +219,12 @@ public class Entries extends UIAction {
         this.lastEntry = lastEntry;
     }
 
-    public boolean isMoreResults() {
-        return moreResults;
+    public EntriesPager getPager() {
+        return pager;
     }
 
-    public void setMoreResults(boolean moreResults) {
-        this.moreResults = moreResults;
+    public void setPager(EntriesPager pager) {
+        this.pager = pager;
     }
     
 }

@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,13 +14,13 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <title></title>
-</head>
-<body>
-Core Roller UI classes for Servlet context, session and request.
-</body>
-</html>
+--%>
+#centercontent_wrap {
+    width: 70%;
+}
+#rightcontent_wrap {
+    width: 29%;
+}
+label.checkboxLabel {
+    display: none;
+}

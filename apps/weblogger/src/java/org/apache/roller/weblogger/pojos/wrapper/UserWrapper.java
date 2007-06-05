@@ -18,74 +18,69 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import org.apache.roller.weblogger.pojos.WeblogBookmark;
+import java.util.Date;
+import org.apache.roller.weblogger.pojos.User;
 
 
 /**
- * Pojo safety wrapper for WeblogBookmark object.
+ * Pojo safety wrapper for User objects.
  */
-public class BookmarkDataWrapper {
+public class UserWrapper {
     
     // keep a reference to the wrapped pojo
-    private final WeblogBookmark pojo;
+    private final User pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private BookmarkDataWrapper(WeblogBookmark toWrap) {
+    private UserWrapper(User toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static BookmarkDataWrapper wrap(WeblogBookmark toWrap) {
+    public static UserWrapper wrap(User toWrap) {
         if(toWrap != null)
-            return new BookmarkDataWrapper(toWrap);
+            return new UserWrapper(toWrap);
         
         return null;
     }
     
     
-    public String getId() {
-        return this.pojo.getId();
+    /**
+     * This is here for backwards compatability.  We no longer allow the
+     * username to be displayed publicly, so screen name is returned instead.
+     */
+    public String getUserName() {
+        return this.pojo.getScreenName();
     }
     
     
-    public String getName() {
-        return this.pojo.getName();
+    public String getScreenName() {
+        return this.pojo.getScreenName();
     }
     
     
-    public String getDescription() {
-        return this.pojo.getDescription();
+    public String getFullName() {
+        return this.pojo.getFullName();
     }
     
     
-    public String getUrl() {
-        return this.pojo.getUrl();
+    public String getEmailAddress() {
+        return this.pojo.getEmailAddress();
     }
     
     
-    public Integer getWeight() {
-        return this.pojo.getWeight();
+    public Date getDateCreated() {
+        return this.pojo.getDateCreated();
     }
     
     
-    public Integer getPriority() {
-        return this.pojo.getPriority();
+    public String getLocale() {
+        return this.pojo.getLocale();
     }
     
     
-    public String getImage() {
-        return this.pojo.getImage();
-    }
-    
-    
-    public String getFeedUrl() {
-        return this.pojo.getFeedUrl();
-    }
-    
-    
-    public FolderDataWrapper getFolder() {
-        return FolderDataWrapper.wrap(this.pojo.getFolder());
+    public String getTimeZone() {
+        return this.pojo.getTimeZone();
     }
     
 }

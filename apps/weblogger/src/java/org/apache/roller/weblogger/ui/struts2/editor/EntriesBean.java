@@ -18,8 +18,11 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -28,19 +31,14 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class EntriesBean {
     
-    private Date endDate = null;
-    private Date startDate = null;
+    private String endDateString = null;
+    private String startDateString = null;
     private String categoryPath = null;
     private String tagsAsString = null;
     private String text = null;
     private String status = "ALL";
     private String sortBy = "updateTime";
-    
-    /** max entries displayed per page */
-    private int count = 30;
-    
-    /** offset into current query results */
-    private int offset = 0;
+    private int page = 0;
     
     
     public EntriesBean() {
@@ -55,22 +53,22 @@ public class EntriesBean {
         }
     }
     
-    
-    public Date getEndDate() {
-        return endDate;
-    }
-    
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-    
     public Date getStartDate() {
-        return startDate;
+        if(!StringUtils.isEmpty(getStartDateString())) try {
+            DateFormat df = new SimpleDateFormat("MM/dd/yy");
+            return df.parse(getStartDateString());
+        } catch(Exception e) { }
+        return null;
+    }
+
+    public Date getEndDate() {
+        if(!StringUtils.isEmpty(getEndDateString())) try {
+            DateFormat df = new SimpleDateFormat("MM/dd/yy");
+            return df.parse(getEndDateString());
+        } catch(Exception e) { }
+        return null;
     }
     
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
     
     public String getCategoryPath() {
         return categoryPath;
@@ -112,20 +110,12 @@ public class EntriesBean {
         this.sortBy = sortBy;
     }
     
-    public int getCount() {
-        return count;
+    public int getPage() {
+        return page;
     }
-    
-    public void setCount(int count) {
-        this.count = count;
-    }
-    
-    public int getOffset() {
-        return offset;
-    }
-    
-    public void setOffset(int offset) {
-        this.offset = offset;
+
+    public void setPage(int page) {
+        this.page = page;
     }
     
     
@@ -139,10 +129,25 @@ public class EntriesBean {
         buf.append("catPath = ").append(getCategoryPath()).append("\n");
         buf.append("tags = ").append(getTagsAsString()).append("\n");
         buf.append("text = ").append(getText()).append("\n");
-        buf.append("offset = ").append(getOffset()).append("\n");
-        buf.append("count = ").append(getCount()).append("\n");
+        buf.append("page = ").append(getPage()).append("\n");
         
         return buf.toString();
+    }
+
+    public String getEndDateString() {
+        return endDateString;
+    }
+
+    public void setEndDateString(String endDateString) {
+        this.endDateString = endDateString;
+    }
+
+    public String getStartDateString() {
+        return startDateString;
+    }
+
+    public void setStartDateString(String startDateString) {
+        this.startDateString = startDateString;
     }
     
 }

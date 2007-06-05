@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -75,12 +75,12 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 entries = new TreeMap();
-                entries.put(new Date(currEntry.getPubTime().getTime()),
-                        Collections.singletonList(WeblogEntryDataWrapper.wrap(currEntry)));
+                entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry)));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching entry");
         }
+
 
         
         return entries;

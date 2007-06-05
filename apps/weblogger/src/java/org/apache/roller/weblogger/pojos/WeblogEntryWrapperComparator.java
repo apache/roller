@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 /**
  * Sorts WeblogEntryData objects in reverse chronological order
@@ -36,8 +36,8 @@ public class WeblogEntryWrapperComparator implements Comparator, Serializable
     public int compare(Object val1, Object val2)
     throws ClassCastException
     {
-        WeblogEntryDataWrapper entry1 = (WeblogEntryDataWrapper)val1;
-        WeblogEntryDataWrapper entry2 = (WeblogEntryDataWrapper)val2;
+        WeblogEntryWrapper entry1 = (WeblogEntryWrapper)val1;
+        WeblogEntryWrapper entry2 = (WeblogEntryWrapper)val2;
         long pubTime1 = entry1.getPubTime().getTime();
         long pubTime2 = entry2.getPubTime().getTime();
 

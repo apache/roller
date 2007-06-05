@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
 /**
@@ -125,7 +125,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     WeblogEntry entry = (WeblogEntry) it.next();
                     if (count++ < length) {
-                        results.add(WeblogEntryDataWrapper.wrap(entry));
+                        results.add(WeblogEntryWrapper.wrap(entry));
                     }
                 }
                 if (rawEntries.size() > length) more = true;

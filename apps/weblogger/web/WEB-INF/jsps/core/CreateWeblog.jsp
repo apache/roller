@@ -23,7 +23,7 @@ function previewImage(theme) {
     document.preview.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
 }
 function handlePreview(handle) {
-    previewSpan = document.getElementById("handlePreview");
+    previewSpan = $("handlePreview");
     var n1 = previewSpan.childNodes[0];
     var n2 = document.createTextNode(handle.value);
     if (handle.value == null) {

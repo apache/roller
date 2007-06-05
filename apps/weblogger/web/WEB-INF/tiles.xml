@@ -64,15 +64,6 @@
     <definition name=".denied" extends=".tiles-errorpage" >
         <put name="content" value="/WEB-INF/jsps/errors/denied.jsp" />
     </definition>
-    <definition name=".error" extends=".tiles-errorpage" >
-        <put name="content" value="/WEB-INF/jsps/errors/error.jsp" />
-    </definition>
-    <definition name=".403" extends=".tiles-errorpage" >
-        <put name="content" value="/WEB-INF/jsps/errors/403.jsp" />
-    </definition>
-    <definition name=".404" extends=".tiles-errorpage" >
-        <put name="content" value="/WEB-INF/jsps/errors/404.jsp" />
-    </definition>
     
     
     <!-- core pages (and associates) -->
@@ -128,7 +119,7 @@
         <put name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put name="content" value="/WEB-INF/jsps/admin/GlobalCommentManagement.jsp" />
         <put name="sidebar" value="/WEB-INF/jsps/admin/GlobalCommentManagementSidebar.jsp" />
-        <put name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
     
     <definition name=".CommonPingTargets" extends=".tiles-tabbedpage" >
@@ -195,7 +186,7 @@
         <put name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
         <put name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
-        <put name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+        <put name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
     </definition>
     
     <definition name=".Categories" extends=".tiles-tabbedpage" >

@@ -24,21 +24,21 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
 /**
  * Pojo safety wrapper for WeblogReferrer object.
  */
-public class RefererDataWrapper {
+public class WeblogReferrerWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogReferrer pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private RefererDataWrapper(WeblogReferrer toWrap) {
+    private WeblogReferrerWrapper(WeblogReferrer toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static RefererDataWrapper wrap(WeblogReferrer toWrap) {
+    public static WeblogReferrerWrapper wrap(WeblogReferrer toWrap) {
         if(toWrap != null)
-            return new RefererDataWrapper(toWrap);
+            return new WeblogReferrerWrapper(toWrap);
         
         return null;
     }
@@ -49,13 +49,13 @@ public class RefererDataWrapper {
     }
     
     
-    public WebsiteDataWrapper getWebsite() {
-        return WebsiteDataWrapper.wrap(this.pojo.getWebsite());
+    public WeblogWrapper getWebsite() {
+        return WeblogWrapper.wrap(this.pojo.getWebsite());
     }
     
     
-    public WeblogEntryDataWrapper getWeblogEntry() {
-        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
+    public WeblogEntryWrapper getWeblogEntry() {
+        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
     }
     
     

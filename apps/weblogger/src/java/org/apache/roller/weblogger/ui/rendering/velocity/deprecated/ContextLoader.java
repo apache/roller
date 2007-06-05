@@ -41,9 +41,9 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -227,7 +227,7 @@ public class ContextLoader {
         // setup Timezone for future rendering
         ctx.put("timezone", weblog.getTimeZoneInstance());
         ctx.put("timeZone", weblog.getTimeZoneInstance());
-        ctx.put("website", WebsiteDataWrapper.wrap(weblog) );
+        ctx.put("website",WeblogWrapper.wrap(weblog) );
         
         String siteName = ((RuntimeConfigProperty)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
@@ -243,7 +243,7 @@ public class ContextLoader {
         // alternative display pages - customization
         ThemeTemplate entryPage = weblog.getPageByName("_entry");
         if (entryPage != null) {
-            ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
+            ctx.put("entryPage",ThemeTemplateWrapper.wrap(entryPage));
         }
         // TODO: ATLAS: no templates use this, should be safe to remove
         // Template descPage = weblog.getPageByName("_desc");
@@ -304,7 +304,7 @@ public class ContextLoader {
         }
         
         if (entry.getStatus().equals(WeblogEntry.PUBLISHED)) {
-            ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));
+            ctx.put("entry",WeblogEntryWrapper.wrap(entry));
         }
     }
     
@@ -377,7 +377,7 @@ public class ContextLoader {
         // the Entry Day link.
         ctx.put("plainFormat", "yyyyMMdd");
         
-        ctx.put("page",            TemplateWrapper.wrap(page));
+        ctx.put("page",ThemeTemplateWrapper.wrap(page));
         ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
         ctx.put("rollerVersion",   RollerFactory.getRoller().getVersion() );

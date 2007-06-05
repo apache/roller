@@ -137,7 +137,20 @@
             :
             <s:select name="bean.seconds" list="secondsList" />
             &nbsp;&nbsp;
-            <s:datetimepicker name="bean.dateString" />
+            <script type="text/javascript" >
+            <!--
+            if (document.layers) { // Netscape 4 hack
+                var cal = new CalendarPopup();
+            } else {
+                var cal = new CalendarPopup("datetagdiv");
+                document.write(cal.getStyles());
+            }
+            // -->
+            </script>
+            <s:textfield name="bean.dateString" size="12" />
+            <a href="#" id="anchorCal" name="anchorCal"
+               onclick="cal.select($('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
+            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
             <s:property value="actionWeblog.timeZone" />
         </div>   
         <br />
@@ -169,12 +182,12 @@
     <br>
     <div class="control">
         <s:if test="userAnAuthor">
-            <s:submit key="weblogEdit.post" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
+            <s:submit key="weblogEdit.post" onclick="$('entry_bean_status').value='PUBLISHED';"/>
         </s:if>
         <s:else>
-            <s:submit key="weblogEdit.submitForReview" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
+            <s:submit key="weblogEdit.submitForReview" onclick="$('entry_bean_status').value='PENDING';"/>
         </s:else>
-        <s:submit key="weblogEdit.save" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
+        <s:submit key="weblogEdit.save" onclick="$('entry_bean_status').value='DRAFT';" />
     </div>
     
 </s:form>

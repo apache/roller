@@ -59,9 +59,9 @@
         
         // Update page URL when user changes link
         function updatePageURLDisplay() {
-            var previewSpan = document.getElementById('linkPreview');
+            var previewSpan = $('linkPreview');
             var n1 = previewSpan.firstChild;
-            var n2 = document.createTextNode(document.getElementById('template_bean_link').value);
+            var n2 = document.createTextNode($('template_bean_link').value);
             if (n1 == null) {
                 previewSpan.appendChild(n2);
             } else {
@@ -70,7 +70,7 @@
         }
         // Don't launch page if user has changed link, it'll be a 404
         function launchPage() {
-            if (originalLink != document.getElementById('template_bean_link').value) {
+            if (originalLink != $('template_bean_link').value) {
                 window.alert("Link changed, not launching page");
             } else {
                 window.open(weblogURL + '/page/' + originalLink, '_blank');
@@ -115,7 +115,7 @@
     
     <script type="text/javascript"><!--
         if (getCookie("editorSize1") != null) {
-            document.getElementById('template_bean_contents').rows = getCookie("editorSize1");
+            $('template_bean_contents').rows = getCookie("editorSize1");
         }
         function changeSize(e, num) {
             a = e.rows + num;
@@ -141,9 +141,9 @@
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
                 <input type="button" name="taller" value=" &darr; " 
-                       onclick="changeSize1(document.getElementById('template_bean_contents'), 5)" />
+                       onclick="changeSize1($('template_bean_contents'), 5)" />
                 <input type="button" name="shorter" value=" &uarr; " 
-                       onclick="changeSize1(document.getElementById('template_bean_contents'), -5)" />
+                       onclick="changeSize1($('template_bean_contents'), -5)" />
             </td>
         </tr>
     </table>
@@ -168,12 +168,12 @@
                     <td class="field">
                         <script type="text/javascript"><!--
                         function showContentTypeField() {
-                            if (document.getElementById('template_bean_autoContentType1').checked) {
-                                document.getElementById('template_bean_manualContentType').readOnly = true;
-                                document.getElementById('template_bean_manualContentType').style.background = '#e5e5e5';
+                            if ($('template_bean_autoContentType1').checked) {
+                                $('template_bean_manualContentType').readOnly = true;
+                                $('template_bean_manualContentType').style.background = '#e5e5e5';
                             } else {
-                                document.getElementById('template_bean_manualContentType').readOnly = false;
-                                document.getElementById('template_bean_manualContentType').style.background = '#ffffff';
+                                $('template_bean_manualContentType').readOnly = false;
+                                $('template_bean_manualContentType').style.background = '#ffffff';
                             }
                         }
                         // --></script>
