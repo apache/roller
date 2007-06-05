@@ -24,8 +24,8 @@ function previewImage(element, theme) {
 }
 
 function fullPreview() {
-    selected=document.getElementById('themeEdit_themeId').selectedIndex;
-    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+document.getElementById('themeEdit_themeId').options[selected].value, '_preview', '');
+    selected=$('themeEdit_themeId').selectedIndex;
+    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+$('themeEdit_themeId').options[selected].value, '_preview', '');
 }
 -->
 </script>
@@ -44,13 +44,13 @@ function fullPreview() {
     
     <div>
         <p>
-            <s:select name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('previewImg'), this[selectedIndex].value)"/>
+            <s:select name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('previewImg'), this[selectedIndex].value)"/>
         </p>
         <p>
             <img id="previewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
-            previewImage(document.getElementById('previewImg'), '<s:property value="themeId"/>');
+            previewImage($('previewImg'), '<s:property value="themeId"/>');
             </script>
         </p>
         <p>
