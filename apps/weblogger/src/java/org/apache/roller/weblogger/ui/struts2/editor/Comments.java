@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
@@ -86,9 +87,17 @@ public class Comments extends UIAction {
         boolean hasMore = false;
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            
+            // lookup weblog entry if necessary
+            WeblogEntry queryEntry = null;
+            if(!StringUtils.isEmpty(getBean().getEntryId())) {
+                queryEntry = wmgr.getWeblogEntry(getBean().getEntryId());
+            }
+            
+            // query for comments
             comments = wmgr.getComments(
                     getActionWeblog(),
-                    null,
+                    queryEntry,
                     getBean().getSearchString(),
                     getBean().getStartDate(),
                     getBean().getEndDate(),
@@ -123,6 +132,9 @@ public class Comments extends UIAction {
         
         Map<String, String> params = new HashMap();
         
+        if(!StringUtils.isEmpty(getBean().getEntryId())) {
+            params.put("bean.entryId", getBean().getEntryId());
+        }
         if(!StringUtils.isEmpty(getBean().getSearchString())) {
             params.put("bean.searchString", getBean().getSearchString());
         }

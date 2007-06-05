@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class CommentsBean {
     
+    private String entryId = null;
     private String searchString = null;
     private String startDateString = null;
     private String endDateString = null;
@@ -201,6 +202,14 @@ public class CommentsBean {
 
     public void setEndDateString(String endDateString) {
         this.endDateString = endDateString;
+    }
+
+    public String getEntryId() {
+        return entryId;
+    }
+
+    public void setEntryId(String entryId) {
+        this.entryId = entryId;
     }
     
 }

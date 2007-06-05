@@ -403,7 +403,7 @@ public class MailUtil {
         ownermsg.append((escapeHtml) ? "\n" : "<br />");
         
         Map<String, String> parameters = new HashMap();
-        parameters.put("entryId", entry.getId());
+        parameters.put("bean.entryId", entry.getId());
         String deleteURL = URLUtilities.getActionURL(
                 "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
         
