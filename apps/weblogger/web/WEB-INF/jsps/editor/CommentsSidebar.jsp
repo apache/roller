@@ -28,7 +28,7 @@
 
 <p><s:text name="commentManagement.sidebarDescription" /></p>
     
- <s:form action="comments!query">
+ <s:form action="comments!query" id="commentsQuery">
     <s:hidden name="weblog" />
     
     <div class="sideformrow">
@@ -40,12 +40,38 @@
     
     <div class="sideformrow">
         <label for="startDateString" class="sideformrow"><s:text name="commentManagement.startDate" />:</label>
-        <s:datetimepicker name="bean.startDate" />
+            <script type="text/javascript" >
+            <!--
+            if (document.layers) { // Netscape 4 hack
+                var calStart = new CalendarPopup();
+            } else {
+                var calStart = new CalendarPopup("datetagdiv");
+                document.write(calStart.getStyles());
+            }
+            // -->
+            </script>
+            <s:textfield name="bean.startDateString" size="12" />
+            <a href="#" id="anchorCalStart" name="anchorCalStart"
+               onclick="calStart.select(document.getElementById('commentsQuery_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
+            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
     </div>
         
     <div class="sideformrow">
         <label for="endDateString" class="sideformrow"><s:text name="commentManagement.endDate" />:</label>
-        <s:datetimepicker name="bean.endDate" />
+            <script type="text/javascript" >
+            <!--
+            if (document.layers) { // Netscape 4 hack
+                var calEnd = new CalendarPopup();
+            } else {
+                var calEnd = new CalendarPopup("datetagdiv");
+                document.write(calEnd.getStyles());
+            }
+            // -->
+            </script>
+            <s:textfield name="bean.endDateString" size="12" />
+            <a href="#" id="anchorCalEnd" name="anchorCalEnd"
+               onclick="calEnd.select(document.getElementById('commentsQuery_bean_endDateString'),'anchorCalEnd','MM/dd/yy'); return false">
+            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
     </div>
     <br />
     <br />

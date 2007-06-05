@@ -68,19 +68,41 @@
                     
                     <%-- ========================================================= --%>
                     <%-- filter by date --%>
-  
+                    
                     <div class="sideformrow">
-                        <label for="startDateString" class="sideformrow">
-                            <s:text name="weblogEntryQuery.label.startDate" />:
-                        </label>
-                        <s:datetimepicker name="bean.startDate" />
+                        <label for="startDateString" class="sideformrow"><s:text name="weblogEntryQuery.label.startDate" />:</label>
+                        <script type="text/javascript" >
+                        <!--
+                        if (document.layers) { // Netscape 4 hack
+                            var calStart = new CalendarPopup();
+                        } else {
+                            var calStart = new CalendarPopup("datetagdiv");
+                            document.write(calStart.getStyles());
+                        }
+                        // -->
+                        </script>
+                        <s:textfield name="bean.startDateString" size="12" />
+                        <a href="#" id="anchorCalStart" name="anchorCalStart"
+                           onclick="calStart.select(document.getElementById('entries_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
+                        <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
                     </div>
                     
                     <div class="sideformrow">
-                        <label for="endDateString" class="sideformrow">
-                            <s:text name="weblogEntryQuery.label.endDate" />:
-                        </label>
-                        <s:datetimepicker name="bean.endDate" />
+                        <label for="endDateString" class="sideformrow"><s:text name="weblogEntryQuery.label.endDate" />:</label>
+                        <script type="text/javascript" >
+                        <!--
+                        if (document.layers) { // Netscape 4 hack
+                            var calEnd = new CalendarPopup();
+                        } else {
+                            var calEnd = new CalendarPopup("datetagdiv");
+                            document.write(calEnd.getStyles());
+                        }
+                        // -->
+                        </script>
+                        <s:textfield name="bean.endDateString" size="12" />
+                        <a href="#" id="anchorCalEnd" name="anchorCalEnd"
+                           onclick="calEnd.select(document.getElementById('entries_bean_endDateString'),'anchorCalEnd','MM/dd/yy'); return false">
+                        <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
                     </div>
                     <br />
                     <br />

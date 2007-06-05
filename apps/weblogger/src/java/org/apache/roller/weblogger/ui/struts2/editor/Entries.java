@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,9 +130,6 @@ public class Entries extends UIAction {
         
         Map<String, String> params = new HashMap();
         
-        SimpleDateFormat dojoFormat = new SimpleDateFormat("yyyy-MM-dd", getLocale());
-        SimpleDateFormat stdFormat = new SimpleDateFormat("MM/dd/yy", getLocale());
-        
         if(!StringUtils.isEmpty(getBean().getCategoryPath())) {
             params.put("bean.categoryPath", getBean().getCategoryPath());
         }
@@ -143,13 +139,11 @@ public class Entries extends UIAction {
         if(!StringUtils.isEmpty(getBean().getText())) {
             params.put("bean.text", getBean().getText());
         }
-        if(getBean().getStartDate() != null) {
-            params.put("bean.startDate", stdFormat.format(getBean().getStartDate()));
-            params.put("dojo.bean.startDate", dojoFormat.format(getBean().getStartDate()));
+        if(!StringUtils.isEmpty(getBean().getStartDateString())) {
+            params.put("bean.startDateString", getBean().getStartDateString());
         }
-        if(getBean().getEndDate() != null) {
-            params.put("bean.endDate", stdFormat.format(getBean().getEndDate()));
-            params.put("dojo.bean.endDate", dojoFormat.format(getBean().getEndDate()));
+        if(!StringUtils.isEmpty(getBean().getEndDateString())) {
+            params.put("bean.endDateString", getBean().getEndDateString());
         }
         if(!StringUtils.isEmpty(getBean().getStatus())) {
             params.put("bean.status", getBean().getStatus());
