@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPreviewPager;
@@ -66,11 +66,11 @@ public class PreviewPageModel extends PageModel {
     }
     
     
-    public WeblogEntryDataWrapper getWeblogEntry() {
+    public WeblogEntryWrapper getWeblogEntry() {
         
         if(previewRequest.getPreviewEntry() != null ||
                 previewRequest.getWeblogAnchor() != null) {
-            return WeblogEntryDataWrapper.wrap(previewRequest.getWeblogEntry());
+            return WeblogEntryWrapper.wrap(previewRequest.getWeblogEntry());
         }
         return null;
     }

@@ -34,21 +34,21 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
 /**
  * Pojo safety wrapper for WeblogEntry objects.
  */
-public class WeblogEntryDataWrapper {
+public class WeblogEntryWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogEntry pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogEntryDataWrapper(WeblogEntry toWrap) {
+    private WeblogEntryWrapper(WeblogEntry toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WeblogEntryDataWrapper wrap(WeblogEntry toWrap) {
+    public static WeblogEntryWrapper wrap(WeblogEntry toWrap) {
         if(toWrap != null)
-            return new WeblogEntryDataWrapper(toWrap);
+            return new WeblogEntryWrapper(toWrap);
         
         return null;
     }
@@ -59,8 +59,8 @@ public class WeblogEntryDataWrapper {
     }
     
     
-    public WeblogCategoryDataWrapper getCategory() {
-        return WeblogCategoryDataWrapper.wrap(this.pojo.getCategory());
+    public WeblogCategoryWrapper getCategory() {
+        return WeblogCategoryWrapper.wrap(this.pojo.getCategory());
     }
     
     
@@ -74,7 +74,7 @@ public class WeblogEntryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategory) it.next()));
+            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next()));
             i++;
         }
         
@@ -82,13 +82,13 @@ public class WeblogEntryDataWrapper {
     }
     
     
-    public WebsiteDataWrapper getWebsite() {
-        return WebsiteDataWrapper.wrap(this.pojo.getWebsite());
+    public WeblogWrapper getWebsite() {
+        return WeblogWrapper.wrap(this.pojo.getWebsite());
     }
     
     
-    public UserDataWrapper getCreator() {
-        return UserDataWrapper.wrap(this.pojo.getCreator());
+    public UserWrapper getCreator() {
+        return UserWrapper.wrap(this.pojo.getCreator());
     }
     
     
@@ -136,7 +136,7 @@ public class WeblogEntryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,EntryAttributeDataWrapper.wrap((WeblogEntryAttribute) it.next()));
+            wrappedCollection.add(i,WeblogEntryAttributeWrapper.wrap((WeblogEntryAttribute) it.next()));
             i++;
         }
         
@@ -209,7 +209,7 @@ public class WeblogEntryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, WeblogEntryTagDataWrapper.wrap((WeblogEntryTag) it.next()));
+            wrappedCollection.add(i,WeblogEntryTagWrapper.wrap((WeblogEntryTag) it.next()));
             i++;
         }
         
@@ -247,7 +247,7 @@ public class WeblogEntryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
+            wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next()));
             i++;
         }
         
@@ -265,7 +265,7 @@ public class WeblogEntryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
+            wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next()));
             i++;
         }
         
@@ -288,7 +288,7 @@ public class WeblogEntryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,RefererDataWrapper.wrap((WeblogReferrer) it.next()));
+            wrappedCollection.add(i,WeblogReferrerWrapper.wrap((WeblogReferrer) it.next()));
             i++;
         }
         

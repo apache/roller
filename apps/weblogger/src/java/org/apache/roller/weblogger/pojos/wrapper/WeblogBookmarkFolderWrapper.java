@@ -23,28 +23,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogBookmark;
+import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
 
 /**
- * Pojo safety wrapper for WeblogCategory objects.
+ * Pojo safety wrapper for WeblogBookmarkFolder object.
  */
-public class WeblogCategoryDataWrapper {
+public class WeblogBookmarkFolderWrapper {
     
     // keep a reference to the wrapped pojo
-    private final WeblogCategory pojo;
+    private final WeblogBookmarkFolder pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogCategoryDataWrapper(WeblogCategory toWrap) {
+    private WeblogBookmarkFolderWrapper(WeblogBookmarkFolder toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WeblogCategoryDataWrapper wrap(WeblogCategory toWrap) {
+    public static WeblogBookmarkFolderWrapper wrap(WeblogBookmarkFolder toWrap) {
         if(toWrap != null)
-            return new WeblogCategoryDataWrapper(toWrap);
+            return new WeblogBookmarkFolderWrapper(toWrap);
         
         return null;
     }
@@ -65,28 +65,41 @@ public class WeblogCategoryDataWrapper {
     }
     
     
-    public String getImage() {
-        return this.pojo.getImage();
-    }
-    
-    
     public String getPath() {
         return this.pojo.getPath();
     }
     
     
-    public WebsiteDataWrapper getWebsite() {
-        return WebsiteDataWrapper.wrap(this.pojo.getWebsite());
+    public WeblogWrapper getWebsite() {
+        return WeblogWrapper.wrap(this.pojo.getWebsite());
     }
     
     
-    public WeblogCategoryDataWrapper getParent() {
-        return WeblogCategoryDataWrapper.wrap(this.pojo.getParent());
+    public WeblogBookmarkFolderWrapper getParent() {
+        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getParent());
     }
     
     
-    public List getWeblogCategories() {
-        Set initialCollection = this.pojo.getWeblogCategories();
+    public List getFolders() {
+        Set initialCollection = this.pojo.getFolders();
+        
+        // iterate through and wrap
+        // we force the use of an ArrayList because it should be good enough to cover
+        // for any Collection type we encounter.
+        List wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
+        int i = 0;
+        while(it.hasNext()) {
+            wrappedCollection.add(i,WeblogBookmarkFolderWrapper.wrap((WeblogBookmarkFolder) it.next()));
+            i++;
+        }
+        
+        return wrappedCollection;
+    }
+    
+    
+    public List getBookmarks() {
+        Set initialCollection = this.pojo.getBookmarks();
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
@@ -95,7 +108,7 @@ public class WeblogCategoryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategory) it.next()));
+            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap((WeblogBookmark) it.next()));
             i++;
         }
         
@@ -103,10 +116,10 @@ public class WeblogCategoryDataWrapper {
     }
     
     
-    public List retrieveWeblogEntries(boolean subcats)
+    public List retrieveBookmarks(boolean subfolders)
             throws WebloggerException {
         
-        List initialCollection = this.pojo.retrieveWeblogEntries(subcats);
+        List initialCollection = this.pojo.retrieveBookmarks(subfolders);
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
@@ -115,7 +128,7 @@ public class WeblogCategoryDataWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry) it.next()));
+            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap((WeblogBookmark) it.next()));
             i++;
         }
         
@@ -123,14 +136,9 @@ public class WeblogCategoryDataWrapper {
     }
     
     
-    // TODO: this method doesn't work and propably doesn't need to be here anyways?
-    public boolean descendentOf(WeblogCategory ancestor) {
+    // TODO: this method won't actually work and we probably don't need it here anyways?
+    public boolean descendentOf(WeblogBookmarkFolder ancestor) {
         return this.pojo.descendentOf(ancestor);
-    }
-    
-    
-    public boolean isInUse() {
-        return this.pojo.isInUse();
     }
     
 }

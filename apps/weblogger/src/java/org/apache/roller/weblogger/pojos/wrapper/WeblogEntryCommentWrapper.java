@@ -25,21 +25,21 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 /**
  * Pojo safety wrapper for WeblogEntryComment object.
  */
-public class CommentDataWrapper {
+public class WeblogEntryCommentWrapper {
     
     // keep a reference to the wrapped pojo
     private final WeblogEntryComment pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private CommentDataWrapper(WeblogEntryComment toWrap) {
+    private WeblogEntryCommentWrapper(WeblogEntryComment toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static CommentDataWrapper wrap(WeblogEntryComment toWrap) {
+    public static WeblogEntryCommentWrapper wrap(WeblogEntryComment toWrap) {
         if(toWrap != null)
-            return new CommentDataWrapper(toWrap);
+            return new WeblogEntryCommentWrapper(toWrap);
         
         return null;
     }
@@ -50,8 +50,8 @@ public class CommentDataWrapper {
     }
     
     
-    public WeblogEntryDataWrapper getWeblogEntry() {
-        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
+    public WeblogEntryWrapper getWeblogEntry() {
+        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
     }
     
     

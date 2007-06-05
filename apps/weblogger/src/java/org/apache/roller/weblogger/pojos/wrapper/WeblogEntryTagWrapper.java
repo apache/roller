@@ -18,69 +18,60 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.util.Date;
-import org.apache.roller.weblogger.pojos.User;
+import java.sql.Timestamp;
+import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 
 
 /**
- * Pojo safety wrapper for User objects.
+ * Pojo safety wrapper for WeblogEntryTag objects.
  */
-public class UserDataWrapper {
+public class WeblogEntryTagWrapper {
     
     // keep a reference to the wrapped pojo
-    private final User pojo;
+    private final WeblogEntryTag pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private UserDataWrapper(User toWrap) {
+    private WeblogEntryTagWrapper(WeblogEntryTag toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static UserDataWrapper wrap(User toWrap) {
+    public static WeblogEntryTagWrapper wrap(WeblogEntryTag toWrap) {
         if(toWrap != null)
-            return new UserDataWrapper(toWrap);
+            return new WeblogEntryTagWrapper(toWrap);
         
         return null;
     }
     
     
-    /**
-     * This is here for backwards compatability.  We no longer allow the
-     * username to be displayed publicly, so screen name is returned instead.
-     */
-    public String getUserName() {
-        return this.pojo.getScreenName();
+    public String getId() {
+        return this.pojo.getId();
     }
     
     
-    public String getScreenName() {
-        return this.pojo.getScreenName();
+    public WeblogWrapper getWeblog() {
+        return WeblogWrapper.wrap(this.pojo.getWeblog());
     }
     
     
-    public String getFullName() {
-        return this.pojo.getFullName();
+    public WeblogEntryWrapper getWeblogEntry() {
+        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
     }
     
     
-    public String getEmailAddress() {
-        return this.pojo.getEmailAddress();
+    public UserWrapper getUser() {
+        return UserWrapper.wrap(this.pojo.getUser());
     }
     
     
-    public Date getDateCreated() {
-        return this.pojo.getDateCreated();
+    public String getName() {
+        return this.pojo.getName();
     }
     
     
-    public String getLocale() {
-        return this.pojo.getLocale();
-    }
-    
-    
-    public String getTimeZone() {
-        return this.pojo.getTimeZone();
+    public Timestamp getTime() {
+        return this.pojo.getTime();
     }
     
 }

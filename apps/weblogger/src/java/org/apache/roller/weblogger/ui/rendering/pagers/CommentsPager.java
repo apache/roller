@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 
 
 /**
@@ -103,7 +103,7 @@ public class CommentsPager extends AbstractPager {
                 // wrap the results
                 for (Iterator it = entries.iterator(); it.hasNext();) {
                     WeblogEntryComment comment = (WeblogEntryComment) it.next();
-                    results.add(CommentDataWrapper.wrap(comment));
+                    results.add(WeblogEntryCommentWrapper.wrap(comment));
                 }
                 
             } catch (Exception e) {

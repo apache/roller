@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.DateUtil;
@@ -117,7 +117,7 @@ public class UtilitiesModel implements Model {
     
     //---------------------------------------------------- Authentication utils 
     
-    public boolean isUserAuthorizedToAuthor(WebsiteDataWrapper weblog) {
+    public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses != null && rses.getAuthenticatedUser() != null) {
@@ -129,7 +129,7 @@ public class UtilitiesModel implements Model {
         return false;
     }
     
-    public boolean isUserAuthorizedToAdmin(WebsiteDataWrapper weblog) {
+    public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses != null && rses.getAuthenticatedUser() != null) {
