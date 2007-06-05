@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.util;
 
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 
 
 /**
@@ -61,8 +61,8 @@ public class WeblogEntryCommentForm {
         this.message = errorMessage;
     }
     
-    public CommentDataWrapper getPreviewComment() {
-        return CommentDataWrapper.wrap(previewComment);
+    public WeblogEntryCommentWrapper getPreviewComment() {
+        return WeblogEntryCommentWrapper.wrap(previewComment);
     }
     
     public boolean isPreview() {

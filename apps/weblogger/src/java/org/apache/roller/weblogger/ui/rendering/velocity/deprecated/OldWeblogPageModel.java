@@ -46,13 +46,13 @@ import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.CommentDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.FolderDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.RefererDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.TemplateWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogBookmarkFolderWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogReferrerWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.ThemeTemplateWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
@@ -84,10 +84,10 @@ public class OldWeblogPageModel {
     private boolean              mIsDaySpecified = false;
     private boolean              mIsMonthSpecified = false;
     private String               mLocale = null;
-    private WeblogEntryDataWrapper      mNextEntry = null;
-    private WeblogEntryDataWrapper      mPreviousEntry = null;
-    private WeblogEntryDataWrapper      mLastEntry = null;
-    private WeblogEntryDataWrapper      mFirstEntry = null;
+    private WeblogEntryWrapper      mNextEntry = null;
+    private WeblogEntryWrapper      mPreviousEntry = null;
+    private WeblogEntryWrapper      mLastEntry = null;
+    private WeblogEntryWrapper      mFirstEntry = null;
     
     //------------------------------------------------------------------------
     
@@ -141,7 +141,7 @@ public class OldWeblogPageModel {
             Iterator pageIter = pages.iterator();
             while (pageIter.hasNext()) {
                 ThemeTemplate page = (ThemeTemplate) pageIter.next();
-                mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
+                mPageMap.put(page.getName(),ThemeTemplateWrapper.wrap(page));
             }
         }
     }
@@ -149,7 +149,7 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Encapsulates folder.getBookmarks() & sorting */
-    public Collection getBookmarks(FolderDataWrapper folder) {
+    public Collection getBookmarks(WeblogBookmarkFolderWrapper folder) {
         Collection bookmarks = null;
         if (folder != null) {
             mLogger.debug("Getting bookmarks for folder : "+folder.getName());
@@ -179,7 +179,7 @@ public class OldWeblogPageModel {
             Iterator it = mTops.iterator();
             int i=0;
             while(it.hasNext()) {
-                tops.add(i,FolderDataWrapper.wrap((WeblogBookmarkFolder) it.next()));
+                tops.add(i,WeblogBookmarkFolderWrapper.wrap((WeblogBookmarkFolder) it.next()));
                 i++;
             }
         } catch (WebloggerException e) {
@@ -207,19 +207,19 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Get comments for weblog entry specified by request */
-    public List getComments(WeblogEntryDataWrapper entry) {
+    public List getComments(WeblogEntryWrapper entry) {
         return getComments(entry, true, true);
     }
     
     /** Get comments for weblog entry specified by request */
-    public List getComments(WeblogEntryDataWrapper wrapper, boolean noSpam, boolean approvedOnly) {
+    public List getComments(WeblogEntryWrapper wrapper, boolean noSpam, boolean approvedOnly) {
         WeblogEntry entry = wrapper.getPojo();
         List comments = new ArrayList();
         List unwrappped = entry.getComments(noSpam, approvedOnly);
         comments = new ArrayList(unwrappped.size());
         Iterator it = unwrappped.iterator();
         while(it.hasNext()) {
-            comments.add(CommentDataWrapper.wrap((WeblogEntryComment)it.next()));
+            comments.add(WeblogEntryCommentWrapper.wrap((WeblogEntryComment)it.next()));
         }
         return comments;
     }
@@ -242,9 +242,9 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Encapsulates BookmarkManager.getFolder() */
-    public FolderDataWrapper getFolder(String folderPath) {
+    public WeblogBookmarkFolderWrapper getFolder(String folderPath) {
         try {
-            return FolderDataWrapper.wrap(
+            return WeblogBookmarkFolderWrapper.wrap(
                     mBookmarkMgr.getFolder(
                     mUserMgr.getWebsiteByHandle(mWebsite.getHandle()), folderPath));
         } catch (WebloggerException e) {
@@ -256,9 +256,9 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public TemplateWrapper getUsersPageByName(WebsiteDataWrapper wrapper, String pageName) {
+    public ThemeTemplateWrapper getUsersPageByName(WeblogWrapper wrapper, String pageName) {
         Weblog website = wrapper.getPojo();
-        TemplateWrapper page = null;
+        ThemeTemplateWrapper page = null;
         try {
             if (website == null)
                 throw new NullPointerException("website is null");
@@ -266,7 +266,7 @@ public class OldWeblogPageModel {
             if (pageName == null)
                 throw new NullPointerException("pageName is null");
             
-            page = TemplateWrapper.wrap(website.getPageByName(pageName));
+            page = ThemeTemplateWrapper.wrap(website.getPageByName(pageName));
         } catch (NullPointerException npe) {
             mLogger.warn(npe.getMessage());
         } catch (WebloggerException e) {
@@ -278,8 +278,8 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public TemplateWrapper getPageByName(String pageName) {
-        return (TemplateWrapper) mPageMap.get(pageName);
+    public ThemeTemplateWrapper getPageByName(String pageName) {
+        return (ThemeTemplateWrapper) mPageMap.get(pageName);
     }
     
     //------------------------------------------------------------------------
@@ -398,7 +398,7 @@ public class OldWeblogPageModel {
                 List wrappedEntries = new ArrayList();
                 List entries = (List) mRet.get(key);
                 for(int i=0; i < entries.size(); i++) {
-                    wrappedEntries.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry)entries.get(i)));
+                    wrappedEntries.add(i,WeblogEntryWrapper.wrap((WeblogEntry)entries.get(i)));
                 }
                 mRet.put(key, wrappedEntries);
             }
@@ -427,14 +427,14 @@ public class OldWeblogPageModel {
             List vals = (List)days.get( keys[0] );
             int valSize = vals.size();
             if (valSize > 0) {
-                mFirstEntry = (WeblogEntryDataWrapper)vals.get(0);
+                mFirstEntry = (WeblogEntryWrapper)vals.get(0);
             }
             
             // get last entry in map
             vals = (List)days.get( keys[--numDays] );
             valSize = vals.size();
             if (valSize > 0) {
-                mLastEntry = (WeblogEntryDataWrapper)vals.get(--valSize);
+                mLastEntry = (WeblogEntryWrapper)vals.get(--valSize);
             }
         }
     }
@@ -498,7 +498,7 @@ public class OldWeblogPageModel {
             Iterator it = mEntries.iterator();
             int i=0;
             while(it.hasNext()) {
-                ret.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry) it.next()));
+                ret.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next()));
                 i++;
             }
         } catch (Exception e) {
@@ -527,7 +527,7 @@ public class OldWeblogPageModel {
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (   referer.getVisible().booleanValue()
                     || rses.isUserAuthorizedToAdmin(referer.getWebsite()) ) {
-                        referers.add(RefererDataWrapper.wrap(referer));
+                        referers.add(WeblogReferrerWrapper.wrap(referer));
                     }
                 }
             }
@@ -540,7 +540,7 @@ public class OldWeblogPageModel {
     }
     
     /** Encapsulates RefererManager **/
-    public List getEntryReferers(WeblogEntryDataWrapper entry) {
+    public List getEntryReferers(WeblogEntryWrapper entry) {
         ArrayList referers = new ArrayList();
         try {
             List refs = mRefererMgr.getReferersToEntry(entry.getId());
@@ -555,7 +555,7 @@ public class OldWeblogPageModel {
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (referer.getVisible().booleanValue()
                     || rses.isUserAuthorizedToAdmin(referer.getWebsite()) ) {
-                        referers.add(RefererDataWrapper.wrap(referer));
+                        referers.add(WeblogReferrerWrapper.wrap(referer));
                     }
                 }
             }
@@ -635,7 +635,7 @@ public class OldWeblogPageModel {
                 Iterator it = mRet.iterator();
                 int i=0;
                 while(it.hasNext()) {
-                    ret.add(WeblogCategoryDataWrapper.wrap((WeblogCategory)it.next()));
+                    ret.add(WeblogCategoryWrapper.wrap((WeblogCategory)it.next()));
                     i++;
                 }
                 if (categoryName != null) {
@@ -653,10 +653,10 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Encapsulates RollerRequest.getWeblogEntry() */
-    public WeblogEntryDataWrapper getWeblogEntry() {
+    public WeblogEntryWrapper getWeblogEntry() {
         
         if(mEntry != null && mEntry.getStatus().equals(WeblogEntry.PUBLISHED))
-            return WeblogEntryDataWrapper.wrap(mEntry);
+            return WeblogEntryWrapper.wrap(mEntry);
         else
             return null;
     }
@@ -666,8 +666,8 @@ public class OldWeblogPageModel {
     /**
      * Get the next occurring Entry.
      */
-    public WeblogEntryDataWrapper getNextEntry() {
-        WeblogEntryDataWrapper currentEntry = getWeblogEntry();
+    public WeblogEntryWrapper getNextEntry() {
+        WeblogEntryWrapper currentEntry = getWeblogEntry();
         if (mFirstEntry != null) currentEntry = mFirstEntry;
         if (mNextEntry == null && currentEntry != null) {
             String catName = null;
@@ -679,7 +679,7 @@ public class OldWeblogPageModel {
                         mWeblogMgr.getNextEntry(currentEntry.getPojo(), catName, mLocale);
                 
                 if(nextEntry != null)
-                    mNextEntry = WeblogEntryDataWrapper.wrap(nextEntry);
+                    mNextEntry = WeblogEntryWrapper.wrap(nextEntry);
                 
                 // make sure that mNextEntry is not published to future
                 if (mNextEntry != null &&
@@ -698,8 +698,8 @@ public class OldWeblogPageModel {
     /**
      * Get the previous occurring Entry.
      */
-    public WeblogEntryDataWrapper getPreviousEntry() {
-        WeblogEntryDataWrapper currentEntry = getWeblogEntry();
+    public WeblogEntryWrapper getPreviousEntry() {
+        WeblogEntryWrapper currentEntry = getWeblogEntry();
         if (mLastEntry != null) currentEntry = mLastEntry;
         if (mPreviousEntry == null && currentEntry != null ) {
             String catName = null;
@@ -711,7 +711,7 @@ public class OldWeblogPageModel {
                         mWeblogMgr.getPreviousEntry(currentEntry.getPojo(), catName, mLocale);
                 
                 if(prevEntry != null)
-                    mPreviousEntry = WeblogEntryDataWrapper.wrap(prevEntry);
+                    mPreviousEntry = WeblogEntryWrapper.wrap(prevEntry);
             } catch (WebloggerException e) {
                 mLogger.error("PageModel.getPreviousEntry)", e);
             }
@@ -767,12 +767,12 @@ public class OldWeblogPageModel {
     
     //------------------------------------------------------------------------
     
-    public FolderDataWrapper getFolderByPath(String path) {
+    public WeblogBookmarkFolderWrapper getFolderByPath(String path) {
         try {
             WeblogBookmarkFolder folder = mBookmarkMgr.getFolder(mWebsite, path);
             
             if(folder != null)
-                return FolderDataWrapper.wrap(folder);
+                return WeblogBookmarkFolderWrapper.wrap(folder);
         } catch (WebloggerException e) {
             mLogger.error(e);
         }
@@ -805,7 +805,7 @@ public class OldWeblogPageModel {
             recentComments = new ArrayList(recent.size());
             Iterator it = recent.iterator();
             while(it.hasNext()) {
-                recentComments.add(CommentDataWrapper.wrap((WeblogEntryComment) it.next()));
+                recentComments.add(WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next()));
             }
         } catch (WebloggerException e) {
             mLogger.error(e);

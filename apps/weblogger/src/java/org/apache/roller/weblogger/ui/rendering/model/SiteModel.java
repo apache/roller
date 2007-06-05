@@ -40,9 +40,9 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.UserDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.UsersPager;
@@ -312,7 +312,7 @@ public class SiteModel implements Model {
             List perms = umgr.getAllPermissions(user);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 WeblogPermission perm = (WeblogPermission) it.next();
-                results.add(WebsiteDataWrapper.wrap(perm.getWebsite()));
+                results.add(WeblogWrapper.wrap(perm.getWebsite()));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -333,7 +333,7 @@ public class SiteModel implements Model {
             List perms = umgr.getAllPermissions(website);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 WeblogPermission perm = (WeblogPermission) it.next();
-                results.add(UserDataWrapper.wrap(perm.getUser()));
+                results.add(UserWrapper.wrap(perm.getUser()));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -344,13 +344,13 @@ public class SiteModel implements Model {
     
     
     /** Get User object by username */
-    public UserDataWrapper getUser(String username) {
-        UserDataWrapper wrappedUser = null;
+    public UserWrapper getUser(String username) {
+        UserWrapper wrappedUser = null;
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
             User user = umgr.getUserByUserName(username, Boolean.TRUE);
-            wrappedUser = UserDataWrapper.wrap(user);
+            wrappedUser = UserWrapper.wrap(user);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
@@ -359,13 +359,13 @@ public class SiteModel implements Model {
     
     
     /** Get Website object by handle */
-    public WebsiteDataWrapper getWeblog(String handle) {
-        WebsiteDataWrapper wrappedWebsite = null;
+    public WeblogWrapper getWeblog(String handle) {
+        WeblogWrapper wrappedWebsite = null;
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
             Weblog website = umgr.getWebsiteByHandle(handle);
-            wrappedWebsite = WebsiteDataWrapper.wrap(website);
+            wrappedWebsite = WeblogWrapper.wrap(website);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
@@ -394,7 +394,7 @@ public class SiteModel implements Model {
                 null, Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 Weblog website = (Weblog) it.next();
-                results.add(WebsiteDataWrapper.wrap(website));
+                results.add(WeblogWrapper.wrap(website));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -416,7 +416,7 @@ public class SiteModel implements Model {
             List users = umgr.getUsers(null, Boolean.TRUE, null, null, 0, length);
             for (Iterator it = users.iterator(); it.hasNext();) {
                 User user = (User) it.next();
-                results.add(UserDataWrapper.wrap(user));
+                results.add(UserWrapper.wrap(user));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -521,7 +521,7 @@ public class SiteModel implements Model {
             List weblogs = wmgr.getWeblogEntriesPinnedToMain(new Integer(length));
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 WeblogEntry entry = (WeblogEntry) it.next();
-                results.add(WeblogEntryDataWrapper.wrap(entry));
+                results.add(WeblogEntryWrapper.wrap(entry));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching pinned weblog entries", e);

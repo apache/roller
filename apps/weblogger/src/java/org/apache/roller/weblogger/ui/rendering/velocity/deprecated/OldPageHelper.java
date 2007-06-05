@@ -37,8 +37,8 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.RefererDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogReferrerWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
@@ -123,12 +123,12 @@ public class OldPageHelper {
     
     
     /** Build the URL for editing an WeblogEntry **/
-    public String getEntryEditUrl(WeblogEntryDataWrapper entry) {
+    public String getEntryEditUrl(WeblogEntryWrapper entry) {
         return URLUtilities.getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), false);
     }
     
     
-    public String getToggleLinkbackDisplayHTML(RefererDataWrapper referer) {
+    public String getToggleLinkbackDisplayHTML(WeblogReferrerWrapper referer) {
         // NOTE: this was EOLed as part of Roller 4.0 since we no longer
         // have an action for toggling linkback display
         return "";
@@ -294,7 +294,7 @@ public class OldPageHelper {
      * @param str   String to which plugins are to be applied.
      * @return      Result of applying plugins to str.
      */
-    public String renderPlugins(WeblogEntryDataWrapper entry, String str) {
+    public String renderPlugins(WeblogEntryWrapper entry, String str) {
         String ret = str;
         mLogger.debug("Applying page plugins to string");
         

@@ -42,9 +42,9 @@ import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsFeedPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
@@ -204,7 +204,7 @@ public class SearchResultsFeedModel implements Model {
                 // or entry's user is not the requested user.
                 // but don't return future posts
                 if (entry != null && entry.getPubTime().before(now)) {
-                    results.add(WeblogEntryDataWrapper.wrap(entry));
+                    results.add(WeblogEntryWrapper.wrap(entry));
                 }
             }
             
@@ -219,8 +219,8 @@ public class SearchResultsFeedModel implements Model {
     /**
      * Get weblog being displayed.
      */
-    public WebsiteDataWrapper getWeblog() {
-        return WebsiteDataWrapper.wrap(weblog);
+    public WeblogWrapper getWeblog() {
+        return WeblogWrapper.wrap(weblog);
     }
     
     public String getTerm() {
@@ -259,9 +259,9 @@ public class SearchResultsFeedModel implements Model {
         return feedRequest.getWeblogCategoryName();
     }
     
-    public WeblogCategoryDataWrapper getWeblogCategory() {
+    public WeblogCategoryWrapper getWeblogCategory() {
         if(feedRequest.getWeblogCategory() != null) {
-            return WeblogCategoryDataWrapper.wrap(feedRequest.getWeblogCategory());
+            return WeblogCategoryWrapper.wrap(feedRequest.getWeblogCategory());
         }
         return null;
     }    

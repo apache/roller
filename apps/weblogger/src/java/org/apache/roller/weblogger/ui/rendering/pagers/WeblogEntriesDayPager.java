@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 
@@ -139,7 +139,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                     List unwrapped = (List) mmap.get(key);
                     for(int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry)unwrapped.get(i)));
+                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i)));
                         } else {
                             more = true;
                         }

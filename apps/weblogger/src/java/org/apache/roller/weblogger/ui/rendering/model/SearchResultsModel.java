@@ -39,8 +39,8 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryDataWrapper;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
@@ -193,7 +193,7 @@ public class SearchResultsModel extends PageModel {
                 // or entry's user is not the requested user.
                 // but don't return future posts
                 if (entry != null && entry.getPubTime().before(now)) {
-                    addEntryToResults(WeblogEntryDataWrapper.wrap(entry));
+                    addEntryToResults(WeblogEntryWrapper.wrap(entry));
                 }
             }
             
@@ -206,7 +206,7 @@ public class SearchResultsModel extends PageModel {
     }
     
     
-    private void addEntryToResults(WeblogEntryDataWrapper entry) {
+    private void addEntryToResults(WeblogEntryWrapper entry) {
         
         // convert entry's each date to midnight (00m 00h 00s)
         Date midnight = DateUtil.getStartOfDay(entry.getPubTime());
@@ -259,9 +259,9 @@ public class SearchResultsModel extends PageModel {
         return searchRequest.getWeblogCategoryName();
     }
     
-    public WeblogCategoryDataWrapper getWeblogCategory() {
+    public WeblogCategoryWrapper getWeblogCategory() {
         if(searchRequest.getWeblogCategory() != null) {
-            return WeblogCategoryDataWrapper.wrap(searchRequest.getWeblogCategory());
+            return WeblogCategoryWrapper.wrap(searchRequest.getWeblogCategory());
         }
         return null;
     }

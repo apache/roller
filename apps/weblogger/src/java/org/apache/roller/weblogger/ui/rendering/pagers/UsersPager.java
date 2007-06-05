@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.wrapper.UserDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 
 
 /**
@@ -149,7 +149,7 @@ public class UsersPager extends AbstractPager {
                 // wrap the results
                 for (Iterator it = rawUsers.iterator(); it.hasNext();) {
                     User user = (User) it.next();
-                    results.add(UserDataWrapper.wrap(user));
+                    results.add(UserWrapper.wrap(user));
                 }
                 
             } catch (Exception e) {

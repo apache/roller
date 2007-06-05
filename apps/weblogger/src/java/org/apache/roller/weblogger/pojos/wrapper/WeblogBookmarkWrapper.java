@@ -18,28 +18,27 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.util.Date;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.WeblogBookmark;
 
 
 /**
- * Pojo safety wrapper for ThemeTemplate objects.
+ * Pojo safety wrapper for WeblogBookmark object.
  */
-public class TemplateWrapper {
+public class WeblogBookmarkWrapper {
     
     // keep a reference to the wrapped pojo
-    private final ThemeTemplate pojo;
+    private final WeblogBookmark pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private TemplateWrapper(ThemeTemplate toWrap) {
+    private WeblogBookmarkWrapper(WeblogBookmark toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static TemplateWrapper wrap(ThemeTemplate toWrap) {
+    public static WeblogBookmarkWrapper wrap(WeblogBookmark toWrap) {
         if(toWrap != null)
-            return new TemplateWrapper(toWrap);
+            return new WeblogBookmarkWrapper(toWrap);
         
         return null;
     }
@@ -60,28 +59,33 @@ public class TemplateWrapper {
     }
     
     
-    public String getContents() {
-        return this.pojo.getContents();
+    public String getUrl() {
+        return this.pojo.getUrl();
     }
     
     
-    public String getLink() {
-        return this.pojo.getLink();
+    public Integer getWeight() {
+        return this.pojo.getWeight();
     }
     
     
-    public Date getLastModified() {
-        return this.pojo.getLastModified();
+    public Integer getPriority() {
+        return this.pojo.getPriority();
     }
     
     
-    public boolean isHidden() {
-        return this.pojo.isHidden();
+    public String getImage() {
+        return this.pojo.getImage();
     }
     
     
-    public boolean isNavbar() {
-        return this.pojo.isNavbar();
+    public String getFeedUrl() {
+        return this.pojo.getFeedUrl();
+    }
+    
+    
+    public WeblogBookmarkFolderWrapper getFolder() {
+        return WeblogBookmarkFolderWrapper.wrap(this.pojo.getFolder());
     }
     
 }

@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
 /**
@@ -98,7 +98,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                     List unwrapped= (List) mmap.get(key);
                     for(int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryDataWrapper.wrap((WeblogEntry)unwrapped.get(i)));
+                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i)));
                         } else {
                             more = true;
                         }

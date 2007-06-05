@@ -18,28 +18,28 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.sql.Timestamp;
-import org.apache.roller.weblogger.pojos.WeblogEntryTag;
+import java.util.Date;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 
 
 /**
- * Pojo safety wrapper for WeblogEntryTag objects.
+ * Pojo safety wrapper for ThemeTemplate objects.
  */
-public class WeblogEntryTagDataWrapper {
+public class ThemeTemplateWrapper {
     
     // keep a reference to the wrapped pojo
-    private final WeblogEntryTag pojo;
+    private final ThemeTemplate pojo;
     
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogEntryTagDataWrapper(WeblogEntryTag toWrap) {
+    private ThemeTemplateWrapper(ThemeTemplate toWrap) {
         this.pojo = toWrap;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WeblogEntryTagDataWrapper wrap(WeblogEntryTag toWrap) {
+    public static ThemeTemplateWrapper wrap(ThemeTemplate toWrap) {
         if(toWrap != null)
-            return new WeblogEntryTagDataWrapper(toWrap);
+            return new ThemeTemplateWrapper(toWrap);
         
         return null;
     }
@@ -50,28 +50,38 @@ public class WeblogEntryTagDataWrapper {
     }
     
     
-    public WebsiteDataWrapper getWeblog() {
-        return WebsiteDataWrapper.wrap(this.pojo.getWeblog());
-    }
-    
-    
-    public WeblogEntryDataWrapper getWeblogEntry() {
-        return WeblogEntryDataWrapper.wrap(this.pojo.getWeblogEntry());
-    }
-    
-    
-    public UserDataWrapper getUser() {
-        return UserDataWrapper.wrap(this.pojo.getUser());
-    }
-    
-    
     public String getName() {
         return this.pojo.getName();
     }
     
     
-    public Timestamp getTime() {
-        return this.pojo.getTime();
+    public String getDescription() {
+        return this.pojo.getDescription();
+    }
+    
+    
+    public String getContents() {
+        return this.pojo.getContents();
+    }
+    
+    
+    public String getLink() {
+        return this.pojo.getLink();
+    }
+    
+    
+    public Date getLastModified() {
+        return this.pojo.getLastModified();
+    }
+    
+    
+    public boolean isHidden() {
+        return this.pojo.isHidden();
+    }
+    
+    
+    public boolean isNavbar() {
+        return this.pojo.isNavbar();
     }
     
 }

@@ -23,7 +23,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.weblogger.ui.core.tags.calendar.WeblogCalendarModel;
@@ -73,17 +73,17 @@ public class CalendarModel implements Model {
     }
     
     
-    public String showWeblogEntryCalendar(WebsiteDataWrapper websiteWrapper, String catArgument) {        
+    public String showWeblogEntryCalendar(WeblogWrapper websiteWrapper, String catArgument) {        
         return showWeblogEntryCalendar(websiteWrapper, catArgument, false);
     }
     
     
-    public String showWeblogEntryCalendarBig(WebsiteDataWrapper websiteWrapper, String catArgument) { 
+    public String showWeblogEntryCalendarBig(WeblogWrapper websiteWrapper, String catArgument) { 
         return showWeblogEntryCalendar(websiteWrapper, catArgument, true);
     }
     
     
-    private String showWeblogEntryCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {
+    private String showWeblogEntryCalendar(WeblogWrapper websiteWrapper, String catArgument, boolean big) {
         
         if ("nil".equals(catArgument)) catArgument = null;        
         String ret = null;
