@@ -64,15 +64,6 @@
     <definition name=".denied" extends=".tiles-errorpage" >
         <put name="content" value="/WEB-INF/jsps/errors/denied.jsp" />
     </definition>
-    <definition name=".error" extends=".tiles-errorpage" >
-        <put name="content" value="/WEB-INF/jsps/errors/error.jsp" />
-    </definition>
-    <definition name=".403" extends=".tiles-errorpage" >
-        <put name="content" value="/WEB-INF/jsps/errors/403.jsp" />
-    </definition>
-    <definition name=".404" extends=".tiles-errorpage" >
-        <put name="content" value="/WEB-INF/jsps/errors/404.jsp" />
-    </definition>
     
     
     <!-- core pages (and associates) -->

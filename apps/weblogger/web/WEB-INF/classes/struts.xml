@@ -67,7 +67,6 @@
         <!-- results made available to all actions -->
         <global-results>
             <result name="access-denied" type="tiles">.denied</result>
-            <result name="error" type="tiles">.error</result>
         </global-results>
         
         
@@ -83,18 +82,6 @@
         
         <action name="logout">
             <result>/roller-ui/logout-redirect.jsp</result>
-        </action>
-        
-        <action name="error">
-            <result type="tiles">.error</result>
-        </action>
-        
-        <action name="403">
-            <result type="tiles">.403</result>
-        </action>
-        
-        <action name="404">
-            <result type="tiles">.404</result>
         </action>
         
         <action name="setup"
