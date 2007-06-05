@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
