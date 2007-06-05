@@ -17,20 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script type="text/javascript">
-<!--
-function dirty() {
-    messages = document.getElementById("messages");
-    if (messages != null) {
-	    messages.className = "warnings";
-	    var n1 = messages.childNodes[0];
-	    var n2 = document.createTextNode("Unsaved changes");
-	    messages.replaceChild(n2, n1);
-    }
-}
--->
-</script>
-
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">
     <div id="messages" class="messages">
