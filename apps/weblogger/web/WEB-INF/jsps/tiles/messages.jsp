@@ -41,9 +41,15 @@ function dirty() {
 <%-- Error Messages --%>
 <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
     <div id="errors" class="errors">
-        <s:actionerror />
-        <s:iterator id="key" value="fieldErrors">
-            <s:property value="#key.value" />
-        </s:iterator>
+        <ul>
+            <s:iterator id="actionError" value="actionErrors">
+                <li><s:property value="#actionError" /></li>
+            </s:iterator>
+            <s:iterator id="fieldErrorName" value="fieldErrors.keySet()">
+                <s:iterator id="fieldErrorValue" value="fieldErrors[#fieldErrorName]">
+                    <li><s:property value="#fieldErrorValue" /></li>
+                </s:iterator>
+            </s:iterator>
+        </ul>
     </div>
 </s:if>
