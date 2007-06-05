@@ -28,23 +28,49 @@
 
 <p><s:text name="commentManagement.sidebarDescription" /></p>
     
- <s:form action="globalCommentManagement!query">
+ <s:form action="globalCommentManagement!query" id="comments">
         
     <div class="sideformrow">
         <label for="searchString" class="sideformrow"><s:text name="commentManagement.searchString" />:</label>   
-        <s:textfield name="bean.searchString" />
+        <s:textfield name="bean.searchString" size="15" />
     </div>
     <br />
     <br />
     
     <div class="sideformrow">
         <label for="startDateString" class="sideformrow"><s:text name="commentManagement.startDate" />:</label>
-        <s:datetimepicker name="bean.startDate" />
+            <script type="text/javascript" >
+            <!--
+            if (document.layers) { // Netscape 4 hack
+                var calStart = new CalendarPopup();
+            } else {
+                var calStart = new CalendarPopup("datetagdiv");
+                document.write(calStart.getStyles());
+            }
+            // -->
+            </script>
+            <s:textfield name="bean.startDateString" size="12" />
+            <a href="#" id="anchorCalStart" name="anchorCalStart"
+               onclick="calStart.select(document.getElementById('comments_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
+            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
     </div>
         
     <div class="sideformrow">
         <label for="endDateString" class="sideformrow"><s:text name="commentManagement.endDate" />:</label>
-        <s:datetimepicker name="bean.endDate" />
+            <script type="text/javascript" >
+            <!--
+            if (document.layers) { // Netscape 4 hack
+                var calEnd = new CalendarPopup();
+            } else {
+                var calEnd = new CalendarPopup("datetagdiv");
+                document.write(calEnd.getStyles());
+            }
+            // -->
+            </script>
+            <s:textfield name="bean.endDateString" size="12" />
+            <a href="#" id="anchorCalEnd" name="anchorCalEnd"
+               onclick="calEnd.select(document.getElementById('comments_bean_endDateString'),'anchorCalEnd','MM/dd/yy'); return false">
+            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
     </div>
     <br />
     <br />

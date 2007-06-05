@@ -18,10 +18,13 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -32,8 +35,8 @@ import org.apache.roller.weblogger.util.Utilities;
 public class CommentsBean {
     
     private String searchString = null;
-    private Date startDate = null;
-    private Date endDate = null;
+    private String startDateString = null;
+    private String endDateString = null;
     private String spamString = "ALL";
     private String approvedString = "ALL";
     private int page = 0;
@@ -95,6 +98,22 @@ public class CommentsBean {
         }
     }
     
+    public Date getStartDate() {
+        if(!StringUtils.isEmpty(getStartDateString())) try {
+            DateFormat df = new SimpleDateFormat("MM/dd/yy");
+            return df.parse(getStartDateString());
+        } catch(Exception e) { }
+        return null;
+    }
+
+    public Date getEndDate() {
+        if(!StringUtils.isEmpty(getEndDateString())) try {
+            DateFormat df = new SimpleDateFormat("MM/dd/yy");
+            return df.parse(getEndDateString());
+        } catch(Exception e) { }
+        return null;
+    }
+    
     
     public String getSpamString() {
         return spamString;
@@ -126,22 +145,6 @@ public class CommentsBean {
     
     public void setSearchString(String searchString) {
         this.searchString = searchString;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public String[] getApprovedComments() {
@@ -182,6 +185,22 @@ public class CommentsBean {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public String getStartDateString() {
+        return startDateString;
+    }
+
+    public void setStartDateString(String startDateString) {
+        this.startDateString = startDateString;
+    }
+
+    public String getEndDateString() {
+        return endDateString;
+    }
+
+    public void setEndDateString(String endDateString) {
+        this.endDateString = endDateString;
     }
     
 }

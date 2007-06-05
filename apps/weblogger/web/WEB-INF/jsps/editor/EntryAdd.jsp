@@ -137,7 +137,20 @@
             :
             <s:select name="bean.seconds" list="secondsList" />
             &nbsp;&nbsp;
-            <s:datetimepicker name="bean.dateString" />
+            <script type="text/javascript" >
+            <!--
+            if (document.layers) { // Netscape 4 hack
+                var cal = new CalendarPopup();
+            } else {
+                var cal = new CalendarPopup("datetagdiv");
+                document.write(cal.getStyles());
+            }
+            // -->
+            </script>
+            <s:textfield name="bean.dateString" size="12" />
+            <a href="#" id="anchorCal" name="anchorCal"
+               onclick="cal.select(document.getElementById('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
+            <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
             <s:property value="actionWeblog.timeZone" />
         </div>   
         <br />
