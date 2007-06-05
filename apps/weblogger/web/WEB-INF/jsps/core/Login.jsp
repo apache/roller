@@ -59,7 +59,7 @@
             <td>
                 <input type="submit" name="login" id="login" value="<s:text name="loginPage.login" />" />
                 <input type="reset" name="reset" id="reset" value="<s:text name="loginPage.reset" />" 
-                    onclick="document.getElementById('j_username').focus()" />
+                    onclick="$('j_username').focus()" />
             </td>
         </tr>
         
@@ -73,11 +73,11 @@
 if (document.getElementById) {
     if (getCookie("username") != null) {
         if (document.getElementById) {
-            document.getElementById("j_username").value = getCookie("username");
-            document.getElementById("j_password").focus();
+            $("j_username").value = getCookie("username");
+            $("j_password").focus();
         }
     } else {
-        document.getElementById("j_username").focus();
+        $("j_username").focus();
     }
 }
 

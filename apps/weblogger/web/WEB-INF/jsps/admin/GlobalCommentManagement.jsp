@@ -62,9 +62,9 @@ function readMoreComment(id) {
 function handleCommentResponse() {
     if (http.readyState == 4) {
         comment = eval("(" + http.responseText + ")"); 
-        commentDiv = document.getElementById("comment-" + comment.id);
+        commentDiv = $("comment-" + comment.id);
         commentDiv.textContent = comment.content;
-        linkDiv = document.getElementById("link-" + comment.id);
+        linkDiv = $("link-" + comment.id);
         linkDiv.parentNode.removeChild(linkDiv);
     }
     isBusy = false;
