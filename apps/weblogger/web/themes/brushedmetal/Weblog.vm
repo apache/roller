@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+
     <style type="text/css">
     #includeTemplate($model.weblog "_css")
     </style>
-    #showAutodiscoveryLinks($model.weblog)
-   <title>$model.weblog.name : $model.weblogPage.name</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.customStylesheet">
 </head>
+
 <body>
 <div id="block">&nbsp;
 
