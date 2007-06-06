@@ -8,6 +8,9 @@
     <!-- theme preview image -->
     <preview-image path="sm-theme-brushedmetal.png" />
     
+    <!-- custom stylesheet -->
+    <custom-stylesheet path="brushedmetal-custom.css" />
+    
     <!-- templates -->
     <template action="weblog">
         <name>Weblog</name>
