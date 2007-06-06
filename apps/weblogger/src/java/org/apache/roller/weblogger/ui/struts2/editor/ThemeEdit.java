@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -84,6 +85,7 @@ public class ThemeEdit extends UIAction {
             setThemeId(null);
         } else {
             setThemeId(getActionWeblog().getTheme().getId());
+            setImportThemeId(getActionWeblog().getTheme().getId());
         }
         
         if(!RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
@@ -196,6 +198,16 @@ public class ThemeEdit extends UIAction {
     
     public boolean isCustomTheme() {
         return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+    }
+    
+    // has this weblog had a custom theme before?
+    public boolean isFirstCustomization() {
+        try {
+            return (getActionWeblog().getPageByAction(WeblogTemplate.ACTION_WEBLOG) == null);
+        } catch (WebloggerException ex) {
+            log.error("Error looking up weblog template", ex);
+        }
+        return false;
     }
     
     

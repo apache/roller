@@ -113,8 +113,14 @@ function updateThemeChooser(selected) {
     
     <div id="customOptioner" class="optioner" style="display:none;">
         <p>
-            <s:checkbox name="importTheme" /><s:text name="themeEditor.import" /><br/>
-            <span class="warning"><s:text name="themeEditor.importWarning" /></span>
+            <s:if test="!firstCustomization">
+                <s:hidden name="importTheme" value="true" />
+                <span class="warning"><s:text name="themeEditor.importRequired" /></span>
+            </s:if>
+            <s:else>
+                <s:checkbox name="importTheme" /><s:text name="themeEditor.import" /><br/>
+                <span class="warning"><s:text name="themeEditor.importWarning" /></span>
+            </s:else>
         </p>
         <p>
             <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('customPreviewImg'), this[selectedIndex].value)"/>
@@ -123,7 +129,12 @@ function updateThemeChooser(selected) {
             <img id="customPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
-            previewImage($('customPreviewImg'), '<s:property value="themes[0].id"/>');
+                <s:if test="customTheme">
+                    previewImage($('customPreviewImg'), '<s:property value="themes[0].id"/>');
+                </s:if>
+                <s:else>
+                    previewImage($('customPreviewImg'), '<s:property value="themeId"/>');
+                </s:else>
             </script>
         </p>
         <p>
