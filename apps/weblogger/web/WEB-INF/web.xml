@@ -267,6 +267,12 @@
     </servlet>
     
     <servlet>
+        <servlet-name>StrutsRedirectServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.util.StrutsRedirectServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+    
+    <servlet>
         <servlet-name>AtomServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.webservices.atomprotocol.AtomServlet</servlet-class>
     </servlet>
@@ -461,6 +467,17 @@
     <servlet-mapping>
         <servlet-name>RedirectServlet</servlet-name>
         <url-pattern>/admin/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Redirect support for some old struts1 urls -->
+    <servlet-mapping>
+        <servlet-name>StrutsRedirectServlet</servlet-name>
+        <url-pattern>/roller-ui/yourWebsites.do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>StrutsRedirectServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/commentManagement.do</url-pattern>
     </servlet-mapping>
     
     
