@@ -42,7 +42,7 @@ public class Templates extends UIAction {
     private static Log log = LogFactory.getLog(Templates.class);
     
     // list of templates to display
-    private List templates = Collections.EMPTY_LIST;
+    private List<WeblogTemplate> templates = Collections.EMPTY_LIST;
     
     // list of template action types user is allowed to create
     private List availableActions = Collections.EMPTY_LIST;
@@ -69,7 +69,14 @@ public class Templates extends UIAction {
         // query for templates list
         try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            setTemplates(mgr.getPages(getActionWeblog()));
+            
+            // get current list of templates, minus custom stylesheet
+            List<WeblogTemplate> pages = mgr.getPages(getActionWeblog());
+            if(getActionWeblog().getTheme().getCustomStylesheet() != null) {
+                pages.remove(mgr.getPageByLink(getActionWeblog(), 
+                        getActionWeblog().getTheme().getCustomStylesheet()));
+            }
+            setTemplates(pages);
             
             // build list of action types that may be added
             List availableActions = new ArrayList();
@@ -83,8 +90,7 @@ public class Templates extends UIAction {
                 availableActions.add(WeblogTemplate.ACTION_WEBLOG);
                 availableActions.add(WeblogTemplate.ACTION_TAGSINDEX);
                 
-                List<WeblogTemplate> pages = getTemplates();
-                for(WeblogTemplate tmpPage : pages) {
+                for(WeblogTemplate tmpPage : getTemplates()) {
                     if(!WeblogTemplate.ACTION_CUSTOM.equals(tmpPage.getAction())) {
                         availableActions.remove(tmpPage.getAction());
                     }
@@ -186,11 +192,11 @@ public class Templates extends UIAction {
     }
     
     
-    public List getTemplates() {
+    public List<WeblogTemplate> getTemplates() {
         return templates;
     }
 
-    public void setTemplates(List templates) {
+    public void setTemplates(List<WeblogTemplate> templates) {
         this.templates = templates;
     }
 
