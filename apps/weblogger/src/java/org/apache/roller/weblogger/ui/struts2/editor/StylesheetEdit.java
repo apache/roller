@@ -85,6 +85,8 @@ public class StylesheetEdit extends UIAction {
                     
                     mgr.savePage(stylesheet);
                     RollerFactory.getRoller().flush();
+                    
+                    setTemplate(stylesheet);
                 }
             } catch (WebloggerException ex) {
                 log.error("Error finding/adding stylesheet tempalate from weblog - "+getActionWeblog().getHandle(), ex);
