@@ -445,8 +445,17 @@ Error and status message styles
    border: 1px solid green;
 }
 .warnings {
-   background-color: #FFFFAA;
-   border: 1px solid yellow;
+    background-color: #ffffce;
+    border: 1px solid #f0c000;
+}
+div.notification {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 25px;
+    font-size: larger;
+    background-color: #ffffce;
+    border: 1px solid #f0c000;
 }
 div.error {
     background-color: #ffcccc;

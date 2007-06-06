@@ -79,6 +79,10 @@
         <put name="content" value="/WEB-INF/jsps/core/Register.jsp" />
     </definition>
     
+    <definition name=".RegisterDisabled" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/RegisterDisabled.jsp" />
+    </definition>
+    
     <definition name=".Welcome" extends=".tiles-simplepage" >
         <put name="content" value="/WEB-INF/jsps/core/Welcome.jsp" />
     </definition>
