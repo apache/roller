@@ -80,6 +80,7 @@ public class ThemeEdit extends UIAction {
     
     
     public String execute() {
+        
         // set theme to current value
         if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
             setThemeId(null);
@@ -103,14 +104,17 @@ public class ThemeEdit extends UIAction {
         
         Weblog weblog = getActionWeblog();
         
+        // we are dealing with a custom theme scenario
         if(WeblogTheme.CUSTOM.equals(getThemeType())) {
             
             // only continue if custom themes are allowed
             if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+                
                 // do theme import if necessary
+                SharedTheme importTheme = null;
                 if(isImportTheme() && !StringUtils.isEmpty(getImportThemeId())) try {
                     ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                    SharedTheme importTheme = themeMgr.getTheme(getImportThemeId());
+                    importTheme = themeMgr.getTheme(getImportThemeId());
                     themeMgr.importTheme(getActionWeblog(), importTheme);
                 } catch(WebloggerException re) {
                     log.error("Error customizing theme for weblog - "+getActionWeblog().getHandle(), re);
@@ -118,34 +122,67 @@ public class ThemeEdit extends UIAction {
                     addError("Error importing theme");
                 }
                 
-                if(!hasActionErrors()) {
+                if(!hasActionErrors()) try {
                     weblog.setEditorTheme(WeblogTheme.CUSTOM);
                     log.debug("Saving custom theme for weblog "+weblog.getHandle());
                     
-                    // reset import theme checkbox
+                    // save updated weblog and flush
+                    UserManager userMgr = RollerFactory.getRoller().getUserManager();
+                    userMgr.saveWebsite(weblog);
+                    RollerFactory.getRoller().flush();
+                    
+                    // make sure to flush the page cache so ppl can see the change
+                    CacheManager.invalidate(weblog);
+                    
+                    // TODO: i18n
+                    addMessage("Successfully set theme to - "+WeblogTheme.CUSTOM);
+                    if(importTheme != null) {
+                        addMessage("Successfully copied templates from theme - "+importTheme.getName());
+                    }
+                    
+                    // reset import theme options
                     setImportTheme(false);
+                    setImportThemeId(null);
+                    
+                } catch(WebloggerException re) {
+                    log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
+                    addError("Error setting theme");
                 }
             } else {
                 // TODO: i18n
                 addError("Sorry, custom themes are not allowed");
             }
             
+        // we are dealing with a shared theme scenario
         } else if("shared".equals(getThemeType())) {
-            // validation
-            myValidate();
             
-            if(!hasActionErrors()) {
+            // make sure theme is valid and enabled
+            Theme newTheme = null;
+            if(getThemeId() == null) {
+                // TODO: i18n
+                addError("No theme specified");
+                
+            } else {
+                try {
+                    ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                    newTheme = themeMgr.getTheme(getThemeId());
+                    
+                    if(!newTheme.isEnabled()) {
+                        // TODO: i18n
+                        addError("Theme not enabled");
+                    }
+                    
+                } catch(Exception ex) {
+                    log.warn(ex);
+                    // TODO: i18n
+                    addError("Theme not found");
+                }
+            }
+            
+            if(!hasActionErrors()) try {
                 weblog.setEditorTheme(getThemeId());
                 log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
-            }
-        } else {
-            // invalid theme type
-            // TODO: i18n
-            addError("no valid theme type submitted");
-        }
-        
-        if(!hasActionErrors()) {
-            try {
+                
                 // save updated weblog and flush
                 UserManager userMgr = RollerFactory.getRoller().getUserManager();
                 userMgr.saveWebsite(weblog);
@@ -155,44 +192,21 @@ public class ThemeEdit extends UIAction {
                 CacheManager.invalidate(weblog);
                 
                 // TODO: i18n
-                addMessage("Successfully updated theme");
+                addMessage("Successfully set theme to - "+newTheme.getName());
                 
             } catch(WebloggerException re) {
                 log.error("Error saving weblog - "+getActionWeblog().getHandle(), re);
                 addError("Error setting theme");
             }
+            
+        // unknown theme scenario, error
+        } else {
+            // invalid theme type
+            // TODO: i18n
+            addError("no valid theme type submitted");
         }
         
         return execute();
-    }
-    
-    
-    // validation
-    private void myValidate() {
-        
-        String newTheme = getThemeId();
-        
-        // make sure theme is valid and enabled
-        if(newTheme == null) {
-            // TODO: i18n
-            addError("No theme specified");
-            
-        } else {
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                Theme newThemeObj = themeMgr.getTheme(getThemeId());
-                
-                if(!newThemeObj.isEnabled()) {
-                    // TODO: i18n
-                    addError("Theme not enabled");
-                }
-                
-            } catch(Exception ex) {
-                log.warn(ex);
-                // TODO: i18n
-                addError("Theme not found");
-            }
-        }
     }
     
     
@@ -203,7 +217,8 @@ public class ThemeEdit extends UIAction {
     // has this weblog had a custom theme before?
     public boolean isFirstCustomization() {
         try {
-            return (getActionWeblog().getPageByAction(WeblogTemplate.ACTION_WEBLOG) == null);
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            return (umgr.getPageByAction(getActionWeblog(), WeblogTemplate.ACTION_WEBLOG) == null);
         } catch (WebloggerException ex) {
             log.error("Error looking up weblog template", ex);
         }
