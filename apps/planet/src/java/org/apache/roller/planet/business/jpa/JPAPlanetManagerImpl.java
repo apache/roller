@@ -72,6 +72,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     protected Map lastUpdatedByGroup = new HashMap();
     protected static final String NO_GROUP = "zzz_nogroup_zzz";
     
+    @com.google.inject.Inject  
     public JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
         

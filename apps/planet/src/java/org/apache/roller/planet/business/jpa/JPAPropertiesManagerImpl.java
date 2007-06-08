@@ -18,6 +18,7 @@
 
 package org.apache.roller.planet.business.jpa;
 
+import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
      */
+    @com.google.inject.Inject
     public JPAPropertiesManagerImpl(JPAPersistenceStrategy strat) {
         
         log.debug("Instantiating JPA Properties Manager");

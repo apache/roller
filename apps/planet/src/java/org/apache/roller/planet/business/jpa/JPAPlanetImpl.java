@@ -54,6 +54,7 @@ public class JPAPlanetImpl implements Planet {
     protected FeedFetcher feedFetcher = null;
     
         
+    @com.google.inject.Inject  
     protected JPAPlanetImpl(
             JPAPersistenceStrategy strategy, 
             PlanetManager     planetManager, 
