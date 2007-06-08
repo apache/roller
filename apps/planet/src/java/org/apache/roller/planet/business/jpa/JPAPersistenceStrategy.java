@@ -43,6 +43,7 @@ import org.apache.roller.util.DatabaseProvider;
 /**
  * Responsible for the lowest-level interaction with the JPA API.
  */
+@com.google.inject.Singleton
 public class JPAPersistenceStrategy {
     private static Log logger = 
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);

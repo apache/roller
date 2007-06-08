@@ -513,7 +513,8 @@
             <classpath>
                 <path refid="test.path"/>
                 <pathelement location="${build.compile.test}"/>
-                <pathelement location="${basedir}/testdata" />
+                <pathelement location="${basedir}/build/test/testcontext" />
+                <pathelement location="${basedir}/build/test/testcontext/WEB-INF/classes" />
                 <pathelement path="${test.db.cpath}" />
             </classpath>
         </java>
@@ -546,7 +547,8 @@
             <classpath>
                 <path refid="test.path"/>
                 <pathelement location="${build.compile.test}"/>
-                <pathelement location="${basedir}/testdata" />
+                <pathelement location="${basedir}/build/test/testcontext" />
+                <pathelement location="${basedir}/build/test/testcontext/WEB-INF/classes" />
                 <pathelement path="${test.db.cpath}" />
             </classpath>
         </java>

@@ -40,6 +40,7 @@ import org.apache.roller.planet.pojos.PropertyData;
 /**
  * Hibernate implementation of the PropertiesManager.
  */
+@com.google.inject.Singleton
 public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements PropertiesManager {
     
     private static Log log = LogFactory.getLog(JPAPropertiesManagerImpl.class);

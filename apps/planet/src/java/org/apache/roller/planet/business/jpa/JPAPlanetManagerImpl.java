@@ -62,6 +62,7 @@ import org.apache.roller.planet.config.PlanetRuntimeConfig;
  *
  * @author Dave Johnson
  */
+@com.google.inject.Singleton
 public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);

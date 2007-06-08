@@ -33,6 +33,7 @@ import org.apache.roller.planet.config.PlanetConfig;
  * Implements Planet, the entry point interface for the Roller-Planet business 
  * tier APIs using the Java Persistence API (JPA).
  */
+@com.google.inject.Singleton
 public class JPAPlanetImpl implements Planet {   
     
     private static Log log = LogFactory.getLog(JPAPlanetImpl.class);
