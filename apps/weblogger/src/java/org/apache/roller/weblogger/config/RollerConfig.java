@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.util.PropertyExpander;
  */
 public class RollerConfig {
     
-    private static String default_config = "/roller.properties";
+    private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
     private static String custom_config = "/roller-custom.properties";
     private static String custom_jvm_param = "roller.custom.config";
     private static File custom_config_file = null;

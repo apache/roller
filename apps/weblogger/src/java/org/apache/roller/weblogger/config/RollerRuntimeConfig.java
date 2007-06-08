@@ -42,7 +42,7 @@ public class RollerRuntimeConfig {
     
     private static Log log = LogFactory.getLog(RollerRuntimeConfig.class);
     
-    private static String runtime_config = "/rollerRuntimeConfigDefs.xml";
+    private static String runtime_config = "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
     // special case for our context urls
