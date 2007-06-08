@@ -20,20 +20,23 @@ package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.zip.GZIPOutputStream;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.ui.core.util.ByteArrayOutputStreamWrapper;
-import org.apache.roller.weblogger.ui.core.util.ByteArrayResponseWrapper;
 
 
 /** 
@@ -42,13 +45,10 @@ import org.apache.roller.weblogger.ui.core.util.ByteArrayResponseWrapper;
  * Taken from More Servlets and JavaServer Pages from Prentice Hall and 
  * Sun Microsystems Press, http://www.moreservlets.com/.
  * &copy; 2002 Marty Hall; may be freely used or adapted.
- *
- * @web.filter name="CompressionFilter"
  */
-
 public class CompressionFilter implements Filter {
     
-    private static Log mLogger = LogFactory.getLog(CompressionFilter.class);
+    private static Log log = LogFactory.getLog(CompressionFilter.class);
     
     private boolean enabled = true;
     
@@ -82,7 +82,7 @@ public class CompressionFilter implements Filter {
             ByteArrayOutputStream outputStream = responseWrapper.getByteArrayOutputStream();
             
             // Get character array representing output.
-            mLogger.debug("Pre-zip size:" + outputStream.size());
+            log.debug("Pre-zip size:" + outputStream.size());
             
             // Make a writer that compresses data and puts
             // it into a byte array.
@@ -95,7 +95,7 @@ public class CompressionFilter implements Filter {
             // Gzip streams must be explicitly closed.
             zipOut.close();
             
-            mLogger.debug("Gzip size:" + byteStream.size());
+            log.debug("Gzip size:" + byteStream.size());
             
             // Update the Content-Length header.
             res.setContentLength(byteStream.size());
@@ -118,10 +118,10 @@ public class CompressionFilter implements Filter {
         // is compression enabled?
         if(RollerConfig.getBooleanProperty("compression.gzipResponse.enabled")) {
             this.enabled = true;
-            mLogger.info("Compressed Output ENABLED");
+            log.info("Compressed Output ENABLED");
         } else {
             this.enabled = false;
-            mLogger.info("Compressed Output DISABLED");
+            log.info("Compressed Output DISABLED");
         }
     }
     
@@ -135,4 +135,110 @@ public class CompressionFilter implements Filter {
                     && (browserEncodings.indexOf("gzip") != -1));
     }
     
+    
+    /**
+     * Implementation of HttpServletResponseWrapper that supports caching.
+     */
+    private class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
+        
+        private PrintWriter tpWriter;
+        private ByteArrayOutputStreamWrapper tpStream;
+        
+        
+        public ByteArrayResponseWrapper(ServletResponse inResp) throws IOException {
+            super((HttpServletResponse) inResp);
+            tpStream = new ByteArrayOutputStreamWrapper(inResp.getOutputStream());
+            tpWriter = new PrintWriter(new OutputStreamWriter(tpStream,"UTF-8"));
+        }
+        
+        
+        public ServletOutputStream getOutputStream() throws IOException {
+            return tpStream;
+        }
+        
+        public PrintWriter getWriter() throws IOException {
+            return tpWriter;
+        }
+        
+        /**
+         * Get a String representation of the entire buffer.
+         */
+        public String toString() {
+            return tpStream.getByteArrayStream().toString();
+        }
+        
+        public ByteArrayOutputStream getByteArrayOutputStream() throws IOException {
+            return tpStream.getByteArrayStream();
+        }
+        
+    }
+    
+    
+    /**
+     * Implementation of ServletOutputStream that allows the filter to hold the
+     * Response content for insertion into the cache.
+     */
+    private class ByteArrayOutputStreamWrapper extends ServletOutputStream {
+        
+        protected OutputStream intStream;
+        protected ByteArrayOutputStream baStream;
+        protected boolean finallized = false;
+        protected boolean flushOnFinalizeOnly = true;
+        
+        
+        public ByteArrayOutputStreamWrapper(OutputStream outStream) {
+            intStream = outStream;
+            baStream = new ByteArrayOutputStream();
+        }
+        
+        public ByteArrayOutputStreamWrapper() {
+            intStream = System.out;
+            baStream = new ByteArrayOutputStream();
+        }
+        
+        
+        public ByteArrayOutputStream getByteArrayStream() {
+            return baStream;
+        }
+        
+        public void setFinallized() {
+            finallized = true;
+        }
+        
+        public boolean isFinallized() {
+            return finallized;
+        }
+        
+        
+        public void write(int i) throws java.io.IOException {
+            baStream.write(i);
+        }
+        
+        public void close() throws java.io.IOException {
+            if (finallized) {
+                processStream();
+                intStream.close();
+            }
+        }
+        
+        public void flush() throws java.io.IOException {
+            if (baStream.size() != 0) {
+                if (!flushOnFinalizeOnly || finallized) {
+                    processStream();
+                    baStream = new ByteArrayOutputStream();
+                }
+            }
+        }
+        
+        protected void processStream() throws java.io.IOException {
+            intStream.write(baStream.toByteArray());
+            intStream.flush();
+        }
+        
+        public void clear() {
+            baStream = new ByteArrayOutputStream();
+        }
+        
+    }
+
 }

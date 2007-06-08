@@ -136,7 +136,7 @@
             <include name="*.jar"/>
         </fileset>
         <pathelement location="${tools}/buildtime/junit-4.1.jar"/>
-        <pathelement location="${tools}/buildtime/ant-1.6.2/ant-junit.jar"/>
+        <pathelement location="${tools}/buildtime/ant-1.7.0/ant-junit.jar"/>
         <pathelement location="${tools}/buildtime/derby.jar"/>
         <pathelement location="${tools}/buildtime/derbyclient.jar"/>
         <pathelement location="${tools}/buildtime/derbynet.jar"/>
@@ -368,7 +368,7 @@
             
             <classpath>
                 <path refid="test.path"/>
-                <pathelement location="${tools}/buildtime/ant-1.6.2/ant.jar"/>
+                <pathelement location="${tools}/buildtime/ant-1.7.0/ant.jar"/>
             </classpath>
         </javac>
 

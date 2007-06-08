@@ -59,9 +59,8 @@ function fullPreviewMode() {
                         <s:text name="weblogEdit.published" />
                         (<s:text name="weblogEdit.updateTime" />
                         <s:date name="entry.updateTime" format="dd/MM/yyyy hh:mm a" />)
-                        <a href='<s:property value="entry.permalink" />'>
-                            <s:property value="entry.permaLink" />
-                        </a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<img src="<s:url value="/images/launch-link.png"/>" />
+                        <a href='<s:property value="entry.permalink" />'><s:text name="weblogEdit.permaLink" /></a>
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">

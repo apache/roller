@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.core.util;
+package org.apache.roller.weblogger.ui.struts2.util;
 
 import java.util.Arrays;
 import java.util.Collections;
