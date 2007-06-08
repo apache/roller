@@ -5,13 +5,13 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.business.DatabaseProvider;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.util.DatabaseProvider;
 import org.hibernate.HibernateException;
 import org.hibernate.connection.ConnectionProvider;
 
 /**
- * Allows use to provide Hibernate with database connections via Roller's
+ * Allows user to provide Hibernate with database connections via Roller's
  * DatabaseProvider class. By default HibernatePersistenceStrategy adds this 
  * class to Hibernate's configuration. If you'd like to provide your own
  * ConnctionProvider implementation you can do so by overriding Roller's 

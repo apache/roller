@@ -30,28 +30,22 @@ function fullPreview(selector) {
 
 function updateThemeChooser(selected) {
     if(selected.value == 'shared') {
-        selectedChooser = $('sharedChooser');
-        selectedOptioner = $('sharedOptioner');
+        $('sharedChooser').style.backgroundColor="#CCFFCC";
+        $('sharedChooser').style.border="1px solid #008000";
+        $('sharedOptioner').show();
         
-        otherChooser = $('customChooser');
-        otherOptioner = $('customOptioner');
+        $('customChooser').style.backgroundColor="#eee";
+        $('customChooser').style.border="1px solid gray";
+        $('customOptioner').hide();
     } else {
-        selectedChooser = $('customChooser');
-        selectedOptioner = $('customOptioner');
+        $('customChooser').style.backgroundColor="#CCFFCC";
+        $('customChooser').style.border="1px solid #008000";
+        $('customOptioner').show();
         
-        otherChooser = $('sharedChooser');
-        otherOptioner = $('sharedOptioner');
+        $('sharedChooser').style.backgroundColor="#eee";
+        $('sharedChooser').style.border="1px solid gray";
+        $('sharedOptioner').hide();
     }
-    
-    // update styling on chooser
-    selectedChooser.style.backgroundColor="#CCFFCC";
-    selectedChooser.style.border="1px solid #008000";
-    otherChooser.style.backgroundColor="#eee";
-    otherChooser.style.border="1px solid grey";
-    
-    // update display of selected optioner
-    otherOptioner.hide();
-    selectedOptioner.show();
 }
 -->
 </script>
@@ -69,13 +63,13 @@ function updateThemeChooser(selected) {
         <tr>
             <td width="50%">
                 <div id="sharedChooser" class="chooser">
-                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared" <s:if test="!customTheme">checked="true"</s:if> onchange="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.sharedTheme" /></h2>
+                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared" <s:if test="!customTheme">checked="true"</s:if> onclick="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.sharedTheme" /></h2>
                     <s:text name="themeEditor.sharedThemeDescription" />
                 </div>
             </td>
             <td width="50%">
                 <div id="customChooser" class="chooser">
-                    <h2><input id="customRadio" type="radio" name="themeType" value="custom" <s:if test="customTheme">checked="true"</s:if> onchange="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.customTheme" /></h2>
+                    <h2><input id="customRadio" type="radio" name="themeType" value="custom" <s:if test="customTheme">checked="true"</s:if> onclick="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.customTheme" /></h2>
                     <s:text name="themeEditor.customThemeDescription" />
                 </div>
             </td>
@@ -119,8 +113,14 @@ function updateThemeChooser(selected) {
     
     <div id="customOptioner" class="optioner" style="display:none;">
         <p>
-            <s:checkbox name="importTheme" /><s:text name="themeEditor.import" /><br/>
-            <span class="warning"><s:text name="themeEditor.importWarning" /></span>
+            <s:if test="!firstCustomization">
+                <s:hidden name="importTheme" value="true" />
+                <span class="warning"><s:text name="themeEditor.importRequired" /></span>
+            </s:if>
+            <s:else>
+                <s:checkbox name="importTheme" /><s:text name="themeEditor.import" /><br/>
+                <span class="warning"><s:text name="themeEditor.importWarning" /></span>
+            </s:else>
         </p>
         <p>
             <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('customPreviewImg'), this[selectedIndex].value)"/>
@@ -129,7 +129,12 @@ function updateThemeChooser(selected) {
             <img id="customPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
-            previewImage($('customPreviewImg'), '<s:property value="themes[0].id"/>');
+                <s:if test="customTheme">
+                    previewImage($('customPreviewImg'), '<s:property value="themes[0].id"/>');
+                </s:if>
+                <s:else>
+                    previewImage($('customPreviewImg'), '<s:property value="themeId"/>');
+                </s:else>
             </script>
         </p>
         <p>

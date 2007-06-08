@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -57,6 +59,11 @@ public class ThemeMetadataParser {
         theme.setName(root.getChildText("name"));
         theme.setAuthor(root.getChildText("author"));
         
+        // if either id or name is null then throw a parsing exception
+        if(StringUtils.isEmpty(theme.getId()) || StringUtils.isEmpty(theme.getName())) {
+            throw new ThemeParsingException("'id' and 'name' are required theme elements");
+        }
+        
         // now grab the preview image path
         Element previewImage = root.getChild("preview-image");
         if(previewImage != null) {
@@ -80,21 +87,31 @@ public class ThemeMetadataParser {
         }
         
         // now grab the templates
+        boolean weblogActionTemplate = false;
         List templates = root.getChildren("template");
         Iterator templatesIter = templates.iterator();
         while (templatesIter.hasNext()) {
             Element template = (Element) templatesIter.next();
-            theme.addTemplate(this.elementToTemplateMetadata(template));
+            ThemeMetadataTemplate tmpl = elementToTemplateMetadata(template);
+            theme.addTemplate(tmpl);
+            
+            if(WeblogTemplate.ACTION_WEBLOG.equals(tmpl.getAction())) {
+                weblogActionTemplate = true;
+            }
         }
         
-        // TODO: validation
         // make sure all required elements are present and values are valid
+        // check that there is a template with action='weblog'
+        if(!weblogActionTemplate) {
+            throw new ThemeParsingException("did not find a template of action = 'weblog'");
+        }
         
         return theme;
     }
     
     
-    private ThemeMetadataTemplate elementToTemplateMetadata(Element element) {
+    private ThemeMetadataTemplate elementToTemplateMetadata(Element element) 
+            throws ThemeParsingException {
         
         ThemeMetadataTemplate template = new ThemeMetadataTemplate();
         
@@ -114,6 +131,17 @@ public class ThemeMetadataParser {
         String hidden = element.getChildText("hidden");
         if("true".equalsIgnoreCase(hidden)) {
             template.setHidden(true);
+        }
+        
+        // validate template
+        if(StringUtils.isEmpty(template.getAction())) {
+            throw new ThemeParsingException("templates must contain an 'action' attribute");
+        }
+        if(StringUtils.isEmpty(template.getName())) {
+            throw new ThemeParsingException("templates must contain a 'name' element");
+        }
+        if(StringUtils.isEmpty(template.getTemplateLanguage())) {
+            throw new ThemeParsingException("templates must contain a 'templateLanguage' element");
         }
         
         return template;

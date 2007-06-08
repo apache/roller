@@ -17,6 +17,4 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
-
-<div class="notification"><s:text name="stylesheetEdit.noStylesheetOverride" /></div>
+<div class="notification"><s:text name="Register.disabled" /></div>

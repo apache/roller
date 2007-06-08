@@ -18,16 +18,12 @@
 
 package org.apache.roller.planet.business.jpa;
 
-import java.util.Enumeration;
-import java.util.Properties;
-import org.apache.roller.planet.business.DatabaseProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetConfig;
