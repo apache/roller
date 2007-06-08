@@ -16,14 +16,14 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.plugins;
+package org.apache.roller.weblogger.business.plugins.entry;
 
 import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RegexUtil;

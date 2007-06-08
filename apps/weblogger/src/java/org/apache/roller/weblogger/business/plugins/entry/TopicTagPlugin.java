@@ -16,11 +16,10 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.plugins;
+package org.apache.roller.weblogger.business.plugins.entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
@@ -28,7 +27,7 @@ import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.business.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -41,7 +40,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javax.servlet.ServletConfig;
+
 
 /**
  * Provides an easy way to write topic tag links for Technorati (or similar services).

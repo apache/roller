@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.PluginManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
