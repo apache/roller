@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;

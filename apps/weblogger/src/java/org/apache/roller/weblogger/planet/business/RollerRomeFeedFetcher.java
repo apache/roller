@@ -36,7 +36,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.RomeFeedFetcher;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.weblogger.business.PluginManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;

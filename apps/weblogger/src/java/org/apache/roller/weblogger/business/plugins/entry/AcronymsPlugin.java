@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.plugins;
+package org.apache.roller.weblogger.business.plugins.entry;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogEntryPlugin;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;

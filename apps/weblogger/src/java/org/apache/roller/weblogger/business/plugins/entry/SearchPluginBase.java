@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.plugins;
+package org.apache.roller.weblogger.business.plugins.entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.roller.weblogger.WebloggerException;

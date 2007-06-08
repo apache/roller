@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import java.io.Serializable;
 import java.sql.Connection;
 import org.apache.roller.weblogger.WebloggerException;
