@@ -349,8 +349,7 @@ public class WeblogPageRequest extends WeblogRequest {
         
         if(weblogPage == null && weblogPageName != null) {
             try {
-                UserManager umgr = RollerFactory.getRoller().getUserManager();
-                weblogPage = getWeblog().getPageByLink(weblogPageName);                
+                weblogPage = getWeblog().getTheme().getTemplateByLink(weblogPageName);                
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }
