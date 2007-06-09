@@ -85,7 +85,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public ThemeTemplate getDecorator() {
         if(decoratorName != null && !id.equals(decoratorName)) {
             try {
-                return weblog.getPageByName(decoratorName);
+                return weblog.getTheme().getTemplateByName(decoratorName);
             } catch (WebloggerException ex) {
                 log.error("Error getting decorator["+decoratorName+"] "+
                         "for template "+id);
