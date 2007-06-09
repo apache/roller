@@ -57,7 +57,6 @@ public class WeblogConfigBean {
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
     private String pageModels = null;
-    private String customStylesheetPath = null;
     private String icon = null;
     private String about = null;
     
@@ -231,14 +230,6 @@ public class WeblogConfigBean {
         this.pageModels = pageModels;
     }
     
-    public String getCustomStylesheetPath() {
-        return this.customStylesheetPath;
-    }
-    
-    public void setCustomStylesheetPath( String customStylesheetPath ) {
-        this.customStylesheetPath = customStylesheetPath;
-    }
-    
     public String getIcon() {
         return icon;
     }
@@ -321,7 +312,6 @@ public class WeblogConfigBean {
         this.enableMultiLang = dataHolder.isEnableMultiLang();
         this.showAllLangs = dataHolder.isShowAllLangs();
         this.pageModels = dataHolder.getPageModels();
-        this.customStylesheetPath = dataHolder.getCustomStylesheetPath();
         setIcon(dataHolder.getIconPath());
         setAbout(dataHolder.getAbout());
         
@@ -359,7 +349,6 @@ public class WeblogConfigBean {
         dataHolder.setEnableMultiLang(this.enableMultiLang);
         dataHolder.setShowAllLangs(this.showAllLangs);
         dataHolder.setPageModels(this.pageModels);
-        dataHolder.setCustomStylesheetPath(this.customStylesheetPath);
         dataHolder.setIconPath(getIcon());
         dataHolder.setAbout(getAbout());
         
