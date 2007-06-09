@@ -54,13 +54,6 @@ public interface Theme {
     
     
     /**
-     * The path within the Theme to a custom stylesheet override, or null if
-     * no stylesheet override is set.
-     */
-    public String getCustomStylesheet();
-    
-    
-    /**
      * Is the Theme enable for use?
      */
     public boolean isEnabled();
@@ -70,6 +63,12 @@ public interface Theme {
      * Get the list of all templates associated with this Theme.
      */
     public List getTemplates() throws WebloggerException;
+    
+    
+    /**
+     * Lookup the stylesheet template for the Theme.
+     */
+    public ThemeTemplate getStylesheet() throws WebloggerException;
     
     
     /**

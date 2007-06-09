@@ -31,7 +31,7 @@ public class ThemeMetadata {
     private String name = null;
     private String author = null;
     private String previewImage = null;
-    private String customStylesheet = null;
+    private ThemeMetadataTemplate stylesheet = null;
     private Set templates = new HashSet();
     private Set resources = new HashSet();
     
@@ -96,12 +96,12 @@ public class ThemeMetadata {
         this.author = author;
     }
 
-    public String getCustomStylesheet() {
-        return customStylesheet;
+    public ThemeMetadataTemplate getStylesheet() {
+        return stylesheet;
     }
 
-    public void setCustomStylesheet(String customStylesheet) {
-        this.customStylesheet = customStylesheet;
+    public void setStylesheet(ThemeMetadataTemplate stylesheet) {
+        this.stylesheet = stylesheet;
     }
     
 }

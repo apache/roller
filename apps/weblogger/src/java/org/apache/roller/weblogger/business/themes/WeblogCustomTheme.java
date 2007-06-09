@@ -58,10 +58,6 @@ public class WeblogCustomTheme extends WeblogTheme {
     public String getAuthor() {
         return "N/A";
     }
-
-    public String getCustomStylesheet() {
-        return this.weblog.getCustomStylesheetPath();
-    }
     
     public Date getLastModified() {
         return this.weblog.getLastModified();
@@ -81,6 +77,19 @@ public class WeblogCustomTheme extends WeblogTheme {
     }
     
     
+    /**
+     * Lookup the stylesheet template for this theme.
+     * Returns null if no stylesheet can be found.
+     */
+    public ThemeTemplate getStylesheet() throws WebloggerException {
+        return getTemplateByLink(this.weblog.getCustomStylesheetPath());
+    }
+    
+    
+    /**
+     * Lookup the default template.
+     * Returns null if the template cannot be found.
+     */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         UserManager userMgr = RollerFactory.getRoller().getUserManager();
         return userMgr.getPageByAction(this.weblog, ThemeTemplate.ACTION_WEBLOG);

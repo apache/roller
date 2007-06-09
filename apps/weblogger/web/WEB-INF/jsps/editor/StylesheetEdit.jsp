@@ -19,7 +19,10 @@
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
 
-<p class="pagetip"><s:text name="stylesheetEdit.tip" /></p>
+<p class="pagetip">
+    <s:text name="stylesheetEdit.tip" />
+    <s:if test="!customTheme"><s:text name="stylesheetEdit.revertTip" /></s:if>
+</p>
                 
 <s:form action="stylesheetEdit!save">
     <s:hidden name="weblog" />
@@ -52,7 +55,10 @@
     <table style="width:100%">
         <tr>
             <td>
-                <s:submit key="stylesheetEdit.save" />
+                <s:submit key="stylesheetEdit.save" />&nbsp;&nbsp;
+                <s:if test="!customTheme">
+                    <s:submit key="stylesheetEdit.revert" action="stylesheetEdit!revert" />
+                </s:if>
             </td>
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
