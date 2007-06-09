@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
 /**
@@ -50,6 +50,9 @@ public class SharedThemeFromDir extends SharedTheme {
     
     // the theme preview image
     private ThemeResource previewImage = null;
+    
+    // the theme stylesheet
+    private ThemeTemplate stylesheet = null;
     
     // we keep templates in a Map for faster lookups by name
     // the Map contains ... (template name, ThemeTemplate)
@@ -94,6 +97,19 @@ public class SharedThemeFromDir extends SharedTheme {
     }
     
     
+    /**
+     * Lookup the stylesheet.
+     * Returns null if no stylesheet defined.
+     */
+    public ThemeTemplate getStylesheet() {
+        return this.stylesheet;
+    }
+    
+    
+    /**
+     * Looup the default template, action = weblog.
+     * Returns null if the template cannot be found.
+     */
     public ThemeTemplate getDefaultTemplate() {
         return (ThemeTemplate) this.templatesByAction.get(ThemeTemplate.ACTION_WEBLOG);
     }
@@ -127,16 +143,6 @@ public class SharedThemeFromDir extends SharedTheme {
     
     
     /**
-     * Set the value for a given template name.
-     */
-    public void addTemplate(ThemeTemplate template) {
-        this.templatesByName.put(template.getName(), template);
-        this.templatesByLink.put(template.getLink(), template);
-        this.templatesByAction.put(template.getAction(), template);
-    }
-    
-    
-    /**
      * Get the collection of all resources associated with this Theme.
      *
      * It is assured that the resources are returned sorted by pathname.
@@ -157,14 +163,6 @@ public class SharedThemeFromDir extends SharedTheme {
      */
     public ThemeResource getResource(String path) {
         return (ThemeResource) this.resources.get(path);
-    }
-    
-    
-    /**
-     * Set the value for a given resource path.
-     */
-    public void setResource(String path, SharedThemeResourceFromDir resource) {
-        this.resources.put(path, resource);
     }
     
     
@@ -208,7 +206,6 @@ public class SharedThemeFromDir extends SharedTheme {
         setName(themeMetadata.getName());
         setDescription(themeMetadata.getName());
         setAuthor(themeMetadata.getAuthor());
-        setCustomStylesheet(themeMetadata.getCustomStylesheet());
         setLastModified(new Date());
         setEnabled(true);
         
@@ -218,6 +215,47 @@ public class SharedThemeFromDir extends SharedTheme {
             log.warn("Couldn't read preview image file ["+themeMetadata.getPreviewImage()+"]");
         } else {
             this.previewImage = new SharedThemeResourceFromDir(themeMetadata.getPreviewImage(), previewFile);
+        }
+        
+        // load stylesheet if possible
+        if(themeMetadata.getStylesheet() != null) {
+            
+            ThemeMetadataTemplate stylesheetTmpl = themeMetadata.getStylesheet();
+            
+            // construct File object from path
+            File templateFile = new File(this.themeDir + File.separator + 
+                    stylesheetTmpl.getContentsFile());
+            
+            // read stylesheet contents
+            String contents = loadTemplateFile(templateFile);
+            if(contents == null) {
+                // if we don't have any contents then skip this one
+                log.error("Couldn't load stylesheet template file ["+templateFile+"]");
+            } else {
+                
+                // construct ThemeTemplate representing this file
+                // a few restrictions for now:
+                //   - decorator is always "_decorator" or null
+                SharedThemeTemplate theme_template = new SharedThemeTemplate(
+                        this,
+                        themeMetadata.getId()+":"+stylesheetTmpl.getName(),
+                        WeblogTemplate.ACTION_CUSTOM,
+                        stylesheetTmpl.getName(),
+                        stylesheetTmpl.getDescription(),
+                        contents,
+                        stylesheetTmpl.getLink(),
+                        new Date(templateFile.lastModified()),
+                        stylesheetTmpl.getTemplateLanguage(),
+                        false,
+                        false,
+                        null);
+                
+                // store it
+                this.stylesheet = theme_template;
+                
+                // add it to templates list
+                addTemplate(theme_template);
+            }
         }
         
         // go through static resources and add them to the theme
@@ -250,23 +288,10 @@ public class SharedThemeFromDir extends SharedTheme {
             File templateFile = new File(this.themeDir + File.separator + 
                     templateMetadata.getContentsFile());
             
-            // Continue reading theme even if problem encountered with one file
-            if(!templateFile.exists() && !templateFile.canRead()) {
-                log.error("Couldn't read theme template file ["+templateFile+"]");
-                continue;
-            }
-            
-            char[] chars = null;
-            int length;
-            try {
-                chars = new char[(int) templateFile.length()];
-            	FileInputStream stream = new FileInputStream(templateFile);
-            	InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-                length = reader.read(chars);            
-            } catch (Exception noprob) {
-                log.error("Exception reading template file ["+templateFile+"]");
-                if (log.isDebugEnabled()) 
-                    log.debug(noprob);
+            String contents = loadTemplateFile(templateFile);
+            if(contents == null) {
+                // if we don't have any contents then skip this one
+                log.error("Couldn't load theme template file ["+templateFile+"]");
                 continue;
             }
             
@@ -284,7 +309,7 @@ public class SharedThemeFromDir extends SharedTheme {
                     templateMetadata.getAction(),
                     templateMetadata.getName(),
                     templateMetadata.getDescription(),
-                    new String(chars, 0, length),
+                    contents,
                     templateMetadata.getLink(),
                     new Date(templateFile.lastModified()),
                     templateMetadata.getTemplateLanguage(),
@@ -295,6 +320,53 @@ public class SharedThemeFromDir extends SharedTheme {
             // add it to the theme
             addTemplate(theme_template);
         }
+    }
+    
+    
+    /**
+     * Load a single template file as a string, returns null if can't read file.
+     */
+    private String loadTemplateFile(File templateFile) {
+        // Continue reading theme even if problem encountered with one file
+        if(!templateFile.exists() && !templateFile.canRead()) {
+            return null;
+        }
+        
+        char[] chars = null;
+        int length;
+        try {
+            chars = new char[(int) templateFile.length()];
+            FileInputStream stream = new FileInputStream(templateFile);
+            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+            length = reader.read(chars);
+        } catch (Exception noprob) {
+            log.error("Exception reading template file ["+templateFile+"]");
+            if (log.isDebugEnabled())
+                log.debug(noprob);
+            return null;
+        }
+        
+        return new String(chars, 0, length);
+    }
+    
+    
+    /**
+     * Set the value for a given template name.
+     */
+    private void addTemplate(ThemeTemplate template) {
+        this.templatesByName.put(template.getName(), template);
+        this.templatesByLink.put(template.getLink(), template);
+        if(!ThemeTemplate.ACTION_CUSTOM.equals(template.getAction())) {
+            this.templatesByAction.put(template.getAction(), template);
+        }
+    }
+    
+    
+    /**
+     * Set the value for a given resource path.
+     */
+    private void setResource(String path, SharedThemeResourceFromDir resource) {
+        this.resources.put(path, resource);
     }
     
 }

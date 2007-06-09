@@ -24,8 +24,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -57,36 +61,42 @@ public class StylesheetEdit extends UIAction {
     }
     
     
+    @Override
     public void myPrepare() {
-        String stylesheetPath = getActionWeblog().getTheme().getCustomStylesheet();
-        log.debug("custom stylesheet path is - "+stylesheetPath);
         
-        if(stylesheetPath != null) {
+        ThemeTemplate stylesheet = null;
+        try {
+            stylesheet = getActionWeblog().getTheme().getStylesheet();
+        } catch (WebloggerException ex) {
+            log.error("Error looking up stylesheet on weblog - "+getActionWeblog().getHandle(), ex);
+        }
+        
+        if(stylesheet != null) {
+            log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
-                setTemplate(mgr.getPageByLink(getActionWeblog(), stylesheetPath));
+                setTemplate(mgr.getPageByLink(getActionWeblog(), stylesheet.getLink()));
                 
                 if(getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
+                    
                     // template doesn't exist yet, so create it
-                    WeblogTemplate stylesheet = new WeblogTemplate();
-                    stylesheet.setWebsite(getActionWeblog());
-                    stylesheet.setAction(stylesheet.ACTION_CUSTOM);
-                    stylesheet.setName(stylesheetPath);
-                    stylesheet.setDescription(stylesheetPath);
-                    stylesheet.setLink(stylesheetPath);
-                    stylesheet.setContents("");
-                    stylesheet.setHidden(false);
-                    stylesheet.setNavbar(false);
-                    stylesheet.setLastModified(new Date());
+                    WeblogTemplate stylesheetTmpl = new WeblogTemplate();
+                    stylesheetTmpl.setWebsite(getActionWeblog());
+                    stylesheetTmpl.setAction(stylesheet.ACTION_CUSTOM);
+                    stylesheetTmpl.setName(stylesheet.getName());
+                    stylesheetTmpl.setDescription(stylesheet.getDescription());
+                    stylesheetTmpl.setLink(stylesheet.getLink());
+                    stylesheetTmpl.setContents(stylesheet.getContents());
+                    stylesheetTmpl.setHidden(false);
+                    stylesheetTmpl.setNavbar(false);
+                    stylesheetTmpl.setLastModified(new Date());
+                    stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
                     
-                    // all templates start out as velocity templates
-                    stylesheet.setTemplateLanguage("velocity");
-                    
-                    mgr.savePage(stylesheet);
+                    mgr.savePage(stylesheetTmpl);
                     RollerFactory.getRoller().flush();
                     
-                    setTemplate(stylesheet);
+                    setTemplate(stylesheetTmpl);
                 }
             } catch (WebloggerException ex) {
                 log.error("Error finding/adding stylesheet tempalate from weblog - "+getActionWeblog().getHandle(), ex);
@@ -106,12 +116,12 @@ public class StylesheetEdit extends UIAction {
         
         setContents(getTemplate().getContents());
         
-        return SUCCESS;
+        return INPUT;
     }
     
     
     /**
-     * Save an existing template.
+     * Save an existing stylesheet.
      */
     public String save() {
         
@@ -137,7 +147,7 @@ public class StylesheetEdit extends UIAction {
             CacheManager.invalidate(stylesheet);
             
             // success message
-            addMessage("pageForm.save.success", stylesheet.getName());
+            addMessage("stylesheetEdit.save.success", stylesheet.getName());
             
         } catch (WebloggerException ex) {
             log.error("Error updating stylesheet template for weblog - "+getActionWeblog().getHandle(), ex);
@@ -145,9 +155,64 @@ public class StylesheetEdit extends UIAction {
             addError("Error saving template");
         }
         
-        return SUCCESS;
+        return INPUT;
     }
-
+    
+    
+    /**
+     * Revert the stylesheet to its original state.
+     */
+    public String revert() {
+        
+        if(getTemplate() == null) {
+            // TODO: i18n
+            addError("Unable to locate stylesheet template");
+            return ERROR;
+        }
+        
+        // make sure we are still using a shared theme so that reverting is possible
+        if(WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+            // TODO: i18n
+            addError("stylesheetEdit.error.customTheme");
+        }
+        
+        if(!hasActionErrors()) try {
+            
+            WeblogTemplate stylesheet = getTemplate();
+            
+            // lookup the theme used by this weblog
+            ThemeManager tmgr = RollerFactory.getRoller().getThemeManager();
+            Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
+            
+            // lookup 
+            stylesheet.setLastModified(new Date());
+            stylesheet.setContents(theme.getStylesheet().getContents());
+            
+            // save template and flush
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            mgr.savePage(stylesheet);
+            RollerFactory.getRoller().flush();
+            
+            // notify caches
+            CacheManager.invalidate(stylesheet);
+            
+            // success message
+            addMessage("stylesheetEdit.revert.success", stylesheet.getName());
+            
+        } catch (WebloggerException ex) {
+            log.error("Error updating stylesheet template for weblog - "+getActionWeblog().getHandle(), ex);
+            // TODO: i18n
+            addError("Error saving template");
+        }
+        
+        return execute();
+    }
+    
+    
+    public boolean isCustomTheme() {
+        return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+    }
+    
     
     public WeblogTemplate getTemplate() {
         return template;

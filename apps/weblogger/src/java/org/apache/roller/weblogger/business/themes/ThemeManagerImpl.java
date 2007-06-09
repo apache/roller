@@ -172,6 +172,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
             Set importedActionTemplates = new HashSet();
             ThemeTemplate themeTemplate = null;
+            ThemeTemplate stylesheetTemplate = theme.getStylesheet();
             Iterator iter = theme.getTemplates().iterator();
             while ( iter.hasNext() ) {
                 themeTemplate = (ThemeTemplate) iter.next();
@@ -192,9 +193,11 @@ public class ThemeManagerImpl implements ThemeManager {
                 }
                 
                 // Weblog does not have this template, so create it.
+                boolean newTmpl = false;
                 if (template == null) {
                     template = new WeblogTemplate();
                     template.setWebsite(website);
+                    newTmpl = true;
                 }
 
                 // TODO: fix conflict situation
@@ -202,19 +205,22 @@ public class ThemeManagerImpl implements ThemeManager {
                 // matches 2 existing templates, 1 by action, the other by name
                 
                 // update template attributes
-                template.setAction(themeTemplate.getAction());
-                template.setName(themeTemplate.getName());
-                template.setDescription(themeTemplate.getDescription());
-                template.setLink(themeTemplate.getLink());
-                template.setContents(themeTemplate.getContents());
-                template.setHidden(themeTemplate.isHidden());
-                template.setNavbar(themeTemplate.isNavbar());
-                template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
-                template.setDecoratorName(themeTemplate.getDecoratorName());
-                template.setLastModified(new Date());
-                
-                // save it
-                userMgr.savePage( template );
+                // NOTE: we don't want to copy the template data for an existing stylesheet
+                if(newTmpl || !themeTemplate.equals(stylesheetTemplate)) {
+                    template.setAction(themeTemplate.getAction());
+                    template.setName(themeTemplate.getName());
+                    template.setDescription(themeTemplate.getDescription());
+                    template.setLink(themeTemplate.getLink());
+                    template.setContents(themeTemplate.getContents());
+                    template.setHidden(themeTemplate.isHidden());
+                    template.setNavbar(themeTemplate.isNavbar());
+                    template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
+                    template.setDecoratorName(themeTemplate.getDecoratorName());
+                    template.setLastModified(new Date());
+                    
+                    // save it
+                    userMgr.savePage( template );
+                }
             }
             
             // now, see if the weblog has left over action templates that
@@ -235,7 +241,9 @@ public class ThemeManagerImpl implements ThemeManager {
             
             // always update this weblog's theme and customStylesheet, then save
             website.setEditorTheme(WeblogTheme.CUSTOM);
-            website.setCustomStylesheetPath(theme.getCustomStylesheet());
+            if(theme.getStylesheet() != null) {
+                website.setCustomStylesheetPath(theme.getStylesheet().getLink());
+            }
             userMgr.saveWebsite(website);
             
             

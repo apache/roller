@@ -72,10 +72,10 @@ public class ThemeMetadataParser {
             throw new ThemeParsingException("No preview image specified");
         }
         
-        // grab the custom stylesheet path
-        Element customStylesheet = root.getChild("custom-stylesheet");
-        if(customStylesheet != null) {
-            theme.setCustomStylesheet(customStylesheet.getAttributeValue("path"));
+        // grab the stylesheet if it exists
+        Element stylesheet = root.getChild("stylesheet");
+        if(stylesheet != null) {
+            theme.setStylesheet(elementToStylesheet(stylesheet));
         }
         
         // now grab the static resources
@@ -142,6 +142,38 @@ public class ThemeMetadataParser {
         }
         if(StringUtils.isEmpty(template.getTemplateLanguage())) {
             throw new ThemeParsingException("templates must contain a 'templateLanguage' element");
+        }
+        if(StringUtils.isEmpty(template.getContentsFile())) {
+            throw new ThemeParsingException("templates must contain a 'contentsFile' element");
+        }
+        
+        return template;
+    }
+    
+    
+    private ThemeMetadataTemplate elementToStylesheet(Element element) 
+            throws ThemeParsingException {
+        
+        ThemeMetadataTemplate template = new ThemeMetadataTemplate();
+        
+        template.setName(element.getChildText("name"));
+        template.setDescription(element.getChildText("description"));
+        template.setLink(element.getChildText("link"));
+        template.setTemplateLanguage(element.getChildText("templateLanguage"));
+        template.setContentsFile(element.getChildText("contentsFile"));
+        
+        // validate template
+        if(StringUtils.isEmpty(template.getName())) {
+            throw new ThemeParsingException("stylesheet must contain a 'name' element");
+        }
+        if(StringUtils.isEmpty(template.getLink())) {
+            throw new ThemeParsingException("stylesheet must contain a 'link' element");
+        }
+        if(StringUtils.isEmpty(template.getTemplateLanguage())) {
+            throw new ThemeParsingException("stylesheet must contain a 'templateLanguage' element");
+        }
+        if(StringUtils.isEmpty(template.getContentsFile())) {
+            throw new ThemeParsingException("stylesheet must contain a 'contentsFile' element");
         }
         
         return template;
