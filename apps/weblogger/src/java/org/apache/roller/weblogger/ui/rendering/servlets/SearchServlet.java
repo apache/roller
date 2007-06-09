@@ -49,9 +49,6 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
 
 /**
  * Handles search queries for weblogs.
- *
- * @web.servlet name="SearchServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/search/*"
  */
 public class SearchServlet extends HttpServlet {
     
@@ -99,11 +96,11 @@ public class SearchServlet extends HttpServlet {
         ThemeTemplate page = null;
         try {
             // first try looking for a specific search page
-            page = weblog.getPageByAction(ThemeTemplate.ACTION_SEARCH);
+            page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_SEARCH);
             
             // if not found then fall back on default page
             if(page == null) {
-                page = weblog.getDefaultPage();
+                page = weblog.getTheme().getDefaultTemplate();
             }
             
             // if still null then that's a problem

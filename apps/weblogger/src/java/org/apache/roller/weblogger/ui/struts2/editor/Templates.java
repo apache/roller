@@ -72,9 +72,9 @@ public class Templates extends UIAction {
             
             // get current list of templates, minus custom stylesheet
             List<WeblogTemplate> pages = mgr.getPages(getActionWeblog());
-            if(getActionWeblog().getTheme().getCustomStylesheet() != null) {
+            if(getActionWeblog().getTheme().getStylesheet() != null) {
                 pages.remove(mgr.getPageByLink(getActionWeblog(), 
-                        getActionWeblog().getTheme().getCustomStylesheet()));
+                        getActionWeblog().getTheme().getStylesheet().getLink()));
             }
             setTemplates(pages);
             

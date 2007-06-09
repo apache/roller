@@ -51,9 +51,6 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
  * This servlet is used as part of the authoring interface to provide previews
  * of what a weblog will look like with a given theme.  It is not available
  * outside of the authoring interface.
- *
- * @web.servlet name="PreviewServlet" load-on-startup="9"
- * @web.servlet-mapping url-pattern="/roller-ui/authoring/preview/*"
  */
 public class PreviewServlet extends HttpServlet {
     
@@ -120,7 +117,7 @@ public class PreviewServlet extends HttpServlet {
         Template page = null;
         try {
             // we just want to show the default view
-            page = tmpWebsite.getDefaultPage();
+            page = tmpWebsite.getTheme().getDefaultTemplate();
             
             if(page == null) {
                 throw new WebloggerException("No default page for weblog: "+tmpWebsite.getHandle());
