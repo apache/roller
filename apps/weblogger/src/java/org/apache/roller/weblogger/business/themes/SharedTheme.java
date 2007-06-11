@@ -42,7 +42,6 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
     protected String name = null;
     protected String description = null;
     protected String author = null;
-    protected String customStylesheet = null;
     protected Date lastModified = null;
     protected boolean enabled = false;
     
@@ -90,14 +89,6 @@ public abstract class SharedTheme implements Theme, Serializable, Comparable {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getCustomStylesheet() {
-        return customStylesheet;
-    }
-
-    public void setCustomStylesheet(String customStylesheet) {
-        this.customStylesheet = customStylesheet;
     }
     
     public Date getLastModified() {

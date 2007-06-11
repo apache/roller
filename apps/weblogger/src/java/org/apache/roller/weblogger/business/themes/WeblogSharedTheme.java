@@ -65,10 +65,6 @@ public class WeblogSharedTheme extends WeblogTheme {
     public String getDescription() {
         return this.theme.getDescription();
     }
-
-    public String getCustomStylesheet() {
-        return this.theme.getCustomStylesheet();
-    }
     
     public Date getLastModified() {
         return this.theme.getLastModified();
@@ -122,6 +118,30 @@ public class WeblogSharedTheme extends WeblogTheme {
     
     
     /**
+     * Lookup the stylesheet template for this theme.
+     * Returns null if no stylesheet can be found.
+     */
+    public ThemeTemplate getStylesheet() throws WebloggerException {
+        // stylesheet is handled differently than other templates because with
+        // the stylesheet we want to return the weblog custom version if it
+        // exists, otherwise we return the shared theme version
+        
+        // load from theme first to see if we even support a stylesheet
+        ThemeTemplate stylesheet = this.theme.getStylesheet();
+        if(stylesheet != null) {
+            // now try getting custom version from weblog
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            ThemeTemplate override = umgr.getPageByLink(this.weblog, stylesheet.getLink());
+            if(override != null) {
+                stylesheet = override;
+            }
+        }
+        
+        return stylesheet;
+    }
+    
+    
+    /**
      * Lookup the default template.
      */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
@@ -156,6 +176,12 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         ThemeTemplate template = null;
         
+        // if name refers to the stylesheet then return result of getStylesheet()
+        ThemeTemplate stylesheet = getStylesheet();
+        if(name.equals(stylesheet.getName())) {
+            return stylesheet;
+        }
+        
         // first check if this user has selected a theme
         // if so then return the proper theme template
         template = this.theme.getTemplateByName(name);
@@ -180,6 +206,12 @@ public class WeblogSharedTheme extends WeblogTheme {
             return null;
         
         ThemeTemplate template = null;
+        
+        // if name refers to the stylesheet then return result of getStylesheet()
+        ThemeTemplate stylesheet = getStylesheet();
+        if(link.equals(stylesheet.getLink())) {
+            return stylesheet;
+        }
         
         // first check if this user has selected a theme
         // if so then return the proper theme template

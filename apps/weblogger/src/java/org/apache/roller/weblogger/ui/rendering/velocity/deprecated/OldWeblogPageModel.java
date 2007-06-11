@@ -133,7 +133,7 @@ public class OldWeblogPageModel {
             
             List pages = Collections.EMPTY_LIST;
             try {
-                pages = mWebsite.getPages();
+                pages = mWebsite.getTheme().getTemplates();
             } catch (WebloggerException ex) {
                 mLogger.error("error getting weblog pages", ex);
             }
@@ -266,7 +266,7 @@ public class OldWeblogPageModel {
             if (pageName == null)
                 throw new NullPointerException("pageName is null");
             
-            page = ThemeTemplateWrapper.wrap(website.getPageByName(pageName));
+            page = ThemeTemplateWrapper.wrap(website.getTheme().getTemplateByName(pageName));
         } catch (NullPointerException npe) {
             mLogger.warn(npe.getMessage());
         } catch (WebloggerException e) {
@@ -291,7 +291,7 @@ public class OldWeblogPageModel {
         String template_id = null;
         
         try {
-            ThemeTemplate pd = mWebsite.getPageByName(pageName);
+            ThemeTemplate pd = mWebsite.getTheme().getTemplateByName(pageName);
             if(pd != null) {
                 template_id = pd.getId();
             }

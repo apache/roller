@@ -60,25 +60,25 @@ public class WeblogWrapper {
     
     public ThemeTemplateWrapper getPageByAction(String action)
             throws WebloggerException {
-        return ThemeTemplateWrapper.wrap(this.pojo.getPageByAction(action));
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByAction(action));
     }
     
     
     public ThemeTemplateWrapper getPageByName(String name)
             throws WebloggerException {
-        return ThemeTemplateWrapper.wrap(this.pojo.getPageByName(name));
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByName(name));
     }
     
     
     public ThemeTemplateWrapper getPageByLink(String link)
             throws WebloggerException {
-        return ThemeTemplateWrapper.wrap(this.pojo.getPageByLink(link));
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByLink(link));
     }
     
     
     public List getPages() throws WebloggerException {
         
-        List initialCollection = this.pojo.getPages();
+        List initialCollection = this.pojo.getTheme().getTemplates();
         
         // iterate through and wrap
         // we force the use of an ArrayList because it should be good enough to cover
@@ -255,9 +255,12 @@ public class WeblogWrapper {
     }
     
     
-    public String getCustomStylesheet() {
+    public String getStylesheet() throws WebloggerException {
         // custom stylesheet comes from the weblog theme
-        return URLUtilities.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getCustomStylesheet(), null, null, null, null, 0, false);
+        if(this.pojo.getTheme().getStylesheet() != null) {
+            return URLUtilities.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
+        }
+        return null;
     }
     
     

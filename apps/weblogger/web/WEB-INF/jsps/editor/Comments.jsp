@@ -21,11 +21,12 @@
 <script type="text/javascript">
 <!-- 
 function setChecked(val, name) {
-    len = document.globalCommentManagement.elements.length;
+    form = $('comments');
+    len = form.elements.length;
     var i=0;
     for( i=0 ; i<len ; i++) {
-        if (document.globalCommentManagement.elements[i].name == name) { 
-           document.globalCommentManagement.elements[i].checked=val;
+        if (form.elements[i].name == name) { 
+           form.elements[i].checked=val;
         }
     }
 }
@@ -199,28 +200,28 @@ function handleCommentResponse() {
         <td align="center">
             <s:text name="commentManagement.select" /><br/>
             
-            <a href="#" onclick='setChecked(1,"approvedComments")'>
+            <a href="#" onclick='setChecked(1,"bean.approvedComments")'>
             <s:text name="commentManagement.all" /></a><br />  
             
-            <a href="#" onclick='setChecked(0,"approvedComments")'>
+            <a href="#" onclick='setChecked(0,"bean.approvedComments")'>
             <s:text name="commentManagement.none" /></a>
         </td>
         <td align="center">
             <s:text name="commentManagement.select" /><br/>
             
-            <a href="#" onclick='setChecked(1,"spamComments")'>
+            <a href="#" onclick='setChecked(1,"bean.spamComments")'>
             <s:text name="commentManagement.all" /></a><br />  
             
-            <a href="#" onclick='setChecked(0,"spamComments")'>
+            <a href="#" onclick='setChecked(0,"bean.spamComments")'>
             <s:text name="commentManagement.none" /></a>
         </td>
         <td align="center">
             <s:text name="commentManagement.select" /><br/>
             
-            <a href="#" onclick='setChecked(1,"deleteComments")'>
+            <a href="#" onclick='setChecked(1,"bean.deleteComments")'>
             <s:text name="commentManagement.all" /></a><br /> 
             
-            <a href="#" onclick='setChecked(0,"deleteComments")'>
+            <a href="#" onclick='setChecked(0,"bean.deleteComments")'>
             <s:text name="commentManagement.none" /></a>
         </td>
         <td align="right">
@@ -288,7 +289,7 @@ function handleCommentResponse() {
                     <s:text name="commentManagement.commentByBoth" >
                         <s:param><s:property value="#comment.name" /></s:param>
                         <s:param><s:property value="#comment.email" /></s:param>
-                        <s:param value="mailto" />
+                        <s:param><s:property value="#comment.email" /></s:param>
                         <s:param><s:property value="#comment.remoteHost" /></s:param>
                     </s:text>
                 </s:if>

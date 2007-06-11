@@ -16,8 +16,10 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger.business.plugins;
 
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;

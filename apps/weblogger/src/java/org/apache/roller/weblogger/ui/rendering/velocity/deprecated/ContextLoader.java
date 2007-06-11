@@ -120,7 +120,7 @@ public class ContextLoader {
         category = pageRequest.getWeblogCategory();
         page = pageRequest.getWeblogPage();
         if(page == null) {
-            page = weblog.getDefaultPage();
+            page = weblog.getTheme().getDefaultTemplate();
         }
         
         // setup date, isDay, and isMonth
@@ -241,7 +241,7 @@ public class ContextLoader {
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
         
         // alternative display pages - customization
-        ThemeTemplate entryPage = weblog.getPageByName("_entry");
+        ThemeTemplate entryPage = weblog.getTheme().getTemplateByName("_entry");
         if (entryPage != null) {
             ctx.put("entryPage",ThemeTemplateWrapper.wrap(entryPage));
         }

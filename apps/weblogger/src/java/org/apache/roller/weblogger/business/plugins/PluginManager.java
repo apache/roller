@@ -16,13 +16,11 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger.business.plugins;
 
-import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 
 
 /**

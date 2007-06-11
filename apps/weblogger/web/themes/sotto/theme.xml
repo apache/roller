@@ -8,8 +8,14 @@
     <!-- theme preview image -->
     <preview-image path="sm-theme-sotto.png" />
     
-    <!-- custom stylesheet -->
-    <custom-stylesheet path="sotto-custom.css" />
+    <!-- stylesheet -->
+    <stylesheet>
+        <name>sotto-custom.css</name>
+        <description>Stylesheet for Sotto theme</description>
+	<link>sotto-custom.css</link>
+        <templateLanguage>velocity</templateLanguage>
+        <contentsFile>sotto-custom.css</contentsFile>
+    </stylesheet>
     
     <!-- templates -->
     <template action="weblog">
@@ -34,20 +40,7 @@
         <contentsFile>_day.vm</contentsFile>
     </template>
     
-    <template action="custom">
-        <name>_css</name>
-        <description>_css</description>
-	<link></link>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/css</contentType>
-        <contentsFile>_css.vm</contentsFile>
-    </template>
-    
     <!-- resources -->
-    <resource path="theme.css" />
-    <resource path="styles/default.css" />
     <resource path="images/bannerBackground.gif" />
     <resource path="images/buttonBackground.gif" />
     <resource path="images/clouds.jpg" />

@@ -8,8 +8,14 @@
     <!-- theme preview image -->
     <preview-image path="sm-theme-basic.png" />
     
-    <!-- custom stylesheet -->
-    <custom-stylesheet path="basic-custom.css" />
+    <!-- stylesheet -->
+    <stylesheet>
+        <name>basic-custom.css</name>
+        <description>Stylesheet for Basic theme</description>
+	<link>basic-custom.css</link>
+        <templateLanguage>velocity</templateLanguage>
+        <contentsFile>basic-custom.css</contentsFile>
+    </stylesheet>
     
     <!-- templates -->
     <template action="weblog">
@@ -32,17 +38,6 @@
         <templateLanguage>velocity</templateLanguage>
         <contentType>text/html</contentType>
         <contentsFile>_day.vm</contentsFile>
-    </template>
-    
-    <template action="custom">
-        <name>_css</name>
-        <description>_css</description>
-	<link></link>
-        <navbar>false</navbar>
-        <hidden>true</hidden>
-        <templateLanguage>velocity</templateLanguage>
-        <contentType>text/css</contentType>
-        <contentsFile>_css.vm</contentsFile>
     </template>
     
     <!-- resources -->

@@ -154,7 +154,7 @@ public class PageModel implements Model {
             return ThemeTemplateWrapper.wrap(pageRequest.getWeblogPage());
         } else {
             try {
-                return ThemeTemplateWrapper.wrap(weblog.getDefaultPage());
+                return ThemeTemplateWrapper.wrap(weblog.getTheme().getDefaultTemplate());
             } catch (WebloggerException ex) {
                 log.error("Error getting default page", ex);
             }

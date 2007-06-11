@@ -313,7 +313,7 @@
         
         <action name="stylesheetEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.StylesheetEdit">
-            <result name="success" type="tiles">.StylesheetEdit</result>
+            <result name="input" type="tiles">.StylesheetEdit</result>
             <result name="error" type="tiles">.StylesheetEditError</result>
         </action>
         
