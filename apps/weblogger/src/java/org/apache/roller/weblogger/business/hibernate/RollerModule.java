@@ -64,16 +64,15 @@ public class RollerModule implements Module {
         binder.bind(PingTargetManager.class).to(   HibernatePingTargetManagerImpl.class);
         binder.bind(PropertiesManager.class).to(   HibernatePropertiesManagerImpl.class);
         binder.bind(RefererManager.class).to(      HibernateRefererManagerImpl.class);
+        binder.bind(ThreadManager.class).to(       HibernateThreadManagerImpl.class);
         binder.bind(UserManager.class).to(         HibernateUserManagerImpl.class);
         binder.bind(WeblogManager.class).to(       HibernateWeblogManagerImpl.class);
-        
-        
+                
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);
         binder.bind(FileManager.class).to(         FileManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
         binder.bind(PluginManager.class).to(       PluginManagerImpl.class);
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
-        binder.bind(ThreadManager.class).to(       ThreadManagerImpl.class);
     }
 }
 

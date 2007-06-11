@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
-import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -64,16 +63,15 @@ public class RollerModule implements Module {
         binder.bind(PingTargetManager.class).to(   JPAPingTargetManagerImpl.class); 
         binder.bind(PropertiesManager.class).to(   JPAPropertiesManagerImpl.class);   
         binder.bind(RefererManager.class).to(      JPARefererManagerImpl.class);
+        binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);  
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
-        
-        
+                
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
         binder.bind(FileManager.class).to(         FileManagerImpl.class);   
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
         binder.bind(PluginManager.class).to(       PluginManagerImpl.class);    
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);  
-        binder.bind(ThreadManager.class).to(       ThreadManagerImpl.class);  
     }    
 }
 
