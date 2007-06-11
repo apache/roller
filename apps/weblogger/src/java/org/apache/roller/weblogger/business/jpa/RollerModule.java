@@ -24,8 +24,6 @@ import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
-import org.apache.roller.weblogger.business.PluginManager;
-import org.apache.roller.weblogger.business.PluginManagerImpl;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerDatabaseProvider;
@@ -34,6 +32,8 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
@@ -56,7 +56,7 @@ public class RollerModule implements Module {
         binder.bind(Roller.class).to(JPARollerImpl.class);
         
         binder.bind(JPAPersistenceStrategy.class);       
-        binder.bind(org.apache.roller.planet.business.jpa.JPAPersistenceStrategy.class);   
+        binder.bind(org.apache.roller.weblogger.planet.business.jpa.JPARollerPlanetPersistenceStrategy.class);   
         
         binder.bind(AutoPingManager.class).to(     JPAAutoPingManagerImpl.class);   
         binder.bind(BookmarkManager.class).to(     JPABookmarkManagerImpl.class);  

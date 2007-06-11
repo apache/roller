@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.PluginManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerImpl;
@@ -32,6 +31,7 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 /**
  * A JPA specific implementation of the Roller business layer.
  */
+@com.google.inject.Singleton
 public class JPARollerImpl extends RollerImpl {
 
     static final long serialVersionUID = 5256135928578074652L;

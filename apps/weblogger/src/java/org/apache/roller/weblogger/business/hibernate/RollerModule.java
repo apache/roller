@@ -24,8 +24,6 @@ import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
-import org.apache.roller.weblogger.business.PluginManager;
-import org.apache.roller.weblogger.business.PluginManagerImpl;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerDatabaseProvider;
@@ -34,6 +32,8 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
@@ -48,32 +48,32 @@ import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
  * Guice module for configuring Hibernate as Roller-backend.
  */
 public class RollerModule implements Module {
-
+    
     public void configure(Binder binder) {
         
         binder.bind(DatabaseProvider.class).to(RollerDatabaseProvider.class);
-
+        
         binder.bind(Roller.class).to(HibernateRollerImpl.class);
         
-        binder.bind(HibernatePersistenceStrategy.class);       
-        binder.bind(org.apache.roller.weblogger.planet.business.hibernate.HibernateRollerPlanetPersistenceStrategy.class);     
+        binder.bind(HibernatePersistenceStrategy.class);
+        binder.bind(org.apache.roller.weblogger.planet.business.hibernate.HibernateRollerPlanetPersistenceStrategy.class);
         
-        binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);   
-        binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);  
-        binder.bind(PingQueueManager.class).to(    HibernatePingQueueManagerImpl.class);   
-        binder.bind(PingTargetManager.class).to(   HibernatePingTargetManagerImpl.class); 
-        binder.bind(PropertiesManager.class).to(   HibernatePropertiesManagerImpl.class);   
+        binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);
+        binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);
+        binder.bind(PingQueueManager.class).to(    HibernatePingQueueManagerImpl.class);
+        binder.bind(PingTargetManager.class).to(   HibernatePingTargetManagerImpl.class);
+        binder.bind(PropertiesManager.class).to(   HibernatePropertiesManagerImpl.class);
         binder.bind(RefererManager.class).to(      HibernateRefererManagerImpl.class);
-        binder.bind(UserManager.class).to(         HibernateUserManagerImpl.class);   
-        binder.bind(WeblogManager.class).to(       HibernateWeblogManagerImpl.class);   
+        binder.bind(UserManager.class).to(         HibernateUserManagerImpl.class);
+        binder.bind(WeblogManager.class).to(       HibernateWeblogManagerImpl.class);
         
         
-        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
-        binder.bind(FileManager.class).to(         FileManagerImpl.class);   
+        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);
+        binder.bind(FileManager.class).to(         FileManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
-        binder.bind(PluginManager.class).to(       PluginManagerImpl.class);    
-        binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);  
-        binder.bind(ThreadManager.class).to(       ThreadManagerImpl.class);  
-    }    
+        binder.bind(PluginManager.class).to(       PluginManagerImpl.class);
+        binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
+        binder.bind(ThreadManager.class).to(       ThreadManagerImpl.class);
+    }
 }
 
