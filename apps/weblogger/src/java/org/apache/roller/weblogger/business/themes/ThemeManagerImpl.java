@@ -133,6 +133,8 @@ public class ThemeManagerImpl implements ThemeManager {
                     (SharedTheme) this.themes.get(weblog.getEditorTheme());
             if(staticTheme != null) {
                 weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
+            } else {
+                log.warn("Unable to lookup theme "+weblog.getEditorTheme());
             }
         }
         
