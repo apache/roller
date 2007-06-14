@@ -28,6 +28,7 @@ import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 
 
 /**
@@ -209,9 +210,20 @@ public class PlanetSubscriptions extends PlanetUIAction {
         
         List<PlanetSubscriptionData> subs = Collections.EMPTY_LIST;
         if(getGroup() != null) {
-            Set subsSet = getGroup().getSubscriptions();
-            subs = new ArrayList(subsSet);
+            Set<PlanetSubscriptionData> subsSet = getGroup().getSubscriptions();
+            
+            String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+            
+            // iterate over list and build display list
+            subs = new ArrayList();
+            for( PlanetSubscriptionData sub : subsSet ) {
+                // only include external subs for display
+                if(!sub.getFeedURL().startsWith(absUrl)) {
+                    subs.add(sub);
+                }
+            }
         }
+        
         return subs;
     }
     
