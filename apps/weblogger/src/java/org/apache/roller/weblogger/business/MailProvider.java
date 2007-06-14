@@ -74,8 +74,8 @@ public class MailProvider {
         if (type == ConfigurationType.JNDI_NAME) {            
             String name = "java:comp/env/" + jndiName;
             try {
-                Context ctx = (Context) new InitialContext().lookup(name);
-                session = (Session)ctx.lookup(name);        
+                Context ctx = (Context) new InitialContext();
+                session = (Session) ctx.lookup(name);
             } catch (NamingException ex) {
                 throw new WebloggerException("ERROR looking up mail-session with JNDI name: " + name);
             }
