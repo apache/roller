@@ -96,7 +96,7 @@
       </property-def>
       <property-def  name="user.account.activation.enabled"  key="configForm.accountActivation">
          <type>boolean</type>
-         <default-value>true</default-value>
+         <default-value>false</default-value>
       </property-def>
       <property-def  name="user.account.activation.mail.from"  key="configForm.accountActivationFromAddress">
          <type>string</type>
