@@ -26,9 +26,6 @@ alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
 update rag_group set planet_id='zzz_default_planet_zzz';
 
--- drop old planet config table
-drop table if exists rag_config;
-
 
 -- new column to support account activation by email
 #addColumnNull("rolleruser" "activationcode" "varchar(48)")
@@ -48,24 +45,32 @@ update rolleruser set screenname = username;
 
 -- add new action column to webpage table, default value is custom
 #addColumnNotNull("webpage" "action" "varchar(16)" "'custom'")
-update webpage set action = 'weblog' where name = 'Weblog';
 
 -- add new custom stylesheet column to website table
 #addColumnNull("website" "customstylesheet" "varchar(128)")
 
+
+
+
+-- The rest of these statements are just deleting old columns/tables which
+-- are no longer used by Roller starting in 4.0.  If you want to be a cautious
+-- upgrader then you can wait and run these statements only after you have
+-- finished upgrading to 4.0 and feel that things are stable.
+
+-- drop old planet config table
+drop table if exists rag_config;
+
 -- remove old id column of group subscription table
 alter table rag_group_subscription drop column id;
 
--- remove old usercookie table which has been unused since 0.x?
+-- remove old usercookie table which hasn't been unused since 0.x?
 drop table if exists usercookie;
 
--- remove old assoc tables which were EOLed in 3.2
+-- remove old assoc tables
 drop table if exists folderassoc;
 drop table if exists weblogcategoryassoc;
 
 -- remove old rollerconfig table which has been deprecated since 1.2
--- NOTE: since this breaks the pre-1.2 -> 4.0+ direct upgrade path then
---       maybe we want to attempt to fix that by doing that upgrade via sql?
 drop table if exists rollerconfig;
 
 -- remove old approved, spam, pending columns from comment table
