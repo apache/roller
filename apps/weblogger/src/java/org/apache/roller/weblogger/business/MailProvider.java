@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.weblogger.business;
 
 import java.util.Properties;
@@ -13,11 +31,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
+
 /**
  * Encapsulates Roller mail configuration, returns mail sessions.
  */
 public class MailProvider {
-    private static Log log = LogFactory.getLog(MailProvider.class);
+    
+    private static final Log log = LogFactory.getLog(MailProvider.class);
+    
     private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES; }
     
     private static MailProvider singletonInstance = null;
@@ -39,14 +60,14 @@ public class MailProvider {
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
         }
-        jndiName =     RollerConfig.getProperty("mail.jndiName");
+        jndiName =     RollerConfig.getProperty("mail.jndi.name");
         mailHostname = RollerConfig.getProperty("mail.hostname");
         mailUsername = RollerConfig.getProperty("mail.username");
         mailPassword = RollerConfig.getProperty("mail.password");
         try {
             mailPort = Integer.parseInt(RollerConfig.getProperty("mail.port"));
         } catch (Throwable t) {
-            log.error("ERROR mail server port not a valid integer, ignoring");
+            log.warn("mail server port not a valid integer, ignoring");
         }
         
         // init and connect now so we fail early
