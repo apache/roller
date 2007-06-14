@@ -664,7 +664,38 @@ public class UpgradeDatabase {
         
         mLogger.info("Doing upgrade to 400 ...");
         
-        try {    
+        try {
+            mLogger.info("Setting all weblog default templates with action 'weblog'");
+            
+            // we are taking all of the weblog defaulte templates defined by the
+            // website.defaultpageid column and setting their action value to 'weblog'
+            
+            // select default page ids
+            PreparedStatement selectDefaultTemplateIds = con.prepareStatement(
+                    "select defaultpageid from website");
+            
+            // update template with action value 'weblog'
+            PreparedStatement updateTemplateAction = con.prepareStatement(
+                    "update webpage set action = ? where id = ?");
+            
+            // lets get to it
+            ResultSet rs = selectDefaultTemplateIds.executeQuery();
+            while (rs.next()) {
+                updateTemplateAction.clearParameters();
+                updateTemplateAction.setString(1, "weblog");
+                updateTemplateAction.setString(2, rs.getString(1));
+                updateTemplateAction.executeUpdate();
+            }
+            
+            if (!con.getAutoCommit()) con.commit();
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 400", e);
+            throw new WebloggerException("Problem upgrading database to version 400", e);
+        }
+        
+        
+        try {
             mLogger.info("Merging planet groups 'all' and 'external'");
             
             // Move all subscriptions in the planet group 'external' to group 'all'
