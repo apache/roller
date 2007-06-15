@@ -254,6 +254,9 @@ public class EntryBean {
         return status.equals(WeblogEntry.PUBLISHED);
     }
     
+    public boolean isScheduled() {
+        return status.equals(WeblogEntry.SCHEDULED);
+    }
     
     public void copyTo(WeblogEntry entry) throws WebloggerException {
         
