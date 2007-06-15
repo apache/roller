@@ -140,8 +140,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         String cat = null;
         if ( postcontent.get("categories") != null ) {
-            Vector cats = (Vector)postcontent.get("categories");
-            cat = (String)cats.elementAt(0);
+            Object[] cats = (Object[])postcontent.get("categories");
+            cat = (String)cats[0];
         }
         mLogger.debug("      Title: " + title);
         mLogger.debug("   Category: " + cat);
@@ -259,11 +259,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // so here we take accept the first category that exists
             WeblogCategory rollerCat = null;
             if ( postcontent.get("categories") != null ) {
-                Vector cats = (Vector)postcontent.get("categories");
-                if (cats != null && cats.size() > 0) {
-                    for (int i=0; i<cats.size(); i++) {
-                        String cat = (String)cats.get(i);
-                        rollerCat = weblogMgr.getWeblogCategoryByPath(website, cat);
+                Object[] cats = (Object[])postcontent.get("categories");
+                if (cats != null && cats.length > 0) {
+                    mLogger.debug("cats type - "+cats[0].getClass().getName());
+                    mLogger.debug("cat to string - "+cats[0].toString());
+                    for (int i=0; i<cats.length; i++) {
+                        Object cat = cats[i];
+                        rollerCat = weblogMgr.getWeblogCategoryByPath(website, (String)cat);
                         if (rollerCat != null) {
                             entry.setCategory(rollerCat);
                             break;
