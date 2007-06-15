@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -325,7 +326,7 @@ public final class URLUtilities {
                                                     String filePath,
                                                     boolean absolute) {
         
-        if(weblog == null) {
+        if(weblog == null || StringUtils.isEmpty(filePath)) {
             return null;
         }
         
