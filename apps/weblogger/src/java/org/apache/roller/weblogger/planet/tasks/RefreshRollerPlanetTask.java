@@ -56,7 +56,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
     
     
     public String getName() {
-        return "RefreshPlanetTask";
+        return "RefreshRollerPlanetTask";
     }
     
     public String getClientId() {
