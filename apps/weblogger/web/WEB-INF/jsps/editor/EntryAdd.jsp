@@ -23,7 +23,7 @@
     </s:text>
 </p>
 
-<s:form id="entry" action="entryAdd!save">
+<s:form id="entry" action="entryAdd!save" onsubmit="editorCleanup()">
     <s:hidden name="weblog" />
     
     <%-- ================================================================== --%>

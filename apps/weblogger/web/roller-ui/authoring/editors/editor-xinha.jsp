@@ -18,10 +18,9 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script type="text/javascript">
-<!--
-function postWeblogEntry() {
-    document.weblogEntryFormEx.text.value = xinha_editors.xe_content.getHTML().trim();
-    document.weblogEntryFormEx.summary.value = xinha_editors.xe_summary.getHTML().trim();
+function editorCleanup() {
+    $('xe_content').value = xinha_editors.xe_content.getHTML().trim();
+    $('xe_summary').value = xinha_editors.xe_summary.getHTML().trim();
 }
 
 // (preferably absolute) URL (including trailing slash) where Xinha is installed
@@ -29,7 +28,6 @@ _editor_url  = '<s:url value="/roller-ui/authoring/editors/xinha/" />'
 
 // And the language we need to use in the editor.
 _editor_lang = "en"; 
--->
 </script>
 <script type="text/javascript" src='<s:url value="/roller-ui/authoring/editors/xinha/htmlarea.js" />'></script>
 <script type="text/javascript" src='<s:url value="/roller-ui/authoring/editors/xinha/my_config.js" />'></script> 
@@ -42,8 +40,4 @@ _editor_lang = "en";
 <%-- ===================================================================== --%>
 <b><s:text name="weblogEdit.summary" /></b><br />
 <s:textarea id="xe_summary" name="bean.summary" rows="10" cols="50" cssStyle="width: 100%" />
-
-
  
-
-
