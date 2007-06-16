@@ -88,7 +88,7 @@
                 class="org.apache.roller.weblogger.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
         </action>
-            
+                        
         <action name="login"
                 class="org.apache.roller.weblogger.ui.struts2.core.Login">
             <result type="tiles">.Login</result>
@@ -119,6 +119,27 @@
             <result type="tiles">.MainMenu</result>
         </action>
         
+    </package>
+    
+    
+    <!-- Weblogger Admin UI (includes planet) -->
+    <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger">
+        
+        <action name="databaseError"
+                class="org.apache.roller.weblogger.ui.struts2.core.DatabaseError">
+            <result name="success" type="tiles">.DatabaseError</result>
+        </action>
+            
+        <action name="createDatabase!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.CreateDatabase">
+            <result name="success" type="tiles">.CreateDatabase</result>
+        </action>
+            
+        <action name="upgradeDatabase!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.UpgradeDatabase">
+            <result name="success" type="tiles">.UpgradeDatabase</result>
+        </action>
+    
     </package>
     
     

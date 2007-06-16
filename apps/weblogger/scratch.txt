@@ -1,0 +1,6 @@
+
+run '/Users/dave/src/roller_apache/roller_newinstaller/apps/weblogger/build/webapp/WEB-INF/dbscripts/droptables.sql';
+
+run '/Users/dave/src/roller_apache/old_releases/roller-2.0.2/WEB-INF/dbscripts/derby/createdb.sql';
+insert into roller_properties values ('roller.database.version','200');
+
