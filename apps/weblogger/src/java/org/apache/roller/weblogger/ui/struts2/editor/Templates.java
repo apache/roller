@@ -71,7 +71,9 @@ public class Templates extends UIAction {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             
             // get current list of templates, minus custom stylesheet
-            List<WeblogTemplate> pages = mgr.getPages(getActionWeblog());
+            List<WeblogTemplate> raw = mgr.getPages(getActionWeblog()); 
+            List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
+            pages.addAll(raw);
             if(getActionWeblog().getTheme().getStylesheet() != null) {
                 pages.remove(mgr.getPageByLink(getActionWeblog(), 
                         getActionWeblog().getTheme().getStylesheet().getLink()));
