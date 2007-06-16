@@ -221,6 +221,7 @@
         <copy todir="${build.compile.web}">
             <fileset dir="${ro.src}">
                 <exclude name="**/META-INF/**"/> <!-- don't copy persistence.xml -->
+                <exclude name="**/pojos/**"/> <!-- don't copy any POJO ORM mapping files -->
                 <exclude name="**/*.java"/>
                 <exclude name="**/*.html"/>
                 <exclude name="**/*.png"/>
@@ -717,14 +718,13 @@
         
         <!-- Copy test resources -->
         <copy todir="${build.compile.tests}">
-            <fileset dir="${ro.tests}" 
-                     excludes="**/*.java, **/*.html, **/*.png" />
+            <fileset dir="${ro.tests}" excludes="**/*.java, **/*.html, **/*.png" />
         </copy>
         
         <!-- 
-    Copy web config files to ${build.tests} to make them available for testing.
-    This includes the WEB-INF directory, minus jsps
-    -->
+        Copy web config files to ${build.tests} to make them available for testing.
+        This includes the WEB-INF directory, minus jsps
+        -->
         <mkdir dir="${build.tests}/WEB-INF" />
         <copy todir="${build.tests}/WEB-INF">
             <fileset dir="${basedir}/web/WEB-INF">
@@ -737,10 +737,11 @@
         </copy>
         
         <!-- 
-    Copy custom testing files which will overwrite some config files 
-    -->
+        Copy custom testing files which will overwrite some config files 
+        -->
         <copy todir="${build.tests}" overwrite="true">
             <fileset dir="${basedir}/testdata" />
+            <fileset dir="${build.webapp}" includes="**/dbscripts/**" />
         </copy>
         
         <!-- allow for custom build work -->
