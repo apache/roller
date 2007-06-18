@@ -50,7 +50,14 @@ public class ModDateHeaderUtil {
     public static boolean respondIfNotModified(HttpServletRequest request,
                                                HttpServletResponse response,
                                                long lastModifiedTimeMillis) {
-        long sinceDate = request.getDateHeader("If-Modified-Since");
+        long sinceDate = 0;
+        try {
+            sinceDate = request.getDateHeader("If-Modified-Since");
+        } catch(IllegalArgumentException ex) {
+            // this indicates there was some problem parsing the header value as a date
+            return false;
+        }
+        
         // truncate to seconds
         lastModifiedTimeMillis -= (lastModifiedTimeMillis % 1000);
         log.debug("since date = " + sinceDate);
