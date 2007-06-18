@@ -18,27 +18,13 @@
 
 package org.apache.roller.planet.business.jpa;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-import com.sun.syndication.fetcher.impl.SyndFeedInfo;
-
-import java.io.File;
-import java.net.URL;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -46,16 +32,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
-import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 import org.apache.roller.planet.business.AbstractManagerImpl;
-import org.apache.roller.planet.config.PlanetRuntimeConfig;
-
 
 /**
  * Manages Planet Roller objects and entry aggregations in a database.
