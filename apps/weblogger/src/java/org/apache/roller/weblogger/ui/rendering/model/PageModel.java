@@ -176,6 +176,24 @@ public class PageModel implements Model {
     
     
     /**
+     * Returns the list of tags specified in the request /tags/foo+bar
+     */
+    public List getTags() {
+        return pageRequest.getTags();
+    }
+    
+    
+    /**
+     * A map of entries representing this page. The collection is grouped by 
+     * days of entries.  Each value is a list of entry objects keyed by the 
+     * date they were published.
+     */
+    public WeblogEntriesPager getWeblogEntriesPager() {
+        return getWeblogEntriesPager(null);
+    }
+    
+    
+    /**
      * A map of entries representing this page - with entries restricted by category.
      * The collection is grouped by days of entries.  
      * Each value is a list of entry objects keyed by the date they were published.
@@ -184,7 +202,8 @@ public class PageModel implements Model {
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
         return getWeblogEntriesPager(catArgument, null);
     }
-
+    
+    
     /**
      * A map of entries representing this page - with entries restricted by tag.
      * The collection is grouped by days of entries.  
@@ -194,6 +213,7 @@ public class PageModel implements Model {
     public WeblogEntriesPager getWeblogEntriesPagerByTag(String tagArgument) {
         return getWeblogEntriesPager(null, tagArgument);
     }
+    
     
     private WeblogEntriesPager getWeblogEntriesPager(String catArgument, String tagArgument) {
         
@@ -255,16 +275,6 @@ public class PageModel implements Model {
                     pageRequest.getPageNum());
         }
     }
-    
-    
-    /**
-     * A map of entries representing this page. The collection is grouped by 
-     * days of entries.  Each value is a list of entry objects keyed by the 
-     * date they were published.
-     */
-    public WeblogEntriesPager getWeblogEntriesPager() {
-        return getWeblogEntriesPager(null);
-    }
         
     
     /**
@@ -291,11 +301,4 @@ public class PageModel implements Model {
         return null;
     }
     
-    /**
-     * Returns the list of tags specified in the request /tags/foo+bar
-     * @return
-     */
-    public List getTags() {
-        return pageRequest.getTags();
-    }    
 }

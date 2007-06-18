@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 
 /**
- *
+ * A pager over a collection of recent weblog entries.
  */
 public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     
@@ -76,12 +76,12 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 Map mmap = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
-                        
                         weblog,
                         null,
                         new Date(),
                         catPath,
-                        tags,WeblogEntry.PUBLISHED,
+                        tags,
+                        WeblogEntry.PUBLISHED,
                         locale,
                         offset,
                         length + 1);
