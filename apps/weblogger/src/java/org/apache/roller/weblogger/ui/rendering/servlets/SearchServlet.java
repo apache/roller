@@ -92,6 +92,11 @@ public class SearchServlet extends HttpServlet {
             return;
         }
         
+        // do we need to force a specific locale for the request?
+        if(searchRequest.getLocale() == null && !weblog.isShowAllLangs()) {
+            searchRequest.setLocale(weblog.getLocale());
+        }
+        
         // lookup template to use for rendering
         ThemeTemplate page = null;
         try {
