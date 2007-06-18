@@ -1237,10 +1237,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 query.setParameter(1, website);
                 query.setParameter(2, start);
             } else {
-                Timestamp start = new Timestamp(startDate.getTime());
                 query = strategy.getNamedQuery(
                         "WeblogEntryTagAggregate.getPopularTagsByWebsite");
-                query.setParameter(1, start);
+                query.setParameter(1, website);
             }
         } else {
             if (startDate != null) {
@@ -1267,7 +1266,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             Object[] row = (Object[]) iter.next();
             TagStat t = new TagStat();
             t.setName((String) row[0]);
-            t.setCount(((Integer) row[1]).intValue());
+            t.setCount(((Number) row[1]).intValue());
             
             min = Math.min(min, t.getCount());
             max = Math.max(max, t.getCount());

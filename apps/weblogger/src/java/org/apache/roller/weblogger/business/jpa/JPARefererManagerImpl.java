@@ -195,7 +195,7 @@ public class JPARefererManagerImpl implements RefererManager {
         List queryResults = (List)q.getResultList();
         for (Iterator it = queryResults.iterator(); it.hasNext(); ) {
             Object[] row = (Object[])it.next();
-            Integer hits = (Integer)row[0];
+            long hits = ((Number)row[0]).longValue();
             String websiteId = (String)row[1];
             String websiteName = (String)row[2];
             String websiteHandle = (String)row[3];
@@ -204,7 +204,7 @@ public class JPARefererManagerImpl implements RefererManager {
                 websiteHandle,
                 websiteName,
                 "statCount.weblogDayHits",
-                hits.longValue()));              
+                hits));              
         }
         // Original query ordered by desc hits.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
