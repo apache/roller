@@ -21,6 +21,7 @@ drop table rag_subscription;
 drop table rag_group;
 drop table rag_planet;
 drop table rag_properties;
+drop table rag_config;
 
 -- non-associated tables
 drop table newsfeed;

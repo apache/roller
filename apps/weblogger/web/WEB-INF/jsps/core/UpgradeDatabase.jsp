@@ -21,10 +21,9 @@
 <s:if test="error">
     
     <h2><s:text name="installer.errorUpgradingTables" /></h2> 
+    <p><s:text name="installer.errorUpgradingTablesExplanation" /></p> 
 <pre>
-<s:iterator value="messages">
-<s:property/>
-</s:iterator>
+<s:iterator value="messages"><s:property/><br /></s:iterator>
 </pre>
     
 </s:if>
@@ -49,7 +48,11 @@
     <h2><s:text name="installer.tablesUpgraded" /></h2>
     
     <p><s:text name="installer.tablesUpgradedExplanation" /></p>
-    <p><s:text name="installer.pleaseRestart" /></p>
+    <p>
+        <s:text name="installer.tryBootstrapping">
+            <s:param><s:url value="/"/></s:param>
+        </s:text>
+    </p>
     
 <pre>
 <s:iterator value="messages"><s:property/><br /></s:iterator>

@@ -18,44 +18,40 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import com.opensymphony.xwork2.ActionSupport;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.business.utils.DatabaseScriptProvider;
 import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.struts2.interceptor.ApplicationAware;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
  * Walk user through database auto-upgrade process.
  */
-public class UpgradeDatabase extends ActionSupport implements ApplicationAware { 
-    private static Log log = LogFactory.getLog(UpgradeDatabase.class);
-    
-    private DatabaseScriptProvider scripts = null;
+public class UpgradeDatabase extends UIAction { 
+    private static Log log = LogFactory.getLog(UpgradeDatabase.class);    
     private boolean error = false;
     private List<String> messages = null;
     
+    
     public String execute() {
         return SUCCESS;
+    }    
+    
+    public boolean isUserRequired() {
+        return false;
     }
     
-    /**
-     * Looks for DatabaseScriptProvider via key 'DatabaseScriptProvider'
-     */
-    public void setApplication(Map map) {
-        if (map.get("DatabaseScriptProvider") != null) {
-            scripts = (DatabaseScriptProvider)map.get("DatabaseScriptProvider");
-        }
+    public boolean isWeblogRequired() {
+        return false;
     }
     
     public String upgrade() {
-        DatabaseUpgrader upgrader = new DatabaseUpgrader(scripts);
+        DatabaseUpgrader upgrader = new DatabaseUpgrader(
+                new ServletContextDatabaseScriptProvider());
         try {
             upgrader.upgradeDatabase(true);
         } catch (Exception ex) {

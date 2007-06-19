@@ -60,11 +60,15 @@ public class PersistenceSessionFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             log.debug("Releasing Roller Session");
-            RollerFactory.getRoller().release();
+            if (RollerFactory.getRoller() != null) {
+                RollerFactory.getRoller().release();
+            }
             
             // if planet is enabled then release planet backend as well
-            if(RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-                PlanetFactory.getPlanet().release();
+            if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                if (PlanetFactory.getPlanet() != null) {
+                    PlanetFactory.getPlanet().release();
+                }
             }
         }
         
