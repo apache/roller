@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.business.RollerFactory;
+
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.utils.DatabaseCreator;
 import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
@@ -58,23 +58,51 @@ public class BootstrapFilter implements Filter {
         
         log.debug("Entered "+request.getRequestURI());
         
-        if ("auto".equals(RollerConfig.getProperty("installation.type"))) {            
+        if ("auto".equals(RollerConfig.getProperty("installation.type"))) {
+            
             // an auto-install is in progress, do some checks and if necessary
             // redirect to error, db create or db upgrade page
 
             // only do this if Roller is configured for auto-install and 
-            // only if request is NOT for install page or a style/script file            
+            // only if request is NOT for install page or a style/script file
+            
             String requestURI = request.getRequestURI();
             if (     requestURI != null 
                  && !requestURI.startsWith("/roller/roller-ui/install") 
                  && !requestURI.endsWith(".js")
                  && !requestURI.endsWith(".css")) {
-                
-                if (RollerFactory.isBootstrapped()) {
-                    // we doing an install, so forward to installer
+                        
+                // if cannot connect to database
+                try {
+                    DatabaseProvider dp = DatabaseProvider.getDatabaseProvider();             
+                } catch (RollerException e) {
+                    // we doing an install, so forward to informative database error page
                     RequestDispatcher rd = 
-                        context.getRequestDispatcher("/roller-ui/install/installer.rol");
+                        context.getRequestDispatcher("/roller-ui/install/databaseError.rol");
                     rd.forward(req, res);
+                    return;
+                }   
+
+                // if installation type 'auto' then check if upgrade required
+                try {               
+                    if (DatabaseCreator.isCreationRequired()) {
+                        // forward to database create page
+                        RequestDispatcher rd = context.getRequestDispatcher(
+                            "/roller-ui/install/createDatabase.rol");
+                        rd.forward(req, res);   
+                        return;
+                    } 
+                    if (DatabaseUpgrader.isUpgradeRequired()) {
+                        // forward to database upgrade page
+                        RequestDispatcher rd = context.getRequestDispatcher(
+                            "/roller-ui/install/upgradeDatabase.rol");
+                        rd.forward(req, res);
+                        return;
+                    }
+                } catch (Throwable t) {
+                    // Exception at this point indicates something is 
+                    // horribly wrong and there is no way to recover.
+                    throw new RuntimeException("FATAL error checking database status", t);
                 }
             }
         }
