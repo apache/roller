@@ -33,7 +33,6 @@ import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.utils.DatabaseScriptProvider;
 import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
@@ -42,6 +41,7 @@ import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.ui.struts2.core.ServletContextDatabaseScriptProvider;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
@@ -53,7 +53,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * Initialize the Roller web application/context.
  */
 public class RollerContext extends ContextLoaderListener  
-        implements ServletContextListener, DatabaseScriptProvider { 
+        implements ServletContextListener { 
     
     private static Log log = LogFactory.getLog(RollerContext.class);
     
@@ -78,9 +78,6 @@ public class RollerContext extends ContextLoaderListener
 
             // Keep a reverence to ServletContext object
             this.servletContext = sce.getServletContext();
-
-            // Save self to context as DatabaseScriptProvider
-            this.servletContext.setAttribute("DatabaseScriptProvider", this);
 
             // Call Spring's context ContextLoaderListener to initialize all the 
             // context files specified in web.xml. This is necessary because 
@@ -126,7 +123,8 @@ public class RollerContext extends ContextLoaderListener
             // If installation type is manual, then don't run migraton scripts
             if ("manual".equals(RollerConfig.getProperty("installation.type"))) {
                 if (DatabaseUpgrader.isUpgradeRequired()) {
-                    DatabaseUpgrader upgrader = new DatabaseUpgrader(this); 
+                    DatabaseUpgrader upgrader = new DatabaseUpgrader(
+                            new ServletContextDatabaseScriptProvider());  
                     upgrader.upgradeDatabase(false);
                 }
             }
@@ -288,14 +286,6 @@ public class RollerContext extends ContextLoaderListener
         return servletContext;
     }
     
-
-    /**
-     * Get database script as stream, path is relative to dbscripts directory.
-     */
-    public InputStream getDatabaseScript(String path) throws Exception {
-        return getServletContext().getResourceAsStream("/WEB-INF/dbscripts/" + path);
-    }
-
 
     /**
      * Get an instance of AutoProvision, if available in roller.properties

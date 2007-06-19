@@ -18,20 +18,28 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import com.opensymphony.xwork2.ActionSupport;
 import java.io.StringWriter;
 import java.util.List;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
  * Display error message about database.
  */
-public class DatabaseError extends ActionSupport { 
+public class DatabaseError extends UIAction { 
     
     public String execute() {
         return SUCCESS;
+    }
+    
+    public boolean isUserRequired() {
+        return false;
+    }
+    
+    public boolean isWeblogRequired() {
+        return false;
     }
     
     public String getProp(String key) {

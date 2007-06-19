@@ -18,26 +18,21 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import com.opensymphony.xwork2.ActionSupport;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.utils.DatabaseCreator;
-import org.apache.roller.weblogger.business.utils.DatabaseScriptProvider;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.struts2.interceptor.ApplicationAware;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 /**
  * Walk user through database auto-creation process.
  */
-public class CreateDatabase extends ActionSupport implements ApplicationAware { 
-    private static Log log = LogFactory.getLog(CreateDatabase.class);
-    
-    private DatabaseScriptProvider scripts = null;    
+public class CreateDatabase extends UIAction { 
+    private static Log log = LogFactory.getLog(CreateDatabase.class);      
     private boolean error = false;
     private List<String> messages = null;
     
@@ -46,17 +41,17 @@ public class CreateDatabase extends ActionSupport implements ApplicationAware {
         return SUCCESS;
     }
     
-    /**
-     * Looks for DatabaseScriptProvider via key 'DatabaseScriptProvider'
-     */
-    public void setApplication(Map map) {
-        if (map.get("DatabaseScriptProvider") != null) {
-            scripts = (DatabaseScriptProvider)map.get("DatabaseScriptProvider");
-        }
+    public boolean isUserRequired() {
+        return false;
     }
-
+    
+    public boolean isWeblogRequired() {
+        return false;
+    }
+    
     public String create() {
-        DatabaseCreator creator = new DatabaseCreator(scripts);
+        DatabaseCreator creator = new DatabaseCreator(
+                new ServletContextDatabaseScriptProvider());
         try {
             creator.createDatabase();
         } catch (Exception ex) {

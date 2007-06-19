@@ -21,6 +21,8 @@ package org.apache.roller.weblogger.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.utils.DatabaseCreator;
+import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
@@ -58,7 +60,14 @@ public final class RollerFactory {
     /**
      * Bootstrap the Roller Weblogger business tier.
      */
-    public static final void bootstrap() {
+    public static final void bootstrap() throws WebloggerException {
+        
+        if ("manual".equals(RollerConfig.getProperty("installation.type"))) {
+            if (DatabaseCreator.isCreationRequired() 
+             || DatabaseUpgrader.isUpgradeRequired()) { 
+                return;
+            }
+        }        
         
         // This will cause instantiation and initialziation of Roller impl
         Roller roller = getRoller();
