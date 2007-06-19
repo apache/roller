@@ -61,6 +61,11 @@ alter table weblogentry modify status varchar(20) default '';
 update weblogentry set status='', pubtime=pubtime, updatetime=updatetime;
 alter table weblogentry modify status varchar(20) not null;
 
+-- add new column which holds the locale for a weblog entry
+-- then set the values and make column not null
+    alter table weblogentry add column locale varchar(20) default null;
+create index we_locale_idx on weblogentry(locale);
+
 create index we_status_idx on weblogentry(status);
 create index weblogentry_userid_index on weblogentry(userid);
 
