@@ -38,6 +38,7 @@ public final class RollerFactory {
         //"org.apache.roller.weblogger.business.datamapper.jpa.JPARollerImpl";
     
     private static Roller rollerInstance = null;
+    private static boolean bootstrapped = false;
     
     
     // non-instantiable
@@ -46,6 +47,14 @@ public final class RollerFactory {
     }
     
     
+    /**
+     * True if bootstrap process was completed
+     */
+    public static boolean isBootstrapped() {
+        return bootstrapped;
+    }
+    
+
     /**
      * Bootstrap the Roller Weblogger business tier.
      */
@@ -87,6 +96,8 @@ public final class RollerFactory {
         } catch (WebloggerException e) {
             log.error("ERROR configing ping managers", e);
         }
+        
+        bootstrapped = true;
     }
     
     
@@ -144,5 +155,5 @@ public final class RollerFactory {
         
         return rollerInstance;
     }
-    
+
 }

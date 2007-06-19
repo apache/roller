@@ -16,30 +16,41 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.util;
+package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.BlacklistChecker;
 
 /**
- * Validates comment if comment does not contain blacklisted words.
+ * Validates comment only if it has fewer links than comment.validator.excessSize.threshold
  */
-public class BlacklistCommentValidator implements CommentValidator {
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");       
-    private BlacklistChecker checker = new BlacklistChecker();
-
+public class ExcessLinksCommentValidator implements CommentValidator {
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");  
+    private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");    
+    private int threshold;
+        
+    public ExcessLinksCommentValidator() {
+        threshold = RollerConfig.getIntProperty("comment.validator.excessLinks.threshold");
+    }
+        
     public String getName() {
-        return bundle.getString("comment.validator.blacklistName");
+        return bundle.getString("comment.validator.excessLinksName");
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        if (checker.checkComment(comment)) {
-            messages.addError("comment.validator.blacklistMessage");
-            return 0;
+        Matcher m = linkPattern.matcher(comment.getContent());
+        int count = 0;
+        while (m.find()) {
+            if (count++ > threshold) {
+                messages.addError("comment.validator.excessLinksMessage", Integer.toString(threshold));
+                return 0;
+            }
         }
-        return 100; 
+        return 100;
     }
     
 }
