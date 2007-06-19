@@ -53,6 +53,7 @@
     </definition>
     
     <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
+        <put name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put name="content"      value="${content}" />
@@ -65,12 +66,8 @@
         <put name="content" value="/WEB-INF/jsps/errors/denied.jsp" />
     </definition>
     
-    
+        
     <!-- core pages (and associates) -->
-    <definition name=".Setup" extends=".tiles-simplepage" >
-        <put name="content" value="/WEB-INF/jsps/core/Setup.jsp" />
-    </definition>
-    
     <definition name=".Login" extends=".tiles-simplepage" >
         <put name="content" value="/WEB-INF/jsps/core/Login.jsp" />
     </definition>
@@ -102,6 +99,36 @@
     </definition>
     
     
+        <!-- setup pages -->
+    <definition name=".Setup" extends=".tiles-simplepage" >
+        <put name="content" value="/WEB-INF/jsps/core/Setup.jsp" />
+    </definition>
+    
+    <definition name=".CreateDatabase" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/core/CreateDatabase.jsp" />
+        <put name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+
+    <definition name=".UpgradeDatabase" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/core/UpgradeDatabase.jsp" />
+        <put name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+    
+    <definition name=".DatabaseError" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/core/DatabaseError.jsp" />
+        <put name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+    
+    <definition name=".UnknownError" extends=".tiles-errorpage" >
+        <put name="content" value="/WEB-INF/jsps/core/UnknownError.jsp" />
+        <put name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+    
+
     <!-- global admin pages (and associates) -->
     <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
         <put name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />

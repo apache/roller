@@ -178,7 +178,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
-        if(name.equals(stylesheet.getName())) {
+        if(stylesheet != null && name.equals(stylesheet.getName())) {
             return stylesheet;
         }
         
@@ -209,7 +209,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if name refers to the stylesheet then return result of getStylesheet()
         ThemeTemplate stylesheet = getStylesheet();
-        if(link.equals(stylesheet.getLink())) {
+        if(stylesheet != null && link.equals(stylesheet.getLink())) {
             return stylesheet;
         }
         

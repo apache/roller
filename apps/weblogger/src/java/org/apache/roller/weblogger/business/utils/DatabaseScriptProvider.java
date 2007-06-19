@@ -15,25 +15,15 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+package org.apache.roller.weblogger.business.utils;
 
-package org.apache.roller.weblogger.ui.rendering.util;
+import java.io.InputStream;
 
-import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.RollerMessages;
-
-/** Interface for comment validation plugin */
-public interface CommentValidator {  
+/**
+ * Interface for retrieving database script.
+ */
+public interface DatabaseScriptProvider {
     
-    /**
-     * Plain text name of validator for display purposes.
-     */
-    public String getName();
-
-    /**
-     * @param comment Comment to be validated
-     * @param messages Messages object to which errors will added
-     * @return Number indicating confidence that comment is valid (100 meaning 100%)
-     */
-    public int validate(WeblogEntryComment comment, RollerMessages messages);   
+    /** Get database script, path is relative to dbscripts dir */
+    public InputStream getDatabaseScript(String path) throws Exception;
 }

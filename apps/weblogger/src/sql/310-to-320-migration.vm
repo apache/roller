@@ -50,8 +50,8 @@ create index co_combo1_idx on roller_comment(status, posttime);
 -- remove old indexes that are no longer of value
 drop index we_pubtime_idx on weblogentry;
 drop index we_pubentry_idx on weblogentry;
-drop index co_pending_idx on roller_comment;
-drop index co_approved_idx on roller_comment;
+-- drop index co_pending_idx on roller_comment;
+-- drop index co_approved_idx on roller_comment;
 
 -- fix wacky indexs which ended up with a size constraint
 drop index rage_sid_idx on rag_entry;

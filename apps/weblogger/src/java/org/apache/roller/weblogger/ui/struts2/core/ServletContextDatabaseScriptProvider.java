@@ -15,34 +15,19 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+package org.apache.roller.weblogger.ui.struts2.core;
 
-package org.apache.roller.weblogger.ui.rendering.util;
-
-import javax.servlet.http.HttpServletRequest;
-
+import java.io.InputStream;
+import org.apache.roller.weblogger.business.utils.DatabaseScriptProvider;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 
 /**
- * Interface for comment authentication plugin.
+ * Reads script from ServletContext.
  */
-public interface CommentAuthenticator {
+public class ServletContextDatabaseScriptProvider implements DatabaseScriptProvider {
     
-    
-    /**
-     * Plugin should write out HTML for the form fields and other UI elements
-     * needed to display the comment authentication widget.
-     *
-     * @param request comment form request object
-     */
-    public String getHtml(HttpServletRequest request);
-    
-    
-    /**
-     * Plugin should return true only if comment posting passes the 
-     * authentication test.
-     *
-     * @param request comment posting request object
-     * @return true if authentication passed, false otherwise
-     */
-    public boolean authenticate(HttpServletRequest request);
-    
+    public InputStream getDatabaseScript(String path) throws Exception {
+        return RollerContext.getServletContext().getResourceAsStream(
+                "/WEB-INF/dbscripts/" + path);
+    }    
 }

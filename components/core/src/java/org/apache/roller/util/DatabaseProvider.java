@@ -21,6 +21,8 @@ package org.apache.roller.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -48,22 +50,30 @@ import org.apache.commons.logging.LogFactory;
  * </pre>
  */
 @com.google.inject.Singleton
-public abstract class DatabaseProvider  {
+public class DatabaseProvider  {
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
+
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
-        
-    protected ConfigurationType type = ConfigurationType.JNDI_NAME;
+    protected ConfigurationType type = ConfigurationType.JNDI_NAME; 
     
+    private static DatabaseProvider singletonInstance = null;
+    private static DatabaseProviderException startupException = null;
+    private static List<String> startupLog = new ArrayList<String>();
+    
+    protected DataSource dataSource = null;    
     protected String jndiName = null; 
-    protected DataSource dataSource = null;  
     
     protected String jdbcDriverClass = null;
     protected String jdbcConnectionURL = null;
     protected String jdbcPassword = null;
     protected String jdbcUsername = null;
     protected Properties props = null;
-   
     
+    
+    /**
+     * Reads configuraiton, loads driver or locates data-source and attempts
+     * to get test connecton so that we can fail early.
+     */ 
     protected void init(
         ConfigurationType type,
         String jndiName, 
@@ -78,41 +88,107 @@ public abstract class DatabaseProvider  {
         this.jdbcConnectionURL = jdbcConnectionURL;
         this.jdbcUsername      = jdbcUsername;
         this.jdbcPassword      = jdbcPassword;
+         
+        if ("jdbc".equals(type)) {
+            type = ConfigurationType.JDBC_PROPERTIES;
+        }
         
-        // init now so we fail early
+        successMessage("SUCCESS: Got parameters. Using configuration type " + type);
+
+        // If we're doing JDBC then attempt to load JDBC driver class
         if (getType() == ConfigurationType.JDBC_PROPERTIES) {
-            log.info("Using 'jdbc' properties based configuration");
+            successMessage("-- Using JDBC driver class: "   + jdbcDriverClass);
+            successMessage("-- Using JDBC connection URL: " + jdbcConnectionURL);
+            successMessage("-- Using JDBC username: "       + jdbcUsername);
+            successMessage("-- Using JDBC password: [hidden]");
             try {
                 Class.forName(getJdbcDriverClass());
             } catch (ClassNotFoundException ex) {
-                throw new DatabaseProviderException(
-                   "Cannot load specified JDBC driver class [" +getJdbcDriverClass()+ "]", ex);
+                String errorMsg = 
+                     "ERROR: cannot load JDBC driver class [" + getJdbcDriverClass()+ "]. "
+                    +"Likely problem: JDBC driver jar missing from server classpath.";
+                errorMessage(errorMsg);
+                startupException = new DatabaseProviderException(errorMsg, ex);
+                throw startupException;
             }
+            successMessage("SUCCESS: loaded JDBC driver class [" +getJdbcDriverClass()+ "]");
+            
             if (getJdbcUsername() != null || getJdbcPassword() != null) {
                 props = new Properties();
                 if (getJdbcUsername() != null) props.put("user", getJdbcUsername());
                 if (getJdbcPassword() != null) props.put("password", getJdbcPassword());
             }
-        } else {
-            log.info("Using 'jndi' based configuration");
+            
+        // Else attempt to locate JNDI datasource
+        } else { 
             String name = "java:comp/env/" + getJndiName();
+            successMessage("-- Using JNDI datasource name: " + name);
             try {
                 InitialContext ic = new InitialContext();
                 dataSource = (DataSource)ic.lookup(name);
             } catch (NamingException ex) {
-                throw new DatabaseProviderException(
-                    "ERROR looking up data-source with JNDI name: " + name, ex);
+                String errorMsg = 
+                    "ERROR: cannot locate JNDI DataSource [" +name+ "]. "
+                   +"Likely problem: no DataSource or datasource is misconfigured.";
+                errorMessage(errorMsg);
+                startupException =  new DatabaseProviderException(errorMsg, ex);
+                throw startupException;
             }            
+            successMessage("SUCCESS: located JNDI DataSource [" +name+ "]");
         }
+        
+        // So far so good. Now, can we get a connection?
         try { 
             Connection testcon = getConnection();
             testcon.close();
         } catch (Throwable t) {
-            throw new DatabaseProviderException("ERROR unable to obtain connection", t);
+            String errorMsg = 
+                "ERROR: unable to obtain database connection. "
+               +"Likely problem: bad connection parameters or database unavailable.";
+            errorMessage(errorMsg);
+            startupException =  new DatabaseProviderException(errorMsg, t);
+            throw startupException;
         }
     }
     
+    private void successMessage(String msg) {
+        startupLog.add(msg);
+        log.info(msg);
+    }
     
+    private void errorMessage(String msg) {
+        startupLog.add(msg);
+        log.error(msg);
+    }
+    
+    /**
+     * Get global database provider singlton, instantiating if necessary.
+     */
+    public static DatabaseProvider getDatabaseProvider() throws DatabaseProviderException {
+        // No need to jam log with database connection attempts
+        if (startupException != null) {
+            throw startupException;
+        }
+        if (singletonInstance == null) {
+            singletonInstance = new DatabaseProvider();
+        }
+        return singletonInstance;
+    }
+    
+    /**
+     * Exception that occured during startup, or null if none occured.
+     */
+    public static DatabaseProviderException getStartupException() {
+        return startupException;
+    }
+
+    /** 
+     * List of success and error messages when class was first instantiated.
+     **/
+    public static List<String> getStartupLog() {
+        return startupLog;
+    }
+
     /**
      * Get database connection from data-source or driver manager, depending 
      * on which is configured.
@@ -148,4 +224,5 @@ public abstract class DatabaseProvider  {
     public String getJdbcUsername() {
         return jdbcUsername;
     }
+
 }

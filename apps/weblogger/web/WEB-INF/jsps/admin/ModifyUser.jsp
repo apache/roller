@@ -103,7 +103,7 @@
                         </a>
                     </td>
                     <td width="%15">
-                        <s:url action="postEntry" namespace="/roller-ui/authoring" id="newEntry">
+                        <s:url action="entryAdd" namespace="/roller-ui/authoring" id="newEntry">
                             <s:param name="weblog" value="#perms.website.handle" />
                         </s:url>
                         <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -111,7 +111,7 @@
                         <s:text name="userAdmin.newEntry" /></a>
                     </td>
                     <td width="%15">
-                        <s:url value="entries" namespace="/roller-ui/authoring" id="editEntries">
+                        <s:url action="entries" namespace="/roller-ui/authoring" id="editEntries">
                             <s:param name="weblog" value="#perms.website.handle" />
                         </s:url>
                         <img src='<s:url value="/images/page_white_edit.png"/>' />
@@ -119,7 +119,7 @@
                         <s:text name="userAdmin.editEntries" /></a> 
                     </td>
                     <td width="%15">
-                        <s:url value="settings" namespace="/roller-ui/authoring" id="manageWeblog">
+                        <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
                             <s:param name="weblog" value="#perms.website.handle" />
                         </s:url>
                         <img src='<s:url value="/images/page_white_edit.png"/>' />

@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.core;
 
 import java.io.File;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -35,15 +34,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.utils.UpgradeDatabase;
+import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.ui.struts2.core.ServletContextDatabaseScriptProvider;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
@@ -54,8 +53,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 /**
  * Initialize the Roller web application/context.
  */
-public class RollerContext extends ContextLoaderListener 
-        implements ServletContextListener {
+public class RollerContext extends ContextLoaderListener  
+        implements ServletContextListener { 
     
     private static Log log = LogFactory.getLog(RollerContext.class);
     
@@ -73,45 +72,63 @@ public class RollerContext extends ContextLoaderListener
     public void contextInitialized(ServletContextEvent sce) {
         
         log.info("Apache Roller Weblogger Initializing ...");
-                
-        // Keep a reverence to ServletContext object
-        this.servletContext = sce.getServletContext();
-        
-        // Call Spring's context ContextLoaderListener to initialize all the 
-        // context files specified in web.xml. This is necessary because 
-        // listeners don't initialize in the order specified in 2.3 containers
-        super.contextInitialized(sce);
             
-        // get the *real* path to <context>/resources
-        String ctxPath = servletContext.getRealPath("/");
-        if(!ctxPath.endsWith(File.separator))
-            ctxPath += File.separator + "resources";
-        else
-            ctxPath += "resources";
-        
-        // try setting the uploads path to <context>/resources
-        // NOTE: this should go away at some point
-        // we leave it here for now to allow users to keep writing
-        // uploads into their webapp context, but this is a bad idea
-        //
-        // also, the RollerConfig.setUploadsDir() method is smart
-        // enough to disregard this call unless the uploads.path
-        // is set to ${webapp.context}
-        RollerConfig.setUploadsDir(ctxPath);
-        
-        // try setting the themes path to <context>/themes
-        // NOTE: this should go away at some point
-        // we leave it here for now to allow users to keep using
-        // themes in their webapp context, but this is a bad idea
-        //
-        // also, the RollerConfig.setThemesDir() method is smart
-        // enough to disregard this call unless the themes.dir
-        // is set to ${webapp.context}
-        RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
-        
         try {        
-            // Parts of database upgrade are not included in migration scripts
-            upgradeDatabaseIfNeeded();
+            
+            // First, initialize everything that requires no database 
+
+            // Keep a reverence to ServletContext object
+            this.servletContext = sce.getServletContext();
+
+            // Call Spring's context ContextLoaderListener to initialize all the 
+            // context files specified in web.xml. This is necessary because 
+            // listeners don't initialize in the order specified in 2.3 containers
+            super.contextInitialized(sce);
+
+            // get the *real* path to <context>/resources
+            String ctxPath = servletContext.getRealPath("/");
+            if(!ctxPath.endsWith(File.separator))
+                ctxPath += File.separator + "resources";
+            else
+                ctxPath += "resources";
+
+            // try setting the uploads path to <context>/resources
+            // NOTE: this should go away at some point
+            // we leave it here for now to allow users to keep writing
+            // uploads into their webapp context, but this is a bad idea
+            //
+            // also, the RollerConfig.setUploadsDir() method is smart
+            // enough to disregard this call unless the uploads.path
+            // is set to ${webapp.context}
+            RollerConfig.setUploadsDir(ctxPath);
+
+            // try setting the themes path to <context>/themes
+            // NOTE: this should go away at some point
+            // we leave it here for now to allow users to keep using
+            // themes in their webapp context, but this is a bad idea
+            //
+            // also, the RollerConfig.setThemesDir() method is smart
+            // enough to disregard this call unless the themes.dir
+            // is set to ${webapp.context}
+            RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
+        
+            // Initialize Acegi based on Roller configuration
+            initializeSecurityFeatures(servletContext);
+            
+            // Setup Velocity template engine
+            setupVelocity();
+           
+
+            // Now, the database dependent part...
+
+            // If installation type is manual, then don't run migraton scripts
+            if ("manual".equals(RollerConfig.getProperty("installation.type"))) {
+                if (DatabaseUpgrader.isUpgradeRequired()) {
+                    DatabaseUpgrader upgrader = new DatabaseUpgrader(
+                            new ServletContextDatabaseScriptProvider());  
+                    upgrader.upgradeDatabase(false);
+                }
+            }
             
             // trigger bootstrapping process
             RollerFactory.bootstrap();
@@ -119,27 +136,12 @@ public class RollerContext extends ContextLoaderListener
             // flush any changes made during bootstrapping
             RollerFactory.getRoller().flush();
             
-            // Initialize Acegi based on Roller configuration
-            initializeSecurityFeatures(servletContext);
-            
-            // Setup Velocity template engine
-            setupVelocity();
-            
-            // This will cause instantiation and initialziation of Roller impl
-            Roller roller = RollerFactory.getRoller();
-            
-            // TODO_GUICE: eliminate need this RollerFactory.bootstrap()
-            RollerFactory.bootstrap();
-            
-            // And this will schedule all configured tasks
-            roller.getThreadManager().startTasks();
-            
         } catch (Throwable t) {
             log.fatal("Roller Weblogger initialization failed", t);
         }
         
         // Initialize Planet if necessary
-        if(RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+        if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
             try {
                 Planet planet = PlanetFactory.getPlanet();                
                 PlanetFactory.getPlanet().getPropertiesManager();                
@@ -162,21 +164,6 @@ public class RollerContext extends ContextLoaderListener
         RollerFactory.getRoller().shutdown();        
         // do we need a more generic mechanism for presentation layer shutdown?
         CacheManager.shutdown();
-    }
-    
-    
-    /**
-     * Trigger any database upgrade work that needs to be done.
-     */
-    private void upgradeDatabaseIfNeeded() throws Exception {  
-        
-        // TODO_GUICE: address this little ugliness after table auto-create/update is in place
-        DatabaseProvider databaseProvider = 
-            RollerFactory.getInjector().getInstance(DatabaseProvider.class);
-        
-        Connection con = databaseProvider.getConnection();
-        UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
-        con.close();
     }
     
     
@@ -300,7 +287,7 @@ public class RollerContext extends ContextLoaderListener
         return servletContext;
     }
     
-    
+
     /**
      * Get an instance of AutoProvision, if available in roller.properties
      * @return AutoProvision
@@ -348,5 +335,4 @@ public class RollerContext extends ContextLoaderListener
     public static UIPluginManager getUIPluginManager() {
         return UIPluginManagerImpl.getInstance();
     }
-
 }

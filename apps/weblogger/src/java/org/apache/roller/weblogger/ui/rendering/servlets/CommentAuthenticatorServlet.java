@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.ui.rendering.util.CommentAuthenticator;
-import org.apache.roller.weblogger.ui.rendering.util.DefaultCommentAuthenticator;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentAuthenticator;
 
 
 /**

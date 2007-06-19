@@ -169,8 +169,13 @@ public class FeedServlet extends HttpServlet {
         } else {
             log.debug("MISS "+cacheKey);
         }
-
-
+        
+        
+        // do we need to force a specific locale for the request?
+        if(feedRequest.getLocale() == null && !weblog.isShowAllLangs()) {
+            feedRequest.setLocale(weblog.getLocale());
+        }
+        
         // validation.  make sure that request input makes sense.
         boolean invalid = false;
         if(feedRequest.getLocale() != null) {

@@ -118,7 +118,7 @@ public final class I18nMessages {
             return bundle.getString(key);
         } catch (Exception e) {
             // send a warning in the logs
-            log.warn("Error getting key "+key, e);
+            log.warn("Error getting key "+key);
             return key;
         }
     }

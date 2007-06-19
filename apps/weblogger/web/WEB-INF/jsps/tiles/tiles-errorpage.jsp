@@ -25,6 +25,10 @@
     </head>
     <body>
         
+        <div id="banner">
+            <tiles:insertAttribute name="banner" />
+        </div>
+        
         <div id="wrapper"> 
             <div id="leftcontent_wrap">
                 <div id="leftcontent"> 

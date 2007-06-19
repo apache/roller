@@ -20,7 +20,7 @@
 
 <script type="text/javascript">
 <!--
-function postWeblogEntry() {
+function editorCleanup() {
     // no-op
 }
 function changeSize(e, num) {

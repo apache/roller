@@ -90,7 +90,7 @@ public class PreviewServlet extends HttpServlet {
             }
         } catch (Exception e) {
             // some kind of error parsing the request or getting weblog
-            log.error("error creating preview request", e);
+            log.debug("error creating preview request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -113,6 +113,10 @@ public class PreviewServlet extends HttpServlet {
         // the object that gets referenced during rendering operations
         previewRequest.setWeblog(tmpWebsite);
         
+        // do we need to force a specific locale for the request?
+        if(previewRequest.getLocale() == null && !weblog.isShowAllLangs()) {
+            previewRequest.setLocale(weblog.getLocale());
+        }
         
         Template page = null;
         try {
