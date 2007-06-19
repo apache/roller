@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**

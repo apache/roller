@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.util;
+package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.ui.rendering.util;
+package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.ui.rendering.util.*;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.URLUtilities;
 
