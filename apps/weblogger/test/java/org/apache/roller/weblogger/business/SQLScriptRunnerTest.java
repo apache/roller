@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import junit.framework.TestCase;
+import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.business.utils.SQLScriptRunner;
 
 /**
