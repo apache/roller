@@ -220,7 +220,10 @@ public class EntryBean {
             log.debug("pubtime vals are "+getDateString()+", "+getHours()+", "+getMinutes()+", "+getSeconds());
             
             // first convert the specified date string into an actual Date obj
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            // TODO: at some point this date conversion should be locale sensitive,
+            // however at this point our calendar widget does not take into account
+            // locales and only operates in the standard English US locale.
+            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
             Date newDate = df.parse(getDateString());
             
             log.debug("dateString yields date - "+newDate);
@@ -332,7 +335,10 @@ public class EntryBean {
             setMinutes(cal.get(Calendar.MINUTE));
             setSeconds(cal.get(Calendar.SECOND));
             
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            // TODO: at some point this date conversion should be locale sensitive,
+            // however at this point our calendar widget does not take into account
+            // locales and only operates in the standard English US locale.
+            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
             df.setTimeZone(entry.getWebsite().getTimeZoneInstance());
             setDateString(df.format(entry.getPubTime()));
             
