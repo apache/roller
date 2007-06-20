@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.utils;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,70 +27,144 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
- * Upgrades Roller database.
+ * Handles the install/upgrade of the Roller Weblogger database when the user
+ * has configured their installation type to 'auto'.
  */
-public class DatabaseUpgrader {    
-    private static Log log = LogFactory.getLog(DatabaseUpgrader.class);
-    private DatabaseScriptProvider scripts = null;
-    private List<String>           messages = new ArrayList<String>();
+public class DatabaseInstaller {
+    
+    private static Log log = LogFactory.getLog(DatabaseInstaller.class);
+    
+    private final DatabaseProvider db;
+    private final DatabaseScriptProvider scripts;
+    private final String version;
+    private List<String> messages = new ArrayList<String>();
     
     // the name of the property which holds the dbversion value
     private static final String DBVERSION_PROP = "roller.database.version";
     
     
-    public DatabaseUpgrader(DatabaseScriptProvider scriptProvider) {
-        this.scripts = scriptProvider;
-    }    
+    public DatabaseInstaller(DatabaseProvider dbProvider, DatabaseScriptProvider scriptProvider) {
+        db = dbProvider;
+        scripts = scriptProvider;
+        
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getResourceAsStream("/version.properties"));
+        } catch (IOException e) {
+            log.error("version.properties not found", e);
+        }
+        
+        version = props.getProperty("ro.version", "UNKNOWN");
+    }
     
     
     /** 
      * Determine if database schema needs to be upgraded.
      */
-    public static boolean isUpgradeRequired() throws WebloggerException {        
-        int desiredVersion = parseVersionString(RollerFactory.getRoller().getVersion());
-        int databaseVersion = getDatabaseVersion();
+    public boolean isCreationRequired() {
+        Connection con = null;
+        try {            
+            con = db.getConnection();
+            
+            // just check for a couple key Roller tables
+            if (tableExists(con, "rolleruser") && tableExists(con, "userrole")) {
+                return false;
+            }
+            
+        } catch (Throwable t) {
+            throw new RuntimeException("Error checking for tables", t);            
+        } finally {
+            try { if (con != null) con.close(); } catch (Exception ignored) {}
+        }
+        
+        return true;
+    }
+    
+    
+    /** 
+     * Determine if database schema needs to be upgraded.
+     */
+    public boolean isUpgradeRequired() {        
+        int desiredVersion = parseVersionString(version);
+        int databaseVersion;
+        try {
+            databaseVersion = getDatabaseVersion();
+        } catch (StartupException ex) {
+            throw new RuntimeException(ex);
+        }
         return databaseVersion < desiredVersion;
     }
-
-
-    public void successMessage(String msg) {
-        messages.add(msg);
-        log.info(msg);
+    
+    
+    public List<String> getMessages() {
+        return messages;
     }
     
-
-    public void errorMessage(String msg) {
+    
+    private void errorMessage(String msg) {
         messages.add(msg);
         log.error(msg);
-    }
+    }    
     
-
-    public void errorMessage(String msg, Throwable t) {
+    
+    private void errorMessage(String msg, Throwable t) {
         messages.add(msg);
         log.error(msg, t);
     }
     
-
-    public List<String> getMessages() {
-        return messages;
+    
+    private void successMessage(String msg) {
+        messages.add(msg);
+        log.trace(msg);
     }
-
+    
+    
+    /**
+     * Create datatabase tables.
+     */
+    public void createDatabase() throws StartupException {
+        
+        log.debug("Attempting to create database");
+        
+        Connection con = null;
+        SQLScriptRunner create = null;
+        try {
+            con = db.getConnection();
+            String handle = getDatabaseHandle(con);
+            create = new SQLScriptRunner(scripts.getDatabaseScript(handle + "/createdb.sql"));
+            create.runScript(con, true);
+            messages.addAll(create.getMessages());
+            
+            setDatabaseVersion(con, version);
+            
+        } catch (SQLException sqle) {
+            errorMessage("ERROR running SQL in database creation script");
+            throw new StartupException("Error running sql script", sqle);           
+        } catch (Exception ioe) {
+            if (create != null) messages.addAll(create.getMessages());
+            errorMessage("ERROR reading/parsing database creation script");
+            throw new StartupException("Error running sql script", ioe);           
+        } finally {
+            try { if (con != null) con.close(); } catch (Exception ignored) {}
+        }
+    }
+    
     
     /**
      * Upgrade database if dbVersion is older than desiredVersion.
      */
-    public void upgradeDatabase(boolean runScripts) throws WebloggerException {
+    public void upgradeDatabase(boolean runScripts) throws StartupException {
         
-        int myVersion = parseVersionString(RollerFactory.getRoller().getVersion());
+        int myVersion = parseVersionString(version);
         int dbversion = getDatabaseVersion();
         
         log.debug("Database version = "+dbversion);
@@ -97,11 +172,11 @@ public class DatabaseUpgrader {
        
         Connection con = null;
         try {
-            con = DatabaseProvider.getDatabaseProvider().getConnection();
+            con = db.getConnection();
             if(dbversion < 0) {
                 String msg = "Cannot upgrade database tables, Roller database version cannot be determined";
                 errorMessage(msg);
-                throw new WebloggerException(msg);
+                throw new StartupException(msg);
             } else if(dbversion >= myVersion) {
                 log.info("Database is current, no upgrade needed");
                 return;
@@ -151,10 +226,10 @@ public class DatabaseUpgrader {
 
             // make sure the database version is the exact version
             // we are upgrading too.
-            DatabaseUpgrader.updateDatabaseVersion(con, myVersion);
+            updateDatabaseVersion(con, myVersion);
         
         } catch (SQLException e) {
-            throw new WebloggerException("ERROR obtaining connection");
+            throw new StartupException("ERROR obtaining connection");
         } finally {
             try { if (con != null) con.close(); } catch (Exception ignored) {}
         }
@@ -164,10 +239,10 @@ public class DatabaseUpgrader {
     /**
      * Upgrade database for Roller 1.3.0
      */
-    private void upgradeTo130(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo130(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/120-to-130-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -203,19 +278,19 @@ public class DatabaseUpgrader {
             
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 130", e);  
-            throw new WebloggerException("Problem upgrading database to version 130", e);
+            throw new StartupException("Problem upgrading database to version 130", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 130);
+        updateDatabaseVersion(con, 130);
     }
     
     /**
      * Upgrade database for Roller 2.0.0
      */
-    private void upgradeTo200(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo200(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/130-to-200-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -286,20 +361,20 @@ public class DatabaseUpgrader {
             
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 200", e);
-            throw new WebloggerException("Problem upgrading database to version 200", e);
+            throw new StartupException("Problem upgrading database to version 200", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 200);
+        updateDatabaseVersion(con, 200);
     }
     
     
     /**
      * Upgrade database for Roller 2.1.0
      */
-    private void upgradeTo210(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo210(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/200-to-210-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -401,20 +476,20 @@ public class DatabaseUpgrader {
             
         } catch (Exception e) {
             log.error("Problem upgrading database to version 210", e);
-            throw new WebloggerException("Problem upgrading database to version 210", e);
+            throw new StartupException("Problem upgrading database to version 210", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 210);
+        updateDatabaseVersion(con, 210);
     }
     
     
     /**
      * Upgrade database for Roller 2.3.0
      */
-    private void upgradeTo230(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo230(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/210-to-230-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -423,20 +498,20 @@ public class DatabaseUpgrader {
             }
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 230", e);
-            throw new WebloggerException("Problem upgrading database to version 230", e);
+            throw new StartupException("Problem upgrading database to version 230", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 230);
+        updateDatabaseVersion(con, 230);
     }
     
     
     /**
      * Upgrade database for Roller 2.4.0
      */
-    private void upgradeTo240(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo240(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/230-to-240-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -445,20 +520,20 @@ public class DatabaseUpgrader {
             }
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 240", e);
-            throw new WebloggerException("Problem upgrading database to version 240", e);
+            throw new StartupException("Problem upgrading database to version 240", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 240);
+        updateDatabaseVersion(con, 240);
     }
     
     
     /**
      * Upgrade database for Roller 3.0.0
      */
-    private void upgradeTo300(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo300(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/240-to-300-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -525,20 +600,20 @@ public class DatabaseUpgrader {
             
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 300", e);
-            throw new WebloggerException("Problem upgrading database to version 300", e);
+            throw new StartupException("Problem upgrading database to version 300", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 300);
+        updateDatabaseVersion(con, 300);
     }
     
     
     /**
      * Upgrade database for Roller 3.1.0
      */
-    private void upgradeTo310(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo310(Connection con, boolean runScripts) throws StartupException {
         try {
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/300-to-310-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -547,23 +622,23 @@ public class DatabaseUpgrader {
             }
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 310", e);
-            throw new WebloggerException("Problem upgrading database to version 310", e);
+            throw new StartupException("Problem upgrading database to version 310", e);
         }
         
-        DatabaseUpgrader.updateDatabaseVersion(con, 310);
+        updateDatabaseVersion(con, 310);
     }
 
     
     /**
      * Upgrade database for Roller 3.2.0
      */
-    private void upgradeTo320(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo320(Connection con, boolean runScripts) throws StartupException {
         
         successMessage("Doing upgrade to 320 ...");
         
         try {    
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/310-to-320-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -624,7 +699,7 @@ public class DatabaseUpgrader {
             
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 320", e);
-            throw new WebloggerException("Problem upgrading database to version 320", e);
+            throw new StartupException("Problem upgrading database to version 320", e);
         }
         
         
@@ -773,24 +848,24 @@ public class DatabaseUpgrader {
             
         } catch (SQLException e) {
             log.error("Problem upgrading database to version 320", e);
-            throw new WebloggerException("Problem upgrading database to version 320", e);
+            throw new StartupException("Problem upgrading database to version 320", e);
         }
         
         // finally, upgrade db version string to 320
-        DatabaseUpgrader.updateDatabaseVersion(con, 320);
+        updateDatabaseVersion(con, 320);
     }
     
     
     /**
      * Upgrade database for Roller 4.0.0
      */
-    private void upgradeTo400(Connection con, boolean runScripts) throws WebloggerException {
+    private void upgradeTo400(Connection con, boolean runScripts) throws StartupException {
         
         successMessage("Doing upgrade to 400 ...");
         
         try {    
             if (runScripts) {
-                String handle = DatabaseCreator.getDatabaseHandle(con);
+                String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/320-to-400-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
@@ -847,21 +922,63 @@ public class DatabaseUpgrader {
             
         } catch (Exception e) {
             errorMessage("Problem upgrading database to version 400", e);
-            throw new WebloggerException("Problem upgrading database to version 400", e);
+            throw new StartupException("Problem upgrading database to version 400", e);
         }
         
         // finally, upgrade db version string to 400
-        DatabaseUpgrader.updateDatabaseVersion(con, 400);
+        updateDatabaseVersion(con, 400);
     }
     
     
-    private static int getDatabaseVersion() throws WebloggerException {
+    /**
+     * Use database product name to get the database script directory name.
+     */
+    public String getDatabaseHandle(Connection con) throws SQLException {
+        
+        String productName = con.getMetaData().getDatabaseProductName();
+        String handle = "mysql";
+        if (       productName.toLowerCase().indexOf("mysql") != -1) {
+            handle =  "mysql";
+        } else if (productName.toLowerCase().indexOf("derby") != -1) {
+            handle =  "derby";
+        } else if (productName.toLowerCase().indexOf("hsql") != -1) {
+            handle =  "hsqldb";
+        } else if (productName.toLowerCase().indexOf("postgres") != -1) {
+            handle =  "postgresql";
+        } else if (productName.toLowerCase().indexOf("oracle") != -1) {
+            handle =  "oracle";
+        } else if (productName.toLowerCase().indexOf("microsoft") != -1) {
+            handle =  "mssql";
+        } else if (productName.toLowerCase().indexOf("db2") != -1) {   
+            handle =  "db2";
+        }
+        
+        return handle;
+    }
+
+    
+    /**
+     * Return true if named table exists in database.
+     */
+    private boolean tableExists(Connection con, String tableName) throws SQLException {
+        String[] types = {"TABLE"};
+        ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
+        while (rs.next()) {
+            if (tableName.toLowerCase().equals(rs.getString("TABLE_NAME").toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    private int getDatabaseVersion() throws StartupException {
         int dbversion = -1;
         
         // get the current db version
         Connection con = null;
         try {
-            con = DatabaseProvider.getDatabaseProvider().getConnection();
+            con = db.getConnection();
             Statement stmt = con.createStatement();
             
             // just check in the roller_properties table
@@ -892,7 +1009,7 @@ public class DatabaseUpgrader {
     }
     
     
-    private static int parseVersionString(String vstring) {        
+    private int parseVersionString(String vstring) {        
         int myversion = 0;
         
         // NOTE: this assumes a maximum of 3 digits for the version number
@@ -919,8 +1036,8 @@ public class DatabaseUpgrader {
      * Insert a new database.version property.
      * This should only be called once for new installations
      */
-    public static void setDatabaseVersion(Connection con, String version) 
-            throws WebloggerException {
+    private void setDatabaseVersion(Connection con, String version) 
+            throws StartupException {
         setDatabaseVersion(con, parseVersionString(version));
     }
 
@@ -928,8 +1045,8 @@ public class DatabaseUpgrader {
      * Insert a new database.version property.
      * This should only be called once for new installations
      */
-    public static void setDatabaseVersion(Connection con, int version)
-            throws WebloggerException {
+    private void setDatabaseVersion(Connection con, int version)
+            throws StartupException {
         
         try {
             Statement stmt = con.createStatement();
@@ -938,7 +1055,7 @@ public class DatabaseUpgrader {
             
             log.debug("Set database verstion to "+version);
         } catch(SQLException se) {
-            throw new WebloggerException("Error setting database version.", se);
+            throw new StartupException("Error setting database version.", se);
         }
     }
     
@@ -946,8 +1063,8 @@ public class DatabaseUpgrader {
     /**
      * Update the existing database.version property
      */
-    private static void updateDatabaseVersion(Connection con, int version)
-            throws WebloggerException {
+    private void updateDatabaseVersion(Connection con, int version)
+            throws StartupException {
         
         try {
             Statement stmt = con.createStatement();
@@ -957,8 +1074,8 @@ public class DatabaseUpgrader {
             
             log.debug("Updated database verstion to "+version);
         } catch(SQLException se) {
-            throw new WebloggerException("Error setting database version.", se);
+            throw new StartupException("Error setting database version.", se);
         } 
-    } 
+    }
+    
 }
-

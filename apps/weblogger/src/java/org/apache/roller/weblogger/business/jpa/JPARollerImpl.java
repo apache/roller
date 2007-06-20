@@ -26,7 +26,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.DatabaseProvider;
@@ -40,6 +39,7 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -87,7 +87,7 @@ public class JPARollerImpl extends RollerImpl {
             }
         }
         
-        DatabaseProvider dbProvider = DatabaseProvider.getDatabaseProvider();
+        DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
         if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
             strategy = new JPAPersistenceStrategy(
                 "RollerPU", "java:comp/env/" + dbProvider.getJndiName(), props); 

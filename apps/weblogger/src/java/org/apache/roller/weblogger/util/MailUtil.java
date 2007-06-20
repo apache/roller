@@ -42,6 +42,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MailProvider;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -68,7 +69,7 @@ public class MailUtil {
      * startup, no need to complain on every attempt to send.
      */
     public static boolean isMailConfigured() {
-        return MailProvider.isMailConfigured(); 
+        return WebloggerStartup.getMailProvider() != null; 
     }
     
     /**
@@ -77,7 +78,7 @@ public class MailUtil {
     public static void sendPendingEntryNotice(WeblogEntry entry) 
             throws WebloggerException {
         
-        Session mailSession = MailProvider.getMailProvider().getSession();
+        Session mailSession = WebloggerStartup.getMailProvider().getSession();
         if(mailSession == null) {
             throw new WebloggerException("Couldn't get mail Session");
         }
@@ -147,7 +148,7 @@ public class MailUtil {
                                             User user)
             throws WebloggerException {
         
-        Session mailSession = MailProvider.getMailProvider().getSession();
+        Session mailSession = WebloggerStartup.getMailProvider().getSession();
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
@@ -204,7 +205,7 @@ public class MailUtil {
     public static void sendUserActivationEmail(User user)
             throws WebloggerException {
         
-        Session mailSession = MailProvider.getMailProvider().getSession();
+        Session mailSession = WebloggerStartup.getMailProvider().getSession();
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
@@ -568,16 +569,12 @@ public class MailUtil {
             )
             throws MessagingException {
         
-        MailProvider mailProvider = null;
-        Session session = null;
-        try {
-            mailProvider = MailProvider.getMailProvider(); 
-        } catch (WebloggerException ex) {
-            // The MailProvider should have been constructed long before 
-            // we get to this point, so this should never ever happen
-            throw new RuntimeException("ERROR getting mail provider", ex);
+        MailProvider mailProvider = WebloggerStartup.getMailProvider();
+        if(mailProvider == null) {
+            return;
         }
-        session = mailProvider.getSession();
+        
+        Session session = mailProvider.getSession();
         Message message = new MimeMessage(session);
         
         // n.b. any default from address is expected to be determined by caller.

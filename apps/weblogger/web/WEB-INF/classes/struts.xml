@@ -124,34 +124,14 @@
     
     <!-- Weblogger install/bootstrap actions -->
     <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger">
-        
-        <action name="databaseError"
-                class="org.apache.roller.weblogger.ui.struts2.core.DatabaseError">
-            <result name="success" type="tiles">.DatabaseError</result>
-        </action>
-            
-        <action name="unknownError"
-                class="org.apache.roller.weblogger.ui.struts2.core.UpgradeDatabase">
-            <result name="success" type="tiles">.UnknownError</result>
-        </action>
-    
-        <action name="createDatabase!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.CreateDatabase">
-            <result name="success" type="tiles">.CreateDatabase</result>
-        </action>
-            
-        <action name="upgradeDatabase!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.core.UpgradeDatabase">
-            <result name="success" type="tiles">.UpgradeDatabase</result>
-        </action>
     
         <action name="install"
                 class="org.apache.roller.weblogger.ui.struts2.core.Install">
-            <result name="database_error"   type="chain">databaseError</result>
-            <result name="create_database"  type="chain">createDatabase</result>
-            <result name="upgrade_database" type="chain">upgradeDatabase</result>
-            <result name="unknown_error"    type="tiles">.UnknownError</result>
-            <result name="success"          type="chain">home</result>
+            <result name="database_error" type="tiles">.DatabaseError</result>
+            <result name="create_database" type="tiles">.CreateDatabase</result>
+            <result name="upgrade_database" type="tiles">.UpgradeDatabase</result>
+            <result name="bootstrap" type="tiles">.Bootstrap</result>
+            <result name="success" type="chain">home</result>
         </action>
             
     </package>

@@ -23,7 +23,6 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,25 +30,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.utils.DatabaseCreator;
-import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
 
 
 /**
- * Checks database setup, forwards to appropriate error or setup page.
+ * Redirects clients to install page when app is not bootstrapped and install
+ * type is "auto", otherwise does nothing.
  */
 public class BootstrapFilter implements Filter {
-    private ServletContext context = null;
+    
     private static Log log = LogFactory.getLog(BootstrapFilter.class);
     
     
-    /**
-     * Release Roller persistence session at end of request processing.
-     */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         
@@ -58,37 +51,29 @@ public class BootstrapFilter implements Filter {
         
         log.debug("Entered "+request.getRequestURI());
         
-        if ("auto".equals(RollerConfig.getProperty("installation.type"))) {            
-            // an auto-install is in progress, do some checks and if necessary
-            // redirect to error, db create or db upgrade page
-
-            // only do this if Roller is configured for auto-install and 
-            // only if request is NOT for install page or a style/script file            
-            String requestURI = request.getRequestURI();
-            if (     requestURI != null 
-                 &&  requestURI.indexOf("/roller-ui/install") < 0 
-                 && !requestURI.endsWith(".js")
-                 && !requestURI.endsWith(".css")) {
-                
-                if (!RollerFactory.isBootstrapped()) {
-                    // we doing an install, so forward to installer
-                    RequestDispatcher rd = context.getRequestDispatcher(
-                            "/roller-ui/install/install.rol");
-                    rd.forward(req, res);
-                    return;
-                }
-            }
+        if (!RollerFactory.isBootstrapped() &&
+                "auto".equals(RollerConfig.getProperty("installation.type")) &&
+                !isInstallUrl(request.getServletPath())) {
+            
+            // just redirect to install action
+            response.sendRedirect("/roller-ui/install/install.rol");
+            
+        } else {
+            chain.doFilter(request, response);
         }
-        chain.doFilter(request, response);                    
+        
         log.debug("Exiting "+request.getRequestURI());
     }
     
     
-    public void init(FilterConfig filterConfig) throws ServletException {
-        context = filterConfig.getServletContext();
+    private boolean isInstallUrl(String uri) {
+        return (uri != null && (uri.startsWith("/roller-ui/install") ||
+                uri.endsWith(".js") || uri.endsWith(".css")));
     }
+    
+    
+    public void init(FilterConfig filterConfig) throws ServletException {}
     
     public void destroy() {}
     
 }
-

@@ -16,19 +16,22 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.utils;
+package org.apache.roller.weblogger.business;
 
-import java.io.InputStream;
+import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
- * Interface for retrieving database script.
+ * Exception generated from Weblogger bootstrapping process.
  */
-public interface DatabaseScriptProvider {
+public class BootstrapException extends WebloggerException {
     
-    /** 
-     * Get an InputStream to a database script at the given path.
-     */
-    public InputStream getDatabaseScript(String path) throws Exception;
+    public BootstrapException(String msg) {
+        super(msg);
+    }
+    
+    public BootstrapException(String msg, Throwable t) {
+        super(msg, t);
+    }
     
 }

@@ -22,13 +22,13 @@ import java.io.InputStream;
 
 
 /**
- * Interface for retrieving database script.
+ * Reads dbscripts from the classpath.
  */
-public interface DatabaseScriptProvider {
+public class ClasspathDatabaseScriptProvider implements DatabaseScriptProvider {
     
-    /** 
-     * Get an InputStream to a database script at the given path.
-     */
-    public InputStream getDatabaseScript(String path) throws Exception;
+    public InputStream getDatabaseScript(String path) {
+        return ClasspathDatabaseScriptProvider.class.getResourceAsStream(
+                "/dbscripts/" + path);
+    }
     
 }

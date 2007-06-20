@@ -23,7 +23,7 @@
 
 <p><s:text name="installer.whatHappenedDatabaseConnectionError" /></p>
 <ul>
-   <s:iterator value="startupLog">
+   <s:iterator value="messages">
       <li><s:property/></li>
    </s:iterator>
 </ul>

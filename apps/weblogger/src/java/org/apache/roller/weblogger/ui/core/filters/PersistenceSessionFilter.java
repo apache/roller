@@ -59,17 +59,20 @@ public class PersistenceSessionFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
-            log.debug("Releasing Roller Session");
-            if (RollerFactory.getRoller() != null) {
+            if (RollerFactory.isBootstrapped()) {
+                log.debug("Releasing Roller Session");
                 RollerFactory.getRoller().release();
-            }
-            
-            // if planet is enabled then release planet backend as well
-            if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-                if (PlanetFactory.getPlanet() != null) {
-                    PlanetFactory.getPlanet().release();
+                
+                // if planet is enabled then release planet backend as well
+                if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                    // TODO: once planet uses same lifecycle options as weblogger
+                    // then this should be updated to if(PlanetFactory.isBootstrapped())
+                    if (PlanetFactory.getPlanet() != null) {
+                        PlanetFactory.getPlanet().release();
+                    }
                 }
             }
+            
         }
         
         log.debug("Exiting "+request.getRequestURI());

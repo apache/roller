@@ -33,15 +33,16 @@ import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
+import org.apache.roller.weblogger.business.BootstrapException;
+import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
-import org.apache.roller.weblogger.ui.struts2.core.ServletContextDatabaseScriptProvider;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
@@ -70,89 +71,102 @@ public class RollerContext extends ContextLoaderListener
      */
     public void contextInitialized(ServletContextEvent sce) {
         
-        log.info("Apache Roller Weblogger Initializing ...");
-            
-        try {
-            
-            // First, initialize everything that requires no database 
-
-            // Keep a reverence to ServletContext object
-            this.servletContext = sce.getServletContext();
-
-            // Call Spring's context ContextLoaderListener to initialize all the 
-            // context files specified in web.xml. This is necessary because 
-            // listeners don't initialize in the order specified in 2.3 containers
-            super.contextInitialized(sce);
-
-            // get the *real* path to <context>/resources
-            String ctxPath = servletContext.getRealPath("/");
-            if(!ctxPath.endsWith(File.separator))
-                ctxPath += File.separator + "resources";
-            else
-                ctxPath += "resources";
-
-            // try setting the uploads path to <context>/resources
-            // NOTE: this should go away at some point
-            // we leave it here for now to allow users to keep writing
-            // uploads into their webapp context, but this is a bad idea
-            //
-            // also, the RollerConfig.setUploadsDir() method is smart
-            // enough to disregard this call unless the uploads.path
-            // is set to ${webapp.context}
-            RollerConfig.setUploadsDir(ctxPath);
-
-            // try setting the themes path to <context>/themes
-            // NOTE: this should go away at some point
-            // we leave it here for now to allow users to keep using
-            // themes in their webapp context, but this is a bad idea
-            //
-            // also, the RollerConfig.setThemesDir() method is smart
-            // enough to disregard this call unless the themes.dir
-            // is set to ${webapp.context}
-            RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
+        // First, initialize everything that requires no database
         
+        // Keep a reverence to ServletContext object
+        this.servletContext = sce.getServletContext();
+        
+        // Call Spring's context ContextLoaderListener to initialize all the
+        // context files specified in web.xml. This is necessary because
+        // listeners don't initialize in the order specified in 2.3 containers
+        super.contextInitialized(sce);
+        
+        // get the *real* path to <context>/resources
+        String ctxPath = servletContext.getRealPath("/");
+        if(!ctxPath.endsWith(File.separator))
+            ctxPath += File.separator + "resources";
+        else
+            ctxPath += "resources";
+        
+        // try setting the uploads path to <context>/resources
+        // NOTE: this should go away at some point
+        // we leave it here for now to allow users to keep writing
+        // uploads into their webapp context, but this is a bad idea
+        //
+        // also, the RollerConfig.setUploadsDir() method is smart
+        // enough to disregard this call unless the uploads.path
+        // is set to ${webapp.context}
+        RollerConfig.setUploadsDir(ctxPath);
+        
+        // try setting the themes path to <context>/themes
+        // NOTE: this should go away at some point
+        // we leave it here for now to allow users to keep using
+        // themes in their webapp context, but this is a bad idea
+        //
+        // also, the RollerConfig.setThemesDir() method is smart
+        // enough to disregard this call unless the themes.dir
+        // is set to ${webapp.context}
+        RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
+        
+        
+        // Now prepare the core services of the app so we can bootstrap
+        try {
+            WebloggerStartup.prepare();
+        } catch (StartupException ex) {
+            log.fatal("Roller Weblogger startup failed during app preparation", ex);
+            return;
+        }
+        
+        
+        // if preparation failed or is incomplete then we are done,
+        // otherwise try to bootstrap the business tier
+        if (!WebloggerStartup.isPrepared()) {
+            log.info("Roller Weblogger startup requires interaction from user to continue");
+        } else {
+            try {
+                // trigger bootstrapping process
+                RollerFactory.bootstrap();
+                
+                // trigger initialization process
+                RollerFactory.initialize();
+                
+                // flush any changes made during initialization
+                RollerFactory.getRoller().flush();
+                
+            } catch (BootstrapException ex) {
+                log.fatal("Roller Weblogger bootstrap failed", ex);
+            } catch (WebloggerException ex) {
+                log.fatal("Roller Weblogger initialization failed", ex);
+            }
+            
+            // Initialize Planet if necessary
+            if (RollerFactory.isBootstrapped()) {
+                if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                    try {
+                        Planet planet = PlanetFactory.getPlanet();
+                        PlanetFactory.getPlanet().getPropertiesManager();
+                        planet.flush();
+                        planet.release();
+                        
+                    } catch (Throwable t) {
+                        log.fatal("Roller Planet initialization failed", t);
+                    }
+                }
+            }
+        }
+        
+        
+        // do a small amount of work to initialize the web tier
+        try {
             // Initialize Acegi based on Roller configuration
             initializeSecurityFeatures(servletContext);
             
             // Setup Velocity template engine
             setupVelocity();
-           
-
-            // Now, the database dependent part...
-
-            // If installation type is manual, then don't run migraton scripts
-            if ("manual".equals(RollerConfig.getProperty("installation.type"))) {
-                if (DatabaseUpgrader.isUpgradeRequired()) {
-                    DatabaseUpgrader upgrader = new DatabaseUpgrader(
-                            new ServletContextDatabaseScriptProvider());  
-                    upgrader.upgradeDatabase(false);
-                }
-            }
-            
-            // trigger bootstrapping process
-            RollerFactory.bootstrap();
-            
-            // flush any changes made during bootstrapping
-            RollerFactory.getRoller().flush();
-            
-        } catch (Throwable t) {
-            log.fatal("Roller Weblogger initialization failed", t);
+        } catch (WebloggerException ex) {
+            log.fatal("Error initializing Roller Weblogger web tier", ex);
         }
         
-        // Initialize Planet if necessary
-        if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-            try {
-                Planet planet = PlanetFactory.getPlanet();                
-                PlanetFactory.getPlanet().getPropertiesManager();                
-                planet.flush();
-                planet.release();
-                
-            } catch (Throwable t) {
-                log.fatal("Roller Planet initialization failed", t);
-            }
-        }
-        
-        log.info("Apache Roller Weblogger Initialization Complete");
     }
     
     
@@ -169,7 +183,7 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Initialize the Velocity rendering engine.
      */
-    private void setupVelocity() throws Exception {        
+    private void setupVelocity() throws WebloggerException {        
         log.info("Initializing Velocity");
         
         // initialize the Velocity engine
@@ -203,7 +217,7 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Setup Acegi security features.
      */
-    protected void initializeSecurityFeatures(ServletContext context) throws WebloggerException { 
+    protected void initializeSecurityFeatures(ServletContext context) { 
 
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);

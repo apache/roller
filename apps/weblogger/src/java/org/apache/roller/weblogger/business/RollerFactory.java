@@ -21,8 +21,7 @@ package org.apache.roller.weblogger.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.utils.DatabaseCreator;
-import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
@@ -34,13 +33,11 @@ public final class RollerFactory {
     
     private static final Log log = LogFactory.getLog(RollerFactory.class);
     
-    private static final String DEFAULT_IMPL =
-        "org.apache.roller.weblogger.business.jpa.JPARollerImpl";
-        //"org.apache.roller.weblogger.business.hibernate.HibernateRollerImpl";
-        //"org.apache.roller.weblogger.business.datamapper.jpa.JPARollerImpl";
-    
-    private static Roller rollerInstance = null;
+    // have we been bootstrapped yet?
     private static boolean bootstrapped = false;
+    
+    // a reference to the bootstrapped Roller instance
+    private static Roller rollerInstance = null;
     
     
     // non-instantiable
@@ -50,41 +47,112 @@ public final class RollerFactory {
     
     
     /**
-     * True if bootstrap process was completed
+     * True if bootstrap process was completed, False otherwise.
      */
     public static boolean isBootstrapped() {
         return bootstrapped;
     }
     
-
+    
+    /**
+     * Accessor to the Roller Weblogger business tier.
+     *
+     * @return Roller An instance of Roller.
+     * @throws IllegalStateException If the app has not been properly bootstrapped yet.
+     */
+    public static final Roller getRoller() {
+        if(rollerInstance == null) {
+            throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
+        }
+        
+        return rollerInstance;
+    }
+    
+    
     /**
      * Bootstrap the Roller Weblogger business tier.
+     *
+     * Bootstrapping the application effectively instantiates all the necessary
+     * pieces of the business tier and wires them together so that the app is 
+     * ready to run.
+     *
+     * @throws IllegalStateException If the app has not been properly prepared yet.
+     * @throws BootstrapException If an error happens during the bootstrap process.
      */
-    public static final void bootstrap() throws WebloggerException {
+    public static final void bootstrap() throws BootstrapException {
         
-        if ("manual".equals(RollerConfig.getProperty("installation.type"))) {
-            if (DatabaseCreator.isCreationRequired() 
-             || DatabaseUpgrader.isUpgradeRequired()) { 
-                return;
-            }
-        }        
+        // if the app hasn't been properly started so far then bail
+        if (!WebloggerStartup.isPrepared()) {
+            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
+        }
         
-        // This will cause instantiation and initialziation of Roller impl
-        Roller roller = getRoller();
+        log.info("Bootstrapping Roller Weblogger business tier");
+        
+        // bootstrap Roller Weblogger business tier
+        
+        // lookup value for the roller classname to use
+        String roller_classname =
+                RollerConfig.getProperty("persistence.roller.classname");
+        if(roller_classname == null || roller_classname.trim().length() < 1) {
+            throw new BootstrapException("Invalid roller classname - "+roller_classname);
+        } else {
+            log.info("Using Roller Impl: " + roller_classname);
+        }
+        
+        try {
+            Class rollerClass = Class.forName(roller_classname);
+            java.lang.reflect.Method instanceMethod =
+                    rollerClass.getMethod("instantiate", (Class[])null);
+            
+            // do the invocation
+            rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
+            
+            // note that we've now been bootstrapped
+            bootstrapped = true;
+            
+        } catch (Throwable ex) {
+            // bootstrapping failed
+            throw new BootstrapException("Exception doing bootstrapping", ex);
+        }
+        
+        log.info("Roller Weblogger business tier successfully bootstrapped");
+    }
+    
+    
+    /**
+     * Initialize the Roller Weblogger business tier.
+     *
+     * Initialization is used to perform any logic that needs to happen only
+     * once after the application has been properly bootstrapped.
+     *
+     * @throws IllegalStateException If the app has not been bootstrapped yet.
+     * @throws InitializationException If there is an error during initialization.
+     */
+    public static final void initialize() throws InitializationException {
         
         // TODO: this initialization process should probably be controlled by
         // a more generalized application lifecycle event framework
         
-        // Now that Roller has been instantiated, initialize individual managers
-        roller.getPropertiesManager();
-        roller.getIndexManager();
-        roller.getThemeManager();
+        if(!isBootstrapped()) {
+            throw new IllegalStateException("Cannot initialize until application has been properly bootstrapped");
+        }
         
-        // And this will schedule all configured tasks
-        roller.getThreadManager().startTasks();
+        log.info("Initializing Roller Weblogger business tier");
         
-        // Initialize ping systems
         try {
+            
+            Roller roller = getRoller();
+            
+            // Now that Roller has been bootstrapped, initialize individual managers
+            roller.getPropertiesManager();
+            roller.getIndexManager();
+            roller.getThemeManager();
+            
+            // And this will schedule all configured tasks
+            roller.getThreadManager().startTasks();
+            
+            // Initialize ping systems
+
             // Initialize common targets from the configuration
             PingConfig.initializeCommonTargets();
             
@@ -102,67 +170,11 @@ public final class RollerFactory {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
             }
-        } catch (WebloggerException e) {
-            log.error("ERROR configing ping managers", e);
+        } catch (Throwable t) {
+            throw new InitializationException("Error initializing ping systems", t);
         }
         
-        bootstrapped = true;
-    }
-    
-    
-    /**
-     * Static accessor for the instance of Roller.
-     */
-    public static final Roller getRoller() {
-        
-        // check to see if we need to instantiate
-        if(rollerInstance == null) {
-            
-            // lookup value for the roller classname to use
-            String roller_classname =
-                    RollerConfig.getProperty("persistence.roller.classname");
-            if(roller_classname == null || roller_classname.trim().length() < 1)
-                roller_classname = DEFAULT_IMPL;
-            
-            try {
-                Class rollerClass = Class.forName(roller_classname);
-                java.lang.reflect.Method instanceMethod =
-                        rollerClass.getMethod("instantiate", (Class[])null);
-                
-                // do the invocation
-                rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
-                
-                log.info("Using Roller Impl: " + roller_classname);
-                
-            } catch (Throwable e) {
-                
-                // uh oh
-                log.error("Error instantiating " + roller_classname, e);
-                
-                try {
-                    // if we didn't already try DEFAULT_IMPL then try it now
-                    if( ! DEFAULT_IMPL.equals(roller_classname)) {
-                        
-                        log.info("** Trying DEFAULT_IMPL "+DEFAULT_IMPL+" **");
-                        
-                        Class rollerClass = Class.forName(DEFAULT_IMPL);
-                        java.lang.reflect.Method instanceMethod =
-                                rollerClass.getMethod("instantiate", (Class[])null);
-                        
-                        // do the invocation
-                        rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
-                    } else {
-                        // we just do this so that the logger gets the message
-                        throw new Exception("Doh! Couldn't instantiate a roller class");
-                    }
-                    
-                } catch (Exception re) {
-                    log.fatal("Failed to instantiate fallback roller impl", re);
-                }
-            }
-        }
-        
-        return rollerInstance;
+        log.info("Roller Weblogger business tier successfully initialized");
     }
 
 }
