@@ -126,10 +126,7 @@ public class Install extends UIAction {
             RollerFactory.bootstrap();
             
             // trigger initialization process
-            RollerFactory.initialize();
-            
-            // flush any changes made during initialization
-            RollerFactory.getRoller().flush();
+            RollerFactory.getRoller().initialize();
             
             return SUCCESS;
             

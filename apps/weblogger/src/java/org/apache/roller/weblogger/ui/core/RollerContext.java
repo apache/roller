@@ -128,10 +128,7 @@ public class RollerContext extends ContextLoaderListener
                 RollerFactory.bootstrap();
                 
                 // trigger initialization process
-                RollerFactory.initialize();
-                
-                // flush any changes made during initialization
-                RollerFactory.getRoller().flush();
+                RollerFactory.getRoller().initialize();
                 
             } catch (BootstrapException ex) {
                 log.fatal("Roller Weblogger bootstrap failed", ex);

@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.themes;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
+import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -63,9 +63,6 @@ public class ThemeManagerImpl implements ThemeManager {
     
     
     public ThemeManagerImpl() {
-        
-        log.debug("Initializing ThemeManagerImpl");
-        
         // get theme directory from config and verify it
         this.themeDir = RollerConfig.getProperty("themes.dir");
         if(themeDir == null || themeDir.trim().length() < 1) {
@@ -83,9 +80,17 @@ public class ThemeManagerImpl implements ThemeManager {
                     !themeDirFile.canRead()) {
                 throw new RuntimeException("couldn't access theme dir ["+themeDir+"]");
             }
-            
+        }
+    }
+    
+    
+    public void initialize() throws InitializationException {
+        
+        log.debug("Initializing Theme Manager");
+        
+        if(themeDir != null) {
             // rather than be lazy we are going to load all themes from
-            // the disk preemptively during initialization and cache them
+            // the disk preemptively and cache them
             this.themes = loadAllThemesFromDisk();
             
             log.info("Loaded "+this.themes.size()+" themes from disk.");

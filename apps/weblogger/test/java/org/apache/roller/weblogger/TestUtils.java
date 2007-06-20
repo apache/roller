@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -39,13 +40,34 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.WebloggerException;
-
 
 /**
  * Utility class for unit test classes.
  */
 public final class TestUtils {
+    
+    
+    public static void setupWeblogger() throws Exception {
+        
+        if(!RollerFactory.isBootstrapped()) {
+            // do core services preparation
+            WebloggerStartup.prepare();
+            
+            // do application bootstrapping
+            RollerFactory.bootstrap();
+            
+            // always initialize the properties manager and flush
+            RollerFactory.getRoller().getPropertiesManager().initialize();
+            RollerFactory.getRoller().flush();
+        }
+    }
+    
+    
+    public static void shutdownWeblogger() throws Exception {
+        
+        // trigger shutdown
+        RollerFactory.getRoller().shutdown();
+    }
     
     
     /**

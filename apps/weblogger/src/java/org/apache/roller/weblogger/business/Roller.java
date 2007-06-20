@@ -18,10 +18,8 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.business.plugins.PluginManager;
-import java.io.Serializable;
-import java.sql.Connection;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -135,9 +133,16 @@ public interface Roller {
     
     
     /**
+     * Initialize any resources necessary for this instance of Roller.
+     */
+    public void initialize() throws InitializationException;
+    
+    
+    /**
      * Release all resources necessary for this instance of Roller.
      */
     public void shutdown();
+    
     
     /** Roller version */
     public String getVersion();    

@@ -70,6 +70,9 @@ public class RefererTest extends TestCase {
      */
     public void setUp() throws Exception {
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("referTestUser");
             testWeblog = TestUtils.setupWeblog("referTestWeblog1", testUser);

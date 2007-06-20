@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
@@ -32,6 +33,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
+import org.apache.roller.weblogger.config.PingConfig;
 
 
 /**
@@ -53,6 +55,7 @@ public abstract class RollerImpl implements Roller {
     private String version = null;
     private String buildTime = null;
     private String buildUser = null;
+    
     
     public RollerImpl() {
                 
@@ -140,6 +143,57 @@ public abstract class RollerImpl implements Roller {
         } catch(Throwable e) {
             mLogger.error("Error calling Roller.release()", e);
         }
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public void initialize() throws InitializationException {
+        
+        mLogger.info("Initializing Roller Weblogger business tier");
+        
+        // TODO: this should probably be done in a more uniform fashion, possibly
+        // using annotations?  biggest issue is controlling ordering
+        getPropertiesManager().initialize();
+        getThemeManager().initialize();
+        getThreadManager().initialize();
+        getIndexManager().initialize();
+        
+        try {
+            // Initialize ping systems
+            // TODO: this should probably be moving inside ping manager initialize() methods?
+            
+            // Initialize common targets from the configuration
+            PingConfig.initializeCommonTargets();
+            
+            // Initialize ping variants
+            PingConfig.initializePingVariants();
+            
+            // Remove custom ping targets if they have been disallowed
+            if (PingConfig.getDisallowCustomTargets()) {
+                mLogger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
+                RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
+            }
+            
+            // Remove all autoping configurations if ping usage has been disabled.
+            if (PingConfig.getDisablePingUsage()) {
+                mLogger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+                RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
+            }
+        } catch (Throwable t) {
+            throw new InitializationException("Error initializing ping systems", t);
+        }
+        
+        // we always need to do a flush after initialization because it's
+        // possible that some changes need to be persisted
+        try {
+            flush();
+        } catch(WebloggerException ex) {
+            throw new InitializationException("Error flushing after initialization", ex);
+        }
+        
+        mLogger.info("Roller Weblogger business tier successfully initialized");
     }
     
     

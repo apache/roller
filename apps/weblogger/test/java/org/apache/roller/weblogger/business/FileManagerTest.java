@@ -54,6 +54,9 @@ public class FileManagerTest extends TestCase {
     
     public void setUp() throws Exception {
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("FileManagerTest_userName");
             testWeblog = TestUtils.setupWeblog("FileManagerTest_handle", testUser);

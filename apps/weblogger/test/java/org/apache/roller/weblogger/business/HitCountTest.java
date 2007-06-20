@@ -59,6 +59,9 @@ public class HitCountTest extends TestCase {
      */
     public void setUp() throws Exception {
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("hitCountTestUser");
             testWeblog = TestUtils.setupWeblog("hitCountTestWeblog", testUser);

@@ -48,6 +48,9 @@ public class FolderParentDeletesTest extends TestCase {
         
         log.info("BEGIN");
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("folderParentDeletesTestUser");
             testWeblog = TestUtils.setupWeblog("folderParentDeletesTestWeblog", testUser);

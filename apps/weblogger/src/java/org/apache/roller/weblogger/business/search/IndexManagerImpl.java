@@ -93,6 +93,7 @@ public class IndexManagerImpl implements IndexManager {
      *            the path to the index directory
      */
     public IndexManagerImpl() {
+        
         // check config to see if the internal search is enabled
         String enabled = RollerConfig.getProperty("search.enabled");
         if("false".equalsIgnoreCase(enabled))
@@ -101,7 +102,6 @@ public class IndexManagerImpl implements IndexManager {
         // we also need to know what our index directory is
         // Note: system property expansion is now handled by RollerConfig
         String searchIndexDir = RollerConfig.getProperty("search.index.dir");
-        
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
         
         // a little debugging
@@ -110,8 +110,15 @@ public class IndexManagerImpl implements IndexManager {
         
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public void initialize() throws InitializationException {
         
-        // only setup the index if search is enabled
+        // only initialize the index if search is enabled
         if (this.searchEnabled) {
             
             // 1. If inconsistency marker exists.
@@ -164,7 +171,9 @@ public class IndexManagerImpl implements IndexManager {
                 }
             }
         }
+        
     }
+    
     
     //~ Methods
     // ================================================================
