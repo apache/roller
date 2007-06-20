@@ -101,7 +101,13 @@ public class DatabaseInstaller {
         } catch (StartupException ex) {
             throw new RuntimeException(ex);
         }
-        return databaseVersion < desiredVersion;
+        
+        // if dbversion is unset then assume a new install, otherwise compare
+        if (databaseVersion < 0) {
+            return false;
+        } else {
+            return databaseVersion < desiredVersion;
+        }
     }
     
     
