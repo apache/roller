@@ -15,19 +15,23 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.weblogger.ui.struts2.core;
 
-import java.io.InputStream;
-import org.apache.roller.weblogger.business.utils.DatabaseScriptProvider;
-import org.apache.roller.weblogger.ui.core.RollerContext;
+package org.apache.roller.weblogger.business;
+
+import org.apache.roller.weblogger.WebloggerException;
+
 
 /**
- * Reads script from ServletContext.
+ * Exception generated from Weblogger initialization process.
  */
-public class ServletContextDatabaseScriptProvider implements DatabaseScriptProvider {
+public class InitializationException extends WebloggerException {
     
-    public InputStream getDatabaseScript(String path) throws Exception {
-        return RollerContext.getServletContext().getResourceAsStream(
-                "/WEB-INF/dbscripts/" + path);
-    }    
+    public InitializationException(String msg) {
+        super(msg);
+    }
+    
+    public InitializationException(String msg, Throwable t) {
+        super(msg, t);
+    }
+    
 }

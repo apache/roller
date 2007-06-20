@@ -26,8 +26,24 @@
 </pre>
     
 </s:if>
-<s:elseif test="creationRequired">
+<s:elseif test="success">
 
+    <h2><s:text name="installer.tablesCreated" /></h2>
+    
+    <p><s:text name="installer.tablesCreatedExplanation" /></p>
+    <p>
+        <s:text name="installer.tryBootstrapping">
+            <s:param><s:url action="install!bootstrap"/></s:param>
+        </s:text>
+    </p>
+    
+<pre>
+<s:iterator value="messages"><s:property/><br /></s:iterator>
+</pre>
+
+</s:elseif>
+<s:else>
+    
     <h2><s:text name="installer.noDatabaseTablesFound" /></h2>
 
     <p>
@@ -37,25 +53,9 @@
     </p>
     <p><s:text name="installer.createTables" /></p>
 
-    <s:form action="createDatabase!create">
+    <s:form action="install!create">
         <s:submit key="installer.yesCreateTables" />
     </s:form>
-
-</s:elseif>
-<s:else>
-    
-    <h2><s:text name="installer.tablesCreated" /></h2>
-    
-    <p><s:text name="installer.tablesCreatedExplanation" /></p>
-    <p>
-        <s:text name="installer.tryBootstrapping">
-            <s:param><s:url value="/"/></s:param>
-        </s:text>
-    </p>
-    
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
     
 </s:else>
 

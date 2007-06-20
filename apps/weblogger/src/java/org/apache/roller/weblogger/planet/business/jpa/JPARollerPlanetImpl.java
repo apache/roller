@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 
 
 /**
@@ -56,12 +57,7 @@ public class JPARollerPlanetImpl extends JPAPlanetImpl {
             }
         }
         
-        DatabaseProvider dbProvider;
-        try {
-            dbProvider = DatabaseProvider.getDatabaseProvider();
-        } catch (WebloggerException ex) {
-            throw new PlanetException(ex);
-        }
+        DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
         
         if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
             return new JPAPersistenceStrategy(

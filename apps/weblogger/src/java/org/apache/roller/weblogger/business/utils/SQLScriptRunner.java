@@ -50,12 +50,16 @@ public class SQLScriptRunner {
     
     /** Creates a new instance of SQLScriptRunner */
     public SQLScriptRunner(InputStream is) throws IOException {
+        
+        log.debug("instantiated");
+        
         this.scriptPath = scriptPath;
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         String command = ""; 
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
+            log.debug(line);
             
             if (!line.startsWith("--")) { // ignore lines starting with "--"    
                 

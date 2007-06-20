@@ -20,61 +20,38 @@ package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.Connection;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
-import org.apache.roller.weblogger.business.utils.DatabaseCreator;
-import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
+import org.apache.roller.weblogger.business.startup.StartupException;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.beans.factory.access.BootstrapException;
+
 
 /**
  * Walk user through install process.
  */
-public class Install extends UIAction { 
+public class Install extends UIAction {
+    
     private static Log log = LogFactory.getLog(Install.class);
+    
     private static final String DATABASE_ERROR = "database_error";
     private static final String CREATE_DATABASE = "create_database";
     private static final String UPGRADE_DATABASE = "upgrade_database";
-    private static final String UNKNOWN_ERROR = "unknown_error";
+    private static final String BOOTSTRAP = "bootstrap";
+    
     private Throwable rootCauseException = null;
-       
-    public String execute() {
-
-        try {
-            DatabaseProvider dp = DatabaseProvider.getDatabaseProvider();             
-        } catch (RollerException e) {
-            return DATABASE_ERROR;
-        }   
-        
-        try {               
-            if (DatabaseCreator.isCreationRequired()) {  
-                log.info("Forwarding to database table creation page");
-                return CREATE_DATABASE;
-            } 
-            if (DatabaseUpgrader.isUpgradeRequired()) {
-                log.info("Forwarding to database table upgrade page");
-                return UPGRADE_DATABASE;
-            }
-        } catch (Throwable t) {
-            rootCauseException = t;
-            log.error("ERROR checking database status", t);
-            return UNKNOWN_ERROR;
-        } 
-        
-        try {
-            log.info("Attempting to bootstrap Roller");
-            RollerFactory.bootstrap();
-        } catch (Throwable t) {
-            rootCauseException = t;
-            log.error("ERROR bootstrapping Roller", t);
-            return UNKNOWN_ERROR;
-        }
-        
-        return SUCCESS;
-    }
-
+    private boolean error = false;
+    private boolean success = false;
+    private List<String> messages = null;
+    private String databaseName = "Unknown";
+    
+    
     public boolean isUserRequired() {
         return false;
     }
@@ -82,6 +59,114 @@ public class Install extends UIAction {
     public boolean isWeblogRequired() {
         return false;
     }
+    
+    
+    public String execute() {
+
+        if(WebloggerStartup.getDatabaseProviderException() != null) {
+            StartupException se = WebloggerStartup.getDatabaseProviderException();
+            if (se.getRootCause() != null) {
+                rootCauseException = se.getRootCause();
+            } else {
+                rootCauseException = se;
+            }
+            messages = se.getStartupLog();
+            
+            log.debug("Forwarding to database error page");
+            return DATABASE_ERROR;
+        }   
+        
+        if (WebloggerStartup.isDatabaseCreationRequired()) {
+            log.debug("Forwarding to database table creation page");
+            return CREATE_DATABASE;
+        }
+        if (WebloggerStartup.isDatabaseUpgradeRequired()) {
+            log.debug("Forwarding to database table upgrade page");
+            return UPGRADE_DATABASE;
+        }
+        
+        return BOOTSTRAP;
+    }
+    
+    
+    public String create() {
+        
+        try {
+            messages = WebloggerStartup.createDatabase();
+            
+            success = true;
+        } catch (StartupException se) {
+            error = true;
+            messages = se.getStartupLog();
+        }
+        
+        return CREATE_DATABASE;
+    }
+    
+    
+    public String upgrade() {
+        
+        try {
+            messages = WebloggerStartup.upgradeDatabase(true);
+            
+            success = true;
+        } catch (StartupException se) {
+            error = true;
+            messages = se.getStartupLog();
+        }
+        
+        return UPGRADE_DATABASE;
+    }
+    
+    
+    public String bootstrap() {
+        
+        try {
+            // trigger bootstrapping process
+            RollerFactory.bootstrap();
+            
+            // trigger initialization process
+            RollerFactory.initialize();
+            
+            // flush any changes made during initialization
+            RollerFactory.getRoller().flush();
+            
+            return SUCCESS;
+            
+        } catch (BootstrapException ex) {
+            rootCauseException = ex;
+        } catch (WebloggerException ex) {
+            rootCauseException = ex;
+        }
+        
+        return BOOTSTRAP;
+    }
+    
+    
+    public String getDatabaseProductName() {
+        String name = "unknown";
+        
+        Connection con = null;
+        try {
+            con = WebloggerStartup.getDatabaseProvider().getConnection();
+            name = con.getMetaData().getDatabaseProductName();
+        } catch (Exception intentionallyIgnored) {
+            // ignored
+        } finally {
+            if(con != null) try {
+                con.close();
+            } catch(Exception ex) {}
+        }
+        
+        return name;
+    }
+    
+    public String getProp(String key) {
+        // Static config only, we don't have database yet
+        String value = RollerConfig.getProperty(key);
+        return (value == null) ? key : value;
+    }
+    
     
     public Throwable getRootCauseException() {
         return rootCauseException;
@@ -96,5 +181,21 @@ public class Install extends UIAction {
         }
         return stackTrace;
     }
-}
 
+    public boolean isError() {
+        return error;
+    }
+
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+    
+}
