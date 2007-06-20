@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.utils;
+package org.apache.roller.weblogger.business.startup;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -31,7 +31,6 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 

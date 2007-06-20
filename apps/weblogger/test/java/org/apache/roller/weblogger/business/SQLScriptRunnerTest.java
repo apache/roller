@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import junit.framework.TestCase;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.business.utils.SQLScriptRunner;
+import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 
 /**
  * Test parsing and running of SQL scripts

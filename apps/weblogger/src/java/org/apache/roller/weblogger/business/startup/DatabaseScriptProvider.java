@@ -16,19 +16,19 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.utils;
+package org.apache.roller.weblogger.business.startup;
 
 import java.io.InputStream;
 
 
 /**
- * Reads dbscripts from the classpath.
+ * Interface for retrieving database script.
  */
-public class ClasspathDatabaseScriptProvider implements DatabaseScriptProvider {
+public interface DatabaseScriptProvider {
     
-    public InputStream getDatabaseScript(String path) {
-        return ClasspathDatabaseScriptProvider.class.getResourceAsStream(
-                "/dbscripts/" + path);
-    }
+    /** 
+     * Get an InputStream to a database script at the given path.
+     */
+    public InputStream getDatabaseScript(String path) throws Exception;
     
 }

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.utils;
+package org.apache.roller.weblogger.business.startup;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -33,12 +33,14 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 /**
  * SQL script runner, parses script and allows you to run it. 
  * You can run the script multiple times if necessary.
  * Assumes that anything on an input line after "--" or ";" can be ignored.
  */
 public class SQLScriptRunner {
+    
     private static Log   log = LogFactory.getLog(SQLScriptRunner.class);
     
     private String       scriptPath = null;

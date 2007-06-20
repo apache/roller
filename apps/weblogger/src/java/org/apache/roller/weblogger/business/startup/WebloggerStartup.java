@@ -23,8 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.MailProvider;
-import org.apache.roller.weblogger.business.utils.ClasspathDatabaseScriptProvider;
-import org.apache.roller.weblogger.business.utils.DatabaseInstaller;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
