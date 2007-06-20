@@ -52,6 +52,9 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("folderFuncTestUser");
             testWeblog = TestUtils.setupWeblog("folderFuncTestWeblog", testUser);

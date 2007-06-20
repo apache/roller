@@ -59,6 +59,9 @@ public class PermissionTest extends TestCase {
         
         log.info("BEGIN");
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("permsTestUser");
             testWeblog = TestUtils.setupWeblog("permsTestWeblog", testUser);

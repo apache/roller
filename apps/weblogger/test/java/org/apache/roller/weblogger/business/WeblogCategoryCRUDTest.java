@@ -48,6 +48,9 @@ public class WeblogCategoryCRUDTest extends TestCase {
         log.info("BEGIN");
         
         try {
+            // setup weblogger
+            TestUtils.setupWeblogger();
+            
             testUser = TestUtils.setupUser("categoryCRUDTestUser");
             testWeblog = TestUtils.setupWeblog("categoryCRUDTestWeblog", testUser);
             TestUtils.endSession(true);

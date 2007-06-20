@@ -69,6 +69,9 @@ public class WeblogEntryTest extends TestCase {
      */
     public void setUp() throws Exception {
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("entryTestUser");
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);

@@ -45,6 +45,9 @@ public class FolderCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("folderCRUDTestUser");
             testWeblog = TestUtils.setupWeblog("folderCRUDTestWeblog", testUser);

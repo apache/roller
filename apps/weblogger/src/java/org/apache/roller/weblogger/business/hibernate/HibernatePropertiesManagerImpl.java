@@ -28,14 +28,13 @@ import org.hibernate.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
@@ -59,9 +58,29 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
         log.debug("Instantiating Hibernate Properties Manager");
         
         this.strategy = strat;
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public void initialize() throws InitializationException {
         
-        // TODO: and new method initialize(props)
-        init();
+        Map props = null;
+        try {
+            props = this.getProperties();
+            
+            // check for new props
+            props = initializeMissingProps(props);
+            
+            // save our changes
+            this.saveProperties(props);
+        } catch (Exception e) {
+            log.fatal("Failed to initialize runtime configuration properties."+
+                    "Please check that the database has been upgraded!", e);
+            throw new RuntimeException(e);
+        }
+        
     }
     
     
@@ -133,25 +152,6 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
         while (props.hasNext()) {
             this.strategy.store((RuntimeConfigProperty) props.next());
         }
-    }
-
-    
-    private void init() {
-        Map props = null;
-        try {
-            props = this.getProperties();
-            
-            // check for new props
-            props = initializeMissingProps(props);
-            
-            // save our changes
-            this.saveProperties(props);
-        } catch (Exception e) {
-            log.fatal("Failed to initialize runtime configuration properties."+
-                    "Please check that the database has been upgraded!", e);
-            throw new RuntimeException(e);
-        }
-        
     }
     
     

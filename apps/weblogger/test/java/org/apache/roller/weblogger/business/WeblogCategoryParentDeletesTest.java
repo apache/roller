@@ -47,6 +47,9 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
         log.info("BEGIN");
         
         try {
+            // setup weblogger
+            TestUtils.setupWeblogger();
+        
             testUser = TestUtils.setupUser("categoryParentDeletesTestUser");
             testWeblog = TestUtils.setupWeblog("categoryParentDeletesTestWeblog", testUser);
             TestUtils.endSession(true);

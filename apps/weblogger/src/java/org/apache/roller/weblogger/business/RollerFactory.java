@@ -33,9 +33,6 @@ public final class RollerFactory {
     
     private static final Log log = LogFactory.getLog(RollerFactory.class);
     
-    // have we been bootstrapped yet?
-    private static boolean bootstrapped = false;
-    
     // a reference to the bootstrapped Roller instance
     private static Roller rollerInstance = null;
     
@@ -50,7 +47,7 @@ public final class RollerFactory {
      * True if bootstrap process was completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return bootstrapped;
+        return (rollerInstance != null);
     }
     
     
@@ -107,74 +104,12 @@ public final class RollerFactory {
             // do the invocation
             rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
             
-            // note that we've now been bootstrapped
-            bootstrapped = true;
-            
         } catch (Throwable ex) {
             // bootstrapping failed
             throw new BootstrapException("Exception doing bootstrapping", ex);
         }
         
         log.info("Roller Weblogger business tier successfully bootstrapped");
-    }
-    
-    
-    /**
-     * Initialize the Roller Weblogger business tier.
-     *
-     * Initialization is used to perform any logic that needs to happen only
-     * once after the application has been properly bootstrapped.
-     *
-     * @throws IllegalStateException If the app has not been bootstrapped yet.
-     * @throws InitializationException If there is an error during initialization.
-     */
-    public static final void initialize() throws InitializationException {
-        
-        // TODO: this initialization process should probably be controlled by
-        // a more generalized application lifecycle event framework
-        
-        if(!isBootstrapped()) {
-            throw new IllegalStateException("Cannot initialize until application has been properly bootstrapped");
-        }
-        
-        log.info("Initializing Roller Weblogger business tier");
-        
-        try {
-            
-            Roller roller = getRoller();
-            
-            // Now that Roller has been bootstrapped, initialize individual managers
-            roller.getPropertiesManager();
-            roller.getIndexManager();
-            roller.getThemeManager();
-            
-            // And this will schedule all configured tasks
-            roller.getThreadManager().startTasks();
-            
-            // Initialize ping systems
-
-            // Initialize common targets from the configuration
-            PingConfig.initializeCommonTargets();
-            
-            // Initialize ping variants
-            PingConfig.initializePingVariants();
-            
-            // Remove custom ping targets if they have been disallowed
-            if (PingConfig.getDisallowCustomTargets()) {
-                log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
-                RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
-            }
-            
-            // Remove all autoping configurations if ping usage has been disabled.
-            if (PingConfig.getDisablePingUsage()) {
-                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-                RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
-            }
-        } catch (Throwable t) {
-            throw new InitializationException("Error initializing ping systems", t);
-        }
-        
-        log.info("Roller Weblogger business tier successfully initialized");
     }
 
 }

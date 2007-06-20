@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.runnable;
 
 import java.util.Date;
+import org.apache.roller.weblogger.business.InitializationException;
 
 
 /**
@@ -30,9 +31,11 @@ public interface ThreadManager {
     
     
     /**
-     * Schedule execution of all configured tasks.
+     * Initialize the thread management system.
+     *
+     * @throws InitializationException If there is a problem during initialization.
      */
-    public void startTasks();
+    public void initialize() throws InitializationException;
     
     
     /**

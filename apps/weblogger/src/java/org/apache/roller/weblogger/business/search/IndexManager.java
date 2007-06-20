@@ -18,8 +18,8 @@
 package org.apache.roller.weblogger.business.search;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -51,6 +51,15 @@ public interface IndexManager
      * Release all resources associated with Roller session.
      */
     public abstract void release();
+    
+    
+    /**
+     * Initialize the search system.
+     *
+     * @throws InitializationException If there is a problem during initialization.
+     */
+    public void initialize() throws InitializationException;
+    
     
     /** Shutdown to be called on application shutdown */
     public abstract void shutdown();
