@@ -134,9 +134,6 @@ public final class RollerFactory {
      */
     public static final void initialize() throws InitializationException {
         
-        // TODO: this initialization process should probably be controlled by
-        // a more generalized application lifecycle event framework
-        
         if(!isBootstrapped()) {
             throw new IllegalStateException("Cannot initialize until application has been properly bootstrapped");
         }
