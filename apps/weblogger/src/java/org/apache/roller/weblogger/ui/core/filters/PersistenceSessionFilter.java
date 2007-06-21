@@ -65,9 +65,7 @@ public class PersistenceSessionFilter implements Filter {
                 
                 // if planet is enabled then release planet backend as well
                 if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
-                    // TODO: once planet uses same lifecycle options as weblogger
-                    // then this should be updated to if(PlanetFactory.isBootstrapped())
-                    if (PlanetFactory.getPlanet() != null) {
+                    if (PlanetFactory.isBootstrapped()) {
                         PlanetFactory.getPlanet().release();
                     }
                 }

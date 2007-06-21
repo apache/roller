@@ -81,7 +81,7 @@ public abstract class PlanetFactory {
         return bootstrapped;
     }
     
-        /**
+    /**
      * Bootstrap the Roller Planet business tier.
      *
      * Bootstrapping the application effectively instantiates all the necessary
@@ -107,5 +107,44 @@ public abstract class PlanetFactory {
         bootstrapped = true;            
         
         log.info("Roller Planet business tier successfully bootstrapped");
+    }
+    
+    /**
+     * Initialize the Roller Planet business tier.
+     *
+     * Initialization is used to perform any logic that needs to happen only
+     * once after the application has been properly bootstrapped.
+     *
+     * @throws IllegalStateException If the app has not been bootstrapped yet.
+     * @throws InitializationException If there is an error during initialization.
+     */
+    public static final void initialize() throws InitializationException {
+        
+        // TODO: this initialization process should probably be controlled by
+        // a more generalized application lifecycle event framework
+        
+        if(!isBootstrapped()) {
+            throw new IllegalStateException("Cannot initialize until application has been properly bootstrapped");
+        }
+        
+        log.info("Initializing Roller Planet business tier");
+        
+        String urlStratClass = PlanetConfig.getProperty("urlstrategy.classname");
+        if(urlStratClass == null || urlStratClass.trim().length() < 1) {
+            throw new InitializationException("No URLStrategy configured!!!");
+        }
+        
+        URLStrategy urlStrategy;
+        try {
+            Class stratClass = Class.forName(urlStratClass);
+            urlStrategy = (URLStrategy) stratClass.newInstance();
+        } catch (Throwable ex) {
+            throw new InitializationException("Error instantiating URL strategy: " + urlStratClass);
+        }
+        
+        // plug it in
+        PlanetFactory.getPlanet().setURLStrategy(urlStrategy);
+        
+        log.info("Roller Weblogger business tier successfully initialized");
     }
 }

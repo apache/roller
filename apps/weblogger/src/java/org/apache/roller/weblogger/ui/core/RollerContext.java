@@ -37,8 +37,8 @@ import org.apache.roller.weblogger.business.BootstrapException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.RollerFactory;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
@@ -110,7 +110,7 @@ public class RollerContext extends ContextLoaderListener
         
         
         // Now prepare the core services of the app so we can bootstrap
-        try {        
+        try {
             WebloggerStartup.prepare();
         } catch (StartupException ex) {
             log.fatal("Roller Weblogger startup failed during app preparation", ex);
@@ -128,7 +128,10 @@ public class RollerContext extends ContextLoaderListener
                 RollerFactory.bootstrap();
                 
                 // trigger initialization process
-                RollerFactory.getRoller().initialize();
+                RollerFactory.initialize();
+                
+                // flush any changes made during initialization
+                RollerFactory.getRoller().flush();
                 
             } catch (BootstrapException ex) {
                 log.fatal("Roller Weblogger bootstrap failed", ex);
@@ -139,11 +142,21 @@ public class RollerContext extends ContextLoaderListener
             // Initialize Planet if necessary
             if (RollerFactory.isBootstrapped()) {
                 if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                    
+                    // Now prepare the core services of planet so we can bootstrap it
                     try {
-                        Planet planet = PlanetFactory.getPlanet();
-                        PlanetFactory.getPlanet().getPropertiesManager();
-                        planet.flush();
-                        planet.release();
+                        PlanetStartup.prepare();
+                    } catch (Throwable ex) {
+                        log.fatal("Roller Planet startup failed during app preparation", ex);
+                        return;
+                    }
+        
+                    try {
+                        // trigger planet bootstrapping process
+                        PlanetFactory.bootstrap();
+
+                        // flush any changes made during initialization
+                        PlanetFactory.getPlanet().flush();
                         
                     } catch (Throwable t) {
                         log.fatal("Roller Planet initialization failed", t);

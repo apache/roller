@@ -46,10 +46,7 @@ public interface IndexManager
     
     /** Execute operation immediately */
     public abstract void executeIndexOperationNow(final IndexOperation op);
-    
-    /** Init index manager by checking and rebuilding index */
-    public void bootstrap();
-    
+
     /**
      * Release all resources associated with Roller session.
      */

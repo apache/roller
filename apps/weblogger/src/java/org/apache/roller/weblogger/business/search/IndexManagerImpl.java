@@ -96,11 +96,7 @@ public class IndexManagerImpl implements IndexManager {
     @com.google.inject.Inject
     public IndexManagerImpl(Roller roller) {
         this.roller = roller;
-    }
-        
-    public void bootstrap() {
-        
-        
+
         // check config to see if the internal search is enabled
         String enabled = RollerConfig.getProperty("search.enabled");
         if("false".equalsIgnoreCase(enabled))

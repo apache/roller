@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.runnable;
 
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -27,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -50,8 +50,7 @@ public class ThreadManagerImpl implements ThreadManager {
         serviceScheduler = Executors.newScheduledThreadPool(10);
     }
     
-    
-    public void initialize() throws InitializationException {
+    public void startTasks() {
         
         Date now = new Date();
         
@@ -85,10 +84,8 @@ public class ThreadManagerImpl implements ThreadManager {
                     log.error("Error instantiating task", ex);
                 }
             }
-        }
-        
+        }        
     }
-    
     
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
