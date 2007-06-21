@@ -62,7 +62,11 @@ public class Install extends UIAction {
     
     
     public String execute() {
-
+        
+        if(RollerFactory.isBootstrapped()) {
+            return SUCCESS;
+        }
+        
         if(WebloggerStartup.getDatabaseProviderException() != null) {
             StartupException se = WebloggerStartup.getDatabaseProviderException();
             if (se.getRootCause() != null) {
@@ -91,6 +95,10 @@ public class Install extends UIAction {
     
     public String create() {
         
+        if(RollerFactory.isBootstrapped()) {
+            return SUCCESS;
+        }
+        
         try {
             messages = WebloggerStartup.createDatabase();
             
@@ -106,6 +114,10 @@ public class Install extends UIAction {
     
     public String upgrade() {
         
+        if(RollerFactory.isBootstrapped()) {
+            return SUCCESS;
+        }
+        
         try {
             messages = WebloggerStartup.upgradeDatabase(true);
             
@@ -120,6 +132,10 @@ public class Install extends UIAction {
     
     
     public String bootstrap() {
+        
+        if(RollerFactory.isBootstrapped()) {
+            return SUCCESS;
+        }
         
         try {
             // trigger bootstrapping process
