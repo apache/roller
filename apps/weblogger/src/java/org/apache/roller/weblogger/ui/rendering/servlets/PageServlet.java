@@ -219,6 +219,7 @@ public class PageServlet extends HttpServlet {
             }
         }
         
+        log.debug("Looking for template to use for rendering");
         
         // figure out what template to use
         ThemeTemplate page = null;
@@ -287,11 +288,6 @@ public class PageServlet extends HttpServlet {
         
         log.debug("page found, dealing with it");
         
-        // do we need to force a specific locale for the request?
-        if(pageRequest.getLocale() == null && !weblog.isShowAllLangs()) {
-            pageRequest.setLocale(weblog.getLocale());
-        }
-        
         // validation.  make sure that request input makes sense.
         boolean invalid = false;
         if(pageRequest.getWeblogPageName() != null && page.isHidden()) {
@@ -341,9 +337,16 @@ public class PageServlet extends HttpServlet {
 
         
         if(invalid) {
+            log.debug("page failed validation, bailing out");
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        }
+        
+        
+        // do we need to force a specific locale for the request?
+        if(pageRequest.getLocale() == null && !weblog.isShowAllLangs()) {
+            pageRequest.setLocale(weblog.getLocale());
         }
         
         
