@@ -144,6 +144,13 @@ public class WeblogConfig extends UIAction {
                 addMessage("websiteSettings.commentsOffForInactiveWeblog");
             }
             
+            // if blog has unchecked 'show all langs' then we must make sure
+            // the multi-language blogging option is enabled.
+            // TODO: this should be properly reflected via the UI
+            if(!weblog.isShowAllLangs() && !weblog.isEnableMultiLang()) {
+                weblog.setEnableMultiLang(true);
+            }
+            
             // save config
             umgr.saveWebsite(weblog);
             
