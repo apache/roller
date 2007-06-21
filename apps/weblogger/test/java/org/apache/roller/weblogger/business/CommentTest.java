@@ -63,6 +63,9 @@ public class CommentTest extends TestCase {
      */
     public void setUp() throws Exception {
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("commentTestUser");
             testWeblog = TestUtils.setupWeblog("commentTestWeblog", testUser);

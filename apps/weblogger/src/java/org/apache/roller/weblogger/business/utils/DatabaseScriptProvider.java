@@ -15,15 +15,20 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.weblogger.business.utils;
 
 import java.io.InputStream;
+
 
 /**
  * Interface for retrieving database script.
  */
 public interface DatabaseScriptProvider {
     
-    /** Get database script, path is relative to dbscripts dir */
+    /** 
+     * Get an InputStream to a database script at the given path.
+     */
     public InputStream getDatabaseScript(String path) throws Exception;
+    
 }

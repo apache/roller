@@ -55,6 +55,9 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         log.info("BEGIN");
         
         try {
+            // setup weblogger
+            TestUtils.setupWeblogger();
+            
             testUser = TestUtils.setupUser("categoryTestUser");
             testWeblog = TestUtils.setupWeblog("categoryTestWeblog", testUser);
             

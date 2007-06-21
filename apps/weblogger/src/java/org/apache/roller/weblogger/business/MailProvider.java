@@ -28,7 +28,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -41,8 +41,6 @@ public class MailProvider {
     
     private enum ConfigurationType {JNDI_NAME, MAIL_PROPERTIES; }
     
-    private static MailProvider singletonInstance = null;
-    
     private Session session = null;
     
     private ConfigurationType type = ConfigurationType.JNDI_NAME;
@@ -53,9 +51,9 @@ public class MailProvider {
     private String mailUsername = null;
     private String mailPassword = null;
 
+    
+    public MailProvider() throws StartupException {
         
-    /** Creates a new instance of MailProvider */
-    public MailProvider() throws WebloggerException {
         String connectionTypeString = RollerConfig.getProperty("mail.configurationType"); 
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
@@ -77,7 +75,7 @@ public class MailProvider {
                 Context ctx = (Context) new InitialContext();
                 session = (Session) ctx.lookup(name);
             } catch (NamingException ex) {
-                throw new WebloggerException("ERROR looking up mail-session with JNDI name: " + name);
+                throw new StartupException("ERROR looking up mail-session with JNDI name: " + name);
             }
         } else {
             Properties props = new Properties();
@@ -86,35 +84,32 @@ public class MailProvider {
             if (mailPort != -1) props.put("mail.smtp.port", ""+mailPort);
             session = Session.getDefaultInstance(props, null);
         }
+        
         try {
             Transport transport = getTransport();
             transport.close();
         } catch (Throwable t) {
-            throw new WebloggerException("ERROR connecting to mail server", t);
+            throw new StartupException("ERROR connecting to mail server", t);
         }
         
     }
     
-    public static MailProvider getMailProvider() throws WebloggerException {
-        if (singletonInstance == null) {
-            singletonInstance = new MailProvider();
-        }
-        return singletonInstance;
-    }   
     
-    public static boolean isMailConfigured() {
-        return singletonInstance != null;
-    }
-    
+    /**
+     * Get a mail Session.
+     */
     public Session getSession() {
         return session;
     }
+    
     
     /**
      * Create and connect to transport, caller is responsible for closing transport.
      */
     public Transport getTransport() throws NoSuchProviderException, MessagingException {
+        
         Transport transport = null;
+        
         if (type == ConfigurationType.MAIL_PROPERTIES) {
             // Configure transport ourselves using mail properties
             transport = session.getTransport("smtp"); 
@@ -128,6 +123,8 @@ public class MailProvider {
             transport = session.getTransport(); 
             transport.connect();
         }
+        
         return transport;
     }
+    
 }

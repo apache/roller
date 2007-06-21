@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.InitializationException;
 
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -62,11 +63,37 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         log.debug("Instantiating JPA Properties Manager");
         this.roller = roller;
         this.strategy = strategy;
-
-        // TODO: and new method initialize(props)
-        init();
     }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public void initialize() throws InitializationException {
+        
+        Map props = null;
+        try {
+            props = this.getProperties();
 
+            if(props.size() < 1) {
+                // empty props table ... load defaults
+                props = initializeMissingProps(props);
+            } else {
+                // found existing props ... check for new props
+                props = initializeMissingProps(props);
+            }
+
+            // save our changes
+            this.saveProperties(props);
+        } catch (Exception e) {
+            log.fatal("Failed to initialize runtime configuration properties."+
+                    "Please check that the database has been upgraded!", e);
+            throw new RuntimeException(e);
+        }
+        
+    }
+    
+    
     /**
      * Retrieve a single property by name.
      */
@@ -124,30 +151,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
             this.strategy.store((RuntimeConfigProperty) props.next());
         }
     }
-
-
-    private void init() {
-        Map props = null;
-        try {
-            props = this.getProperties();
-
-            if(props.size() < 1) {
-                // empty props table ... load defaults
-                props = initializeMissingProps(props);
-            } else {
-                // found existing props ... check for new props
-                props = initializeMissingProps(props);
-            }
-
-            // save our changes
-            this.saveProperties(props);
-        } catch (Exception e) {
-            log.fatal("Failed to initialize runtime configuration properties."+
-                    "Please check that the database has been upgraded!", e);
-            throw new RuntimeException(e);
-        }
-
-    }
+    
 
     /**
      * This method compares the property definitions in the RuntimeConfigDefs

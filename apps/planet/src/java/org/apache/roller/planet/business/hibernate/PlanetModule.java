@@ -21,10 +21,8 @@ package org.apache.roller.planet.business.hibernate;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.apache.roller.planet.business.Planet;
-import org.apache.roller.planet.business.PlanetDatabaseProvider;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
-import org.apache.roller.util.DatabaseProvider;
 
 
 /**
@@ -34,8 +32,6 @@ public class PlanetModule implements Module {
 
     public void configure(Binder binder) {
         
-        binder.bind(DatabaseProvider.class).to(PlanetDatabaseProvider.class);
-
         binder.bind(Planet.class).to(HibernatePlanetImpl.class);
         
         binder.bind(HibernatePersistenceStrategy.class); 

@@ -122,7 +122,7 @@
         <put name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
     
-    <definition name=".UnknownError" extends=".tiles-errorpage" >
+    <definition name=".Bootstrap" extends=".tiles-errorpage" >
         <put name="content" value="/WEB-INF/jsps/core/UnknownError.jsp" />
         <put name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />

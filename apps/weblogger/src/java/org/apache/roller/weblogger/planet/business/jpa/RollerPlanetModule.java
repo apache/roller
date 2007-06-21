@@ -26,8 +26,7 @@ import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 import org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl;
 import org.apache.roller.planet.business.jpa.JPAPropertiesManagerImpl;
-import org.apache.roller.util.DatabaseProvider;
-import org.apache.roller.weblogger.business.RollerDatabaseProvider;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 
 
 /**
@@ -43,8 +42,7 @@ public class RollerPlanetModule implements Module {
         binder.bind(JPARollerPlanetPersistenceStrategy.class); 
         
         binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
-        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);   
-        binder.bind(DatabaseProvider.class).to(  RollerDatabaseProvider.class);   
+        binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);    
     }    
 }
 

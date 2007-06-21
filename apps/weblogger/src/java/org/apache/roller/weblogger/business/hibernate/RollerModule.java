@@ -20,13 +20,11 @@ package org.apache.roller.weblogger.business.hibernate;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.roller.util.DatabaseProvider;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerDatabaseProvider;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -50,8 +48,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
 public class RollerModule implements Module {
     
     public void configure(Binder binder) {
-        
-        binder.bind(DatabaseProvider.class).to(RollerDatabaseProvider.class);
         
         binder.bind(Roller.class).to(HibernateRollerImpl.class);
         

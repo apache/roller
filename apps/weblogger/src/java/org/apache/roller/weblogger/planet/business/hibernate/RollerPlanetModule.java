@@ -26,8 +26,7 @@ import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePropertiesManagerImpl;
-import org.apache.roller.util.DatabaseProvider;
-import org.apache.roller.weblogger.business.RollerDatabaseProvider;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 
 
 /**
@@ -44,7 +43,6 @@ public class RollerPlanetModule implements Module {
         
         binder.bind(PlanetManager.class).to(     HibernatePlanetManagerImpl.class);   
         binder.bind(PropertiesManager.class).to( HibernatePropertiesManagerImpl.class);   
-        binder.bind(DatabaseProvider.class).to(  RollerDatabaseProvider.class); 
     }    
 }
 

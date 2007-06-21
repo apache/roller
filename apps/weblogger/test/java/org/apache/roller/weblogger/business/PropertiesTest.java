@@ -49,11 +49,11 @@ public class PropertiesTest extends TestCase {
     
     
     public void setUp() throws Exception {
-        
+        // setup weblogger
+        TestUtils.setupWeblogger();
     }
     
     public void tearDown() throws Exception {
-        
     }
     
     

@@ -26,7 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.util.DatabaseProvider;
+import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 /**
@@ -41,12 +42,9 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
      * Construct by finding using DatabaseProvider and RollerConfig.
      * @throws org.apache.roller.PlanetException on any error
      */
-    @com.google.inject.Inject
-    public JPARollerPlanetPersistenceStrategy(DatabaseProvider dbProvider) throws PlanetException { 
-        super(dbProvider);
-    }
-    
-    protected void init(DatabaseProvider dbProvider) throws PlanetException {
+    public JPARollerPlanetPersistenceStrategy() throws PlanetException { 
+
+        DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
         
         // Pull in any properties defined in JMAEMF.properties config file
         Properties emfProps = loadPropertiesFromResourceName(

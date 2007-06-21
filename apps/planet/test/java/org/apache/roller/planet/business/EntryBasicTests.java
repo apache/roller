@@ -32,6 +32,9 @@ public class EntryBasicTests extends TestCase {
     
     
     protected void setUp() throws Exception {
+        // setup planet
+        TestUtils.setupPlanet();
+        
         testSub = TestUtils.setupSubscription("entryBasicTest");
     }
     

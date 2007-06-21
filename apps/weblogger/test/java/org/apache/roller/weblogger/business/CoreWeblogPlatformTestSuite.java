@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.business;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.roller.weblogger.TestUtils;
 
 
 /**

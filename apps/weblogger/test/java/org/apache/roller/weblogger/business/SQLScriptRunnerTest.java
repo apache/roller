@@ -22,8 +22,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import junit.framework.TestCase;
-import org.apache.roller.util.DatabaseProvider;
-import org.apache.roller.weblogger.business.utils.SQLScriptRunner;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 
 /**
  * Test parsing and running of SQL scripts
@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.utils.SQLScriptRunner;
 public class SQLScriptRunnerTest extends TestCase {
 
     public void testParseOnly() throws Exception {        
-        DatabaseProvider dbp = DatabaseProvider.getDatabaseProvider();
+        DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
         Connection con = dbp.getConnection(); 
         
         // normaly tests run against Derby
@@ -49,7 +49,7 @@ public class SQLScriptRunnerTest extends TestCase {
     }    
     
     public void testSimpleRun() throws Exception {
-        DatabaseProvider dbp = DatabaseProvider.getDatabaseProvider();
+        DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
         Connection con = dbp.getConnection(); 
 
         // normaly tests run against Derby

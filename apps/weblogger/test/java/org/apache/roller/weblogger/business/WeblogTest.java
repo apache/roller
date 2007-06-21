@@ -58,6 +58,9 @@ public class WeblogTest extends TestCase {
         
         log.info("BEGIN");
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("weblogTestUser");
             TestUtils.endSession(true);

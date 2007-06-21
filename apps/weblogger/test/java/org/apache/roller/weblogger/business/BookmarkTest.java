@@ -55,6 +55,9 @@ public class BookmarkTest extends TestCase {
      */
     public void setUp() throws Exception {
         
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         try {
             testUser = TestUtils.setupUser("bkmrkTestUser");
             testWeblog = TestUtils.setupWeblog("bkmrkTestWeblog", testUser);

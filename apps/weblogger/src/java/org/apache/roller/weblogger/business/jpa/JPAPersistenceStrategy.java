@@ -30,13 +30,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.util.DatabaseProvider;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 
 
 /**

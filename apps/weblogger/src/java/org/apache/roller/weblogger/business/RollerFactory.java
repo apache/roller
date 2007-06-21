@@ -24,22 +24,22 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.utils.DatabaseCreator;
-import org.apache.roller.weblogger.business.utils.DatabaseUpgrader;
-import org.apache.roller.weblogger.config.PingConfig;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
 /**
  * Provides access to the Roller instance.
  */
-public abstract class RollerFactory implements Module {
-    private static Log log = LogFactory.getLog(RollerFactory.class);
-    private static Injector injector = null;
-    private static Roller rollerInstance = null;
-    private static boolean bootstrapped = false;
+public final class RollerFactory {
     
+    private static final Log log = LogFactory.getLog(RollerFactory.class);
+    
+    // a reference to the bootstrapped Roller instance
+    private static Roller rollerInstance = null;
+    
+    private static Injector injector = null;
+  
     
     static {
         String moduleClassname = RollerConfig.getProperty("guice.backend.module");
@@ -51,15 +51,36 @@ public abstract class RollerFactory implements Module {
             // Fatal misconfiguration, cannot recover
             throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
         }
+    } 
+    
+    
+    // non-instantiable
+    private RollerFactory() {
+        // hello all you beautiful people
     }
     
     
     /**
-     * True if bootstrap process was completed
+     * True if bootstrap process was completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return bootstrapped;
+        return (rollerInstance != null);
     }
+    
+    
+    /**
+     * Accessor to the Roller Weblogger business tier.
+     *
+     * @return Roller An instance of Roller.
+     * @throws IllegalStateException If the app has not been properly bootstrapped yet.
+     */
+    public static final Roller getRoller() {
+        if(rollerInstance == null) {
+            throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
+        }        
+        return rollerInstance;
+    }
+    
     
     /**
      * Access to Guice injector so that developers can add new injected objects
@@ -72,62 +93,27 @@ public abstract class RollerFactory implements Module {
     
     /**
      * Bootstrap the Roller Weblogger business tier.
+     *
+     * Bootstrapping the application effectively instantiates all the necessary
+     * pieces of the business tier and wires them together so that the app is 
+     * ready to run.
+     *
+     * @throws IllegalStateException If the app has not been properly prepared yet.
+     * @throws BootstrapException If an error happens during the bootstrap process.
      */
-    public static final void bootstrap() throws WebloggerException {
+    public static final void bootstrap() throws BootstrapException {
         
-        if ("manual".equals(RollerConfig.getProperty("installation.type"))) {
-            if (DatabaseCreator.isCreationRequired()
-            || DatabaseUpgrader.isUpgradeRequired()) {
-                return;
-            }
+        // if the app hasn't been properly started so far then bail
+        if (!WebloggerStartup.isPrepared()) {
+            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         
-        // This will cause instantiation and initialziation of Roller impl
-        Roller roller = getRoller();
-        
-        // TODO: this initialization process should probably be controlled by
-        // a more generalized application lifecycle event framework
-        
-        // Now that Roller has been instantiated, initialize individual managers
-        roller.getPropertiesManager();
-        roller.getIndexManager();
-        roller.getThemeManager();
-        
-        // And this will schedule all configured tasks
-        roller.getThreadManager().startTasks();
-        
-        // Initialize ping systems
-        try {
-            // Initialize common targets from the configuration
-            PingConfig.initializeCommonTargets();
+        log.info("Bootstrapping Roller Weblogger business tier");
             
-            // Initialize ping variants
-            PingConfig.initializePingVariants();
-            
-            // Remove custom ping targets if they have been disallowed
-            if (PingConfig.getDisallowCustomTargets()) {
-                log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
-                RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
-            }
-            
-            // Remove all autoping configurations if ping usage has been disabled.
-            if (PingConfig.getDisablePingUsage()) {
-                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-                RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
-            }
-            
-            RollerFactory.getRoller().getIndexManager().bootstrap();
-            
-        } catch (WebloggerException e) {
-            log.error("ERROR configing ping managers", e);
-        }
-        
-        bootstrapped = true;
+        // do the invocation
+        rollerInstance = injector.getInstance(Roller.class);
+                   
+        log.info("Roller Weblogger business tier successfully bootstrapped");
     }
-    
-    public static Roller getRoller() {
-        return injector.getInstance(Roller.class);
-    }
-    
-}
 
+}

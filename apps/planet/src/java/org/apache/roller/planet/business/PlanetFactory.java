@@ -23,6 +23,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.planet.config.PlanetConfig; 
 
 /**
@@ -32,7 +33,11 @@ public abstract class PlanetFactory {
     private static Log log = LogFactory.getLog(PlanetFactory.class);
     private static Planet planetInstance = null;
     private static Injector injector = null;       
-            
+    
+    // have we been bootstrapped yet?
+    private static boolean bootstrapped = false;
+    
+    
     /**
      * Let's just be doubling certain this class cannot be instantiated.
      */
@@ -55,13 +60,52 @@ public abstract class PlanetFactory {
      * Static accessor for the instance of Roller
      */
     public static Planet getPlanet() {
-        return injector.getInstance(Planet.class);
+        if (planetInstance == null) {
+            throw new IllegalStateException("Roller Planet has not been bootstrapped yet");
+        }        
+        return planetInstance;
     }     
     
     /**
-     * TODO_GUICE: elimiate the need for PlanetFactory.getInjector()
+     * Access to Guice injector so that developers can add new injected objects
+     * to Roller, e.g. new managers that are not part of the Roller interface.
      */
     public static Injector getInjector() {
         return injector;
+    }
+    
+    /**
+     * True if bootstrap process was completed, False otherwise.
+     */
+    public static boolean isBootstrapped() {
+        return bootstrapped;
+    }
+    
+        /**
+     * Bootstrap the Roller Planet business tier.
+     *
+     * Bootstrapping the application effectively instantiates all the necessary
+     * pieces of the business tier and wires them together so that the app is 
+     * ready to run.
+     *
+     * @throws IllegalStateException If the app has not been properly prepared yet.
+     * @throws BootstrapException If an error happens during the bootstrap process.
+     */
+    public static final void bootstrap() throws BootstrapException {
+        
+        // if the app hasn't been properly started so far then bail
+        if (!PlanetStartup.isPrepared()) {
+            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
+        }
+        
+        log.info("Bootstrapping Roller Planet business tier");
+        
+        // bootstrap Roller Weblogger business tier
+        planetInstance =  injector.getInstance(Planet.class);
+
+        // note that we've now been bootstrapped
+        bootstrapped = true;            
+        
+        log.info("Roller Planet business tier successfully bootstrapped");
     }
 }

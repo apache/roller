@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.util;
+package org.apache.roller.planet.business;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,10 +29,19 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.startup.StartupException;
+import org.apache.roller.planet.config.PlanetConfig;
 
 
 /**
  * Encapsulates Roller database configuration via JDBC properties or JNDI.
+ *
+ * <p>To keep the logs from filling up with DB connection errors, will only 
+ * attempt to connect once.</p>
+ * 
+ * <p>Keeps startup exception and log so we can present useful debugging
+ * information to whoever is installing Roller.</p>
+ *
  *
  * <p>Reads configuration properties from RollerConfig:</p>
  * <pre>
@@ -49,49 +58,40 @@ import org.apache.commons.logging.LogFactory;
  * database.jdbc.password=
  * </pre>
  */
-@com.google.inject.Singleton
 public class DatabaseProvider  {
+    
     private static Log log = LogFactory.getLog(DatabaseProvider.class);
 
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES;}
-    protected ConfigurationType type = ConfigurationType.JNDI_NAME; 
+    private ConfigurationType type = ConfigurationType.JNDI_NAME;
+    private List<String> startupLog = new ArrayList<String>();
     
-    private static DatabaseProvider singletonInstance = null;
-    private static DatabaseProviderException startupException = null;
-    private static List<String> startupLog = new ArrayList<String>();
+    private DataSource dataSource = null;    
+    private String jndiName = null; 
     
-    protected DataSource dataSource = null;    
-    protected String jndiName = null; 
-    
-    protected String jdbcDriverClass = null;
-    protected String jdbcConnectionURL = null;
-    protected String jdbcPassword = null;
-    protected String jdbcUsername = null;
-    protected Properties props = null;
+    private String jdbcDriverClass = null;
+    private String jdbcConnectionURL = null;
+    private String jdbcPassword = null;
+    private String jdbcUsername = null;
+    private Properties props = null;
     
     
     /**
      * Reads configuraiton, loads driver or locates data-source and attempts
      * to get test connecton so that we can fail early.
      */ 
-    protected void init(
-        ConfigurationType type,
-        String jndiName, 
-        String jdbcDriverClass,
-        String jdbcConnectionURL,
-        String jdbcUsername,
-        String jdbcPassword) throws DatabaseProviderException { 
+    public DatabaseProvider() throws StartupException {
         
-        this.type              = type;
-        this.jndiName          = jndiName;
-        this.jdbcDriverClass   = jdbcDriverClass;
-        this.jdbcConnectionURL = jdbcConnectionURL;
-        this.jdbcUsername      = jdbcUsername;
-        this.jdbcPassword      = jdbcPassword;
-         
-        if ("jdbc".equals(type)) {
+        String connectionTypeString = 
+                PlanetConfig.getProperty("database.configurationType"); 
+        if ("jdbc".equals(connectionTypeString)) {
             type = ConfigurationType.JDBC_PROPERTIES;
         }
+        jndiName =          PlanetConfig.getProperty("database.jndi.name");
+        jdbcDriverClass =   PlanetConfig.getProperty("database.jdbc.driverClass");
+        jdbcConnectionURL = PlanetConfig.getProperty("database.jdbc.connectionURL");
+        jdbcUsername =      PlanetConfig.getProperty("database.jdbc.username");
+        jdbcPassword =      PlanetConfig.getProperty("database.jdbc.password");
         
         successMessage("SUCCESS: Got parameters. Using configuration type " + type);
 
@@ -108,8 +108,7 @@ public class DatabaseProvider  {
                      "ERROR: cannot load JDBC driver class [" + getJdbcDriverClass()+ "]. "
                     +"Likely problem: JDBC driver jar missing from server classpath.";
                 errorMessage(errorMsg);
-                startupException = new DatabaseProviderException(errorMsg, ex);
-                throw startupException;
+                throw new StartupException(errorMsg, ex, startupLog);
             }
             successMessage("SUCCESS: loaded JDBC driver class [" +getJdbcDriverClass()+ "]");
             
@@ -131,8 +130,7 @@ public class DatabaseProvider  {
                     "ERROR: cannot locate JNDI DataSource [" +name+ "]. "
                    +"Likely problem: no DataSource or datasource is misconfigured.";
                 errorMessage(errorMsg);
-                startupException =  new DatabaseProviderException(errorMsg, ex);
-                throw startupException;
+                throw new StartupException(errorMsg, ex, startupLog);
             }            
             successMessage("SUCCESS: located JNDI DataSource [" +name+ "]");
         }
@@ -146,10 +144,10 @@ public class DatabaseProvider  {
                 "ERROR: unable to obtain database connection. "
                +"Likely problem: bad connection parameters or database unavailable.";
             errorMessage(errorMsg);
-            startupException =  new DatabaseProviderException(errorMsg, t);
-            throw startupException;
+            throw new StartupException(errorMsg, t, startupLog);
         }
     }
+    
     
     private void successMessage(String msg) {
         startupLog.add(msg);
@@ -161,31 +159,11 @@ public class DatabaseProvider  {
         log.error(msg);
     }
     
-    /**
-     * Get global database provider singlton, instantiating if necessary.
-     */
-    public static DatabaseProvider getDatabaseProvider() throws DatabaseProviderException {
-        // No need to jam log with database connection attempts
-        if (startupException != null) {
-            throw startupException;
-        }
-        if (singletonInstance == null) {
-            singletonInstance = new DatabaseProvider();
-        }
-        return singletonInstance;
-    }
-    
-    /**
-     * Exception that occured during startup, or null if none occured.
-     */
-    public static DatabaseProviderException getStartupException() {
-        return startupException;
-    }
 
     /** 
      * List of success and error messages when class was first instantiated.
      **/
-    public static List<String> getStartupLog() {
+    public List<String> getStartupLog() {
         return startupLog;
     }
 
