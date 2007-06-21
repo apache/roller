@@ -53,6 +53,11 @@ update webpage set action = 'weblog' where name = 'Weblog';
 -- add new custom stylesheet column to website table
 #addColumnNull("website" "customstylesheet" "varchar(128)")
 
+-- fix blogs which have unchecked showalllangs but did not check enablemultilang
+update website set enablemultilang = 1 where showalllangs = 0;
+
+
+
 -- remove old id column of group subscription table
 alter table rag_group_subscription drop column id;
 
