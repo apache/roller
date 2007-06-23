@@ -18,14 +18,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import org.apache.commons.codec.binary.Base64;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -433,9 +431,7 @@ public class Utilities {
      * @throws IOException
      */
     public static String encodeString(String str) throws IOException {
-        BASE64Encoder encoder = new BASE64Encoder();
-        String encodedStr = encoder.encodeBuffer(str.getBytes());
-        
+        String encodedStr = new String(Base64.encodeBase64(str.getBytes()));  
         return (encodedStr.trim());
     }
     
@@ -447,10 +443,8 @@ public class Utilities {
      * @throws IOException
      */
     public static String decodeString(String str) throws IOException {
-        BASE64Decoder dec = new BASE64Decoder();
-        String value = new String(dec.decodeBuffer(str));
-        
-        return (value);
+        String value = new String(Base64.decodeBase64(str.getBytes()));        
+        return (value); 
     }
     
     /**

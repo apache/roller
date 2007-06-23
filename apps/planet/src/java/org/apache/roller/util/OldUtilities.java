@@ -25,11 +25,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.planet.util.RegexUtil;
 import org.apache.roller.planet.util.Utilities;
 
@@ -487,9 +487,7 @@ public class OldUtilities {
      * @throws IOException
      */
     public static String encodeString(String str) throws IOException {
-        sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
-        String encodedStr = encoder.encodeBuffer(str.getBytes());
-        
+        String encodedStr = new String(Base64.encodeBase64(str.getBytes()));  
         return (encodedStr.trim());
     }
     
@@ -501,10 +499,8 @@ public class OldUtilities {
      * @throws IOException
      */
     public static String decodeString(String str) throws IOException {
-        sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-        String value = new String(dec.decodeBuffer(str));
-        
-        return (value);
+        String value = new String(Base64.decodeBase64(str.getBytes()));        
+        return (value); 
     }
                
     /**
