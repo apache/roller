@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,13 +35,13 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
-import org.apache.roller.weblogger.util.Utilities;
+import org.apache.roller.weblogger.business.Roller;
 
 
 /**
  * Hibernate implementation of the BookmarkManager.
  */
+@com.google.inject.Singleton
 public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     static final long serialVersionUID = 5286654557062382772L;
@@ -50,16 +49,18 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     private static Log log = LogFactory.getLog(HibernateBookmarkManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     
     /**
      * @param pstrategy
      * @param roller
      */
-    public HibernateBookmarkManagerImpl(HibernatePersistenceStrategy strat) {
-        log.debug("Instantiating Hibernate Bookmark Manager");
-        
+    @com.google.inject.Inject    
+    protected HibernateBookmarkManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        this.roller = roller;
         this.strategy = strat;
+        log.debug("Instantiating Hibernate Bookmark Manager");
     }
     
     
@@ -67,7 +68,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
+        roller.getUserManager().saveWebsite(bookmark.getWebsite());
     }
     
     
@@ -86,8 +87,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         //Now remove it from database
         this.strategy.remove(bookmark);
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager()
-                .saveWebsite(bookmark.getWebsite());
+        roller.getUserManager().saveWebsite(bookmark.getWebsite());
     }
     
     
@@ -101,7 +101,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        roller.getUserManager().saveWebsite(folder.getWebsite());
     }
     
     
@@ -110,7 +110,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.remove(folder);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
+        roller.getUserManager().saveWebsite(folder.getWebsite());
     }
     
     

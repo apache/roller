@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -51,9 +51,11 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * This particular implementation reads theme data off the filesystem 
  * and assumes that those themes are not changable at runtime.
  */
+@com.google.inject.Singleton
 public class ThemeManagerImpl implements ThemeManager {
     
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
+    private Roller roller = null;
     
     // directory where themes are kept
     private String themeDir = null;
@@ -61,8 +63,9 @@ public class ThemeManagerImpl implements ThemeManager {
     // the Map contains ... (theme id, Theme)
     private Map themes = null;
     
-    
-    public ThemeManagerImpl() {
+    @com.google.inject.Inject
+    protected ThemeManagerImpl(Roller roller) {
+        this.roller = roller;
         // get theme directory from config and verify it
         this.themeDir = RollerConfig.getProperty("themes.dir");
         if(themeDir == null || themeDir.trim().length() < 1) {
@@ -133,7 +136,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
         // otherwise we are returning a WeblogSharedTheme
         } else {
-            ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+            ThemeManager themeMgr = roller.getThemeManager();
             SharedTheme staticTheme =
                     (SharedTheme) this.themes.get(weblog.getEditorTheme());
             if(staticTheme != null) {
@@ -175,7 +178,7 @@ public class ThemeManagerImpl implements ThemeManager {
         log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
         
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = roller.getUserManager();
             
             Set importedActionTemplates = new HashSet();
             ThemeTemplate themeTemplate = null;
@@ -255,7 +258,7 @@ public class ThemeManagerImpl implements ThemeManager {
             
             
             // now lets import all the theme resources
-            FileManager fileMgr = RollerFactory.getRoller().getFileManager();
+            FileManager fileMgr = roller.getFileManager();
             
             List resources = theme.getResources();
             Iterator iterat = resources.iterator();

@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
@@ -50,10 +49,8 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /*
  * JPARefererManagerImpl.java
- *
- * Created on May 31, 2006, 4:06 PM
- *
  */
+@com.google.inject.Singleton
 public class JPARefererManagerImpl implements RefererManager {
 
     private static Log log = LogFactory.getLog(
@@ -67,13 +64,15 @@ public class JPARefererManagerImpl implements RefererManager {
     
     /** The strategy for this manager. */
     protected JPAPersistenceStrategy strategy;
+    private Roller roller = null;
 
     /**
      * Creates a new instance of JPARefererManagerImpl
      */
-    public JPARefererManagerImpl(JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    protected JPARefererManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Referer Manager");
-
+        this.roller = roller;
         this.strategy = strategy;
     }
 
@@ -379,13 +378,13 @@ public class JPARefererManagerImpl implements RefererManager {
 
         // lookup the weblog now
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = roller.getUserManager();
             weblog = userMgr.getWebsiteByHandle(weblogHandle);
             if (weblog == null) return;
 
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
-                WeblogManager weblogMgr = RollerFactory.getRoller().
+                WeblogManager weblogMgr = roller.
                     getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             }
@@ -485,7 +484,7 @@ public class JPARefererManagerImpl implements RefererManager {
                     // Launch thread to extract referer linkback
 
                     try {
-                        Roller mRoller = RollerFactory.getRoller();
+                        Roller mRoller = roller;
                         mRoller.getThreadManager().executeInBackground(
                                 new LinkbackExtractorRunnable(ref));
                     } catch (InterruptedException e) {

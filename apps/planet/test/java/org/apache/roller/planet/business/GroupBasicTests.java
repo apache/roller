@@ -32,6 +32,9 @@ public class GroupBasicTests extends TestCase {
     
     
     protected void setUp() throws Exception {
+        // setup planet
+        TestUtils.setupPlanet();
+
         testPlanet = TestUtils.setupPlanet("groupBasicTest");
     }
     

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -20,7 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.util.Collection;
-import java.util.Properties;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -31,20 +29,23 @@ import java.security.PrivilegedAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.RollerConfig;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import org.apache.roller.weblogger.business.DatabaseProvider;
 
 
 /**
- * JPAPersistenceStrategy is responsible for the lowest-level interaction with
- * the JPA API.
+ * Responsible for the lowest-level interaction with the JPA API.
  */
-// TODO handle PersistenceExceptions!
+@com.google.inject.Singleton
 public class JPAPersistenceStrategy {
+    private static Log logger = 
+        LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
     
     /**
      * The thread local EntityManager.
@@ -56,99 +57,62 @@ public class JPAPersistenceStrategy {
      */
     private EntityManagerFactory emf = null;
     
-    /**
-     * The logger instance for this class.
-     */
-    private static Log logger = LogFactory.getFactory().getInstance(
-            JPAPersistenceStrategy.class);
             
     /**
      * Construct by finding JPA EntityManagerFactory.
      * @throws org.apache.roller.WebloggerException on any error
      */
-    public JPAPersistenceStrategy(
-            String puName,             
-            String jndiName, 
-            Properties properties) throws WebloggerException { 
-                
-        // set strategy used by Datamapper
-        // You can configure JPA completely via the JPAEMF.properties file
+    @com.google.inject.Inject
+    protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws WebloggerException { 
+        
+        // Pull in any properties defined in JMAEMF.properties config file
         Properties emfProps = loadPropertiesFromResourceName(
            "JPAEMF.properties", getContextClassLoader());
                 
-        // Add additional properties passed in 
-        Enumeration keys = properties.keys();
+        // Add all OpenJPA and Toplinks properties found in RollerConfig
+        Enumeration keys = RollerConfig.keys(); 
         while (keys.hasMoreElements()) {
             String key = (String)keys.nextElement();
-            String value = properties.getProperty(key);
-            logger.info(key + ": " + value);
-            emfProps.setProperty(key, value);
+            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
+                String value = RollerConfig.getProperty(key);
+                logger.info(key + ": " + value);
+                emfProps.setProperty(key, value);
+            }
         }
         
-        emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
+        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) { 
+            // We're doing JNDI, so set OpenJPA JNDI name property
+            String jndiName = "java:comp/env/" + dbProvider.getJndiName();
+            emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
+            
+        } else {
+            // So set JDBD properties for OpenJPA
+            emfProps.setProperty("openjpa.ConnectionDriverName",     dbProvider.getJdbcDriverClass());
+            emfProps.setProperty("openjpa.ConnectionURL",            dbProvider.getJdbcConnectionURL());
+            emfProps.setProperty("openjpa.ConnectionUserName",       dbProvider.getJdbcUsername());
+            emfProps.setProperty("openjpa.ConnectionPassword",       dbProvider.getJdbcPassword()); 
 
+            // And Toplink JPA
+            emfProps.setProperty("toplink.jdbc.driver",              dbProvider.getJdbcDriverClass());
+            emfProps.setProperty("toplink.jdbc.url",                 dbProvider.getJdbcConnectionURL());
+            emfProps.setProperty("toplink.jdbc.user",                dbProvider.getJdbcUsername());
+            emfProps.setProperty("toplink.jdbc.password",            dbProvider.getJdbcPassword());
+
+            // And Hibernate JPA
+            emfProps.setProperty("hibernate.connection.driver_class",dbProvider.getJdbcDriverClass());
+            emfProps.setProperty("hibernate.connection.url",         dbProvider.getJdbcConnectionURL());
+            emfProps.setProperty("hibernate.connection.username",    dbProvider.getJdbcUsername());
+            emfProps.setProperty("hibernate.connection.password",    dbProvider.getJdbcPassword()); 
+        }
+        
         try {
-            this.emf = Persistence.createEntityManagerFactory(puName, emfProps);
+            this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
         } catch (PersistenceException pe) {
             logger.error("ERROR: creating entity manager", pe);
             throw new WebloggerException(pe);
         }
-    }    
-        
-    /**
-     * Construct by finding JPA EntityManagerFactory.
-     * @throws org.apache.roller.WebloggerException on any error
-     */
-    public JPAPersistenceStrategy(
-            String puName,            
-            String driverClass,
-            String connectonUrl,
-            String username,
-            String password,
-            Properties properties) throws WebloggerException {   
-        
-        logger.info("driverClass:    " + driverClass);
-        logger.info("connectionURL:  " + connectonUrl);
-        logger.info("username:       " + username);         
-
-        // set strategy used by Datamapper
-        // You can configure JPA completely via the JPAEMF.properties file
-        Properties emfProps = loadPropertiesFromResourceName(
-           "JPAEMF.properties", getContextClassLoader());
-        
-        // Add additional properties passed in 
-        Enumeration keys = properties.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            String value = properties.getProperty(key);
-            logger.info(key + ": " + value);
-            emfProps.setProperty(key, value);
-        }
-        
-        // Try to please all the players
-        emfProps.setProperty("openjpa.ConnectionDriverName",     driverClass);
-        emfProps.setProperty("openjpa.ConnectionURL",            connectonUrl);
-        emfProps.setProperty("openjpa.ConnectionUserName",       username);
-        emfProps.setProperty("openjpa.ConnectionPassword",       password); 
-
-        emfProps.setProperty("toplink.jdbc.driver",              driverClass);
-        emfProps.setProperty("toplink.jdbc.url",                 connectonUrl);
-        emfProps.setProperty("toplink.jdbc.user",                username);
-        emfProps.setProperty("toplink.jdbc.password",            password);
-
-        emfProps.setProperty("hibernate.connection.driver_class",driverClass);
-        emfProps.setProperty("hibernate.connection.url",         connectonUrl);
-        emfProps.setProperty("hibernate.connection.username",    username);
-        emfProps.setProperty("hibernate.connection.password",    password); 
-        
-        try {
-            this.emf = Persistence.createEntityManagerFactory(puName, emfProps);
-        } catch (PersistenceException pe) {
-            logger.error("ERROR: creating entity manager", pe);
-            throw new WebloggerException(pe);
-        }
-    }    
-        
+    }
+                        
     /**
      * Flush changes to the datastore, commit transaction, release em.
      * @throws org.apache.roller.WebloggerException on any error

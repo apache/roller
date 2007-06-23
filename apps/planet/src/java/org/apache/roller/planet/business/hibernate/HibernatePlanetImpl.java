@@ -33,6 +33,7 @@ import org.apache.roller.planet.business.URLStrategy;
 /**
  * A Hibernate specific implementation of the Roller Planet business layer.
  */
+@com.google.inject.Singleton
 public class HibernatePlanetImpl implements Planet {   
     
     private static Log log = LogFactory.getLog(HibernatePlanetImpl.class);
@@ -58,69 +59,32 @@ public class HibernatePlanetImpl implements Planet {
      * Create HibernatePlanetImpl using Hibernate XML config file or config
      * file plus JDBC overrides from planet-custom.properties.
      */
-    public HibernatePlanetImpl() throws PlanetException {
+    @com.google.inject.Inject 
+    protected HibernatePlanetImpl(
+            HibernatePersistenceStrategy strategy, 
+            PlanetManager     planetManager, 
+            PropertiesManager propertiesManager,
+            URLStrategy       urlStrategy,
+            FeedFetcher       feedFetcher) throws PlanetException {
         
-        strategy = getStrategy();
-        
-        try {
-            String feedFetchClass = PlanetConfig.getProperty("feedfetcher.classname");
-            if(feedFetchClass == null || feedFetchClass.trim().length() < 1) {
-                throw new PlanetException("No FeedFetcher configured!!!");
-            }
-            
-            Class fetchClass = Class.forName(feedFetchClass);
-            FeedFetcher feedFetcher = (FeedFetcher) fetchClass.newInstance();
-            
-            // plug it in
-            setFeedFetcher(feedFetcher);
-            
-        } catch (Exception e) {
-            throw new PlanetException("Error initializing feed fetcher", e);
-        }
+        this.strategy = strategy;
+        this.propertiesManager = propertiesManager;
+        this.planetManager = planetManager;
+        this.urlStrategy = urlStrategy;
     }
+       
     
-    protected HibernatePersistenceStrategy getStrategy() throws PlanetException {
-        try {
-            String dialect =  
-                PlanetConfig.getProperty("hibernate.dialect");
-            String connectionProvider = 
-                PlanetConfig.getProperty("hibernate.connectionProvider");
-            return new HibernatePersistenceStrategy(
-                "/hibernate.cfg.xml", dialect, connectionProvider);
-
-        } catch(Throwable t) {
-            // if this happens then we are screwed
-            log.fatal("Error initializing Hibernate", t);
-            throw new PlanetException(t);
-        }        
-    }
-    
-    
-    /**
-     * Instantiates and returns an instance of HibernatePlanetImpl.
-     */
-    public static Planet instantiate() throws PlanetException {
-        if (me == null) {
-            log.debug("Instantiating HibernatePlanetImpl");
-            me = new HibernatePlanetImpl();
-        }
-        
-        return me;
+    public void initialize() {
+        // no-op
     }
     
     
     public PlanetManager getPlanetManager() {
-        if ( planetManager == null ) {
-            planetManager = new HibernatePlanetManagerImpl(strategy);  
-        }
         return planetManager;
     }
     
     
     public PropertiesManager getPropertiesManager() {
-        if ( propertiesManager == null ) {
-            propertiesManager = new HibernatePropertiesManagerImpl(strategy);  
-        }
         return propertiesManager;
     }
     
@@ -129,19 +93,9 @@ public class HibernatePlanetImpl implements Planet {
         return this.urlStrategy;
     }
     
-    public void setURLStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-        log.info("Using URLStrategy: " + urlStrategy.getClass().getName());
-    }
-    
     
     public FeedFetcher getFeedFetcher() {
         return this.feedFetcher;
-    }
-    
-    public void setFeedFetcher(FeedFetcher feedFetcher) {
-        this.feedFetcher = feedFetcher;
-        log.info("Using FeedFetcher: " + feedFetcher.getClass().getName());
     }
     
     
@@ -178,5 +132,4 @@ public class HibernatePlanetImpl implements Planet {
         // trigger the final release()
         this.release();
     }
-    
 }

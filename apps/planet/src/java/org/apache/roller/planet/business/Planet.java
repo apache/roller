@@ -46,29 +46,23 @@ public interface Planet {
     
     
     /**
-     * Set the configured URLStrategy.
-     */
-    public void setURLStrategy(URLStrategy urlStrategy);
-    
-    
-    /**
      * Get the configured FeedFetcher.
      */
     public FeedFetcher getFeedFetcher();
     
-    
-    /**
-     * Set the configured FeedFetcher.
-     */
-    public void setFeedFetcher(FeedFetcher feedFetcher);
-    
-    
+        
     /**
      * Flush object states.
      */
     public void flush() throws PlanetException;
     
     
+    /**
+     * Initialize any resources necessary for this instance of Roller.
+     */
+    public void initialize() throws InitializationException;
+    
+
     /**
      * Release any resources associated with a session.
      */

@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.business.hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -42,8 +41,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -66,22 +65,25 @@ import org.hibernate.Query;
 
 /**
  * Hibernate implementation of the UserManager.
- */
+ */    
+@com.google.inject.Singleton
 public class HibernateUserManagerImpl implements UserManager {
     
     static final long serialVersionUID = -5128460637997081121L;    
     private static Log log = LogFactory.getLog(HibernateUserManagerImpl.class);    
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
     
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
-        
-    public HibernateUserManagerImpl(HibernatePersistenceStrategy strat) {
+   
+    @com.google.inject.Inject
+    protected HibernateUserManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         log.debug("Instantiating Hibernate User Manager");
-        
+        this.roller = roller;       
         this.strategy = strat;
     }
     
@@ -113,8 +115,8 @@ public class HibernateUserManagerImpl implements UserManager {
         
         Session session = this.strategy.getSession();
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        BookmarkManager bmgr = roller.getBookmarkManager();
+        WeblogManager wmgr = roller.getWeblogManager();
         
         // remove tags
         Criteria tagQuery = session.createCriteria(WeblogEntryTag.class)
@@ -147,7 +149,7 @@ public class HibernateUserManagerImpl implements UserManager {
         List queueEntries = criteria.list();
         
         // Remove the website's auto ping configurations
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = roller.getAutopingManager();
         List autopings = autoPingMgr.getAutoPingsByWebsite(website);
         Iterator it = autopings.iterator();
         while(it.hasNext()) {
@@ -155,7 +157,7 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         
         // Remove the website's custom ping targets
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
         List pingtargets = pingTargetMgr.getCustomPingTargets(website);
         it = pingtargets.iterator();
         while(it.hasNext()) {
@@ -238,14 +240,14 @@ public class HibernateUserManagerImpl implements UserManager {
         this.strategy.store(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
+        roller.getUserManager().saveWebsite(page.getWebsite());
     }
         
     public void removePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.remove(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
+        roller.getUserManager().saveWebsite(page.getWebsite());
     }
         
     public void addUser(User newUser) throws WebloggerException {
@@ -287,8 +289,8 @@ public class HibernateUserManagerImpl implements UserManager {
         
     private void addWeblogContents(Weblog newWeblog) throws WebloggerException {
         
-        UserManager umgr = RollerFactory.getRoller().getUserManager();
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        UserManager umgr = roller.getUserManager();
+        WeblogManager wmgr = roller.getWeblogManager();
         
         // grant weblog creator ADMIN permissions
         WeblogPermission perms = new WeblogPermission();
@@ -358,8 +360,8 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         
         // add any auto enabled ping targets
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
+        AutoPingManager autoPingMgr = roller.getAutopingManager();
         
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
         PingTarget pingTarget = null;

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  The ASF licenses this file to You
@@ -18,17 +17,11 @@
  */
 package org.apache.roller.weblogger.business.jpa;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Enumeration;
-import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.DatabaseProvider;
+import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.RollerImpl;
@@ -38,14 +31,16 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.RollerConfig;
-
+import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 /**
  * A JPA specific implementation of the Roller business layer.
  */
+@com.google.inject.Singleton
 public class JPARollerImpl extends RollerImpl {
 
     static final long serialVersionUID = 5256135928578074652L;
@@ -57,6 +52,7 @@ public class JPARollerImpl extends RollerImpl {
 
     // a persistence utility class
     protected JPAPersistenceStrategy strategy = null;
+    private Roller roller = null;
 
     // references to the managers we maintain
     private BookmarkManager bookmarkManager = null;
@@ -73,61 +69,44 @@ public class JPARollerImpl extends RollerImpl {
      * Single constructor.
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    protected JPARollerImpl() throws WebloggerException {
+    @com.google.inject.Inject
+    protected JPARollerImpl(
+        JPAPersistenceStrategy strategy,
+        AutoPingManager      autoPingManager,
+        BookmarkManager      bookmarkManager,
+        FileManager          fileManager,
+        IndexManager         indexManager,
+        PingQueueManager     pingQueueManager,
+        PingTargetManager    pingTargetManager,
+        PluginManager        pluginManager,
+        PropertiesManager    propertiesManager,
+        RefererManager       refererManager,
+        ReferrerQueueManager refererQueueManager,
+        ThemeManager         themeManager,
+        ThreadManager        threadManager,
+        UserManager          userManager,
+        WeblogManager        weblogManager) throws WebloggerException {
         
-        // Add OpenJPA, Toplink and Hibernate properties to Roller config.
-        Properties props = new Properties();
-        Enumeration keys = RollerConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = RollerConfig.getProperty(key);
-                logger.info(key + ": " + value);
-                props.setProperty(key, value);
-            }
-        }
+        super(
+            autoPingManager,
+            bookmarkManager,
+            fileManager,
+            indexManager,
+            pingQueueManager,
+            pingTargetManager,
+            pluginManager,
+            propertiesManager,
+            refererManager,
+            refererQueueManager,
+            themeManager,
+            threadManager,
+            userManager,
+            weblogManager); 
+        this.strategy = strategy;
+    }
         
-        DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-            strategy = new JPAPersistenceStrategy(
-                "RollerPU", "java:comp/env/" + dbProvider.getJndiName(), props); 
-        } else {
-            strategy = new JPAPersistenceStrategy(
-                "RollerPU",  
-                dbProvider.getJdbcDriverClass(),
-                dbProvider.getJdbcConnectionURL(),
-                dbProvider.getJdbcUsername(),
-                dbProvider.getJdbcPassword(), 
-                props);
-        }
-    }
-    
-    protected UserManager createJPAUserManager(JPAPersistenceStrategy strategy) {
-        return new JPAUserManagerImpl((JPAPersistenceStrategy) strategy);
-    }
-
-    protected WeblogManager createJPAWeblogManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAWeblogManagerImpl((JPAPersistenceStrategy) strategy);
-    }
-
-    protected ThreadManager createJPAThreadManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAThreadManagerImpl((JPAPersistenceStrategy) strategy);
-    }
-
-    protected RefererManager createJPARefererManagerImpl(JPAPersistenceStrategy strategy) {
-        return new JPARefererManagerImpl((JPAPersistenceStrategy) strategy);
-    }
-
-    /**
-     * Construct and return the singleton instance of the class.
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
-     * @return the singleton
-     */
-    public static Roller instantiate() throws WebloggerException {
-        logger.debug("Instantiating JPARollerImpl");
-        return new JPARollerImpl();
+    public void initialize() {
+        // no-op
     }
     
     public void flush() throws WebloggerException {
@@ -136,194 +115,17 @@ public class JPARollerImpl extends RollerImpl {
 
     
     public void release() {
-
-        // release our own stuff first
-        if (bookmarkManager != null) bookmarkManager.release();
-        if (referrerManager != null) referrerManager.release();
-        if (userManager != null) userManager.release();
-        if (weblogManager != null) weblogManager.release();
-        if (pingTargetManager != null) pingTargetManager.release();
-        if (pingQueueManager != null) pingQueueManager.release();
-        if (autoPingManager != null) autoPingManager.release();
-
+        super.release();
         // tell JPA to close down
         this.strategy.release();
-
-        // then let parent do its thing
-        super.release();
     }
 
     
     public void shutdown() {
-
         // do our own shutdown first
         this.release();
 
         // then let parent do its thing
         super.shutdown();
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getAutopingManager()
-     */
-    public AutoPingManager getAutopingManager() {
-        if (autoPingManager == null) {
-            autoPingManager = createJPAAutoPingManager(strategy);
-        }
-        return autoPingManager;
-    }
-
-    protected AutoPingManager createJPAAutoPingManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAAutoPingManagerImpl(strategy);
-    }
-    
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getBookmarkManager()
-     */
-    public BookmarkManager getBookmarkManager() {
-        if ( bookmarkManager == null ) {
-            bookmarkManager = createJPABookmarkManager(strategy);
-        }
-        return bookmarkManager;
-    }
-
-    protected BookmarkManager createJPABookmarkManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPABookmarkManagerImpl(strategy);
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getPingTargetManager()
-     */
-    public PingQueueManager getPingQueueManager() {
-        if (pingQueueManager == null) {
-            pingQueueManager = createJPAPingQueueManager(strategy);
-        }
-        return pingQueueManager;
-    }
-
-    protected PingQueueManager createJPAPingQueueManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAPingQueueManagerImpl(strategy);
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getPingTargetManager()
-     */
-    public PingTargetManager getPingTargetManager() {
-        if (pingTargetManager == null) {
-            pingTargetManager = createJPAPingTargetManager(strategy);
-        }
-        return pingTargetManager;
-    }
-
-    protected PingTargetManager createJPAPingTargetManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAPingTargetManagerImpl(strategy);
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getPropertiesManager()
-     */
-    public PropertiesManager getPropertiesManager() {
-        if (propertiesManager == null) {
-            propertiesManager = createJPAPropertiesManager(strategy);
-        }
-        return propertiesManager;
-    }
-
-    protected PropertiesManager createJPAPropertiesManager(
-            JPAPersistenceStrategy strategy) {
-        return new JPAPropertiesManagerImpl(strategy);
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getRefererManager()
-     */
-    public RefererManager getRefererManager() {
-        if ( referrerManager == null ) {
-            referrerManager = createJPARefererManagerImpl(strategy);
-        }
-        return referrerManager;
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getUserManager()
-     */
-    public UserManager getUserManager() {
-        if ( userManager == null ) {
-            userManager = createJPAUserManager(strategy);
-        }
-        return userManager;
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.business.Roller#getWeblogManager()
-     */
-    public WeblogManager getWeblogManager() {
-        if ( weblogManager == null ) {
-            weblogManager = createJPAWeblogManager(strategy);
-        }
-        return weblogManager;
-    }
-
-    /**
-     * @see org.apache.roller.weblogger.model.Roller#getThreadManager()
-     */
-    public ThreadManager getThreadManager() {
-        if (threadManager == null) {
-            threadManager = createJPAThreadManager(strategy);
-        }
-        return threadManager;
-    }
-        
-    /**
-     * Loads properties from given resourceName using given class loader
-     * @param resourceName The name of the resource containing properties
-     * @param cl Classloeder to be used to locate the resouce
-     * @return A properties object
-     * @throws WebloggerException
-     */
-    private static Properties loadPropertiesFromResourceName(
-            String resourceName, ClassLoader cl) throws WebloggerException {
-        Properties props = new Properties();
-        InputStream in = null;
-        in = cl.getResourceAsStream(resourceName);
-        if (in == null) {
-            //TODO: Check how i18n is done in roller
-            throw new WebloggerException(
-                    "Could not locate properties to load " + resourceName);
-        }
-        try {
-            props.load(in);
-        } catch (IOException ioe) {
-            throw new WebloggerException(
-                    "Could not load properties from " + resourceName);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioe) {
-                }
-            }
-        }
-        
-        return props;
-    }
-    
-    /**
-     * Get the context class loader associated with the current thread. This is
-     * done in a doPrivileged block because it is a secure method.
-     * @return the current thread's context class loader.
-     */
-    private static ClassLoader getContextClassLoader() {
-        return (ClassLoader) AccessController.doPrivileged(
-                new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
-    
+    }    
 }

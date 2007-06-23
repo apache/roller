@@ -42,6 +42,7 @@ import org.apache.roller.planet.pojos.PropertyData;
 /**
  * Hibernate implementation of the PropertiesManager.
  */
+@com.google.inject.Singleton
 public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
         implements PropertiesManager {
     
@@ -53,7 +54,8 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     /**
      * Creates a new instance of HibernatePropertiesManagerImpl
      */
-    public HibernatePropertiesManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject 
+    protected HibernatePropertiesManagerImpl(HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Properties Manager");
         

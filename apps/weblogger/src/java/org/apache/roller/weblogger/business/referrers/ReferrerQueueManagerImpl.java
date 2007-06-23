@@ -31,10 +31,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
 
 
 /**
@@ -58,27 +58,26 @@ import org.apache.roller.weblogger.business.RollerFactory;
  *
  * @author Allen Gilliland
  */
+@com.google.inject.Singleton
 public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     
     private static Log mLogger = LogFactory.getLog(ReferrerQueueManagerImpl.class);
     
-    private static ReferrerQueueManager instance = null;
+    private Roller roller = null;
     
     private boolean asyncMode = false;
     private int numWorkers = 1;
     private int sleepTime = 10000;
     private List workers = null;
     private List referrerQueue = null;
-    
-    static {
-        instance = new ReferrerQueueManagerImpl();
-    }
-    
+
     
     // private because we are a singleton
-    private ReferrerQueueManagerImpl() {
+    @com.google.inject.Inject
+    protected ReferrerQueueManagerImpl(Roller roller) {
         mLogger.info("Initializing Referrer Queue Manager");
-        
+        this.roller = roller;
+
         // lookup config options
         this.asyncMode = RollerConfig.getBooleanProperty("referrers.asyncProcessing.enabled");
         
@@ -123,15 +122,6 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
         }
     }
     
-    
-    /**
-     * Get access to the singleton instance.
-     */
-    public static ReferrerQueueManager getInstance() {
-        return instance;
-    }
-    
-    
     /**
      * Process an incoming referrer.
      *
@@ -160,7 +150,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             
             try {
                 // flush changes
-                RollerFactory.getRoller().flush();
+                roller.flush();
             } catch (WebloggerException ex) {
                 mLogger.error("ERROR commiting referrer", ex);
             }

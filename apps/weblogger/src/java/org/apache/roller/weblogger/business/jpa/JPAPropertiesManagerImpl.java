@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.business.Roller;
 
 
 /*
@@ -44,6 +45,7 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
  * Created on May 29, 2006, 2:06 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAPropertiesManagerImpl implements PropertiesManager {
     
     /** The logger instance for this class. */
@@ -51,14 +53,15 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         JPAPropertiesManagerImpl.class);
 
     private JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
      */
-    public JPAPropertiesManagerImpl (
-            JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    protected JPAPropertiesManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Properties Manager");
-
+        this.roller = roller;
         this.strategy = strategy;
     }
     

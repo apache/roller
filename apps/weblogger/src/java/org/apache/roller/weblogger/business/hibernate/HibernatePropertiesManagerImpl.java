@@ -35,12 +35,14 @@ import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
 /**
  * Hibernate implementation of the PropertiesManager.
- */
+ */ 
+@com.google.inject.Singleton
 public class HibernatePropertiesManagerImpl implements PropertiesManager {
     
     public static final long serialVersionUID = -4326713177137796936L;
@@ -48,15 +50,17 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     private static Log log = LogFactory.getLog(HibernatePropertiesManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     
     /** 
      * Creates a new instance of HibernatePropertiesManagerImpl
      */
-    public HibernatePropertiesManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject
+    protected HibernatePropertiesManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Properties Manager");
-        
+        this.roller = roller;        
         this.strategy = strat;
     }
     

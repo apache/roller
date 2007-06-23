@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 
@@ -47,6 +47,7 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
+@com.google.inject.Singleton
 public class HibernatePingTargetManagerImpl implements PingTargetManager {
     
     static final long serialVersionUID = 121008492583382718L;
@@ -54,9 +55,12 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     private static Log log = LogFactory.getLog(HibernatePingTargetManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     
-    public HibernatePingTargetManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject    
+    protected HibernatePingTargetManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        this.roller = roller;
         this.strategy = strat;
     }
     
@@ -87,7 +91,7 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         }
         
         // Remove the website's auto ping configurations
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = roller.getAutopingManager();
         List autopings = autoPingMgr.getAutoPingsByTarget(ping);
         Iterator it = autopings.iterator();
         while(it.hasNext()) {

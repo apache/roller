@@ -18,6 +18,7 @@
 
 package org.apache.roller.planet.business.jpa;
 
+import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.roller.planet.pojos.PropertyData;
 /**
  * Hibernate implementation of the PropertiesManager.
  */
+@com.google.inject.Singleton
 public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements PropertiesManager {
     
     private static Log log = LogFactory.getLog(JPAPropertiesManagerImpl.class);
@@ -49,7 +51,8 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
      */
-    public JPAPropertiesManagerImpl(JPAPersistenceStrategy strat) {
+    @com.google.inject.Inject
+    protected JPAPropertiesManagerImpl(JPAPersistenceStrategy strat) {
         
         log.debug("Instantiating JPA Properties Manager");
         

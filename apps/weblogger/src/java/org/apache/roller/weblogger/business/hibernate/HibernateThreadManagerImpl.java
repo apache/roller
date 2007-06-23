@@ -22,9 +22,9 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.TaskLock;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -39,18 +39,21 @@ import org.hibernate.criterion.Expression;
  * This implementation extends the base ThreadManagerImpl class and provides
  * leasing abilities which are managed through the database.
  */
+@com.google.inject.Singleton
 public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
     private static Log log = LogFactory.getLog(HibernateThreadManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     
-    public HibernateThreadManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject    
+    protected HibernateThreadManagerImpl(HibernatePersistenceStrategy strat) {
         super();
         
         log.debug("Instantiating Hibernate Thread Manager");
-        
+        this.roller = roller;        
         this.strategy = strat;
     }
     
@@ -75,7 +78,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
                 
                 // save it and flush
                 this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
+                roller.flush();
             }
             
         } catch (WebloggerException ex) {
@@ -105,7 +108,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             int result = query.executeUpdate();
             
             // this may not be needed
-            RollerFactory.getRoller().flush();
+            roller.flush();
             
             if(result == 1) {
                 return true;
@@ -151,7 +154,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             int result = query.executeUpdate();
             
             // this may not be needed
-            RollerFactory.getRoller().flush();
+            roller.flush();
             
             if(result == 1) {
                 return true;

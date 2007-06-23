@@ -44,6 +44,7 @@ import org.apache.roller.planet.business.AbstractManagerImpl;
  *
  * @author Dave Johnson
  */
+@com.google.inject.Singleton
 public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
@@ -54,7 +55,8 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     protected Map lastUpdatedByGroup = new HashMap();
     protected static final String NO_GROUP = "zzz_nogroup_zzz";
     
-    public JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject  
+    protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Planet Manager");
         
         this.strategy = strategy;

@@ -41,15 +41,16 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 /**
  * Hibernate implementation of the PlanetManager.
  */
-public class HibernatePlanetManagerImpl extends AbstractManagerImpl
-        implements PlanetManager {
+@com.google.inject.Singleton
+public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
     
     private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
     
     
-    public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
+    @com.google.inject.Inject 
+    protected HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
         this.strategy = strat;
     }
     

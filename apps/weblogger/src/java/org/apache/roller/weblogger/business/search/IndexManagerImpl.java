@@ -45,7 +45,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -54,11 +53,13 @@ import org.apache.commons.lang.StringUtils;
  * @author Mindaugas Idzelis (min@idzelis.com)
  * @author mraible (formatting and making indexDir configurable)
  */
+@com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
     //~ Static fields/initializers
     // =============================================
     
     private IndexReader reader;
+    private Roller roller;
     
     static Log mLogger = LogFactory.getFactory().getInstance(
             IndexManagerImpl.class);
@@ -92,8 +93,10 @@ public class IndexManagerImpl implements IndexManager {
      * @param indexDir -
      *            the path to the index directory
      */
-    public IndexManagerImpl() {
-        
+    @com.google.inject.Inject
+    protected IndexManagerImpl(Roller roller) {
+        this.roller = roller;
+
         // check config to see if the internal search is enabled
         String enabled = RollerConfig.getProperty("search.enabled");
         if("false".equalsIgnoreCase(enabled))
@@ -180,31 +183,31 @@ public class IndexManagerImpl implements IndexManager {
     
     public void rebuildWebsiteIndex() throws WebloggerException {
         scheduleIndexOperation(
-                new RebuildWebsiteIndexOperation(this, null));
+                new RebuildWebsiteIndexOperation(roller, this, null));
     }
     
     public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(
-                new RebuildWebsiteIndexOperation(this, website));
+                new RebuildWebsiteIndexOperation(roller, this, website));
     }
     
     public void removeWebsiteIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(
-                new RemoveWebsiteIndexOperation(this, website));
+                new RemoveWebsiteIndexOperation(roller, this, website));
     }
     
     public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
-        AddEntryOperation addEntry = new AddEntryOperation(this, entry);
+        AddEntryOperation addEntry = new AddEntryOperation(roller, this, entry);
         scheduleIndexOperation(addEntry);
     }
     
     public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(this, entry);
+        ReIndexEntryOperation reindex = new ReIndexEntryOperation(roller, this, entry);
         scheduleIndexOperation(reindex);
     }
     
     public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
-        RemoveEntryOperation removeOp = new RemoveEntryOperation(this, entry);
+        RemoveEntryOperation removeOp = new RemoveEntryOperation(roller, this, entry);
         executeIndexOperationNow(removeOp);
     }
     
@@ -230,7 +233,7 @@ public class IndexManagerImpl implements IndexManager {
             // only if search is enabled
             if(this.searchEnabled) {
                 mLogger.debug("Starting scheduled index operation: "+op.getClass().getName());
-                RollerFactory.getRoller().getThreadManager().executeInBackground(op);
+                roller.getThreadManager().executeInBackground(op);
             }
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);
@@ -245,7 +248,7 @@ public class IndexManagerImpl implements IndexManager {
             // only if search is enabled
             if(this.searchEnabled) {
                 mLogger.debug("Executing index operation now: "+op.getClass().getName());
-                RollerFactory.getRoller().getThreadManager().executeInForeground(op);
+                roller.getThreadManager().executeInForeground(op);
             }
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);

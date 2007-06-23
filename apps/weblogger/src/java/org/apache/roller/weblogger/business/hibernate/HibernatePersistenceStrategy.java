@@ -28,6 +28,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.RollerConfig;
 import org.hibernate.cfg.Environment;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -40,13 +41,11 @@ import org.xml.sax.InputSource;
  * manager implementations by providing a set of basic persistence methods
  * that can be easily reused.
  */
+@com.google.inject.Singleton
 public class HibernatePersistenceStrategy {
-    
-    static final long serialVersionUID = 2561090040518169098L;
+    private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
     protected static SessionFactory sessionFactory = null;
-    
-    private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
     /** No-op so XML parser doesn't hit the network looking for Hibernate DTDs */
     private EntityResolver noOpEntityResolver = new EntityResolver() {
@@ -61,11 +60,18 @@ public class HibernatePersistenceStrategy {
      * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
      * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
      */
-    public HibernatePersistenceStrategy(String configResource, String dialect, String connectionProvider) {
-        
-        // Read Hibernate config file specified by Roller config
+    protected HibernatePersistenceStrategy() throws WebloggerException {        
+        String dialect =  
+            RollerConfig.getProperty("hibernate.dialect");
+        String connectionProvider = 
+            RollerConfig.getProperty("hibernate.connectionProvider");        
+        String configuration = "hibernate.cfg.xml";
+        init(dialect, connectionProvider, configuration);
+    }   
+    
+    protected void init(String dialect, String connectionProvider, String configuration) {
         Configuration config = new Configuration();
-        config.configure(configResource);
+        config.configure(configuration);
 
         // Add dialect specified by Roller config and our connection provider
         Properties props = new Properties();

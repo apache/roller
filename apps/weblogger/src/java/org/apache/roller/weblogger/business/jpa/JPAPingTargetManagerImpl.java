@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -42,6 +43,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * Created on May 29, 2006, 2:24 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAPingTargetManagerImpl implements PingTargetManager {
     
     /** The logger instance for this class. */
@@ -49,9 +51,11 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         JPAPingTargetManagerImpl.class);
 
     private JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
-    public JPAPingTargetManagerImpl(
-            JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    protected JPAPingTargetManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+        this.roller = roller;
         this.strategy = strategy;
     }
 

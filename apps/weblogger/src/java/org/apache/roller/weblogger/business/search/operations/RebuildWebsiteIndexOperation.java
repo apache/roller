@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -54,6 +53,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     //~ Instance fields ========================================================
     
     private Weblog website;
+    private Roller roller;
     
     //~ Constructors ===========================================================
     
@@ -62,8 +62,9 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
      *
      * @param website The website to rebuild the index for, or null for all users.
      */
-    public RebuildWebsiteIndexOperation(IndexManagerImpl mgr, Weblog website) {
+    public RebuildWebsiteIndexOperation(Roller roller, IndexManagerImpl mgr, Weblog website) {
         super(mgr);
+        this.roller = roller;
         this.website = website;
     }
     
@@ -77,7 +78,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         // lazy initialization problems, so requery for the object now
         if(this.website != null) {
             try {
-                UserManager uMgr = RollerFactory.getRoller().getUserManager();
+                UserManager uMgr = roller.getUserManager();
                 this.website = uMgr.getWebsite(this.website.getId());
             } catch (WebloggerException ex) {
                 mLogger.error("Error getting website object", ex);
@@ -111,7 +112,6 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         
         IndexWriter writer = beginWriting();
         
-        Roller roller = RollerFactory.getRoller();
         try {
             if (writer != null) {
                 WeblogManager weblogManager = roller.getWeblogManager();

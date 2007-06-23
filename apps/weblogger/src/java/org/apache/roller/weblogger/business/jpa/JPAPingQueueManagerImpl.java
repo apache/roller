@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -38,6 +39,7 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
  * Created on May 28, 2006, 4:11 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAPingQueueManagerImpl implements PingQueueManager {
 
     private static Log log = LogFactory.getLog(
@@ -45,12 +47,14 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
 
     /** The strategy for this manager. */
     private JPAPersistenceStrategy strategy;
+    private Roller roller = null;
 
     /**
      * Creates a new instance of JPAPingQueueManagerImpl
      */
-    public JPAPingQueueManagerImpl(
-            JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    protected JPAPingQueueManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+        this.roller = roller;
         this.strategy =  strategy;
     }
 

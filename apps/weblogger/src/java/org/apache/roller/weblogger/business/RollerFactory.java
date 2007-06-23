@@ -18,9 +18,13 @@
 
 package org.apache.roller.weblogger.business;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -31,8 +35,26 @@ public final class RollerFactory {
     
     private static final Log log = LogFactory.getLog(RollerFactory.class);
     
+    // have we been bootstrapped yet?
+    private static boolean bootstrapped = false;
+    
     // a reference to the bootstrapped Roller instance
     private static Roller rollerInstance = null;
+    
+    private static Injector injector = null;
+  
+    
+    static {
+        String moduleClassname = RollerConfig.getProperty("guice.backend.module");
+        try {
+            Class moduleClass = Class.forName(moduleClassname);
+            Module module = (Module)moduleClass.newInstance();
+            injector = Guice.createInjector(module);
+        } catch (Throwable e) {
+            // Fatal misconfiguration, cannot recover
+            throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
+        }
+    } 
     
     
     // non-instantiable
@@ -45,7 +67,7 @@ public final class RollerFactory {
      * True if bootstrap process was completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return (rollerInstance != null);
+        return bootstrapped;
     }
     
     
@@ -56,11 +78,19 @@ public final class RollerFactory {
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
     public static final Roller getRoller() {
-        if(rollerInstance == null) {
+        if (rollerInstance == null) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
         
         return rollerInstance;
+    }
+    
+    
+    /**
+     * Access to Guice injector so that developers can add new injected objects.
+     */
+    public static Injector getInjector() {
+        return injector;
     }
     
     
@@ -83,31 +113,11 @@ public final class RollerFactory {
         
         log.info("Bootstrapping Roller Weblogger business tier");
         
-        // bootstrap Roller Weblogger business tier
-        
-        // lookup value for the roller classname to use
-        String roller_classname =
-                RollerConfig.getProperty("persistence.roller.classname");
-        if(roller_classname == null || roller_classname.trim().length() < 1) {
-            throw new BootstrapException("Invalid roller classname - "+roller_classname);
-        } else {
-            log.info("Using Roller Impl: " + roller_classname);
-        }
-        
-        try {
-            Class rollerClass = Class.forName(roller_classname);
-            java.lang.reflect.Method instanceMethod =
-                    rollerClass.getMethod("instantiate", (Class[])null);
+        rollerInstance = injector.getInstance(Roller.class);
             
-            // do the invocation
-            rollerInstance = (Roller) instanceMethod.invoke(rollerClass, (Object[])null);
+        // note that we've now been bootstrapped
+        bootstrapped = true;
             
-        } catch (Throwable ex) {
-            // bootstrapping failed
-            throw new BootstrapException("Exception doing bootstrapping", ex);
-        }
-        
         log.info("Roller Weblogger business tier successfully bootstrapped");
-    }
-
+    }    
 }

@@ -24,11 +24,10 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.FeedFetcher;
-import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.BootstrapException;
 import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.URLStrategy;
-import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.planet.business.startup.PlanetStartup;
+import org.apache.roller.planet.business.startup.StartupException;
 import org.springframework.web.context.ContextLoaderListener;
 
 
@@ -75,22 +74,32 @@ public class PlanetContext extends ContextLoaderListener
         // because listeners don't initialize in the order specified in
         // 2.3 containers
         super.contextInitialized(sce);
-        
+                
+        // Now prepare the core services of the app so we can bootstrap
         try {
-            // always upgrade database first
-            upgradeDatabaseIfNeeded();
-            
-            Planet planet = PlanetFactory.getPlanet();
-            
-            setupRuntimeProperties();
-            setupURLStrategy();
-            
-            planet.flush();
-            planet.release();
-            
-        } catch (Throwable t) {
-            log.fatal("Roller Planet initialization failed", t);
-            throw new RuntimeException(t);
+            PlanetStartup.prepare();
+        } catch (StartupException ex) {
+            log.fatal("Roller Planet startup failed during app preparation", ex);
+            return;
+        }        
+        
+        // if preparation failed or is incomplete then we are done,
+        // otherwise try to bootstrap the business tier
+        if (!PlanetStartup.isPrepared()) {
+            log.info("Roller Planet startup requires interaction from user to continue");
+        } else {
+            try {
+                // trigger bootstrapping process
+                PlanetFactory.bootstrap();
+                
+                // trigger initialization process
+                PlanetFactory.getPlanet().initialize();
+                
+            } catch (BootstrapException ex) {
+                log.fatal("Roller PlanetFactory bootstrap failed", ex);
+            } catch (PlanetException ex) {
+                log.fatal("Roller PlanetFactory initialization failed", ex);
+            }
         }
         
         log.info("Roller Planet Initialization Complete");
@@ -103,44 +112,4 @@ public class PlanetContext extends ContextLoaderListener
     public void contextDestroyed(ServletContextEvent sce) {
         PlanetFactory.getPlanet().shutdown();
     }
-    
-    
-    private void setupRuntimeProperties() {
-        // init property manager by loading it
-        PlanetFactory.getPlanet().getPropertiesManager();
-    }
-    
-    
-    /**
-     * Lookup configured URLStrategy from config and plug it in.
-     *
-     * If no URLStrategy can be configured then we bail and spew errors.
-     */
-    private void setupURLStrategy() throws Exception {
-        
-        String urlStratClass = PlanetConfig.getProperty("urlstrategy.classname");
-        if(urlStratClass == null || urlStratClass.trim().length() < 1) {
-            throw new Exception("No URLStrategy configured!!!");
-        }
-        
-        Class stratClass = Class.forName(urlStratClass);
-        URLStrategy urlStrategy = (URLStrategy) stratClass.newInstance();
-        
-        // plug it in
-        PlanetFactory.getPlanet().setURLStrategy(urlStrategy);
-    }        
-    
-    private void upgradeDatabaseIfNeeded() throws PlanetException {
-        
-//        try {
-//            Connection con = // get connection somehow
-//            UpgradeDatabase.upgradeDatabase(con, RollerFactory.getRoller().getVersion());
-//            con.close();
-//        } catch (NamingException e) {
-//            log.warn("Unable to access DataSource", e);
-//        } catch (SQLException e) {
-//            log.warn(e);
-//        }
-    }
-
 }
