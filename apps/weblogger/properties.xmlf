@@ -107,6 +107,7 @@ in the "base.path" definition.
     <include name="rome-0.9.jar"/>
     <include name="rome-fetcher-0.9.jar"/>
     <include name="velocity-1.5.jar"/>
+    <include name="guice-1.0.jar"/>
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
@@ -187,6 +188,7 @@ in the "base.path" definition.
     <fileset refid="mail.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="xmlrpc.jars"/>
+    <fileset refid="roller-planet.jars" />
     <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
     <fileset refid="jpa.jars" />
 </path>
@@ -200,7 +202,6 @@ in the "base.path" definition.
 <path id="presentation.path">
     <path refid="base.path"/>
     <fileset refid="presentation.jars"/>
-    <fileset refid="roller-planet.jars" />
     <fileset refid="struts.jars"/>
     <fileset refid="struts2.jars"/>
     <fileset refid="servlet.jars"/>

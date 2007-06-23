@@ -29,6 +29,9 @@ public class SubscriptionBasicTests extends TestCase {
     
     public void testSubscriptionCRUD() throws Exception {
         
+        // setup planet
+        TestUtils.setupPlanet();
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         PlanetSubscriptionData testSub = new PlanetSubscriptionData();

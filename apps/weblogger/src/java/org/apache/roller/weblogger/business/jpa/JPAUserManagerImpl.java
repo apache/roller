@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -45,6 +44,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.Roller;
 
 /*
  * JPAUserManagerImpl.java
@@ -52,6 +52,7 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
  * Created on May 29, 2006, 3:15 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAUserManagerImpl implements UserManager {
     
     /** The logger instance for this class. */
@@ -61,6 +62,7 @@ public class JPAUserManagerImpl implements UserManager {
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     protected JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
@@ -68,9 +70,10 @@ public class JPAUserManagerImpl implements UserManager {
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
     
-    public JPAUserManagerImpl(JPAPersistenceStrategy strat) {
+    @com.google.inject.Inject
+    protected JPAUserManagerImpl(Roller roller, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA User Manager");
-        
+        this.roller = roller;
         this.strategy = strat;
     }
     
@@ -100,8 +103,8 @@ public class JPAUserManagerImpl implements UserManager {
     private void removeWebsiteContents(Weblog website)
     throws  WebloggerException {
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        BookmarkManager bmgr = roller.getBookmarkManager();
+        WeblogManager wmgr = roller.getWeblogManager();
         
         // remove tags
         Query tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog");
@@ -140,7 +143,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         // Remove the website's auto ping configurations
-        AutoPingManager autoPingMgr = RollerFactory.getRoller()
+        AutoPingManager autoPingMgr = roller
         .getAutopingManager();
         List autopings = autoPingMgr.getAutoPingsByWebsite(website);
         it = autopings.iterator();
@@ -149,7 +152,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         // Remove the website's custom ping targets
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
         List pingtargets = pingTargetMgr.getCustomPingTargets(website);
         it = pingtargets.iterator();
         while(it.hasNext()) {
@@ -288,7 +291,7 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy.store(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager()
+        roller.getUserManager()
         .saveWebsite(page.getWebsite());
     }
     
@@ -296,7 +299,7 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy.remove(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
+        roller.getUserManager().saveWebsite(page.getWebsite());
     }
     
     public void addUser(User newUser) throws WebloggerException {
@@ -408,9 +411,9 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         // add any auto enabled ping targets
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller()
+        PingTargetManager pingTargetMgr = roller
         .getPingTargetManager();
-        AutoPingManager autoPingMgr = RollerFactory.getRoller()
+        AutoPingManager autoPingMgr = roller
         .getAutopingManager();
         
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();

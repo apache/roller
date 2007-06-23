@@ -16,22 +16,22 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.tasks;
+package org.apache.roller.planet.business;
 
-import org.apache.roller.planet.business.FeedFetcher;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.URLStrategy;
-import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.planet.PlanetException;
 
 
 /**
- * An abstract class representing a scheduled task in Roller Planet.
+ * Exception generated from Weblogger initialization process.
  */
-public abstract class PlanetTask implements Runnable {
+public class InitializationException extends PlanetException {
     
-    /**
-     * Initialize the task basically the same way the webapp would initialize.
-     */
-    public void initialize() throws Exception {
-    }       
+    public InitializationException(String msg) {
+        super(msg);
+    }
+    
+    public InitializationException(String msg, Throwable t) {
+        super(msg, t);
+    }
+    
 }

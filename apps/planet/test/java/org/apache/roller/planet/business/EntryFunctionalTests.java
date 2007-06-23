@@ -44,6 +44,9 @@ public class EntryFunctionalTests extends TestCase {
     
     
     protected void setUp() throws Exception {
+        // setup planet
+        TestUtils.setupPlanet();
+
         log.info("ENTERED");
         
         testPlanet = TestUtils.setupPlanet("entryFuncTestPlanet");

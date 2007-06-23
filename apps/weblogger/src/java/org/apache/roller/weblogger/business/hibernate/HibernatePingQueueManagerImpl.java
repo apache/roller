@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.business.pings.PingQueueManager;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
+@com.google.inject.Singleton
 public class HibernatePingQueueManagerImpl implements PingQueueManager {
     
     static final long serialVersionUID = -7660638707453106615L;
@@ -48,7 +49,8 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     private HibernatePersistenceStrategy strategy = null;
     
     
-    public HibernatePingQueueManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject    
+    protected HibernatePingQueueManagerImpl(HibernatePersistenceStrategy strat) {
         this.strategy = strat;
     }
     

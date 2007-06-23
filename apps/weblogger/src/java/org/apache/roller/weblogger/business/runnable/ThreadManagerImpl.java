@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.config.RollerConfig;
 /**
  * Manage Roller's thread use.
  */
+@com.google.inject.Singleton
 public class ThreadManagerImpl implements ThreadManager {
     
     private static final Log log = LogFactory.getLog(ThreadManagerImpl.class);
@@ -42,13 +43,12 @@ public class ThreadManagerImpl implements ThreadManager {
     private final ScheduledExecutorService serviceScheduler;
     
     
-    public ThreadManagerImpl() {
+    protected ThreadManagerImpl() {
         
         log.info("Intializing Thread Manager");
         
         serviceScheduler = Executors.newScheduledThreadPool(10);
     }
-    
     
     public void initialize() throws InitializationException {
         
@@ -84,10 +84,8 @@ public class ThreadManagerImpl implements ThreadManager {
                     log.error("Error instantiating task", ex);
                 }
             }
-        }
-        
+        }        
     }
-    
     
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {

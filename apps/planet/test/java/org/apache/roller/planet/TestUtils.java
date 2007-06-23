@@ -18,9 +18,9 @@
 
 package org.apache.roller.planet;
 
-import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -31,6 +31,27 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
  * Utility class for unit test classes.
  */
 public final class TestUtils {
+    
+    
+    public static void setupPlanet() throws Exception {
+        
+        if(!PlanetFactory.isBootstrapped()) {
+            
+            // do core services preparation
+            PlanetStartup.prepare();
+            
+            // do application bootstrapping and init
+            PlanetFactory.bootstrap();
+            PlanetFactory.getPlanet().initialize();
+        }
+    }
+    
+    
+    public static void shutdownPlanet() throws Exception {
+        
+        // trigger shutdown
+        PlanetFactory.getPlanet().shutdown();
+    }
     
     
     /**

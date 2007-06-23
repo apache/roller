@@ -26,9 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.TaskLock;
 
 
@@ -38,18 +38,22 @@ import org.apache.roller.weblogger.pojos.TaskLock;
  * This implementation extends the base ThreadManagerImpl class and provides
  * locking abilities which are managed through the database.
  */
+@com.google.inject.Singleton
 public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
     private static final Log log = LogFactory.getLog(JPAThreadManagerImpl.class);
 
     private final JPAPersistenceStrategy strategy;
+    private Roller roller = null;
 
 
-    public JPAThreadManagerImpl(JPAPersistenceStrategy strat) {
+    @com.google.inject.Inject
+    protected JPAThreadManagerImpl(Roller roller, JPAPersistenceStrategy strat) {
         super();
 
         log.debug("Instantiating JPA Thread Manager");
 
+        this.roller = roller;
         this.strategy = strat;
     }
 
@@ -73,7 +77,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
                 // save it and flush
                 this.saveTaskLock(taskLock);
-                RollerFactory.getRoller().flush();
+                roller.flush();
             }
 
         } catch (WebloggerException ex) {

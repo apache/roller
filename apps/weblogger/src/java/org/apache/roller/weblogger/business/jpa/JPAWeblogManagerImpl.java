@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
@@ -65,12 +65,14 @@ import org.apache.roller.weblogger.util.DateUtil;
  * Created on May 31, 2006, 4:08 PM
  *
  */
+@com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
     
     protected static Log log = LogFactory.getLog(
             JPAWeblogManagerImpl.class);
     
     protected JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
     // cached mapping of entryAnchors -> entryIds
     private Hashtable entryAnchorToIdMap = new Hashtable();
@@ -86,10 +88,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private static final Comparator statCountCountReverseComparator =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
-    public JPAWeblogManagerImpl
-            (JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    protected JPAWeblogManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Weblog Manager");
-        
+        this.roller = roller;
         this.strategy = strategy;
     }
     
@@ -111,7 +113,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());        
+        roller.getUserManager().saveWebsite(cat.getWebsite());        
         this.strategy.store(cat);
     }
     
@@ -146,7 +148,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(
+        roller.getUserManager().saveWebsite(
                 cat.getWebsite());
     }
     
@@ -265,7 +267,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.store(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager()
+        roller.getUserManager()
         .saveWebsite(comment.getWeblogEntry().getWebsite());
     }
     
@@ -276,7 +278,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager()
+        roller.getUserManager()
         .saveWebsite(comment.getWeblogEntry().getWebsite());
     }
     
@@ -315,13 +317,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            RollerFactory.getRoller().getUserManager()
+            roller.getUserManager()
             .saveWebsite(entry.getWebsite());
         }
         
         if(entry.isPublished()) {
             // Queue applicable pings for this update.
-            RollerFactory.getRoller().getAutopingManager()
+            roller.getAutopingManager()
             .queueApplicableAutoPings(entry);
         }
     }
@@ -370,7 +372,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            RollerFactory.getRoller().getUserManager()
+            roller.getUserManager()
             .saveWebsite(entry.getWebsite());
         }
         

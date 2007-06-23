@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.business.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.config.PingConfig;
@@ -36,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.Roller;
 
 /*
  * JPAAutoPingManagerImpl.java
@@ -43,21 +43,24 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
  * Created on May 29, 2006, 11:29 AM
  *
  */
+@com.google.inject.Singleton
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
     private JPAPersistenceStrategy strategy;
+    private Roller roller = null;
     
     /**
      * The logger instance for this class.
      */
-    private static Log logger = LogFactory
-            .getFactory().getInstance(JPAAutoPingManagerImpl.class);
+    private static Log logger = 
+        LogFactory.getFactory().getInstance(JPAAutoPingManagerImpl.class);
 
     /**
      * Creates a new instance of JPAAutoPingManagerImpl
      */
-    public JPAAutoPingManagerImpl
-            (JPAPersistenceStrategy strategy) {
+    @com.google.inject.Inject
+    protected JPAAutoPingManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+        this.roller = roller;
         this.strategy = strategy;
     }
 
@@ -101,7 +104,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
             return;
         }
 
-        PingQueueManager pingQueueMgr = RollerFactory.getRoller().
+        PingQueueManager pingQueueMgr = roller.
             getPingQueueManager();
         List applicableAutopings = getApplicableAutoPings(changedWeblogEntry);
         for (Iterator i = applicableAutopings.iterator(); i.hasNext(); ) {

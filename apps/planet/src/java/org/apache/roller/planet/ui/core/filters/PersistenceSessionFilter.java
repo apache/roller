@@ -58,7 +58,9 @@ public class PersistenceSessionFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             log.debug("Releasing Planet Session");
-            planet.release();
+            if (PlanetFactory.isBootstrapped()) {
+                PlanetFactory.getPlanet().release();
+            }
         }
         
         log.debug("Exiting PersistenceSessionFilter");

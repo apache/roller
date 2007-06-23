@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
@@ -65,6 +65,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Hibernate implementation of the WeblogManager.
  */
+@com.google.inject.Singleton
 public class HibernateWeblogManagerImpl implements WeblogManager {
     
     static final long serialVersionUID = -3730860865389981439L;
@@ -72,6 +73,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     private static Log log = LogFactory.getLog(HibernateWeblogManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
     
     // cached mapping of entryAnchors -> entryIds
     private Hashtable entryAnchorToIdMap = new Hashtable();
@@ -81,9 +83,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     private Comparator tagStatComparator = new TagStatComparator();
     
-    public HibernateWeblogManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject    
+    protected HibernateWeblogManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         log.debug("Instantiating Hibernate Weblog Manager");
-        
+        this.roller = roller;        
         this.strategy = strat;
     }
     
@@ -95,7 +98,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
+        roller.getUserManager().saveWebsite(cat.getWebsite());
         
         this.strategy.store(cat);
     }
@@ -124,7 +127,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
+        roller.getUserManager().saveWebsite(cat.getWebsite());
     }
     
     
@@ -196,7 +199,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         this.strategy.store(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
+        roller.getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
     }
     
     
@@ -204,7 +207,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        RollerFactory.getRoller().getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
+        roller.getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
     }
     
     
@@ -240,12 +243,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            RollerFactory.getRoller().getUserManager().saveWebsite(entry.getWebsite());
+            roller.getUserManager().saveWebsite(entry.getWebsite());
         }
         
         if(entry.isPublished()) {
             // Queue applicable pings for this update.
-            RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
+            roller.getAutopingManager().queueApplicableAutoPings(entry);
         }
     }
     
@@ -292,7 +295,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            RollerFactory.getRoller().getUserManager().saveWebsite(entry.getWebsite());
+            roller.getUserManager().saveWebsite(entry.getWebsite());
         }
         
         // remove entry from cache mapping

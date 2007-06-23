@@ -46,7 +46,6 @@ import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.dialect.Dialect;
 import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -58,6 +57,7 @@ import org.hibernate.dialect.DerbyDialect;
 /**
  * Hibernate implementation of the RefererManager.
  */
+@com.google.inject.Singleton
 public class HibernateRefererManagerImpl implements RefererManager {
     
     static final long serialVersionUID = -4966091850482256435L;
@@ -68,14 +68,18 @@ public class HibernateRefererManagerImpl implements RefererManager {
     protected static final String TOTALHITS = "totalHits";
     
     private HibernatePersistenceStrategy strategy = null;
+    private Roller roller;
+
     private Date mRefDate = new Date();
     
         
-    public HibernateRefererManagerImpl(HibernatePersistenceStrategy strat) {
+    @com.google.inject.Inject    
+    protected HibernateRefererManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Referer Manager");
         
-        strategy = strat;
+        this.strategy = strat;
+        this.roller = roller;
     }
     
     public void saveReferer(WeblogReferrer referer) throws WebloggerException {
@@ -527,13 +531,13 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         // lookup the weblog now
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = roller.getUserManager();
             weblog = userMgr.getWebsiteByHandle(weblogHandle);
             if (weblog == null) return;
             
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
-                WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager weblogMgr = roller.getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             }
         } catch (WebloggerException re) {
@@ -629,8 +633,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                     // Launch thread to extract referer linkback
                     
                     try {
-                        Roller mRoller = RollerFactory.getRoller();
-                        mRoller.getThreadManager().executeInBackground(
+                        roller.getThreadManager().executeInBackground(
                                 new LinkbackExtractorRunnable(ref));
                     } catch (InterruptedException e) {
                         log.warn("Interrupted during linkback extraction",e);

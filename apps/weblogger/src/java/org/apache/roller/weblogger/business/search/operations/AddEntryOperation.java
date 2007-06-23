@@ -26,7 +26,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.Roller;
-import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -44,14 +43,16 @@ public class AddEntryOperation extends WriteToIndexOperation {
     //~ Instance fields ========================================================
     
     private WeblogEntry data;
+    private Roller roller;
     
     //~ Constructors ===========================================================
     
     /**
      * Adds a web log entry into the index.
      */
-    public AddEntryOperation(IndexManagerImpl mgr,WeblogEntry data) {
+    public AddEntryOperation(Roller roller, IndexManagerImpl mgr,WeblogEntry data) {
         super(mgr);
+        this.roller = roller;
         this.data = data;
     }
     
@@ -64,14 +65,13 @@ public class AddEntryOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         try {
-            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wMgr = roller.getWeblogManager();
             this.data = wMgr.getWeblogEntry(this.data.getId());
         } catch (WebloggerException ex) {
             mLogger.error("Error getting weblogentry object", ex);
             return;
         }
         
-        Roller roller = RollerFactory.getRoller();
         try {
             if (writer != null) {
                 writer.addDocument(getDocument(data));

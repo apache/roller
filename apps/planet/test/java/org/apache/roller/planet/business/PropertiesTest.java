@@ -38,7 +38,11 @@ public class PropertiesTest extends TestCase {
     public static Log log = LogFactory.getLog(PropertiesTest.class);
     
     
-    public void setUp() throws Exception {}
+    public void setUp() throws Exception {
+        // setup planet
+        TestUtils.setupPlanet();
+
+    }
     
     public void tearDown() throws Exception {}
     

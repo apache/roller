@@ -34,6 +34,9 @@ public class PlanetBasicTests extends TestCase {
     
     public void testPlanetCRUD() throws Exception {
         
+        // setup planet
+        TestUtils.setupPlanet();
+
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet", "testPlanet");
