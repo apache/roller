@@ -95,7 +95,7 @@ public class Comments extends UIAction {
             }
             
             // query for comments
-            comments = wmgr.getComments(
+            List rawComments = wmgr.getComments(
                     getActionWeblog(),
                     queryEntry,
                     getBean().getSearchString(),
@@ -105,7 +105,8 @@ public class Comments extends UIAction {
                     true, // reverse  chrono order
                     getBean().getPage() * COUNT,
                     COUNT + 1);
-            
+            comments = new ArrayList();
+            comments.addAll(rawComments);            
             if(comments != null && comments.size() > 0) {
                 if(comments.size() > COUNT) {
                     comments.remove(comments.size()-1);

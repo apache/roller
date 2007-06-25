@@ -75,7 +75,7 @@ public class Entries extends UIAction {
     
     public String execute() {
         
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("entries bean is ...\n"+getBean().toString());
         }
         
@@ -85,7 +85,7 @@ public class Entries extends UIAction {
             String status = getBean().getStatus();
             
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            entries = wmgr.getWeblogEntries(
+            List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(
                     getActionWeblog(),
                     null,
                     getBean().getStartDate(),
@@ -99,11 +99,12 @@ public class Entries extends UIAction {
                     null,
                     getBean().getPage() * COUNT,
                     COUNT + 1);
-            
-            if(entries != null && entries.size() > 0) {
-                log.debug("query found "+entries.size()+" results");
+            entries = new ArrayList<WeblogEntry>();
+            entries.addAll(rawEntries);
+            if (entries != null && entries.size() > 0) {
+                log.debug("query found "+rawEntries.size()+" results");
                 
-                if(entries.size() > COUNT) {
+                if(rawEntries.size() > COUNT) {
                     entries.remove(entries.size()-1);
                     hasMore = true;
                 }
