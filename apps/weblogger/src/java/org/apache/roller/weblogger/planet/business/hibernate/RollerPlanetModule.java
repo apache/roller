@@ -25,12 +25,12 @@ import org.apache.roller.planet.business.MultiPlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
-import org.apache.roller.planet.business.RomeFeedFetcher;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePropertiesManagerImpl;
+import org.apache.roller.weblogger.planet.business.RollerRomeFeedFetcher;
 
 
 /**
@@ -39,16 +39,17 @@ import org.apache.roller.planet.business.hibernate.HibernatePropertiesManagerImp
 public class RollerPlanetModule implements Module {
 
     public void configure(Binder binder) {
-        
-        binder.bind(Planet.class).to(HibernatePlanetImpl.class);
 
-        // Use special Planet persistence strategy that works against RollerConfig
-        binder.bind(HibernatePersistenceStrategy.class).to(HibernateRollerPlanetPersistenceStrategy.class);
+        binder.bind(HibernatePersistenceStrategy.class);
         
         binder.bind(PlanetManager.class).to(     HibernatePlanetManagerImpl.class);   
         binder.bind(PropertiesManager.class).to( HibernatePropertiesManagerImpl.class);   
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
-        binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
+        
+        // use custom Weblogger feed fetcher
+        binder.bind(FeedFetcher.class).to(       RollerRomeFeedFetcher.class);
+        
+        binder.bind(Planet.class).to(HibernatePlanetImpl.class);
     }
     
 }

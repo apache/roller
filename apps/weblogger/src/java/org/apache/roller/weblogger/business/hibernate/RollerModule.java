@@ -42,6 +42,7 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
 
+
 /**
  * Guice module for configuring Hibernate as Roller-backend.
  */
@@ -52,7 +53,6 @@ public class RollerModule implements Module {
         binder.bind(Roller.class).to(HibernateRollerImpl.class);
         
         binder.bind(HibernatePersistenceStrategy.class);
-        binder.bind(org.apache.roller.weblogger.planet.business.hibernate.HibernateRollerPlanetPersistenceStrategy.class);
         
         binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);
         binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);
@@ -70,5 +70,6 @@ public class RollerModule implements Module {
         binder.bind(PluginManager.class).to(       PluginManagerImpl.class);
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
     }
+    
 }
 
