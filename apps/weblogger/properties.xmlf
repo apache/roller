@@ -191,12 +191,12 @@ in the "base.path" definition.
     <fileset refid="roller-planet.jars" />
     <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
     <fileset refid="jpa.jars" />
+    <fileset refid="hibernate.jar" />
+    <fileset refid="hibernate.jars" />
 </path>
 
 <path id="business.path">
     <path refid="base.path"/>
-    <fileset refid="hibernate.jar" />
-    <fileset refid="hibernate.jars" />
 </path>
 
 <path id="presentation.path">

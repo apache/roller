@@ -30,13 +30,16 @@ import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.RollerConfig;
 
+
 /**
  * JPA strategy for Planet, uses RollerConfig to get JPA configuration.
  */
 @com.google.inject.Singleton
 public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
+    
     private static Log logger = 
         LogFactory.getFactory().getInstance(JPARollerPlanetPersistenceStrategy.class); 
+    
     
     /**
      * Construct by finding using DatabaseProvider and RollerConfig.
@@ -87,10 +90,11 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
         }
         
         try {
-            this.emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
+            emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
         } catch (PersistenceException pe) {
             logger.error("ERROR: creating entity manager", pe);
             throw new PlanetException(pe);
         }
-    }  
+    }
+    
 }
