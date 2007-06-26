@@ -43,8 +43,8 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
     private static final Log log = LogFactory.getLog(JPAThreadManagerImpl.class);
 
+    private final Roller roller;
     private final JPAPersistenceStrategy strategy;
-    private Roller roller = null;
 
 
     @com.google.inject.Inject

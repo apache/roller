@@ -55,7 +55,8 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class ThemeManagerImpl implements ThemeManager {
     
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
-    private Roller roller = null;
+    
+    private final Roller roller;
     
     // directory where themes are kept
     private String themeDir = null;
@@ -63,9 +64,12 @@ public class ThemeManagerImpl implements ThemeManager {
     // the Map contains ... (theme id, Theme)
     private Map themes = null;
     
+    
     @com.google.inject.Inject
     protected ThemeManagerImpl(Roller roller) {
+        
         this.roller = roller;
+        
         // get theme directory from config and verify it
         this.themeDir = RollerConfig.getProperty("themes.dir");
         if(themeDir == null || themeDir.trim().length() < 1) {

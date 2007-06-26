@@ -62,6 +62,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+
 /**
  * Hibernate implementation of the WeblogManager.
  */
@@ -72,8 +73,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     private static Log log = LogFactory.getLog(HibernateWeblogManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
     private Hashtable entryAnchorToIdMap = new Hashtable();
@@ -83,8 +84,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     private Comparator tagStatComparator = new TagStatComparator();
     
+    
     @com.google.inject.Inject    
     protected HibernateWeblogManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        
         log.debug("Instantiating Hibernate Weblog Manager");
         this.roller = roller;        
         this.strategy = strat;

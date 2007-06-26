@@ -18,8 +18,6 @@
 
 package org.apache.roller.weblogger.business.hibernate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerImpl;
 import org.apache.roller.weblogger.business.BookmarkManager;
@@ -42,11 +40,11 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
  * A Hibernate specific implementation of the Roller business layer.
  */
 @com.google.inject.Singleton
-public class HibernateRollerImpl extends RollerImpl {    
-    private static Log mLogger = LogFactory.getLog(HibernateRollerImpl.class);    
+public class HibernateRollerImpl extends RollerImpl {
     
     // a persistence utility class
-    private HibernatePersistenceStrategy strategy = null;
+    private final HibernatePersistenceStrategy strategy;
+    
     
     @com.google.inject.Inject
     protected HibernateRollerImpl(
@@ -80,12 +78,35 @@ public class HibernateRollerImpl extends RollerImpl {
             themeManager,
             threadManager,
             userManager,
-            weblogManager); 
+            weblogManager);
+        
         this.strategy = strategy;
     }
-        
+    
+    
     public void flush() throws WebloggerException {
         this.strategy.flush();
-    }    
+    }
+    
+    
+    public void release() {
+        
+        // tell Hibernate to close down
+        this.strategy.release();
+        
+        // then let parent do its thing
+        super.release();
+    }
+    
+    
+    public void shutdown() {
+        
+        // do our own shutdown first
+        this.release();
+        
+        // then let parent do its thing
+        super.shutdown();
+    }
+    
 }
 

@@ -50,8 +50,9 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     private static Log log = LogFactory.getLog(
         JPAPingTargetManagerImpl.class);
 
-    private JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
+    
     
     @com.google.inject.Inject
     protected JPAPingTargetManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
@@ -59,6 +60,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         this.strategy = strategy;
     }
 
+    
     public void removePingTarget(PingTarget pingTarget) 
             throws WebloggerException {
         // remove contents and then target

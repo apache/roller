@@ -46,8 +46,9 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         JPAPingQueueManagerImpl.class);
 
     /** The strategy for this manager. */
-    private JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
+    
 
     /**
      * Creates a new instance of JPAPingQueueManagerImpl
@@ -58,6 +59,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         this.strategy =  strategy;
     }
 
+    
     public PingQueueEntry getQueueEntry(String id) 
             throws WebloggerException {
         return (PingQueueEntry)strategy.load(

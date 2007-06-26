@@ -67,8 +67,8 @@ public class HibernateRefererManagerImpl implements RefererManager {
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
     
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
 
     private Date mRefDate = new Date();
     
@@ -77,10 +77,10 @@ public class HibernateRefererManagerImpl implements RefererManager {
     protected HibernateRefererManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Referer Manager");
-        
         this.strategy = strat;
         this.roller = roller;
     }
+    
     
     public void saveReferer(WeblogReferrer referer) throws WebloggerException {
         strategy.store(referer);

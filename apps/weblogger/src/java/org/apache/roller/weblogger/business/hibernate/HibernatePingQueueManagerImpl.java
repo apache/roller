@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import java.sql.Timestamp;
 import java.util.List;
+import org.apache.roller.weblogger.business.Roller;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 
 
@@ -46,11 +47,15 @@ public class HibernatePingQueueManagerImpl implements PingQueueManager {
     
     private static Log log = LogFactory.getLog(HibernatePingQueueManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject    
-    protected HibernatePingQueueManagerImpl(HibernatePersistenceStrategy strat) {
+    protected HibernatePingQueueManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        
+        log.debug("Instantiating Hibernate Ping Queue Manager");
+        this.roller = roller;
         this.strategy = strat;
     }
     

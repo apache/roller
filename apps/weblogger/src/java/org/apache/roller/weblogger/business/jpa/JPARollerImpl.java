@@ -45,25 +45,11 @@ public class JPARollerImpl extends RollerImpl {
 
     static final long serialVersionUID = 5256135928578074652L;
 
-    protected static Log logger = LogFactory.getLog(JPARollerImpl.class);
-
-    // our singleton instance
-    private static JPARollerImpl me = null;
+    private static Log logger = LogFactory.getLog(JPARollerImpl.class);
 
     // a persistence utility class
-    protected JPAPersistenceStrategy strategy = null;
-    private Roller roller = null;
-
-    // references to the managers we maintain
-    private BookmarkManager bookmarkManager = null;
-    private PropertiesManager propertiesManager = null;
-    private RefererManager referrerManager = null;
-    private UserManager userManager = null;
-    private WeblogManager weblogManager = null;
-    private PingQueueManager pingQueueManager = null;
-    private AutoPingManager autoPingManager = null;
-    private PingTargetManager pingTargetManager = null;
-    private ThreadManager threadManager = null;    
+    private final JPAPersistenceStrategy strategy;
+    
     
     /**
      * Single constructor.
@@ -101,13 +87,11 @@ public class JPARollerImpl extends RollerImpl {
             themeManager,
             threadManager,
             userManager,
-            weblogManager); 
+            weblogManager);
+        
         this.strategy = strategy;
     }
-        
-    public void initialize() {
-        // no-op
-    }
+    
     
     public void flush() throws WebloggerException {
         this.strategy.flush();
@@ -127,5 +111,6 @@ public class JPARollerImpl extends RollerImpl {
 
         // then let parent do its thing
         super.shutdown();
-    }    
+    }
+    
 }

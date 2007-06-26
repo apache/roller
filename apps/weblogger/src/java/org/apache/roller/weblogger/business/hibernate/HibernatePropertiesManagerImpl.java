@@ -49,8 +49,8 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     
     private static Log log = LogFactory.getLog(HibernatePropertiesManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     
     /** 

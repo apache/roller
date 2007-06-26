@@ -52,8 +52,9 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     private static Log log = LogFactory.getLog(
         JPAPropertiesManagerImpl.class);
 
-    private JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
+    
     
     /**
      * Creates a new instance of JPAPropertiesManagerImpl
