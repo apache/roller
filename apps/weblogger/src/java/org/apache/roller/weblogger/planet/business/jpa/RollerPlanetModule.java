@@ -27,9 +27,11 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.RomeFeedFetcher;
 import org.apache.roller.planet.business.URLStrategy;
+import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 import org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl;
 import org.apache.roller.planet.business.jpa.JPAPropertiesManagerImpl;
+
 
 /**
  * Guice module for configuring Roller's built-in Planet, JPA version.
@@ -41,12 +43,12 @@ public class RollerPlanetModule implements Module {
         binder.bind(Planet.class).to(JPAPlanetImpl.class);
 
         // Use special Planet persistence strategy that works against RollerConfig
-        binder.bind(JPARollerPlanetPersistenceStrategy.class); 
+        binder.bind(JPAPersistenceStrategy.class).to(JPARollerPlanetPersistenceStrategy.class); 
         
         binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
         binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);    
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
-    }    
+    }
+    
 }
-
