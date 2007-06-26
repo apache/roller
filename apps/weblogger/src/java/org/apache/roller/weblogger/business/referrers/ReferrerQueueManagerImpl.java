@@ -70,7 +70,9 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     // private because we are a singleton
     @com.google.inject.Inject
     protected ReferrerQueueManagerImpl(Roller roller) {
-        mLogger.info("Initializing Referrer Queue Manager");
+        
+        mLogger.info("Instantiating Referrer Queue Manager");
+        
         this.roller = roller;
 
         // lookup config options
