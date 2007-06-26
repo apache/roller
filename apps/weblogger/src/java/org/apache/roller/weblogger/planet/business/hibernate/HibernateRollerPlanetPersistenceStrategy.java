@@ -41,15 +41,15 @@ public class HibernateRollerPlanetPersistenceStrategy extends HibernatePersisten
      * dialect to be used, 'hibernate.connectionProvider - the classname of 
      * Roller's connnection provider impl.
      */
-    protected HibernateRollerPlanetPersistenceStrategy() throws PlanetException {        
+    protected HibernateRollerPlanetPersistenceStrategy() throws PlanetException {
+        
         String dialect =  
             RollerConfig.getProperty("hibernate.dialect");
         String connectionProvider = 
             RollerConfig.getProperty("hibernate.connectionProvider");        
-        String configuration = "planet-hibernate.cfg.xml";
         
         Configuration config = new Configuration();
-        config.configure(configuration);
+        config.configure("/META-INF/planet-hibernate.cfg.xml");
 
         // Add dialect specified by Roller config and our connection provider
         Properties props = new Properties();

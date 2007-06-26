@@ -27,9 +27,11 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.RomeFeedFetcher;
 import org.apache.roller.planet.business.URLStrategy;
+import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePropertiesManagerImpl;
+
 
 /**
  * Guice module for configuring Roller's built-in Planet, Hibernate version.
@@ -41,12 +43,12 @@ public class RollerPlanetModule implements Module {
         binder.bind(Planet.class).to(HibernatePlanetImpl.class);
 
         // Use special Planet persistence strategy that works against RollerConfig
-        binder.bind(HibernateRollerPlanetPersistenceStrategy.class); 
+        binder.bind(HibernatePersistenceStrategy.class).to(HibernateRollerPlanetPersistenceStrategy.class);
         
         binder.bind(PlanetManager.class).to(     HibernatePlanetManagerImpl.class);   
         binder.bind(PropertiesManager.class).to( HibernatePropertiesManagerImpl.class);   
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
-    }    
+    }
+    
 }
-
