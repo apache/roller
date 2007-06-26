@@ -57,11 +57,10 @@ public class HibernatePersistenceStrategy {
         String dialect =  
             PlanetConfig.getProperty("hibernate.dialect");
         String connectionProvider = 
-            PlanetConfig.getProperty("hibernate.connectionProvider");        
-        String configuration = "hibernate.cfg.xml";
+            PlanetConfig.getProperty("hibernate.connectionProvider");
         
         Configuration config = new Configuration();
-        config.configure(configuration);
+        config.configure("/META-INF/planet-hibernate.cfg.xml");
 
         // Add dialect specified by Roller config and our connection provider
         Properties props = new Properties();
