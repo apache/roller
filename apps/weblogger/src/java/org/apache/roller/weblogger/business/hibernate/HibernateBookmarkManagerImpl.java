@@ -48,8 +48,8 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     private static Log log = LogFactory.getLog(HibernateBookmarkManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     
     /**
@@ -58,9 +58,10 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
      */
     @com.google.inject.Inject    
     protected HibernateBookmarkManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        
+        log.debug("Instantiating Hibernate Bookmark Manager");
         this.roller = roller;
         this.strategy = strat;
-        log.debug("Instantiating Hibernate Bookmark Manager");
     }
     
     

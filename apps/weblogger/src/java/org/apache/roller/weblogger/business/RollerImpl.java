@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.PingConfig;
 
+
 /**
  * The abstract version of the Roller implementation.
  *
@@ -44,26 +45,30 @@ import org.apache.roller.weblogger.config.PingConfig;
  */
 @com.google.inject.Singleton
 public abstract class RollerImpl implements Roller {
-    private static Log mLogger = LogFactory.getLog(RollerImpl.class);
     
-    private AutoPingManager      autoPingManager = null;
-    private BookmarkManager      bookmarkManager = null;
-    private FileManager          fileManager = null;
-    private IndexManager         indexManager = null;
-    private PingQueueManager     pingQueueManager = null;
-    private PingTargetManager    pingTargetManager = null;
-    private PluginManager        pluginManager = null;
-    private PropertiesManager    propertiesManager = null;
-    private RefererManager       refererManager = null;
-    private ReferrerQueueManager refererQueueManager = null;
-    private ThemeManager         themeManager = null;
-    private ThreadManager        threadManager = null;
-    private UserManager          userManager = null;
-    private WeblogManager        weblogManager = null;
-            
-    private String version = null;
-    private String buildTime = null;
-    private String buildUser = null;
+    private static Log log = LogFactory.getLog(RollerImpl.class);
+    
+    // managers
+    private final AutoPingManager      autoPingManager;
+    private final BookmarkManager      bookmarkManager;
+    private final FileManager          fileManager;
+    private final IndexManager         indexManager;
+    private final PingQueueManager     pingQueueManager;
+    private final PingTargetManager    pingTargetManager;
+    private final PluginManager        pluginManager;
+    private final PropertiesManager    propertiesManager;
+    private final RefererManager       refererManager;
+    private final ReferrerQueueManager refererQueueManager;
+    private final ThemeManager         themeManager;
+    private final ThreadManager        threadManager;
+    private final UserManager          userManager;
+    private final WeblogManager        weblogManager;
+    
+    // some simple attributes
+    private final String version;
+    private final String buildTime;
+    private final String buildUser;
+    
     
     protected RollerImpl(
         AutoPingManager      autoPingManager,
@@ -100,7 +105,7 @@ public abstract class RollerImpl implements Roller {
         try {
             props.load(getClass().getResourceAsStream("/version.properties"));
         } catch (IOException e) {
-            mLogger.error("version.properties not found", e);
+            log.error("version.properties not found", e);
         }
         
         version = props.getProperty("ro.version", "UNKNOWN");
@@ -222,6 +227,9 @@ public abstract class RollerImpl implements Roller {
     }
     
     
+    /**
+     * @inheritDoc
+     */
     public void release() {
         try {
             autoPingManager.release();
@@ -235,12 +243,9 @@ public abstract class RollerImpl implements Roller {
             userManager.release();
             weblogManager.release();
         } catch(Throwable e) {
-            mLogger.error("Error calling Roller.release()", e);
+            log.error("Error calling Roller.release()", e);
         }
     }
-    
-
-    
     
     
     /**
@@ -248,7 +253,7 @@ public abstract class RollerImpl implements Roller {
      */
     public void initialize() throws InitializationException {
         
-        mLogger.info("Initializing Roller Weblogger business tier");
+        log.info("Initializing Roller Weblogger business tier");
         
         // TODO: this should probably be done in a more uniform fashion, possibly
         // using annotations?  biggest issue is controlling ordering
@@ -269,13 +274,13 @@ public abstract class RollerImpl implements Roller {
             
             // Remove custom ping targets if they have been disallowed
             if (PingConfig.getDisallowCustomTargets()) {
-                mLogger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
+                log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
                 RollerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
             }
             
             // Remove all autoping configurations if ping usage has been disabled.
             if (PingConfig.getDisablePingUsage()) {
-                mLogger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
+                log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
                 RollerFactory.getRoller().getAutopingManager().removeAllAutoPings();
             }
         } catch (Throwable t) {
@@ -290,10 +295,13 @@ public abstract class RollerImpl implements Roller {
             throw new InitializationException("Error flushing after initialization", ex);
         } 
         
-        mLogger.info("Roller Weblogger business tier successfully initialized");
+        log.info("Roller Weblogger business tier successfully initialized");
     }
     
     
+    /**
+     * @inheritDoc
+     */
     public void shutdown() {
         try {
             HitCountQueue.getInstance().shutdown();
@@ -301,9 +309,10 @@ public abstract class RollerImpl implements Roller {
             if (indexManager != null) indexManager.shutdown();
             if (threadManager != null) threadManager.shutdown();
         } catch(Throwable e) {
-            mLogger.error("Error calling Roller.shutdown()", e);
+            log.error("Error calling Roller.shutdown()", e);
         }
     }
+    
     
     /** Roller version */
     public String getVersion() {

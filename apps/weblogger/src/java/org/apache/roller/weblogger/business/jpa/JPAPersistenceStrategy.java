@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.business.DatabaseProvider;
  */
 @com.google.inject.Singleton
 public class JPAPersistenceStrategy {
+    
     private static Log logger = 
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
     

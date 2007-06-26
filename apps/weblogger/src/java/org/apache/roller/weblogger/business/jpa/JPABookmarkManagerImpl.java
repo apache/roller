@@ -46,8 +46,9 @@ import org.jdom.input.SAXBuilder;
 @com.google.inject.Singleton
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
-    private JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
+    
     
     /**
      * The logger instance for this class.
@@ -65,6 +66,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy = strategy;
     }
 
+   
     public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
         boolean exists = getBookmark(bookmark.getId()) != null;        
         if (!exists) {

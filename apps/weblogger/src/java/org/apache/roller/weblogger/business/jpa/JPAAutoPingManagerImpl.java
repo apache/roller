@@ -46,14 +46,16 @@ import org.apache.roller.weblogger.business.Roller;
 @com.google.inject.Singleton
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
-    private JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
+    
     
     /**
      * The logger instance for this class.
      */
     private static Log logger = 
         LogFactory.getFactory().getInstance(JPAAutoPingManagerImpl.class);
+    
 
     /**
      * Creates a new instance of JPAAutoPingManagerImpl
@@ -63,6 +65,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         this.roller = roller;
         this.strategy = strategy;
     }
+    
 
     public AutoPing getAutoPing(String id) throws WebloggerException {
         return (AutoPing)strategy.load(AutoPing.class, id);

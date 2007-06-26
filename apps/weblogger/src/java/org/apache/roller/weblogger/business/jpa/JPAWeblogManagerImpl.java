@@ -71,8 +71,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     protected static Log log = LogFactory.getLog(
             JPAWeblogManagerImpl.class);
     
-    protected JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
     private Hashtable entryAnchorToIdMap = new Hashtable();
@@ -87,6 +87,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     private static final Comparator statCountCountReverseComparator =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
+    
     
     @com.google.inject.Inject
     protected JPAWeblogManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {

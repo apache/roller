@@ -48,16 +48,18 @@ import org.apache.roller.weblogger.business.pings.PingQueueManager;
 @com.google.inject.Singleton
 public class HibernateAutoPingManagerImpl implements AutoPingManager {
     
-    private Roller roller;
-    
     static final long serialVersionUID = 5420615676256979199L;
     
     private static Log log = LogFactory.getLog(HibernateAutoPingManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
+    
     
     @com.google.inject.Inject    
     protected HibernateAutoPingManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        
+        log.debug("Instantiating Hibernate Auto Ping Manager");
         this.roller = roller;
         this.strategy = strat;
     }

@@ -24,19 +24,15 @@ import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
 /**
- * Provides access to the Roller instance.
+ * Provides access to the Roller instance and bootstraps the business tier.
  */
 public final class RollerFactory {
     
     private static final Log log = LogFactory.getLog(RollerFactory.class);
-    
-    // have we been bootstrapped yet?
-    private static boolean bootstrapped = false;
     
     // a reference to the bootstrapped Roller instance
     private static Roller rollerInstance = null;
@@ -64,10 +60,10 @@ public final class RollerFactory {
     
     
     /**
-     * True if bootstrap process was completed, False otherwise.
+     * True if bootstrap process has been completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return bootstrapped;
+        return (rollerInstance != null);
     }
     
     
@@ -115,9 +111,7 @@ public final class RollerFactory {
         
         rollerInstance = injector.getInstance(Roller.class);
             
-        // note that we've now been bootstrapped
-        bootstrapped = true;
-            
         log.info("Roller Weblogger business tier successfully bootstrapped");
-    }    
+    }
+    
 }

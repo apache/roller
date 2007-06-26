@@ -63,8 +63,9 @@ public class JPARefererManagerImpl implements RefererManager {
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     /** The strategy for this manager. */
-    protected JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
+    
 
     /**
      * Creates a new instance of JPARefererManagerImpl
@@ -76,6 +77,7 @@ public class JPARefererManagerImpl implements RefererManager {
         this.strategy = strategy;
     }
 
+    
     public void saveReferer(WeblogReferrer referer) throws WebloggerException {
         strategy.store(referer);
     }

@@ -69,10 +69,12 @@ import org.hibernate.Query;
 @com.google.inject.Singleton
 public class HibernateUserManagerImpl implements UserManager {
     
-    static final long serialVersionUID = -5128460637997081121L;    
-    private static Log log = LogFactory.getLog(HibernateUserManagerImpl.class);    
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    static final long serialVersionUID = -5128460637997081121L;
+    
+    private static Log log = LogFactory.getLog(HibernateUserManagerImpl.class);
+    
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
@@ -80,12 +82,15 @@ public class HibernateUserManagerImpl implements UserManager {
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
    
+    
     @com.google.inject.Inject
     protected HibernateUserManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        
         log.debug("Instantiating Hibernate User Manager");
         this.roller = roller;       
         this.strategy = strat;
     }
+    
     
     /**
      * Update existing website.

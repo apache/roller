@@ -47,6 +47,7 @@ import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.commons.lang.StringUtils;
 
+
 /**
  * Lucene implementation of IndexManager. This is the central entry point 
  * into the Lucene searching API.
@@ -59,7 +60,7 @@ public class IndexManagerImpl implements IndexManager {
     // =============================================
     
     private IndexReader reader;
-    private Roller roller;
+    private final Roller roller;
     
     static Log mLogger = LogFactory.getFactory().getInstance(
             IndexManagerImpl.class);

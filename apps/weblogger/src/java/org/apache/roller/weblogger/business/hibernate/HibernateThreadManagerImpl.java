@@ -44,16 +44,16 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
     private static Log log = LogFactory.getLog(HibernateThreadManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject    
-    protected HibernateThreadManagerImpl(HibernatePersistenceStrategy strat) {
+    protected HibernateThreadManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
         super();
         
         log.debug("Instantiating Hibernate Thread Manager");
-        this.roller = roller;        
+        this.roller = roller;
         this.strategy = strat;
     }
     

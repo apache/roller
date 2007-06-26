@@ -54,12 +54,14 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     
     private static Log log = LogFactory.getLog(HibernatePingTargetManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
-    private Roller roller;
+    private final Roller roller;
+    private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject    
     protected HibernatePingTargetManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+        
+        log.debug("Instantiating Hibernate Ping Target Manager");
         this.roller = roller;
         this.strategy = strat;
     }

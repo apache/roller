@@ -61,14 +61,15 @@ public class JPAUserManagerImpl implements UserManager {
     private static final Comparator statCountCountReverseComparator =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
-    protected JPAPersistenceStrategy strategy;
-    private Roller roller = null;
+    private final Roller roller;
+    private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
     private Map weblogHandleToIdMap = new Hashtable();
     
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
+    
     
     @com.google.inject.Inject
     protected JPAUserManagerImpl(Roller roller, JPAPersistenceStrategy strat) {
