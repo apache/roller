@@ -59,7 +59,7 @@ public class JPAPersistenceStrategy {
     /**
      * The EntityManagerFactory for this Roller instance.
      */
-    private final EntityManagerFactory emf;
+    protected EntityManagerFactory emf;
     
             
     /**

@@ -43,7 +43,7 @@ public class HibernatePersistenceStrategy {
     
     private static final Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
-    private final SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
     
     
     /**
