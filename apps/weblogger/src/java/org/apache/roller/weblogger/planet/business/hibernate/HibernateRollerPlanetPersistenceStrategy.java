@@ -18,19 +18,22 @@
 
 package org.apache.roller.weblogger.planet.business.hibernate;
 
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.weblogger.config.RollerConfig;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+
 
 /**
  * Hibernate strategy for Planet, uses RollerConfig to get Hibernate configuration.
  */
 @com.google.inject.Singleton
 public class HibernateRollerPlanetPersistenceStrategy extends HibernatePersistenceStrategy {
-    private static Log logger = 
-        LogFactory.getFactory().getInstance(HibernateRollerPlanetPersistenceStrategy.class); 
+    
     
     /**
      * Persistence strategy configures itself by using 'planet-hibernate.cfg.xml' 
@@ -44,6 +47,17 @@ public class HibernateRollerPlanetPersistenceStrategy extends HibernatePersisten
         String connectionProvider = 
             RollerConfig.getProperty("hibernate.connectionProvider");        
         String configuration = "planet-hibernate.cfg.xml";
-        init(dialect, connectionProvider, configuration);
-    }   
+        
+        Configuration config = new Configuration();
+        config.configure(configuration);
+
+        // Add dialect specified by Roller config and our connection provider
+        Properties props = new Properties();
+        props.put(Environment.DIALECT, dialect);
+        props.put(Environment.CONNECTION_PROVIDER, connectionProvider);
+        config.mergeProperties(props);
+        
+        sessionFactory = config.buildSessionFactory(); 
+    }
+    
 }
