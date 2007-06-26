@@ -18,6 +18,7 @@
 
 package org.apache.roller.planet.business.hibernate;
 
+import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,8 +29,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.planet.config.PlanetConfig;
-import org.hibernate.cfg.Environment;
-
 
 /**
  * Base class for Hibernate persistence implementation.
@@ -43,29 +42,28 @@ public class HibernatePersistenceStrategy {
     
     private static final Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
-    protected SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
     
     
     /**
-     * Persistence strategy configures itself by using Roller properties:
-     * 'hibernate.configResource' - the resource name of Roller's Hibernate XML configuration file, 
-     * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
-     * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
+     * Persistence strategy configures itself by using properties from the
+     * planet config starting with hibernate.*
      */
     protected HibernatePersistenceStrategy() throws PlanetException {
-        
-        String dialect =  
-            PlanetConfig.getProperty("hibernate.dialect");
-        String connectionProvider = 
-            PlanetConfig.getProperty("hibernate.connectionProvider");
         
         Configuration config = new Configuration();
         config.configure("/META-INF/planet-hibernate.cfg.xml");
 
-        // Add dialect specified by Roller config and our connection provider
+        // Add all Hibernate properties found in PlanetConfig
         Properties props = new Properties();
-        props.put(Environment.DIALECT, dialect);
-        props.put(Environment.CONNECTION_PROVIDER, connectionProvider);
+        Enumeration keys = PlanetConfig.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            if (key.startsWith("hibernate.")) {
+                String value = PlanetConfig.getProperty(key);
+                props.setProperty(key, value);
+            }
+        }
         config.mergeProperties(props);
         
         sessionFactory = config.buildSessionFactory(); 
