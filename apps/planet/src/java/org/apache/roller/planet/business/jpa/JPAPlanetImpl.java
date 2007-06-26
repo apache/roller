@@ -21,38 +21,35 @@ package org.apache.roller.planet.business.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
+import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.FeedFetcher;
+import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.PropertiesManager;
-import org.apache.roller.planet.config.PlanetConfig;
-
 
 /**
  * Implements Planet, the entry point interface for the Roller-Planet business 
  * tier APIs using the Java Persistence API (JPA).
  */
 @com.google.inject.Singleton
-public class JPAPlanetImpl implements Planet {   
+public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {   
     
     private static Log log = LogFactory.getLog(JPAPlanetImpl.class);
     
     // a persistence utility class
-    protected JPAPersistenceStrategy strategy = null;
-    
-    // our singleton instance
-    protected static JPAPlanetImpl me = null;
+    private final JPAPersistenceStrategy strategy;
         
     // references to the managers we maintain
-    private PlanetManager planetManager = null;
-    private PropertiesManager propertiesManager = null;
+    private final PlanetManager planetManager;
+    private final PropertiesManager propertiesManager;
     
     // url strategy
-    protected URLStrategy urlStrategy = null;
+    private final URLStrategy urlStrategy;
     
     // feed fetcher
-    protected FeedFetcher feedFetcher = null;
+    private final FeedFetcher feedFetcher;
     
         
     @com.google.inject.Inject  
@@ -71,12 +68,9 @@ public class JPAPlanetImpl implements Planet {
     }
     
 
-    public void initialize() {
-        // no-op
-    }
-    
-    public URLStrategy getURLStrategy() {
-        return this.urlStrategy;
+    @Override
+    public void initialize() throws InitializationException {
+        getPropertiesManager().initialize();
     }
     
     
@@ -85,14 +79,17 @@ public class JPAPlanetImpl implements Planet {
     }
 
     
+    @Override
     public void release() {
         this.strategy.release();
     }
 
     
+    @Override
     public void shutdown() {
         this.release();
     }
+    
     
     /**
      * @see org.apache.roller.business.Roller#getBookmarkManager()
@@ -110,7 +107,13 @@ public class JPAPlanetImpl implements Planet {
     }
     
     
+    public URLStrategy getURLStrategy() {
+        return this.urlStrategy;
+    }
+    
+    
     public FeedFetcher getFeedFetcher() {
         return this.feedFetcher;
-    }   
+    }
+    
 }

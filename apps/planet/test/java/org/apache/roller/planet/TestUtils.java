@@ -42,7 +42,10 @@ public final class TestUtils {
             
             // do application bootstrapping and init
             PlanetFactory.bootstrap();
-            PlanetFactory.getPlanet().initialize();
+            
+            // always initialize the properties manager and flush
+            PlanetFactory.getPlanet().getPropertiesManager().initialize();
+            PlanetFactory.getPlanet().flush();
         }
     }
     

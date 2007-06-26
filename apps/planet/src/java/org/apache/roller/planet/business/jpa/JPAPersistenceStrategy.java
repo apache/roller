@@ -46,8 +46,10 @@ import org.apache.roller.planet.config.PlanetConfig;
  */
 @com.google.inject.Singleton
 public class JPAPersistenceStrategy {
+    
     private static Log logger = 
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
+    
     
     /**
      * The thread local EntityManager.
@@ -57,7 +59,7 @@ public class JPAPersistenceStrategy {
     /**
      * The EntityManagerFactory for this Roller instance.
      */
-    protected EntityManagerFactory emf = null;
+    private final EntityManagerFactory emf;
     
             
     /**
@@ -115,7 +117,8 @@ public class JPAPersistenceStrategy {
             throw new PlanetException(pe);
         }
     }
-                        
+          
+    
     /**
      * Flush changes to the datastore, commit transaction, release em.
      * @throws org.apache.roller.PlanetException on any error
