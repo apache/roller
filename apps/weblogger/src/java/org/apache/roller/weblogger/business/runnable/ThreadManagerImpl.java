@@ -45,7 +45,7 @@ public class ThreadManagerImpl implements ThreadManager {
     
     protected ThreadManagerImpl() {
         
-        log.info("Intializing Thread Manager");
+        log.info("Instantiating Thread Manager");
         
         serviceScheduler = Executors.newScheduledThreadPool(10);
     }
