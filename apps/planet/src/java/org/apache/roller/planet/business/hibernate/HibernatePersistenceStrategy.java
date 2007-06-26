@@ -40,8 +40,11 @@ import org.hibernate.cfg.Environment;
  */
 @com.google.inject.Singleton
 public class HibernatePersistenceStrategy {
+    
     private static final Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
-    private SessionFactory sessionFactory = null;
+    
+    private final SessionFactory sessionFactory;
+    
     
     /**
      * Persistence strategy configures itself by using Roller properties:
@@ -49,16 +52,14 @@ public class HibernatePersistenceStrategy {
      * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
      * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
      */
-    protected HibernatePersistenceStrategy() throws PlanetException {        
+    protected HibernatePersistenceStrategy() throws PlanetException {
+        
         String dialect =  
             PlanetConfig.getProperty("hibernate.dialect");
         String connectionProvider = 
             PlanetConfig.getProperty("hibernate.connectionProvider");        
         String configuration = "hibernate.cfg.xml";
-        init(dialect, connectionProvider, configuration);
-    }   
-    
-    protected void init(String dialect, String connectionProvider, String configuration) {
+        
         Configuration config = new Configuration();
         config.configure(configuration);
 

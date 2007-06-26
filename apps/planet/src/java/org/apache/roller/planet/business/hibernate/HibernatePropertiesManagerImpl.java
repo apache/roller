@@ -28,8 +28,8 @@ import org.hibernate.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
+import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.config.runtime.ConfigDef;
@@ -48,7 +48,7 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     
     private static Log log = LogFactory.getLog(HibernatePropertiesManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
+    private final HibernatePersistenceStrategy strategy;
     
     
     /**
@@ -60,9 +60,6 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
         log.debug("Instantiating Hibernate Properties Manager");
         
         this.strategy = strat;
-        
-        // TODO: and new method initialize(props)
-        init();
     }
     
     
@@ -136,7 +133,11 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     }
     
     
-    private void init() {
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void initialize() throws InitializationException {
         Map props = null;
         try {
             props = this.getProperties();

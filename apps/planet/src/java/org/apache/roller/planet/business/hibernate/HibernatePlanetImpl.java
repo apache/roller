@@ -21,11 +21,11 @@ package org.apache.roller.planet.business.hibernate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
+import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.FeedFetcher;
-import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.URLStrategy;
 
@@ -34,25 +34,22 @@ import org.apache.roller.planet.business.URLStrategy;
  * A Hibernate specific implementation of the Roller Planet business layer.
  */
 @com.google.inject.Singleton
-public class HibernatePlanetImpl implements Planet {   
+public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {   
     
     private static Log log = LogFactory.getLog(HibernatePlanetImpl.class);
     
-    // our singleton instance
-    protected static HibernatePlanetImpl me = null;
-    
     // a persistence utility class
-    protected HibernatePersistenceStrategy strategy = null;
+    private final HibernatePersistenceStrategy strategy;
     
     // references to the managers we maintain
-    protected PlanetManager planetManager = null;
-    protected PropertiesManager propertiesManager = null;
+    private final PlanetManager planetManager;
+    private final PropertiesManager propertiesManager;
     
     // url strategy
-    protected URLStrategy urlStrategy = null;
+    private final URLStrategy urlStrategy;
     
     // feed fetcher
-    protected FeedFetcher feedFetcher = null;
+    private final FeedFetcher feedFetcher;
     
         
     /**
@@ -71,11 +68,13 @@ public class HibernatePlanetImpl implements Planet {
         this.propertiesManager = propertiesManager;
         this.planetManager = planetManager;
         this.urlStrategy = urlStrategy;
+        this.feedFetcher = feedFetcher;
     }
        
     
-    public void initialize() {
-        // no-op
+    @Override
+    public void initialize() throws InitializationException {
+        getPropertiesManager().initialize();
     }
     
     
@@ -104,6 +103,7 @@ public class HibernatePlanetImpl implements Planet {
     }
     
     
+    @Override
     public void release() {
         // allow managers to do any session cleanup
         if(this.propertiesManager != null) {
@@ -119,6 +119,7 @@ public class HibernatePlanetImpl implements Planet {
     }
     
     
+    @Override
     public void shutdown() {
         // allow managers to do any shutdown needed
         if(this.propertiesManager != null) {
@@ -132,4 +133,5 @@ public class HibernatePlanetImpl implements Planet {
         // trigger the final release()
         this.release();
     }
+    
 }

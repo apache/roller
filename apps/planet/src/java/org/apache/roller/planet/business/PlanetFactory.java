@@ -26,22 +26,17 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.planet.config.PlanetConfig; 
 
+
 /**
  * Provides access to the Planet instance.
  */
-public abstract class PlanetFactory {    
+public abstract class PlanetFactory {
+    
     private static Log log = LogFactory.getLog(PlanetFactory.class);
+    
     private static Planet planetInstance = null;
-    private static Injector injector = null;       
+    private static Injector injector = null;
     
-    // have we been bootstrapped yet?
-    private static boolean bootstrapped = false;
-    
-    
-    /**
-     * Let's just be doubling certain this class cannot be instantiated.
-     */
-    private PlanetFactory() {} // hello planetary citizens
         
     static { 
 
@@ -55,7 +50,15 @@ public abstract class PlanetFactory {
             throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
         }
     }
-            
+    
+    
+    // non-instantiable
+    private PlanetFactory() {
+        // hello planetary citizens
+    }
+    
+    
+    
     /**
      * Static accessor for the instance of Roller
      */
@@ -66,6 +69,7 @@ public abstract class PlanetFactory {
         return planetInstance;
     }     
     
+    
     /**
      * Access to Guice injector so that developers can add new injected objects.
      */
@@ -73,12 +77,14 @@ public abstract class PlanetFactory {
         return injector;
     }
     
+    
     /**
      * True if bootstrap process was completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return bootstrapped;
+        return (planetInstance != null);
     }
+    
     
     /**
      * Bootstrap the Roller Planet business tier.
@@ -101,10 +107,8 @@ public abstract class PlanetFactory {
         
         // bootstrap Roller Weblogger business tier
         planetInstance =  injector.getInstance(Planet.class);
-
-        // note that we've now been bootstrapped
-        bootstrapped = true;            
         
         log.info("Roller Planet business tier successfully bootstrapped");
     }
+    
 }

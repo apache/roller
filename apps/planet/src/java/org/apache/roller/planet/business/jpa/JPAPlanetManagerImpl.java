@@ -50,10 +50,11 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
     
     /** The strategy for this manager. */
-    private JPAPersistenceStrategy strategy;
+    private final JPAPersistenceStrategy strategy;
     
     protected Map lastUpdatedByGroup = new HashMap();
     protected static final String NO_GROUP = "zzz_nogroup_zzz";
+    
     
     @com.google.inject.Inject  
     protected JPAPlanetManagerImpl(JPAPersistenceStrategy strategy) {
@@ -61,6 +62,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         
         this.strategy = strategy;
     }
+    
     
     public void saveGroup(PlanetGroupData group) throws PlanetException {
         strategy.store(group);

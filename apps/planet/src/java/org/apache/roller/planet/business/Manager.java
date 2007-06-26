@@ -27,6 +27,12 @@ package org.apache.roller.planet.business;
 public interface Manager {
     
     /**
+     * Initialize the Manager.  Called once after instantiation.
+     */
+    public void initialize() throws InitializationException;
+    
+    
+    /**
      * Release all resources associated with session.
      */
     public void release();

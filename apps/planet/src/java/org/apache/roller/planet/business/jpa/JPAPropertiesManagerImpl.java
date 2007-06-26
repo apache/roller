@@ -18,7 +18,6 @@
 
 package org.apache.roller.planet.business.jpa;
 
-import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,8 +25,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
+import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.config.runtime.ConfigDef;
@@ -45,7 +44,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     
     private static Log log = LogFactory.getLog(JPAPropertiesManagerImpl.class);
     
-    private JPAPersistenceStrategy strategy = null;
+    private final JPAPersistenceStrategy strategy;
     
     
     /**
@@ -57,9 +56,6 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
         log.debug("Instantiating JPA Properties Manager");
         
         this.strategy = strat;
-        
-        // TODO: and new method initialize(props)
-        init();
     }
     
     
@@ -122,7 +118,11 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     }
     
     
-    private void init() {
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void initialize() throws InitializationException {
         Map props = null;
         try {
             props = this.getProperties();

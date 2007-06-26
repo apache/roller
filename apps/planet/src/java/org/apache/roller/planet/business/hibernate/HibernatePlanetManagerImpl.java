@@ -46,7 +46,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     private static Log log = LogFactory.getLog(HibernatePlanetManagerImpl.class);
     
-    private HibernatePersistenceStrategy strategy = null;
+    private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject 
