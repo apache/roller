@@ -70,12 +70,6 @@ public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {
         this.urlStrategy = urlStrategy;
         this.feedFetcher = feedFetcher;
     }
-       
-    
-    @Override
-    public void initialize() throws InitializationException {
-        getPropertiesManager().initialize();
-    }
     
     
     public PlanetManager getPlanetManager() {
@@ -98,6 +92,21 @@ public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {
     }
     
     
+    @Override
+    public void initialize() throws InitializationException {
+        getPropertiesManager().initialize();
+        getPlanetManager().initialize();
+        
+        // we always need to do a flush after initialization because it's
+        // possible that some changes need to be persisted
+        try {
+            flush();
+        } catch(PlanetException ex) {
+            throw new InitializationException("Error flushing after initialization", ex);
+        }
+    }
+    
+    
     public void flush() throws PlanetException {
         this.strategy.flush();
     }
@@ -106,13 +115,8 @@ public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {
     @Override
     public void release() {
         // allow managers to do any session cleanup
-        if(this.propertiesManager != null) {
-            this.propertiesManager.release();
-        }
-        
-        if(this.planetManager != null) {
-            this.planetManager.release();
-        }
+        getPropertiesManager().release();
+        getPlanetManager().release();
         
         // close down the session
         this.strategy.release();
@@ -122,13 +126,8 @@ public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {
     @Override
     public void shutdown() {
         // allow managers to do any shutdown needed
-        if(this.propertiesManager != null) {
-            this.propertiesManager.shutdown();
-        }
-        
-        if(this.planetManager != null) {
-            this.planetManager.shutdown();
-        }
+        getPropertiesManager().shutdown();
+        getPlanetManager().shutdown();
         
         // trigger the final release()
         this.release();
