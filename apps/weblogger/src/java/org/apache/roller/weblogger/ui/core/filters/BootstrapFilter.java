@@ -23,6 +23,7 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,7 +40,7 @@ import org.apache.roller.weblogger.config.RollerConfig;
  * type is "auto", otherwise does nothing.
  */
 public class BootstrapFilter implements Filter {
-    
+    private ServletContext context = null;
     private static Log log = LogFactory.getLog(BootstrapFilter.class);
     
     
@@ -55,8 +56,10 @@ public class BootstrapFilter implements Filter {
                 "auto".equals(RollerConfig.getProperty("installation.type")) &&
                 !isInstallUrl(request.getServletPath())) {
             
-            // just redirect to install action
-            response.sendRedirect("/roller-ui/install/install.rol");
+            // we doing an install, so forward to installer
+            RequestDispatcher rd = context.getRequestDispatcher(
+                "/roller-ui/install/install.rol");
+            rd.forward(req, res);
             
         } else {
             chain.doFilter(request, response);
@@ -72,8 +75,9 @@ public class BootstrapFilter implements Filter {
     }
     
     
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+        context = filterConfig.getServletContext();
+    }
     
-    public void destroy() {}
-    
+    public void destroy() {}    
 }
