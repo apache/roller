@@ -35,7 +35,6 @@
         <s:hidden name="removeId" />
         <s:submit key="weblogEntryRemove.yes" />
     </s:form>
-    </div>
 </td>
 <td>
     <s:form action="entryEdit">
