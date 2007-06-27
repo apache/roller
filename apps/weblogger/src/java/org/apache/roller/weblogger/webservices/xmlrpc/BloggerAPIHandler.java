@@ -403,6 +403,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             WeblogEntry entry = new WeblogEntry();
             entry.setTitle(title);
             entry.setText(content);
+            entry.setLocale(website.getLocale());
             entry.setPubTime(current);
             entry.setUpdateTime(current);
             User user = roller.getUserManager().getUserByUserName(userid);

@@ -244,6 +244,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             WeblogEntry entry = new WeblogEntry();
             entry.setTitle(title);
             entry.setText(description);
+            entry.setLocale(website.getLocale());
             entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWebsite(website);
