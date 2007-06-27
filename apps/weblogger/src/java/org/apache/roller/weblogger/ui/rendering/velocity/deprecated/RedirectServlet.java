@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.URLUtilities;
 
 
@@ -163,7 +163,7 @@ public class RedirectServlet extends HttpServlet {
     // language servlet has no new equivalent, so just redirect to weblog homepage
     private String figureLanguageRedirect(HttpServletRequest request) {
         
-        String newUrl = RollerRuntimeConfig.getRelativeContextURL();
+        String newUrl = WebloggerRuntimeConfig.getRelativeContextURL();
         
         String pathInfo = request.getPathInfo();
         if(pathInfo == null) {
@@ -190,7 +190,7 @@ public class RedirectServlet extends HttpServlet {
         
         StringBuffer url = new StringBuffer();
         
-        url.append(RollerRuntimeConfig.getRelativeContextURL());
+        url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         url.append("/").append(commentsRequest.getWeblogHandle()).append("/");
         
         if(commentsRequest.getWeblogAnchor() != null) {
@@ -209,7 +209,7 @@ public class RedirectServlet extends HttpServlet {
     // redirect to new weblog resource location
     private String figureResourceRedirect(HttpServletRequest request) {
         
-        String newUrl = RollerRuntimeConfig.getRelativeContextURL();
+        String newUrl = WebloggerRuntimeConfig.getRelativeContextURL();
         
         String pathInfo = request.getPathInfo();
         if(pathInfo == null) {
@@ -230,7 +230,7 @@ public class RedirectServlet extends HttpServlet {
     // redirect to new weblog rsd location
     private String figureRsdRedirect(HttpServletRequest request) {
         
-        String newUrl = RollerRuntimeConfig.getRelativeContextURL();
+        String newUrl = WebloggerRuntimeConfig.getRelativeContextURL();
         
         String pathInfo = request.getPathInfo();
         if(pathInfo == null) {
@@ -258,10 +258,10 @@ public class RedirectServlet extends HttpServlet {
         String weblog = feedRequest.getWeblogHandle();
         if(weblog == null) {
             // must be site-wide feed
-            weblog = RollerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
+            weblog = WebloggerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
         }
         
-        String newUrl = RollerRuntimeConfig.getRelativeContextURL();
+        String newUrl = WebloggerRuntimeConfig.getRelativeContextURL();
         newUrl += "/"+weblog+"/feed/entries/"+feedRequest.getFlavor();
         
         Map params = new HashMap();
@@ -290,7 +290,7 @@ public class RedirectServlet extends HttpServlet {
         StringBuffer url = new StringBuffer();
         Map params = new HashMap();
         
-        url.append(RollerRuntimeConfig.getRelativeContextURL());
+        url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         url.append("/").append(pageRequest.getWeblogHandle()).append("/");
         
         if(pageRequest.getWeblogPage() != null && 
@@ -342,7 +342,7 @@ public class RedirectServlet extends HttpServlet {
     // redirect to new search servlet
     private String figureSearchRedirect(HttpServletRequest request) {
         
-        String newUrl = RollerRuntimeConfig.getRelativeContextURL();
+        String newUrl = WebloggerRuntimeConfig.getRelativeContextURL();
         
         String pathInfo = request.getPathInfo();
         if(pathInfo == null) {
@@ -381,14 +381,14 @@ public class RedirectServlet extends HttpServlet {
     // redirect to new editor UI location
     private String figureEditorRedirect(HttpServletRequest request) {
         
-        return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/";
+        return WebloggerRuntimeConfig.getRelativeContextURL()+"/roller-ui/";
     }
     
     
     // redirect to new admin UI location
     private String figureAdminRedirect(HttpServletRequest request) {
         
-        return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/";
+        return WebloggerRuntimeConfig.getRelativeContextURL()+"/roller-ui/";
     }
     
 }

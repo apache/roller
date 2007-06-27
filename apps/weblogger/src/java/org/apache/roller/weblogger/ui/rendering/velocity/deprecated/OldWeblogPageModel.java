@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -815,7 +815,7 @@ public class OldWeblogPageModel {
     
     public boolean getEmailComments() {
         if (mWebsite != null) {
-            boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+            boolean emailComments = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
             return (mWebsite.getEmailComments().booleanValue() && emailComments);
         }
         return false;

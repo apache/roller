@@ -34,8 +34,9 @@ import java.util.regex.Pattern;
 // business package on the presentation package.
 
 /**
- * Thin wrapper around WebloggerConfig and RollerRuntimeConfig for centralizing access to the many configurable
+ * Thin wrapper around WebloggerConfig and WebloggerRuntimeConfig for centralizing access to the many configurable
  * settings for pings.
+ * 
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
@@ -169,7 +170,7 @@ public class PingConfig {
      * @return the configured (or default) value of the suspend ping processing setting.
      */
     public static boolean getSuspendPingProcessing() {
-        return RollerRuntimeConfig.getBooleanProperty(PINGS_SUSPEND_PING_PROCESSING_PROP);
+        return WebloggerRuntimeConfig.getBooleanProperty(PINGS_SUSPEND_PING_PROCESSING_PROP);
     }
 
     /**

@@ -61,7 +61,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -299,7 +299,7 @@ public class RollerAtomHandler implements AtomHandler {
                 }
             }        
             String handle = pathInfo[0];
-            String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+            String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
             Weblog website = roller.getUserManager().getWebsiteByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find specified weblog");
@@ -398,7 +398,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (!path.equals("")) path = path + File.separator;
             
             String handle = pathInfo[0];
-            String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+            String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
             Weblog website = roller.getUserManager().getWebsiteByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find weblog: " + handle);
@@ -985,7 +985,7 @@ public class RollerAtomHandler implements AtomHandler {
         summary.setType(Content.HTML);
         summary.setValue(entry.getSummary());
         
-        String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         atomEntry.setId(        absUrl + entry.getPermaLink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setContents(  contents);
@@ -1042,7 +1042,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     private Entry createAtomResourceEntry(Weblog website, ThemeResource file) {
-        String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         String editURI = 
                 URLUtilities.getAtomProtocolURL(true)+"/"+website.getHandle()
                 + "/resource/" + file.getPath() + ".media-link";

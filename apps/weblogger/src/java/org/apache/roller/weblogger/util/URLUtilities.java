@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -47,9 +47,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-services/xmlrpc");
@@ -62,9 +62,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-services/app");
@@ -87,9 +87,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/").append(weblog.getHandle()).append("/");
@@ -368,9 +368,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         // json tags service base
@@ -393,9 +393,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/login-redirect.rol");
@@ -412,9 +412,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/logout.rol");
@@ -436,9 +436,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append(namespace);
@@ -472,9 +472,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/authoring/entryAdd.rol");
@@ -496,9 +496,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/authoring/entryEdit.rol");
@@ -520,9 +520,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/authoring/weblogConfig.rol");
@@ -550,9 +550,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
@@ -586,9 +586,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
@@ -621,9 +621,9 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url.append(RollerRuntimeConfig.getRelativeContextURL());
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         url.append("/roller-ui/authoring/previewresource/").append(weblog.getHandle()).append("/");

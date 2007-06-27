@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIUtils;
@@ -101,18 +101,18 @@ public abstract class UIAction extends ActionSupport
     
     
     public String getSiteURL() {
-        return RollerRuntimeConfig.getRelativeContextURL();
+        return WebloggerRuntimeConfig.getRelativeContextURL();
     }
     
     public String getAbsoluteSiteURL() {
-        return RollerRuntimeConfig.getAbsoluteContextURL();
+        return WebloggerRuntimeConfig.getAbsoluteContextURL();
     }
     
     public String getProp(String key) {
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
-            value = RollerRuntimeConfig.getProperty(key);
+            value = WebloggerRuntimeConfig.getProperty(key);
         }
         
         return (value == null) ? key : value;
@@ -122,7 +122,7 @@ public abstract class UIAction extends ActionSupport
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
-            value = RollerRuntimeConfig.getProperty(key);
+            value = WebloggerRuntimeConfig.getProperty(key);
         }
         
         return (value == null) ? false : (new Boolean(value)).booleanValue();
@@ -132,7 +132,7 @@ public abstract class UIAction extends ActionSupport
         // first try static config
         String value = WebloggerConfig.getProperty(key);
         if(value == null) {
-            value = RollerRuntimeConfig.getProperty(key);
+            value = WebloggerRuntimeConfig.getProperty(key);
         }
         
         return (value == null) ? 0 : (new Integer(value)).intValue();

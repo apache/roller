@@ -32,7 +32,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -98,7 +98,7 @@ public class SearchResultsModel extends PageModel {
         SearchOperation search = new SearchOperation(indexMgr);
         search.setTerm(searchRequest.getQuery());
         
-        if(RollerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
             this.websiteSpecificSearch = false;
         } else {
             search.setWebsiteHandle(searchRequest.getWeblogHandle());

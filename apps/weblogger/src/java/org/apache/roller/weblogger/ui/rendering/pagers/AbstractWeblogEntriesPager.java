@@ -28,7 +28,7 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -82,7 +82,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
           this.tags = tags;
         
         // make sure offset, length, and page are valid
-        int maxLength = RollerRuntimeConfig.getIntProperty("site.pages.maxEntries");
+        int maxLength = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
         length = weblog.getEntryDisplayCount();
         if(length > maxLength) {
             length = maxLength;

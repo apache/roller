@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -109,7 +109,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * Apply ignoreWord/spam filters to all referers in system.
      */
     public void applyRefererFilters() throws WebloggerException {
-        String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
+        String spamwords = WebloggerRuntimeConfig.getProperty("spam.blacklist");
         String[] blacklist = StringUtils.split(
                 StringUtils.deleteWhitespace(spamwords),",");
         if (blacklist.length == 0) return;
@@ -468,7 +468,7 @@ public class JPARefererManagerImpl implements RefererManager {
 
                 // If not a direct or search engine then search for linkback
                 boolean doLinkbackExtraction =
-                    RollerRuntimeConfig.getBooleanProperty(
+                    WebloggerRuntimeConfig.getBooleanProperty(
                         "site.linkbacks.enabled");
                 if (doLinkbackExtraction
                         && entry != null

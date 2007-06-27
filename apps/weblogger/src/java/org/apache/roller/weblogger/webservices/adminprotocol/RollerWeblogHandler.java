@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -192,7 +192,7 @@ class RollerWeblogHandler extends Handler {
                 }
                 
                 try {
-                    String def = RollerRuntimeConfig.getProperty("users.editor.pages");
+                    String def = WebloggerRuntimeConfig.getProperty("users.editor.pages");
                     String[] defs = Utilities.stringToStringArray(def,",");
                     wd.setEditorPage(defs[0]);
                 } catch (Exception ex) {
@@ -293,7 +293,7 @@ class RollerWeblogHandler extends Handler {
         we.setEnabled(wd.getEnabled());
         
         try {
-            AppUrl appUrl = new AppUrl(RollerRuntimeConfig.getAbsoluteContextURL(), wd.getHandle());
+            AppUrl appUrl = new AppUrl(WebloggerRuntimeConfig.getAbsoluteContextURL(), wd.getHandle());
             we.setAppEntriesUrl(appUrl.getEntryUrl().toString());
             we.setAppResourcesUrl(appUrl.getResourceUrl().toString());
         } catch (MalformedURLException mfue) {

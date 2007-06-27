@@ -38,9 +38,9 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
  * 
  * We also provide some methods for converting to different data types.
  */
-public class RollerRuntimeConfig {
+public class WebloggerRuntimeConfig {
     
-    private static Log log = LogFactory.getLog(RollerRuntimeConfig.class);
+    private static Log log = LogFactory.getLog(WebloggerRuntimeConfig.class);
     
     private static String runtime_config = "/org/apache/roller/weblogger/config/runtimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
@@ -51,7 +51,7 @@ public class RollerRuntimeConfig {
     
     
     // prevent instantiations
-    private RollerRuntimeConfig() {}
+    private WebloggerRuntimeConfig() {}
     
     
     /**
@@ -84,7 +84,7 @@ public class RollerRuntimeConfig {
     public static boolean getBooleanProperty(String name) {
         
         // get the value first, then convert
-        String value = RollerRuntimeConfig.getProperty(name);
+        String value = WebloggerRuntimeConfig.getProperty(name);
         
         if(value == null)
             return false;
@@ -99,7 +99,7 @@ public class RollerRuntimeConfig {
     public static int getIntProperty(String name) {
         
         // get the value first, then convert
-        String value = RollerRuntimeConfig.getProperty(name);
+        String value = WebloggerRuntimeConfig.getProperty(name);
         
         if(value == null)
             return -1;
@@ -122,7 +122,7 @@ public class RollerRuntimeConfig {
             // unmarshall the config defs file
             try {
                 InputStream is = 
-                        RollerRuntimeConfig.class.getResourceAsStream(runtime_config);
+                        WebloggerRuntimeConfig.class.getResourceAsStream(runtime_config);
                 
                 RuntimeConfigDefsParser parser = new RuntimeConfigDefsParser();
                 configDefs = parser.unmarshall(is);

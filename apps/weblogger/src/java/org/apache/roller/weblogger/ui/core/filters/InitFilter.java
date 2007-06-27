@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 
 /**
@@ -59,8 +59,8 @@ public class InitFilter implements Filter {
             String absPath = this.getAbsoluteUrl(request);
             
             // set them in our config
-            RollerRuntimeConfig.setAbsoluteContextURL(absPath);
-            RollerRuntimeConfig.setRelativeContextURL(relPath);
+            WebloggerRuntimeConfig.setAbsoluteContextURL(absPath);
+            WebloggerRuntimeConfig.setRelativeContextURL(relPath);
             
             log.debug("relPath = "+relPath);
             log.debug("absPath = "+absPath);

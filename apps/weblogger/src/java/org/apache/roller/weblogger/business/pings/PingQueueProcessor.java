@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.PingConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -81,7 +81,7 @@ public class PingQueueProcessor {
             return;
         }
         
-        String absoluteContextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+        String absoluteContextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null) {
             logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");
             return;

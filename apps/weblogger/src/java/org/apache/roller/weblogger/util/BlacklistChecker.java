@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -68,9 +68,9 @@ public class BlacklistChecker {
             List regexRules = new ArrayList();
             Blacklist.populateSpamRules(
                 website.getBlacklist(), stringRules, regexRules, null);
-            if (RollerRuntimeConfig.getProperty("spam.blacklist") != null) {
+            if (WebloggerRuntimeConfig.getProperty("spam.blacklist") != null) {
                 Blacklist.populateSpamRules(
-                    RollerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules, null);
+                    WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules, null);
             }
             return Blacklist.matchesRulesOnly(referrerURL, stringRules, regexRules);
         }
@@ -88,7 +88,7 @@ public class BlacklistChecker {
         Weblog website = c.getWeblogEntry().getWebsite();
         Blacklist.populateSpamRules(
             website.getBlacklist(), stringRules, regexRules, 
-            RollerRuntimeConfig.getProperty("spam.blacklist"));
+            WebloggerRuntimeConfig.getProperty("spam.blacklist"));
         Blacklist blacklist = Blacklist.getBlacklist();
         if (   blacklist.isBlacklisted(c.getUrl(),     stringRules, regexRules)
             || blacklist.isBlacklisted(c.getEmail(),   stringRules, regexRules)

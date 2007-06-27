@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -281,7 +281,7 @@ public class CommentServlet extends HttpServlet {
             
             try {               
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
-                        !RollerRuntimeConfig.getBooleanProperty("comments.ignoreSpam.enabled")) {
+                        !WebloggerRuntimeConfig.getBooleanProperty("comments.ignoreSpam.enabled")) {
                     
                     WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
                     mgr.saveComment(comment);

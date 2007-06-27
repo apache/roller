@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -133,7 +133,7 @@ abstract class Handler {
         this.uri = new URI(request);
         this.roller = WebloggerFactory.getWeblogger();
         //TODO: is this the right thing to do? hardcode roller-services?
-        this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
+        this.urlPrefix = WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //Authenticator auth = new WSSEAuthenticator(request);

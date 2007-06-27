@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
  * Model which provides access to application config data like site
@@ -122,17 +122,17 @@ public class ConfigModel implements Model {
     
     
     private String getProperty(String name) {
-        return RollerRuntimeConfig.getProperty(name);
+        return WebloggerRuntimeConfig.getProperty(name);
     }
     
     
     private int getIntProperty(String name) {
-        return RollerRuntimeConfig.getIntProperty(name);
+        return WebloggerRuntimeConfig.getIntProperty(name);
     }
     
     
     private boolean getBooleanProperty(String name) {
-        return RollerRuntimeConfig.getBooleanProperty(name);
+        return WebloggerRuntimeConfig.getBooleanProperty(name);
     }
     
 }

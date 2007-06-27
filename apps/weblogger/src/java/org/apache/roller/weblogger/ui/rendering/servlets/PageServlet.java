@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
@@ -151,7 +151,7 @@ public class PageServlet extends HttpServlet {
             }
             
             // is this the site-wide weblog?
-            isSiteWide = RollerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle());
+            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle());
             
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
@@ -399,7 +399,7 @@ public class PageServlet extends HttpServlet {
             ModelLoader.loadModels(pageModels, model, initData, true);
             
             // Load special models for site-wide blog
-            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
@@ -530,7 +530,7 @@ public class PageServlet extends HttpServlet {
         }
         
         // if this came from site-wide frontpage then skip it
-        if(RollerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle())) {
+        if(WebloggerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle())) {
             return false;
         }
         
@@ -566,7 +566,7 @@ public class PageServlet extends HttpServlet {
             
             // Base page URLs, with and without www.
             String basePageUrlWWW =
-                    RollerRuntimeConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
+                    WebloggerRuntimeConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
             String basePageUrl = basePageUrlWWW;
             if ( basePageUrlWWW.startsWith("http://www.") ) {
                 // chop off the http://www.

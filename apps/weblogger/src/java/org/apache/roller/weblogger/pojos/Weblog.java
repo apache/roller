@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -763,7 +763,7 @@ public class Weblog implements Serializable {
      */ 
     public boolean getCommentModerationRequired() { 
         return (getModerateComments().booleanValue()
-         || RollerRuntimeConfig.getBooleanProperty("users.moderation.required"));
+         || WebloggerRuntimeConfig.getBooleanProperty("users.moderation.required"));
     }
     
     /** No-op */
@@ -834,7 +834,7 @@ public class Weblog implements Serializable {
      */
     public String getURL() {
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
-        String relPath = RollerRuntimeConfig.getRelativeContextURL();
+        String relPath = WebloggerRuntimeConfig.getRelativeContextURL();
         return relPath + "/" + getHandle();
         //return URLUtilities.getWeblogURL(this, null, false);
     }
@@ -848,7 +848,7 @@ public class Weblog implements Serializable {
      */
     public String getAbsoluteURL() {
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
-        String relPath = RollerRuntimeConfig.getAbsoluteContextURL();
+        String relPath = WebloggerRuntimeConfig.getAbsoluteContextURL();
         return relPath + "/" + getHandle();
         //return URLUtilities.getWeblogURL(this, null, true);
     }

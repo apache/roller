@@ -32,7 +32,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -252,11 +252,11 @@ public class ContextLoader {
         //}
         
         boolean commentsEnabled =
-                RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
+                WebloggerRuntimeConfig.getBooleanProperty("users.comments.enabled");
         boolean trackbacksEnabled =
-                RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
+                WebloggerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
         boolean linkbacksEnabled =
-                RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
+                WebloggerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
         
         ctx.put("commentsEnabled",   new Boolean(commentsEnabled) );
         ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
@@ -275,9 +275,9 @@ public class ContextLoader {
         mLogger.debug("Loading comment values");
         
         String escapeHtml =
-                RollerRuntimeConfig.getProperty("users.comments.escapehtml");
+                WebloggerRuntimeConfig.getProperty("users.comments.escapehtml");
         String autoFormat =
-                RollerRuntimeConfig.getProperty("users.comments.autoformat");
+                WebloggerRuntimeConfig.getProperty("users.comments.autoformat");
         ctx.put("isCommentPage",     Boolean.TRUE);
         ctx.put("escapeHtml",        new Boolean(escapeHtml) );
         ctx.put("autoformat",        new Boolean(autoFormat) );
@@ -333,7 +333,7 @@ public class ContextLoader {
         
         // But don't exceed installation-wide maxEntries settings
         int defaultEntries =
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+                WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         if (entryCount < 1) entryCount = defaultEntries;
         if (entryCount > defaultEntries) entryCount = defaultEntries;
         ctx.put("entryCount",  new Integer(entryCount));
@@ -404,16 +404,16 @@ public class ContextLoader {
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
             url = URLUtilities.getWeblogURL(website, locale, true);
         } else {
-            url= RollerRuntimeConfig.getAbsoluteContextURL();
+            url= WebloggerRuntimeConfig.getAbsoluteContextURL();
         }
         ctx.put("websiteURL", url);
-        ctx.put("baseURL",    RollerRuntimeConfig.getRelativeContextURL() );
-        ctx.put("absBaseURL", RollerRuntimeConfig.getAbsoluteContextURL() );
-        ctx.put("ctxPath",    RollerRuntimeConfig.getRelativeContextURL() );
+        ctx.put("baseURL",    WebloggerRuntimeConfig.getRelativeContextURL() );
+        ctx.put("absBaseURL", WebloggerRuntimeConfig.getAbsoluteContextURL() );
+        ctx.put("ctxPath",    WebloggerRuntimeConfig.getRelativeContextURL() );
         ctx.put("uploadPath", ContextLoader.figureResourcePath());
         
         try {
-            URL absUrl = new URL(RollerRuntimeConfig.getAbsoluteContextURL());
+            URL absUrl = new URL(WebloggerRuntimeConfig.getAbsoluteContextURL());
             ctx.put("host", absUrl.getHost());
         } catch (MalformedURLException e) {
             throw new WebloggerException(e);

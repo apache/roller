@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -275,7 +275,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         Vector result = new Vector();
         if (validateUser(userid, password)) {
             try {
-                String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+                String contextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
                 
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 User user = umgr.getUserByUserName(userid);

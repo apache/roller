@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ResourceBundle;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.LinkbackExtractor;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -44,7 +44,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         
         // linkback validation can be toggled at runtime, so check if it's enabled
         // if it's disabled then just return a score of 100
-        if(!RollerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
+        if(!WebloggerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
             return 100;
         }
         
