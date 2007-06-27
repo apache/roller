@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -50,7 +50,7 @@ public abstract class EntryBase extends UIAction {
      * Trigger reindexing of modified entry.
      */
     protected void reindexEntry(WeblogEntry entry) {
-        IndexManager manager = RollerFactory.getRoller().getIndexManager();
+        IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
         
         // if published, index the entry
         if (entry.isPublished()) {
@@ -72,7 +72,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentPublishedEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(), // userName
                     null,
@@ -101,7 +101,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentScheduledEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(), // userName
                     null,
@@ -129,7 +129,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentDraftEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(),
                     null,
@@ -157,7 +157,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentPendingEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(),
                     null,
@@ -180,7 +180,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntryPlugin> getEntryPlugins() {
         List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
         try {
-            PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getRoller().getPagePluginManager();
             Map<String, WeblogEntryPlugin> plugins = ppmgr.getWeblogEntryPlugins(getActionWeblog());
             
             if(plugins.size() > 0) {

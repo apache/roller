@@ -96,7 +96,7 @@ public class CommentTest extends TestCase {
      */
     public void testCommentCRUD() throws Exception {
         
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
         
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName("test");
@@ -146,7 +146,7 @@ public class CommentTest extends TestCase {
      */
     public void testCommentLookups() throws Exception {
         
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
         List comments = null;
         
         // we need some comments to play with
@@ -212,8 +212,8 @@ public class CommentTest extends TestCase {
         log.info("BEGIN");
         
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();        
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();        
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
 
             // first make sure we can delete an entry with comments
             User user = TestUtils.setupUser("commentParentDeleteUser");
@@ -373,7 +373,7 @@ public class CommentTest extends TestCase {
      */
 //    public void testAdvancedCommentCRUD() throws Exception {
 //        
-//        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+//        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
 //        List comments = null;
 //        
 //        // we need some comments to play with

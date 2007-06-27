@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -61,7 +61,7 @@ public abstract class PingTargetsBase extends UIAction {
         // load specified ping target if possible
         if(!StringUtils.isEmpty(getPingTargetId())) {
             try {
-                PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
                 setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
             } catch (WebloggerException ex) {
                 getLogger().error("Error looking up ping target - "+getPingTargetId(), ex);
@@ -104,9 +104,9 @@ public abstract class PingTargetsBase extends UIAction {
         if(getPingTarget() != null) {
             
             try {
-                PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
                 pingTargetMgr.removePingTarget(getPingTarget());
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // remove deleted target from list
                 getPingTargets().remove(getPingTarget());

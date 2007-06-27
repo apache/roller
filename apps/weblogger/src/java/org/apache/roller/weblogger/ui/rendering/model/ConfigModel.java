@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 
 /**
@@ -105,19 +105,19 @@ public class ConfigModel implements Model {
     
     /** Get Roller version string */
     public String getRollerVersion() {
-        return RollerFactory.getRoller().getVersion();
+        return WebloggerFactory.getRoller().getVersion();
     }
     
     
     /** Get timestamp of Roller build */
     public String getRollerBuildTimestamp() {
-        return RollerFactory.getRoller().getBuildTime();
+        return WebloggerFactory.getRoller().getBuildTime();
     }
     
     
     /** Get username who created Roller build */
     public String getRollerBuildUser() {
-        return RollerFactory.getRoller().getBuildUser();
+        return WebloggerFactory.getRoller().getBuildUser();
     }
     
     

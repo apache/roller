@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -125,7 +125,7 @@ public class RollerAtomHandler implements AtomHandler {
      * then user's name, otherwise it will return null.
      */
     public RollerAtomHandler(HttpServletRequest request) {
-        roller = RollerFactory.getRoller();
+        roller = WebloggerFactory.getRoller();
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //String userName = authenticateWSSE(request);
@@ -247,7 +247,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private String getAcceptedContentTypeRange() throws WebloggerException {
         StringBuffer sb = new StringBuffer();
-        Weblogger roller = RollerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getRoller();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");

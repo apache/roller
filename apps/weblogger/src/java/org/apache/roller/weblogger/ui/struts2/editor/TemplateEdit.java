@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -65,7 +65,7 @@ public class TemplateEdit extends UIAction {
     
     public void myPrepare() {
         try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             setTemplate(mgr.getPage(getBean().getId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template - "+getBean().getId(), ex);
@@ -129,9 +129,9 @@ public class TemplateEdit extends UIAction {
             }
             
             // save template and flush
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             mgr.savePage(template);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify caches
             CacheManager.invalidate(template);
@@ -154,7 +154,7 @@ public class TemplateEdit extends UIAction {
         // if name changed make sure there isn't a conflict
         if(!getTemplate().getName().equals(getBean().getName())) {
             try {
-                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                UserManager umgr = WebloggerFactory.getRoller().getUserManager();
                 if(umgr.getPageByName(getActionWeblog(), getBean().getName()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getName());
                 }
@@ -167,7 +167,7 @@ public class TemplateEdit extends UIAction {
         if(!StringUtils.isEmpty(getBean().getLink()) &&
                 !getBean().getLink().equals(getTemplate().getLink())) {
             try {
-                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                UserManager umgr = WebloggerFactory.getRoller().getUserManager();
                 if(umgr.getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getLink());
                 }

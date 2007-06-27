@@ -22,7 +22,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -63,7 +63,7 @@ public class Maintenance extends UIAction {
     public String index() {
         
         try {
-            IndexManager manager = RollerFactory.getRoller().getIndexManager();
+            IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
             manager.rebuildWebsiteIndex(getActionWeblog());
             
             addMessage("maintenance.message.indexed");
@@ -88,9 +88,9 @@ public class Maintenance extends UIAction {
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
             
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             umgr.saveWebsite(weblog);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // also notify cache manager
             CacheManager.invalidate(weblog);

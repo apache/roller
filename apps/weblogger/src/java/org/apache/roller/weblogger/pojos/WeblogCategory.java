@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.util.UUIDGenerator;
 
@@ -250,7 +250,7 @@ public class WeblogCategory implements Serializable, Comparable {
      * @throws WebloggerException
      */
     public List retrieveWeblogEntries(boolean subcats) throws WebloggerException {
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
     }
     
@@ -318,7 +318,7 @@ public class WeblogCategory implements Serializable, Comparable {
      */
     public boolean isInUse() {
         try {
-            return RollerFactory.getRoller().getWeblogManager().isWeblogCategoryInUse(this);
+            return WebloggerFactory.getRoller().getWeblogManager().isWeblogCategoryInUse(this);
         } catch (WebloggerException e) {
             throw new RuntimeException(e);
         }
@@ -364,7 +364,7 @@ public class WeblogCategory implements Serializable, Comparable {
             } else {
                 childCat.setPath(cat.getPath() + "/" + childCat.getName());
             }
-            RollerFactory.getRoller().getWeblogManager().saveWeblogCategory(childCat);
+            WebloggerFactory.getRoller().getWeblogManager().saveWeblogCategory(childCat);
             
             log.debug("NEW child category path is "+ childCat.getPath());
             

@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.business.runnable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -51,7 +51,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
      */
     public final void run() {
         
-        ThreadManager mgr = RollerFactory.getRoller().getThreadManager();
+        ThreadManager mgr = WebloggerFactory.getRoller().getThreadManager();
         
         boolean lockAcquired = false;
         try {
@@ -86,7 +86,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
             }
             
             // always release Roller session
-            RollerFactory.getRoller().release();
+            WebloggerFactory.getRoller().release();
         }
         
     }

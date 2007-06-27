@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -97,7 +97,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         
         if(theme == null && themeName != null) {
             try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
                 theme = themeMgr.getTheme(themeName);
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it
@@ -133,7 +133,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
             }
             
             try {
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), anchor);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry "+anchor, ex);

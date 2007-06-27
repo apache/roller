@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -64,7 +64,7 @@ public class CreateWeblog extends UIAction {
         
         try {
             if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 List permissions = mgr.getAllPermissions(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
@@ -92,7 +92,7 @@ public class CreateWeblog extends UIAction {
         User user = getAuthenticatedUser();
         try {
             if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 List permissions = mgr.getAllPermissions(user);
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
@@ -128,9 +128,9 @@ public class CreateWeblog extends UIAction {
             
             try {
                 // add weblog and flush
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 mgr.addWebsite(wd);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // tell the user their weblog was created
                 addMessage("createWebsite.created", getBean().getHandle());
@@ -166,7 +166,7 @@ public class CreateWeblog extends UIAction {
         
         // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             if (mgr.getWebsiteByHandle(getBean().getHandle()) != null) {
                 addError("createWeblog.error.handleExists");
                 // reset handle
@@ -181,7 +181,7 @@ public class CreateWeblog extends UIAction {
     
     
     public List getThemes() {
-        ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+        ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
         return themeMgr.getEnabledThemesList();
     }
     

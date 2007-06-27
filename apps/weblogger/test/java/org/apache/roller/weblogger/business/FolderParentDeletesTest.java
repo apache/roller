@@ -86,7 +86,7 @@ public class FolderParentDeletesTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
@@ -103,7 +103,7 @@ public class FolderParentDeletesTest extends TestCase {
         // now delete the weblog owning these categories
         Exception ex = null;
         try {
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             umgr.removeWebsite(TestUtils.getManagedWebsite(testWeblog));
             TestUtils.endSession(true);
         } catch (WebloggerException e) {

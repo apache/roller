@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
@@ -81,7 +81,7 @@ public class BookmarkTest extends TestCase {
     }
     
     public Weblogger getRoller() {
-        return RollerFactory.getRoller();
+        return WebloggerFactory.getRoller();
     }
     
     

@@ -62,7 +62,7 @@ public class TaskLockTest extends TestCase {
      */
     public void testTaskLockCRUD() throws Exception {
         
-        ThreadManager mgr = RollerFactory.getRoller().getThreadManager();
+        ThreadManager mgr = WebloggerFactory.getRoller().getThreadManager();
         
         // need a test task to play with
         RollerTask task = new TestTask();

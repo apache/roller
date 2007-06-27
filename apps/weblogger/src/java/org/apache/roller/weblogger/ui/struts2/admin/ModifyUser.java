@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -68,14 +68,14 @@ public class ModifyUser extends UIAction {
         // load the user object we are modifying
         if(getUserName() != null) {
             try {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 setUser(mgr.getUserByUserName(getUserName()));
             } catch(Exception e) {
                 log.error("Error looking up user - "+getUserName(), e);
             }
         } else if(getBean().getId() != null) {
             try {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 setUser(mgr.getUser(getBean().getId()));
             } catch(Exception e) {
                 log.error("Error looking up user - "+getBean().getId(), e);
@@ -116,7 +116,7 @@ public class ModifyUser extends UIAction {
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 try {
-                    getUser().resetPassword(RollerFactory.getRoller(),
+                    getUser().resetPassword(WebloggerFactory.getRoller(),
                             getBean().getPassword(),
                             getBean().getPassword());
                 } catch (WebloggerException e) {
@@ -125,7 +125,7 @@ public class ModifyUser extends UIAction {
             }
             
             try {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 
                 // grant/revoke admin role if needed
                 if(getUser().hasRole("admin") && !getBean().isAdministrator()) {
@@ -138,7 +138,7 @@ public class ModifyUser extends UIAction {
             
                 // save the updated profile
                 mgr.saveUser(getUser());
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // TODO: i18n
                 addMessage("user updated.");

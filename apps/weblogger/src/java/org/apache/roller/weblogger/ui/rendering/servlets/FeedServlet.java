@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -192,7 +192,7 @@ public class FeedServlet extends HttpServlet {
             
             try {
                 // tags specified.  make sure they exist.
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
                 invalid = !wmgr.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;

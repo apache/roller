@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -325,7 +325,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
      * @param subfolders
      */
     public List retrieveBookmarks(boolean subfolders) throws WebloggerException {
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         return bmgr.getBookmarks(this, subfolders);
     }
     
@@ -405,7 +405,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
             } else {
                 childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
             }
-            RollerFactory.getRoller().getBookmarkManager().saveFolder(childFolder);
+            WebloggerFactory.getRoller().getBookmarkManager().saveFolder(childFolder);
             
             log.debug("NEW child folder path is "+ childFolder.getPath());
             

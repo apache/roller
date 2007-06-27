@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -86,7 +86,7 @@ public class Comments extends UIAction {
         List comments = Collections.EMPTY_LIST;
         boolean hasMore = false;
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             
             // lookup weblog entry if necessary
             WeblogEntry queryEntry = null;
@@ -181,7 +181,7 @@ public class Comments extends UIAction {
         getBean().loadCheckboxes(getPager().getItems());
         
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             List allMatchingComments = wmgr.getComments(
                     getActionWeblog(),
                     null,
@@ -213,7 +213,7 @@ public class Comments extends UIAction {
     public String delete() {
         
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             int deleted = wmgr.removeMatchingComments(
                     getActionWeblog(),
                     null,
@@ -246,7 +246,7 @@ public class Comments extends UIAction {
     public String update() {
         
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             
             List<WeblogEntryComment> flushList = new ArrayList();
             
@@ -319,7 +319,7 @@ public class Comments extends UIAction {
                 }
             }
             
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify caches of changes
             for(WeblogEntryComment comm : flushList) {

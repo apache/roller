@@ -27,7 +27,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -76,7 +76,7 @@ public final class BookmarksImport extends UIAction {
      */
     public String save() {
         
-        BookmarkManager bm = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bm = WebloggerFactory.getRoller().getBookmarkManager();
         
         InputStream stream = null;
         if(getOpmlFile() != null && getOpmlFile().exists()) try {
@@ -101,7 +101,7 @@ public final class BookmarksImport extends UIAction {
                 
                 // Use Roller BookmarkManager to import bookmarks
                 bm.importBookmarks(getActionWeblog(), folderName, data);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());

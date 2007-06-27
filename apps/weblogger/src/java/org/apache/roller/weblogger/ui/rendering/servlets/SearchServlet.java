@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -82,7 +82,7 @@ public class SearchServlet extends HttpServlet {
             searchRequest = new WeblogSearchRequest(request);
             
             // now make sure the specified weblog really exists
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             weblog = userMgr.getWebsiteByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
             
         } catch(Exception e) {

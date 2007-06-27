@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
@@ -43,7 +43,7 @@ public class CommentDataServlet extends HttpServlet {
                       HttpServletResponse response)
             throws ServletException, IOException {
         
-        Weblogger roller = RollerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getRoller();
         try {
             WeblogManager wmgr = roller.getWeblogManager();
             WeblogEntryComment c = wmgr.getComment(request.getParameter("id"));

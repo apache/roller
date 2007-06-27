@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
@@ -51,7 +51,7 @@ public class PingQueueProcessor {
     
     
     private PingQueueProcessor() throws WebloggerException {
-        pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
+        pingQueueMgr = WebloggerFactory.getRoller().getPingQueueManager();
     }
     
     

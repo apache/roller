@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -315,7 +315,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         }
         else
         {
-            BookmarkManager bMgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bMgr = WebloggerFactory.getRoller().getBookmarkManager();
             List bookmarks = bMgr.getBookmarks(bMgr.getRootFolder(website), true);
 
             for (Iterator i = bookmarks.iterator(); i.hasNext();)

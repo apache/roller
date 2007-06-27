@@ -15,7 +15,7 @@ import java.net.URL;
 import javax.mail.internet.ContentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 
 
@@ -79,7 +79,7 @@ public final class MediacastUtil {
         
 //        if (!valid) {
 //            log.debug("Removing MediaCast attributes");
-//            WeblogManager weblogManager = RollerFactory.getRoller().getWeblogManager();
+//            WeblogManager weblogManager = WebloggerFactory.getRoller().getWeblogManager();
 //            try {
 //                weblogManager.removeWeblogEntryAttribute("att_mediacast_url", entry);
 //                weblogManager.removeWeblogEntryAttribute("att_mediacast_type", entry);

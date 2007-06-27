@@ -8,7 +8,7 @@ import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.UserRole;
 import org.apache.roller.weblogger.pojos.User;
@@ -25,7 +25,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         
         User userData = null;
         try {
-            Weblogger roller = RollerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
             userData = umgr.getUserByUserName(userName, Boolean.TRUE); 
         } catch (WebloggerException ex) {

@@ -27,7 +27,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -77,7 +77,7 @@ public class WeblogConfig extends UIAction {
     public void myPrepare() {
         
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             
             // set categories list
             setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog(), false));
@@ -90,7 +90,7 @@ public class WeblogConfig extends UIAction {
             }
             
             // set plugins list
-            PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getRoller().getPagePluginManager();
             Map pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
             List plugins = new ArrayList();
             Iterator iter = pluginsMap.values().iterator();
@@ -125,8 +125,8 @@ public class WeblogConfig extends UIAction {
         myValidate();
         
         if(!hasActionErrors()) try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             
             Weblog weblog = getActionWeblog();
             
@@ -160,10 +160,10 @@ public class WeblogConfig extends UIAction {
             }
             
             // apply referer filters
-            RollerFactory.getRoller().getRefererManager().applyRefererFilters(weblog);
+            WebloggerFactory.getRoller().getRefererManager().applyRefererFilters(weblog);
             
             // flush
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             addMessage("websiteSettings.savedChanges");
             

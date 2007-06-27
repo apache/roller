@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -212,7 +212,7 @@ public class ContextLoader {
         if(weblog == null)
             return;
         
-        Weblogger mRoller = RollerFactory.getRoller();
+        Weblogger mRoller = WebloggerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
         ctx.put("userName",         weblog.getHandle());
@@ -380,9 +380,9 @@ public class ContextLoader {
         ctx.put("page",ThemeTemplateWrapper.wrap(page));
         ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
-        ctx.put("rollerVersion",   RollerFactory.getRoller().getVersion() );
-        ctx.put("rollerBuildTime", RollerFactory.getRoller().getBuildTime() );
-        ctx.put("rollerBuildUser", RollerFactory.getRoller().getBuildUser() );
+        ctx.put("rollerVersion",   WebloggerFactory.getRoller().getVersion() );
+        ctx.put("rollerBuildTime", WebloggerFactory.getRoller().getBuildTime() );
+        ctx.put("rollerBuildUser", WebloggerFactory.getRoller().getBuildUser() );
         ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
         
         ctx.put("requestParameters", request.getParameterMap());

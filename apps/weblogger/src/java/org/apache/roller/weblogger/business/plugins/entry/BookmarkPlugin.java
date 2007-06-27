@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -71,7 +71,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     public String render(WeblogEntry entry, String str) {
         String text = str;
         try {
-            BookmarkManager bMgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bMgr = WebloggerFactory.getRoller().getBookmarkManager();
             WeblogBookmarkFolder rootFolder = bMgr.getRootFolder(entry.getWebsite());
             text = matchBookmarks(text, rootFolder);
             text = lookInFolders(text, rootFolder.getFolders());

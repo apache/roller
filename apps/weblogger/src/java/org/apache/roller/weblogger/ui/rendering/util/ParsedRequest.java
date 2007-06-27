@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 
@@ -88,7 +88,7 @@ public abstract class ParsedRequest {
         
         if(user == null && authenticUser != null) {
             try {
-                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                UserManager umgr = WebloggerFactory.getRoller().getUserManager();
                 user = umgr.getUserByUserName(authenticUser);
             } catch (WebloggerException ex) {
                 log.error("Error looking up user "+authenticUser, ex);

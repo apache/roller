@@ -34,7 +34,7 @@ import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -73,7 +73,7 @@ public class ThemeResourceLoader extends ResourceLoader {
                 throw new ResourceNotFoundException("Invalid ThemeRL key "+name);
             
             // lookup the template from the proper theme
-            ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+            ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
             ThemeTemplate template = theme.getTemplateByName(split[1]);
             
@@ -126,7 +126,7 @@ public class ThemeResourceLoader extends ResourceLoader {
                 return last_mod;
             
             // lookup the template from the proper theme
-            ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+            ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
             ThemeTemplate template = theme.getTemplateByName(split[1]);
             

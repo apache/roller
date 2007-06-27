@@ -37,7 +37,7 @@ import org.apache.roller.planet.business.RomeFeedFetcher;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
@@ -80,13 +80,13 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 Set newEntries = new TreeSet();
                 
                 // get corresponding website object
-                UserManager usermgr = RollerFactory.getRoller().getUserManager();
+                UserManager usermgr = WebloggerFactory.getRoller().getUserManager();
                 Weblog website = usermgr.getWebsiteByHandle(sub.getAuthor());
                 if (website == null) 
                     return newEntries;
                 
                 // figure website last update time
-                WeblogManager blogmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager blogmgr = WebloggerFactory.getRoller().getWeblogManager();
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
                 
                 Date siteUpdated = website.getLastModified();
@@ -130,7 +130,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 }
                 
                 // Populate subscription object with new entries
-                PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+                PluginManager ppmgr = WebloggerFactory.getRoller().getPagePluginManager();
                 Map pagePlugins = ppmgr.getWeblogEntryPlugins(website);
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {

@@ -23,7 +23,7 @@
 
 package org.apache.roller.weblogger.business.referrers;
 
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -42,7 +42,7 @@ public class QueuedReferrerProcessingJob extends ReferrerProcessingJob {
     public void execute() {
         
         ReferrerQueueManager refQueue =
-                RollerFactory.getRoller().getReferrerQueueManager();
+                WebloggerFactory.getRoller().getReferrerQueueManager();
         
         // check the queue for any incoming referrers
         referrer = refQueue.dequeue();

@@ -84,7 +84,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategory root = mgr.getRootWeblogCategory(testWeblog);
@@ -106,7 +106,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
         WeblogCategory cat = null;
         List cats = null;
         
@@ -169,7 +169,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
         
         // root category is always available
         testWeblog = TestUtils.getManagedWebsite(testWeblog);

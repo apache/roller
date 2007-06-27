@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.planet.pojos.PlanetData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -138,7 +138,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         
         try {
             PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
-            UserManager userManager = RollerFactory.getRoller().getUserManager();
+            UserManager userManager = WebloggerFactory.getRoller().getUserManager();
             
             // first, make sure there is an "all" planet group
             PlanetData planetObject = planet.getPlanet("zzz_default_planet_zzz");
@@ -223,7 +223,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             log.error("ERROR refreshing entries", e);
         } finally {
             // don't forget to release
-            RollerFactory.getRoller().release();
+            WebloggerFactory.getRoller().release();
             PlanetFactory.getPlanet().release();
         }
     }

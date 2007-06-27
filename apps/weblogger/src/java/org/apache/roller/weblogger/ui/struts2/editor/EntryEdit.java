@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -76,7 +76,7 @@ public final class EntryEdit extends EntryBase {
     public void myPrepare() {
         if(getBean().getId() != null) {
             try {
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
                 setEntry(wmgr.getWeblogEntry(getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - "+getBean().getId(), ex);
@@ -122,7 +122,7 @@ public final class EntryEdit extends EntryBase {
         }
         
         if(!hasActionErrors()) try {
-            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager weblogMgr = WebloggerFactory.getRoller().getWeblogManager();
             
             WeblogEntry entry = getEntry();
             
@@ -168,7 +168,7 @@ public final class EntryEdit extends EntryBase {
             
             log.debug("Saving entry");
             weblogMgr.saveWeblogEntry(entry);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify search of the new entry
             reindexEntry(entry);
@@ -178,7 +178,7 @@ public final class EntryEdit extends EntryBase {
             
             // Queue applicable pings for this update.
             if(entry.isPublished()) {
-                RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
+                WebloggerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
             }
             
             if(entry.isPending()) {
@@ -263,7 +263,7 @@ public final class EntryEdit extends EntryBase {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             return wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);

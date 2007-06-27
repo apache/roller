@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -100,7 +100,7 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries before startDate, using category restriction limit 1
         // Use entry's date as previous month
         try {
-            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
             List prevEntries = mgr.getWeblogEntries(
                     
                     weblog,                    // website
@@ -126,7 +126,7 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries after endDate, using category restriction limit 1
         // Use entry's date as next month
         try {
-            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
             List nextEntries = mgr.getWeblogEntries(
                     
                     weblog,                    // website
@@ -157,7 +157,7 @@ public class WeblogCalendarModel implements CalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
             monthMap = mgr.getWeblogEntryStringMap(
                     
                     weblog,                  // website

@@ -22,7 +22,7 @@
 <%@ page import="java.util.List" %>
 <%
 User user = RollerSession.getRollerSession(request).getAuthenticatedUser();
-List websites = RollerFactory.getRoller().getUserManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, Integer.MAX_VALUE);
+List websites = WebloggerFactory.getRoller().getUserManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, Integer.MAX_VALUE);
 
 if (websites.size() == 1) {
     Weblog website = (Weblog) websites.get(0);

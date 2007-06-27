@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -116,7 +116,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
         try {
             log.info("task started");
             
-            Weblogger roller = RollerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getRoller();
             roller.getRefererManager().clearReferrers();
             roller.flush();
             
@@ -128,7 +128,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
             log.error("unexpected exception", ee);
         } finally {
             // always release
-            RollerFactory.getRoller().release();
+            WebloggerFactory.getRoller().release();
         }
         
     }

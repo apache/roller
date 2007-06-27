@@ -27,16 +27,16 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
 /**
  * This is a simple template file loader that loads templates
  * from the Roller instance instead of plain files.
- *
- * RollerResourceLoader makes use of RollerFactory.
- *
+ * 
+ * RollerResourceLoader makes use of WebloggerFactory.
+ * 
  * @author <a href="mailto:lance@brainopolis.com">Lance Lavandowska</a>
  * @version $Id: RollerResourceLoader.java,v 1.9 2005/01/15 03:32:49 snoopdave Exp $
  */
@@ -78,7 +78,7 @@ public class RollerResourceLoader extends ResourceLoader {
         
         try {
             WeblogTemplate page = 
-                    RollerFactory.getRoller().getUserManager().getPage(name);
+                    WebloggerFactory.getRoller().getUserManager().getPage(name);
             
             if (page == null) {
                 throw new ResourceNotFoundException(
@@ -116,7 +116,7 @@ public class RollerResourceLoader extends ResourceLoader {
         String name = resource.getName();
         try {
             WeblogTemplate page = 
-                    RollerFactory.getRoller().getUserManager().getPage(name);
+                    WebloggerFactory.getRoller().getUserManager().getPage(name);
             
             if (mLogger.isDebugEnabled()) {
                 mLogger.debug(name + ": resource=" + resource.getLastModified() +

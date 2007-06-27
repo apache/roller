@@ -46,7 +46,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.util.DateUtil;
@@ -710,7 +710,7 @@ public class WeblogEntry implements Serializable {
             }
         }
 
-        WeblogManager weblogManager = RollerFactory.getRoller().getWeblogManager();
+        WeblogManager weblogManager = WebloggerFactory.getRoller().getWeblogManager();
         for (Iterator it = removeTags.iterator(); it.hasNext();) {
             weblogManager.removeWeblogEntryTag((String) it.next(), this);
         }
@@ -853,7 +853,7 @@ public class WeblogEntry implements Serializable {
     public List getComments(boolean ignoreSpam, boolean approvedOnly) {
         List list = new ArrayList();
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             return wmgr.getComments(
                     
                     getWebsite(),
@@ -889,7 +889,7 @@ public class WeblogEntry implements Serializable {
     public List getReferers() {
         List referers = null;
         try {
-            referers = RollerFactory.getRoller().getRefererManager().getReferersToEntry(getId());
+            referers = WebloggerFactory.getRoller().getRefererManager().getReferersToEntry(getId());
         } catch (WebloggerException e) {
             mLogger.error("Unexpected exception", e);
         }
@@ -976,7 +976,7 @@ public class WeblogEntry implements Serializable {
     
     /** Create anchor for weblog entry, based on title or text */
     protected String createAnchor() throws WebloggerException {
-        return RollerFactory.getRoller().getWeblogManager().createAnchor(this);
+        return WebloggerFactory.getRoller().getWeblogManager().createAnchor(this);
     }
     
     /** Create anchor for weblog entry, based on title or text */

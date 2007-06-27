@@ -18,7 +18,7 @@ package org.apache.roller.weblogger.webservices.adminprotocol;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 
@@ -35,7 +35,7 @@ abstract class Authenticator {
     /** Creates a new instance of HttpBasicAuthenticator */
     public Authenticator(HttpServletRequest req) {
         setRequest(req);
-        setRoller(RollerFactory.getRoller());
+        setRoller(WebloggerFactory.getRoller());
     }
     
     public abstract void authenticate() throws HandlerException;

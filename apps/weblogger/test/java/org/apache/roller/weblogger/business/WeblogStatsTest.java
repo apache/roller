@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -54,7 +54,7 @@ public class WeblogStatsTest extends TestCase {
         TestUtils.endSession(true);
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
-        UserManager mgr = RollerFactory.getRoller().getUserManager();      
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();      
         List list = mgr.getMostCommentedWebsites(null, null, 0, -1);  
         
         assertNotNull(list);
@@ -72,7 +72,7 @@ public class WeblogStatsTest extends TestCase {
     }
     public void testGetMostCommentedWeblogEntries() throws Exception {
         
-        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();      
+        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();      
         List list = mgr.getMostCommentedWeblogEntries(null, null, null, 0, -1);
         
         assertNotNull(list);
@@ -88,14 +88,14 @@ public class WeblogStatsTest extends TestCase {
         assertEquals(1L, s2.getCount());   
     }
     public void testGetUserNameLetterMap() throws Exception {        
-        UserManager mgr = RollerFactory.getRoller().getUserManager();      
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();      
         Map map = mgr.getUserNameLetterMap();    
         assertNotNull(map.get("a"));
         assertNotNull(map.get("b"));
         assertNull(map.get("c"));
     }
     public void testGetWeblogLetterMap() throws Exception {        
-        UserManager mgr = RollerFactory.getRoller().getUserManager();      
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();      
         Map map = mgr.getWeblogHandleLetterMap();    
         assertNotNull(map.get("a"));
         assertNotNull(map.get("b"));

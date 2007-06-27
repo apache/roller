@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -98,7 +98,7 @@ public class TagStatsServlet extends HttpServlet {
             prefix = pathInfo;
         }
                                         
-        Weblogger roller = RollerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getRoller();
         try {
             response.setContentType("text/html; charset=utf-8");
             
@@ -109,7 +109,7 @@ public class TagStatsServlet extends HttpServlet {
             // only throw an exception when not found if we have a tag prefix 
             if(handle != null) {
                 try {
-                    UserManager umgr = RollerFactory.getRoller().getUserManager();
+                    UserManager umgr = WebloggerFactory.getRoller().getUserManager();
                     website = umgr.getWebsiteByHandle(handle, Boolean.TRUE);
                     if (website == null)
                         throw new WebloggerException();                

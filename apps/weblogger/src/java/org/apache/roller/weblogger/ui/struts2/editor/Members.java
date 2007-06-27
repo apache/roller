@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -73,7 +73,7 @@ public class Members extends UIAction implements ParameterAware {
         
         log.debug("Attempting to processing weblog permissions updates");
         
-        UserManager userMgr = RollerFactory.getRoller().getUserManager();
+        UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
         
         List<WeblogPermission> permissions = getActionWeblog().getPermissions();
         
@@ -112,7 +112,7 @@ public class Members extends UIAction implements ParameterAware {
             if (removed > 0 || changed > 0) {
                 log.debug("Weblog permissions updated, flushing changes");
                 
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
             }
         } catch (Exception ex) {
             log.error("Error saving permissions on weblog - "+getActionWeblog().getHandle(), ex);

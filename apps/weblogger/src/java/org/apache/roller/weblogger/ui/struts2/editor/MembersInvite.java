@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -88,7 +88,7 @@ public class MembersInvite extends UIAction {
         
         log.debug("Attempting to process weblog invitation");
         
-        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        UserManager umgr = WebloggerFactory.getRoller().getUserManager();
         
         // user being invited
         User user = null;
@@ -128,7 +128,7 @@ public class MembersInvite extends UIAction {
         if(!hasActionErrors()) try {
             
             umgr.inviteUser(getActionWeblog(), user, Short.parseShort(getPermissionsMask()));
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             addMessage("inviteMember.userInvited");
             

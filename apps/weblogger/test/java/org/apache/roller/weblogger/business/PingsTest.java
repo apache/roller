@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
@@ -110,7 +110,7 @@ public class PingsTest extends TestCase {
      */
     public void testPingTargetCRUD() throws Exception {
         
-        PingTargetManager mgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager mgr = WebloggerFactory.getRoller().getPingTargetManager();
         PingTarget ping = null;
         
         // create common ping
@@ -191,7 +191,7 @@ public class PingsTest extends TestCase {
      */
     public void testPingTargetLookups() throws Exception {
         
-        PingTargetManager mgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager mgr = WebloggerFactory.getRoller().getPingTargetManager();
         PingTarget ping = null;
         
         // create common ping
@@ -242,7 +242,7 @@ public class PingsTest extends TestCase {
      */
     public void testAutoPingCRUD() throws Exception {
         
-        AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
+        AutoPingManager mgr = WebloggerFactory.getRoller().getAutopingManager();
         AutoPing autoPing = null;
         
         // create ping target to use for tests
@@ -294,8 +294,8 @@ public class PingsTest extends TestCase {
      */
     public void testPingTargetRemovals() throws Exception {
         
-        AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
-        PingTargetManager ptmgr = RollerFactory.getRoller().getPingTargetManager();
+        AutoPingManager mgr = WebloggerFactory.getRoller().getAutopingManager();
+        PingTargetManager ptmgr = WebloggerFactory.getRoller().getPingTargetManager();
         AutoPing testAutoPing = null;
         
         // create ping target to use for tests
@@ -368,8 +368,8 @@ public class PingsTest extends TestCase {
      */
     public void testAutoPingLookups() throws Exception {
         
-        AutoPingManager mgr = RollerFactory.getRoller().getAutopingManager();
-        PingTargetManager ptmgr = RollerFactory.getRoller().getPingTargetManager();
+        AutoPingManager mgr = WebloggerFactory.getRoller().getAutopingManager();
+        PingTargetManager ptmgr = WebloggerFactory.getRoller().getPingTargetManager();
         AutoPing autoPing = null;
         
         // create autoPing target to use for tests

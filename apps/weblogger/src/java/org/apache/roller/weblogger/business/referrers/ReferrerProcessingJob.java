@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.Job;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -62,14 +62,14 @@ public class ReferrerProcessingJob implements Job {
         
         // process a referrer
         try {
-            RefererManager refMgr = RollerFactory.getRoller().getRefererManager();
+            RefererManager refMgr = WebloggerFactory.getRoller().getRefererManager();
             refMgr.processReferrer(referrer.getRequestUrl(),
                                    referrer.getReferrerUrl(),
                                    referrer.getWeblogHandle(),
                                    referrer.getWeblogAnchor(),
                                    referrer.getWeblogDateString());
             
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
         } catch(WebloggerException re) {
             // trouble
             mLogger.warn("Trouble processing referrer", re);

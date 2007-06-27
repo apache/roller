@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetsBase;
 
@@ -58,7 +58,7 @@ public class CommonPingTargets extends PingTargetsBase {
     
     public void loadPingTargets() {
         try {
-            PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
             setPingTargets(pingTargetMgr.getCommonPingTargets());
         } catch (WebloggerException ex) {
             log.error("Error loading common ping targets", ex);
@@ -77,9 +77,9 @@ public class CommonPingTargets extends PingTargetsBase {
             try {
                 getPingTarget().setAutoEnabled(true);
                 
-                PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
             } catch (Exception ex) {
                 getLogger().error("Error saving ping target", ex);
                 // TODO: i18n
@@ -103,9 +103,9 @@ public class CommonPingTargets extends PingTargetsBase {
             try {
                 getPingTarget().setAutoEnabled(false);
                 
-                PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
             } catch (Exception ex) {
                 getLogger().error("Error saving ping target", ex);
                 // TODO: i18n

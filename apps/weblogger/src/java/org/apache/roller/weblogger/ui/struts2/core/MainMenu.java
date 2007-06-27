@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -62,14 +62,14 @@ public class MainMenu extends UIAction {
     public String accept() {
         
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             WeblogPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {        
                 // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
                 // TODO EXCEPTIONS: better exception handling
                 perms.setPending(false);
                 userMgr.savePermissions(perms);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
 
                 addMessage("yourWebsites.accepted", perms.getWebsite().getHandle());
             } else {
@@ -88,13 +88,13 @@ public class MainMenu extends UIAction {
     public String decline() {
         
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             WeblogPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {
                 // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
                 // TODO EXCEPTIONS: better exception handling here
                 userMgr.removePermissions(perms);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
 
                 addMessage("yourWebsites.declined", perms.getWebsite().getHandle());
             } else {
@@ -115,17 +115,17 @@ public class MainMenu extends UIAction {
         User user = getAuthenticatedUser();
         
         try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             Weblog website = mgr.getWebsite(getWebsiteId());
             
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             WeblogPermission perms = userMgr.getPermissions(website, user);
             
             if (perms != null) {
                 // TODO ROLLER_2.0: notify website members that user has resigned
                 // TODO EXCEPTIONS: better exception handling
                 userMgr.removePermissions(perms);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
             }
             
             addMessage("yourWebsites.resigned", perms.getWebsite().getHandle());
@@ -141,7 +141,7 @@ public class MainMenu extends UIAction {
     
     public List getExistingPermissions() {
         try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             return mgr.getAllPermissions(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.EMPTY_LIST;
@@ -150,7 +150,7 @@ public class MainMenu extends UIAction {
     
     public List getPendingPermissions() {
         try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             return mgr.getPendingPermissions(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.EMPTY_LIST;

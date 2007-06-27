@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -122,8 +122,8 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
         log.debug("task started");
         
         try {
-            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
-            IndexManager searchMgr = RollerFactory.getRoller().getIndexManager();
+            WeblogManager wMgr = WebloggerFactory.getRoller().getWeblogManager();
+            IndexManager searchMgr = WebloggerFactory.getRoller().getIndexManager();
             
             Date now = new Date();
             
@@ -157,7 +157,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             }
             
             // commit the changes
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // take a second pass to trigger reindexing and cache invalidations
             // this is because we need the updated entries flushed first
@@ -178,7 +178,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             log.error("Unexpected exception running task", e);
         } finally {
             // always release
-            RollerFactory.getRoller().release();
+            WebloggerFactory.getRoller().release();
         }
         
         log.debug("task completed");

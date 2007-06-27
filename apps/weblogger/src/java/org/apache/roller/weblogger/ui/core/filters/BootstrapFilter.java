@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
 
 
@@ -52,7 +52,7 @@ public class BootstrapFilter implements Filter {
         
         log.debug("Entered "+request.getRequestURI());
         
-        if (!RollerFactory.isBootstrapped() &&
+        if (!WebloggerFactory.isBootstrapped() &&
                 "auto".equals(RollerConfig.getProperty("installation.type")) &&
                 !isInstallUrl(request.getServletPath())) {
             

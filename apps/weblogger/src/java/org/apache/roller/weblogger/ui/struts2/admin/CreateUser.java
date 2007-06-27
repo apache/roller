@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.User;
@@ -85,7 +85,7 @@ public class CreateUser extends UIAction {
         
         if (!hasActionErrors()) try {
             
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             
             // copy form data into new user pojo
             User newUser = new User();
@@ -94,7 +94,7 @@ public class CreateUser extends UIAction {
             
             // set username and password
             newUser.setUserName(getBean().getUserName());
-            newUser.resetPassword(RollerFactory.getRoller(),
+            newUser.resetPassword(WebloggerFactory.getRoller(),
                     getBean().getPassword(), getBean().getPassword());
             
             // are we granting the user admin rights?
@@ -104,7 +104,7 @@ public class CreateUser extends UIAction {
             
             // save new user
             mgr.addUser(newUser);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // TODO: i18n
             addMessage("New user created");

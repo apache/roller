@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -120,10 +120,10 @@ public class OldWeblogPageModel {
         mIsMonthSpecified = isMonth;
         mLocale = locale;
         
-        mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
-        mRefererMgr  = RollerFactory.getRoller().getRefererManager();
-        mUserMgr     = RollerFactory.getRoller().getUserManager();
-        mWeblogMgr   = RollerFactory.getRoller().getWeblogManager();
+        mBookmarkMgr = WebloggerFactory.getRoller().getBookmarkManager();
+        mRefererMgr  = WebloggerFactory.getRoller().getRefererManager();
+        mUserMgr     = WebloggerFactory.getRoller().getUserManager();
+        mWeblogMgr   = WebloggerFactory.getRoller().getWeblogManager();
         
         // Preload what we can for encapsulation.  What we cannot preload we
         // will use the Managers later to fetch.
@@ -379,7 +379,7 @@ public class OldWeblogPageModel {
             } else if (mIsMonthSpecified) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
-            Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+            Map mRet = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                     
                     mWebsite,
                     startDate,                    // startDate
@@ -475,7 +475,7 @@ public class OldWeblogPageModel {
                     catParam = null;
                 }
             }
-            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
             
             //ret = mgr.getRecentWeblogEntriesArray(
             //name, day, catParam, maxEntries, true );
@@ -789,7 +789,7 @@ public class OldWeblogPageModel {
     public List getRecentComments(int maxCount) {
         List recentComments = new ArrayList();
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             List recent = wmgr.getComments(
                     
                     mWebsite,

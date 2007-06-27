@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
@@ -118,7 +118,7 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
                 // lookup weblog specified by comment request
-                UserManager uMgr = RollerFactory.getRoller().getUserManager();
+                UserManager uMgr = WebloggerFactory.getRoller().getUserManager();
                 weblog = uMgr.getWebsiteByHandle(trackbackRequest.getWeblogHandle());
                 
                 if (weblog == null) {
@@ -127,7 +127,7 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
                 // lookup entry specified by comment request
-                WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager weblogMgr = WebloggerFactory.getRoller().getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
                 
                 if (entry == null) {
@@ -181,9 +181,9 @@ public class TrackbackServlet extends HttpServlet {
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !RollerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
                     
-                    WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+                    WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
                     mgr.saveComment(comment);
-                    RollerFactory.getRoller().flush();
+                    WebloggerFactory.getRoller().flush();
                     
                     // only invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {

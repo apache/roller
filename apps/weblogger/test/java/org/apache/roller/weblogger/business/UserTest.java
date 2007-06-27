@@ -27,7 +27,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 
@@ -64,7 +64,7 @@ public class UserTest extends TestCase {
      */
     public void testUserCRUD() throws Exception {
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         User user = null;
         
         User testUser = new User();
@@ -122,7 +122,7 @@ public class UserTest extends TestCase {
      */
     public void testUserLookups() throws Exception {
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         User user = null;
         
         // add test user
@@ -176,7 +176,7 @@ public class UserTest extends TestCase {
      */
     public void testRoleCRUD() throws Exception {
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         User user = null;
         
         // add test user

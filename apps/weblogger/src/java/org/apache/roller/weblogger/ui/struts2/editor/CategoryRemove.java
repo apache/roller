@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -69,7 +69,7 @@ public class CategoryRemove extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             if(!StringUtils.isEmpty(getRemoveId())) {
                 setCategory(wmgr.getWeblogCategory(getRemoveId()));
             }
@@ -89,7 +89,7 @@ public class CategoryRemove extends UIAction {
         
         try {
             // Build list of all categories, except for current one, sorted by path.
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
@@ -116,16 +116,16 @@ public class CategoryRemove extends UIAction {
     public String remove() {
         
         if(getCategory() != null) try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             
             if(getTargetCategoryId() != null) {
                 WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
                 wmgr.moveWeblogCategoryContents(getCategory(), target);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
             }
             
             wmgr.removeWeblogCategory(getCategory());
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify cache
             CacheManager.invalidate(getCategory());
