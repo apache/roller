@@ -19,9 +19,12 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -30,6 +33,7 @@ import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.util.MediacastResource;
 import org.apache.roller.weblogger.util.MediacastUtil;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -188,6 +192,20 @@ public final class EntryAdd extends EntryBase {
 
         
         return INPUT;
+    }
+    
+    
+    /**
+     * Get the list of all categories for the action weblog, not including root.
+     */
+    public List<WeblogCategory> getCategories() {
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            return wmgr.getWeblogCategories(getActionWeblog(), false);
+        } catch (WebloggerException ex) {
+            log.error("Error getting category list for weblog - "+getWeblog(), ex);
+            return Collections.EMPTY_LIST;
+        }
     }
     
     
