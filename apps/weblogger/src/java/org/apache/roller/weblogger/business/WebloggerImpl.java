@@ -44,9 +44,9 @@ import org.apache.roller.weblogger.config.PingConfig;
  * interface, regardless of their persistence strategy.
  */
 @com.google.inject.Singleton
-public abstract class RollerImpl implements Weblogger {
+public abstract class WebloggerImpl implements Weblogger {
     
-    private static Log log = LogFactory.getLog(RollerImpl.class);
+    private static Log log = LogFactory.getLog(WebloggerImpl.class);
     
     // managers
     private final AutoPingManager      autoPingManager;
@@ -70,7 +70,7 @@ public abstract class RollerImpl implements Weblogger {
     private final String buildUser;
     
     
-    protected RollerImpl(
+    protected WebloggerImpl(
         AutoPingManager      autoPingManager,
         BookmarkManager      bookmarkManager,
         FileManager          fileManager,

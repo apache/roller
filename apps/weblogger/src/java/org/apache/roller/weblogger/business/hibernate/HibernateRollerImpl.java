@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.business.hibernate;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerImpl;
+import org.apache.roller.weblogger.business.WebloggerImpl;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
  * A Hibernate specific implementation of the Roller business layer.
  */
 @com.google.inject.Singleton
-public class HibernateRollerImpl extends RollerImpl {
+public class HibernateRollerImpl extends WebloggerImpl {
     
     // a persistence utility class
     private final HibernatePersistenceStrategy strategy;
