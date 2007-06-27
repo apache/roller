@@ -26,14 +26,16 @@
             Specify your Roller database configuration parameters
             in your roller-custom.properties override file, not here.
          -->
-                       
-        <property name="show_sql">false</property>
-
+        
+        <property name="hibernate.show_sql">false</property>
+        
+        <!-- use custom connection provider -->
+        <property name="hibernate.connection.provider_class">org.apache.roller.weblogger.business.hibernate.HibernateConnectionProvider</property>
+        
         <!-- use custom thread local Session context -->
-        <!--<property name="hibernate.current_session_context_class">thread</property>-->
         <property name="hibernate.current_session_context_class">org.apache.roller.weblogger.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
-        <!-- Hibernate L2 Caching -->
+        <!-- Hibernate Caching -->
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
         <property name="hibernate.generate_statistics">true</property>
