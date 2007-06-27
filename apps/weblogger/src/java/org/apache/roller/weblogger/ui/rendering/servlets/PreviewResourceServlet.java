@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -131,7 +131,7 @@ public class PreviewResourceServlet extends HttpServlet {
         // if not from theme then see if resource is in weblog's upload dir
         if(resourceStream == null) {
             try {
-                FileManager fileMgr = RollerFactory.getRoller().getFileManager();
+                FileManager fileMgr = WebloggerFactory.getRoller().getFileManager();
                 ThemeResource resource = fileMgr.getFile(weblog, 
                         resourceRequest.getResourcePath());
                 resourceLastMod = resource.getLastModified();

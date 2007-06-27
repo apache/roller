@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 
 
@@ -116,9 +116,9 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
         try {
             log.info("task started");
             
-            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
             mgr.resetAllHitCounts();
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             log.info("task completed");
             
@@ -128,7 +128,7 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
             log.error("unexpected exception", ee);
         } finally {
             // always release
-            RollerFactory.getRoller().release();
+            WebloggerFactory.getRoller().release();
         }
         
     }

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.ThemeResource;
@@ -74,7 +74,7 @@ public class PreviewThemeImageServlet extends HttpServlet {
         
         // try looking up selected theme
         try {
-            ThemeManager tmgr = RollerFactory.getRoller().getThemeManager();
+            ThemeManager tmgr = WebloggerFactory.getRoller().getThemeManager();
             SharedTheme previewTheme = tmgr.getTheme(theme);
             ThemeResource previewImage = previewTheme.getPreviewImage();
             if(previewImage != null) {

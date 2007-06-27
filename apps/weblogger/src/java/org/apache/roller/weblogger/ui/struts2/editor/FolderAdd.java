@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -62,7 +62,7 @@ public class FolderAdd extends UIAction {
     
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
             if(!StringUtils.isEmpty(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             }
@@ -108,9 +108,9 @@ public class FolderAdd extends UIAction {
             getFolder().addFolder(newFolder);
             
             // save changes
-            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
             bmgr.saveFolder(newFolder);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify caches
             CacheManager.invalidate(newFolder);

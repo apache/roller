@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BootstrapException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
@@ -125,10 +125,10 @@ public class RollerContext extends ContextLoaderListener
         } else {
             try {
                 // trigger bootstrapping process
-                RollerFactory.bootstrap();
+                WebloggerFactory.bootstrap();
                 
                 // trigger initialization process
-                RollerFactory.getRoller().initialize();
+                WebloggerFactory.getRoller().initialize();
                 
             } catch (BootstrapException ex) {
                 log.fatal("Roller Weblogger bootstrap failed", ex);
@@ -137,7 +137,7 @@ public class RollerContext extends ContextLoaderListener
             }
             
             // Initialize Planet if necessary
-            if (RollerFactory.isBootstrapped()) {
+            if (WebloggerFactory.isBootstrapped()) {
                 if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
                     
                     // Now prepare the core services of planet so we can bootstrap it
@@ -178,7 +178,7 @@ public class RollerContext extends ContextLoaderListener
      * Responds to app-destroy event and triggers shutdown sequence.
      */
     public void contextDestroyed(ServletContextEvent sce) {        
-        RollerFactory.getRoller().shutdown();        
+        WebloggerFactory.getRoller().shutdown();        
         // do we need a more generic mechanism for presentation layer shutdown?
         CacheManager.shutdown();
     }

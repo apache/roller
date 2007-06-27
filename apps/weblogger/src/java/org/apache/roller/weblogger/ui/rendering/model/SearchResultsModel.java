@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
@@ -93,7 +93,7 @@ public class SearchResultsModel extends PageModel {
         }
         
         // setup the search
-        IndexManager indexMgr = RollerFactory.getRoller().getIndexManager();
+        IndexManager indexMgr = WebloggerFactory.getRoller().getIndexManager();
         
         SearchOperation search = new SearchOperation(indexMgr);
         search.setTerm(searchRequest.getQuery());
@@ -159,7 +159,7 @@ public class SearchResultsModel extends PageModel {
         
         try {
             TreeSet categories = new TreeSet();
-            Weblogger roller = RollerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
             WeblogEntry entry = null;

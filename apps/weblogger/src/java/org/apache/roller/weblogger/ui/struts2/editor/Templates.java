@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -68,7 +68,7 @@ public class Templates extends UIAction {
         
         // query for templates list
         try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             
             // get current list of templates, minus custom stylesheet
             List<WeblogTemplate> raw = mgr.getPages(getActionWeblog()); 
@@ -139,7 +139,7 @@ public class Templates extends UIAction {
             }
             
             // save the new Template
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             mgr.savePage( newTemplate );
             
             // if this person happened to create a Weblog template from
@@ -150,7 +150,7 @@ public class Templates extends UIAction {
             }
             
             // flush results to db
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // reset form fields
             setNewTmplName(null);
@@ -183,7 +183,7 @@ public class Templates extends UIAction {
         
         // check if template by that name already exists
         try {
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             WeblogTemplate existingPage = umgr.getPageByName(getActionWeblog(), getNewTmplName());
             if(existingPage != null) {
                 addError("pagesForm.error.alreadyExists", getNewTmplName());

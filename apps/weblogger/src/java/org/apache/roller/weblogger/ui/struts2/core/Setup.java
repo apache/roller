@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -57,7 +57,7 @@ public class Setup extends UIAction {
     public String execute() {
         
         try {
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             setUserCount(umgr.getUserCount());
             setBlogCount(umgr.getWeblogCount());
         } catch (WebloggerException ex) {

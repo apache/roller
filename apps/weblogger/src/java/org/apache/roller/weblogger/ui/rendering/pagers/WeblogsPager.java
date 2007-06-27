@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -140,7 +140,7 @@ public class WeblogsPager extends AbstractPager {
                 startDate = cal.getTime();
             }
             try {
-                Weblogger roller = RollerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
                 List rawWeblogs = null;
                 if (letter == null) {

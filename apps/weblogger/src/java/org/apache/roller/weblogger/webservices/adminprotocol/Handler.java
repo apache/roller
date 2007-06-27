@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -131,7 +131,7 @@ abstract class Handler {
     public Handler(HttpServletRequest request) throws HandlerException {
         this.request = request;
         this.uri = new URI(request);
-        this.roller = RollerFactory.getRoller();
+        this.roller = WebloggerFactory.getRoller();
         //TODO: is this the right thing to do? hardcode roller-services?
         this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
         

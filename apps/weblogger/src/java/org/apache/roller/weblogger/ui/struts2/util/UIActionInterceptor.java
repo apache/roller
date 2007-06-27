@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -68,7 +68,7 @@ public class UIActionInterceptor extends AbstractInterceptor
             if(!StringUtils.isEmpty(weblogHandle)) {
                 Weblog weblog = null;
                 try {
-                    UserManager mgr = RollerFactory.getRoller().getUserManager();
+                    UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                     weblog = mgr.getWebsiteByHandle(weblogHandle);
                     if(weblog != null) {
                         theAction.setActionWeblog(weblog);

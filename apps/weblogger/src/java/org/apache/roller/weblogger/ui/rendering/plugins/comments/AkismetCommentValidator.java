@@ -26,7 +26,7 @@ import java.net.URLConnection;
 import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.util.*;
@@ -72,7 +72,7 @@ public class AkismetCommentValidator implements CommentValidator {
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "Roller " + RollerFactory.getRoller().getVersion()); 
+            conn.setRequestProperty("User_Agent", "Roller " + WebloggerFactory.getRoller().getVersion()); 
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8"); 
             conn.setRequestProperty("Content-length", Integer.toString(sb.length()));
 

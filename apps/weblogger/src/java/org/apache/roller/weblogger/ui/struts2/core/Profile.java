@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -86,7 +86,7 @@ public class Profile extends UIAction {
             if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
                 try {
-                    existingUser.resetPassword(RollerFactory.getRoller(),
+                    existingUser.resetPassword(WebloggerFactory.getRoller(),
                             getBean().getPasswordText(),
                             getBean().getPasswordConfirm());
                 } catch (WebloggerException e) {
@@ -96,9 +96,9 @@ public class Profile extends UIAction {
             
             try {
                 // save the updated profile
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 mgr.saveUser(existingUser);
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // TODO: i18n
                 addMessage("profile updated.");

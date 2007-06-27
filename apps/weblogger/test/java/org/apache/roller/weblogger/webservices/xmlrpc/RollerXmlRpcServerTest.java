@@ -41,7 +41,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -174,7 +174,7 @@ public class RollerXmlRpcServerTest extends TestCase {
             testEntry1.setWebsite(testWeblog);
             testEntry1.setCreator(testUser);
             testEntry1.setCategory(testWeblog.getDefaultCategory());
-            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
+            WebloggerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
             WeblogEntry testEntry2 = new WeblogEntry();
             testEntry2.setTitle("entryTestEntry2");
@@ -186,7 +186,7 @@ public class RollerXmlRpcServerTest extends TestCase {
             testEntry2.setWebsite(testWeblog);
             testEntry2.setCreator(testUser);
             testEntry2.setCategory(testWeblog.getDefaultCategory());
-            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
+            WebloggerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
             WeblogEntry testEntry3 = new WeblogEntry();
             testEntry3.setTitle("entryTestEntry3");
@@ -198,7 +198,7 @@ public class RollerXmlRpcServerTest extends TestCase {
             testEntry3.setWebsite(testWeblog);
             testEntry3.setCreator(testUser);
             testEntry3.setCategory(testWeblog.getDefaultCategory());           
-            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
+            WebloggerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
             TestUtils.endSession(true);
             

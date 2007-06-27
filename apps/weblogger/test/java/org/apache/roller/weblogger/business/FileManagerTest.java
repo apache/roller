@@ -84,7 +84,7 @@ public class FileManagerTest extends TestCase {
     public void testFileCRUD() throws Exception {
         
         // update roller properties to prepare for test
-        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
         Map config = pmgr.getProperties();
         ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
         ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("opml");
@@ -94,7 +94,7 @@ public class FileManagerTest extends TestCase {
         
         /* NOTE: upload dir for unit tests is set in
                roller/testdata/roller-custom.properties */
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
         
         // we should be starting with 0 files
         assertEquals(0, fmgr.getFiles(testWeblog, null).length);
@@ -121,7 +121,7 @@ public class FileManagerTest extends TestCase {
     public void testDirectoryCRUD() throws Exception {
         
         // update roller properties to prepare for test
-        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
         Map config = pmgr.getProperties();
         ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
         ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("opml");
@@ -129,7 +129,7 @@ public class FileManagerTest extends TestCase {
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
         
         // we should be starting with 0 directories
         assertEquals(0, fmgr.getDirectories(testWeblog).length);
@@ -157,7 +157,7 @@ public class FileManagerTest extends TestCase {
     public void testFilesInDirectoriesCRUD() throws Exception {
         
         // update roller properties to prepare for test
-        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
         Map config = pmgr.getProperties();
         ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
         ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("opml");
@@ -165,7 +165,7 @@ public class FileManagerTest extends TestCase {
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
         
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
         
         // we should be starting with 0 files and 0 directories
         assertEquals(0, fmgr.getFiles(testWeblog, null).length);
@@ -206,8 +206,8 @@ public class FileManagerTest extends TestCase {
      */
     public void testCanSave() throws Exception {
         
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
-        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
+        PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
         Map config = config = pmgr.getProperties();
         ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("1.00");
         ((RuntimeConfigProperty)config.get("uploads.types.forbid")).setValue("");

@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -65,7 +65,7 @@ public class Referrers extends UIAction {
      */
     public String execute() {
         
-        RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
+        RefererManager refmgr = WebloggerFactory.getRoller().getRefererManager();
         try {
             setDayHits(refmgr.getDayHits(getActionWeblog()));
             setReferrers(refmgr.getTodaysReferers(getActionWeblog()));
@@ -85,9 +85,9 @@ public class Referrers extends UIAction {
     public String reset() {
         
         try {
-            RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
+            RefererManager refmgr = WebloggerFactory.getRoller().getRefererManager();
             refmgr.clearReferrers(getActionWeblog());
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             CacheManager.invalidate(getActionWeblog());
         } catch (Exception ex) {
@@ -107,7 +107,7 @@ public class Referrers extends UIAction {
         
         String[] removeIds = getRemoveIds();
         if(removeIds != null) {
-            RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
+            RefererManager refmgr = WebloggerFactory.getRoller().getRefererManager();
             
             try {
                 WeblogReferrer referer = null;
@@ -121,7 +121,7 @@ public class Referrers extends UIAction {
                 }
                 
                 // flush
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());

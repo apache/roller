@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
@@ -75,7 +75,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     public void myPrepare() {
         try {
             // just grab our properties map and make it available to the action
-            PropertiesManager mgr = RollerFactory.getRoller().getPropertiesManager();
+            PropertiesManager mgr = WebloggerFactory.getRoller().getPropertiesManager();
             setProperties(mgr.getProperties());
         } catch (WebloggerException ex) {
             log.error("Error getting runtime properties map", ex);
@@ -144,9 +144,9 @@ public class GlobalConfig extends UIAction implements ParameterAware {
         
         try {
             // save 'em and flush
-            PropertiesManager mgr = RollerFactory.getRoller().getPropertiesManager();
+            PropertiesManager mgr = WebloggerFactory.getRoller().getPropertiesManager();
             mgr.saveProperties(getProperties());
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify user of our success
             addMessage("weblogEdit.changesSaved");

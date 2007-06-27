@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
@@ -97,7 +97,7 @@ public class WeblogTest extends TestCase {
         
         try {
         
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             Weblog weblog = null;
 
             Weblog testWeblog = new Weblog();
@@ -167,7 +167,7 @@ public class WeblogTest extends TestCase {
         Weblog testWeblog1 = null;
         Weblog testWeblog2 = null;
         try {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             Weblog weblog = null;
             
             // add test weblogs

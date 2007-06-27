@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 Powered by <a href="http://www.rollerweblogger.org">Apache Roller</a> 
-<%= org.apache.roller.weblogger.business.RollerFactory.getRoller().getVersion() %> |
+<%= org.apache.roller.weblogger.business.WebloggerFactory.getRoller().getVersion() %> |
 
 <a href="http://opensource2.atlassian.com/projects/roller/">
     <s:text name="footer.reportIssue" /></a> | 

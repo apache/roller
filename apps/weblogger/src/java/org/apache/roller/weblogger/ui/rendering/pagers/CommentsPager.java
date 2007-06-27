@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -89,7 +89,7 @@ public class CommentsPager extends AbstractPager {
             }
             
             try {
-                Weblogger roller = RollerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 List entries = wmgr.getComments(
                         weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);

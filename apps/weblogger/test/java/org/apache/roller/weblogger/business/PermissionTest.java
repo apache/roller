@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -98,7 +98,7 @@ public class PermissionTest extends TestCase {
         
         log.info("BEGIN");
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         WeblogPermission perm = null;
                 
         // delete permissions
@@ -162,7 +162,7 @@ public class PermissionTest extends TestCase {
             User user = TestUtils.setupUser("testPermissionsLookups");
             TestUtils.endSession(true);
             
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
             WeblogPermission perm = null;
             List perms = null;
             
@@ -236,7 +236,7 @@ public class PermissionTest extends TestCase {
         User user = TestUtils.setupUser("testInvitations");
         TestUtils.endSession(true);
 
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         WeblogPermission perm = null;
         List perms = null;
 

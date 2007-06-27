@@ -30,9 +30,9 @@ import org.apache.roller.weblogger.config.RollerConfig;
 /**
  * Provides access to the Weblogger instance and bootstraps the business tier.
  */
-public final class RollerFactory {
+public final class WebloggerFactory {
     
-    private static final Log log = LogFactory.getLog(RollerFactory.class);
+    private static final Log log = LogFactory.getLog(WebloggerFactory.class);
     
     // a reference to the bootstrapped Weblogger instance
     private static Weblogger rollerInstance = null;
@@ -54,7 +54,7 @@ public final class RollerFactory {
     
     
     // non-instantiable
-    private RollerFactory() {
+    private WebloggerFactory() {
         // hello all you beautiful people
     }
     

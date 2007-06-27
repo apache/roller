@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -79,14 +79,14 @@ public class RefererTest extends TestCase {
             testWeblog2 = TestUtils.setupWeblog("referTestWeblog2", testUser);
             
             // add "spamtest" to refererSpamWords
-            PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+            PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
             RuntimeConfigProperty spamprop = pmgr.getProperty("spam.blacklist");
             this.origSpamWords = spamprop.getValue();
             spamprop.setValue(spamprop.getValue() + ", spamtest");
             pmgr.saveProperty(spamprop);
             
             // add a number of referers to play with
-            RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
+            RefererManager rmgr = WebloggerFactory.getRoller().getRefererManager();
             Calendar lCalendar = Calendar.getInstance();
             lCalendar.setTime(new Date());
             for (int i = 0; i < count; i++) {
@@ -114,7 +114,7 @@ public class RefererTest extends TestCase {
         
         try {
             // reset refererSpamWords to original value
-            PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+            PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
             RuntimeConfigProperty spamprop = pmgr.getProperty("spam.blacklist");
             spamprop.setValue(this.origSpamWords);
             pmgr.saveProperty(spamprop);
@@ -137,7 +137,7 @@ public class RefererTest extends TestCase {
      */
     public void testRefererCRUD() throws Exception {
         
-        RefererManager mgr = RollerFactory.getRoller().getRefererManager();
+        RefererManager mgr = WebloggerFactory.getRoller().getRefererManager();
         WeblogReferrer referer = null;
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -189,7 +189,7 @@ public class RefererTest extends TestCase {
     
     public void testGetReferersToDate() throws Exception {
         
-        RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
+        RefererManager rmgr = WebloggerFactory.getRoller().getRefererManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List referers = rmgr.getReferersToDate(testWeblog, testDay);
@@ -199,7 +199,7 @@ public class RefererTest extends TestCase {
     
     public void testRefererProcessing() throws WebloggerException {
         
-        RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
+        RefererManager rmgr = WebloggerFactory.getRoller().getRefererManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List refs = rmgr.getReferers(testWeblog);
@@ -214,13 +214,13 @@ public class RefererTest extends TestCase {
         
         log.info("Test apply referers (global)");
         
-        RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
+        RefererManager rmgr = WebloggerFactory.getRoller().getRefererManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List refs = rmgr.getReferers(testWeblog);
         assertEquals(count, refs.size());
         
-        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
         RuntimeConfigProperty spamprop = pmgr.getProperty("spam.blacklist");
         String origWords = spamprop.getValue();
         spamprop.setValue(spamprop.getValue() + ", test");
@@ -245,14 +245,14 @@ public class RefererTest extends TestCase {
         
         log.info("Test apply referers (weblog)");
         
-        RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
+        RefererManager rmgr = WebloggerFactory.getRoller().getRefererManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         List refs = rmgr.getReferers(testWeblog);
         assertEquals(count, refs.size());
         String origWords = null;
         
-        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        UserManager umgr = WebloggerFactory.getRoller().getUserManager();
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         origWords = testWeblog.getBlacklist();
         testWeblog.setBlacklist("test");

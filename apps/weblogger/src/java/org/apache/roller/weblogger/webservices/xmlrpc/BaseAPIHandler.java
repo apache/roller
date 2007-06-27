@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -115,7 +115,7 @@ public class BaseAPIHandler implements Serializable {
         Weblog website = null;
         User user = null;
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             user = userMgr.getUserByUserName(username);
             userEnabled = user.getEnabled().booleanValue();
             
@@ -177,7 +177,7 @@ public class BaseAPIHandler implements Serializable {
         User user = null;
         try {
             
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             user = userMgr.getUserByUserName(username);
             
             enabled = user.getEnabled().booleanValue();
@@ -193,7 +193,7 @@ public class BaseAPIHandler implements Serializable {
                 //System.out.println("is now [" + password + "]");
                 authenticated = user.getPassword().equals(password);
                 if (authenticated) {
-                    //RollerFactory.getRoller().setUser(user);
+                    //WebloggerFactory.getRoller().setUser(user);
                 }
             }
         } catch (Exception e) {

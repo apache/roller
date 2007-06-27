@@ -100,7 +100,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         
         // start at root
         WeblogBookmarkFolder root = bmgr.getRootFolder(TestUtils.getManagedWebsite(testWeblog));
@@ -150,7 +150,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
@@ -169,7 +169,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         try {
-            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
@@ -205,7 +205,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         
         // test lookup by id
         WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
@@ -223,7 +223,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder folder = bmgr.getFolder(testWeblog, "/folderFuncTest-f1");
@@ -252,7 +252,7 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
         
         // get all folders, including root
         testWeblog = TestUtils.getManagedWebsite(testWeblog);

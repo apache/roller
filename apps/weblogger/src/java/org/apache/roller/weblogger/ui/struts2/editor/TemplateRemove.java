@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -58,7 +58,7 @@ public class TemplateRemove extends UIAction {
     
     public void myPrepare() {
         if(getRemoveId() != null) try {
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             setTemplate(umgr.getPage(getRemoveId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template by id - "+getRemoveId(), ex);
@@ -83,9 +83,9 @@ public class TemplateRemove extends UIAction {
         
         if(getTemplate() != null) try {
             if(!getTemplate().isRequired()) {
-                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                UserManager umgr = WebloggerFactory.getRoller().getUserManager();
                 umgr.removePage(getTemplate());
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
                 
                 // notify cache
                 CacheManager.invalidate(getTemplate());

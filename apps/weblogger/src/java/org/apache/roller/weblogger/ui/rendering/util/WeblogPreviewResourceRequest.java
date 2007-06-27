@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Theme;
 
@@ -84,7 +84,7 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
         
         if(theme == null && themeName != null) {
             try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
                 theme = themeMgr.getTheme(themeName);
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it

@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
 import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.ThemeResource;
@@ -92,7 +92,7 @@ public final class Resources extends UIAction {
      */
     public String execute()  {
         
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
         
         setOverQuota(fmgr.overQuota(getActionWeblog()));
         
@@ -147,7 +147,7 @@ public final class Resources extends UIAction {
             }
             
             try {
-                FileManager fmgr = RollerFactory.getRoller().getFileManager();
+                FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
                 
                 // add the new subdirectory
                 fmgr.createDirectory(getActionWeblog(), newDirPath);
@@ -183,7 +183,7 @@ public final class Resources extends UIAction {
             return execute();
         }
             
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
         
         List<String> uploaded = new ArrayList();
         File[] uploads = getUploadedFiles();
@@ -267,7 +267,7 @@ public final class Resources extends UIAction {
         if(deleteFiles != null) {
             log.debug("Attempting to delete "+deleteFiles.length+" files");
             
-            FileManager fmgr = RollerFactory.getRoller().getFileManager();
+            FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
             for (int i=0; i < deleteFiles.length; i++) {
                 if (deleteFiles[i].trim().startsWith("/") ||
                         deleteFiles[i].trim().startsWith("\\") ||

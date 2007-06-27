@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -76,7 +76,7 @@ public class Categories extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             if(!StringUtils.isEmpty(getCategoryId()) && 
                     !"/".equals(getCategoryId())) {
                 setCategory(wmgr.getWeblogCategory(getCategoryId()));
@@ -96,7 +96,7 @@ public class Categories extends UIAction {
         
         try {
             // Build list of all categories, except for current one, sorted by path.
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getCategoryId())) {
@@ -132,7 +132,7 @@ public class Categories extends UIAction {
     public String move() {
         
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             
             log.debug("Moving categories to category - "+getTargetCategoryId());
             
@@ -154,7 +154,7 @@ public class Categories extends UIAction {
                 }
                 
                 // flush changes
-                RollerFactory.getRoller().flush();
+                WebloggerFactory.getRoller().flush();
             }
             
         } catch (WebloggerException ex) {

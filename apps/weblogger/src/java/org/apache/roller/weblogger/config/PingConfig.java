@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.PingTarget;
 
 import java.util.*;
@@ -190,7 +190,7 @@ public class PingConfig {
             }
             return;
         }
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
         if (!pingTargetMgr.getCommonPingTargets().isEmpty()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");

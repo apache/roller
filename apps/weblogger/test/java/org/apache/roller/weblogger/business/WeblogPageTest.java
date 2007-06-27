@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -102,7 +102,7 @@ public class WeblogPageTest extends TestCase {
      */
     public void testTemplateCRUD() throws Exception {
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         WeblogTemplate template = null;
         
         // create template
@@ -145,7 +145,7 @@ public class WeblogPageTest extends TestCase {
      */
     public void testPermissionsLookups() throws Exception {
         
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
         WeblogTemplate page = null;
         
         // create page

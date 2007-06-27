@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -85,7 +85,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         // first get the pages from the db
         try {
             ThemeTemplate template = null;
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             Iterator dbPages = userMgr.getPages(this.weblog).iterator();
             while(dbPages.hasNext()) {
                 template = (ThemeTemplate) dbPages.next();
@@ -130,7 +130,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         ThemeTemplate stylesheet = this.theme.getStylesheet();
         if(stylesheet != null) {
             // now try getting custom version from weblog
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
             ThemeTemplate override = umgr.getPageByLink(this.weblog, stylesheet.getLink());
             if(override != null) {
                 stylesheet = override;
@@ -188,7 +188,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             template = userMgr.getPageByName(this.weblog, name);
         }
         
@@ -219,7 +219,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
             template = userMgr.getPageByLink(this.weblog, link);
         }
         
@@ -244,7 +244,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         // if we didn't find it in our theme then look in weblog uploads
         if(resource == null) {
             try {
-                FileManager fileMgr = RollerFactory.getRoller().getFileManager();
+                FileManager fileMgr = WebloggerFactory.getRoller().getFileManager();
                 resource = fileMgr.getFile(this.weblog, path);
             } catch (WebloggerException ex) {
                 // ignored, resource considered not found

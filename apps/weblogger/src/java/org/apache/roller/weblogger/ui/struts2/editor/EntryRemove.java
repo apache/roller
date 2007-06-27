@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -53,7 +53,7 @@ public class EntryRemove extends UIAction {
     public void myPrepare() {
         if(getRemoveId() != null) {
             try {
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
                 setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - "+getRemoveId(), ex);
@@ -77,16 +77,16 @@ public class EntryRemove extends UIAction {
                 // remove the entry from the search index
                 // TODO: can we do this in a better way?
                 entry.setStatus(WeblogEntry.DRAFT);
-                IndexManager manager = RollerFactory.getRoller().getIndexManager();
+                IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
                 manager.addEntryReIndexOperation(entry);
             } catch (WebloggerException ex) {
                 log.warn("Trouble triggering entry indexing", ex);
             }
             
             // remove entry itself
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             wmgr.removeWeblogEntry(entry);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // flush caches
             CacheManager.invalidate(entry);

@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.common;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -48,7 +48,7 @@ public abstract class PingTargetEditBase extends UIAction {
      */
     public void myPrepare() {
         
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
         if(!StringUtils.isEmpty(getBean().getId())) {
             
             try {
@@ -104,9 +104,9 @@ public abstract class PingTargetEditBase extends UIAction {
         
         if(!hasActionErrors()) try {
             // Appears to be ok.  Save it and flush.
-            PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
             pingTargetMgr.savePingTarget(getPingTarget());
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             addMessage("pingTarget.saved");
             
@@ -126,7 +126,7 @@ public abstract class PingTargetEditBase extends UIAction {
     protected void myValidate(PingTarget pingTarget) {
         
         try {
-            PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }

@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
@@ -60,7 +60,7 @@ public class PropertiesTest extends TestCase {
     public void testProperiesCRUD() throws Exception {
         
         // remember, the properties table is initialized during Roller startup
-        PropertiesManager mgr = RollerFactory.getRoller().getPropertiesManager();
+        PropertiesManager mgr = WebloggerFactory.getRoller().getPropertiesManager();
         TestUtils.endSession(true);
         
         RuntimeConfigProperty prop = null;

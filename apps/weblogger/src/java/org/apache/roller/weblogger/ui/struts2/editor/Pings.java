@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger;
@@ -79,7 +79,7 @@ public class Pings extends UIAction {
     
     public void myPrepare() {
         
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
         
         // load selected ping target, if possible
         if(getPingTargetId() != null) try {
@@ -123,10 +123,10 @@ public class Pings extends UIAction {
     public String enable() {
         
         if(getPingTarget() != null) try {
-            AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+            AutoPingManager autoPingMgr = WebloggerFactory.getRoller().getAutopingManager();
             AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
             autoPingMgr.saveAutoPing(autoPing);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
         } catch(Exception ex) {
             log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
             // TODO: i18n
@@ -143,9 +143,9 @@ public class Pings extends UIAction {
     public String disable() {
         
         if(getPingTarget() != null) try {
-            AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+            AutoPingManager autoPingMgr = WebloggerFactory.getRoller().getAutopingManager();
             autoPingMgr.removeAutoPing(getPingTarget(), getActionWeblog());
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
         } catch (Exception ex) {
             log.error("Error removing auto ping for target - "+getPingTargetId(), ex);
             // TODO: i18n
@@ -209,7 +209,7 @@ public class Pings extends UIAction {
      */
     private void buildIsEnabledMap() {
         
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = WebloggerFactory.getRoller().getAutopingManager();
         
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map isEnabled = new HashMap();

@@ -34,7 +34,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -119,7 +119,7 @@ public class SearchResultsFeedModel implements Model {
         this.entryCount = RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         
         // setup the search
-        IndexManager indexMgr = RollerFactory.getRoller().getIndexManager();
+        IndexManager indexMgr = WebloggerFactory.getRoller().getIndexManager();
         
         SearchOperation search = new SearchOperation(indexMgr);
         search.setTerm(feedRequest.getTerm());
@@ -170,7 +170,7 @@ public class SearchResultsFeedModel implements Model {
         
         try {
             TreeSet categories = new TreeSet();
-            Weblogger roller = RollerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
             WeblogEntry entry = null;

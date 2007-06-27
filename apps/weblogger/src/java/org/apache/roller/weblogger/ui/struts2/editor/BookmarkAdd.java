@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -65,7 +65,7 @@ public class BookmarkAdd extends UIAction {
     
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
             if(!StringUtils.isEmpty(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             }
@@ -105,9 +105,9 @@ public class BookmarkAdd extends UIAction {
             newBookmark.setFolder(getFolder());
             getBean().copyTo(newBookmark);
             
-            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
             bmgr.saveBookmark(newBookmark);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             CacheManager.invalidate(newBookmark);
             

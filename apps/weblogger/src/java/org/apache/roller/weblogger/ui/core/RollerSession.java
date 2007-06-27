@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -75,7 +75,7 @@ public class RollerSession
             Principal principal = request.getUserPrincipal();
             if (rollerSession.getAuthenticatedUser() == null && principal != null) {
                 try {
-                    UserManager umgr = RollerFactory.getRoller().getUserManager();
+                    UserManager umgr = WebloggerFactory.getRoller().getUserManager();
                     User user = umgr.getUserByUserName(principal.getName());
                     
                     // try one time to auto-provision, only happens if user==null
@@ -141,7 +141,7 @@ public class RollerSession
         User authenticUser = null;
         if(userId != null) {
             try {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
                 authenticUser = mgr.getUser(userId);
             } catch (WebloggerException ex) {
                 log.warn("Error looking up authenticated user "+userId, ex);

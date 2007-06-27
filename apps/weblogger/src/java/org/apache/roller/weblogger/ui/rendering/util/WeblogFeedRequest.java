@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -215,7 +215,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
                 weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);

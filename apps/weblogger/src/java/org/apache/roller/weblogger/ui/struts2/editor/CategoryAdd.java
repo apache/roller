@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -63,7 +63,7 @@ public class CategoryAdd extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             if(!StringUtils.isEmpty(getCategoryId())) {
                 setCategory(wmgr.getWeblogCategory(getCategoryId()));
             }
@@ -116,9 +116,9 @@ public class CategoryAdd extends UIAction {
             getCategory().addCategory(newCategory);
             
             // save changes
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
             wmgr.saveWeblogCategory(newCategory);
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             // notify caches
             CacheManager.invalidate(newCategory);

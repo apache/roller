@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.core.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 
@@ -43,9 +43,9 @@ public class BasicUserAutoProvision implements AutoProvision {
     if(ud != null) {
       UserManager mgr;
       try {
-        mgr = RollerFactory.getRoller().getUserManager();
+        mgr = WebloggerFactory.getRoller().getUserManager();
         mgr.addUser(ud);
-        RollerFactory.getRoller().flush();
+        WebloggerFactory.getRoller().flush();
       } catch (WebloggerException e) {
         log.warn("Error while auto-provisioning user from SSO.", e);
       }

@@ -30,7 +30,7 @@ import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -114,9 +114,9 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
-                Weblogger roller = RollerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                Map mmap = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+                Map mmap = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                         
                         weblog,
                         startDate,

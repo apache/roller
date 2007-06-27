@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -127,7 +127,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             log.debug("task started");
             
             PingQueueProcessor.getInstance().processQueue();
-            RollerFactory.getRoller().flush();
+            WebloggerFactory.getRoller().flush();
             
             log.debug("task completed");
             
@@ -137,7 +137,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             log.error("unexpected exception", ee);
         } finally {
             // always release
-            RollerFactory.getRoller().release();
+            WebloggerFactory.getRoller().release();
         }
         
     }

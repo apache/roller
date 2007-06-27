@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -63,7 +63,7 @@ public class Install extends UIAction {
     
     public String execute() {
         
-        if(RollerFactory.isBootstrapped()) {
+        if(WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
         
@@ -95,7 +95,7 @@ public class Install extends UIAction {
     
     public String create() {
         
-        if(RollerFactory.isBootstrapped()) {
+        if(WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
         
@@ -114,7 +114,7 @@ public class Install extends UIAction {
     
     public String upgrade() {
         
-        if(RollerFactory.isBootstrapped()) {
+        if(WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
         
@@ -133,16 +133,16 @@ public class Install extends UIAction {
     
     public String bootstrap() {
         
-        if(RollerFactory.isBootstrapped()) {
+        if(WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
         
         try {
             // trigger bootstrapping process
-            RollerFactory.bootstrap();
+            WebloggerFactory.bootstrap();
             
             // trigger initialization process
-            RollerFactory.getRoller().initialize();
+            WebloggerFactory.getRoller().initialize();
             
             return SUCCESS;
             

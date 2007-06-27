@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.RollerFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -328,7 +328,7 @@ public class PageServlet extends HttpServlet {
             
             try {
                 // tags specified.  make sure they exist.
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
                 invalid = !wmgr.getTagComboExists(pageRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
@@ -608,7 +608,7 @@ public class PageServlet extends HttpServlet {
             referrer.setWeblogDateString(pageRequest.getWeblogDate());
             
             ReferrerQueueManager refQueue =
-                    RollerFactory.getRoller().getReferrerQueueManager();
+                    WebloggerFactory.getRoller().getReferrerQueueManager();
             refQueue.processReferrer(referrer);
         } catch(Exception e) {
             log.error("Error processing referrer", e);
