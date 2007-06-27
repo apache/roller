@@ -20,14 +20,17 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -254,6 +257,19 @@ public final class EntryEdit extends EntryBase {
         return INPUT;
     }
     
+    
+    /**
+     * Get the list of all categories for the action weblog, not including root.
+     */
+    public List<WeblogCategory> getCategories() {
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            return wmgr.getWeblogCategories(getActionWeblog(), false);
+        } catch (WebloggerException ex) {
+            log.error("Error getting category list for weblog - "+getWeblog(), ex);
+            return Collections.EMPTY_LIST;
+        }
+    }
     
     public String getPreviewURL() {
         return URLUtilities.getPreviewWeblogEntryURL(getEntry().getAnchor(), getActionWeblog(), null, true);

@@ -86,7 +86,7 @@ function fullPreviewMode() {
                 <label for="categoryId"><s:text name="weblogEdit.category" /></label>
             </td>
             <td>
-                <s:select name="bean.categoryId" list="actionWeblog.weblogCategories" listKey="id" listValue="path" size="1" />
+                <s:select name="bean.categoryId" list="categories" listKey="id" listValue="name" size="1" />
             </td>
         </tr>
         
