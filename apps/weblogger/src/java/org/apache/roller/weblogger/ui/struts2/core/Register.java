@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
@@ -88,7 +88,7 @@ public class Register extends UIAction implements ServletRequestAware {
         try {
             // Let's see if there's any user-authentication available from Acegi
             // and retrieve custom user data to pre-populate form.
-            boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
+            boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
             if(usingSSO) {
                 User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
                 if(fromSSO != null) {
@@ -242,12 +242,12 @@ public class Register extends UIAction implements ServletRequestAware {
         
         // if usingSSO, we don't want to error on empty password/username from HTML form.
         setFromSS0(false);
-        boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
+        boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if(usingSSO) {
-            boolean storePassword = RollerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
+            boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
             User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
             if(fromSSO != null) {
-                String password = RollerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
+                String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
                 if(storePassword) {
                     password = fromSSO.getPassword();
                 }
@@ -258,7 +258,7 @@ public class Register extends UIAction implements ServletRequestAware {
             }
         }
         
-        String allowed = RollerConfig.getProperty("username.allowedChars");
+        String allowed = WebloggerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }

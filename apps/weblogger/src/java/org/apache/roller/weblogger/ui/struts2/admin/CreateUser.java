@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -123,7 +123,7 @@ public class CreateUser extends UIAction {
     // TODO: replace with struts2 validation
     private void myValidate() {
         
-        String allowed = RollerConfig.getProperty("username.allowedChars");
+        String allowed = WebloggerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }

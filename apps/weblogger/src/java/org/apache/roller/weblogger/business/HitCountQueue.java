@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.HitCountProcessingJob;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -60,7 +60,7 @@ public class HitCountQueue {
     // non-instantiable because we are a singleton
     private HitCountQueue() {
         
-        String sleep = RollerConfig.getProperty("hitcount.queue.sleepTime", "180");
+        String sleep = WebloggerConfig.getProperty("hitcount.queue.sleepTime", "180");
         
         try {
             // multiply by 1000 because we expect input in seconds

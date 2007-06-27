@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.servlets.CommentServlet;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -42,7 +42,7 @@ public class CommentValidationManager {
         
         // instantiate the validators that are configured
         try {
-            String vals = RollerConfig.getProperty("comment.validator.classnames");
+            String vals = WebloggerConfig.getProperty("comment.validator.classnames");
             String[] valsarray = Utilities.stringToStringArray(vals, ",");
             for(int i=0; i < valsarray.length; i++) {
                 try {

@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.factory.access.BootstrapException;
 
@@ -176,7 +176,7 @@ public class Install extends UIAction {
     
     public String getProp(String key) {
         // Static config only, we don't have database yet
-        String value = RollerConfig.getProperty(key);
+        String value = WebloggerConfig.getProperty(key);
         return (value == null) ? key : value;
     }
     

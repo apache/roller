@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.DateUtil;
 
 
@@ -101,9 +101,9 @@ public abstract class RollerTask implements Runnable {
     
     
     /**
-     * Get the properties from RollerConfig which pertain to this task.
-     *
-     * This extracts all properties from the RollerConfig of the type
+     * Get the properties from WebloggerConfig which pertain to this task.
+     * 
+     * This extracts all properties from the WebloggerConfig of the type
      * task.<taskname>.<prop>=value and returns them in a properties object
      * where each item is keyed by <prop>.
      */
@@ -114,18 +114,18 @@ public abstract class RollerTask implements Runnable {
         Properties taskProps = new Properties();
         
         String key = null;
-        Enumeration keys = RollerConfig.keys();
+        Enumeration keys = WebloggerConfig.keys();
         while(keys.hasMoreElements()) {
             key = (String) keys.nextElement();
             
             if(key.startsWith(prefix)) {
                 taskProps.setProperty(key.substring(prefix.length()), 
-                        RollerConfig.getProperty(key));
+                        WebloggerConfig.getProperty(key));
             }
         }
         
         // special addition for clientId property that applies to all tasks
-        taskProps.setProperty("clientId", RollerConfig.getProperty("tasks.clientId"));
+        taskProps.setProperty("clientId", WebloggerConfig.getProperty("tasks.clientId"));
         
         return taskProps;
     }

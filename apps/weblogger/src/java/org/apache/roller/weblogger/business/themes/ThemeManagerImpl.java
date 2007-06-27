@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -71,7 +71,7 @@ public class ThemeManagerImpl implements ThemeManager {
         this.roller = roller;
         
         // get theme directory from config and verify it
-        this.themeDir = RollerConfig.getProperty("themes.dir");
+        this.themeDir = WebloggerConfig.getProperty("themes.dir");
         if(themeDir == null || themeDir.trim().length() < 1) {
             throw new RuntimeException("couldn't get themes directory from config");
         } else {

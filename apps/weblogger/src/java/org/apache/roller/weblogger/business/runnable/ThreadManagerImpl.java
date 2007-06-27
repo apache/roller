@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -55,11 +55,11 @@ public class ThreadManagerImpl implements ThreadManager {
         Date now = new Date();
         
         // okay, first we look for what tasks have been enabled
-        String tasksStr = RollerConfig.getProperty("tasks.enabled");
+        String tasksStr = WebloggerConfig.getProperty("tasks.enabled");
         String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
         for (int i=0; i < tasks.length; i++) {
             
-            String taskClassName = RollerConfig.getProperty("tasks."+tasks[i]+".class");
+            String taskClassName = WebloggerConfig.getProperty("tasks."+tasks[i]+".class");
             if(taskClassName != null) {
                 log.info("Initializing task: "+tasks[i]);
                 

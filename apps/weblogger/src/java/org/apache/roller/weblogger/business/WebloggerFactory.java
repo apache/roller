@@ -24,7 +24,7 @@ import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -41,7 +41,7 @@ public final class WebloggerFactory {
   
     
     static {
-        String moduleClassname = RollerConfig.getProperty("guice.backend.module");
+        String moduleClassname = WebloggerConfig.getProperty("guice.backend.module");
         try {
             Class moduleClass = Class.forName(moduleClassname);
             Module module = (Module)moduleClass.newInstance();

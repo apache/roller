@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.LRUCache2;
 
 
@@ -55,9 +55,9 @@ public class NewsfeedCache {
     /** Constructor */
     private NewsfeedCache() {
         // lookup the props we need
-        String enabled = RollerConfig.getProperty("aggregator.enabled");
-        String usecache = RollerConfig.getProperty("aggregator.cache.enabled");
-        String cachetime = RollerConfig.getProperty("aggregator.cache.timeout");
+        String enabled = WebloggerConfig.getProperty("aggregator.enabled");
+        String usecache = WebloggerConfig.getProperty("aggregator.cache.enabled");
+        String cachetime = WebloggerConfig.getProperty("aggregator.cache.timeout");
         
         if("true".equalsIgnoreCase(enabled))
             this.aggregator_enabled = true;

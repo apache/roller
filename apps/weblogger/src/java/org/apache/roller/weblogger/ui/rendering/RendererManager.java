@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 
 
@@ -45,8 +45,8 @@ public class RendererManager {
     
     static {
         // lookup set of renderer factories we are going to use
-        String rollerFactories = RollerConfig.getProperty("rendering.rollerRendererFactories");
-        String userFactories = RollerConfig.getProperty("rendering.userRendererFactories");
+        String rollerFactories = WebloggerConfig.getProperty("rendering.rollerRendererFactories");
+        String userFactories = WebloggerConfig.getProperty("rendering.userRendererFactories");
         
         // instantiate user defined renderer factory classes
         if(userFactories != null && userFactories.trim().length() > 0) {

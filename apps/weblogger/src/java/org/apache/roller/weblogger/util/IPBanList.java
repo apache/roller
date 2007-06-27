@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -61,7 +61,7 @@ public class IPBanList {
         log.debug("INIT");
         
         // load up set of denied ips
-        String banIpsFilePath = RollerConfig.getProperty("ipbanlist.file");
+        String banIpsFilePath = WebloggerConfig.getProperty("ipbanlist.file");
         if(banIpsFilePath != null) {
             ModifiedFile banIpsFile = new ModifiedFile(banIpsFilePath);
             

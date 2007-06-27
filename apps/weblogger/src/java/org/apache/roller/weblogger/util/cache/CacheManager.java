@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.Job;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -75,7 +75,7 @@ public class CacheManager {
     
     static {
         // lookup what cache factory we want to use
-        String classname = RollerConfig.getProperty("cache.defaultFactory");
+        String classname = WebloggerConfig.getProperty("cache.defaultFactory");
         
         // use reflection to instantiate our factory class
         try {
@@ -104,7 +104,7 @@ public class CacheManager {
         
         
         // add custom handlers
-        String customHandlers = RollerConfig.getProperty("cache.customHandlers");
+        String customHandlers = WebloggerConfig.getProperty("cache.customHandlers");
         if(customHandlers != null && customHandlers.trim().length() > 0) {
             
             String[] cHandlers = customHandlers.split(",");

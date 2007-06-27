@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -86,7 +86,7 @@ public class CommentServlet extends HttpServlet {
         
         // lookup the authenticator we are going to use and instantiate it
         try {
-            String name = RollerConfig.getProperty("comment.authenticator.classname");
+            String name = WebloggerConfig.getProperty("comment.authenticator.classname");
             
             Class clazz = Class.forName(name);
             this.authenticator = (CommentAuthenticator) clazz.newInstance();
@@ -98,18 +98,18 @@ public class CommentServlet extends HttpServlet {
         
         
         // are we doing throttling?
-        if(RollerConfig.getBooleanProperty("comment.throttle.enabled")) {
+        if(WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
             
             int threshold = 25;
             try {
-                threshold = Integer.parseInt(RollerConfig.getProperty("comment.throttle.threshold"));
+                threshold = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.threshold"));
             } catch(Exception e) {
                 log.warn("bad input for config property comment.throttle.threshold", e);
             }
             
             int interval = 60000;
             try {
-                interval = Integer.parseInt(RollerConfig.getProperty("comment.throttle.interval"));
+                interval = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.interval"));
                 // convert from seconds to milliseconds
                 interval = interval * 1000;
             } catch(Exception e) {
@@ -118,7 +118,7 @@ public class CommentServlet extends HttpServlet {
             
             int maxEntries = 250;
             try {
-                maxEntries = Integer.parseInt(RollerConfig.getProperty("comment.throttle.maxentries"));
+                maxEntries = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.maxentries"));
             } catch(Exception e) {
                 log.warn("bad input for config property comment.throttle.maxentries", e);
             }

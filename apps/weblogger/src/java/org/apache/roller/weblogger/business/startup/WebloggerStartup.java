@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.MailProvider;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -182,7 +182,7 @@ public final class WebloggerStartup {
         }
         
         // now we need to deal with database install/upgrade logic
-        if("manual".equals(RollerConfig.getProperty("installation.type"))) {
+        if("manual".equals(WebloggerConfig.getProperty("installation.type"))) {
             
             // if we are doing manual install then all that is needed is the
             // app handled database upgrade work, not the db scripts

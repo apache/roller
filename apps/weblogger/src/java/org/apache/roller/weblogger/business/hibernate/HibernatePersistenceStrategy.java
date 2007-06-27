@@ -28,7 +28,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
  * Base class for Hibernate persistence implementation.
@@ -53,13 +53,13 @@ public class HibernatePersistenceStrategy {
         Configuration config = new Configuration();
         config.configure("/META-INF/weblogger-hibernate.cfg.xml");
 
-        // Add all Hibernate properties found in RollerConfig
+        // Add all Hibernate properties found in WebloggerConfig
         Properties props = new Properties();
-        Enumeration keys = RollerConfig.keys();
+        Enumeration keys = WebloggerConfig.keys();
         while (keys.hasMoreElements()) {
             String key = (String)keys.nextElement();
             if (key.startsWith("hibernate.")) {
-                String value = RollerConfig.getProperty(key);
+                String value = WebloggerConfig.getProperty(key);
                 props.setProperty(key, value);
             }
         }

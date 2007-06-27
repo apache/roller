@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.util.*;
 import org.apache.roller.weblogger.util.RollerMessages;
@@ -46,7 +46,7 @@ public class AkismetCommentValidator implements CommentValidator {
     
     /** Creates a new instance of AkismetCommentValidator */
     public AkismetCommentValidator() {
-        apikey = RollerConfig.getProperty("comment.validator.akismet.apikey");
+        apikey = WebloggerConfig.getProperty("comment.validator.akismet.apikey");
     }
 
     public String getName() {

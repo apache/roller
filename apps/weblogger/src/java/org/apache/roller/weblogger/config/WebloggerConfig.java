@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.util.PropertyExpander;
 /**
  * This is the single entry point for accessing configuration properties in Roller.
  */
-public class RollerConfig {
+public class WebloggerConfig {
     
     private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
     private static String custom_config = "/roller-custom.properties";
@@ -40,7 +40,7 @@ public class RollerConfig {
 
     private static Properties mConfig;
 
-    private static Log log = LogFactory.getLog(RollerConfig.class);
+    private static Log log = LogFactory.getLog(WebloggerConfig.class);
     
     
     /*
@@ -53,7 +53,7 @@ public class RollerConfig {
 
         try {
             // we'll need this to get at our properties files in the classpath
-            Class config_class = Class.forName("org.apache.roller.weblogger.config.RollerConfig");
+            Class config_class = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
 
             // first, lets load our default properties
             InputStream is = config_class.getResourceAsStream(default_config);
@@ -110,7 +110,7 @@ public class RollerConfig {
 
             // some debugging for those that want it
             if(log.isDebugEnabled()) {
-                log.debug("RollerConfig looks like this ...");
+                log.debug("WebloggerConfig looks like this ...");
 
                 String key = null;
                 Enumeration keys = mConfig.keys();
@@ -128,7 +128,7 @@ public class RollerConfig {
 
 
     // no, you may not instantiate this class :p
-    private RollerConfig() {}
+    private WebloggerConfig() {}
 
 
     /**
@@ -168,7 +168,7 @@ public class RollerConfig {
      */
     public static boolean getBooleanProperty(String name, boolean defaultValue) {
         // get the value first, then convert
-        String value = RollerConfig.getProperty(name);
+        String value = WebloggerConfig.getProperty(name);
 
         if(value == null)
             return defaultValue;
@@ -188,7 +188,7 @@ public class RollerConfig {
      */
     public static int getIntProperty(String name, int defaultValue) {
         // get the value first, then convert
-        String value = RollerConfig.getProperty(name);
+        String value = WebloggerConfig.getProperty(name);
 
         if (value == null)
             return defaultValue;

@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -179,7 +179,7 @@ public class TemplateEdit extends UIAction {
     
     
     public List getTemplateLanguages() {
-        String langs = RollerConfig.getProperty("rendering.templateLanguages","velocity");
+        String langs = WebloggerConfig.getProperty("rendering.templateLanguages","velocity");
         String[] langsArray = Utilities.stringToStringArray(langs, ",");
         return Arrays.asList(langsArray);
     }

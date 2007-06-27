@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -86,7 +86,7 @@ public class PageServlet extends HttpServlet {
         log.info("Initializing PageServlet");
         
         this.excludeOwnerPages = 
-                RollerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
+                WebloggerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
         
         // get a reference to the weblog page cache
         this.weblogPageCache = WeblogPageCache.getInstance();
@@ -96,12 +96,12 @@ public class PageServlet extends HttpServlet {
         
         // see if built-in referrer processing is enabled
         this.processReferrers = 
-                RollerConfig.getBooleanProperty("referrers.processing.enabled");
+                WebloggerConfig.getBooleanProperty("referrers.processing.enabled");
         
         log.info("Referrer processing enabled = "+this.processReferrers);
         
         // check for possible robot pattern
-        String robotPatternStr = RollerConfig.getProperty("referrer.robotCheck.userAgentPattern");
+        String robotPatternStr = WebloggerConfig.getProperty("referrer.robotCheck.userAgentPattern");
         if (robotPatternStr != null && robotPatternStr.length() > 0) {
             // Parse the pattern, and store the compiled form.
             try {
@@ -395,12 +395,12 @@ public class PageServlet extends HttpServlet {
             }
             
             // Load models for pages
-            String pageModels = RollerConfig.getProperty("rendering.pageModels");
+            String pageModels = WebloggerConfig.getProperty("rendering.pageModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
             
             // Load special models for site-wide blog
             if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 

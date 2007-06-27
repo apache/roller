@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -145,7 +145,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 } else if("tags".equals(this.context)) {
                     String tagsString = pathElements[1].replace('+', ' ');
                     this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));                  
-                    int maxSize = RollerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
+                    int maxSize = WebloggerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
                     if(this.tags.size() > maxSize)
                         throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
                                       

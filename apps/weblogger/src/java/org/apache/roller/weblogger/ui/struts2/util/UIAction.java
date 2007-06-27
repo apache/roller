@@ -23,7 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -110,7 +110,7 @@ public abstract class UIAction extends ActionSupport
     
     public String getProp(String key) {
         // first try static config
-        String value = RollerConfig.getProperty(key);
+        String value = WebloggerConfig.getProperty(key);
         if(value == null) {
             value = RollerRuntimeConfig.getProperty(key);
         }
@@ -120,7 +120,7 @@ public abstract class UIAction extends ActionSupport
     
     public boolean getBooleanProp(String key) {
         // first try static config
-        String value = RollerConfig.getProperty(key);
+        String value = WebloggerConfig.getProperty(key);
         if(value == null) {
             value = RollerRuntimeConfig.getProperty(key);
         }
@@ -130,7 +130,7 @@ public abstract class UIAction extends ActionSupport
     
     public int getIntProp(String key) {
         // first try static config
-        String value = RollerConfig.getProperty(key);
+        String value = WebloggerConfig.getProperty(key);
         if(value == null) {
             value = RollerRuntimeConfig.getProperty(key);
         }

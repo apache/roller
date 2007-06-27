@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang.StringUtils;
 
 
@@ -89,7 +89,7 @@ public class UIPluginManagerImpl implements UIPluginManager {
         
         log.debug("Initializing entry editor plugins");
         
-        String editorStr = RollerConfig.getProperty("plugins.weblogEntryEditors");
+        String editorStr = WebloggerConfig.getProperty("plugins.weblogEntryEditors");
         if (editorStr != null) {
             
             String[] editorList = StringUtils.stripAll(StringUtils.split(editorStr, ","));
@@ -120,7 +120,7 @@ public class UIPluginManagerImpl implements UIPluginManager {
         }
         
         // make sure the default editor is defined
-        String defaultEditorId = RollerConfig.getProperty("plugins.defaultEditor");
+        String defaultEditorId = WebloggerConfig.getProperty("plugins.defaultEditor");
         if(defaultEditorId != null) {
             this.defaultEditor = (WeblogEntryEditor) this.editors.get(defaultEditorId);
         }

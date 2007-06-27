@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.business.plugins.entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
@@ -306,7 +306,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
     protected Map buildBookmarkMap(Weblog website) throws WebloggerException
     {
         Map bookmarkMap = new HashMap();
-        if (RollerConfig.getBooleanProperty("plugins.topictag.ignoreBookmarks")) {
+        if (WebloggerConfig.getBooleanProperty("plugins.topictag.ignoreBookmarks")) {
             return bookmarkMap;
         }
         if (website == null)
@@ -341,7 +341,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
     private String getSetting(String propName, String defaultValue)
     {
         String fullPropName = "plugins.topictag." + propName;
-        String val = (String) RollerConfig.getProperty(fullPropName);
+        String val = (String) WebloggerConfig.getProperty(fullPropName);
         return (val != null) ? val : defaultValue;
     }
 

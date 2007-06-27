@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.business.MailProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -275,7 +275,7 @@ public class MailUtil {
         log.debug("Comment notification enabled ... preparing email");
         
         // Determine message and addressing options from init parameters
-        boolean hideCommenterAddrs = RollerConfig.getBooleanProperty(
+        boolean hideCommenterAddrs = WebloggerConfig.getBooleanProperty(
                 "comment.notification.hideCommenterAddresses");
         
         // use either the weblog configured from address or the site configured from address

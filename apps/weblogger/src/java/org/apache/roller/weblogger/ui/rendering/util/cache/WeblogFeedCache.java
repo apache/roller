@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -56,11 +56,11 @@ public class WeblogFeedCache {
     
     private WeblogFeedCache() {
         
-        cacheEnabled = RollerConfig.getBooleanProperty(CACHE_ID+".enabled");
+        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = RollerConfig.keys();
+        Enumeration allProps = WebloggerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
@@ -68,7 +68,7 @@ public class WeblogFeedCache {
             // we are only interested in props for this cache
             if(prop.startsWith(CACHE_ID+".")) {
                 cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        RollerConfig.getProperty(prop));
+                        WebloggerConfig.getProperty(prop));
             }
         }
         
