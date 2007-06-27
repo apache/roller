@@ -94,8 +94,7 @@ public class CreateUser extends UIAction {
             
             // set username and password
             newUser.setUserName(getBean().getUserName());
-            newUser.resetPassword(WebloggerFactory.getWeblogger(),
-                    getBean().getPassword(), getBean().getPassword());
+            newUser.resetPassword(getBean().getPassword());
             
             // are we granting the user admin rights?
             if(((CreateUserBean)getBean()).isAdministrator()) {
