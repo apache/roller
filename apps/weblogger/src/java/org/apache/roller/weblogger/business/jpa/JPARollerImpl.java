@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.RollerImpl;
+import org.apache.roller.weblogger.business.WebloggerImpl;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
  * A JPA specific implementation of the Weblogger business layer.
  */
 @com.google.inject.Singleton
-public class JPARollerImpl extends RollerImpl {
+public class JPARollerImpl extends WebloggerImpl {
 
     static final long serialVersionUID = 5256135928578074652L;
 
