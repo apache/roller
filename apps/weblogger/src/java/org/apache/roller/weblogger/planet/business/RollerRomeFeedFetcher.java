@@ -147,7 +147,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                         }
                         content = ppmgr.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
                         
-                        entry.setAuthor(rollerEntry.getCreator().getFullName());
+                        entry.setAuthor(rollerEntry.getCreator().getScreenName());
                         entry.setTitle(rollerEntry.getTitle());
                         entry.setPubTime(rollerEntry.getPubTime());
                         entry.setText(content);
