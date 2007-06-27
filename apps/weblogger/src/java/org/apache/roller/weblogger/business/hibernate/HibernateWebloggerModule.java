@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.jpa;
+package org.apache.roller.weblogger.business.hibernate;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -36,38 +36,40 @@ import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
+import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
 
+
 /**
- * Guice module for configuring JPA as Weblogger-backend.
+ * Guice module for configuring Hibernate as Weblogger-backend.
  */
-public class RollerModule implements Module {
-
+public class HibernateWebloggerModule implements Module {
+    
     public void configure(Binder binder) {
-
-        binder.bind(Weblogger.class).to(JPAWebloggerImpl.class);
         
-        binder.bind(JPAPersistenceStrategy.class);       
-        binder.bind(org.apache.roller.weblogger.planet.business.jpa.JPARollerPlanetPersistenceStrategy.class);   
+        binder.bind(Weblogger.class).to(HibernateWebloggerImpl.class);
         
-        binder.bind(AutoPingManager.class).to(     JPAAutoPingManagerImpl.class);   
-        binder.bind(BookmarkManager.class).to(     JPABookmarkManagerImpl.class);  
-        binder.bind(PingQueueManager.class).to(    JPAPingQueueManagerImpl.class);   
-        binder.bind(PingTargetManager.class).to(   JPAPingTargetManagerImpl.class); 
-        binder.bind(PropertiesManager.class).to(   JPAPropertiesManagerImpl.class);   
-        binder.bind(RefererManager.class).to(      JPARefererManagerImpl.class);
-        binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);  
-        binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
-        binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
+        binder.bind(HibernatePersistenceStrategy.class);
+        
+        binder.bind(AutoPingManager.class).to(     HibernateAutoPingManagerImpl.class);
+        binder.bind(BookmarkManager.class).to(     HibernateBookmarkManagerImpl.class);
+        binder.bind(PingQueueManager.class).to(    HibernatePingQueueManagerImpl.class);
+        binder.bind(PingTargetManager.class).to(   HibernatePingTargetManagerImpl.class);
+        binder.bind(PropertiesManager.class).to(   HibernatePropertiesManagerImpl.class);
+        binder.bind(RefererManager.class).to(      HibernateRefererManagerImpl.class);
+        binder.bind(ThreadManager.class).to(       HibernateThreadManagerImpl.class);
+        binder.bind(UserManager.class).to(         HibernateUserManagerImpl.class);
+        binder.bind(WeblogManager.class).to(       HibernateWeblogManagerImpl.class);
                 
-        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
-        binder.bind(FileManager.class).to(         FileManagerImpl.class);   
+        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);
+        binder.bind(FileManager.class).to(         FileManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
-        binder.bind(PluginManager.class).to(       PluginManagerImpl.class);    
-        binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);  
-    }    
+        binder.bind(PluginManager.class).to(       PluginManagerImpl.class);
+        binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
+    }
+    
 }
 
