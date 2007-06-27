@@ -95,7 +95,7 @@ function fullPreviewMode() {
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
+                <s:textfield id="entryEditTags" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
                 <div id="entryEditTagsChoices" style="display:none" class="autocomplete"></div>
                 <br/>
                 <script type="text/javascript">
