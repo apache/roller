@@ -30,32 +30,37 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 
-/** 
- * The main entry point interface of the Roller business tier.
+/**
+ * 
+ * The main entry point interface of the Weblogger business tier.
  */
-public interface Roller {
+public interface Weblogger {
     
     
-    /** 
-     * Get UserManager associated with this Roller instance.
+    /**
+     * 
+     * Get UserManager associated with this Weblogger instance.
      */
     public UserManager getUserManager();
     
     
-    /** 
-     * Get BookmarkManager associated with this Roller instance.
+    /**
+     * 
+     * Get BookmarkManager associated with this Weblogger instance.
      */
     public BookmarkManager getBookmarkManager();
     
     
-    /** 
-     * Get WeblogManager associated with this Roller instance.
+    /**
+     * 
+     * Get WeblogManager associated with this Weblogger instance.
      */
     public WeblogManager getWeblogManager();
     
     
-    /** 
-     * Get RefererManager associated with this Roller instance.
+    /**
+     * 
+     * Get RefererManager associated with this Weblogger instance.
      */
     public RefererManager getRefererManager();
     
@@ -67,55 +72,57 @@ public interface Roller {
     
     
     /**
-     * Get the AutoPingManager associated with this Roller instance.
+     * Get the AutoPingManager associated with this Weblogger instance.
      */
     public AutoPingManager getAutopingManager();
     
     
     /**
-     * Get the PingTargetManager associated with this Roller instance.
+     * Get the PingTargetManager associated with this Weblogger instance.
      */
     public PingTargetManager getPingTargetManager();
     
     
     /**
-     * Get the PingQueueManager associated with this Roller instance.
+     * Get the PingQueueManager associated with this Weblogger instance.
      */
     public PingQueueManager getPingQueueManager();
     
     
-    /** 
-     * Get PropertiesManager associated with this Roller instance.
+    /**
+     * 
+     * Get PropertiesManager associated with this Weblogger instance.
      */
     public PropertiesManager getPropertiesManager();
     
     
-    /** 
-     * Get FileManager associated with this Roller instance.
+    /**
+     * 
+     * Get FileManager associated with this Weblogger instance.
      */
     public FileManager getFileManager();
     
     
     /**
-     * Get ThreadManager associated with this Roller instance.
+     * Get ThreadManager associated with this Weblogger instance.
      */
     public ThreadManager getThreadManager();
     
     
     /**
-     * Get IndexManager associated with this Roller instance.
+     * Get IndexManager associated with this Weblogger instance.
      */
     public IndexManager getIndexManager();
     
     
     /**
-     * Get ThemeManager associated with this Roller instance.
+     * Get ThemeManager associated with this Weblogger instance.
      */
     public ThemeManager getThemeManager();
     
     
     /**
-     * Get PluginManager associated with this Roller instance.
+     * Get PluginManager associated with this Weblogger instance.
      */
     public PluginManager getPagePluginManager();
     
@@ -127,30 +134,36 @@ public interface Roller {
     
     
     /**
-     * Release all resources associated with Roller session.
+     * Release all resources associated with Weblogger session.
      */
     public void release();
     
     
     /**
-     * Initialize any resources necessary for this instance of Roller.
+     * Initialize any resources necessary for this instance of Weblogger.
      */
     public void initialize() throws InitializationException;
     
     
     /**
-     * Release all resources necessary for this instance of Roller.
+     * Release all resources necessary for this instance of Weblogger.
      */
     public void shutdown();
     
     
-    /** Roller version */
+    /**
+     * Weblogger version
+     */
     public String getVersion();    
     
-    /** Roller build time */
+    /**
+     * Weblogger build time
+     */
     public String getBuildTime();
         
-    /** Get username that built Roller */
+    /**
+     * Get username that built Weblogger
+     */
     public String getBuildUser();
+    
 }
-
