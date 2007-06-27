@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -77,7 +77,7 @@ public class Register extends UIAction implements ServletRequestAware {
     @SkipValidation
     public String execute() {
         
-        if(!RollerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
+        if(!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
             return "disabled";
         }
         
@@ -108,7 +108,7 @@ public class Register extends UIAction implements ServletRequestAware {
     
     public String save() {
         
-        if(!RollerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
+        if(!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
             return "disabled";
         }
         
@@ -132,7 +132,7 @@ public class Register extends UIAction implements ServletRequestAware {
             }
             
             // are we using email activation?
-            boolean activationEnabled = RollerRuntimeConfig.getBooleanProperty(
+            boolean activationEnabled = WebloggerRuntimeConfig.getBooleanProperty(
                     "user.account.activation.enabled");
             if (activationEnabled) {
                 // User account will be enabled after the activation process

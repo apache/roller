@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -433,7 +433,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     private Hashtable createPostStruct(WeblogEntry entry, String userid) {
         
         String permalink =
-                RollerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
+                WebloggerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
         
         Hashtable struct = new Hashtable();
         struct.put("title", entry.getTitle());
@@ -462,7 +462,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
     private Hashtable createCategoryStruct(WeblogCategory category, String userid) {
         
-        String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
+        String contextUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         
         Hashtable struct = new Hashtable();
         struct.put("description", category.getPath());

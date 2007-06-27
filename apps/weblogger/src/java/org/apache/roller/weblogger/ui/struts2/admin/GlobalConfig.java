@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -84,7 +84,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
         }
         
         // set config def used to draw the view
-        RuntimeConfigDefs defs = RollerRuntimeConfig.getRuntimeConfigDefs();
+        RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
         for(ConfigDef configDef : configDefs) {
             if("global-properties".equals(configDef.getName())) {

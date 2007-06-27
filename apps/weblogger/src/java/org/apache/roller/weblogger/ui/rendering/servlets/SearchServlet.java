@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -148,7 +148,7 @@ public class SearchServlet extends HttpServlet {
             ModelLoader.loadModels(searchModels, model, initData, true);
             
             // Load special models for site-wide blog
-            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }

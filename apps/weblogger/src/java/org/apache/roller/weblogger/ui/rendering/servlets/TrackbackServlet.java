@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -98,7 +98,7 @@ public class TrackbackServlet extends HttpServlet {
         RollerMessages messages = new RollerMessages();
         
         WeblogTrackbackRequest trackbackRequest = null;
-        if (!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
+        if (!WebloggerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
             // TODO: i18n
             error = "Trackbacks are disabled for this site";
         } else {
@@ -179,7 +179,7 @@ public class TrackbackServlet extends HttpServlet {
                 
                 // save, commit, send response
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
-                        !RollerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
+                        !WebloggerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
                     
                     WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
                     mgr.saveComment(comment);

@@ -36,7 +36,7 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.type.Type;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -158,7 +158,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(WeblogReferrer.class);
             
-            String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
+            String spamwords = WebloggerRuntimeConfig.getProperty("spam.blacklist");
             
             String[] blacklist = StringUtils.split(
                     StringUtils.deleteWhitespace(spamwords),",");
@@ -616,7 +616,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 
                 // If not a direct or search engine then search for linkback
                 boolean doLinkbackExtraction =
-                        RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
+                        WebloggerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
                 if (doLinkbackExtraction
                         && entry != null
                         && !refurl.equals("direct")

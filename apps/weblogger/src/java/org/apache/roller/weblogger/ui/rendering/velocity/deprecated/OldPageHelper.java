@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogReferrerWrapper;
@@ -272,10 +272,10 @@ public class OldPageHelper {
             return null;
         } else if("weblogCreate".equals(path)) {
             // a little hacky, but hopefully nobody is really using this anymore
-            return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/entryAdd.rol?weblog="+val1;
+            return WebloggerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/entryAdd.rol?weblog="+val1;
         } else if("editWebsite".equals(path)) {
             // a little hacky, but hopefully nobody is really using this anymore
-            return RollerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/weblogConfig.rol?weblog="+val1;
+            return WebloggerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/weblogConfig.rol?weblog="+val1;
         } else if("logout-redirect".equals(path)) {
             return URLUtilities.getLogoutURL(false);
         } else if("login-redirect".equals(path)) {

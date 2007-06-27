@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.UserManager;
@@ -122,7 +122,7 @@ public class CreateWeblog extends UIAction {
                     getBean().getTimeZone());
             
             // pick a weblog editor for this weblog
-            String def = RollerRuntimeConfig.getProperty("users.editor.pages");
+            String def = WebloggerRuntimeConfig.getProperty("users.editor.pages");
             String[] defs = Utilities.stringToStringArray(def,",");
             wd.setEditorPage(defs[0]);
             

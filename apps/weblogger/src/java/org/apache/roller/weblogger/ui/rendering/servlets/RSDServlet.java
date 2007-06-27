@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -112,7 +112,7 @@ public class RSDServlet extends HttpServlet {
         // populate the model
         HashMap model = new HashMap();
         model.put("website", weblog);
-        model.put("absBaseURL", RollerRuntimeConfig.getAbsoluteContextURL());
+        model.put("absBaseURL", WebloggerRuntimeConfig.getAbsoluteContextURL());
 
         
         // lookup Renderer we are going to use

@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -80,7 +80,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     public synchronized void init(Weblog website) throws WebloggerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
-            String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();
+            String baseURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
             
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetData;
@@ -137,11 +137,11 @@ public class PlanetFeedServlet extends HttpServlet {
             model.put("planet", planet);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
-            model.put("absoluteSite", RollerRuntimeConfig.getAbsoluteContextURL());
-            model.put("feedStyle", new Boolean(RollerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds")));
+            model.put("absoluteSite", WebloggerRuntimeConfig.getAbsoluteContextURL());
+            model.put("feedStyle", new Boolean(WebloggerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds")));
 
             int numEntries =
-                    RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+                    WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
             int entryCount = numEntries;
             String sCount = request.getParameter("count");
             if (sCount!=null) {

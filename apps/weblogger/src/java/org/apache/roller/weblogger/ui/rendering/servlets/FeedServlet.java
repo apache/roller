@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -101,7 +101,7 @@ public class FeedServlet extends HttpServlet {
             }
 
             // is this the site-wide weblog?
-            isSiteWide = RollerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle());
+            isSiteWide = WebloggerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle());
 
         } catch(Exception e) {
             // invalid feed request format or weblog doesn't exist
@@ -130,7 +130,7 @@ public class FeedServlet extends HttpServlet {
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
-        if (RollerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds") &&
+        if (WebloggerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds") &&
             accepts != null && accepts.indexOf("*/*") != -1 &&
             userAgent != null && userAgent.startsWith("Mozilla")) {
             // client is a browser and feed style is enabled so we want 
@@ -216,7 +216,7 @@ public class FeedServlet extends HttpServlet {
         String pageId = null;
         try {
             // determine what template to render with
-            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 pageId = "templates/feeds/site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
             } else {
                 pageId = "templates/feeds/weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
@@ -233,7 +233,7 @@ public class FeedServlet extends HttpServlet {
 
             // Load special models for site-wide blog
 
-            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }

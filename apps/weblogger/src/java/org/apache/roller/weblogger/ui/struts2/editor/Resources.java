@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -178,7 +178,7 @@ public final class Resources extends UIAction {
     public String upload() {
         
         // make sure uploads are enabled
-        if(!RollerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+        if(!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
             addError("error.upload.disabled");
             return execute();
         }

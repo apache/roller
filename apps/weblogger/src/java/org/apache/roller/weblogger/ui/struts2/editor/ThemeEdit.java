@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -89,7 +89,7 @@ public class ThemeEdit extends UIAction {
             setImportThemeId(getActionWeblog().getTheme().getId());
         }
         
-        if(!RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+        if(!WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
             return "input-sharedonly";
         } else {
             return INPUT;
@@ -108,7 +108,7 @@ public class ThemeEdit extends UIAction {
         if(WeblogTheme.CUSTOM.equals(getThemeType())) {
             
             // only continue if custom themes are allowed
-            if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+            if(WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
                 
                 // do theme import if necessary
                 SharedTheme importTheme = null;

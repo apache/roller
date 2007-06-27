@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -166,7 +166,7 @@ public class MailUtil {
             String content;
             
             // Figure URL to entry edit page
-            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
+            String rootURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
             String url = rootURL + "/roller-ui/menu.rol";
             
             ResourceBundle resources = ResourceBundle.getBundle(
@@ -215,7 +215,7 @@ public class MailUtil {
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", I18nUtils.toLocale(user.getLocale()));
             
-            String from = RollerRuntimeConfig.getProperty(
+            String from = WebloggerRuntimeConfig.getProperty(
                     "user.account.activation.mail.from");
             
             String cc[] = new String[0];
@@ -225,7 +225,7 @@ public class MailUtil {
                     "user.account.activation.mail.subject");
             String content;
             
-            String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
+            String rootURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
             
             StringBuffer sb = new StringBuffer();
             
@@ -266,7 +266,7 @@ public class MailUtil {
         User user = entry.getCreator();
         
         // Only send email if email notificaiton is enabled
-        boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+        boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
         if (!notify || !weblog.getEmailComments().booleanValue()) {
             // notifications disabled, just bail
             return;
@@ -324,7 +324,7 @@ public class MailUtil {
         // Determine with mime type to use for e-mail
         StringBuffer msg = new StringBuffer();
         StringBuffer ownermsg = new StringBuffer();
-        boolean escapeHtml = RollerRuntimeConfig.getBooleanProperty("users.comments.escapehtml");
+        boolean escapeHtml = WebloggerRuntimeConfig.getBooleanProperty("users.comments.escapehtml");
         
         // first the commenter message
         
@@ -499,7 +499,7 @@ public class MailUtil {
         User user = entry.getCreator();
         
         // Only send email if email notificaiton is enabled
-        boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+        boolean notify = WebloggerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
         if (!notify || !weblog.getEmailComments().booleanValue()) {
             // notifications disabled, just bail
             return;

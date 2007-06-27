@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -62,7 +62,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                                 FeedFetcherCache feedInfoCache)
             throws PlanetException {
         
-        String localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        String localURL = WebloggerRuntimeConfig.getProperty("site.absoluteurl");
         
         // if this is not a local url then let parent deal with it
         if (StringUtils.isEmpty(localURL) || !sub.getFeedURL().startsWith(localURL)) {            
@@ -99,7 +99,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 // if website last update time > subsciption last update time
                 List entries = new ArrayList();
                 if (sub.getLastUpdated()==null || siteUpdated.after(sub.getLastUpdated())) {
-                    int entryCount = RollerRuntimeConfig.getIntProperty(
+                    int entryCount = WebloggerRuntimeConfig.getIntProperty(
                             "site.newsfeeds.defaultEntries");
                     entries = blogmgr.getWeblogEntries(
                             

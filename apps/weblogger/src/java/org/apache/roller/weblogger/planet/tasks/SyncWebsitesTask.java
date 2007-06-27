@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
-import org.apache.roller.weblogger.config.RollerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -129,7 +129,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     public void runTask() {
         
         // make sure we have an absolute url value
-        String absUrl = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        String absUrl = WebloggerRuntimeConfig.getProperty("site.absoluteurl");
         if(absUrl == null || absUrl.trim().length() == 0) {
             log.error("ERROR: cannot sync websites with Planet Roller - "
                     +"absolute URL not specified in Roller Config");
