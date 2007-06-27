@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.hibernate;
 
+import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,8 +29,6 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.hibernate.cfg.Environment;
-
 
 /**
  * Base class for Hibernate persistence implementation.
@@ -47,29 +46,26 @@ public class HibernatePersistenceStrategy {
     
     
     /**
-     * Persistence strategy configures itself by using Roller properties:
-     * 'hibernate.configResource' - the resource name of Roller's Hibernate XML configuration file, 
-     * 'hibernate.dialect' - the classname of the Hibernate dialect to be used,
-     * 'hibernate.connectionProvider - the classname of Roller's connnection provider impl.
+     * Persistence strategy configures itself by using Roller properties.
      */
     protected HibernatePersistenceStrategy() throws WebloggerException {
         
-        String dialect =  
-            RollerConfig.getProperty("hibernate.dialect");
-        String connectionProvider = 
-            RollerConfig.getProperty("hibernate.connectionProvider");        
-        String configuration = "hibernate.cfg.xml";
-        
         Configuration config = new Configuration();
-        config.configure(configuration);
+        config.configure("/META-INF/weblogger-hibernate.cfg.xml");
 
-        // Add dialect specified by Roller config and our connection provider
+        // Add all Hibernate properties found in RollerConfig
         Properties props = new Properties();
-        props.put(Environment.DIALECT, dialect);
-        props.put(Environment.CONNECTION_PROVIDER, connectionProvider);
-        config.mergeProperties(props);
+        Enumeration keys = RollerConfig.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            if (key.startsWith("hibernate.")) {
+                String value = RollerConfig.getProperty(key);
+                props.setProperty(key, value);
+            }
+        }
+        config.addProperties(props);
         
-        sessionFactory = config.buildSessionFactory(); 
+        sessionFactory = config.buildSessionFactory();
     }
     
     
