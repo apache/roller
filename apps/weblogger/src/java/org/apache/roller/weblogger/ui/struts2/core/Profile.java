@@ -86,9 +86,7 @@ public class Profile extends UIAction {
             if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
                 try {
-                    existingUser.resetPassword(WebloggerFactory.getWeblogger(),
-                            getBean().getPasswordText(),
-                            getBean().getPasswordConfirm());
+                    existingUser.resetPassword(getBean().getPasswordText());
                 } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }

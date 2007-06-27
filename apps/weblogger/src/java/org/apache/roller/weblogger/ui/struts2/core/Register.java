@@ -128,8 +128,7 @@ public class Register extends UIAction implements ServletRequestAware {
             // If user set both password and passwordConfirm then reset password
             if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
-                ud.resetPassword(WebloggerFactory.getWeblogger(),
-                        getBean().getPasswordText(), getBean().getPasswordConfirm());
+                ud.resetPassword(getBean().getPasswordText());
             }
             
             // are we using email activation?

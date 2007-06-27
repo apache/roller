@@ -116,9 +116,7 @@ public class ModifyUser extends UIAction {
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 try {
-                    getUser().resetPassword(WebloggerFactory.getWeblogger(),
-                            getBean().getPassword(),
-                            getBean().getPassword());
+                    getUser().resetPassword(getBean().getPassword());
                 } catch (WebloggerException e) {
                     addMessage("yourProfile.passwordResetError");
                 }
