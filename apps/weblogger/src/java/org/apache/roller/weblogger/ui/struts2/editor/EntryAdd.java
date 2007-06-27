@@ -102,7 +102,7 @@ public final class EntryAdd extends EntryBase {
     public String save() {
         
         if(!hasActionErrors()) try {
-            WeblogManager weblogMgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             WeblogEntry entry = new WeblogEntry();
             entry.setCreator(getAuthenticatedUser());
@@ -156,7 +156,7 @@ public final class EntryAdd extends EntryBase {
             
             log.debug("Saving entry");
             weblogMgr.saveWeblogEntry(entry);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify search of the new entry
             reindexEntry(entry);
@@ -166,7 +166,7 @@ public final class EntryAdd extends EntryBase {
             
             // Queue applicable pings for this update.
             if(entry.isPublished()) {
-                WebloggerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
+                WebloggerFactory.getWeblogger().getAutopingManager().queueApplicableAutoPings(entry);
             }
             
             if(entry.isPending()) {
@@ -200,7 +200,7 @@ public final class EntryAdd extends EntryBase {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             return wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);

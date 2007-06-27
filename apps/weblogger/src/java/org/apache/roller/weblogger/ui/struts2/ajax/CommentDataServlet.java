@@ -43,7 +43,7 @@ public class CommentDataServlet extends HttpServlet {
                       HttpServletResponse response)
             throws ServletException, IOException {
         
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             WeblogManager wmgr = roller.getWeblogManager();
             WeblogEntryComment c = wmgr.getComment(request.getParameter("id"));

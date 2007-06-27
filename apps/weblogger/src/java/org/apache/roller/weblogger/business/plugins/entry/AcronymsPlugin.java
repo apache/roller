@@ -128,7 +128,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     private Properties loadAcronyms(Weblog website) {
         Properties acronyms = new Properties();
         try {
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogTemplate acronymsPage = userMgr.getPageByName(
                     website, "_acronyms");
             if (acronymsPage != null) {

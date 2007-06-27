@@ -62,14 +62,14 @@ public class ReferrerProcessingJob implements Job {
         
         // process a referrer
         try {
-            RefererManager refMgr = WebloggerFactory.getRoller().getRefererManager();
+            RefererManager refMgr = WebloggerFactory.getWeblogger().getRefererManager();
             refMgr.processReferrer(referrer.getRequestUrl(),
                                    referrer.getReferrerUrl(),
                                    referrer.getWeblogHandle(),
                                    referrer.getWeblogAnchor(),
                                    referrer.getWeblogDateString());
             
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
         } catch(WebloggerException re) {
             // trouble
             mLogger.warn("Trouble processing referrer", re);

@@ -250,7 +250,7 @@ public class WeblogCategory implements Serializable, Comparable {
      * @throws WebloggerException
      */
     public List retrieveWeblogEntries(boolean subcats) throws WebloggerException {
-        WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
     }
     
@@ -318,7 +318,7 @@ public class WeblogCategory implements Serializable, Comparable {
      */
     public boolean isInUse() {
         try {
-            return WebloggerFactory.getRoller().getWeblogManager().isWeblogCategoryInUse(this);
+            return WebloggerFactory.getWeblogger().getWeblogManager().isWeblogCategoryInUse(this);
         } catch (WebloggerException e) {
             throw new RuntimeException(e);
         }
@@ -364,7 +364,7 @@ public class WeblogCategory implements Serializable, Comparable {
             } else {
                 childCat.setPath(cat.getPath() + "/" + childCat.getName());
             }
-            WebloggerFactory.getRoller().getWeblogManager().saveWeblogCategory(childCat);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblogCategory(childCat);
             
             log.debug("NEW child category path is "+ childCat.getPath());
             

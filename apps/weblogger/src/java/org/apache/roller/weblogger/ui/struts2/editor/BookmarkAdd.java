@@ -65,7 +65,7 @@ public class BookmarkAdd extends UIAction {
     
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if(!StringUtils.isEmpty(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             }
@@ -105,9 +105,9 @@ public class BookmarkAdd extends UIAction {
             newBookmark.setFolder(getFolder());
             getBean().copyTo(newBookmark);
             
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             bmgr.saveBookmark(newBookmark);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             CacheManager.invalidate(newBookmark);
             

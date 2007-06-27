@@ -58,7 +58,7 @@ public class TemplateRemove extends UIAction {
     
     public void myPrepare() {
         if(getRemoveId() != null) try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             setTemplate(umgr.getPage(getRemoveId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template by id - "+getRemoveId(), ex);
@@ -83,9 +83,9 @@ public class TemplateRemove extends UIAction {
         
         if(getTemplate() != null) try {
             if(!getTemplate().isRequired()) {
-                UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 umgr.removePage(getTemplate());
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // notify cache
                 CacheManager.invalidate(getTemplate());

@@ -114,9 +114,9 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
-                Weblogger roller = WebloggerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogManager wmgr = roller.getWeblogManager();
-                Map mmap = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+                Map mmap = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntryObjectMap(
                         
                         weblog,
                         startDate,

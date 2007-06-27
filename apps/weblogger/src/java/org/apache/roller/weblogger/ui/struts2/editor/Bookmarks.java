@@ -81,7 +81,7 @@ public class Bookmarks extends UIAction {
     
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if(!StringUtils.isEmpty(getFolderId()) && 
                     !"/".equals(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
@@ -105,7 +105,7 @@ public class Bookmarks extends UIAction {
         
         try {
             // Build list of all folders, except for current one, sorted by path.
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             List<WeblogBookmarkFolder> folders = bmgr.getAllFolders(getActionWeblog());
             for(WeblogBookmarkFolder fd : folders) {
                 if (!fd.getId().equals(getFolderId())) {
@@ -143,7 +143,7 @@ public class Bookmarks extends UIAction {
      */
     public String delete() {
         
-        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         log.debug("Deleting selected folders and bookmarks.");
         
@@ -170,7 +170,7 @@ public class Bookmarks extends UIAction {
             }
             
             // flush changes
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(getActionWeblog());
@@ -191,7 +191,7 @@ public class Bookmarks extends UIAction {
     public String move() {
         
         try {
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             
             log.debug("Moving folders and bookmarks to folder - "+getTargetFolderId());
             
@@ -224,7 +224,7 @@ public class Bookmarks extends UIAction {
             }
             
             // flush changes
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(getActionWeblog());

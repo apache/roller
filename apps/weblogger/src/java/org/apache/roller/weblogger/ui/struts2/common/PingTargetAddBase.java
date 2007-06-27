@@ -60,9 +60,9 @@ public abstract class PingTargetAddBase extends UIAction {
         
         if(!hasActionErrors()) try {
             // Appears to be ok.  Save it and flush.
-            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             pingTargetMgr.savePingTarget(pingTarget);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             addMessage("pingTarget.saved");
             
@@ -84,7 +84,7 @@ public abstract class PingTargetAddBase extends UIAction {
     protected void myValidate(PingTarget pingTarget) {
         
         try {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }

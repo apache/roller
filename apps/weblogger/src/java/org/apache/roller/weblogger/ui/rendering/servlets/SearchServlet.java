@@ -82,7 +82,7 @@ public class SearchServlet extends HttpServlet {
             searchRequest = new WeblogSearchRequest(request);
             
             // now make sure the specified weblog really exists
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             weblog = userMgr.getWebsiteByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
             
         } catch(Exception e) {

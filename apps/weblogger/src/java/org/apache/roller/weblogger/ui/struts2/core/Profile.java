@@ -86,7 +86,7 @@ public class Profile extends UIAction {
             if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
                 try {
-                    existingUser.resetPassword(WebloggerFactory.getRoller(),
+                    existingUser.resetPassword(WebloggerFactory.getWeblogger(),
                             getBean().getPasswordText(),
                             getBean().getPasswordConfirm());
                 } catch (WebloggerException e) {
@@ -96,9 +96,9 @@ public class Profile extends UIAction {
             
             try {
                 // save the updated profile
-                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // TODO: i18n
                 addMessage("profile updated.");

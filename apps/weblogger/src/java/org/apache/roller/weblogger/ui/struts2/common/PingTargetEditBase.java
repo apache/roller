@@ -48,7 +48,7 @@ public abstract class PingTargetEditBase extends UIAction {
      */
     public void myPrepare() {
         
-        PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         if(!StringUtils.isEmpty(getBean().getId())) {
             
             try {
@@ -104,9 +104,9 @@ public abstract class PingTargetEditBase extends UIAction {
         
         if(!hasActionErrors()) try {
             // Appears to be ok.  Save it and flush.
-            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             pingTargetMgr.savePingTarget(getPingTarget());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             addMessage("pingTarget.saved");
             
@@ -126,7 +126,7 @@ public abstract class PingTargetEditBase extends UIAction {
     protected void myValidate(PingTarget pingTarget) {
         
         try {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             if (!pingTargetMgr.isNameUnique(pingTarget)) {
                 addError("pingTarget.nameNotUnique");
             }

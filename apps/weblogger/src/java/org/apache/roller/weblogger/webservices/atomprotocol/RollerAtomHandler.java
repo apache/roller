@@ -125,7 +125,7 @@ public class RollerAtomHandler implements AtomHandler {
      * then user's name, otherwise it will return null.
      */
     public RollerAtomHandler(HttpServletRequest request) {
-        roller = WebloggerFactory.getRoller();
+        roller = WebloggerFactory.getWeblogger();
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //String userName = authenticateWSSE(request);
@@ -247,7 +247,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private String getAcceptedContentTypeRange() throws WebloggerException {
         StringBuffer sb = new StringBuffer();
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");

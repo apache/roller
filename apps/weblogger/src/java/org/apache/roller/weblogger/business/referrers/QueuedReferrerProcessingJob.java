@@ -42,7 +42,7 @@ public class QueuedReferrerProcessingJob extends ReferrerProcessingJob {
     public void execute() {
         
         ReferrerQueueManager refQueue =
-                WebloggerFactory.getRoller().getReferrerQueueManager();
+                WebloggerFactory.getWeblogger().getReferrerQueueManager();
         
         // check the queue for any incoming referrers
         referrer = refQueue.dequeue();

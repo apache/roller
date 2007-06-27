@@ -131,7 +131,7 @@ abstract class Handler {
     public Handler(HttpServletRequest request) throws HandlerException {
         this.request = request;
         this.uri = new URI(request);
-        this.roller = WebloggerFactory.getRoller();
+        this.roller = WebloggerFactory.getWeblogger();
         //TODO: is this the right thing to do? hardcode roller-services?
         this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
         

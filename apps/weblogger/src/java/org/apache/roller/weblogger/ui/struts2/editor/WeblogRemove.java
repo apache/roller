@@ -62,11 +62,11 @@ public class WeblogRemove extends UIAction {
     public String remove() {
         
         try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             
             // remove website
             umgr.removeWebsite(getActionWeblog());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             CacheManager.invalidate(getActionWeblog());
             

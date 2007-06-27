@@ -70,7 +70,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public Map getEntries() {
         if (entries == null) try {
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager wmgr = roller.getWeblogManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
@@ -133,7 +133,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) try {
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager wmgr = roller.getWeblogManager();
             nextEntry = wmgr.getNextEntry(currEntry, null, locale);
             // make sure that entry is published and not to future
@@ -151,7 +151,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null) try {
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager wmgr = roller.getWeblogManager();
             prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
             // make sure that entry is published and not to future

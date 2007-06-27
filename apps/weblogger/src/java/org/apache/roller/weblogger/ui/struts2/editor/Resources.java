@@ -92,7 +92,7 @@ public final class Resources extends UIAction {
      */
     public String execute()  {
         
-        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
         
         setOverQuota(fmgr.overQuota(getActionWeblog()));
         
@@ -147,7 +147,7 @@ public final class Resources extends UIAction {
             }
             
             try {
-                FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
+                FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
                 
                 // add the new subdirectory
                 fmgr.createDirectory(getActionWeblog(), newDirPath);
@@ -183,7 +183,7 @@ public final class Resources extends UIAction {
             return execute();
         }
             
-        FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
+        FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
         
         List<String> uploaded = new ArrayList();
         File[] uploads = getUploadedFiles();
@@ -267,7 +267,7 @@ public final class Resources extends UIAction {
         if(deleteFiles != null) {
             log.debug("Attempting to delete "+deleteFiles.length+" files");
             
-            FileManager fmgr = WebloggerFactory.getRoller().getFileManager();
+            FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
             for (int i=0; i < deleteFiles.length; i++) {
                 if (deleteFiles[i].trim().startsWith("/") ||
                         deleteFiles[i].trim().startsWith("\\") ||

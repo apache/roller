@@ -102,7 +102,7 @@ public class WeblogPageTest extends TestCase {
      */
     public void testTemplateCRUD() throws Exception {
         
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         WeblogTemplate template = null;
         
         // create template
@@ -145,7 +145,7 @@ public class WeblogPageTest extends TestCase {
      */
     public void testPermissionsLookups() throws Exception {
         
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         WeblogTemplate page = null;
         
         // create page

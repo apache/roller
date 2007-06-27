@@ -100,7 +100,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         // start at root
         WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
@@ -150,7 +150,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
@@ -168,7 +168,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         WeblogCategory cat = mgr.getWeblogCategory(testCat.getId());
         assertNotNull(cat);
@@ -185,7 +185,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategory cat = mgr.getWeblogCategoryByPath(testWeblog, "/catTest-cat1");
@@ -217,7 +217,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         // including root
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -239,7 +239,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
      */
     public void testMoveWeblogCategory() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
@@ -314,7 +314,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
      */
     public void testMoveWeblogCategoryContents() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);

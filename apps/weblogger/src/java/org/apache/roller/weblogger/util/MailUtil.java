@@ -84,7 +84,7 @@ public class MailUtil {
         }
         
         try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             
             String userName = entry.getCreator().getUserName();
             String from = entry.getCreator().getEmailAddress();
@@ -155,7 +155,7 @@ public class MailUtil {
         }
         
         try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             
             String userName = user.getUserName();
             String from = website.getEmailAddress();

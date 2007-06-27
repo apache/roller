@@ -212,7 +212,7 @@ public class ContextLoader {
         if(weblog == null)
             return;
         
-        Weblogger mRoller = WebloggerFactory.getRoller();
+        Weblogger mRoller = WebloggerFactory.getWeblogger();
         Map props = mRoller.getPropertiesManager().getProperties();
         
         ctx.put("userName",         weblog.getHandle());
@@ -380,9 +380,9 @@ public class ContextLoader {
         ctx.put("page",ThemeTemplateWrapper.wrap(page));
         ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
-        ctx.put("rollerVersion",   WebloggerFactory.getRoller().getVersion() );
-        ctx.put("rollerBuildTime", WebloggerFactory.getRoller().getBuildTime() );
-        ctx.put("rollerBuildUser", WebloggerFactory.getRoller().getBuildUser() );
+        ctx.put("rollerVersion",   WebloggerFactory.getWeblogger().getVersion() );
+        ctx.put("rollerBuildTime", WebloggerFactory.getWeblogger().getBuildTime() );
+        ctx.put("rollerBuildUser", WebloggerFactory.getWeblogger().getBuildUser() );
         ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
         
         ctx.put("requestParameters", request.getParameterMap());

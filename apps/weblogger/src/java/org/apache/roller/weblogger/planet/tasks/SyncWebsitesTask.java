@@ -138,7 +138,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         
         try {
             PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
-            UserManager userManager = WebloggerFactory.getRoller().getUserManager();
+            UserManager userManager = WebloggerFactory.getWeblogger().getUserManager();
             
             // first, make sure there is an "all" planet group
             PlanetData planetObject = planet.getPlanet("zzz_default_planet_zzz");
@@ -223,7 +223,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             log.error("ERROR refreshing entries", e);
         } finally {
             // don't forget to release
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
             PlanetFactory.getPlanet().release();
         }
     }

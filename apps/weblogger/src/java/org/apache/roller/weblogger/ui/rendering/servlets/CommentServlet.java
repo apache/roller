@@ -187,7 +187,7 @@ public class CommentServlet extends HttpServlet {
             commentRequest = new WeblogCommentRequest(request);
             
             // lookup weblog specified by comment request
-            UserManager uMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager uMgr = WebloggerFactory.getWeblogger().getUserManager();
             weblog = uMgr.getWebsiteByHandle(commentRequest.getWeblogHandle());
             
             if(weblog == null) {
@@ -283,9 +283,9 @@ public class CommentServlet extends HttpServlet {
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !RollerRuntimeConfig.getBooleanProperty("comments.ignoreSpam.enabled")) {
                     
-                    WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
                     mgr.saveComment(comment);
-                    WebloggerFactory.getRoller().flush();
+                    WebloggerFactory.getWeblogger().flush();
                     
                     // Send email notifications only to subscribers if comment is 100% valid
                     boolean notifySubscribers = (validationScore == 100);
@@ -293,7 +293,7 @@ public class CommentServlet extends HttpServlet {
                     
                     // only re-index/invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {
-                        IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
+                        IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
                         
                         // remove entry before (re)adding it, or in case it isn't Published
                         manager.removeEntryIndexOperation(entry);

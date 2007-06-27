@@ -84,7 +84,7 @@ public class FolderCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
@@ -106,7 +106,7 @@ public class FolderCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
@@ -160,7 +160,7 @@ public class FolderCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);

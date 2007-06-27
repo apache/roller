@@ -120,10 +120,10 @@ public class OldWeblogPageModel {
         mIsMonthSpecified = isMonth;
         mLocale = locale;
         
-        mBookmarkMgr = WebloggerFactory.getRoller().getBookmarkManager();
-        mRefererMgr  = WebloggerFactory.getRoller().getRefererManager();
-        mUserMgr     = WebloggerFactory.getRoller().getUserManager();
-        mWeblogMgr   = WebloggerFactory.getRoller().getWeblogManager();
+        mBookmarkMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+        mRefererMgr  = WebloggerFactory.getWeblogger().getRefererManager();
+        mUserMgr     = WebloggerFactory.getWeblogger().getUserManager();
+        mWeblogMgr   = WebloggerFactory.getWeblogger().getWeblogManager();
         
         // Preload what we can for encapsulation.  What we cannot preload we
         // will use the Managers later to fetch.
@@ -379,7 +379,7 @@ public class OldWeblogPageModel {
             } else if (mIsMonthSpecified) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
-            Map mRet = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+            Map mRet = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntryObjectMap(
                     
                     mWebsite,
                     startDate,                    // startDate
@@ -475,7 +475,7 @@ public class OldWeblogPageModel {
                     catParam = null;
                 }
             }
-            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             //ret = mgr.getRecentWeblogEntriesArray(
             //name, day, catParam, maxEntries, true );
@@ -789,7 +789,7 @@ public class OldWeblogPageModel {
     public List getRecentComments(int maxCount) {
         List recentComments = new ArrayList();
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List recent = wmgr.getComments(
                     
                     mWebsite,

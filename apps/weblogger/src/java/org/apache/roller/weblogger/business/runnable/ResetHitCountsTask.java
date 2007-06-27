@@ -116,9 +116,9 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
         try {
             log.info("task started");
             
-            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             mgr.resetAllHitCounts();
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             log.info("task completed");
             
@@ -128,7 +128,7 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
             log.error("unexpected exception", ee);
         } finally {
             // always release
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
         }
         
     }

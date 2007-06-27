@@ -71,7 +71,7 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
     public String render(WeblogEntry entry, String str) {
         String text = str;
         try {
-            BookmarkManager bMgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bMgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             WeblogBookmarkFolder rootFolder = bMgr.getRootFolder(entry.getWebsite());
             text = matchBookmarks(text, rootFolder);
             text = lookInFolders(text, rootFolder.getFolders());

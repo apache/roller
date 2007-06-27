@@ -274,7 +274,7 @@ public class EntryBean {
         if (getCategoryId() != null) {
             WeblogCategory cat = null;
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 cat = wmgr.getWeblogCategory(getCategoryId());
             } catch (WebloggerException ex) {
                 log.error("Error getting category by id", ex);

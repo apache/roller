@@ -43,9 +43,9 @@ public class BasicUserAutoProvision implements AutoProvision {
     if(ud != null) {
       UserManager mgr;
       try {
-        mgr = WebloggerFactory.getRoller().getUserManager();
+        mgr = WebloggerFactory.getWeblogger().getUserManager();
         mgr.addUser(ud);
-        WebloggerFactory.getRoller().flush();
+        WebloggerFactory.getWeblogger().flush();
       } catch (WebloggerException e) {
         log.warn("Error while auto-provisioning user from SSO.", e);
       }

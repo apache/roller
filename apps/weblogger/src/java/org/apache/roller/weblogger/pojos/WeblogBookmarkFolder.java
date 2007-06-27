@@ -325,7 +325,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
      * @param subfolders
      */
     public List retrieveBookmarks(boolean subfolders) throws WebloggerException {
-        BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         return bmgr.getBookmarks(this, subfolders);
     }
     
@@ -405,7 +405,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
             } else {
                 childFolder.setPath(folder.getPath() + "/" + childFolder.getName());
             }
-            WebloggerFactory.getRoller().getBookmarkManager().saveFolder(childFolder);
+            WebloggerFactory.getWeblogger().getBookmarkManager().saveFolder(childFolder);
             
             log.debug("NEW child folder path is "+ childFolder.getPath());
             

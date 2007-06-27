@@ -118,7 +118,7 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
                 // lookup weblog specified by comment request
-                UserManager uMgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager uMgr = WebloggerFactory.getWeblogger().getUserManager();
                 weblog = uMgr.getWebsiteByHandle(trackbackRequest.getWeblogHandle());
                 
                 if (weblog == null) {
@@ -127,7 +127,7 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
                 // lookup entry specified by comment request
-                WeblogManager weblogMgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
                 
                 if (entry == null) {
@@ -181,9 +181,9 @@ public class TrackbackServlet extends HttpServlet {
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !RollerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
                     
-                    WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
                     mgr.saveComment(comment);
-                    WebloggerFactory.getRoller().flush();
+                    WebloggerFactory.getWeblogger().flush();
                     
                     // only invalidate the cache if comment isn't moderated
                     if(!weblog.getCommentModerationRequired()) {

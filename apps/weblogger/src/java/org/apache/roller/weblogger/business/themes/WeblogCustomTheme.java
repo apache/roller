@@ -72,7 +72,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Get the collection of all templates associated with this Theme.
      */
     public List getTemplates() throws WebloggerException {
-        UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
         return userMgr.getPages(this.weblog);
     }
     
@@ -91,7 +91,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
-        UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
         return userMgr.getPageByAction(this.weblog, ThemeTemplate.ACTION_WEBLOG);
     }
     
@@ -104,7 +104,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if(action == null)
             return null;
         
-        UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
         return userMgr.getPageByAction(this.weblog, action);
     }
     
@@ -117,7 +117,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if(name == null)
             return null;
         
-        UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
         return userMgr.getPageByName(this.weblog, name);
     }
     
@@ -130,7 +130,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if(link == null)
             return null;
         
-        UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
         return userMgr.getPageByLink(this.weblog, link);
     }
     
@@ -144,7 +144,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         ThemeResource resource = null;
         
         try {
-            FileManager fileMgr = WebloggerFactory.getRoller().getFileManager();
+            FileManager fileMgr = WebloggerFactory.getWeblogger().getFileManager();
             resource = fileMgr.getFile(this.weblog, path);
         } catch (WebloggerException ex) {
             // ignored, resource considered not found

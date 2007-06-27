@@ -75,7 +75,7 @@ public class RollerSession
             Principal principal = request.getUserPrincipal();
             if (rollerSession.getAuthenticatedUser() == null && principal != null) {
                 try {
-                    UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+                    UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                     User user = umgr.getUserByUserName(principal.getName());
                     
                     // try one time to auto-provision, only happens if user==null
@@ -141,7 +141,7 @@ public class RollerSession
         User authenticUser = null;
         if(userId != null) {
             try {
-                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 authenticUser = mgr.getUser(userId);
             } catch (WebloggerException ex) {
                 log.warn("Error looking up authenticated user "+userId, ex);

@@ -270,7 +270,7 @@ public class URLModel implements Model {
     public String editEntry(String anchor) {
         try {
             // need to determine entryId from anchor
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             WeblogEntry entry = wmgr.getWeblogEntryByAnchor(weblog, anchor);
             if(entry != null) {
                 return URLUtilities.getEntryEditURL(weblog.getHandle(), entry.getId(), false);

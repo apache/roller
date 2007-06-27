@@ -61,7 +61,7 @@ public abstract class PingTargetsBase extends UIAction {
         // load specified ping target if possible
         if(!StringUtils.isEmpty(getPingTargetId())) {
             try {
-                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 setPingTarget(pingTargetMgr.getPingTarget(getPingTargetId()));
             } catch (WebloggerException ex) {
                 getLogger().error("Error looking up ping target - "+getPingTargetId(), ex);
@@ -104,9 +104,9 @@ public abstract class PingTargetsBase extends UIAction {
         if(getPingTarget() != null) {
             
             try {
-                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.removePingTarget(getPingTarget());
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // remove deleted target from list
                 getPingTargets().remove(getPingTarget());

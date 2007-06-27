@@ -51,7 +51,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
      */
     public final void run() {
         
-        ThreadManager mgr = WebloggerFactory.getRoller().getThreadManager();
+        ThreadManager mgr = WebloggerFactory.getWeblogger().getThreadManager();
         
         boolean lockAcquired = false;
         try {
@@ -86,7 +86,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
             }
             
             // always release Roller session
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
         }
         
     }

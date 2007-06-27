@@ -57,7 +57,7 @@ public class Setup extends UIAction {
     public String execute() {
         
         try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             setUserCount(umgr.getUserCount());
             setBlogCount(umgr.getWeblogCount());
         } catch (WebloggerException ex) {

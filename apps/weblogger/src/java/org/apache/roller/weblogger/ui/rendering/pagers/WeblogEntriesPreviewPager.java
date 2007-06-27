@@ -62,7 +62,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
     
     public Map getEntries() {
         if (entries == null) try {
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager wmgr = roller.getWeblogManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null) {

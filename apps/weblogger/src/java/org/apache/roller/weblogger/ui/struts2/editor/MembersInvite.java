@@ -88,7 +88,7 @@ public class MembersInvite extends UIAction {
         
         log.debug("Attempting to process weblog invitation");
         
-        UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         
         // user being invited
         User user = null;
@@ -128,7 +128,7 @@ public class MembersInvite extends UIAction {
         if(!hasActionErrors()) try {
             
             umgr.inviteUser(getActionWeblog(), user, Short.parseShort(getPermissionsMask()));
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             addMessage("inviteMember.userInvited");
             

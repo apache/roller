@@ -54,7 +54,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             monthMap = mgr.getWeblogEntryObjectMap(
                     
                     weblog,                  // website

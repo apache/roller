@@ -97,7 +97,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         
         if(theme == null && themeName != null) {
             try {
-                ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+                ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                 theme = themeMgr.getTheme(themeName);
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it
@@ -133,7 +133,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
             }
             
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), anchor);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry "+anchor, ex);

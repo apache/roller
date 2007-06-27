@@ -69,7 +69,7 @@ public class CategoryRemove extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if(!StringUtils.isEmpty(getRemoveId())) {
                 setCategory(wmgr.getWeblogCategory(getRemoveId()));
             }
@@ -89,7 +89,7 @@ public class CategoryRemove extends UIAction {
         
         try {
             // Build list of all categories, except for current one, sorted by path.
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getRemoveId())) {
@@ -116,16 +116,16 @@ public class CategoryRemove extends UIAction {
     public String remove() {
         
         if(getCategory() != null) try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             if(getTargetCategoryId() != null) {
                 WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
                 wmgr.moveWeblogCategoryContents(getCategory(), target);
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
             }
             
             wmgr.removeWeblogCategory(getCategory());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify cache
             CacheManager.invalidate(getCategory());

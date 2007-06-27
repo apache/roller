@@ -331,7 +331,7 @@ public class WeblogPageRequest extends WeblogRequest {
         
         if(weblogEntry == null && weblogAnchor != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry "+weblogAnchor, ex);
@@ -366,7 +366,7 @@ public class WeblogPageRequest extends WeblogRequest {
         
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);

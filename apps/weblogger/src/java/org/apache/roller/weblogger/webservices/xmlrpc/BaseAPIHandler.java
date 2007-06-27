@@ -94,7 +94,7 @@ public class BaseAPIHandler implements Serializable {
     //------------------------------------------------------------------------
     //public void prep( HttpServletRequest req )
     //{
-    //mRoller = RollerContext.getRoller(req);
+    //mRoller = RollerContext.getWeblogger(req);
     //mContextUrl = RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
     //
     
@@ -115,7 +115,7 @@ public class BaseAPIHandler implements Serializable {
         Weblog website = null;
         User user = null;
         try {
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             user = userMgr.getUserByUserName(username);
             userEnabled = user.getEnabled().booleanValue();
             
@@ -177,7 +177,7 @@ public class BaseAPIHandler implements Serializable {
         User user = null;
         try {
             
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             user = userMgr.getUserByUserName(username);
             
             enabled = user.getEnabled().booleanValue();
@@ -193,7 +193,7 @@ public class BaseAPIHandler implements Serializable {
                 //System.out.println("is now [" + password + "]");
                 authenticated = user.getPassword().equals(password);
                 if (authenticated) {
-                    //WebloggerFactory.getRoller().setUser(user);
+                    //WebloggerFactory.getWeblogger().setUser(user);
                 }
             }
         } catch (Exception e) {

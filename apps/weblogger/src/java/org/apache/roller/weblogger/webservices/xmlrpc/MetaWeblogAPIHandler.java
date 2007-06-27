@@ -79,7 +79,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         
         Weblog website = validate(blogid, userid,password);
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             Hashtable result = new Hashtable();
             WeblogManager weblogMgr = roller.getWeblogManager();
@@ -124,7 +124,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("    Publish: " + publish);
         
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
@@ -235,7 +235,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("      Title: " + title);
         
         try {
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager weblogMgr = roller.getWeblogManager();
             User user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current =
@@ -314,7 +314,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     PostId: " + postid);
         mLogger.debug("     UserId: " + userid);
         
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
@@ -353,7 +353,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             byte[] bits = (byte[]) struct.get("bits");
             
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             FileManager fmgr = roller.getFileManager();
             RollerMessages msgs = new RollerMessages();
             
@@ -397,7 +397,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Vector results = new Vector();
             
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null) {
                 List entries = weblogMgr.getWeblogEntries(

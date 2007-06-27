@@ -142,7 +142,7 @@ public class Install extends UIAction {
             WebloggerFactory.bootstrap();
             
             // trigger initialization process
-            WebloggerFactory.getRoller().initialize();
+            WebloggerFactory.getWeblogger().initialize();
             
             return SUCCESS;
             

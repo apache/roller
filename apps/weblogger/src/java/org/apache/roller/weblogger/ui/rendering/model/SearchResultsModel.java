@@ -93,7 +93,7 @@ public class SearchResultsModel extends PageModel {
         }
         
         // setup the search
-        IndexManager indexMgr = WebloggerFactory.getRoller().getIndexManager();
+        IndexManager indexMgr = WebloggerFactory.getWeblogger().getIndexManager();
         
         SearchOperation search = new SearchOperation(indexMgr);
         search.setTerm(searchRequest.getQuery());
@@ -159,7 +159,7 @@ public class SearchResultsModel extends PageModel {
         
         try {
             TreeSet categories = new TreeSet();
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
             WeblogEntry entry = null;

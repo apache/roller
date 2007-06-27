@@ -122,8 +122,8 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
         log.debug("task started");
         
         try {
-            WeblogManager wMgr = WebloggerFactory.getRoller().getWeblogManager();
-            IndexManager searchMgr = WebloggerFactory.getRoller().getIndexManager();
+            WeblogManager wMgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            IndexManager searchMgr = WebloggerFactory.getWeblogger().getIndexManager();
             
             Date now = new Date();
             
@@ -157,7 +157,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             }
             
             // commit the changes
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // take a second pass to trigger reindexing and cache invalidations
             // this is because we need the updated entries flushed first
@@ -178,7 +178,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
             log.error("Unexpected exception running task", e);
         } finally {
             // always release
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
         }
         
         log.debug("task completed");

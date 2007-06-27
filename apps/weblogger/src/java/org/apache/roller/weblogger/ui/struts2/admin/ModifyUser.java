@@ -68,14 +68,14 @@ public class ModifyUser extends UIAction {
         // load the user object we are modifying
         if(getUserName() != null) {
             try {
-                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 setUser(mgr.getUserByUserName(getUserName()));
             } catch(Exception e) {
                 log.error("Error looking up user - "+getUserName(), e);
             }
         } else if(getBean().getId() != null) {
             try {
-                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 setUser(mgr.getUser(getBean().getId()));
             } catch(Exception e) {
                 log.error("Error looking up user - "+getBean().getId(), e);
@@ -116,7 +116,7 @@ public class ModifyUser extends UIAction {
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 try {
-                    getUser().resetPassword(WebloggerFactory.getRoller(),
+                    getUser().resetPassword(WebloggerFactory.getWeblogger(),
                             getBean().getPassword(),
                             getBean().getPassword());
                 } catch (WebloggerException e) {
@@ -125,7 +125,7 @@ public class ModifyUser extends UIAction {
             }
             
             try {
-                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 
                 // grant/revoke admin role if needed
                 if(getUser().hasRole("admin") && !getBean().isAdministrator()) {
@@ -138,7 +138,7 @@ public class ModifyUser extends UIAction {
             
                 // save the updated profile
                 mgr.saveUser(getUser());
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // TODO: i18n
                 addMessage("user updated.");

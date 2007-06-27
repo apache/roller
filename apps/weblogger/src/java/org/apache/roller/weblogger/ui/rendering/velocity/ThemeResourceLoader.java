@@ -73,7 +73,7 @@ public class ThemeResourceLoader extends ResourceLoader {
                 throw new ResourceNotFoundException("Invalid ThemeRL key "+name);
             
             // lookup the template from the proper theme
-            ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
             ThemeTemplate template = theme.getTemplateByName(split[1]);
             
@@ -126,7 +126,7 @@ public class ThemeResourceLoader extends ResourceLoader {
                 return last_mod;
             
             // lookup the template from the proper theme
-            ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+            ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
             Theme theme = themeMgr.getTheme(split[0]);
             ThemeTemplate template = theme.getTemplateByName(split[1]);
             

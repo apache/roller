@@ -90,7 +90,7 @@ public class HitCountTest extends TestCase {
      */
     public void testHitCountCRUD() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         WeblogHitCount testCount = new WeblogHitCount();
         testCount.setWeblog(testWeblog);
@@ -133,7 +133,7 @@ public class HitCountTest extends TestCase {
     
     public void testHitCountLookups() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogHitCount testCount = new WeblogHitCount();
@@ -173,7 +173,7 @@ public class HitCountTest extends TestCase {
     
     public void testIncrementHitCount() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         WeblogHitCount testCount = new WeblogHitCount();
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -215,7 +215,7 @@ public class HitCountTest extends TestCase {
     
     
     public void testResetHitCounts() throws Exception {
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testUser = TestUtils.getManagedUser(testUser);
         Weblog blog1 = TestUtils.setupWeblog("hitCntTest1", testUser);
@@ -277,7 +277,7 @@ public class HitCountTest extends TestCase {
     
     public void testHotWeblogs() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         testUser = TestUtils.getManagedUser(testUser);
         Weblog blog1 = TestUtils.setupWeblog("hitCntHotTest1", testUser);

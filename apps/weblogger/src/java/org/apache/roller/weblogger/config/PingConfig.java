@@ -190,7 +190,7 @@ public class PingConfig {
             }
             return;
         }
-        PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         if (!pingTargetMgr.getCommonPingTargets().isEmpty()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");

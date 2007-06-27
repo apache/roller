@@ -60,7 +60,7 @@ public class PropertiesTest extends TestCase {
     public void testProperiesCRUD() throws Exception {
         
         // remember, the properties table is initialized during Roller startup
-        PropertiesManager mgr = WebloggerFactory.getRoller().getPropertiesManager();
+        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         TestUtils.endSession(true);
         
         RuntimeConfigProperty prop = null;

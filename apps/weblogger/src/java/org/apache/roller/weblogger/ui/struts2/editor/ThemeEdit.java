@@ -74,7 +74,7 @@ public class ThemeEdit extends UIAction {
     
     
     public void myPrepare() {
-        ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+        ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         setThemes(themeMgr.getEnabledThemesList());
     }
     
@@ -113,7 +113,7 @@ public class ThemeEdit extends UIAction {
                 // do theme import if necessary
                 SharedTheme importTheme = null;
                 if(isImportTheme() && !StringUtils.isEmpty(getImportThemeId())) try {
-                    ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+                    ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                     importTheme = themeMgr.getTheme(getImportThemeId());
                     themeMgr.importTheme(getActionWeblog(), importTheme);
                 } catch(WebloggerException re) {
@@ -127,9 +127,9 @@ public class ThemeEdit extends UIAction {
                     log.debug("Saving custom theme for weblog "+weblog.getHandle());
                     
                     // save updated weblog and flush
-                    UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+                    UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
                     userMgr.saveWebsite(weblog);
-                    WebloggerFactory.getRoller().flush();
+                    WebloggerFactory.getWeblogger().flush();
                     
                     // make sure to flush the page cache so ppl can see the change
                     CacheManager.invalidate(weblog);
@@ -164,7 +164,7 @@ public class ThemeEdit extends UIAction {
                 
             } else {
                 try {
-                    ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+                    ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                     newTheme = themeMgr.getTheme(getThemeId());
                     
                     if(!newTheme.isEnabled()) {
@@ -184,9 +184,9 @@ public class ThemeEdit extends UIAction {
                 log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
                 
                 // save updated weblog and flush
-                UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
                 userMgr.saveWebsite(weblog);
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // make sure to flush the page cache so ppl can see the change
                 CacheManager.invalidate(weblog);
@@ -217,7 +217,7 @@ public class ThemeEdit extends UIAction {
     // has this weblog had a custom theme before?
     public boolean isFirstCustomization() {
         try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             return (umgr.getPageByAction(getActionWeblog(), WeblogTemplate.ACTION_WEBLOG) == null);
         } catch (WebloggerException ex) {
             log.error("Error looking up weblog template", ex);

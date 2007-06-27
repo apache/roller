@@ -53,7 +53,7 @@ public class EntryRemove extends UIAction {
     public void myPrepare() {
         if(getRemoveId() != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - "+getRemoveId(), ex);
@@ -77,16 +77,16 @@ public class EntryRemove extends UIAction {
                 // remove the entry from the search index
                 // TODO: can we do this in a better way?
                 entry.setStatus(WeblogEntry.DRAFT);
-                IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
+                IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
                 manager.addEntryReIndexOperation(entry);
             } catch (WebloggerException ex) {
                 log.warn("Trouble triggering entry indexing", ex);
             }
             
             // remove entry itself
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             wmgr.removeWeblogEntry(entry);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // flush caches
             CacheManager.invalidate(entry);

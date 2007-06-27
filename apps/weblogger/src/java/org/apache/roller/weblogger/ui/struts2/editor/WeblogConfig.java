@@ -77,7 +77,7 @@ public class WeblogConfig extends UIAction {
     public void myPrepare() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             // set categories list
             setWeblogCategories(wmgr.getWeblogCategories(getActionWeblog(), false));
@@ -90,7 +90,7 @@ public class WeblogConfig extends UIAction {
             }
             
             // set plugins list
-            PluginManager ppmgr = WebloggerFactory.getRoller().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
             Map pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
             List plugins = new ArrayList();
             Iterator iter = pluginsMap.values().iterator();
@@ -125,8 +125,8 @@ public class WeblogConfig extends UIAction {
         myValidate();
         
         if(!hasActionErrors()) try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             
             Weblog weblog = getActionWeblog();
             
@@ -160,10 +160,10 @@ public class WeblogConfig extends UIAction {
             }
             
             // apply referer filters
-            WebloggerFactory.getRoller().getRefererManager().applyRefererFilters(weblog);
+            WebloggerFactory.getWeblogger().getRefererManager().applyRefererFilters(weblog);
             
             // flush
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             addMessage("websiteSettings.savedChanges");
             

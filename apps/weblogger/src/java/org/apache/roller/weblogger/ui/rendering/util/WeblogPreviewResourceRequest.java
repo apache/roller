@@ -84,7 +84,7 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
         
         if(theme == null && themeName != null) {
             try {
-                ThemeManager themeMgr = WebloggerFactory.getRoller().getThemeManager();
+                ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
                 theme = themeMgr.getTheme(themeName);
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it

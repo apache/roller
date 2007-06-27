@@ -74,7 +74,7 @@ public class PreviewThemeImageServlet extends HttpServlet {
         
         // try looking up selected theme
         try {
-            ThemeManager tmgr = WebloggerFactory.getRoller().getThemeManager();
+            ThemeManager tmgr = WebloggerFactory.getWeblogger().getThemeManager();
             SharedTheme previewTheme = tmgr.getTheme(theme);
             ThemeResource previewImage = previewTheme.getPreviewImage();
             if(previewImage != null) {
