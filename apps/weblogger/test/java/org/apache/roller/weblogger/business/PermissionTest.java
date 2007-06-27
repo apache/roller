@@ -98,7 +98,7 @@ public class PermissionTest extends TestCase {
         
         log.info("BEGIN");
         
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         WeblogPermission perm = null;
                 
         // delete permissions
@@ -162,7 +162,7 @@ public class PermissionTest extends TestCase {
             User user = TestUtils.setupUser("testPermissionsLookups");
             TestUtils.endSession(true);
             
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogPermission perm = null;
             List perms = null;
             
@@ -236,7 +236,7 @@ public class PermissionTest extends TestCase {
         User user = TestUtils.setupUser("testInvitations");
         TestUtils.endSession(true);
 
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         WeblogPermission perm = null;
         List perms = null;
 

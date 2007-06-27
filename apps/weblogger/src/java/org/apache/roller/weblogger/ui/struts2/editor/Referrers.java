@@ -65,7 +65,7 @@ public class Referrers extends UIAction {
      */
     public String execute() {
         
-        RefererManager refmgr = WebloggerFactory.getRoller().getRefererManager();
+        RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
         try {
             setDayHits(refmgr.getDayHits(getActionWeblog()));
             setReferrers(refmgr.getTodaysReferers(getActionWeblog()));
@@ -85,9 +85,9 @@ public class Referrers extends UIAction {
     public String reset() {
         
         try {
-            RefererManager refmgr = WebloggerFactory.getRoller().getRefererManager();
+            RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
             refmgr.clearReferrers(getActionWeblog());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             CacheManager.invalidate(getActionWeblog());
         } catch (Exception ex) {
@@ -107,7 +107,7 @@ public class Referrers extends UIAction {
         
         String[] removeIds = getRemoveIds();
         if(removeIds != null) {
-            RefererManager refmgr = WebloggerFactory.getRoller().getRefererManager();
+            RefererManager refmgr = WebloggerFactory.getWeblogger().getRefererManager();
             
             try {
                 WeblogReferrer referer = null;
@@ -121,7 +121,7 @@ public class Referrers extends UIAction {
                 }
                 
                 // flush
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());

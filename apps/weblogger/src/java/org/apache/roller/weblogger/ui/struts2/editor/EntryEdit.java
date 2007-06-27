@@ -76,7 +76,7 @@ public final class EntryEdit extends EntryBase {
     public void myPrepare() {
         if(getBean().getId() != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 setEntry(wmgr.getWeblogEntry(getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - "+getBean().getId(), ex);
@@ -122,7 +122,7 @@ public final class EntryEdit extends EntryBase {
         }
         
         if(!hasActionErrors()) try {
-            WeblogManager weblogMgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             WeblogEntry entry = getEntry();
             
@@ -168,7 +168,7 @@ public final class EntryEdit extends EntryBase {
             
             log.debug("Saving entry");
             weblogMgr.saveWeblogEntry(entry);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify search of the new entry
             reindexEntry(entry);
@@ -178,7 +178,7 @@ public final class EntryEdit extends EntryBase {
             
             // Queue applicable pings for this update.
             if(entry.isPublished()) {
-                WebloggerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
+                WebloggerFactory.getWeblogger().getAutopingManager().queueApplicableAutoPings(entry);
             }
             
             if(entry.isPending()) {
@@ -263,7 +263,7 @@ public final class EntryEdit extends EntryBase {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             return wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);

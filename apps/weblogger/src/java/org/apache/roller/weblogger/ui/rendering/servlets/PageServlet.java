@@ -328,7 +328,7 @@ public class PageServlet extends HttpServlet {
             
             try {
                 // tags specified.  make sure they exist.
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 invalid = !wmgr.getTagComboExists(pageRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
@@ -608,7 +608,7 @@ public class PageServlet extends HttpServlet {
             referrer.setWeblogDateString(pageRequest.getWeblogDate());
             
             ReferrerQueueManager refQueue =
-                    WebloggerFactory.getRoller().getReferrerQueueManager();
+                    WebloggerFactory.getWeblogger().getReferrerQueueManager();
             refQueue.processReferrer(referrer);
         } catch(Exception e) {
             log.error("Error processing referrer", e);

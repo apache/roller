@@ -710,7 +710,7 @@ public class WeblogEntry implements Serializable {
             }
         }
 
-        WeblogManager weblogManager = WebloggerFactory.getRoller().getWeblogManager();
+        WeblogManager weblogManager = WebloggerFactory.getWeblogger().getWeblogManager();
         for (Iterator it = removeTags.iterator(); it.hasNext();) {
             weblogManager.removeWeblogEntryTag((String) it.next(), this);
         }
@@ -853,7 +853,7 @@ public class WeblogEntry implements Serializable {
     public List getComments(boolean ignoreSpam, boolean approvedOnly) {
         List list = new ArrayList();
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             return wmgr.getComments(
                     
                     getWebsite(),
@@ -889,7 +889,7 @@ public class WeblogEntry implements Serializable {
     public List getReferers() {
         List referers = null;
         try {
-            referers = WebloggerFactory.getRoller().getRefererManager().getReferersToEntry(getId());
+            referers = WebloggerFactory.getWeblogger().getRefererManager().getReferersToEntry(getId());
         } catch (WebloggerException e) {
             mLogger.error("Unexpected exception", e);
         }
@@ -976,7 +976,7 @@ public class WeblogEntry implements Serializable {
     
     /** Create anchor for weblog entry, based on title or text */
     protected String createAnchor() throws WebloggerException {
-        return WebloggerFactory.getRoller().getWeblogManager().createAnchor(this);
+        return WebloggerFactory.getWeblogger().getWeblogManager().createAnchor(this);
     }
     
     /** Create anchor for weblog entry, based on title or text */

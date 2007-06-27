@@ -301,13 +301,13 @@ public abstract class WebloggerImpl implements Weblogger {
             // Remove custom ping targets if they have been disallowed
             if (PingConfig.getDisallowCustomTargets()) {
                 log.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
-                WebloggerFactory.getRoller().getPingTargetManager().removeAllCustomPingTargets();
+                WebloggerFactory.getWeblogger().getPingTargetManager().removeAllCustomPingTargets();
             }
             
             // Remove all autoping configurations if ping usage has been disabled.
             if (PingConfig.getDisablePingUsage()) {
                 log.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
-                WebloggerFactory.getRoller().getAutopingManager().removeAllAutoPings();
+                WebloggerFactory.getWeblogger().getAutopingManager().removeAllAutoPings();
             }
         } catch (Throwable t) {
             throw new InitializationException("Error initializing ping systems", t);

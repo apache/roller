@@ -121,7 +121,7 @@ public class ResourceServlet extends HttpServlet {
         // if not from theme then see if resource is in weblog's upload dir
         if(resourceStream == null) {
             try {
-                FileManager fileMgr = WebloggerFactory.getRoller().getFileManager();
+                FileManager fileMgr = WebloggerFactory.getWeblogger().getFileManager();
                 ThemeResource resource = fileMgr.getFile(weblog, 
                         resourceRequest.getResourcePath());
                 resourceLastMod = resource.getLastModified();

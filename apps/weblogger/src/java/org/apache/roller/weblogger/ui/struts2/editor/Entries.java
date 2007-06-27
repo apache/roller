@@ -85,7 +85,7 @@ public class Entries extends UIAction {
         try {
             String status = getBean().getStatus();
             
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(
                     getActionWeblog(),
                     null,
@@ -174,7 +174,7 @@ public class Entries extends UIAction {
         
         List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             weblogCats = wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);

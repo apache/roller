@@ -110,7 +110,7 @@ public class PingsTest extends TestCase {
      */
     public void testPingTargetCRUD() throws Exception {
         
-        PingTargetManager mgr = WebloggerFactory.getRoller().getPingTargetManager();
+        PingTargetManager mgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         PingTarget ping = null;
         
         // create common ping
@@ -191,7 +191,7 @@ public class PingsTest extends TestCase {
      */
     public void testPingTargetLookups() throws Exception {
         
-        PingTargetManager mgr = WebloggerFactory.getRoller().getPingTargetManager();
+        PingTargetManager mgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         PingTarget ping = null;
         
         // create common ping
@@ -242,7 +242,7 @@ public class PingsTest extends TestCase {
      */
     public void testAutoPingCRUD() throws Exception {
         
-        AutoPingManager mgr = WebloggerFactory.getRoller().getAutopingManager();
+        AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
         AutoPing autoPing = null;
         
         // create ping target to use for tests
@@ -294,8 +294,8 @@ public class PingsTest extends TestCase {
      */
     public void testPingTargetRemovals() throws Exception {
         
-        AutoPingManager mgr = WebloggerFactory.getRoller().getAutopingManager();
-        PingTargetManager ptmgr = WebloggerFactory.getRoller().getPingTargetManager();
+        AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
+        PingTargetManager ptmgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         AutoPing testAutoPing = null;
         
         // create ping target to use for tests
@@ -368,8 +368,8 @@ public class PingsTest extends TestCase {
      */
     public void testAutoPingLookups() throws Exception {
         
-        AutoPingManager mgr = WebloggerFactory.getRoller().getAutopingManager();
-        PingTargetManager ptmgr = WebloggerFactory.getRoller().getPingTargetManager();
+        AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
+        PingTargetManager ptmgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         AutoPing autoPing = null;
         
         // create autoPing target to use for tests

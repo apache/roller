@@ -116,7 +116,7 @@ public class Register extends UIAction implements ServletRequestAware {
         
         if (!hasActionErrors()) try {
             
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             
             // copy form data into new user pojo
             User ud = new User();
@@ -128,7 +128,7 @@ public class Register extends UIAction implements ServletRequestAware {
             // If user set both password and passwordConfirm then reset password
             if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
-                ud.resetPassword(WebloggerFactory.getRoller(),
+                ud.resetPassword(WebloggerFactory.getWeblogger(),
                         getBean().getPasswordText(), getBean().getPasswordConfirm());
             }
             
@@ -165,7 +165,7 @@ public class Register extends UIAction implements ServletRequestAware {
             
             // save new user
             mgr.addUser(ud);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // now send activation email if necessary
             if (activationEnabled && ud.getActivationCode() != null) {
@@ -202,7 +202,7 @@ public class Register extends UIAction implements ServletRequestAware {
     public String activate() {
         
         try {
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             
             if (getActivationCode() == null) {
                 addError("error.activate.user.missingActivationCode");
@@ -214,7 +214,7 @@ public class Register extends UIAction implements ServletRequestAware {
                     user.setEnabled(Boolean.TRUE);
                     user.setActivationCode(null);
                     mgr.saveUser(user);
-                    WebloggerFactory.getRoller().flush();
+                    WebloggerFactory.getWeblogger().flush();
                     
                     setActivationStatus("active");
                     
@@ -277,7 +277,7 @@ public class Register extends UIAction implements ServletRequestAware {
         
         // check that username is not taken
         if(!StringUtils.isEmpty(getBean().getUserName())) try {
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             if(mgr.getUserByUserName(getBean().getUserName(), null) != null) {
                 addError("error.add.user.userNameInUse");
                 // reset user name

@@ -102,7 +102,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             }
             
             try {
-                Weblogger roller = WebloggerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogManager wmgr = roller.getWeblogManager();
                 UserManager umgr = roller.getUserManager();
                 List rawEntries = wmgr.getWeblogEntries(

@@ -75,7 +75,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     public void myPrepare() {
         try {
             // just grab our properties map and make it available to the action
-            PropertiesManager mgr = WebloggerFactory.getRoller().getPropertiesManager();
+            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             setProperties(mgr.getProperties());
         } catch (WebloggerException ex) {
             log.error("Error getting runtime properties map", ex);
@@ -144,9 +144,9 @@ public class GlobalConfig extends UIAction implements ParameterAware {
         
         try {
             // save 'em and flush
-            PropertiesManager mgr = WebloggerFactory.getRoller().getPropertiesManager();
+            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             mgr.saveProperties(getProperties());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify user of our success
             addMessage("weblogEdit.changesSaved");

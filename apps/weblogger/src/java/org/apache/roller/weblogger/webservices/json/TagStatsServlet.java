@@ -98,7 +98,7 @@ public class TagStatsServlet extends HttpServlet {
             prefix = pathInfo;
         }
                                         
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             response.setContentType("text/html; charset=utf-8");
             
@@ -109,7 +109,7 @@ public class TagStatsServlet extends HttpServlet {
             // only throw an exception when not found if we have a tag prefix 
             if(handle != null) {
                 try {
-                    UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+                    UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                     website = umgr.getWebsiteByHandle(handle, Boolean.TRUE);
                     if (website == null)
                         throw new WebloggerException();                

@@ -76,7 +76,7 @@ public final class BookmarksImport extends UIAction {
      */
     public String save() {
         
-        BookmarkManager bm = WebloggerFactory.getRoller().getBookmarkManager();
+        BookmarkManager bm = WebloggerFactory.getWeblogger().getBookmarkManager();
         
         InputStream stream = null;
         if(getOpmlFile() != null && getOpmlFile().exists()) try {
@@ -101,7 +101,7 @@ public final class BookmarksImport extends UIAction {
                 
                 // Use Roller BookmarkManager to import bookmarks
                 bm.importBookmarks(getActionWeblog(), folderName, data);
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
                 
                 // notify caches
                 CacheManager.invalidate(getActionWeblog());

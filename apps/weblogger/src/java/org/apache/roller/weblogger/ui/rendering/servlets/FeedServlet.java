@@ -192,7 +192,7 @@ public class FeedServlet extends HttpServlet {
             
             try {
                 // tags specified.  make sure they exist.
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 invalid = !wmgr.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;

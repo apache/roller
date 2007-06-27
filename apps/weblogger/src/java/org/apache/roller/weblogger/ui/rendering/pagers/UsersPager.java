@@ -131,7 +131,7 @@ public class UsersPager extends AbstractPager {
             
             List results = new ArrayList();
             try {
-                Weblogger roller = WebloggerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getWeblogger();
                 UserManager umgr = roller.getUserManager();
                 List rawUsers = null;
                 if (letter == null) {

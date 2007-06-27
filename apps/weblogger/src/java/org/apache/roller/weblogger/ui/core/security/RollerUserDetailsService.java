@@ -25,7 +25,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         
         User userData = null;
         try {
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             userData = umgr.getUserByUserName(userName, Boolean.TRUE); 
         } catch (WebloggerException ex) {

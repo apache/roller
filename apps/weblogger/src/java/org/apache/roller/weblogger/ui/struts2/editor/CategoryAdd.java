@@ -63,7 +63,7 @@ public class CategoryAdd extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if(!StringUtils.isEmpty(getCategoryId())) {
                 setCategory(wmgr.getWeblogCategory(getCategoryId()));
             }
@@ -116,9 +116,9 @@ public class CategoryAdd extends UIAction {
             getCategory().addCategory(newCategory);
             
             // save changes
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             wmgr.saveWeblogCategory(newCategory);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(newCategory);

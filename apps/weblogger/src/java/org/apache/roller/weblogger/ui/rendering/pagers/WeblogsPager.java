@@ -140,7 +140,7 @@ public class WeblogsPager extends AbstractPager {
                 startDate = cal.getTime();
             }
             try {
-                Weblogger roller = WebloggerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getWeblogger();
                 UserManager umgr = roller.getUserManager();
                 List rawWeblogs = null;
                 if (letter == null) {

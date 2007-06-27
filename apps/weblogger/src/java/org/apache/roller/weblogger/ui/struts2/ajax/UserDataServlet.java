@@ -64,7 +64,7 @@ public class UserDataServlet extends HttpServlet {
         try { length = Integer.parseInt(request.getParameter("length"));
         } catch (Throwable ignored) {}
         
-        Weblogger roller = WebloggerFactory.getRoller();
+        Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             UserManager umgr = roller.getUserManager();
             List users =

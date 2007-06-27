@@ -73,7 +73,7 @@ public final class WebloggerFactory {
      * @return Weblogger An instance of Weblogger.
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
-    public static final Weblogger getRoller() {
+    public static final Weblogger getWeblogger() {
         if (rollerInstance == null) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }

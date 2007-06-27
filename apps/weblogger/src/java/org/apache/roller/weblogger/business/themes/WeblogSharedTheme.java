@@ -85,7 +85,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         // first get the pages from the db
         try {
             ThemeTemplate template = null;
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             Iterator dbPages = userMgr.getPages(this.weblog).iterator();
             while(dbPages.hasNext()) {
                 template = (ThemeTemplate) dbPages.next();
@@ -130,7 +130,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         ThemeTemplate stylesheet = this.theme.getStylesheet();
         if(stylesheet != null) {
             // now try getting custom version from weblog
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             ThemeTemplate override = umgr.getPageByLink(this.weblog, stylesheet.getLink());
             if(override != null) {
                 stylesheet = override;
@@ -188,7 +188,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             template = userMgr.getPageByName(this.weblog, name);
         }
         
@@ -219,7 +219,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
-            UserManager userMgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             template = userMgr.getPageByLink(this.weblog, link);
         }
         
@@ -244,7 +244,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         // if we didn't find it in our theme then look in weblog uploads
         if(resource == null) {
             try {
-                FileManager fileMgr = WebloggerFactory.getRoller().getFileManager();
+                FileManager fileMgr = WebloggerFactory.getWeblogger().getFileManager();
                 resource = fileMgr.getFile(this.weblog, path);
             } catch (WebloggerException ex) {
                 // ignored, resource considered not found

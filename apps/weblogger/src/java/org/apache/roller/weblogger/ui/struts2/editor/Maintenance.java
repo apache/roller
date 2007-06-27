@@ -63,7 +63,7 @@ public class Maintenance extends UIAction {
     public String index() {
         
         try {
-            IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
+            IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
             manager.rebuildWebsiteIndex(getActionWeblog());
             
             addMessage("maintenance.message.indexed");
@@ -88,9 +88,9 @@ public class Maintenance extends UIAction {
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
             
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             umgr.saveWebsite(weblog);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // also notify cache manager
             CacheManager.invalidate(weblog);

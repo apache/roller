@@ -61,7 +61,7 @@ public class BookmarkEdit extends UIAction {
     
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if(!StringUtils.isEmpty(getBean().getId())) {
                 setBookmark(bmgr.getBookmark(getBean().getId()));
             }
@@ -102,9 +102,9 @@ public class BookmarkEdit extends UIAction {
             
             getBean().copyTo(getBookmark());
             
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             bmgr.saveBookmark(getBookmark());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             CacheManager.invalidate(getBookmark());
             

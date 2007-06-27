@@ -85,7 +85,7 @@ public class CreateUser extends UIAction {
         
         if (!hasActionErrors()) try {
             
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             
             // copy form data into new user pojo
             User newUser = new User();
@@ -94,7 +94,7 @@ public class CreateUser extends UIAction {
             
             // set username and password
             newUser.setUserName(getBean().getUserName());
-            newUser.resetPassword(WebloggerFactory.getRoller(),
+            newUser.resetPassword(WebloggerFactory.getWeblogger(),
                     getBean().getPassword(), getBean().getPassword());
             
             // are we granting the user admin rights?
@@ -104,7 +104,7 @@ public class CreateUser extends UIAction {
             
             // save new user
             mgr.addUser(newUser);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // TODO: i18n
             addMessage("New user created");

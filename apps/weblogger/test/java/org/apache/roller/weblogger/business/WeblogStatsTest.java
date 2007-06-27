@@ -54,7 +54,7 @@ public class WeblogStatsTest extends TestCase {
         TestUtils.endSession(true);
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();      
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();      
         List list = mgr.getMostCommentedWebsites(null, null, 0, -1);  
         
         assertNotNull(list);
@@ -72,7 +72,7 @@ public class WeblogStatsTest extends TestCase {
     }
     public void testGetMostCommentedWeblogEntries() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();      
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();      
         List list = mgr.getMostCommentedWeblogEntries(null, null, null, 0, -1);
         
         assertNotNull(list);
@@ -88,14 +88,14 @@ public class WeblogStatsTest extends TestCase {
         assertEquals(1L, s2.getCount());   
     }
     public void testGetUserNameLetterMap() throws Exception {        
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();      
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();      
         Map map = mgr.getUserNameLetterMap();    
         assertNotNull(map.get("a"));
         assertNotNull(map.get("b"));
         assertNull(map.get("c"));
     }
     public void testGetWeblogLetterMap() throws Exception {        
-        UserManager mgr = WebloggerFactory.getRoller().getUserManager();      
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();      
         Map map = mgr.getWeblogHandleLetterMap();    
         assertNotNull(map.get("a"));
         assertNotNull(map.get("b"));

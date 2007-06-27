@@ -116,7 +116,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
         try {
             log.info("task started");
             
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             roller.getRefererManager().clearReferrers();
             roller.flush();
             
@@ -128,7 +128,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
             log.error("unexpected exception", ee);
         } finally {
             // always release
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
         }
         
     }

@@ -50,7 +50,7 @@ public abstract class EntryBase extends UIAction {
      * Trigger reindexing of modified entry.
      */
     protected void reindexEntry(WeblogEntry entry) {
-        IndexManager manager = WebloggerFactory.getRoller().getIndexManager();
+        IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
         
         // if published, index the entry
         if (entry.isPublished()) {
@@ -72,7 +72,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentPublishedEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(), // userName
                     null,
@@ -101,7 +101,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentScheduledEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(), // userName
                     null,
@@ -129,7 +129,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentDraftEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(),
                     null,
@@ -157,7 +157,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentPendingEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getRoller().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
                     
                     getActionWeblog(),
                     null,
@@ -180,7 +180,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntryPlugin> getEntryPlugins() {
         List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
         try {
-            PluginManager ppmgr = WebloggerFactory.getRoller().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
             Map<String, WeblogEntryPlugin> plugins = ppmgr.getWeblogEntryPlugins(getActionWeblog());
             
             if(plugins.size() > 0) {

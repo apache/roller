@@ -60,7 +60,7 @@ public class CategoryEdit extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if(!StringUtils.isEmpty(getBean().getId())) {
                 setCategory(wmgr.getWeblogCategory(getBean().getId()));
             }
@@ -109,9 +109,9 @@ public class CategoryEdit extends UIAction {
             getBean().copyTo(getCategory());
             
             // save changes
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             wmgr.saveWeblogCategory(getCategory());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(getCategory());

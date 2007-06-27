@@ -86,7 +86,7 @@ public class Comments extends UIAction {
         List comments = Collections.EMPTY_LIST;
         boolean hasMore = false;
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             // lookup weblog entry if necessary
             WeblogEntry queryEntry = null;
@@ -181,7 +181,7 @@ public class Comments extends UIAction {
         getBean().loadCheckboxes(getPager().getItems());
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List allMatchingComments = wmgr.getComments(
                     getActionWeblog(),
                     null,
@@ -213,7 +213,7 @@ public class Comments extends UIAction {
     public String delete() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             int deleted = wmgr.removeMatchingComments(
                     getActionWeblog(),
                     null,
@@ -246,7 +246,7 @@ public class Comments extends UIAction {
     public String update() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             List<WeblogEntryComment> flushList = new ArrayList();
             
@@ -319,7 +319,7 @@ public class Comments extends UIAction {
                 }
             }
             
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches of changes
             for(WeblogEntryComment comm : flushList) {

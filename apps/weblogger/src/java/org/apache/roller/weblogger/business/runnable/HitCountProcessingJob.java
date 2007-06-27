@@ -52,8 +52,8 @@ public class HitCountProcessingJob implements Job {
      */
     public void execute() {
         
-        UserManager umgr = WebloggerFactory.getRoller().getUserManager();
-        WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+        WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         
         HitCountQueue hitCounter = HitCountQueue.getInstance();
         
@@ -97,7 +97,7 @@ public class HitCountProcessingJob implements Job {
             }
             
             // flush the results to the db
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             long endTime = System.currentTimeMillis();
             
@@ -107,7 +107,7 @@ public class HitCountProcessingJob implements Job {
             log.error("Error persisting updated hit counts", ex);
         } finally {
             // release session
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
         }
     }
     

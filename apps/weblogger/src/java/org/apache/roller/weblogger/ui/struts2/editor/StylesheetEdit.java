@@ -74,7 +74,7 @@ public class StylesheetEdit extends UIAction {
         if(stylesheet != null) {
             log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
-                UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 setTemplate(mgr.getPageByLink(getActionWeblog(), stylesheet.getLink()));
                 
                 if(getTemplate() == null) {
@@ -94,7 +94,7 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
                     
                     mgr.savePage(stylesheetTmpl);
-                    WebloggerFactory.getRoller().flush();
+                    WebloggerFactory.getWeblogger().flush();
                     
                     setTemplate(stylesheetTmpl);
                 }
@@ -139,9 +139,9 @@ public class StylesheetEdit extends UIAction {
             stylesheet.setContents(getContents());
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             mgr.savePage(stylesheet);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(stylesheet);
@@ -181,7 +181,7 @@ public class StylesheetEdit extends UIAction {
             WeblogTemplate stylesheet = getTemplate();
             
             // lookup the theme used by this weblog
-            ThemeManager tmgr = WebloggerFactory.getRoller().getThemeManager();
+            ThemeManager tmgr = WebloggerFactory.getWeblogger().getThemeManager();
             Theme theme = tmgr.getTheme(getActionWeblog().getEditorTheme());
             
             // lookup 
@@ -189,9 +189,9 @@ public class StylesheetEdit extends UIAction {
             stylesheet.setContents(theme.getStylesheet().getContents());
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             mgr.savePage(stylesheet);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(stylesheet);

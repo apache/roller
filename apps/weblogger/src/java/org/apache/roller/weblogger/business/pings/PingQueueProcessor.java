@@ -51,7 +51,7 @@ public class PingQueueProcessor {
     
     
     private PingQueueProcessor() throws WebloggerException {
-        pingQueueMgr = WebloggerFactory.getRoller().getPingQueueManager();
+        pingQueueMgr = WebloggerFactory.getWeblogger().getPingQueueManager();
     }
     
     

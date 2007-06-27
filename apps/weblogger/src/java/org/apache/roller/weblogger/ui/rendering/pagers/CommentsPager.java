@@ -89,7 +89,7 @@ public class CommentsPager extends AbstractPager {
             }
             
             try {
-                Weblogger roller = WebloggerFactory.getRoller();
+                Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogManager wmgr = roller.getWeblogManager();
                 List entries = wmgr.getComments(
                         weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);

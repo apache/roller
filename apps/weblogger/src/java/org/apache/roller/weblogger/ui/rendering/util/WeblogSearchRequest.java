@@ -135,7 +135,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);

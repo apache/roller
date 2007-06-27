@@ -76,7 +76,7 @@ public class Categories extends UIAction {
     
     public void myPrepare() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             if(!StringUtils.isEmpty(getCategoryId()) && 
                     !"/".equals(getCategoryId())) {
                 setCategory(wmgr.getWeblogCategory(getCategoryId()));
@@ -96,7 +96,7 @@ public class Categories extends UIAction {
         
         try {
             // Build list of all categories, except for current one, sorted by path.
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List<WeblogCategory> cats = wmgr.getWeblogCategories(getActionWeblog(), true);
             for(WeblogCategory cat : cats) {
                 if (!cat.getId().equals(getCategoryId())) {
@@ -132,7 +132,7 @@ public class Categories extends UIAction {
     public String move() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             log.debug("Moving categories to category - "+getTargetCategoryId());
             
@@ -154,7 +154,7 @@ public class Categories extends UIAction {
                 }
                 
                 // flush changes
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
             }
             
         } catch (WebloggerException ex) {

@@ -100,7 +100,7 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries before startDate, using category restriction limit 1
         // Use entry's date as previous month
         try {
-            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List prevEntries = mgr.getWeblogEntries(
                     
                     weblog,                    // website
@@ -126,7 +126,7 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries after endDate, using category restriction limit 1
         // Use entry's date as next month
         try {
-            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             List nextEntries = mgr.getWeblogEntries(
                     
                     weblog,                    // website
@@ -157,7 +157,7 @@ public class WeblogCalendarModel implements CalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogManager mgr = WebloggerFactory.getRoller().getWeblogManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
             monthMap = mgr.getWeblogEntryStringMap(
                     
                     weblog,                  // website

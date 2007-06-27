@@ -105,19 +105,19 @@ public class ConfigModel implements Model {
     
     /** Get Roller version string */
     public String getRollerVersion() {
-        return WebloggerFactory.getRoller().getVersion();
+        return WebloggerFactory.getWeblogger().getVersion();
     }
     
     
     /** Get timestamp of Roller build */
     public String getRollerBuildTimestamp() {
-        return WebloggerFactory.getRoller().getBuildTime();
+        return WebloggerFactory.getWeblogger().getBuildTime();
     }
     
     
     /** Get username who created Roller build */
     public String getRollerBuildUser() {
-        return WebloggerFactory.getRoller().getBuildUser();
+        return WebloggerFactory.getWeblogger().getBuildUser();
     }
     
     

@@ -35,7 +35,7 @@ abstract class Authenticator {
     /** Creates a new instance of HttpBasicAuthenticator */
     public Authenticator(HttpServletRequest req) {
         setRequest(req);
-        setRoller(WebloggerFactory.getRoller());
+        setRoller(WebloggerFactory.getWeblogger());
     }
     
     public abstract void authenticate() throws HandlerException;

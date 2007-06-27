@@ -58,7 +58,7 @@ public class CommonPingTargets extends PingTargetsBase {
     
     public void loadPingTargets() {
         try {
-            PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+            PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
             setPingTargets(pingTargetMgr.getCommonPingTargets());
         } catch (WebloggerException ex) {
             log.error("Error loading common ping targets", ex);
@@ -77,9 +77,9 @@ public class CommonPingTargets extends PingTargetsBase {
             try {
                 getPingTarget().setAutoEnabled(true);
                 
-                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
             } catch (Exception ex) {
                 getLogger().error("Error saving ping target", ex);
                 // TODO: i18n
@@ -103,9 +103,9 @@ public class CommonPingTargets extends PingTargetsBase {
             try {
                 getPingTarget().setAutoEnabled(false);
                 
-                PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+                PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
                 pingTargetMgr.savePingTarget(getPingTarget());
-                WebloggerFactory.getRoller().flush();
+                WebloggerFactory.getWeblogger().flush();
             } catch (Exception ex) {
                 getLogger().error("Error saving ping target", ex);
                 // TODO: i18n

@@ -63,7 +63,7 @@ public class RollerRuntimeConfig {
         String value = null;
         
         try {
-            PropertiesManager pmgr = WebloggerFactory.getRoller().getPropertiesManager();
+            PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
             RuntimeConfigProperty prop = pmgr.getProperty(name);
             if(prop != null) {
                 value = prop.getValue();

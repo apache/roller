@@ -80,13 +80,13 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 Set newEntries = new TreeSet();
                 
                 // get corresponding website object
-                UserManager usermgr = WebloggerFactory.getRoller().getUserManager();
+                UserManager usermgr = WebloggerFactory.getWeblogger().getUserManager();
                 Weblog website = usermgr.getWebsiteByHandle(sub.getAuthor());
                 if (website == null) 
                     return newEntries;
                 
                 // figure website last update time
-                WeblogManager blogmgr = WebloggerFactory.getRoller().getWeblogManager();
+                WeblogManager blogmgr = WebloggerFactory.getWeblogger().getWeblogManager();
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
                 
                 Date siteUpdated = website.getLastModified();
@@ -130,7 +130,7 @@ public class RollerRomeFeedFetcher extends RomeFeedFetcher {
                 }
                 
                 // Populate subscription object with new entries
-                PluginManager ppmgr = WebloggerFactory.getRoller().getPagePluginManager();
+                PluginManager ppmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
                 Map pagePlugins = ppmgr.getWeblogEntryPlugins(website);
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {

@@ -127,7 +127,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             log.debug("task started");
             
             PingQueueProcessor.getInstance().processQueue();
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             log.debug("task completed");
             
@@ -137,7 +137,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             log.error("unexpected exception", ee);
         } finally {
             // always release
-            WebloggerFactory.getRoller().release();
+            WebloggerFactory.getWeblogger().release();
         }
         
     }

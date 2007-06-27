@@ -68,7 +68,7 @@ public class Templates extends UIAction {
         
         // query for templates list
         try {
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             
             // get current list of templates, minus custom stylesheet
             List<WeblogTemplate> raw = mgr.getPages(getActionWeblog()); 
@@ -139,7 +139,7 @@ public class Templates extends UIAction {
             }
             
             // save the new Template
-            UserManager mgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             mgr.savePage( newTemplate );
             
             // if this person happened to create a Weblog template from
@@ -150,7 +150,7 @@ public class Templates extends UIAction {
             }
             
             // flush results to db
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // reset form fields
             setNewTmplName(null);
@@ -183,7 +183,7 @@ public class Templates extends UIAction {
         
         // check if template by that name already exists
         try {
-            UserManager umgr = WebloggerFactory.getRoller().getUserManager();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogTemplate existingPage = umgr.getPageByName(getActionWeblog(), getNewTmplName());
             if(existingPage != null) {
                 addError("pagesForm.error.alreadyExists", getNewTmplName());

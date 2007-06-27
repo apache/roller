@@ -81,7 +81,7 @@ public class BookmarkTest extends TestCase {
     }
     
     public Weblogger getRoller() {
-        return WebloggerFactory.getRoller();
+        return WebloggerFactory.getWeblogger();
     }
     
     

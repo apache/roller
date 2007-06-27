@@ -46,7 +46,7 @@ public class IndexManagerTest extends TestCase {
     }
         
     public void testSearch() throws Exception {
-        IndexManager imgr = WebloggerFactory.getRoller().getIndexManager();
+        IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
 
         Weblog website = new Weblog();
         website.setHandle("trekker");
@@ -67,7 +67,7 @@ public class IndexManagerTest extends TestCase {
         +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
         +"begin to lose power, and Spock reports strange sensor readings.");
         imgr.executeIndexOperationNow(
-            new AddEntryOperation(WebloggerFactory.getRoller(), (IndexManagerImpl)imgr, wd1));
+            new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setId("dummy2");
@@ -82,7 +82,7 @@ public class IndexManagerTest extends TestCase {
           +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
           +"in communication with Boss Oxmyx.");
          imgr.executeIndexOperationNow(
-             new AddEntryOperation(WebloggerFactory.getRoller(), (IndexManagerImpl)imgr, wd2));
+             new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd2));
 
         Thread.sleep(1000);
 

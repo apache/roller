@@ -74,7 +74,7 @@ public class WorkerThread extends Thread {
             }
             
             // since this is a thread we have to make sure that we tidy up ourselves
-            Weblogger roller = WebloggerFactory.getRoller();
+            Weblogger roller = WebloggerFactory.getWeblogger();
             roller.release();
         }
         

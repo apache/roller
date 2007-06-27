@@ -79,7 +79,7 @@ public class Pings extends UIAction {
     
     public void myPrepare() {
         
-        PingTargetManager pingTargetMgr = WebloggerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         
         // load selected ping target, if possible
         if(getPingTargetId() != null) try {
@@ -123,10 +123,10 @@ public class Pings extends UIAction {
     public String enable() {
         
         if(getPingTarget() != null) try {
-            AutoPingManager autoPingMgr = WebloggerFactory.getRoller().getAutopingManager();
+            AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
             AutoPing autoPing = new AutoPing(null, getPingTarget(), getActionWeblog());
             autoPingMgr.saveAutoPing(autoPing);
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
         } catch(Exception ex) {
             log.error("Error saving auto ping for target - "+getPingTargetId(), ex);
             // TODO: i18n
@@ -143,9 +143,9 @@ public class Pings extends UIAction {
     public String disable() {
         
         if(getPingTarget() != null) try {
-            AutoPingManager autoPingMgr = WebloggerFactory.getRoller().getAutopingManager();
+            AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
             autoPingMgr.removeAutoPing(getPingTarget(), getActionWeblog());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
         } catch (Exception ex) {
             log.error("Error removing auto ping for target - "+getPingTargetId(), ex);
             // TODO: i18n
@@ -209,7 +209,7 @@ public class Pings extends UIAction {
      */
     private void buildIsEnabledMap() {
         
-        AutoPingManager autoPingMgr = WebloggerFactory.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
         
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map isEnabled = new HashMap();

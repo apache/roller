@@ -61,7 +61,7 @@ public class FolderEdit extends UIAction {
     // load folder to edit
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if(!StringUtils.isEmpty(getBean().getId())) {
                 setFolder(bmgr.getFolder(getBean().getId()));
             }
@@ -110,9 +110,9 @@ public class FolderEdit extends UIAction {
             getBean().copyTo(getFolder());
             
             // save changes
-            BookmarkManager bmgr = WebloggerFactory.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             bmgr.saveFolder(getFolder());
-            WebloggerFactory.getRoller().flush();
+            WebloggerFactory.getWeblogger().flush();
             
             // notify caches
             CacheManager.invalidate(getFolder());
