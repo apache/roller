@@ -27,7 +27,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -37,17 +36,14 @@ import org.apache.roller.util.UUIDGenerator;
 /**
  * Weblog Category.
  * 
- * @ejb:bean name="WeblogCategory"
  * @hibernate.cache usage="read-write"
  * @hibernate.class lazy="true" table="weblogcategory"
- * @struts.form include-all="true"
  */
-public class WeblogCategory implements Serializable {
+public class WeblogCategory implements Serializable, Comparable {
     
     public static final long serialVersionUID = 1435782148712018954L;
     
     private static Log log = LogFactory.getLog(WeblogCategory.class);
-    
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -68,9 +64,9 @@ public class WeblogCategory implements Serializable {
     public WeblogCategory(
             Weblog website,
             WeblogCategory parent,
-            java.lang.String name,
-            java.lang.String description,
-            java.lang.String image) {
+            String name,
+            String description,
+            String image) {
         
         this.name = name;
         this.description = description;
@@ -87,26 +83,6 @@ public class WeblogCategory implements Serializable {
         } else {
             this.path = parent.getPath() + "/" + name;
         }
-    }
-    
-    
-    public WeblogCategory(WeblogCategory otherData) {
-        this.setData(otherData);
-    }
-    
-    
-    public void setData(WeblogCategory otherData) {
-        WeblogCategory other = (WeblogCategory) otherData;
-        
-        this.id = other.getId();
-        this.website = other.getWebsite();
-        this.name = other.getName();
-        this.description = other.getDescription();
-        this.image = other.getImage();
-        this.path = other.getPath();
-        
-        this.parentCategory = other.getParent();
-        this.childCategories = other.getWeblogCategories();
     }
     
     
@@ -142,22 +118,25 @@ public class WeblogCategory implements Serializable {
             .toHashCode();
     }
     
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object o) {
+        WeblogCategory other = (WeblogCategory)o;
+        return getName().compareTo(other.getName());
+    }
+    
     
     /**
      * Database surrogate key.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @hibernate.id column="id"
-     *  generator-class="assigned"  
+     * @hibernate.id column="id" generator-class="assigned"  
      */
-    public java.lang.String getId() {
+    public String getId() {
         return this.id;
     }
     
-    public void setId(java.lang.String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -165,15 +144,13 @@ public class WeblogCategory implements Serializable {
     /**
      * The display name for this category.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @hibernate.property column="name" non-null="true" unique="false"
      */
-    public java.lang.String getName() {
+    public String getName() {
         return this.name;
     }
     
-    public void setName(java.lang.String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -181,15 +158,13 @@ public class WeblogCategory implements Serializable {
     /**
      * A full description for this category.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @hibernate.property column="description" non-null="true" unique="false"
      */
-    public java.lang.String getDescription() {
+    public String getDescription() {
         return this.description;
     }
     
-    public void setDescription(java.lang.String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
     
@@ -197,23 +172,19 @@ public class WeblogCategory implements Serializable {
     /**
      * An image icon to represent this category.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
      * @hibernate.property column="image" non-null="true" unique="false"
      */
-    public java.lang.String getImage() {
+    public String getImage() {
         return this.image;
     }
     
-    public void setImage(java.lang.String image) {
+    public void setImage(String image) {
         this.image = image;
     }
     
     
     /**
      * The full path to this category in the hierarchy.
-     *
-     * @roller.wrapPojoMethod type="simple"
      *
      * @hibernate.property column="path" non-null="true" unique="false"
      */
@@ -229,8 +200,6 @@ public class WeblogCategory implements Serializable {
     /**
      * Get the weblog which owns this category.
      *
-     * @roller.wrapPojoMethod type="pojo"
-     *
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
     public Weblog getWebsite() {
@@ -244,8 +213,6 @@ public class WeblogCategory implements Serializable {
     
     /**
      * Get parent category, or null if category is root of hierarchy.
-     *
-     * @roller.wrapPojoMethod type="pojo"
      *
      * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
@@ -264,7 +231,6 @@ public class WeblogCategory implements Serializable {
      * @hibernate.collection-key column="parentid"
      * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogCategory"
      * @hibernate.set lazy="true" inverse="true" cascade="delete"
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogCategory"
      */
     public Set getWeblogCategories() {
         return this.childCategories;
@@ -278,8 +244,6 @@ public class WeblogCategory implements Serializable {
     /**
      * Retrieve all weblog entries in this category and, optionally, include
      * weblog entries all sub-categories.
-     *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogEntryData"
      *
      * @param subcats True if entries from sub-categories are to be returned.
      * @return List of WeblogEntryData objects.
@@ -335,8 +299,6 @@ public class WeblogCategory implements Serializable {
     
     /**
      * Is this category a descendent of the other category?
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public boolean descendentOf(WeblogCategory ancestor) {
         
@@ -353,8 +315,6 @@ public class WeblogCategory implements Serializable {
     /**
      * Determine if category is in use. Returns true if any weblog entries
      * use this category or any of it's subcategories.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public boolean isInUse() {
         try {
@@ -363,8 +323,6 @@ public class WeblogCategory implements Serializable {
             throw new RuntimeException(e);
         }
     }
-    /** TODO: fix form generation so this is not needed. */
-    public void setInUse(boolean dummy) {}
     
     
     // convenience method for updating the category name, which triggers a path tree rebuild
