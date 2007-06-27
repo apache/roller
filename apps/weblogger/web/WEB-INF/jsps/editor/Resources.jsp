@@ -50,23 +50,25 @@ File upload form, but only if it's enabled and weblog is under quota
         
         <br />
         
-        <s:file name="uploadedFiles" size="30" /><br />
+        <div id="fileControl0" class="miscControl">
+            <s:file name="uploadedFiles" size="30" /><br />
+        </div>
         
         <div id="fileControl1" class="miscControl">
             <s:file name="uploadedFiles" size="30" /><br />
-        </div>                     
+        </div>
         
         <div id="fileControl2" class="miscControl">
             <s:file name="uploadedFiles" size="30" /><br />
-        </div>                     
+        </div>
         
         <div id="fileControl3" class="miscControl">
             <s:file name="uploadedFiles" size="30" /><br />
-        </div>                     
+        </div>
         
         <div id="fileControl4" class="miscControl">
             <s:file name="uploadedFiles" size="30" /><br />
-        </div>      
+        </div>
         
         <br />
         
@@ -109,8 +111,8 @@ Table of files, each with link, size and checkbox
 
         <tr class="rHeaderTr">
             <th class="rollertable" width="95%">Filename</th>
-            <th class="rollertable">Size</td>
-            <th class="rollertable">Delete</td>
+            <th class="rollertable">Size</th>
+            <th class="rollertable">Delete</th>
         </tr>
         
         <s:if test="path != null">
