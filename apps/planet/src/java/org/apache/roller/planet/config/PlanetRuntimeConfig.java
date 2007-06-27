@@ -41,7 +41,7 @@ public class PlanetRuntimeConfig {
     
     private static Log log = LogFactory.getLog(PlanetRuntimeConfig.class);
     
-    private static String runtime_config = "/planetRuntimeConfigDefs.xml";
+    private static String runtime_config = "/org/apache/roller/planet/config/planetRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
     // special case for our context urls
