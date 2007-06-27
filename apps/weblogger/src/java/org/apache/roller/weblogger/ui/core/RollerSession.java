@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -80,7 +80,7 @@ public class RollerSession
                     
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has SSO-enabled in security.xml
-                    if(user == null && RollerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {
+                    if(user == null && WebloggerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {
                         // provisioning enabled, get provisioner and execute
                         AutoProvision provisioner = RollerContext.getAutoProvision();
                         if(provisioner != null) {

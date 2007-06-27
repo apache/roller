@@ -31,20 +31,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
  * Encapsulates Roller database configuration via JDBC properties or JNDI.
- *
+ * 
  * <p>To keep the logs from filling up with DB connection errors, will only 
  * attempt to connect once.</p>
  * 
  * <p>Keeps startup exception and log so we can present useful debugging
  * information to whoever is installing Roller.</p>
- *
- *
- * <p>Reads configuration properties from RollerConfig:</p>
+ * 
+ * 
+ * <p>Reads configuration properties from WebloggerConfig:</p>
  * <pre>
  * # Specify database configuration type of 'jndi' or 'jdbc'
  * database.configurationType=jndi
@@ -84,15 +84,15 @@ public class DatabaseProvider  {
     public DatabaseProvider() throws StartupException {
         
         String connectionTypeString = 
-                RollerConfig.getProperty("database.configurationType"); 
+                WebloggerConfig.getProperty("database.configurationType"); 
         if ("jdbc".equals(connectionTypeString)) {
             type = ConfigurationType.JDBC_PROPERTIES;
         }
-        jndiName =          RollerConfig.getProperty("database.jndi.name");
-        jdbcDriverClass =   RollerConfig.getProperty("database.jdbc.driverClass");
-        jdbcConnectionURL = RollerConfig.getProperty("database.jdbc.connectionURL");
-        jdbcUsername =      RollerConfig.getProperty("database.jdbc.username");
-        jdbcPassword =      RollerConfig.getProperty("database.jdbc.password");
+        jndiName =          WebloggerConfig.getProperty("database.jndi.name");
+        jdbcDriverClass =   WebloggerConfig.getProperty("database.jdbc.driverClass");
+        jdbcConnectionURL = WebloggerConfig.getProperty("database.jdbc.connectionURL");
+        jdbcUsername =      WebloggerConfig.getProperty("database.jdbc.username");
+        jdbcPassword =      WebloggerConfig.getProperty("database.jdbc.password");
         
         successMessage("SUCCESS: Got parameters. Using configuration type " + type);
 

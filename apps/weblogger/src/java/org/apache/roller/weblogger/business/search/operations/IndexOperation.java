@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
  * This is the base class for all index operation. 
@@ -72,7 +72,7 @@ public abstract class IndexOperation implements Runnable {
         // Actual comment content is indexed only if search.index.comments
         // is true or absent from the (static) configuration properties.
         // If false in the configuration, comments are treated as if empty.
-        boolean indexComments = RollerConfig.getBooleanProperty("search.index.comments", true);
+        boolean indexComments = WebloggerConfig.getBooleanProperty("search.index.comments", true);
 
         String commentContent = "";
         String commentEmail = "";

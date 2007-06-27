@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
 
@@ -34,7 +34,7 @@ public class ExcessLinksCommentValidator implements CommentValidator {
     private int threshold;
         
     public ExcessLinksCommentValidator() {
-        threshold = RollerConfig.getIntProperty("comment.validator.excessLinks.threshold");
+        threshold = WebloggerConfig.getIntProperty("comment.validator.excessLinks.threshold");
     }
         
     public String getName() {

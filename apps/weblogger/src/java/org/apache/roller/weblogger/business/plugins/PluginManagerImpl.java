@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.commons.lang.StringUtils;
@@ -106,7 +106,7 @@ public class PluginManagerImpl implements PluginManager {
     private void loadPagePluginClasses() {
         log.debug("Initializing page plugins");
         
-        String pluginStr = RollerConfig.getProperty("plugins.page");
+        String pluginStr = WebloggerConfig.getProperty("plugins.page");
         if (log.isDebugEnabled()) log.debug(pluginStr);
         if (pluginStr != null) {
             String[] plugins = StringUtils.stripAll(

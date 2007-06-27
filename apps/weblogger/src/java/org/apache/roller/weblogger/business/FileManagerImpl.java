@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -53,9 +53,9 @@ public class FileManagerImpl implements FileManager {
      * Create file manager.
      */
     public FileManagerImpl() {
-        String uploaddir = RollerConfig.getProperty("uploads.dir");
+        String uploaddir = WebloggerConfig.getProperty("uploads.dir");
         
-        // Note: System property expansion is now handled by RollerConfig.
+        // Note: System property expansion is now handled by WebloggerConfig.
         
         if(uploaddir == null || uploaddir.trim().length() < 1)
             uploaddir = System.getProperty("user.home") + File.separator+"roller_data"+File.separator+"uploads";
@@ -291,7 +291,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * Determine if file can be saved given current RollerConfig settings.
+     * Determine if file can be saved given current WebloggerConfig settings.
      */
     private boolean canSave(Weblog weblog, 
                            String path, 

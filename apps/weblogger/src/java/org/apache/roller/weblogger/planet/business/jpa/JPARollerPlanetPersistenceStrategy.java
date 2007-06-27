@@ -28,11 +28,11 @@ import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.business.DatabaseProvider;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
- * JPA strategy for Planet, uses RollerConfig to get JPA configuration.
+ * JPA strategy for Planet, uses WebloggerConfig to get JPA configuration.
  */
 @com.google.inject.Singleton
 public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
@@ -42,7 +42,8 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
     
     
     /**
-     * Construct by finding using DatabaseProvider and RollerConfig.
+     * Construct by finding using DatabaseProvider and WebloggerConfig.
+     * 
      * @throws org.apache.roller.PlanetException on any error
      */
     protected JPARollerPlanetPersistenceStrategy() throws PlanetException { 
@@ -53,12 +54,12 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
         Properties emfProps = loadPropertiesFromResourceName(
            "JPAEMF.properties", getContextClassLoader());
                 
-        // Add all OpenJPA and Toplinks properties found in RollerConfig
-        Enumeration keys = RollerConfig.keys();
+        // Add all OpenJPA and Toplinks properties found in WebloggerConfig
+        Enumeration keys = WebloggerConfig.keys();
         while (keys.hasMoreElements()) {
             String key = (String)keys.nextElement();
             if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = RollerConfig.getProperty(key);
+                String value = WebloggerConfig.getProperty(key);
                 logger.info(key + ": " + value);
                 emfProps.setProperty(key, value);
             }

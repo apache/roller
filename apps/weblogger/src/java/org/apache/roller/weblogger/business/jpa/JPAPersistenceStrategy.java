@@ -29,7 +29,7 @@ import java.security.PrivilegedAction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -70,12 +70,12 @@ public class JPAPersistenceStrategy {
         Properties emfProps = loadPropertiesFromResourceName(
            "JPAEMF.properties", getContextClassLoader());
                 
-        // Add all OpenJPA and Toplinks properties found in RollerConfig
-        Enumeration keys = RollerConfig.keys(); 
+        // Add all OpenJPA and Toplinks properties found in WebloggerConfig
+        Enumeration keys = WebloggerConfig.keys(); 
         while (keys.hasMoreElements()) {
             String key = (String)keys.nextElement();
             if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = RollerConfig.getProperty(key);
+                String value = WebloggerConfig.getProperty(key);
                 logger.info(key + ": " + value);
                 emfProps.setProperty(key, value);
             }

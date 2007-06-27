@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /** 
@@ -116,7 +116,7 @@ public class CompressionFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
         
         // is compression enabled?
-        if(RollerConfig.getBooleanProperty("compression.gzipResponse.enabled")) {
+        if(WebloggerConfig.getBooleanProperty("compression.gzipResponse.enabled")) {
             this.enabled = true;
             log.info("Compressed Output ENABLED");
         } else {

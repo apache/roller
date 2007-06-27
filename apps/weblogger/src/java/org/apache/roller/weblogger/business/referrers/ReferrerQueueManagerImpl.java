@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -76,15 +76,15 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
         this.roller = roller;
 
         // lookup config options
-        this.asyncMode = RollerConfig.getBooleanProperty("referrers.asyncProcessing.enabled");
+        this.asyncMode = WebloggerConfig.getBooleanProperty("referrers.asyncProcessing.enabled");
         
         mLogger.info("Asynchronous referrer processing = "+this.asyncMode);
         
         if(this.asyncMode) {
             
             
-            String num = RollerConfig.getProperty("referrers.queue.numWorkers");
-            String sleep = RollerConfig.getProperty("referrers.queue.sleepTime");
+            String num = WebloggerConfig.getProperty("referrers.queue.numWorkers");
+            String sleep = WebloggerConfig.getProperty("referrers.queue.sleepTime");
             
             try {
                 this.numWorkers = Integer.parseInt(num);

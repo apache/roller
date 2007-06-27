@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
@@ -58,9 +58,9 @@ public class RollerVelocity {
             velocityProps.load(instream);
             
             // need to dynamically add old macro libraries if they are enabled
-            if(RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
+            if(WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
                 String macroLibraries = (String) velocityProps.get("velocimacro.library");
-                String oldLibraries = RollerConfig.getProperty("velocity.oldMacroLibraries");
+                String oldLibraries = WebloggerConfig.getProperty("velocity.oldMacroLibraries");
                 
                 // set the new value
                 velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);

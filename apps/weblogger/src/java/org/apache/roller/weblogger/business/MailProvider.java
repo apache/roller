@@ -29,7 +29,7 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -54,16 +54,16 @@ public class MailProvider {
     
     public MailProvider() throws StartupException {
         
-        String connectionTypeString = RollerConfig.getProperty("mail.configurationType"); 
+        String connectionTypeString = WebloggerConfig.getProperty("mail.configurationType"); 
         if ("properties".equals(connectionTypeString)) {
             type = ConfigurationType.MAIL_PROPERTIES;
         }
-        jndiName =     RollerConfig.getProperty("mail.jndi.name");
-        mailHostname = RollerConfig.getProperty("mail.hostname");
-        mailUsername = RollerConfig.getProperty("mail.username");
-        mailPassword = RollerConfig.getProperty("mail.password");
+        jndiName =     WebloggerConfig.getProperty("mail.jndi.name");
+        mailHostname = WebloggerConfig.getProperty("mail.hostname");
+        mailUsername = WebloggerConfig.getProperty("mail.username");
+        mailPassword = WebloggerConfig.getProperty("mail.password");
         try {
-            mailPort = Integer.parseInt(RollerConfig.getProperty("mail.port"));
+            mailPort = Integer.parseInt(WebloggerConfig.getProperty("mail.port"));
         } catch (Throwable t) {
             log.warn("mail server port not a valid integer, ignoring");
         }

@@ -22,7 +22,7 @@ import java.io.Reader;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
@@ -100,7 +100,7 @@ abstract class Handler {
     
     /** Get a Handler object implementation based on the given request. */
     public static Handler getHandler(HttpServletRequest req) throws HandlerException {
-        boolean enabled = RollerConfig.getBooleanProperty("webservices.adminprotocol.enabled");
+        boolean enabled = WebloggerConfig.getBooleanProperty("webservices.adminprotocol.enabled");
         if (!enabled) {
             throw new NotAllowedException("ERROR: Admin protocol not enabled");
         }

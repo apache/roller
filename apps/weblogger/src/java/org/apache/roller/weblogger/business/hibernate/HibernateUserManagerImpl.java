@@ -38,7 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.SimpleExpression;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -314,7 +314,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 null );    // image
         this.strategy.store(rootCat);
         
-        String cats = RollerConfig.getProperty("newuser.categories");
+        String cats = WebloggerConfig.getProperty("newuser.categories");
         WeblogCategory firstCat = rootCat;
         if (cats != null && cats.trim().length() > 0) {
             String[] splitcats = cats.split(",");
@@ -344,7 +344,7 @@ public class HibernateUserManagerImpl implements UserManager {
         this.strategy.store(root);
         
         Integer zero = new Integer(0);
-        String blogroll = RollerConfig.getProperty("newuser.blogroll");
+        String blogroll = WebloggerConfig.getProperty("newuser.blogroll");
         if (blogroll != null) {
             String[] splitroll = blogroll.split(",");
             for (int i=0; i<splitroll.length; i++) {

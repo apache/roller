@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.Job;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -128,7 +128,7 @@ public class WeblogCacheWarmupJob implements Job {
                 initData.put("weblogRequest", feedRequest);
                 
                 // Load models for feeds
-                String feedModels = RollerConfig.getProperty("rendering.feedModels");
+                String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
                 ModelLoader.loadModels(feedModels, model, initData, true);
                 
                 // TODO: re-enable custom models when they are actually used

@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
@@ -228,13 +228,13 @@ public class FeedServlet extends HttpServlet {
             initData.put("weblogRequest", feedRequest);
 
             // Load models for feeds
-            String feedModels = RollerConfig.getProperty("rendering.feedModels");
+            String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);
 
             // Load special models for site-wide blog
 
             if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 

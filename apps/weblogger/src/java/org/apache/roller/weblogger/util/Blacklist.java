@@ -40,7 +40,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -152,7 +152,7 @@ public class Blacklist {
                 // save the new blacklist
                 InputStream instream = connection.getInputStream();
                 
-                String uploadDir = RollerConfig.getProperty("uploads.dir");
+                String uploadDir = WebloggerConfig.getProperty("uploads.dir");
                 String path = uploadDir + File.separator + blacklistFile;
                 FileOutputStream outstream = new FileOutputStream(path);
                 
@@ -194,7 +194,7 @@ public class Blacklist {
         try {
             String path = blacklistFilePath;
             if (path == null) {
-                String uploadDir = RollerConfig.getProperty("uploads.dir");
+                String uploadDir = WebloggerConfig.getProperty("uploads.dir");
                 path = uploadDir + File.separator + blacklistFile;
             }
             File blacklistFile = new File(path);

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -68,7 +68,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         // build roller restricted list
         String restrictList = 
-                RollerConfig.getProperty("rendering.weblogMapper.rollerProtectedUrls");
+                WebloggerConfig.getProperty("rendering.weblogMapper.rollerProtectedUrls");
         if(restrictList != null && restrictList.trim().length() > 0) {
             String[] restrict = restrictList.split(",");
             for(int i=0; i < restrict.length; i++) {
@@ -78,7 +78,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         // add user restricted list
         restrictList = 
-                RollerConfig.getProperty("rendering.weblogMapper.userProtectedUrls");
+                WebloggerConfig.getProperty("rendering.weblogMapper.userProtectedUrls");
         if(restrictList != null && restrictList.trim().length() > 0) {
             String[] restrict = restrictList.split(",");
             for(int i=0; i < restrict.length; i++) {

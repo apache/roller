@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -98,9 +98,9 @@ public class MenuHelper {
             // does this tab have an enabledProperty?
             boolean includeTab = true;
             if(configTab.getEnabledProperty() != null) {
-                includeTab = RollerConfig.getBooleanProperty(configTab.getEnabledProperty());
+                includeTab = WebloggerConfig.getBooleanProperty(configTab.getEnabledProperty());
             } else if(configTab.getDisabledProperty() != null) {
-                includeTab = ! RollerConfig.getBooleanProperty(configTab.getDisabledProperty());
+                includeTab = ! WebloggerConfig.getBooleanProperty(configTab.getDisabledProperty());
             }
             
             if(includeTab) {
@@ -135,9 +135,9 @@ public class MenuHelper {
                     
                     boolean includeItem = true;
                     if(configTabItem.getEnabledProperty() != null) {
-                        includeItem = RollerConfig.getBooleanProperty(configTabItem.getEnabledProperty());
+                        includeItem = WebloggerConfig.getBooleanProperty(configTabItem.getEnabledProperty());
                     } else if(configTabItem.getDisabledProperty() != null) {
-                        includeItem = ! RollerConfig.getBooleanProperty(configTabItem.getDisabledProperty());
+                        includeItem = ! WebloggerConfig.getBooleanProperty(configTabItem.getDisabledProperty());
                     }
                     
                     if(includeItem) {

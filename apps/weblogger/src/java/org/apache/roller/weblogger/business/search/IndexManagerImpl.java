@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang.StringUtils;
 
 
@@ -99,13 +99,13 @@ public class IndexManagerImpl implements IndexManager {
         this.roller = roller;
 
         // check config to see if the internal search is enabled
-        String enabled = RollerConfig.getProperty("search.enabled");
+        String enabled = WebloggerConfig.getProperty("search.enabled");
         if("false".equalsIgnoreCase(enabled))
             this.searchEnabled = false;
         
         // we also need to know what our index directory is
-        // Note: system property expansion is now handled by RollerConfig
-        String searchIndexDir = RollerConfig.getProperty("search.index.dir");
+        // Note: system property expansion is now handled by WebloggerConfig
+        String searchIndexDir = WebloggerConfig.getProperty("search.index.dir");
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
         
         // a little debugging

@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -41,7 +41,7 @@ public class BlacklistChecker {
      * @return True if comment matches blacklist term
      */
     public static boolean checkComment(WeblogEntryComment comment) {
-        if (RollerConfig.getBooleanProperty("site.blacklist.enable.comments")) {
+        if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.comments")) {
             return testComment(comment);
         }
         return false;
@@ -52,7 +52,7 @@ public class BlacklistChecker {
      * @return True if comment matches blacklist term
      */
     public static boolean checkTrackback(WeblogEntryComment comment) {
-        if (RollerConfig.getBooleanProperty("site.blacklist.enable.trackbacks")) {
+        if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.trackbacks")) {
             return testComment(comment);
         }
         return false;
@@ -63,7 +63,7 @@ public class BlacklistChecker {
      * @return True if comment matches blacklist term
      */
     public static boolean checkReferrer(Weblog website, String referrerURL) {
-        if (RollerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
+        if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
             List stringRules = new ArrayList();
             List regexRules = new ArrayList();
             Blacklist.populateSpamRules(

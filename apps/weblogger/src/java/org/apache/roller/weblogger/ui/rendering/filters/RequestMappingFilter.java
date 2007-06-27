@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.RequestMapper;
 
 /**
@@ -54,8 +54,8 @@ public class RequestMappingFilter implements Filter {
     public void init(FilterConfig filterConfig) {
         
         // lookup set of request mappers we are going to use
-        String rollerMappers = RollerConfig.getProperty("rendering.rollerRequestMappers");
-        String userMappers = RollerConfig.getProperty("rendering.userRequestMappers");
+        String rollerMappers = WebloggerConfig.getProperty("rendering.rollerRequestMappers");
+        String userMappers = WebloggerConfig.getProperty("rendering.userRequestMappers");
         
         // instantiate user defined request mapper classes
         if(userMappers != null && userMappers.trim().length() > 0) {

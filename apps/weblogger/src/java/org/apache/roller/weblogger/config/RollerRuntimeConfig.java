@@ -152,7 +152,7 @@ public class RollerRuntimeConfig {
         
         try {
             InputStreamReader reader =
-                    new InputStreamReader(RollerConfig.class.getResourceAsStream(runtime_config));
+                    new InputStreamReader(WebloggerConfig.class.getResourceAsStream(runtime_config));
             StringWriter configString = new StringWriter();
             
             char[] buf = new char[8196];

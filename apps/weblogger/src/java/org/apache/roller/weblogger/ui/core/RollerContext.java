@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BootstrapException;
 import org.apache.roller.weblogger.business.startup.StartupException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.startup.PlanetStartup;
@@ -93,20 +93,20 @@ public class RollerContext extends ContextLoaderListener
         // we leave it here for now to allow users to keep writing
         // uploads into their webapp context, but this is a bad idea
         //
-        // also, the RollerConfig.setUploadsDir() method is smart
+        // also, the WebloggerConfig.setUploadsDir() method is smart
         // enough to disregard this call unless the uploads.path
         // is set to ${webapp.context}
-        RollerConfig.setUploadsDir(ctxPath);
+        WebloggerConfig.setUploadsDir(ctxPath);
         
         // try setting the themes path to <context>/themes
         // NOTE: this should go away at some point
         // we leave it here for now to allow users to keep using
         // themes in their webapp context, but this is a bad idea
         //
-        // also, the RollerConfig.setThemesDir() method is smart
+        // also, the WebloggerConfig.setThemesDir() method is smart
         // enough to disregard this call unless the themes.dir
         // is set to ${webapp.context}
-        RollerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
+        WebloggerConfig.setThemesDir(servletContext.getRealPath("/")+File.separator+"themes");
         
         
         // Now prepare the core services of the app so we can bootstrap
@@ -138,7 +138,7 @@ public class RollerContext extends ContextLoaderListener
             
             // Initialize Planet if necessary
             if (WebloggerFactory.isBootstrapped()) {
-                if (RollerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
                     
                     // Now prepare the core services of planet so we can bootstrap it
                     try {
@@ -199,9 +199,9 @@ public class RollerContext extends ContextLoaderListener
             velocityProps.load(instream);
             
             // need to dynamically add old macro libraries if they are enabled
-            if(RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
+            if(WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
                 String macroLibraries = (String) velocityProps.get("velocimacro.library");
-                String oldLibraries = RollerConfig.getProperty("velocity.oldMacroLibraries");
+                String oldLibraries = WebloggerConfig.getProperty("velocity.oldMacroLibraries");
                 
                 // set the new value
                 velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
@@ -227,7 +227,7 @@ public class RollerContext extends ContextLoaderListener
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
         
 
-        String rememberMe = RollerConfig.getProperty("rememberme.enabled");
+        String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe).booleanValue();
         
         log.info("Remember Me enabled: " + rememberMeEnabled);
@@ -240,13 +240,13 @@ public class RollerContext extends ContextLoaderListener
         }
         
 
-        String encryptPasswords = RollerConfig.getProperty("passwds.encryption.enabled");
+        String encryptPasswords = WebloggerConfig.getProperty("passwds.encryption.enabled");
         boolean doEncrypt = Boolean.valueOf(encryptPasswords).booleanValue();
         
         if (doEncrypt) {
             DaoAuthenticationProvider provider =
                     (DaoAuthenticationProvider) ctx.getBean("daoAuthenticationProvider");
-            String algorithm = RollerConfig.getProperty("passwds.encryption.algorithm");
+            String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
             PasswordEncoder encoder = null;
             if (algorithm.equalsIgnoreCase("SHA")) {
                 encoder = new ShaPasswordEncoder();
@@ -263,7 +263,7 @@ public class RollerContext extends ContextLoaderListener
         }
         
 
-        if (RollerConfig.getBooleanProperty("securelogin.enabled")) {
+        if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
             AuthenticationProcessingFilterEntryPoint entryPoint =
                 (AuthenticationProcessingFilterEntryPoint)
                     ctx.getBean("authenticationProcessingFilterEntryPoint");
@@ -271,7 +271,7 @@ public class RollerContext extends ContextLoaderListener
         }
                 
         /*
-        if (RollerConfig.getBooleanProperty("schemeenforcement.enabled")) {
+        if (WebloggerConfig.getBooleanProperty("schemeenforcement.enabled")) {
             
             ChannelProcessingFilter procfilter =
                     (ChannelProcessingFilter)ctx.getBean("channelProcessingFilter");
@@ -283,7 +283,7 @@ public class RollerContext extends ContextLoaderListener
                     (PathBasedFilterInvocationDefinitionMap)procfilter.getFilterInvocationDefinitionSource();
             
             // add HTTPS URL path patterns to Acegi config
-            String httpsUrlsProp = RollerConfig.getProperty("schemeenforcement.https.urls");
+            String httpsUrlsProp = WebloggerConfig.getProperty("schemeenforcement.https.urls");
             if (httpsUrlsProp != null) {
                 String[] httpsUrls = StringUtils.stripAll(StringUtils.split(httpsUrlsProp, ",") );
                 for (int i=0; i<httpsUrls.length; i++) {
@@ -310,7 +310,7 @@ public class RollerContext extends ContextLoaderListener
      * @return AutoProvision
      */
     public static AutoProvision getAutoProvision() {        
-        String clazzName = RollerConfig.getProperty("users.sso.autoProvision.className");
+        String clazzName = WebloggerConfig.getProperty("users.sso.autoProvision.className");
         
         if (null == clazzName) {
             return null;

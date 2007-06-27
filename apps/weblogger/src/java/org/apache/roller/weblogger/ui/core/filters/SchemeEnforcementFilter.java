@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -135,16 +135,16 @@ public class SchemeEnforcementFilter implements Filter {
         
         // determine if we are doing scheme enforcement
         this.schemeEnforcementEnabled = 
-                RollerConfig.getBooleanProperty("schemeenforcement.enabled");
+                WebloggerConfig.getBooleanProperty("schemeenforcement.enabled");
         this.secureLoginEnabled = 
-                RollerConfig.getBooleanProperty("securelogin.enabled");
+                WebloggerConfig.getBooleanProperty("securelogin.enabled");
         
         if(this.schemeEnforcementEnabled && this.secureLoginEnabled) {
             // gather some more properties
             String http_port = 
-                    RollerConfig.getProperty("securelogin.http.port");
+                    WebloggerConfig.getProperty("securelogin.http.port");
             String https_port = 
-                    RollerConfig.getProperty("securelogin.https.port");
+                    WebloggerConfig.getProperty("securelogin.https.port");
             
             try {
                 this.httpPort = Integer.parseInt(http_port);
@@ -156,7 +156,7 @@ public class SchemeEnforcementFilter implements Filter {
             
             // finally, construct our list of allowable https urls
             String urls = 
-                    RollerConfig.getProperty("schemeenforcement.https.urls");
+                    WebloggerConfig.getProperty("schemeenforcement.https.urls");
             String[] urlsArray = urls.split(",");
             for(int i=0; i < urlsArray.length; i++)
                 this.allowedUrls.add(urlsArray[i]);

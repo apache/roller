@@ -30,7 +30,7 @@ import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.ldap.LdapUserDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 
 /**
@@ -54,7 +54,7 @@ public class CustomUserRegistry {
     private static String TIMEZONE_LDAP_PROPERTY = "users.sso.registry.ldap.attributes.timezone";
     
     public static User getUserDetailsFromAuthentication() {
-        boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
+        boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if(!usingSSO) {
             log.info("SSO is not enabled. Skipping CustomUserRegistry functionality.");
             return null;
@@ -89,9 +89,9 @@ public class CustomUserRegistry {
         ud.setId(null);
         ud.setUserName(userName);
         
-        boolean storePassword = RollerConfig.getBooleanProperty("users.sso.passwords.save");
+        boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.save");
         if(!storePassword) {
-            password = RollerConfig.getProperty("users.sso.passwords.defaultValue","<unknown>");
+            password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue","<unknown>");
         }
         ud.setPassword(password);
         ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
@@ -119,16 +119,16 @@ public class CustomUserRegistry {
         } else if(userDetails instanceof LdapUserDetails) {
             LdapUserDetails ldapDetails = (LdapUserDetails) userDetails;
             Attributes attributes = ldapDetails.getAttributes();
-            String sname = getLdapAttribute(attributes, RollerConfig.getProperty(SNAME_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
-            String name = getLdapAttribute(attributes, RollerConfig.getProperty(NAME_LDAP_PROPERTY, DEFAULT_NAME_LDAP_ATTRIBUTE));
-            String email = getLdapAttribute(attributes, RollerConfig.getProperty(EMAIL_LDAP_PROPERTY, DEFAULT_EMAIL_LDAP_ATTRIBUTE));
+            String sname = getLdapAttribute(attributes, WebloggerConfig.getProperty(SNAME_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
+            String name = getLdapAttribute(attributes, WebloggerConfig.getProperty(NAME_LDAP_PROPERTY, DEFAULT_NAME_LDAP_ATTRIBUTE));
+            String email = getLdapAttribute(attributes, WebloggerConfig.getProperty(EMAIL_LDAP_PROPERTY, DEFAULT_EMAIL_LDAP_ATTRIBUTE));
 
             ud.setScreenName(sname);
             ud.setFullName(name);
             ud.setEmailAddress(email);
             
-            String locale = getLdapAttribute(attributes, RollerConfig.getProperty(LOCALE_LDAP_PROPERTY, DEFAULT_LOCALE_LDAP_ATTRIBUTE));
-            String timezone = getLdapAttribute(attributes, RollerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
+            String locale = getLdapAttribute(attributes, WebloggerConfig.getProperty(LOCALE_LDAP_PROPERTY, DEFAULT_LOCALE_LDAP_ATTRIBUTE));
+            String timezone = getLdapAttribute(attributes, WebloggerConfig.getProperty(TIMEZONE_LDAP_PROPERTY, DEFAULT_TIMEZONE_LDAP_ATTRIBUTE));
             
             if(locale != null) {
                 ud.setLocale(locale);

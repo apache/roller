@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class TagStatsServlet extends HttpServlet {
     
     // this allows for -1 for no limits.
-    private final int MAX_LENGTH = RollerConfig.getIntProperty("services.json.tags.max", 100);
+    private final int MAX_LENGTH = WebloggerConfig.getIntProperty("services.json.tags.max", 100);
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);

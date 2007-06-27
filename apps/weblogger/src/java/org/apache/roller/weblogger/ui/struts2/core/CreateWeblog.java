@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -63,7 +63,7 @@ public class CreateWeblog extends UIAction {
         User user = getAuthenticatedUser();
         
         try {
-            if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
+            if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 List permissions = mgr.getAllPermissions(user);
                 if (permissions.size() > 0) {
@@ -91,7 +91,7 @@ public class CreateWeblog extends UIAction {
         
         User user = getAuthenticatedUser();
         try {
-            if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
+            if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 List permissions = mgr.getAllPermissions(user);
                 if (permissions.size() > 0) {
@@ -151,7 +151,7 @@ public class CreateWeblog extends UIAction {
     
     public void myValidate()  {
         
-        String allowed = RollerConfig.getProperty("username.allowedChars");
+        String allowed = WebloggerConfig.getProperty("username.allowedChars");
         if(allowed == null || allowed.trim().length() == 0) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }

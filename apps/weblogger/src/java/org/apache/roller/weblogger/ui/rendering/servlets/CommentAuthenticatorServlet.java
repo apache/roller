@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentAuthenticator;
 
@@ -78,7 +78,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
         
         // lookup the authenticator we are going to use and instantiate it
         try {
-            String name = RollerConfig.getProperty("comment.authenticator.classname");
+            String name = WebloggerConfig.getProperty("comment.authenticator.classname");
             
             Class clazz = Class.forName(name);
             this.authenticator = (CommentAuthenticator) clazz.newInstance();

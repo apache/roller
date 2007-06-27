@@ -35,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -59,7 +59,7 @@ public class Trackback {
         
         // Make sure trackback to URL is allowed
         boolean allowTrackback = true;
-        String allowedURLs = RollerConfig.getProperty("trackback.allowedURLs");
+        String allowedURLs = WebloggerConfig.getProperty("trackback.allowedURLs");
         if (!StringUtils.isEmpty(allowedURLs)) {
             // in the case that the administrator has enabled trackbacks
             // for only specific URLs, set it to false by default

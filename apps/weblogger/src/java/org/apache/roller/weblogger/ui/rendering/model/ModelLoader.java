@@ -25,7 +25,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.velocity.deprecated.ContextLoader;
@@ -51,7 +51,7 @@ public class ModelLoader {
             WeblogPageRequest pageRequest) throws WebloggerException {
         
         // Only load old models if it's enabled     
-        if (RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) { 
+        if (WebloggerConfig.getBooleanProperty("rendering.legacyModels.enabled")) { 
             ContextLoader.setupContext(model, request, response, pageContext, pageRequest);            
         }
     }

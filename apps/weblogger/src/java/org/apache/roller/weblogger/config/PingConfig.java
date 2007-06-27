@@ -34,9 +34,9 @@ import java.util.regex.Pattern;
 // business package on the presentation package.
 
 /**
- * Thin wrapper around RollerConfig and RollerRuntimeConfig for centralizing access to the many configurable
+ * Thin wrapper around WebloggerConfig and RollerRuntimeConfig for centralizing access to the many configurable
  * settings for pings.
- *
+ * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public class PingConfig {
@@ -183,7 +183,7 @@ public class PingConfig {
      * @see org.apache.roller.weblogger.ui.core.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
     public static void initializeCommonTargets() throws WebloggerException {
-        String configuredVal = RollerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
+        String configuredVal = WebloggerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
             if (logger.isDebugEnabled()) {
                 logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
@@ -222,7 +222,7 @@ public class PingConfig {
      * Initialize known ping variants from the configuration.
      */
     public static void initializePingVariants() {
-        String configuredVal = RollerConfig.getProperty(PINGS_VARIANT_OPTIONS_PROP);
+        String configuredVal = WebloggerConfig.getProperty(PINGS_VARIANT_OPTIONS_PROP);
         if (configuredVal == null || configuredVal.trim().length() == 0) {
             if (logger.isDebugEnabled()) {
                 logger.debug("No (or empty) value of " + PINGS_VARIANT_OPTIONS_PROP + " present in the configuration.  Skipping initialization of ping variants.");
@@ -272,7 +272,7 @@ public class PingConfig {
     }
 
 
-    // TODO: Refactor functionality below to RollerConfig?
+    // TODO: Refactor functionality below to WebloggerConfig?
 
     /**
      * Get the value of an integer configuration property.
@@ -285,7 +285,7 @@ public class PingConfig {
      *         is out of the specified range.
      */
     private static int getIntegerProperty(String propName, int defaultValue, int min, int max) {
-        String configuredVal = RollerConfig.getProperty(propName);
+        String configuredVal = WebloggerConfig.getProperty(propName);
         if (configuredVal == null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
@@ -317,7 +317,7 @@ public class PingConfig {
      * @return the configured value or the default if it the configured value is not present.
      */
     private static boolean getBooleanProperty(String propName, boolean defaultValue) {
-        String configuredVal = RollerConfig.getProperty(propName);
+        String configuredVal = WebloggerConfig.getProperty(propName);
         if (configuredVal == null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);

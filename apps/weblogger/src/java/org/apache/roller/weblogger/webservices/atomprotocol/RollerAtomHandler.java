@@ -60,7 +60,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
@@ -946,11 +946,11 @@ public class RollerAtomHandler implements AtomHandler {
                             if (enabled) {
                                 // are passwords encrypted?
                                 String encrypted =
-                                        RollerConfig.getProperty("passwds.encryption.enabled");
+                                        WebloggerConfig.getProperty("passwds.encryption.enabled");
                                 password = userPass.substring(p+1);
                                 if ("true".equalsIgnoreCase(encrypted)) {
                                     password = Utilities.encodePassword(password,
-                                            RollerConfig.getProperty("passwds.encryption.algorithm"));
+                                            WebloggerConfig.getProperty("passwds.encryption.algorithm"));
                                 }
                                 valid = user.getPassword().equals(password);
                             }

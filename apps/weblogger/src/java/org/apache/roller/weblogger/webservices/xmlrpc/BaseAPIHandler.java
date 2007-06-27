@@ -25,7 +25,7 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.roller.weblogger.config.RollerConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -129,11 +129,11 @@ public class BaseAPIHandler implements Serializable {
             if (user != null) {
                 // are passwords encrypted
                 String encrypted =
-                        RollerConfig.getProperty("passwds.encryption.enabled");
+                        WebloggerConfig.getProperty("passwds.encryption.enabled");
                 //System.out.print("password was [" + password + "] ");
                 if ("true".equalsIgnoreCase(encrypted)) {
                     password = Utilities.encodePassword(password,
-                            RollerConfig.getProperty("passwds.encryption.algorithm"));
+                            WebloggerConfig.getProperty("passwds.encryption.algorithm"));
                 }
                 authenticated = password.equals(user.getPassword());
             }
@@ -184,11 +184,11 @@ public class BaseAPIHandler implements Serializable {
             if (enabled) {
                 // are passwords encrypted?
                 String encrypted =
-                        RollerConfig.getProperty("passwds.encryption.enabled");
+                        WebloggerConfig.getProperty("passwds.encryption.enabled");
                 //System.out.print("password was [" + password + "] ");
                 if ("true".equalsIgnoreCase(encrypted)) {
                     password = Utilities.encodePassword(password,
-                            RollerConfig.getProperty("passwds.encryption.algorithm"));
+                            WebloggerConfig.getProperty("passwds.encryption.algorithm"));
                 }
                 //System.out.println("is now [" + password + "]");
                 authenticated = user.getPassword().equals(password);
