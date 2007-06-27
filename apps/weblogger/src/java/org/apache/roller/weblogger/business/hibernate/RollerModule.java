@@ -50,7 +50,7 @@ public class RollerModule implements Module {
     
     public void configure(Binder binder) {
         
-        binder.bind(Weblogger.class).to(HibernateRollerImpl.class);
+        binder.bind(Weblogger.class).to(HibernateWebloggerImpl.class);
         
         binder.bind(HibernatePersistenceStrategy.class);
         

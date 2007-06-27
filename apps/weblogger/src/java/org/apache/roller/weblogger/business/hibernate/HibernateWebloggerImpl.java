@@ -15,49 +15,40 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.weblogger.business.jpa;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+package org.apache.roller.weblogger.business.hibernate;
+
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerImpl;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerImpl;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
+
 /**
- * A JPA specific implementation of the Weblogger business layer.
+ * A Hibernate specific implementation of the Roller business layer.
  */
 @com.google.inject.Singleton
-public class JPARollerImpl extends WebloggerImpl {
-
-    static final long serialVersionUID = 5256135928578074652L;
-
-    private static Log logger = LogFactory.getLog(JPARollerImpl.class);
-
+public class HibernateWebloggerImpl extends WebloggerImpl {
+    
     // a persistence utility class
-    private final JPAPersistenceStrategy strategy;
+    private final HibernatePersistenceStrategy strategy;
     
     
-    /**
-     * Single constructor.
-     * @throws org.apache.roller.weblogger.WebloggerException on any error
-     */
     @com.google.inject.Inject
-    protected JPARollerImpl(
-        JPAPersistenceStrategy strategy,
+    protected HibernateWebloggerImpl(
+        HibernatePersistenceStrategy strategy,
         AutoPingManager      autoPingManager,
         BookmarkManager      bookmarkManager,
         FileManager          fileManager,
@@ -96,21 +87,26 @@ public class JPARollerImpl extends WebloggerImpl {
     public void flush() throws WebloggerException {
         this.strategy.flush();
     }
-
+    
     
     public void release() {
-        super.release();
-        // tell JPA to close down
+        
+        // tell Hibernate to close down
         this.strategy.release();
+        
+        // then let parent do its thing
+        super.release();
     }
-
+    
     
     public void shutdown() {
+        
         // do our own shutdown first
         this.release();
-
+        
         // then let parent do its thing
         super.shutdown();
     }
     
 }
+

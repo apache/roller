@@ -48,7 +48,7 @@ public class RollerModule implements Module {
 
     public void configure(Binder binder) {
 
-        binder.bind(Weblogger.class).to(JPARollerImpl.class);
+        binder.bind(Weblogger.class).to(JPAWebloggerImpl.class);
         
         binder.bind(JPAPersistenceStrategy.class);       
         binder.bind(org.apache.roller.weblogger.planet.business.jpa.JPARollerPlanetPersistenceStrategy.class);   
