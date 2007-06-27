@@ -163,6 +163,7 @@ public class WeblogEntry implements Serializable {
         this.commentDays = other.getCommentDays();
         this.rightToLeft = other.getRightToLeft();
         this.pinnedToMain = other.getPinnedToMain();
+        this.locale = other.getLocale();
     }
     
     //------------------------------------------------------- Good citizenship
