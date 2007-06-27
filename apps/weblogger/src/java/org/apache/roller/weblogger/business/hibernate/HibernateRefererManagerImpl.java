@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.dialect.Dialect;
@@ -108,7 +108,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             String delete = null;
             // Some databases can't handle comparing CLOBs, use like as a workaround
             if (   currentDialect instanceof SQLServerDialect 
-                || currentDialect instanceof OracleDialect 
+                || currentDialect instanceof Oracle9Dialect 
                 || currentDialect instanceof DerbyDialect) {
                 delete = "delete WeblogReferrer where excerpt is null or excerpt like ''";
             } else {
@@ -137,7 +137,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             session.createQuery(reset)
             .setParameter("site",website).executeUpdate();
             String delete = null;
-            if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
+            if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof Oracle9Dialect ){
                 delete = "delete WeblogReferrer where website=:site and (excerpt is null or excerpt like '')";
             } else {
                 delete = "delete WeblogReferrer where website=:site and (excerpt is null or excerpt='')";
