@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +159,9 @@ public class Entries extends UIAction {
     }
     
     
+    /**
+     * Get the list of all categories for the action weblog, not including root.
+     */
     public List<WeblogCategory> getCategories() {
         // make list of categories with first option being being a transient
         // category just meant to represent the default option of any category
@@ -168,7 +172,15 @@ public class Entries extends UIAction {
         tmpCat.setPath("");
         cats.add(tmpCat);
         
-        cats.addAll(getActionWeblog().getWeblogCategories());
+        List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            weblogCats = wmgr.getWeblogCategories(getActionWeblog(), false);
+        } catch (WebloggerException ex) {
+            log.error("Error getting category list for weblog - "+getWeblog(), ex);
+        }
+        
+        cats.addAll(weblogCats);
         
         return cats;
     }
