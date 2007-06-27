@@ -29,8 +29,10 @@
         
         <property name="show_sql">false</property>
         
-        <!-- use thread local Session context -->
-        <!--<property name="hibernate.current_session_context_class">thread</property>-->
+        <!-- use custom connection provider -->
+        <property name="hibernate.connection.provider_class">org.apache.roller.planet.business.hibernate.HibernateConnectionProvider</property>
+        
+        <!-- use custom thread local Session context -->
         <property name="hibernate.current_session_context_class">org.apache.roller.planet.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
         <!-- Hibernate L2 Caching -->

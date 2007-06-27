@@ -30,6 +30,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.planet.config.PlanetConfig;
 
+
 /**
  * Base class for Hibernate persistence implementation.
  *
@@ -64,7 +65,7 @@ public class HibernatePersistenceStrategy {
                 props.setProperty(key, value);
             }
         }
-        config.mergeProperties(props);
+        config.addProperties(props);
         
         sessionFactory = config.buildSessionFactory(); 
     }
