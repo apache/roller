@@ -34,7 +34,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;  
 import org.apache.commons.logging.LogFactory;  
 import org.apache.roller.RollerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
@@ -52,12 +52,12 @@ public class HibernateAutoPingManagerImpl implements AutoPingManager {
     
     private static Log log = LogFactory.getLog(HibernateAutoPingManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject    
-    protected HibernateAutoPingManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernateAutoPingManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Auto Ping Manager");
         this.roller = roller;

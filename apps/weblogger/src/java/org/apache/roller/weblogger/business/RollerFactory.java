@@ -28,14 +28,14 @@ import org.apache.roller.weblogger.config.RollerConfig;
 
 
 /**
- * Provides access to the Roller instance and bootstraps the business tier.
+ * Provides access to the Weblogger instance and bootstraps the business tier.
  */
 public final class RollerFactory {
     
     private static final Log log = LogFactory.getLog(RollerFactory.class);
     
-    // a reference to the bootstrapped Roller instance
-    private static Roller rollerInstance = null;
+    // a reference to the bootstrapped Weblogger instance
+    private static Weblogger rollerInstance = null;
     
     private static Injector injector = null;
   
@@ -68,12 +68,12 @@ public final class RollerFactory {
     
     
     /**
-     * Accessor to the Roller Weblogger business tier.
-     *
-     * @return Roller An instance of Roller.
+     * Accessor to the Weblogger Weblogger business tier.
+     * 
+     * @return Weblogger An instance of Weblogger.
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
-    public static final Roller getRoller() {
+    public static final Weblogger getRoller() {
         if (rollerInstance == null) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
@@ -91,12 +91,12 @@ public final class RollerFactory {
     
     
     /**
-     * Bootstrap the Roller Weblogger business tier.
-     *
+     * Bootstrap the Weblogger Weblogger business tier.
+     * 
      * Bootstrapping the application effectively instantiates all the necessary
      * pieces of the business tier and wires them together so that the app is 
      * ready to run.
-     *
+     * 
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws BootstrapException If an error happens during the bootstrap process.
      */
@@ -109,7 +109,7 @@ public final class RollerFactory {
         
         log.info("Bootstrapping Roller Weblogger business tier");
         
-        rollerInstance = injector.getInstance(Roller.class);
+        rollerInstance = injector.getInstance(Weblogger.class);
             
         log.info("Roller Weblogger business tier successfully bootstrapped");
     }

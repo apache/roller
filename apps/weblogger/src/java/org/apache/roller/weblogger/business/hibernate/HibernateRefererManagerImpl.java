@@ -45,7 +45,7 @@ import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.dialect.Dialect;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -67,14 +67,14 @@ public class HibernateRefererManagerImpl implements RefererManager {
     protected static final String DAYHITS = "dayHits";
     protected static final String TOTALHITS = "totalHits";
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
 
     private Date mRefDate = new Date();
     
         
     @com.google.inject.Inject    
-    protected HibernateRefererManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernateRefererManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Referer Manager");
         this.strategy = strat;
@@ -216,7 +216,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     }   
     
     /**
-     * Use Hibernate directly because Roller's Query API does too much allocation.
+     * Use Hibernate directly because Weblogger's Query API does too much allocation.
      */
     protected List getExistingReferers(Weblog website, String dateString,
             String permalink) throws WebloggerException {
@@ -236,7 +236,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     }
         
     /**
-     * Use Hibernate directly because Roller's Query API does too much allocation.
+     * Use Hibernate directly because Weblogger's Query API does too much allocation.
      */
     protected List getMatchingReferers(Weblog website, String requestUrl,
             String refererUrl) throws WebloggerException {

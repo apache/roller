@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -42,13 +42,13 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
 
 /**
- * Guice module for configuring JPA as Roller-backend.
+ * Guice module for configuring JPA as Weblogger-backend.
  */
 public class RollerModule implements Module {
 
     public void configure(Binder binder) {
 
-        binder.bind(Roller.class).to(JPARollerImpl.class);
+        binder.bind(Weblogger.class).to(JPARollerImpl.class);
         
         binder.bind(JPAPersistenceStrategy.class);       
         binder.bind(org.apache.roller.weblogger.planet.business.jpa.JPARollerPlanetPersistenceStrategy.class);   

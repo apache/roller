@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.RollerConfig;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
 import java.util.regex.Pattern;
@@ -93,7 +93,7 @@ abstract class Handler {
     protected static final Log logger = LogFactory.getFactory().getInstance(Handler.class);
     
     private HttpServletRequest request;
-    private Roller roller;
+    private Weblogger roller;
     private String userName;
     private URI uri;
     private String urlPrefix;
@@ -171,7 +171,7 @@ abstract class Handler {
         return request;
     }
     
-    protected Roller getRoller() {
+    protected Weblogger getRoller() {
         return roller;
     }
     

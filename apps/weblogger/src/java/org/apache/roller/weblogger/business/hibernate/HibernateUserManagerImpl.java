@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -73,7 +73,7 @@ public class HibernateUserManagerImpl implements UserManager {
     
     private static Log log = LogFactory.getLog(HibernateUserManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
@@ -84,7 +84,7 @@ public class HibernateUserManagerImpl implements UserManager {
    
     
     @com.google.inject.Inject
-    protected HibernateUserManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernateUserManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate User Manager");
         this.roller = roller;       
@@ -675,7 +675,7 @@ public class HibernateUserManagerImpl implements UserManager {
     }
     
     /**
-     * Use Hibernate directly because Roller's Query API does too much allocation.
+     * Use Hibernate directly because Weblogger's Query API does too much allocation.
      */
     public WeblogTemplate getPageByLink(Weblog website, String pagelink)
             throws WebloggerException {

@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -52,8 +52,8 @@ import org.apache.roller.weblogger.util.RegexUtil;
 import org.apache.roller.weblogger.util.URLUtilities;
 
 /**
- * Load Velocity Context with Roller objects, values, and custom plugins.
- *
+ * Load Velocity Context with Weblogger objects, values, and custom plugins.
+ * 
  * NOTE: This class has been deprecated and should no longer be used.  It is
  *       left here so that old weblogs which rely on it will continue to
  *       function properly.  This should only be used by weblog pages.
@@ -92,7 +92,7 @@ public class ContextLoader {
     
     /**
      * Setup the a Velocity context by loading it with objects, values, and
-     * RollerPagePlugins needed for Roller page execution.
+     * RollerPagePlugins needed for Weblogger page execution.
      */
     public static void setupContext(
             Map                 ctx,
@@ -184,7 +184,7 @@ public class ContextLoader {
                 pageRequest);
         ctx.put("pageHelper", pageHelper);
         
-        // Load standard Roller objects and values into the context
+        // Load standard Weblogger objects and values into the context
         loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request);
         loadPathValues(ctx, request, weblog, locale);
         loadRssValues(ctx, request, weblog, category);
@@ -212,7 +212,7 @@ public class ContextLoader {
         if(weblog == null)
             return;
         
-        Roller mRoller = RollerFactory.getRoller();
+        Weblogger mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
         ctx.put("userName",         weblog.getHandle());
@@ -422,7 +422,7 @@ public class ContextLoader {
     
     
     /**
-     * Determine URL path to Roller upload directory.
+     * Determine URL path to Weblogger upload directory.
      */
     private static String figureResourcePath() {
         

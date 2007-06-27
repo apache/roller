@@ -60,7 +60,7 @@ public class IndexManagerImpl implements IndexManager {
     // =============================================
     
     private IndexReader reader;
-    private final Roller roller;
+    private final Weblogger roller;
     
     static Log mLogger = LogFactory.getFactory().getInstance(
             IndexManagerImpl.class);
@@ -95,7 +95,7 @@ public class IndexManagerImpl implements IndexManager {
      *            the path to the index directory
      */
     @com.google.inject.Inject
-    protected IndexManagerImpl(Roller roller) {
+    protected IndexManagerImpl(Weblogger roller) {
         this.roller = roller;
 
         // check config to see if the internal search is enabled

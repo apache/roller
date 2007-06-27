@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 
 
@@ -116,7 +116,7 @@ public class TurnoverReferersTask extends RollerTaskWithLeasing {
         try {
             log.info("task started");
             
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             roller.getRefererManager().clearReferrers();
             roller.flush();
             

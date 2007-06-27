@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 
 /*
  * JPAAutoPingManagerImpl.java
@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.business.Roller;
 @com.google.inject.Singleton
 public class JPAAutoPingManagerImpl implements AutoPingManager {
 
-    private final Roller roller;
+    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
     
@@ -61,7 +61,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
      * Creates a new instance of JPAAutoPingManagerImpl
      */
     @com.google.inject.Inject
-    protected JPAAutoPingManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+    protected JPAAutoPingManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         this.roller = roller;
         this.strategy = strategy;
     }

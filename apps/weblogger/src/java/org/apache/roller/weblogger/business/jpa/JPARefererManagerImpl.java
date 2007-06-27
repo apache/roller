@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
@@ -63,7 +63,7 @@ public class JPARefererManagerImpl implements RefererManager {
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
     /** The strategy for this manager. */
-    private final Roller roller;
+    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
 
@@ -71,7 +71,7 @@ public class JPARefererManagerImpl implements RefererManager {
      * Creates a new instance of JPARefererManagerImpl
      */
     @com.google.inject.Inject
-    protected JPARefererManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+    protected JPARefererManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Referer Manager");
         this.roller = roller;
         this.strategy = strategy;
@@ -486,7 +486,7 @@ public class JPARefererManagerImpl implements RefererManager {
                     // Launch thread to extract referer linkback
 
                     try {
-                        Roller mRoller = roller;
+                        Weblogger mRoller = roller;
                         mRoller.getThreadManager().executeInBackground(
                                 new LinkbackExtractorRunnable(ref));
                     } catch (InterruptedException e) {

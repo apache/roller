@@ -23,7 +23,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerImpl;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
 /**
- * A JPA specific implementation of the Roller business layer.
+ * A JPA specific implementation of the Weblogger business layer.
  */
 @com.google.inject.Singleton
 public class JPARollerImpl extends RollerImpl {

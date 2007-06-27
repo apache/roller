@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.AutoPing;
@@ -54,12 +54,12 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     
     private static Log log = LogFactory.getLog(HibernatePingTargetManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject    
-    protected HibernatePingTargetManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernatePingTargetManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Ping Target Manager");
         this.roller = roller;

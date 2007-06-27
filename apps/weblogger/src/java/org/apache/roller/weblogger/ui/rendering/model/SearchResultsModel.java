@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -159,7 +159,7 @@ public class SearchResultsModel extends PageModel {
         
         try {
             TreeSet categories = new TreeSet();
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
             WeblogEntry entry = null;

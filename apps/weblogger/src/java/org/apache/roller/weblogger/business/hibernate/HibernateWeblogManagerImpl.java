@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
@@ -73,7 +73,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     private static Log log = LogFactory.getLog(HibernateWeblogManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
@@ -86,7 +86,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     
     @com.google.inject.Inject    
-    protected HibernateWeblogManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernateWeblogManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Weblog Manager");
         this.roller = roller;        

@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -70,7 +70,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public Map getEntries() {
         if (entries == null) try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
@@ -133,7 +133,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             nextEntry = wmgr.getNextEntry(currEntry, null, locale);
             // make sure that entry is published and not to future
@@ -151,7 +151,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null) try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
             // make sure that entry is published and not to future

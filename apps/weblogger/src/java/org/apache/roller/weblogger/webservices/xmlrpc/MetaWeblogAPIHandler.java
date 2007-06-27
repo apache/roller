@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -45,10 +45,10 @@ import org.apache.xmlrpc.XmlRpcException;
 
 
 /**
- * Roller XML-RPC Handler for the MetaWeblog API.
- *
+ * Weblogger XML-RPC Handler for the MetaWeblog API.
+ * 
  * MetaWeblog API spec can be found at http://www.xmlrpc.com/metaWeblogApi
- *
+ * 
  * @author David M Johnson
  */
 public class MetaWeblogAPIHandler extends BloggerAPIHandler {
@@ -64,12 +64,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
     /**
      * Authenticates a user and returns the categories available in the website
-     *
-     * @param blogid Dummy Value for Roller
+     * 
+     * @param blogid Dummy Value for Weblogger
      * @param userid Login for a MetaWeblog user who has permission to post to the blog
      * @param password Password for said username
+     * @return 
      * @throws Exception
-     * @return
      */
     public Object getCategories(String blogid, String userid, String password)
     throws Exception {
@@ -79,7 +79,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         
         Weblog website = validate(blogid, userid,password);
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         try {
             Hashtable result = new Hashtable();
             WeblogManager weblogMgr = roller.getWeblogManager();
@@ -124,7 +124,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("    Publish: " + publish);
         
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
@@ -177,7 +177,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // notify cache
             flushPageCache(entry.getWebsite());
             
-            // TODO: Roller timestamps need better than 1 second accuracy
+            // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
             Thread.sleep(1000);
             
@@ -235,7 +235,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("      Title: " + title);
         
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             User user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current =
@@ -256,7 +256,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 entry.setStatus(WeblogEntry.DRAFT);
             }
             
-            // MetaWeblog supports multiple cats, Roller supports one/entry
+            // MetaWeblog supports multiple cats, Weblogger supports one/entry
             // so here we take accept the first category that exists
             WeblogCategory rollerCat = null;
             if ( postcontent.get("categories") != null ) {
@@ -286,7 +286,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // notify cache
             flushPageCache(entry.getWebsite());
             
-            // TODO: Roller timestamps need better than 1 second accuracy
+            // TODO: Weblogger timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
             Thread.sleep(1000);
             
@@ -314,7 +314,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     PostId: " + postid);
         mLogger.debug("     UserId: " + userid);
         
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
@@ -331,7 +331,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
     
     /**
-     * Allows user to post a binary object, a file, to Roller. If the file is
+     * Allows user to post a binary object, a file, to Weblogger. If the file is
      * allowed by the RollerConfig file-upload settings, then the file will be
      * placed in the user's upload diretory.
      */
@@ -353,7 +353,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             byte[] bits = (byte[]) struct.get("bits");
             
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             FileManager fmgr = roller.getFileManager();
             RollerMessages msgs = new RollerMessages();
             
@@ -397,7 +397,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Vector results = new Vector();
             
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null) {
                 List entries = weblogMgr.getWeblogEntries(

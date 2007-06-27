@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
@@ -49,7 +49,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
     
     private static Log log = LogFactory.getLog(HibernatePropertiesManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     
@@ -57,7 +57,7 @@ public class HibernatePropertiesManagerImpl implements PropertiesManager {
      * Creates a new instance of HibernatePropertiesManagerImpl
      */
     @com.google.inject.Inject
-    protected HibernatePropertiesManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernatePropertiesManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Properties Manager");
         this.roller = roller;        

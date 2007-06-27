@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.util.UUIDGenerator;
@@ -924,7 +924,7 @@ public class Weblog implements Serializable {
     public Map getInitializedPlugins() {
         if (initializedPlugins == null) {
             try {
-                Roller roller = RollerFactory.getRoller();
+                Weblogger roller = RollerFactory.getRoller();
                 PluginManager ppmgr = roller.getPagePluginManager();
                 initializedPlugins = ppmgr.getWeblogEntryPlugins(this); 
             } catch (Exception e) {
@@ -943,7 +943,7 @@ public class Weblog implements Serializable {
     public WeblogEntry getWeblogEntry(String anchor) {
         WeblogEntry entry = null;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             entry = wmgr.getWeblogEntryByAnchor(this, anchor);
         } catch (WebloggerException e) {
@@ -977,7 +977,7 @@ public class Weblog implements Serializable {
     public Set getWeblogCategories(String categoryPath) {
         Set ret = new HashSet();
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();            
             WeblogCategory category = null;
             if (categoryPath != null && !categoryPath.equals("nil")) {
@@ -1001,7 +1001,7 @@ public class Weblog implements Serializable {
     public WeblogCategory getWeblogCategory(String categoryPath) {
         WeblogCategory category = null;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             if (categoryPath != null && !categoryPath.equals("nil")) {
                 category = wmgr.getWeblogCategoryByPath(this, categoryPath);
@@ -1129,7 +1129,7 @@ public class Weblog implements Serializable {
     public WeblogBookmarkFolder getBookmarkFolder(String folderName) {
         WeblogBookmarkFolder ret = null;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             BookmarkManager bmgr = roller.getBookmarkManager();
             if (folderName == null || folderName.equals("nil") || folderName.trim().equals("/")) {
                 return bmgr.getRootFolder(this);
@@ -1150,7 +1150,7 @@ public class Weblog implements Serializable {
     public List getTodaysReferrers() {
         List referers = null;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             RefererManager rmgr = roller.getRefererManager();
             return rmgr.getTodaysReferers(this);
             
@@ -1169,7 +1169,7 @@ public class Weblog implements Serializable {
      */
     public int getTodaysHits() {
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             WeblogHitCount hitCount = mgr.getHitCountByWeblog(this);
             
@@ -1204,7 +1204,7 @@ public class Weblog implements Serializable {
             startDate = cal.getTime();     
         }        
         try {            
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             results = wmgr.getPopularTags(this, startDate, length);
         } catch (Exception e) {
@@ -1219,7 +1219,7 @@ public class Weblog implements Serializable {
     public long getCommentCount() {
         long count = 0;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             count = mgr.getCommentCount(this);            
         } catch (WebloggerException e) {
@@ -1237,7 +1237,7 @@ public class Weblog implements Serializable {
     public long getEntryCount() {
         long count = 0;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager mgr = roller.getWeblogManager();
             count = mgr.getEntryCount(this);            
         } catch (WebloggerException e) {

@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -90,7 +90,7 @@ public class OldPageHelper {
         mFolder = folder;
         
         // init plugins
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         PluginManager ppmgr = roller.getPagePluginManager();
         mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite);
     }
@@ -129,7 +129,7 @@ public class OldPageHelper {
     
     
     public String getToggleLinkbackDisplayHTML(WeblogReferrerWrapper referer) {
-        // NOTE: this was EOLed as part of Roller 4.0 since we no longer
+        // NOTE: this was EOLed as part of Weblogger 4.0 since we no longer
         // have an action for toggling linkback display
         return "";
     }
@@ -170,7 +170,7 @@ public class OldPageHelper {
      * @return String HTML for navbar.
      */
     public String showEditorNavBar(boolean vertical) {
-        // this method has been EOLd starting in Roller 4.0
+        // this method has been EOLd starting in Weblogger 4.0
         // this same functionality can be obtained via the #showAuthorMenu() macro
         return null;
     }
@@ -183,7 +183,7 @@ public class OldPageHelper {
      * @return String HTML for menu.
      */
     public String showMenu(String model, String template) {
-        // this method has been EOLd starting in Roller 4.0
+        // this method has been EOLd starting in Weblogger 4.0
         // this same functionality can be obtained via the #showAuthorMenu() macro
         return null;
     }
@@ -265,7 +265,7 @@ public class OldPageHelper {
     public String strutsUrlHelper1( boolean useIds, boolean isAction,
             String path, String val1, String val2, Hashtable params) {
         
-        // NOTE: this method is now official defunct since Roller 4.0
+        // NOTE: this method is now official defunct since Weblogger 4.0
         // when we EOLed struts1 and had no real equivalent for this
         
         if(path == null) {
@@ -327,10 +327,10 @@ public class OldPageHelper {
     
     /**
      * This method used to return an array of supported locales based on some
-     * of the old i18n work done in Roller, however, as of Roller 3.0 there is
+     * of the old i18n work done in Weblogger, however, as of Weblogger 3.0 there is
      * no longer a list of supported languages.  The languages available to a
      * weblog are unbounded and are purely determined by the weblog author.
-     *
+     * 
      * This method always returns null.
      */
     public Locale[] getSupportedLanguages() {

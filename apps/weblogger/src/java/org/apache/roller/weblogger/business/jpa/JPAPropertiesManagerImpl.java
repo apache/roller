@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.config.runtime.DisplayGroup;
 import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 
 
 /*
@@ -52,7 +52,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     private static Log log = LogFactory.getLog(
         JPAPropertiesManagerImpl.class);
 
-    private final Roller roller;
+    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
     
@@ -60,7 +60,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Creates a new instance of JPAPropertiesManagerImpl
      */
     @com.google.inject.Inject
-    protected JPAPropertiesManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+    protected JPAPropertiesManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Properties Manager");
         this.roller = roller;
         this.strategy = strategy;

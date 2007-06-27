@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.RollerConfig;
 import org.apache.roller.weblogger.pojos.Theme;
@@ -56,7 +56,7 @@ public class ThemeManagerImpl implements ThemeManager {
     
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     
     // directory where themes are kept
     private String themeDir = null;
@@ -66,7 +66,7 @@ public class ThemeManagerImpl implements ThemeManager {
     
     
     @com.google.inject.Inject
-    protected ThemeManagerImpl(Roller roller) {
+    protected ThemeManagerImpl(Weblogger roller) {
         
         this.roller = roller;
         

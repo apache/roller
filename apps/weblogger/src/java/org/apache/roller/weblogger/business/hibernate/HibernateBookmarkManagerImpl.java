@@ -35,7 +35,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 
 
 /**
@@ -48,7 +48,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     private static Log log = LogFactory.getLog(HibernateBookmarkManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     
@@ -57,7 +57,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
      * @param roller
      */
     @com.google.inject.Inject    
-    protected HibernateBookmarkManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernateBookmarkManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Bookmark Manager");
         this.roller = roller;

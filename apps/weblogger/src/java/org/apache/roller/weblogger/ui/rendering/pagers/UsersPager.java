@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -131,7 +131,7 @@ public class UsersPager extends AbstractPager {
             
             List results = new ArrayList();
             try {
-                Roller roller = RollerFactory.getRoller();
+                Weblogger roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
                 List rawUsers = null;
                 if (letter == null) {

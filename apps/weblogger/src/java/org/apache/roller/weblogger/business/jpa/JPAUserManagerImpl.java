@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 
 /*
  * JPAUserManagerImpl.java
@@ -61,7 +61,7 @@ public class JPAUserManagerImpl implements UserManager {
     private static final Comparator statCountCountReverseComparator =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
@@ -72,7 +72,7 @@ public class JPAUserManagerImpl implements UserManager {
     
     
     @com.google.inject.Inject
-    protected JPAUserManagerImpl(Roller roller, JPAPersistenceStrategy strat) {
+    protected JPAUserManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
         log.debug("Instantiating JPA User Manager");
         this.roller = roller;
         this.strategy = strat;
@@ -870,7 +870,7 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     /**
-     * Use JPA directly because Roller's Query API does too much allocation.
+     * Use JPA directly because Weblogger's Query API does too much allocation.
      */
     public WeblogTemplate getPageByLink(Weblog website, String pagelink)
     throws WebloggerException {

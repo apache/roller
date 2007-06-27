@@ -38,13 +38,13 @@ import org.apache.roller.weblogger.config.PingConfig;
 
 
 /**
- * The abstract version of the Roller implementation.
- *
- * Here we put code that pertains to *all* implementations of the Roller
+ * The abstract version of the Weblogger implementation.
+ * 
+ * Here we put code that pertains to *all* implementations of the Weblogger
  * interface, regardless of their persistence strategy.
  */
 @com.google.inject.Singleton
-public abstract class RollerImpl implements Roller {
+public abstract class RollerImpl implements Weblogger {
     
     private static Log log = LogFactory.getLog(RollerImpl.class);
     
@@ -115,7 +115,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getFileManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getFileManager()
      */
     public FileManager getFileManager() {
         return fileManager;
@@ -123,7 +125,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getThreadManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getThreadManager()
      */
     public ThreadManager getThreadManager() {
         return threadManager;
@@ -131,7 +135,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getIndexManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getIndexManager()
      */
     public IndexManager getIndexManager() {
         return indexManager;
@@ -139,7 +145,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getThemeManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getThemeManager()
      */
     public ThemeManager getThemeManager() {
         return themeManager;
@@ -156,7 +164,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getUserManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getUserManager()
      */
     public UserManager getUserManager() {
         return userManager;
@@ -164,7 +174,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getBookmarkManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getBookmarkManager()
      */
     public BookmarkManager getBookmarkManager() {
         return bookmarkManager;
@@ -172,7 +184,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getWeblogManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogManager()
      */
     public WeblogManager getWeblogManager() {
         return weblogManager;
@@ -180,7 +194,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getRefererManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getRefererManager()
      */
     public RefererManager getRefererManager() {
         return refererManager;
@@ -188,7 +204,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getPropertiesManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getPropertiesManager()
      */
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
@@ -196,7 +214,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getPingTargetManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
      */
     public PingQueueManager getPingQueueManager() {
         return pingQueueManager;
@@ -204,7 +224,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getPingTargetManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
      */
     public AutoPingManager getAutopingManager() {
         return autoPingManager;
@@ -212,7 +234,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getPingTargetManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
      */
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
@@ -220,7 +244,9 @@ public abstract class RollerImpl implements Roller {
     
     
     /**
-     * @see org.apache.roller.weblogger.model.Roller#getPluginManager()
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getPluginManager()
      */
     public PluginManager getPagePluginManager() {
         return pluginManager;
@@ -314,19 +340,25 @@ public abstract class RollerImpl implements Roller {
     }
     
     
-    /** Roller version */
+    /**
+     * Weblogger version
+     */
     public String getVersion() {
         return version;
     }
     
     
-    /** Roller build time */
+    /**
+     * Weblogger build time
+     */
     public String getBuildTime() {
         return buildTime;
     }
     
     
-    /** Get username that built Roller */
+    /**
+     * Get username that built Weblogger
+     */
     public String getBuildUser() {
         return buildUser;
     }
