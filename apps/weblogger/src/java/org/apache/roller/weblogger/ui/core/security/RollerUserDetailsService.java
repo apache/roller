@@ -7,7 +7,7 @@ import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.UserRole;
@@ -16,7 +16,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**
- * Acegi user details service implemented using Roller API.
+ * Acegi user details service implemented using Weblogger API.
  */
 public class RollerUserDetailsService implements UserDetailsService {
 
@@ -25,7 +25,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         
         User userData = null;
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
             userData = umgr.getUserByUserName(userName, Boolean.TRUE); 
         } catch (WebloggerException ex) {

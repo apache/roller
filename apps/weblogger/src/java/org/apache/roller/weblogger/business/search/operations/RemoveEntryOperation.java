@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
@@ -46,11 +46,11 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
     //~ Instance fields ========================================================
     
     private WeblogEntry data;
-    private Roller roller;
+    private Weblogger roller;
     
     //~ Constructors ===========================================================
     
-    public RemoveEntryOperation(Roller roller, IndexManagerImpl mgr,WeblogEntry data) {
+    public RemoveEntryOperation(Weblogger roller, IndexManagerImpl mgr,WeblogEntry data) {
         super(mgr);
         this.roller = roller;
         this.data = data;

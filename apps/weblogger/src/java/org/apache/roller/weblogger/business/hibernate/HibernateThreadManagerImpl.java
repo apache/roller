@@ -22,7 +22,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
 import org.apache.roller.weblogger.pojos.TaskLock;
@@ -44,12 +44,12 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
     private static Log log = LogFactory.getLog(HibernateThreadManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final HibernatePersistenceStrategy strategy;
     
     
     @com.google.inject.Inject    
-    protected HibernateThreadManagerImpl(Roller roller, HibernatePersistenceStrategy strat) {
+    protected HibernateThreadManagerImpl(Weblogger roller, HibernatePersistenceStrategy strat) {
         super();
         
         log.debug("Instantiating Hibernate Thread Manager");

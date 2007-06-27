@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.RollerRuntimeConfig;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -47,11 +47,11 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
 
 /**
- * Roller XML-RPC Handler for the Blogger v1 API.
- *
+ * Weblogger XML-RPC Handler for the Blogger v1 API.
+ * 
  * Blogger API spec can be found at http://plant.blogger.com/api/index.html
  * See also http://xmlrpc.free-conversant.com/docs/bloggerAPI
- *
+ * 
  * @author David M Johnson
  */
 public class BloggerAPIHandler extends BaseAPIHandler {
@@ -84,7 +84,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     PostId: " + postid);
         mLogger.debug("     UserId: " + userid);
         
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
@@ -111,17 +111,17 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     
     
     /**
-     * Edits the main index template of a given blog. Roller only support
+     * Edits the main index template of a given blog. Weblogger only support
      * updating the main template, the default template of your weblog.
-     *
+     * 
      * @param appkey Unique identifier/passcode of the application sending the post
      * @param blogid Unique identifier of the blog the post will be added to
      * @param userid Login for a Blogger user who has permission to post to the blog
      * @param password Password for said username
      * @param template The text for the new template (usually mostly HTML).
      * @param templateType Determines which of the blog's templates is to be set.
+     * @return 
      * @throws XmlRpcException
-     * @return
      */
     public boolean setTemplate(String appkey, String blogid, String userid,
             String password, String templateData,
@@ -142,7 +142,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         }
         
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
             
             WeblogTemplate page = userMgr.getPage(templateType);
@@ -183,7 +183,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         validate(blogid, userid,password);
         
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
             WeblogTemplate page = userMgr.getPage(templateType);
             
@@ -219,7 +219,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         validateUser(userid, password);
         
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
             User user = userMgr.getUserByUserName(userid);
             
@@ -327,7 +327,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             try {
                 Timestamp current = new Timestamp(System.currentTimeMillis());
                 
-                Roller roller = RollerFactory.getRoller();
+                Weblogger roller = RollerFactory.getRoller();
                 WeblogManager weblogMgr = roller.getWeblogManager();
                 WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
                 entry.setText(content);
@@ -395,7 +395,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         }
         
         try {
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
             Timestamp current = new Timestamp(System.currentTimeMillis());
@@ -461,7 +461,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         try {
             Vector results = new Vector();
             
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null) {
                 Map entries = weblogMgr.getWeblogEntryObjectMap(

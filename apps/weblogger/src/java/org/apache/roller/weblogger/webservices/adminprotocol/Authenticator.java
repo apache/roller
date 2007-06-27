@@ -17,7 +17,7 @@ package org.apache.roller.weblogger.webservices.adminprotocol;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.pojos.User;
  */
 abstract class Authenticator {
     private HttpServletRequest request;
-    private Roller             roller;
+    private Weblogger             roller;
     private String             userName;
     
     /** Creates a new instance of HttpBasicAuthenticator */
@@ -79,11 +79,11 @@ abstract class Authenticator {
         this.userName = userId;
     }
     
-    protected Roller getRoller() {
+    protected Weblogger getRoller() {
         return roller;
     }
     
-    protected void setRoller(Roller roller) {
+    protected void setRoller(Weblogger roller) {
         this.roller = roller;
     }
     

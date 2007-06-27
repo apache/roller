@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -98,7 +98,7 @@ public class TagStatsServlet extends HttpServlet {
             prefix = pathInfo;
         }
                                         
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         try {
             response.setContentType("text/html; charset=utf-8");
             

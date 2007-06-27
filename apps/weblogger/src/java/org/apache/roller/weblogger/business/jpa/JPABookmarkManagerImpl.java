@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -46,7 +46,7 @@ import org.jdom.input.SAXBuilder;
 @com.google.inject.Singleton
 public class JPABookmarkManagerImpl implements BookmarkManager {
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
     
@@ -60,7 +60,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      * Creates a new instance of JPABookmarkManagerImpl
      */
    @com.google.inject.Inject
-   protected JPABookmarkManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+   protected JPABookmarkManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Bookmark Manager");
         this.roller = roller;
         this.strategy = strategy;

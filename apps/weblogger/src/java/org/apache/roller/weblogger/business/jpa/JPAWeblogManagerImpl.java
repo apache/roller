@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
@@ -71,7 +71,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     protected static Log log = LogFactory.getLog(
             JPAWeblogManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
@@ -90,7 +90,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     
     
     @com.google.inject.Inject
-    protected JPAWeblogManagerImpl(Roller roller, JPAPersistenceStrategy strategy) {
+    protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Weblog Manager");
         this.roller = roller;
         this.strategy = strategy;

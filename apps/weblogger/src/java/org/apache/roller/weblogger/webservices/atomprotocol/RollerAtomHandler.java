@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.FilePathException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -71,46 +71,46 @@ import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
- * Roller's ROME-based Atom Protocol implementation.
+ * Weblogger's ROME-based Atom Protocol implementation.
  * 
- * Each Roller workspace has two collections, one that accepts entries and 
+ * Each Weblogger workspace has two collections, one that accepts entries and 
  * that accepts everything. The entries collection represents the weblog 
  * entries in a single weblog and the everything collection represents that 
  * weblog's uploaded-files. 
- *
- * Here are the APP URIs suppored by Roller:
- *
+ * 
+ * Here are the APP URIs suppored by Weblogger:
+ * 
  * <pre>
  *    /roller-services/app
  *    Introspection doc
- *
+ * 
  *    /roller-services/app/[weblog-handle>/entries
  *    Entry collection for a blog
- *
+ * 
  *    /roller-services/app/[weblog-handle]/entries/[offset]
  *    Entry collection for a blog, with offset
- *
+ * 
  *    /roller-services/app/[weblog-handle]/entry/[id]
  *    Individual entry (i.e. edit URI)
- *
+ * 
  *    /roller-services/app/[weblog-handle]/resources
  *    Resource (i.e. file-uploads) collection for a blog
- *
+ * 
  *    /roller-services/app/[weblog-handle]/resources/[offset]
  *    Resource collection for a blog, with offset
- *
+ * 
  *    /roller-services/app/[weblog-handle]/resource/*.media-link[name]
  *    Individual resource metadata (i.e. edit URI)
- *
+ * 
  *    /roller-services/app/[weblog-handle]/resource/[name]
  *    Individual resource data (i.e. media-edit URI)
- *
+ * 
  * </pre>
- *
+ * 
  * @author David M Johnson
  */
 public class RollerAtomHandler implements AtomHandler {
-    private Roller   roller;
+    private Weblogger   roller;
     private User user;
     private int      maxEntries = 20;
     
@@ -247,7 +247,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private String getAcceptedContentTypeRange() throws WebloggerException {
         StringBuffer sb = new StringBuffer();
-        Roller roller = RollerFactory.getRoller();
+        Weblogger roller = RollerFactory.getRoller();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
@@ -484,7 +484,7 @@ public class RollerAtomHandler implements AtomHandler {
     //--------------------------------------------------------------------- entries
     
     /**
-     * Create entry in the entry collection (a Roller blog has only one).
+     * Create entry in the entry collection (a Weblogger blog has only one).
      */
     public Entry postEntry(String[] pathInfo, Entry entry) throws AtomException {
         log.debug("Entering");
@@ -649,7 +649,7 @@ public class RollerAtomHandler implements AtomHandler {
     //-------------------------------------------------------------------- resources
     
     /**
-     * Create new resource in generic collection (a Roller blog has only one).
+     * Create new resource in generic collection (a Weblogger blog has only one).
      * TODO: can we avoid saving temporary file?
      * TODO: do we need to handle mutli-part MIME uploads?
      * TODO: use Jakarta Commons File-upload?
@@ -877,7 +877,7 @@ public class RollerAtomHandler implements AtomHandler {
     
     /**
      * Perform WSSE authentication based on information in request.
-     * Will not work if Roller password encryption is turned on.
+     * Will not work if Weblogger password encryption is turned on.
      */
     protected String authenticateWSSE(HttpServletRequest request) {
         String wsseHeader = request.getHeader("X-WSSE");
@@ -968,7 +968,7 @@ public class RollerAtomHandler implements AtomHandler {
     //----------------------------------------------------------- internal utilities
     
     /**
-     * Create a Rome Atom entry based on a Roller entry.
+     * Create a Rome Atom entry based on a Weblogger entry.
      * Content is escaped.
      * Link is stored as rel=alternate link.
      */
@@ -999,14 +999,14 @@ public class RollerAtomHandler implements AtomHandler {
         author.setEmail(        creator.getEmailAddress());
         atomEntry.setAuthors(   Collections.singletonList(author));
         
-        // Add Atom category for Roller category, using category scheme
+        // Add Atom category for Weblogger category, using category scheme
         List categories = new ArrayList();
         Category atomCat = new Category();
         atomCat.setScheme(getWeblogCategoryScheme(entry.getWebsite()));
         atomCat.setTerm(entry.getCategory().getPath().substring(1));
         categories.add(atomCat);
         
-        // Add Atom categories for each Roller tag with null scheme
+        // Add Atom categories for each Weblogger tag with null scheme
         for (Iterator tagit = entry.getTags().iterator(); tagit.hasNext();) {
             WeblogEntryTag tag = (WeblogEntryTag) tagit.next();
             Category newcat = new Category();
@@ -1089,7 +1089,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     /**
-     * Copy fields from ROME entry to Roller entry.
+     * Copy fields from ROME entry to Weblogger entry.
      */
     private void copyToRollerEntry(Entry entry,WeblogEntry rollerEntry) throws WebloggerException {
         
@@ -1122,8 +1122,8 @@ public class RollerAtomHandler implements AtomHandler {
         }
                 
         // Process incoming categories:
-        // Atom categories with weblog-level scheme are Roller categories.
-        // Atom supports multiple cats, but Roller supports one/entry
+        // Atom categories with weblog-level scheme are Weblogger categories.
+        // Atom supports multiple cats, but Weblogger supports one/entry
         // so here we take accept the first category that exists.
         List categories = entry.getCategories();
         if (categories != null && categories.size() > 0) {

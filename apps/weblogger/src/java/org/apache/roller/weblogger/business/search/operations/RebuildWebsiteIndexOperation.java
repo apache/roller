@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -53,7 +53,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     //~ Instance fields ========================================================
     
     private Weblog website;
-    private Roller roller;
+    private Weblogger roller;
     
     //~ Constructors ===========================================================
     
@@ -62,7 +62,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
      *
      * @param website The website to rebuild the index for, or null for all users.
      */
-    public RebuildWebsiteIndexOperation(Roller roller, IndexManagerImpl mgr, Weblog website) {
+    public RebuildWebsiteIndexOperation(Weblogger roller, IndexManagerImpl mgr, Weblog website) {
         super(mgr);
         this.roller = roller;
         this.website = website;

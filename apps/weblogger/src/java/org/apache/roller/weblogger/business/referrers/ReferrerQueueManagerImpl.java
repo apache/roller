@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.weblogger.business.runnable.WorkerThread;
 import org.apache.roller.weblogger.config.RollerConfig;
@@ -58,7 +58,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     
     private static Log mLogger = LogFactory.getLog(ReferrerQueueManagerImpl.class);
     
-    private final Roller roller;
+    private final Weblogger roller;
     
     private boolean asyncMode = false;
     private int numWorkers = 1;
@@ -69,7 +69,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
     
     // private because we are a singleton
     @com.google.inject.Inject
-    protected ReferrerQueueManagerImpl(Roller roller) {
+    protected ReferrerQueueManagerImpl(Weblogger roller) {
         
         mLogger.info("Instantiating Referrer Queue Manager");
         

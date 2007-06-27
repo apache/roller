@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
- * Test Roller Bookmark Management.
+ * Test Weblogger Bookmark Management.
  */
 public class BookmarkTest extends TestCase {
     
@@ -80,7 +80,7 @@ public class BookmarkTest extends TestCase {
         }
     }
     
-    public Roller getRoller() {
+    public Weblogger getRoller() {
         return RollerFactory.getRoller();
     }
     

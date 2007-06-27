@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.runnable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.Roller;
+import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.RollerFactory;
 
 
@@ -74,7 +74,7 @@ public class WorkerThread extends Thread {
             }
             
             // since this is a thread we have to make sure that we tidy up ourselves
-            Roller roller = RollerFactory.getRoller();
+            Weblogger roller = RollerFactory.getRoller();
             roller.release();
         }
         
