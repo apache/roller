@@ -413,6 +413,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 criteria.add(Expression.isNotNull("parent"));
             }
             
+            // order by name
+            criteria.addOrder(Order.asc("name"));
+            
             return criteria.list();
         } catch (HibernateException e) {
             throw new WebloggerException(e);

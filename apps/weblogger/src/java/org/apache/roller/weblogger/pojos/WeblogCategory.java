@@ -230,7 +230,7 @@ public class WeblogCategory implements Serializable, Comparable {
      * 
      * @hibernate.collection-key column="parentid"
      * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogCategory"
-     * @hibernate.set lazy="true" inverse="true" cascade="delete"
+     * @hibernate.set lazy="true" inverse="true" cascade="delete" order-by="name"
      */
     public Set getWeblogCategories() {
         return this.childCategories;
