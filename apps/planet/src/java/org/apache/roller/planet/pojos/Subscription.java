@@ -32,23 +32,24 @@ import org.apache.roller.util.UUIDGenerator;
  *
  * @hibernate.class lazy="true" table="rag_subscription"
  */
-public class Subscription implements Serializable, Comparable
-{
-    /** Database ID */
-    protected String id = UUIDGenerator.generateUUID();
+public class Subscription implements Serializable, Comparable {
     
     // attributes
-    protected String title;
-    protected String author;
-    protected String feedUrl;
-    protected String siteUrl;
-    protected Date lastUpdated;
-    protected int inboundlinks = 0;
-    protected int inboundblogs = 0;
+    private String id = UUIDGenerator.generateUUID();
+    private String title;
+    private String author;
+    private String feedUrl;
+    private String siteUrl;
+    private Date lastUpdated;
+    private int inboundlinks = 0;
+    private int inboundblogs = 0;
     
     // associations
-    protected Set groups = new HashSet();
-    protected List entries = new ArrayList();
+    private Set groups = new HashSet();
+    private List entries = new ArrayList();
+    
+    
+    public Subscription() {}
     
     
     public int compareTo(Object o) {
@@ -76,44 +77,9 @@ public class Subscription implements Serializable, Comparable
     public String getId() {
         return id;
     }
+    
     public void setId(String id) {
         this.id = id;
-    }
-    
-    
-    /**
-     * @hibernate.property column="feed_url" non-null="true" unique="false"
-     */
-    public String getFeedURL() {
-        return feedUrl;
-    }
-    
-    public void setFeedURL(String feedUrl) {
-        this.feedUrl = feedUrl;
-    }
-    
-    
-    /**
-     * @hibernate.property column="last_updated" non-null="false" unique="false"
-     */
-    public Date getLastUpdated() {
-        return lastUpdated;
-    }
-    
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-    
-    
-    /**
-     * @hibernate.property column="site_url" non-null="false" unique="false"
-     */
-    public String getSiteURL() {
-        return siteUrl;
-    }
-    
-    public void setSiteURL(String siteUrl) {
-        this.siteUrl = siteUrl;
     }
     
     
@@ -142,6 +108,42 @@ public class Subscription implements Serializable, Comparable
     
     
     /**
+     * @hibernate.property column="feed_url" non-null="true" unique="false"
+     */
+    public String getFeedURL() {
+        return feedUrl;
+    }
+    
+    public void setFeedURL(String feedUrl) {
+        this.feedUrl = feedUrl;
+    }
+    
+    
+    /**
+     * @hibernate.property column="site_url" non-null="false" unique="false"
+     */
+    public String getSiteURL() {
+        return siteUrl;
+    }
+    
+    public void setSiteURL(String siteUrl) {
+        this.siteUrl = siteUrl;
+    }
+    
+    
+    /**
+     * @hibernate.property column="last_updated" non-null="false" unique="false"
+     */
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+    
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+    
+    
+    /**
      * @hibernate.property column="inbound_links" non-null="false" unique="false"
      */
     public int getInboundlinks() {
@@ -165,17 +167,6 @@ public class Subscription implements Serializable, Comparable
     }
     
     
-    // for backwards compatability?
-    public String getName() {
-        return title;
-    }
-    
-    // for backwards compatability?
-    public String getURL() {
-        return siteUrl;
-    }
-    
-    
     /**
      * @hibernate.set table="rag_group_subscription" lazy="true" cascade="none"
      * @hibernate.collection-key column="subscription_id"
@@ -185,14 +176,13 @@ public class Subscription implements Serializable, Comparable
         return groups;
     }
     
-    public void setGroups(Set groups) {
+    // private because there is no need for people to do this
+    private void setGroups(Set groups) {
         this.groups = groups;
     }
     
     
     /**
-     * 
-     * 
      * @hibernate.bag lazy="true" inverse="true" cascade="all"
      * @hibernate.collection-key column="subscription_id"
      * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.SubscriptionEntry"
@@ -201,6 +191,7 @@ public class Subscription implements Serializable, Comparable
         return entries;
     }
     
+    // private because there is no need for people to do this
     private void setEntries(List entries) {
         this.entries = entries;
     }
@@ -219,6 +210,17 @@ public class Subscription implements Serializable, Comparable
             entry.setSubscription(this);
         }
         this.getEntries().addAll(newEntries);
+    }
+    
+    
+    // for backwards compatability?
+    public String getName() {
+        return title;
+    }
+    
+    // for backwards compatability?
+    public String getURL() {
+        return siteUrl;
     }
     
 }

@@ -84,29 +84,26 @@ public class PlanetGroup implements Serializable, Comparable {
     
     
     /**
-     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none" sort="natural"
-     * @hibernate.collection-key column="group_id"
-     * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.Subscription"
+     * @hibernate.property column="handle" non-null="false" unique="false"
      */
-    public Set getSubscriptions() {
-        return subscriptions;
+    public String getHandle() {
+        return handle;
     }
     
-    public void setSubscriptions(Set subscriptions) {
-        this.subscriptions = subscriptions;
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
     
     
     /**
-     * @hibernate.property column="cat_restriction" non-null="false" unique="false"
+     * @hibernate.property column="title" non-null="false" unique="false"
      */
-    public String getCategoryRestriction() {
-        return categoryRestriction;
+    public String getTitle() {
+        return title;
     }
     
-    public void setCategoryRestriction(String categoryRestriction) {
-        this.categoryRestriction = categoryRestriction;
-        catArray = null;
+    public void setTitle(String title) {
+        this.title = title;
     }
     
     
@@ -119,18 +116,6 @@ public class PlanetGroup implements Serializable, Comparable {
     
     public void setDescription(String description) {
         this.description = description;
-    }
-    
-    
-    /**
-     * @hibernate.property column="handle" non-null="false" unique="false"
-     */
-    public String getHandle() {
-        return handle;
-    }
-    
-    public void setHandle(String handle) {
-        this.handle = handle;
     }
     
     
@@ -159,14 +144,15 @@ public class PlanetGroup implements Serializable, Comparable {
     
     
     /**
-     * @hibernate.property column="title" non-null="false" unique="false"
+     * @hibernate.property column="cat_restriction" non-null="false" unique="false"
      */
-    public String getTitle() {
-        return title;
+    public String getCategoryRestriction() {
+        return categoryRestriction;
     }
     
-    public void setTitle(String title) {
-        this.title = title;
+    public void setCategoryRestriction(String categoryRestriction) {
+        this.categoryRestriction = categoryRestriction;
+        catArray = null;
     }
     
     
@@ -179,6 +165,20 @@ public class PlanetGroup implements Serializable, Comparable {
     
     public void setPlanet(Planet planet) {
         this.planet = planet;
+    }
+    
+    
+    /**
+     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none" sort="natural"
+     * @hibernate.collection-key column="group_id"
+     * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.Subscription"
+     */
+    public Set getSubscriptions() {
+        return subscriptions;
+    }
+    
+    public void setSubscriptions(Set subscriptions) {
+        this.subscriptions = subscriptions;
     }
     
     
