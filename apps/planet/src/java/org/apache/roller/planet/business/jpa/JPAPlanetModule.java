@@ -28,10 +28,11 @@ import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.RomeFeedFetcher;
 import org.apache.roller.planet.business.URLStrategy;
 
+
 /**
  * Guice module for configuring JPA as Roller-backend.
  */
-public class PlanetModule implements Module {
+public class JPAPlanetModule implements Module {
 
     public void configure(Binder binder) {
 
@@ -43,6 +44,6 @@ public class PlanetModule implements Module {
         binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);   
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
-    }    
+    }
+    
 }
-
