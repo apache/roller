@@ -17,31 +17,39 @@
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
+import org.apache.roller.weblogger.util.DateUtil;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.io.ModuleParser;
 
-public class PubControlModuleParser implements ModuleParser {
+public class AppModuleParser implements ModuleParser {
 
     public String getNamespaceUri() {
-        return PubControlModule.URI;
+        return AppModule.URI;
     }
 
     public Namespace getContentNamespace() {
-        return Namespace.getNamespace(PubControlModule.URI);
+        return Namespace.getNamespace(AppModule.URI);
     }
+    
     public Module parse(Element elem) {
         boolean foundSomething = false;
-        PubControlModule m = new PubControlModuleImpl();
-        Element e = elem.getChild("control", getContentNamespace());
-        if (e != null) {
-            Element draftElem = e.getChild("draft", getContentNamespace());
+        AppModule m = new AppModuleImpl();
+        Element control = elem.getChild("control", getContentNamespace());
+        if (control != null) {
+            Element draftElem = control.getChild("draft", getContentNamespace());
             if (draftElem != null) {
                 if ("yes".equals(draftElem.getText())) m.setDraft(true); 
                 if ("no".equals(draftElem.getText())) m.setDraft(false);                
             }
+        }
+        Element edited = elem.getChild("editied", getContentNamespace());
+        if (edited != null) {
+            try {
+                m.setEdited(DateUtil.parseIso8601(edited.getTextTrim()));
+            } catch (Exception ignored) {}
         }
         return m;
     }

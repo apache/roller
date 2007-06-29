@@ -1032,10 +1032,10 @@ public class RollerAtomHandler implements AtomHandler {
         atomEntry.setOtherLinks(otherlinks);
         
         List modules = new ArrayList();
-        PubControlModule pubControl = new PubControlModuleImpl();
-        pubControl.setDraft(
-                !WeblogEntry.PUBLISHED.equals(entry.getStatus()));
-        modules.add(pubControl);
+        AppModule app = new AppModuleImpl();
+        app.setDraft(!WeblogEntry.PUBLISHED.equals(entry.getStatus()));
+        app.setEdited(entry.getUpdateTime());
+        modules.add(app);
         atomEntry.setModules(modules);
         
         return atomEntry;
@@ -1085,6 +1085,13 @@ public class RollerAtomHandler implements AtomHandler {
         contents.add(content);
         entry.setContents(contents);
         
+        List modules = new ArrayList();
+        AppModule app = new AppModuleImpl();
+        app.setDraft(false);
+        app.setEdited(entry.getUpdated());
+        modules.add(app);
+        entry.setModules(modules);
+        
         return entry;
     }
     
@@ -1113,8 +1120,8 @@ public class RollerAtomHandler implements AtomHandler {
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         
-        PubControlModule control =
-                (PubControlModule)entry.getModule("http://purl.org/atom/app#");
+        AppModule control =
+                (AppModule)entry.getModule("http://purl.org/atom/app#");
         if (control!=null && control.getDraft()) {
             rollerEntry.setStatus(WeblogEntry.DRAFT);
         } else {

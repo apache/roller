@@ -28,58 +28,8 @@ import org.jdom.Namespace;
 
 /**
  * This class models an Atom Publishing Protocol AtomService Document.
- * <p />
- * Based on: draft-ietf-atompub-protocol-10.txt
- * <p />
+ * Based on: draft-ietf-atompub-protocol-10.txt.
  * Designed to be Roller independent.
- *//* 
-
-	namespace app = "http://purl.org/atom/app#"
-	start = appService
-	             
-	appService =
-	   element app:service {
-	      appCommonAttributes,
-	      ( appWorkspace+
-	        & extensionElement* )
-	   }
-	   
-	For example:
-	 
-	<?xml version="1.0" encoding='utf-8'?>
-	<service xmlns="http://purl.org/atom/app#"
-	         xmlns:atom="http://www.w3.org/2005/Atom">
-	  <workspace>
-	    <atom:title>Main Site</atom:title>
-	    <collection
-	        href="http://example.org/reilly/main" >
-	      <atom:title>My Blog Entries</atom:title>
-	      <categories
-	         href="http://example.com/cats/forMain.cats" />
-	    </collection>
-	    <collection
-	        href="http://example.org/reilly/pic" >
-	      <atom:title>Pictures</atom:title>
-	      <accept>image/*</accept>
-	    </collection>
-	  </workspace>
-	  <workspace>
-	    <atom:title>Side Bar Blog</atom:title>
-	    <collection
-	        href="http://example.org/reilly/list" >
-	      <atom:title>Remaindered Links</atom:title>
-	      <accept>entry</accept>
-	      <categories fixed="yes">
-	        <atom:category
-	          scheme="http://example.org/extra-cats/"
-	          term="joke" />
-	        <atom:category
-	          scheme="http://example.org/extra-cats/"
-	          term="serious" />
-	      </categories>
-	    </collection>
-	  </workspace>
-	</service>
  */
 public class AtomService {
 
@@ -91,7 +41,7 @@ public class AtomService {
     
     /** Namespace for Atom Publishing Protocol */
     public static Namespace ATOM_PROTOCOL = 
-        Namespace.getNamespace("app","http://purl.org/atom/app#");  
+        Namespace.getNamespace("app","http://www.w3.org/2007/app");  
         
     public AtomService() {
     }

@@ -20,6 +20,8 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.weblogger.util.Utilities;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -27,19 +29,19 @@ import org.jdom.Namespace;
 import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.io.ModuleGenerator;
 
-public class PubControlModuleGenerator implements ModuleGenerator {
-    private static final Namespace PUBCONTROL_NS  = 
-        Namespace.getNamespace("app", PubControlModule.URI);
+public class AppModuleGenerator implements ModuleGenerator {
+    private static final Namespace APP_NS  = 
+        Namespace.getNamespace("app", AppModule.URI);
 
     public String getNamespaceUri() {
-        return PubControlModule.URI;
+        return AppModule.URI;
     }
 
     private static final Set NAMESPACES;
 
     static {
         Set nss = new HashSet();
-        nss.add(PUBCONTROL_NS);
+        nss.add(APP_NS);
         NAMESPACES = Collections.unmodifiableSet(nss);
     }
 
@@ -48,17 +50,23 @@ public class PubControlModuleGenerator implements ModuleGenerator {
     }
 
     public void generate(Module module, Element element) {
-        PubControlModule m = (PubControlModule)module;
+        AppModule m = (AppModule)module;
+        
         String draft = m.getDraft() ? "yes" : "no";
-        Element control = new Element("control", PUBCONTROL_NS);
+        Element control = new Element("control", APP_NS);
         control.addContent(generateSimpleElement("draft", draft));
         element.addContent(control);
+        
+        if (m.getEdited() != null) {
+            Element edited = new Element("edited", APP_NS);
+            edited.addContent(DateUtil.formatIso8601(m.getEdited()));
+            element.addContent(edited);
+        }
     }
 
     protected Element generateSimpleElement(String name, String value)  {
-        Element element = new Element(name, PUBCONTROL_NS);
+        Element element = new Element(name, APP_NS);
         element.addContent(value);
         return element;
     }
-
 }
