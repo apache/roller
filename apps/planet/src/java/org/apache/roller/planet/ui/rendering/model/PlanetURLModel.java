@@ -25,7 +25,7 @@ import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
 
@@ -47,7 +47,7 @@ public class PlanetURLModel implements Model {
     private static Log log = LogFactory.getLog(PlanetURLModel.class);
     
     private URLStrategy urlStrategy = null;
-    private PlanetData planet = null;
+    private Planet planet = null;
     
     
     public PlanetURLModel() {}

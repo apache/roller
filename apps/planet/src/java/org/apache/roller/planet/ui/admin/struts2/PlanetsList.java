@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
 
 
@@ -73,7 +73,7 @@ public class PlanetsList extends PlanetActionSupport {
             
             try {
                 PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
-                PlanetData planet = pMgr.getPlanetById(getPlanetid());
+                Planet planet = pMgr.getPlanetById(getPlanetid());
                 if(planet != null) {
                     pMgr.deletePlanet(planet);
                     PlanetFactory.getPlanet().flush();

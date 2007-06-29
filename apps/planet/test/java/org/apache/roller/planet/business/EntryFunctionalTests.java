@@ -21,10 +21,10 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -34,13 +34,13 @@ public class EntryFunctionalTests extends TestCase {
     
     public static Log log = LogFactory.getLog(EntryFunctionalTests.class);
     
-    private PlanetData testPlanet = null;
-    private PlanetGroupData testGroup1 = null;
-    private PlanetSubscriptionData testSub1 = null;
-    private PlanetSubscriptionData testSub2 = null;
-    private PlanetEntryData testEntry1 = null;
-    private PlanetEntryData testEntry2 = null;
-    private PlanetEntryData testEntry3 = null;
+    private Planet testPlanet = null;
+    private PlanetGroup testGroup1 = null;
+    private Subscription testSub1 = null;
+    private Subscription testSub2 = null;
+    private SubscriptionEntry testEntry1 = null;
+    private SubscriptionEntry testEntry2 = null;
+    private SubscriptionEntry testEntry3 = null;
     
     
     protected void setUp() throws Exception {
@@ -88,19 +88,19 @@ public class EntryFunctionalTests extends TestCase {
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         // by id
-        PlanetEntryData entry = mgr.getEntryById(testEntry1.getId());
+        SubscriptionEntry entry = mgr.getEntryById(testEntry1.getId());
         assertNotNull(entry);
         assertEquals("entryFuncTestEntry1", entry.getPermalink());
         
         // by subscription
-        PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub2.getId());
+        Subscription sub = mgr.getSubscriptionById(testSub2.getId());
         assertEquals(2, sub.getEntries().size());
         
         // by subscription through manager
         assertEquals(2, mgr.getEntries(sub, 0, 10).size());
         
         // by group
-        PlanetGroupData group = mgr.getGroupById(testGroup1.getId());
+        PlanetGroup group = mgr.getGroupById(testGroup1.getId());
         assertEquals(3, mgr.getEntries(group, 0, 10).size());
         
         // by group with timeframe constraint
@@ -111,7 +111,7 @@ public class EntryFunctionalTests extends TestCase {
     public void testDeleteEntries() throws Exception {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub2.getId());
+        Subscription sub = mgr.getSubscriptionById(testSub2.getId());
         
         // make sure entries are there
         assertEquals(2, sub.getEntries().size());

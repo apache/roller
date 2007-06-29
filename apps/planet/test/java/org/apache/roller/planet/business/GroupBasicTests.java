@@ -19,8 +19,8 @@ package org.apache.roller.planet.business;
 import java.util.List;
 import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 
 
 /**
@@ -28,7 +28,7 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
  */
 public class GroupBasicTests extends TestCase {
     
-    private PlanetData testPlanet = null;
+    private Planet testPlanet = null;
     
     
     protected void setUp() throws Exception {
@@ -48,12 +48,12 @@ public class GroupBasicTests extends TestCase {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
-        PlanetGroupData testGroup = new PlanetGroupData();
+        PlanetGroup testGroup = new PlanetGroup();
         testGroup.setDescription("test_group_desc");
         testGroup.setHandle("test_handle");
         testGroup.setTitle("test_title");
         testGroup.setPlanet(testPlanet);
-        PlanetGroupData group = null;
+        PlanetGroup group = null;
         
         group = mgr.getGroup(testPlanet, "test_handle");
         assertNull(group);

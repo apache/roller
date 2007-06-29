@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
 
 
@@ -40,8 +40,8 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
     
     private static Log log = LogFactory.getLog(PlanetSubscriptionForm.class);
     
-    // the PlanetSubscriptionData to work on
-    private PlanetSubscriptionData subscription = null;
+    // the Subscription to work on
+    private Subscription subscription = null;
     
     // form fields
     private String groupid = null;
@@ -49,7 +49,7 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
     
     
     /**
-     * Load relevant PlanetSubscriptionData if possible.
+     * Load relevant Subscription if possible.
      */
     public void prepare() throws Exception {
         PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -59,7 +59,7 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
             
             subscription = pMgr.getSubscriptionById(getSubid());
         } else {
-            subscription = new PlanetSubscriptionData();
+            subscription = new Subscription();
         }
     }
     
@@ -77,14 +77,14 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
         try {
             if(this.subscription.getId() == null) {
                 // adding a new sub to a group, so make sure we have a group
-                PlanetGroupData group = pMgr.getGroupById(getGroupid());
+                PlanetGroup group = pMgr.getGroupById(getGroupid());
                 if(group == null) {
                     setError("PlanetSubscriptionForm.error.groupNull");
                     return INPUT;
                 }
                 
                 // check if this subscription already exists before adding it
-                PlanetSubscriptionData sub = pMgr.getSubscription(this.subscription.getFeedURL());
+                Subscription sub = pMgr.getSubscription(this.subscription.getFeedURL());
                 if(sub != null) {
                     this.subscription = sub;
                 } else {
@@ -132,11 +132,11 @@ public class PlanetSubscriptionForm extends PlanetActionSupport implements Prepa
         this.subid = subid;
     }
 
-    public PlanetSubscriptionData getSubscription() {
+    public Subscription getSubscription() {
         return subscription;
     }
 
-    public void setSubscription(PlanetSubscriptionData subscription) {
+    public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
     

@@ -24,9 +24,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
 
 
@@ -41,8 +41,8 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
     
     private static Log log = LogFactory.getLog(PlanetGroupForm.class);
     
-    // the PlanetGroupData to work on
-    private PlanetGroupData group = null;
+    // the PlanetGroup to work on
+    private PlanetGroup group = null;
     
     // form fields
     private String planetid = null;
@@ -51,7 +51,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
     
     
     /**
-     * Load relevant PlanetData if possible.
+     * Load relevant Planet if possible.
      */
     public void prepare() throws Exception {
         PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -62,9 +62,9 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
             group = pMgr.getGroupById(getGroupid());
         } else {
             // new group, must have a planet to add it to
-            PlanetData planet = pMgr.getPlanetById(getPlanetid());
+            Planet planet = pMgr.getPlanetById(getPlanetid());
             if(planet != null) {
-                group = new PlanetGroupData();
+                group = new PlanetGroup();
                 group.setPlanet(planet);
             } else {
                 throw new PlanetException("could not determine planet "+getPlanetid());
@@ -108,12 +108,12 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
         PlanetManager pmgr= PlanetFactory.getPlanet().getPlanetManager();
         try {
             if(getSubid() != null && !"".equals(getSubid())) {
-                PlanetSubscriptionData sub = pmgr.getSubscriptionById(getSubid());
+                Subscription sub = pmgr.getSubscriptionById(getSubid());
                 if(sub == null) {
                     setError("PlanetGroupForm.error.nullSubscription");
                     return INPUT;
                 } else {
-                    PlanetGroupData group = getGroup();
+                    PlanetGroup group = getGroup();
                     group.getSubscriptions().remove(sub);
                     sub.getGroups().remove(group);
                     pmgr.saveGroup(group);
@@ -157,11 +157,11 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
         this.subid = subid;
     }
     
-    public PlanetGroupData getGroup() {
+    public PlanetGroup getGroup() {
         return group;
     }
 
-    public void setGroup(PlanetGroupData group) {
+    public void setGroup(PlanetGroup group) {
         this.group = group;
     }
     

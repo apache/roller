@@ -30,8 +30,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.config.PlanetConfig;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.StaticTemplate;
 import org.apache.roller.planet.pojos.Template;
 import org.apache.roller.planet.ui.rendering.Renderer;
@@ -67,8 +67,8 @@ public class OpmlServlet extends HttpServlet {
 
         log.debug("Entering");
         
-        PlanetData planet = null;
-        PlanetGroupData group = null;
+        Planet planet = null;
+        PlanetGroup group = null;
 
         PlanetGroupOpmlRequest opmlRequest = null;
         try {

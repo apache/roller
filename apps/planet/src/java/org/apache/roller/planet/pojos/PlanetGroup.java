@@ -32,7 +32,7 @@ import org.apache.roller.util.UUIDGenerator;
  *
  * @hibernate.class lazy="true" table="rag_group"
  */
-public class PlanetGroupData implements Serializable, Comparable {
+public class PlanetGroup implements Serializable, Comparable {
     
     transient private String[] catArray = null;
     
@@ -48,13 +48,13 @@ public class PlanetGroupData implements Serializable, Comparable {
     private String categoryRestriction = null;
     
     // associations
-    private PlanetData planet = null;
+    private Planet planet = null;
     private Set subscriptions = new TreeSet();
     
     
-    public PlanetGroupData() {}
+    public PlanetGroup() {}
     
-    public PlanetGroupData(PlanetData planet, String handle, String title, String desc) {
+    public PlanetGroup(Planet planet, String handle, String title, String desc) {
         this.planet = planet;
         this.handle = handle;
         this.title = title;
@@ -66,7 +66,7 @@ public class PlanetGroupData implements Serializable, Comparable {
      * For comparing groups and sorting, ordered by Title.
      */
     public int compareTo(Object o) {
-        PlanetGroupData other = (PlanetGroupData) o;
+        PlanetGroup other = (PlanetGroup) o;
         return getTitle().compareTo(other.getTitle());
     }
     
@@ -86,7 +86,7 @@ public class PlanetGroupData implements Serializable, Comparable {
     /**
      * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="none" sort="natural"
      * @hibernate.collection-key column="group_id"
-     * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.PlanetSubscriptionData"
+     * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.Subscription"
      */
     public Set getSubscriptions() {
         return subscriptions;
@@ -173,11 +173,11 @@ public class PlanetGroupData implements Serializable, Comparable {
     /**
      * @hibernate.many-to-one column="planet_id" cascade="none" non-null="false"
      */
-    public PlanetData getPlanet() {
+    public Planet getPlanet() {
         return planet;
     }
     
-    public void setPlanet(PlanetData planet) {
+    public void setPlanet(Planet planet) {
         this.planet = planet;
     }
     
@@ -198,7 +198,7 @@ public class PlanetGroupData implements Serializable, Comparable {
     /**
      * Returns true if entry is qualified for inclusion in this group.
      */
-    public boolean qualified(PlanetEntryData entry) {
+    public boolean qualified(SubscriptionEntry entry) {
         String[] cats = getCategoryRestrictionAsArray();
         if (cats == null || cats.length == 0) return true;
         for (int i=0; i<cats.length; i++) {

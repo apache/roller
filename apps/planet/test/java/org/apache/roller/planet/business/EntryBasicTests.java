@@ -19,8 +19,8 @@ package org.apache.roller.planet.business;
 import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -28,7 +28,7 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
  */
 public class EntryBasicTests extends TestCase {
     
-    private PlanetSubscriptionData testSub = null;
+    private Subscription testSub = null;
     
     
     protected void setUp() throws Exception {
@@ -47,9 +47,9 @@ public class EntryBasicTests extends TestCase {
     public void testEntryCRUD() throws Exception {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub.getId());
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
-        PlanetEntryData testEntry = new PlanetEntryData();
+        SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink("entryBasics");
         testEntry.setTitle("entryBasics");
         testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
@@ -60,7 +60,7 @@ public class EntryBasicTests extends TestCase {
         TestUtils.endSession(true);
         
         // verify
-        PlanetEntryData entry = null;
+        SubscriptionEntry entry = null;
         entry = mgr.getEntryById(testEntry.getId());
         assertNotNull(entry);
         assertEquals("entryBasics", entry.getPermalink());

@@ -22,8 +22,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.ui.rendering.util.PlanetGroupRequest;
 import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
@@ -36,8 +36,8 @@ public class PlanetGroupModel implements Model {
     private static Log log = LogFactory.getLog(PlanetGroupModel.class);
     
     private PlanetGroupRequest planetGroupRequest = null;
-    private PlanetData planet = null;
-    private PlanetGroupData group = null;
+    private Planet planet = null;
+    private PlanetGroup group = null;
     
     
     /** 
@@ -86,7 +86,7 @@ public class PlanetGroupModel implements Model {
     /**
      * Get planet being displayed.
      */
-    public PlanetData getPlanet() {
+    public Planet getPlanet() {
         return planet;
     }
     
@@ -94,7 +94,7 @@ public class PlanetGroupModel implements Model {
     /**
      * Get group being displayed.
      */
-    public PlanetGroupData getGroup() {
+    public PlanetGroup getGroup() {
         return group;
     }
     

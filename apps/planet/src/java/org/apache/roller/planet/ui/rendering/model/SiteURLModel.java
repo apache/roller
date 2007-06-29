@@ -25,7 +25,7 @@ import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.ui.rendering.util.PlanetRequest;
 
 

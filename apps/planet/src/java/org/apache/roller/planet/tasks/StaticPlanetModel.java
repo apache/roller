@@ -26,8 +26,8 @@ import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 /**
  * Simple planet model for use static planet generation, designed
@@ -49,14 +49,14 @@ public class StaticPlanetModel {
 //    }
        
        
-    public PlanetSubscriptionData getSubscription(String feedUrl) throws Exception {
+    public Subscription getSubscription(String feedUrl) throws Exception {
         return planetManager.getSubscription(feedUrl); 
     }
     
     
     public List getFeedEntries(String feedUrl, int maxEntries) throws Exception {
         try {
-            PlanetSubscriptionData sub = planetManager.getSubscription(feedUrl);
+            Subscription sub = planetManager.getSubscription(feedUrl);
             if(sub != null) {
                 return planetManager.getEntries(sub, 0, maxEntries);
             } else {
@@ -74,13 +74,13 @@ public class StaticPlanetModel {
 //    }
     
     // removed now that groups must be part of a planet, this method no longer makes sense
-//    public PlanetGroupData getGroup(String handle) throws PlanetException {
+//    public PlanetGroup getGroup(String handle) throws PlanetException {
 //        return planetManager.getGroup(handle);
 //    }
     
     
     public List getAggregation(
-            PlanetGroupData group, int maxEntries) throws PlanetException {
+            PlanetGroup group, int maxEntries) throws PlanetException {
         return planetManager.getEntries(group, 0, maxEntries);
     }
     

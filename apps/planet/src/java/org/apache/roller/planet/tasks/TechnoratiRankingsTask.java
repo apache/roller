@@ -28,7 +28,7 @@ import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.util.Technorati;
 
 
@@ -85,8 +85,8 @@ public class TechnoratiRankingsTask extends PlanetTask {
                 
                 Iterator subs = planet.getSubscriptions().iterator();
                 while (subs.hasNext()) {
-                    PlanetSubscriptionData sub =
-                            (PlanetSubscriptionData)subs.next();
+                    Subscription sub =
+                            (Subscription)subs.next();
                     if (count >= start && count < end) {
                         try {
                             Technorati.Result result =

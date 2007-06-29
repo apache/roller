@@ -172,7 +172,7 @@
             addedtags="@xdoclet-generated at ${TODAY}"
             force="true">
             
-            <fileset dir="${src}" includes="org/apache/roller/planet/pojos/*Data.java" />
+            <fileset dir="${src}" includes="org/apache/roller/planet/pojos/*.java" />
             <hibernate validatexml="true" version="3.0"/>
             
         </hibernatedoclet>

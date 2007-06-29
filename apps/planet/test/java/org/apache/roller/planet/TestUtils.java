@@ -21,10 +21,10 @@ package org.apache.roller.planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.startup.PlanetStartup;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -78,9 +78,9 @@ public final class TestUtils {
     /**
      * Convenience method that creates a planet and stores it.
      */
-    public static PlanetData setupPlanet(String handle) throws Exception {
+    public static Planet setupPlanet(String handle) throws Exception {
         
-        PlanetData testPlanet = new PlanetData(handle, handle, handle);
+        Planet testPlanet = new Planet(handle, handle, handle);
         
         // store
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
@@ -90,7 +90,7 @@ public final class TestUtils {
         PlanetFactory.getPlanet().flush();
         
         // query to make sure we return the persisted object
-        PlanetData planet = mgr.getPlanet(handle);
+        Planet planet = mgr.getPlanet(handle);
         
         if(planet == null)
             throw new PlanetException("error inserting new planet");
@@ -106,7 +106,7 @@ public final class TestUtils {
         
         // lookup
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        PlanetData planet = mgr.getPlanetById(id);
+        Planet planet = mgr.getPlanetById(id);
         
         // remove
         mgr.deletePlanet(planet);
@@ -119,16 +119,16 @@ public final class TestUtils {
     /**
      * Convenience method that creates a group and stores it.
      */
-    public static PlanetGroupData setupGroup(PlanetData planet, String handle) 
+    public static PlanetGroup setupGroup(Planet planet, String handle) 
             throws Exception {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         // make sure we are using a persistent object
-        PlanetData testPlanet = mgr.getPlanetById(planet.getId());
+        Planet testPlanet = mgr.getPlanetById(planet.getId());
         
         // store
-        PlanetGroupData testGroup = new PlanetGroupData(testPlanet, handle, handle, handle);
+        PlanetGroup testGroup = new PlanetGroup(testPlanet, handle, handle, handle);
         testPlanet.getGroups().add(testGroup);
         mgr.saveGroup(testGroup);
         
@@ -136,7 +136,7 @@ public final class TestUtils {
         PlanetFactory.getPlanet().flush();
         
         // query to make sure we return the persisted object
-        PlanetGroupData group = mgr.getGroupById(testGroup.getId());
+        PlanetGroup group = mgr.getGroupById(testGroup.getId());
         
         if(group == null)
             throw new PlanetException("error inserting new group");
@@ -152,7 +152,7 @@ public final class TestUtils {
         
         // lookup
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        PlanetGroupData group = mgr.getGroupById(id);
+        PlanetGroup group = mgr.getGroupById(id);
         
         // remove
         mgr.deleteGroup(group);
@@ -166,13 +166,13 @@ public final class TestUtils {
     /**
      * Convenience method that creates a sub and stores it.
      */
-    public static PlanetSubscriptionData setupSubscription(String feedUrl) 
+    public static Subscription setupSubscription(String feedUrl) 
             throws Exception {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         // store
-        PlanetSubscriptionData testSub = new PlanetSubscriptionData();
+        Subscription testSub = new Subscription();
         testSub.setFeedURL(feedUrl);
         testSub.setTitle(feedUrl);
         mgr.saveSubscription(testSub);
@@ -181,7 +181,7 @@ public final class TestUtils {
         PlanetFactory.getPlanet().flush();
         
         // query to make sure we return the persisted object
-        PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub.getId());
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
         if(sub == null)
             throw new PlanetException("error inserting new subscription");
@@ -197,7 +197,7 @@ public final class TestUtils {
         
         // lookup
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        PlanetSubscriptionData sub = mgr.getSubscriptionById(id);
+        Subscription sub = mgr.getSubscriptionById(id);
         
         // remove
         mgr.deleteSubscription(sub);
@@ -210,16 +210,16 @@ public final class TestUtils {
     /**
      * Convenience method that creates an entry and stores it.
      */
-    public static PlanetEntryData setupEntry(PlanetSubscriptionData sub, String title) 
+    public static SubscriptionEntry setupEntry(Subscription sub, String title) 
             throws Exception {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         // make sure we are using a persistent object
-        PlanetSubscriptionData testSub = mgr.getSubscriptionById(sub.getId());
+        Subscription testSub = mgr.getSubscriptionById(sub.getId());
         
         // store
-        PlanetEntryData testEntry = new PlanetEntryData();
+        SubscriptionEntry testEntry = new SubscriptionEntry();
         testEntry.setPermalink(title);
         testEntry.setTitle(title);
         testEntry.setPubTime(new java.sql.Timestamp(System.currentTimeMillis()));
@@ -231,7 +231,7 @@ public final class TestUtils {
         PlanetFactory.getPlanet().flush();
         
         // query to make sure we return the persisted object
-        PlanetEntryData entry = mgr.getEntryById(testEntry.getId());
+        SubscriptionEntry entry = mgr.getEntryById(testEntry.getId());
         
         if(entry == null)
             throw new PlanetException("error inserting new entry");
@@ -247,7 +247,7 @@ public final class TestUtils {
         
         // lookup
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        PlanetEntryData entry = mgr.getEntryById(id);
+        SubscriptionEntry entry = mgr.getEntryById(id);
         
         // remove
         mgr.deleteEntry(entry);

@@ -32,10 +32,10 @@ import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -56,24 +56,24 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // save a Planet
-    public void savePlanet(PlanetData planet) throws PlanetException {
+    public void savePlanet(Planet planet) throws PlanetException {
         strategy.store(planet);
     }
         
     // delete a Planet
-    public void deletePlanet(PlanetData planet) throws PlanetException {
+    public void deletePlanet(Planet planet) throws PlanetException {
         strategy.remove(planet);
     }
     
     
     // lookup Planet by handle
-    public PlanetData getPlanet(String handle) throws PlanetException {
-        PlanetData planet = null;
+    public Planet getPlanet(String handle) throws PlanetException {
+        Planet planet = null;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetData.class);
+            Criteria criteria = session.createCriteria(Planet.class);
             criteria.add(Expression.ilike("handle", handle));
-            planet = (PlanetData) criteria.uniqueResult();
+            planet = (Planet) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new PlanetException(e);
         }
@@ -82,8 +82,8 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // lookup Planet by id
-    public PlanetData getPlanetById(String id) throws PlanetException {
-        return (PlanetData) strategy.load(id, PlanetData.class);
+    public Planet getPlanetById(String id) throws PlanetException {
+        return (Planet) strategy.load(id, Planet.class);
     }
     
     
@@ -91,7 +91,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     public List getPlanets() throws PlanetException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetData.class);
+            Criteria criteria = session.createCriteria(Planet.class);
             criteria.addOrder(Order.asc("title"));
             return criteria.list();
         } catch (HibernateException e) {
@@ -101,19 +101,19 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // save a Group
-    public void saveGroup(PlanetGroupData group)  throws PlanetException {
+    public void saveGroup(PlanetGroup group)  throws PlanetException {
         strategy.store(group);
     }
         
     
     // delete a Group
-    public void deleteGroup(PlanetGroupData group) throws PlanetException {
+    public void deleteGroup(PlanetGroup group) throws PlanetException {
         strategy.remove(group);
     }
     
     
     // lookup a Group by Planet & handle
-    public PlanetGroupData getGroup(PlanetData planet, String handle) 
+    public PlanetGroup getGroup(Planet planet, String handle) 
             throws PlanetException {
         
         if(planet == null) {
@@ -122,10 +122,10 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
         
         try {
             Session session = strategy.getSession();
-            Criteria criteria = session.createCriteria(PlanetGroupData.class);
+            Criteria criteria = session.createCriteria(PlanetGroup.class);
             criteria.add(Expression.eq("planet", planet));
             criteria.add(Expression.eq("handle", handle));
-            return (PlanetGroupData) criteria.uniqueResult();
+            return (PlanetGroup) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new PlanetException(e);
         }
@@ -133,15 +133,15 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // lookup a Planet by id
-    public PlanetGroupData getGroupById(String id) throws PlanetException {
-        return (PlanetGroupData) strategy.load(id, PlanetGroupData.class);
+    public PlanetGroup getGroupById(String id) throws PlanetException {
+        return (PlanetGroup) strategy.load(id, PlanetGroup.class);
     }
     
     
     // save a Subscription
-    public void saveSubscription(PlanetSubscriptionData sub) 
+    public void saveSubscription(Subscription sub) 
             throws PlanetException {
-        PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
+        Subscription existing = getSubscription(sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             this.strategy.store(sub);
         } else {
@@ -151,21 +151,21 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // delete a Subscription
-    public void deleteSubscription(PlanetSubscriptionData sub) 
+    public void deleteSubscription(Subscription sub) 
             throws PlanetException {
         strategy.remove(sub);
     }
     
     
     // lookup a Subscription by url
-    public PlanetSubscriptionData getSubscription(String feedURL) 
+    public Subscription getSubscription(String feedURL) 
             throws PlanetException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
-                    session.createCriteria(PlanetSubscriptionData.class);
+                    session.createCriteria(Subscription.class);
             criteria.add(Expression.eq("feedURL", feedURL));
-            return (PlanetSubscriptionData) criteria.uniqueResult();
+            return (Subscription) criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new PlanetException(e);
         }
@@ -173,9 +173,9 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // lookup a Subscription by id
-    public PlanetSubscriptionData getSubscriptionById(String id) 
+    public Subscription getSubscriptionById(String id) 
             throws PlanetException {
-        return (PlanetSubscriptionData) strategy.load(id, PlanetSubscriptionData.class);
+        return (Subscription) strategy.load(id, Subscription.class);
     }
     
     
@@ -185,7 +185,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
-                    session.createCriteria(PlanetSubscriptionData.class);
+                    session.createCriteria(Subscription.class);
             criteria.addOrder(Order.asc("feedURL"));
             return criteria.list();
         } catch (Throwable e) {
@@ -199,7 +199,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Integer count = (Integer)session.createQuery(
-                    "select count(*) from org.apache.roller.planet.pojos.PlanetSubscriptionData").uniqueResult();
+                    "select count(*) from org.apache.roller.planet.pojos.Subscription").uniqueResult();
             return count.intValue();
         } catch (Throwable e) {
             throw new PlanetException("ERROR fetching subscription count", e);
@@ -218,7 +218,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     // get popular Subscriptions from a specific Group
     // TODO: test this method
-    public List getTopSubscriptions(PlanetGroupData group, int offset, int length) 
+    public List getTopSubscriptions(PlanetGroup group, int offset, int length) 
             throws PlanetException {
         
         List ret = null;
@@ -227,14 +227,14 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
             Query query = null;
             if (group != null) {
                 query = session.createQuery(
-                    "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
+                    "select sub from org.apache.roller.planet.pojos.Subscription sub "
                     +"join sub.groups group "
                     +"where group=:group "
                     +"order by sub.inboundblogs desc");
                 query.setSerializable("group", group);
             } else {
                 query = session.createQuery(
-                    "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
+                    "select sub from org.apache.roller.planet.pojos.Subscription sub "
                     +"order by sub.inboundblogs desc");
             }
             if (offset != 0) {
@@ -251,19 +251,19 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     }
         
     // save an Entry
-    public void saveEntry(PlanetEntryData entry) throws PlanetException {
+    public void saveEntry(SubscriptionEntry entry) throws PlanetException {
         strategy.store(entry);
     }
     
     
     // delete an Entry
-    public void deleteEntry(PlanetEntryData entry) throws PlanetException {
+    public void deleteEntry(SubscriptionEntry entry) throws PlanetException {
         strategy.remove(entry);
     }
     
     
     // delete all Entries from a Subscription
-    public void deleteEntries(PlanetSubscriptionData sub) 
+    public void deleteEntries(Subscription sub) 
             throws PlanetException {
         Iterator entries = sub.getEntries().iterator();
         while(entries.hasNext()) {
@@ -276,13 +276,13 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // lookup Entry by id
-    public PlanetEntryData getEntryById(String id) throws PlanetException {
-        return (PlanetEntryData)strategy.load(id, PlanetEntryData.class);
+    public SubscriptionEntry getEntryById(String id) throws PlanetException {
+        return (SubscriptionEntry)strategy.load(id, SubscriptionEntry.class);
     }
     
     
     // lookup Entries from a specific Subscription
-    public List getEntries(PlanetSubscriptionData sub, int offset, int length)
+    public List getEntries(Subscription sub, int offset, int length)
             throws PlanetException {
             
         if(sub == null) {
@@ -291,7 +291,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
         
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(PlanetEntryData.class);
+            Criteria criteria = session.createCriteria(SubscriptionEntry.class);
             criteria.add(Expression.eq("subscription", sub));
             criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
@@ -304,14 +304,14 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
     
     
     // lookup Entries from a specific Group
-    public List getEntries(PlanetGroupData group, int offset, int len) 
+    public List getEntries(PlanetGroup group, int offset, int len) 
             throws PlanetException {
         return getEntries(group, null, null, offset, len);
     } 
     
     
     // Lookup Entries from a specific group
-    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, 
+    public List getEntries(PlanetGroup group, Date startDate, Date endDate, 
                            int offset, int length) 
             throws PlanetException {
         
@@ -326,7 +326,7 @@ public class HibernatePlanetManagerImpl extends AbstractManagerImpl implements P
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             
             StringBuffer sb = new StringBuffer();
-            sb.append("select e from PlanetEntryData e ");
+            sb.append("select e from SubscriptionEntry e ");
             sb.append("join e.subscription.groups g ");
             sb.append("where g=:group ");
             

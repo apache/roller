@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 
 
 /**
@@ -31,7 +31,7 @@ public class PlanetFunctionalTests extends TestCase {
     
     public static Log log = LogFactory.getLog(PlanetFunctionalTests.class);
     
-    private PlanetData testPlanet = null;
+    private Planet testPlanet = null;
     
     
     protected void setUp() throws Exception {
@@ -54,7 +54,7 @@ public class PlanetFunctionalTests extends TestCase {
         
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
-        PlanetData planet = null;
+        Planet planet = null;
         
         // by id
         planet = mgr.getPlanetById(testPlanet.getId());

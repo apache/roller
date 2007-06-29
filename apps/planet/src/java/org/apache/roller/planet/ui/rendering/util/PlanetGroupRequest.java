@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetGroup;
 
 
 /**
@@ -41,7 +41,7 @@ public class PlanetGroupRequest extends PlanetRequest {
     private String groupHandle = null;
     
     // heavyweight attributes
-    private PlanetGroupData group = null;
+    private PlanetGroup group = null;
     
     
     public PlanetGroupRequest() {}
@@ -89,7 +89,7 @@ public class PlanetGroupRequest extends PlanetRequest {
         this.groupHandle = groupHandle;
     }
 
-    public PlanetGroupData getGroup() {
+    public PlanetGroup getGroup() {
         
         if(group == null && groupHandle != null) {
             try {
@@ -103,7 +103,7 @@ public class PlanetGroupRequest extends PlanetRequest {
         return group;
     }
 
-    public void setGroup(PlanetGroupData group) {
+    public void setGroup(PlanetGroup group) {
         this.group = group;
     }
     

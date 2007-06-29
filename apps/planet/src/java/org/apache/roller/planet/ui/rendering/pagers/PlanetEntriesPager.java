@@ -28,9 +28,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -41,7 +41,7 @@ public class PlanetEntriesPager extends AbstractPager {
     private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
     
     private String feedURL = null;
-    private PlanetGroupData group = null;
+    private PlanetGroup group = null;
     private String locale = null;
     private int sinceDays = -1;
     private int length = 0;
@@ -55,7 +55,7 @@ public class PlanetEntriesPager extends AbstractPager {
     
     public PlanetEntriesPager(
             String         feedURL,
-            PlanetGroupData group,
+            PlanetGroup group,
             String         baseUrl,
             int            sinceDays,
             int            page,
@@ -94,7 +94,7 @@ public class PlanetEntriesPager extends AbstractPager {
                 
                 List rawEntries = null;
                 if (feedURL != null) {
-                    PlanetSubscriptionData sub = planetManager.getSubscription(feedURL);
+                    Subscription sub = planetManager.getSubscription(feedURL);
                     if(sub != null) {
                         rawEntries = planetManager.getEntries(sub, offset, length+1);
                     }
@@ -113,7 +113,7 @@ public class PlanetEntriesPager extends AbstractPager {
                 
                 // wrap 'em
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    PlanetEntryData entry = (PlanetEntryData) it.next();
+                    SubscriptionEntry entry = (SubscriptionEntry) it.next();
                     // TODO needs pojo wrapping from planet
                     results.add(entry);
                 }

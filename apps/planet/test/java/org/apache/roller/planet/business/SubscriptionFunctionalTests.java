@@ -19,9 +19,9 @@ package org.apache.roller.planet.business;
 import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -29,11 +29,11 @@ import org.apache.roller.planet.pojos.PlanetSubscriptionData;
  */
 public class SubscriptionFunctionalTests extends TestCase {
     
-    private PlanetData testPlanet = null;
-    private PlanetGroupData testGroup1 = null;
-    private PlanetGroupData testGroup2 = null;
-    private PlanetSubscriptionData testSub1 = null;
-    private PlanetSubscriptionData testSub2 = null;
+    private Planet testPlanet = null;
+    private PlanetGroup testGroup1 = null;
+    private PlanetGroup testGroup2 = null;
+    private Subscription testSub1 = null;
+    private Subscription testSub2 = null;
     
     
     protected void setUp() throws Exception {
@@ -62,7 +62,7 @@ public class SubscriptionFunctionalTests extends TestCase {
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         // by id
-        PlanetSubscriptionData sub = mgr.getSubscriptionById(testSub1.getId());
+        Subscription sub = mgr.getSubscriptionById(testSub1.getId());
         assertNotNull(sub);
         assertEquals("subFuncTest1", sub.getFeedURL());
         
@@ -82,9 +82,9 @@ public class SubscriptionFunctionalTests extends TestCase {
         PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
         
         // retrieve subscriptions and add to group
-        PlanetSubscriptionData sub1 = planet.getSubscriptionById(testSub1.getId());
-        PlanetSubscriptionData sub2 = planet.getSubscriptionById(testSub2.getId());
-        PlanetGroupData group = planet.getGroupById(testGroup1.getId());
+        Subscription sub1 = planet.getSubscriptionById(testSub1.getId());
+        Subscription sub2 = planet.getSubscriptionById(testSub2.getId());
+        PlanetGroup group = planet.getGroupById(testGroup1.getId());
         
         // make sure no subs in group yet
         assertEquals(0, group.getSubscriptions().size());

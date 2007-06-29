@@ -18,7 +18,7 @@ package org.apache.roller.planet.business;
 
 import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -34,11 +34,11 @@ public class SubscriptionBasicTests extends TestCase {
 
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
-        PlanetSubscriptionData testSub = new PlanetSubscriptionData();
+        Subscription testSub = new Subscription();
         testSub.setFeedURL("test_title");
         testSub.setTitle("test_title");
         
-        PlanetSubscriptionData sub = mgr.getSubscription(testSub.getFeedURL());
+        Subscription sub = mgr.getSubscription(testSub.getFeedURL());
         assertNull(sub);
         
         // add

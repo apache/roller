@@ -37,8 +37,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.util.rome.DiskFeedInfoCache;
 
 
@@ -119,7 +119,7 @@ public class RomeFeedFetcher implements FeedFetcher {
             
             long subStartTime = System.currentTimeMillis();
             
-            PlanetSubscriptionData sub = (PlanetSubscriptionData)subs.next();
+            Subscription sub = (Subscription)subs.next();
             
             // reattach sub.  sub gets detached as we iterate
             sub = mgr.getSubscriptionById(sub.getId());
@@ -148,7 +148,7 @@ public class RomeFeedFetcher implements FeedFetcher {
     
     
     // get new Entries for a specific Subscription
-    protected Set getNewEntries(PlanetSubscriptionData sub,
+    protected Set getNewEntries(Subscription sub,
                                 com.sun.syndication.fetcher.FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)
             throws PlanetException {
@@ -215,8 +215,8 @@ public class RomeFeedFetcher implements FeedFetcher {
         while (entries.hasNext()) {
             try {
                 SyndEntry romeEntry = (SyndEntry) entries.next();
-                PlanetEntryData entry =
-                        new PlanetEntryData(feed, romeEntry, sub);
+                SubscriptionEntry entry =
+                        new SubscriptionEntry(feed, romeEntry, sub);
                 log.debug("Entry title=" + entry.getTitle() + " content size=" + entry.getContent().length());
                 if (entry.getPubTime() == null) {
                     log.debug("No published date, assigning fake date for "+feedURL);
