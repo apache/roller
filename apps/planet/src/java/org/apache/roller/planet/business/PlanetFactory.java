@@ -18,9 +18,6 @@
 
 package org.apache.roller.planet.business;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.startup.PlanetStartup;
@@ -34,22 +31,8 @@ public abstract class PlanetFactory {
     
     private static Log log = LogFactory.getLog(PlanetFactory.class);
     
-    private static Planet planetInstance = null;
-    private static Injector injector = null;
-    
-        
-    static { 
-
-        String moduleClassname = PlanetConfig.getProperty("guice.backend.module");
-        try {
-            Class moduleClass = Class.forName(moduleClassname);
-            Module module = (Module)moduleClass.newInstance();
-            injector = Guice.createInjector(module);
-        } catch (Throwable e) {                
-            // Fatal misconfiguration, cannot recover
-            throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
-        }
-    }
+    // our configured planet provider
+    private static PlanetProvider planetProvider = null;
     
     
     // non-instantiable
@@ -63,18 +46,11 @@ public abstract class PlanetFactory {
      * Static accessor for the instance of Roller
      */
     public static Planet getPlanet() {
-        if (planetInstance == null) {
+        if (planetProvider == null) {
             throw new IllegalStateException("Roller Planet has not been bootstrapped yet");
-        }        
-        return planetInstance;
-    }     
-    
-    
-    /**
-     * Access to Guice injector so that developers can add new injected objects.
-     */
-    public static Injector getInjector() {
-        return injector;
+        }
+        
+        return planetProvider.getPlanet();
     }
     
     
@@ -82,12 +58,12 @@ public abstract class PlanetFactory {
      * True if bootstrap process was completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return (planetInstance != null);
+        return (planetProvider != null);
     }
     
     
     /**
-     * Bootstrap the Roller Planet business tier.
+     * Bootstrap the Roller Planet business tier, uses default PlanetProvider.
      *
      * Bootstrapping the application effectively instantiates all the necessary
      * pieces of the business tier and wires them together so that the app is 
@@ -103,10 +79,53 @@ public abstract class PlanetFactory {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         
+        // default provider is Guice, so lookup our module from PlanetConfig
+        String guiceModule = PlanetConfig.getProperty("guice.backend.module");
+        
+        // instantiate guice provider using the configured module
+        PlanetProvider guiceProvider = new GuicePlanetProvider(guiceModule);
+        
+        // finish things off by calling bootstrap() with our guice provider
+        bootstrap(guiceProvider);
+    }
+    
+    
+    /**
+     * Bootstrap the Roller Planet business tier, uses specified PlanetProvider.
+     *
+     * Bootstrapping the application effectively instantiates all the necessary
+     * pieces of the business tier and wires them together so that the app is 
+     * ready to run.
+     *
+     * @throws IllegalStateException If the app has not been properly prepared yet.
+     * @throws BootstrapException If an error happens during the bootstrap process.
+     */
+    public static final void bootstrap(PlanetProvider provider) 
+            throws BootstrapException {
+        
+        // if the app hasn't been properly started so far then bail
+        if (!PlanetStartup.isPrepared()) {
+            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
+        }
+        
+        if (provider == null) {
+            throw new NullPointerException("PlanetProvider is null");
+        }
+        
         log.info("Bootstrapping Roller Planet business tier");
         
-        // bootstrap Roller Weblogger business tier
-        planetInstance =  injector.getInstance(Planet.class);
+        log.info("Planet Provider = "+provider.getClass().getName());
+        
+        // save reference to provider
+        planetProvider = provider;
+        
+        // bootstrap planet provider
+        planetProvider.bootstrap();
+        
+        // make sure we are all set
+        if(planetProvider.getPlanet() == null) {
+            throw new BootstrapException("Bootstrapping failed, Planet instance is null");
+        }
         
         log.info("Roller Planet business tier successfully bootstrapped");
     }
