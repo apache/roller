@@ -608,12 +608,12 @@ public class RollerAtomHandler implements AtomHandler {
                         throw new AtomNotFoundException("cannot find specified entry/resource");
                     }
                     if (canEdit(rollerEntry)) {
-                        WeblogManager mgr = roller.getWeblogManager();
+                        WeblogManager mgr = roller.getWeblogManager();                                                
+                        CacheManager.invalidate(rollerEntry.getWebsite());                        
+                        reindexEntry(rollerEntry);
                         mgr.removeWeblogEntry(rollerEntry);
                         log.debug("Deleted entry:" + rollerEntry.getAnchor());
                         roller.flush();
-                        CacheManager.invalidate(rollerEntry.getWebsite());                        
-                        reindexEntry(rollerEntry);
                         return;
                     } 
                 } else if (pathInfo[1].equals("resource")) {
