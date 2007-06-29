@@ -46,24 +46,23 @@ import org.apache.roller.util.UUIDGenerator;
  */
 public class SubscriptionEntry implements Serializable, Comparable {
     
-    protected String    id = UUIDGenerator.generateUUID();
-    protected String    handle;
-    protected String    title;
-    protected String    guid;
-    protected String    permalink;
-    protected String    author;
-    protected String    text = "";
-    protected Timestamp published;
-    protected Timestamp updated;
-    
+    // attributes
+    private String id = UUIDGenerator.generateUUID();
+    private String handle;
+    private String title;
+    private String guid;
+    private String permalink;
+    private String author;
+    private String text = "";
+    private Timestamp published;
+    private Timestamp updated;
     private String categoriesString;
-    protected Subscription subscription = null;
     
-    /**
-     * Construct empty entry.
-     */
-    public SubscriptionEntry() {
-    }
+    // associations
+    private Subscription subscription = null;
+    
+    
+    public SubscriptionEntry() {}
     
     /**
      * Create entry from Rome entry.
@@ -74,18 +73,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
         initFromRomeEntry(romeFeed, romeEntry);
     }
     
-    /**
-     * Create entry from Rome entry.
-     */
-    /*
-    public SubscriptionEntry(
-            WeblogEntryData rollerEntry,
-            Subscription sub,
-            Map pagePlugins) throws PlanetException {
-        setSubscription(sub);
-        initFromRollerEntry(rollerEntry, pagePlugins);
-    }
-    */
     
     /**
      * Init entry from Rome entry
@@ -146,148 +133,162 @@ public class SubscriptionEntry implements Serializable, Comparable {
     
     
     /**
-     * Init entry from Roller entry
+     * Compare planet entries by comparing permalinks.
      */
-    /*
-    private void initFromRollerEntry(WeblogEntryData rollerEntry, Map pagePlugins)
-    throws PlanetException {
-        Roller roller = RollerFactory.getRoller();
-        PluginManager ppmgr = roller.getPagePluginManager();
-        
-        String content = "";
-        if (!StringUtils.isEmpty(rollerEntry.getText())) {
-            content = rollerEntry.getText();
-        } else {
-            content = rollerEntry.getSummary();
-        }
-        content = ppmgr.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
-        
-        setAuthor(    rollerEntry.getCreator().getFullName());
-        setTitle(     rollerEntry.getTitle());
-        setPermalink( rollerEntry.getLink());
-        setPubTime(   rollerEntry.getPubTime());
-        setText(      content);
-        
-        setPermalink(RollerRuntimeConfig.getProperty("site.absoluteurl")
-        + rollerEntry.getPermaLink());
-        
-        List cats = new ArrayList();
-        cats.add(rollerEntry.getCategory().getPath());
-        setCategoriesString(cats);
+    public int compareTo(Object o) {
+        SubscriptionEntry other = (SubscriptionEntry)o;
+        return getPermalink().compareTo(other.getPermalink());
     }
-    */
     
-    //----------------------------------------------------------- persistent fields
+    /**
+     * Compare planet entries by comparing permalinks.
+     */
+    public boolean equals(Object other) {        
+        if(this == other) return true;
+        if(!(other instanceof SubscriptionEntry)) return false;        
+        final SubscriptionEntry that = (SubscriptionEntry) other;
+        return this.permalink.equals(that.getPermalink());
+    }
+    
+    /**
+     * Generate hash code based on permalink.
+     */
+    public int hashCode() {
+        return this.permalink.hashCode();
+    }
+    
     
     /**
      * @hibernate.id column="id" generator-class="assigned"
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getId() {
         return id;
     }
+    
     public void setId(String id) {
         this.id = id;
     }
+    
+    
+    /**
+     * @hibernate.property column="handle" non-null="false" unique="false"
+     */
+    public String getHandle() {
+        return handle;
+    }
+    
+    public void setHandle(String handle) {
+        this.handle = handle;
+    }
+    
+    
+    /**
+     * @hibernate.property column="title" non-null="false" unique="false"
+     */
+    public String getTitle() {
+        return title;
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    
+    /**
+     * @hibernate.property column="guid" non-null="false" unique="true"
+     */
+    public String getGuid() {
+        return guid;
+    }
+    
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+    
+    
+    /**
+     * @hibernate.property column="permalink" non-null="true" unique="false"
+     */
+    public String getPermalink() {
+        return permalink;
+    }
+    
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
+    }
+    
+    
+    /**
+     * @hibernate.property column="author" non-null="false" unique="false"
+     */
+    public String getAuthor() {
+        return author;
+    }
+    
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    
+    
+    /**
+     * @hibernate.property column="content" non-null="false" unique="false"
+     */
+    public String getText() {
+        return text;
+    }
+    
+    public void setText(String content) {
+        this.text = content;
+    }
+    
+    
+    /**
+     * @hibernate.property column="published" non-null="true" unique="false"
+     */
+    public Timestamp getPubTime() {
+        return published;
+    }
+    
+    public void setPubTime(Timestamp published) {
+        this.published = published;
+    }
+    
+    
+    /**
+     * @hibernate.property column="updated" non-null="false" unique="false"
+     */
+    public Timestamp getUpdateTime() {
+        return updated;
+    }
+    
+    public void setUpdateTime(Timestamp updated) {
+        this.updated = updated;
+    }
+    
+    
     /**
      * @hibernate.property column="categories" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getCategoriesString() {
         return categoriesString;
     }
+    
     public void setCategoriesString(String categoriesString) {
         this.categoriesString = categoriesString;
     }
+    
+    
     /**
      * @hibernate.many-to-one column="subscription_id" cascade="save-update" not-null="true"
      */
     public Subscription getSubscription() {
         return subscription;
     }
+    
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
-    /**
-     * @hibernate.property column="author" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getAuthor() {
-        return author;
-    }
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-    /**
-     * @hibernate.property column="content" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getText() {
-        return text;
-    }
-    public void setText(String content) {
-        this.text = content;
-    }
-    /**
-     * @hibernate.property column="guid" non-null="false" unique="true"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getGuid() {
-        return guid;
-    }
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
-    /**
-     * @hibernate.property column="handle" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getHandle() {
-        return handle;
-    }
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-    /**
-     * @hibernate.property column="published" non-null="true" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public Timestamp getPubTime() {
-        return published;
-    }
-    public void setPubTime(Timestamp published) {
-        this.published = published;
-    }
-    /**
-     * @hibernate.property column="permalink" non-null="true" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getPermalink() {
-        return permalink;
-    }
-    public void setPermalink(String permalink) {
-        this.permalink = permalink;
-    }
-    /**
-     * @hibernate.property column="title" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    /**
-     * @hibernate.property column="updated" non-null="false" unique="false"
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public Timestamp getUpdateTime() {
-        return updated;
-    }
-    public void setUpdateTime(Timestamp updated) {
-        this.updated = updated;
-    }
+    
     
     //----------------------------------------------------------------- convenience
     
@@ -372,30 +373,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
         return null;
     } 
     
-    /**
-     * Compare planet entries by comparing permalinks.
-     */
-    public int compareTo(Object o) {
-        SubscriptionEntry other = (SubscriptionEntry)o;
-        return getPermalink().compareTo(other.getPermalink());
-    }
-    
-    /**
-     * Compare planet entries by comparing permalinks.
-     */
-    public boolean equals(Object other) {        
-        if(this == other) return true;
-        if(!(other instanceof SubscriptionEntry)) return false;        
-        final SubscriptionEntry that = (SubscriptionEntry) other;
-        return this.permalink.equals(that.getPermalink());
-    }
-    
-    /**
-     * Generate hash code based on permalink.
-     */
-    public int hashCode() {
-        return this.permalink.hashCode();
-    }
 
     /**
      * Read-only synomym for getSubscription()
@@ -439,6 +416,3 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
 
 }
-
-
-

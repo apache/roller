@@ -104,6 +104,7 @@ public class Planet implements Comparable {
         this.description = description;
     }
 
+    
     /** 
      * @hibernate.set lazy="true" inverse="true" cascade="all" sort="natural"
      * @hibernate.collection-key column="planet_id"
