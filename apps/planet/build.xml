@@ -156,28 +156,6 @@
         <delete dir="${build}" />
         <delete dir="${dist}" />
     </target>
-    
-    
-    <!-- ============================================== -->
-    <!-- generate code/files for the business layer -->
-    <target name="gen-business" description="Generate business layer resources">
-
-        <taskdef name="hibernatedoclet"
-            classname="xdoclet.modules.hibernate.HibernateDocletTask"
-            classpathref="xdoclet.path" />
-
-        <!-- generate hibernate mapping files -->
-        <hibernatedoclet destdir="${build.compile.business}"
-            excludedtags="@version,@author"
-            addedtags="@xdoclet-generated at ${TODAY}"
-            force="true">
-            
-            <fileset dir="${src}" includes="org/apache/roller/planet/pojos/*.java" />
-            <hibernate validatexml="true" version="3.0"/>
-            
-        </hibernatedoclet>
-        
-    </target>
 
     
     <!-- ============================================== -->
@@ -186,7 +164,7 @@
     </target>
     
     <!-- build the business layer code and jar it up -->
-    <target name="build-business" depends="gen-business">
+    <target name="build-business" >
         
         <!-- compile planet classes -->
         <mkdir dir="${build.compile.business}"/>

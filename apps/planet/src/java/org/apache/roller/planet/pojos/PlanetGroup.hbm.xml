@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    
+    <class name="org.apache.roller.planet.pojos.PlanetGroup" table="rag_group" lazy="true">
+
+        <id name="id" column="id" type="java.lang.String">
+            <generator class="assigned" />
+        </id>
+
+        <property
+            name="handle"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="handle"
+            unique="false"
+        />
+
+        <property
+            name="title"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="title"
+            unique="false"
+        />
+
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="description"
+            unique="false"
+        />
+
+        <property
+            name="maxFeedEntries"
+            type="int"
+            update="true"
+            insert="true"
+            column="max_feed_entries"
+            unique="false"
+        />
+
+        <property
+            name="maxPageEntries"
+            type="int"
+            update="true"
+            insert="true"
+            column="max_page_entries"
+            unique="false"
+        />
+
+        <property
+            name="categoryRestriction"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="cat_restriction"
+            unique="false"
+        />
+
+        <many-to-one
+            name="planet"
+            class="org.apache.roller.planet.pojos.Planet"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="planet_id"
+        />
+
+        <set name="subscriptions" table="rag_group_subscription"
+            lazy="true" cascade="none" sort="natural">
+
+            <key column="group_id" />
+            <many-to-many class="org.apache.roller.planet.pojos.Subscription"
+                column="subscription_id" outer-join="auto" />
+        </set>
+        
+    </class>
+
+</hibernate-mapping>
