@@ -32,7 +32,7 @@ import org.apache.roller.planet.business.URLStrategy;
 /**
  * Guice module for configuring Hibernate as Roller-backend.
  */
-public class PlanetModule implements Module {
+public class HibernatePlanetModule implements Module {
 
     public void configure(Binder binder) {
         
@@ -44,6 +44,6 @@ public class PlanetModule implements Module {
         binder.bind(PropertiesManager.class).to( HibernatePropertiesManagerImpl.class); 
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       RomeFeedFetcher.class);
-    }    
+    }
+    
 }
-
