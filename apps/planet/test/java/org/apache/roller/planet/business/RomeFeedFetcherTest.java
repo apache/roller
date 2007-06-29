@@ -21,9 +21,9 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -33,9 +33,9 @@ public class RomeFeedFetcherTest extends TestCase {
     
     public static Log log = LogFactory.getLog(RomeFeedFetcherTest.class);   
     
-    private PlanetData testPlanet = null;
-    private PlanetGroupData testGroup = null;
-    private PlanetSubscriptionData testSub = null;
+    private Planet testPlanet = null;
+    private PlanetGroup testGroup = null;
+    private Subscription testSub = null;
     
     String feed_url = "http://rollerweblogger.org/roller/feed/entries/rss";
     
@@ -49,7 +49,7 @@ public class RomeFeedFetcherTest extends TestCase {
         
         // add test subscription
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-        testSub = new PlanetSubscriptionData();
+        testSub = new Subscription();
         testSub.setTitle(feed_url);
         testSub.setFeedURL(feed_url);
         mgr.saveSubscription(testSub);
@@ -73,7 +73,7 @@ public class RomeFeedFetcherTest extends TestCase {
         feedFetcher.refreshEntries("." + File.separator + "planet-cache");
         TestUtils.endSession(true);
         
-        PlanetSubscriptionData sub = mgr.getSubscription(feed_url);
+        Subscription sub = mgr.getSubscription(feed_url);
         assertNotNull(sub);
         assertTrue(sub.getEntries().size() > 0);
     }

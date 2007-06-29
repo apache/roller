@@ -32,7 +32,7 @@ import org.apache.roller.util.UUIDGenerator;
  *
  * @hibernate.class lazy="true" table="rag_subscription"
  */
-public class PlanetSubscriptionData implements Serializable, Comparable
+public class Subscription implements Serializable, Comparable
 {
     /** Database ID */
     protected String id = UUIDGenerator.generateUUID();
@@ -52,16 +52,16 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     
     
     public int compareTo(Object o) {
-        PlanetSubscriptionData other = (PlanetSubscriptionData) o;
+        Subscription other = (Subscription) o;
         return getTitle().compareTo(other.getTitle());
     }
     
     public boolean equals(Object other) {
         
         if(this == other) return true;
-        if(!(other instanceof PlanetSubscriptionData)) return false;
+        if(!(other instanceof Subscription)) return false;
         
-        final PlanetSubscriptionData that = (PlanetSubscriptionData) other;
+        final Subscription that = (Subscription) other;
         return this.feedUrl.equals(that.getFeedURL());
     }
     
@@ -179,7 +179,7 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     /**
      * @hibernate.set table="rag_group_subscription" lazy="true" cascade="none"
      * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroupData"
+     * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroup"
      */
     public Set getGroups() {
         return groups;
@@ -191,9 +191,11 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     
     
     /**
+     * 
+     * 
      * @hibernate.bag lazy="true" inverse="true" cascade="all"
      * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetEntryData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.SubscriptionEntry"
      */
     public List getEntries() {
         return entries;
@@ -204,7 +206,7 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     }
     
     
-    public void addEntry(PlanetEntryData entry) {
+    public void addEntry(SubscriptionEntry entry) {
         // bi-directional one-to-many
         entry.setSubscription(this);
         this.getEntries().add(entry);
@@ -213,7 +215,7 @@ public class PlanetSubscriptionData implements Serializable, Comparable
     public void addEntries(Collection newEntries) {
         // bi-directional one-to-many
         for (Iterator it = newEntries.iterator(); it.hasNext();) {
-            PlanetEntryData entry = (PlanetEntryData) it.next();
+            SubscriptionEntry entry = (SubscriptionEntry) it.next();
             entry.setSubscription(this);
         }
         this.getEntries().addAll(newEntries);

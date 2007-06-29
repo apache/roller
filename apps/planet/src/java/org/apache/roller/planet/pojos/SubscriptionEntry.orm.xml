@@ -9,26 +9,26 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.planet.pojos</package>
-    <entity metadata-complete="true" name="PlanetEntryData" class="org.apache.roller.planet.pojos.PlanetEntryData">
+    <entity metadata-complete="true" name="SubscriptionEntry" class="org.apache.roller.planet.pojos.SubscriptionEntry">
         <table name="rag_entry"/>
-        <named-query name="PlanetEntryData.getByFeedURL">
-            <query>SELECT p FROM PlanetEntryData p WHERE p.subscription.feedURL = ?1</query>
+        <named-query name="SubscriptionEntry.getByFeedURL">
+            <query>SELECT p FROM SubscriptionEntry p WHERE p.subscription.feedURL = ?1</query>
         </named-query>
-        <named-query name="PlanetEntryData.getByGroup&amp;EndDateOrderByPubTimeDesc">
-            <query>SELECT p FROM PlanetEntryData p JOIN p.subscription s JOIN s.groups g
+        <named-query name="SubscriptionEntry.getByGroup&amp;EndDateOrderByPubTimeDesc">
+            <query>SELECT p FROM SubscriptionEntry p JOIN p.subscription s JOIN s.groups g
                 WHERE g =?1 AND p.pubTime &lt; ?2
                 ORDER BY p.pubTime DESC
             </query>
         </named-query>
-        <named-query name="PlanetEntryData.getByGroup&amp;EndDate&amp;StartDateOrderByPubTimeDesc">
-            <query>SELECT p FROM PlanetEntryData p JOIN p.subscription s JOIN s.groups g
+        <named-query name="SubscriptionEntry.getByGroup&amp;EndDate&amp;StartDateOrderByPubTimeDesc">
+            <query>SELECT p FROM SubscriptionEntry p JOIN p.subscription s JOIN s.groups g
                 WHERE g=?1 AND p.pubTime &lt; ?2 AND p.pubTime &gt; ?3
                 ORDER BY p.pubTime DESC
             </query>
         </named-query>
-        <named-query name="PlanetEntryData.getBySubscription">
+        <named-query name="SubscriptionEntry.getBySubscription">
             <query>
-                SELECT p FROM PlanetEntryData p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC
+                SELECT p FROM SubscriptionEntry p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC
             </query>
         </named-query>
         <attributes>
@@ -63,7 +63,7 @@
                 <column name="updated" insertable="true" updatable="true" unique="false"/>
             </basic>
             <many-to-one name="subscription"
-                         target-entity="org.apache.roller.planet.pojos.PlanetSubscriptionData">
+                         target-entity="org.apache.roller.planet.pojos.Subscription">
                 <join-column name="subscription_id" insertable="true" updatable="true"
                              nullable="false"/>
             </many-to-one>

@@ -36,7 +36,7 @@ import org.apache.roller.planet.config.runtime.ConfigDef;
 import org.apache.roller.planet.config.runtime.DisplayGroup;
 import org.apache.roller.planet.config.runtime.PropertyDef;
 import org.apache.roller.planet.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.planet.pojos.PropertyData;
+import org.apache.roller.planet.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -66,9 +66,9 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     /**
      * Retrieve a single property by name.
      */
-    public PropertyData getProperty(String name) throws PlanetException {
+    public RuntimeConfigProperty getProperty(String name) throws PlanetException {
         try {
-            return (PropertyData) strategy.load(name, PropertyData.class);
+            return (RuntimeConfigProperty) strategy.load(name, RuntimeConfigProperty.class);
         } catch (HibernateException e) {
             throw new PlanetException(e);
         }
@@ -77,9 +77,9 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     
     /**
      * Retrieve all properties.
-     *
+     * 
      * Properties are returned in a Map to make them easy to lookup.  The Map
-     * uses the property name as the key and the PropertyData object
+     * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
     public Map getProperties() throws PlanetException {
@@ -88,19 +88,19 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
         
         try {
             Session session = strategy.getSession();
-            Criteria criteria = session.createCriteria(PropertyData.class);
+            Criteria criteria = session.createCriteria(RuntimeConfigProperty.class);
             List list = criteria.list();
             
             /*
              * for convenience sake we are going to put the list of props
              * into a map for users to access it.  The value element of the
-             * hash still needs to be the PropertyData object so that
+             * hash still needs to be the RuntimeConfigProperty object so that
              * we can save the elements again after they have been updated
              */
-            PropertyData prop = null;
+            RuntimeConfigProperty prop = null;
             Iterator it = list.iterator();
             while(it.hasNext()) {
-                prop = (PropertyData) it.next();
+                prop = (RuntimeConfigProperty) it.next();
                 props.put(prop.getName(), prop);
             }
         } catch (HibernateException e) {
@@ -114,7 +114,7 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
     /**
      * Save a single property.
      */
-    public void saveProperty(PropertyData property) throws PlanetException {
+    public void saveProperty(RuntimeConfigProperty property) throws PlanetException {
         
         this.strategy.store(property);
     }
@@ -128,7 +128,7 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
         // just go through the list and saveProperties each property
         Iterator props = properties.values().iterator();
         while (props.hasNext()) {
-            this.strategy.store((PropertyData) props.next());
+            this.strategy.store((RuntimeConfigProperty) props.next());
         }
     }
     
@@ -195,8 +195,8 @@ public class HibernatePropertiesManagerImpl extends AbstractManagerImpl
                     
                     // do we already have this prop?  if not then add it
                     if(!props.containsKey(propDef.getName())) {
-                        PropertyData newprop =
-                                new PropertyData(propDef.getName(), propDef.getDefaultValue());
+                        RuntimeConfigProperty newprop =
+                                new RuntimeConfigProperty(propDef.getName(), propDef.getDefaultValue());
                         
                         props.put(propDef.getName(), newprop);
                         

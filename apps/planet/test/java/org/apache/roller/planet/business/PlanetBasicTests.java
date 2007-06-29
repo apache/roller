@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 
 
 /**
@@ -39,8 +39,8 @@ public class PlanetBasicTests extends TestCase {
 
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
-        PlanetData testPlanet = new PlanetData("testPlanet", "testPlanet", "testPlanet");
-        PlanetData planet = null;
+        Planet testPlanet = new Planet("testPlanet", "testPlanet", "testPlanet");
+        Planet planet = null;
         
         planet = mgr.getPlanet("testPlanet");
         assertNull(planet);

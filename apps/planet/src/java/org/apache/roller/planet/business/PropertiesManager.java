@@ -20,7 +20,7 @@ package org.apache.roller.planet.business;
 
 import java.util.Map;
 import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.pojos.PropertyData;
+import org.apache.roller.planet.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -31,7 +31,7 @@ public interface PropertiesManager extends Manager {
     /** 
      * Save a single property 
      */
-    public void saveProperty(PropertyData property) throws PlanetException;
+    public void saveProperty(RuntimeConfigProperty property) throws PlanetException;
     
     
     /** 
@@ -43,7 +43,7 @@ public interface PropertiesManager extends Manager {
     /** 
      * Retrieve a single property by name 
      */
-    public PropertyData getProperty(String name) throws PlanetException;
+    public RuntimeConfigProperty getProperty(String name) throws PlanetException;
     
     
     /** 

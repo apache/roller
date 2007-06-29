@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
 
 
@@ -41,8 +41,8 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
     private static Log log = LogFactory.getLog(PlanetForm.class);
     
     // the objects to work on
-    private PlanetData planet = null;
-    private PlanetGroupData group = null;
+    private Planet planet = null;
+    private PlanetGroup group = null;
     
     // form fields
     private String planetid = null;
@@ -63,7 +63,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
         } else {
             // new planet
             log.debug("No planet specified, constructing new one");
-            this.planet = new PlanetData();
+            this.planet = new Planet();
         }
     }
     
@@ -112,7 +112,7 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
             
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
             try {
-                PlanetGroupData group = pmgr.getGroupById(getGroupid());
+                PlanetGroup group = pmgr.getGroupById(getGroupid());
                 this.planet = group.getPlanet();
                 this.planet.getGroups().remove(group);
                 pmgr.savePlanet(this.planet);
@@ -149,11 +149,11 @@ public class PlanetForm extends PlanetActionSupport implements Preparable {
         this.groupid = groupid;
     }
     
-    public PlanetData getPlanet() {
+    public Planet getPlanet() {
         return planet;
     }
 
-    public void setPlanet(PlanetData planet) {
+    public void setPlanet(Planet planet) {
         this.planet = planet;
     }
     

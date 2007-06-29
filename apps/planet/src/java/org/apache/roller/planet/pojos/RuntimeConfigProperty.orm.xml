@@ -9,11 +9,11 @@
         </persistence-unit-defaults>
     </persistence-unit-metadata>
     <package>org.apache.roller.planet.pojos</package>
-    <entity metadata-complete="true" name="PropertyData"
-            class="org.apache.roller.planet.pojos.PropertyData">
+    <entity metadata-complete="true" name="RuntimeConfigProperty"
+            class="org.apache.roller.planet.pojos.RuntimeConfigProperty">
         <table name="rag_properties"/>
-        <named-query name="PropertyData.getAll">
-            <query>SELECT r FROM PropertyData r</query>
+        <named-query name="RuntimeConfigProperty.getAll">
+            <query>SELECT r FROM RuntimeConfigProperty r</query>
         </named-query>
         <attributes>
             <id name="name">

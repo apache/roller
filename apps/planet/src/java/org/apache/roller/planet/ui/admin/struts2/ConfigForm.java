@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PropertiesManager;
-import org.apache.roller.planet.pojos.PropertyData;
+import org.apache.roller.planet.pojos.RuntimeConfigProperty;
 import org.apache.roller.planet.ui.core.struts2.PlanetActionSupport;
 import org.apache.struts2.interceptor.ParameterAware;
 
@@ -70,7 +70,7 @@ public class ConfigForm extends PlanetActionSupport
         try {
             // only set values for properties that are already defined
             String propName = null;
-            PropertyData updProp = null;
+            RuntimeConfigProperty updProp = null;
             String incomingProp = null;
             Iterator propsIT = this.properties.keySet().iterator();
             while(propsIT.hasNext()) {
@@ -78,7 +78,7 @@ public class ConfigForm extends PlanetActionSupport
                 
                 log.debug("Checking property ["+propName+"]");
                 
-                updProp = (PropertyData) this.properties.get(propName);
+                updProp = (RuntimeConfigProperty) this.properties.get(propName);
                 String[] propValues = (String[]) this.parameters.get(updProp.getName());
                 if(propValues != null && propValues.length > 0) {
                     // we don't deal with multi-valued props

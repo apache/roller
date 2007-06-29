@@ -44,7 +44,7 @@ import org.apache.roller.util.UUIDGenerator;
  * 
  * @hibernate.class lazy="true" table="rag_entry"
  */
-public class PlanetEntryData implements Serializable, Comparable {
+public class SubscriptionEntry implements Serializable, Comparable {
     
     protected String    id = UUIDGenerator.generateUUID();
     protected String    handle;
@@ -57,19 +57,19 @@ public class PlanetEntryData implements Serializable, Comparable {
     protected Timestamp updated;
     
     private String categoriesString;
-    protected PlanetSubscriptionData subscription = null;
+    protected Subscription subscription = null;
     
     /**
      * Construct empty entry.
      */
-    public PlanetEntryData() {
+    public SubscriptionEntry() {
     }
     
     /**
      * Create entry from Rome entry.
      */
-    public PlanetEntryData(
-            SyndFeed romeFeed, SyndEntry romeEntry, PlanetSubscriptionData sub) {
+    public SubscriptionEntry(
+            SyndFeed romeFeed, SyndEntry romeEntry, Subscription sub) {
         setSubscription(sub);
         initFromRomeEntry(romeFeed, romeEntry);
     }
@@ -78,9 +78,9 @@ public class PlanetEntryData implements Serializable, Comparable {
      * Create entry from Rome entry.
      */
     /*
-    public PlanetEntryData(
+    public SubscriptionEntry(
             WeblogEntryData rollerEntry,
-            PlanetSubscriptionData sub,
+            Subscription sub,
             Map pagePlugins) throws PlanetException {
         setSubscription(sub);
         initFromRollerEntry(rollerEntry, pagePlugins);
@@ -202,10 +202,10 @@ public class PlanetEntryData implements Serializable, Comparable {
     /**
      * @hibernate.many-to-one column="subscription_id" cascade="save-update" not-null="true"
      */
-    public PlanetSubscriptionData getSubscription() {
+    public Subscription getSubscription() {
         return subscription;
     }
-    public void setSubscription(PlanetSubscriptionData subscription) {
+    public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
     /**
@@ -376,7 +376,7 @@ public class PlanetEntryData implements Serializable, Comparable {
      * Compare planet entries by comparing permalinks.
      */
     public int compareTo(Object o) {
-        PlanetEntryData other = (PlanetEntryData)o;
+        SubscriptionEntry other = (SubscriptionEntry)o;
         return getPermalink().compareTo(other.getPermalink());
     }
     
@@ -385,8 +385,8 @@ public class PlanetEntryData implements Serializable, Comparable {
      */
     public boolean equals(Object other) {        
         if(this == other) return true;
-        if(!(other instanceof PlanetEntryData)) return false;        
-        final PlanetEntryData that = (PlanetEntryData) other;
+        if(!(other instanceof SubscriptionEntry)) return false;        
+        final SubscriptionEntry that = (SubscriptionEntry) other;
         return this.permalink.equals(that.getPermalink());
     }
     
@@ -401,7 +401,7 @@ public class PlanetEntryData implements Serializable, Comparable {
      * Read-only synomym for getSubscription()
      * @roller.wrapPojoMethod type="pojo"
      */
-    public PlanetSubscriptionData getWebsite() {
+    public Subscription getWebsite() {
         return this.subscription;        
     }
     public void setWebsite() {

@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 
 
 /**
@@ -55,7 +55,7 @@ public class PlanetRequest extends ParsedRequest {
     protected String pathInfo = null;
     
     // heavyweight attributes
-    private PlanetData planet = null;
+    private Planet planet = null;
     
     
     public PlanetRequest() {}
@@ -114,7 +114,7 @@ public class PlanetRequest extends ParsedRequest {
         this.planetHandle = planetHandle;
     }
 
-    public PlanetData getPlanet() {
+    public Planet getPlanet() {
         
         if(planet == null && planetHandle != null) {
             try {
@@ -128,7 +128,7 @@ public class PlanetRequest extends ParsedRequest {
         return planet;
     }
 
-    public void setPlanet(PlanetData planet) {
+    public void setPlanet(Planet planet) {
         this.planet = planet;
     }
     

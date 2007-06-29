@@ -19,8 +19,8 @@ package org.apache.roller.planet.business;
 import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.roller.planet.TestUtils;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 
 
 /**
@@ -28,9 +28,9 @@ import org.apache.roller.planet.pojos.PlanetGroupData;
  */
 public class GroupFunctionalTests extends TestCase {
     
-    private PlanetData testPlanet = null;
-    private PlanetGroupData testGroup1 = null;
-    private PlanetGroupData testGroup2 = null;
+    private Planet testPlanet = null;
+    private PlanetGroup testGroup1 = null;
+    private PlanetGroup testGroup2 = null;
     
     
     protected void setUp() throws Exception {
@@ -55,7 +55,7 @@ public class GroupFunctionalTests extends TestCase {
         PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
         
         // lookup group by id
-        PlanetGroupData group = mgr.getGroupById(testGroup1.getId());
+        PlanetGroup group = mgr.getGroupById(testGroup1.getId());
         assertNotNull(group);
         assertEquals("groupFuncTest1", group.getHandle());
         
@@ -66,7 +66,7 @@ public class GroupFunctionalTests extends TestCase {
         assertEquals("groupFuncTest1", group.getHandle());
         
         // lookup all groups in planet
-        PlanetData planet = mgr.getPlanetById(testPlanet.getId());
+        Planet planet = mgr.getPlanetById(testPlanet.getId());
         Set groups = planet.getGroups();
         assertNotNull(groups);
         assertEquals(2, groups.size());

@@ -25,21 +25,20 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Represents a single runtime property of the system.
- *
- * @ejb:bean name="PropertyData"
- * @hibernate.class lazy="true" table="rag_properties"
+ * 
  * @hibernate.cache usage="read-write"
+ * @hibernate.class lazy="true" table="rag_properties"
  */
-public class PropertyData implements Serializable {
+public class RuntimeConfigProperty implements Serializable {
     
     private String name = null;
     private String value = null;
     
     
-    public PropertyData() {}
+    public RuntimeConfigProperty() {}
     
     
-    public PropertyData(String name, String value) {
+    public RuntimeConfigProperty(String name, String value) {
         this.name = name;
         this.value = value;
     }
@@ -97,8 +96,8 @@ public class PropertyData implements Serializable {
     
     public boolean equals(Object other) {
         if (other == this) return true;
-        if (other instanceof PropertyData != true) return false;
-        PropertyData o = (PropertyData)other;
+        if (other instanceof RuntimeConfigProperty != true) return false;
+        RuntimeConfigProperty o = (RuntimeConfigProperty)other;
         return new EqualsBuilder()
         .append(getName(), o.getName())
         .isEquals();

@@ -28,7 +28,7 @@ import java.util.TreeSet;
  * 
  * @hibernate.class lazy="true" table="rag_planet"
  */
-public class PlanetData implements Comparable {
+public class Planet implements Comparable {
     
     private String id = UUIDGenerator.generateUUID();
     private String handle = null;
@@ -37,11 +37,11 @@ public class PlanetData implements Comparable {
     private Set groups = new TreeSet();
     
     
-    public PlanetData() {
+    public Planet() {
     }
     
     
-    public PlanetData(String handle, String title, String desc) {
+    public Planet(String handle, String title, String desc) {
         this.title = title;
         this.handle = handle;
         this.description = desc;
@@ -52,7 +52,7 @@ public class PlanetData implements Comparable {
      * For comparing planets and sorting, ordered by Title.
      */
     public int compareTo(Object o) {
-        PlanetData other = (PlanetData) o;
+        Planet other = (Planet) o;
         return getTitle().compareTo(other.getTitle());
     }
     
@@ -107,7 +107,7 @@ public class PlanetData implements Comparable {
     /** 
      * @hibernate.set lazy="true" inverse="true" cascade="all" sort="natural"
      * @hibernate.collection-key column="planet_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetGroupData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetGroup"
      */
     public Set getGroups() {
         return groups;

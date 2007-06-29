@@ -30,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetConfig;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 
 
 /**
@@ -271,7 +271,7 @@ public class MultiPlanetRequestMapper implements RequestMapper {
         
         try {
             PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
-            PlanetData planet = mgr.getPlanet(planetHandle);
+            Planet planet = mgr.getPlanet(planetHandle);
             
             if(planet != null) {
                 isPlanet = true;

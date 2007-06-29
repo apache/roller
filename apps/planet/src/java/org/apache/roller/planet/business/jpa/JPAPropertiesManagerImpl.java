@@ -33,7 +33,7 @@ import org.apache.roller.planet.config.runtime.ConfigDef;
 import org.apache.roller.planet.config.runtime.DisplayGroup;
 import org.apache.roller.planet.config.runtime.PropertyDef;
 import org.apache.roller.planet.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.planet.pojos.PropertyData;
+import org.apache.roller.planet.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -62,33 +62,33 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Retrieve a single property by name.
      */
-    public PropertyData getProperty(String name) throws PlanetException {
-        return (PropertyData)strategy.load(PropertyData.class, name);
+    public RuntimeConfigProperty getProperty(String name) throws PlanetException {
+        return (RuntimeConfigProperty)strategy.load(RuntimeConfigProperty.class, name);
     }
     
     
     /**
      * Retrieve all properties.
-     *
+     * 
      * Properties are returned in a Map to make them easy to lookup.  The Map
-     * uses the property name as the key and the PropertyData object
+     * uses the property name as the key and the RuntimeConfigProperty object
      * as the value.
      */
     public Map getProperties() throws PlanetException {
         
         HashMap props = new HashMap();
-        List list = strategy.getNamedQuery("PropertyData.getAll").getResultList();
+        List list = strategy.getNamedQuery("RuntimeConfigProperty.getAll").getResultList();
         
         /*
          * for convenience sake we are going to put the list of props
          * into a map for users to access it.  The value element of the
-         * hash still needs to be the PropertyData object so that
+         * hash still needs to be the RuntimeConfigProperty object so that
          * we can save the elements again after they have been updated
          */
-        PropertyData prop = null;
+        RuntimeConfigProperty prop = null;
         Iterator it = list.iterator();
         while(it.hasNext()) {
-            prop = (PropertyData) it.next();
+            prop = (RuntimeConfigProperty) it.next();
             props.put(prop.getName(), prop);
         }
         
@@ -99,7 +99,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
     /**
      * Save a single property.
      */
-    public void saveProperty(PropertyData property) throws PlanetException {
+    public void saveProperty(RuntimeConfigProperty property) throws PlanetException {
         
         strategy.store(property);
     }
@@ -113,7 +113,7 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
         // just go through the list and saveProperties each property
         Iterator props = properties.values().iterator();
         while (props.hasNext()) {
-            strategy.store((PropertyData) props.next());
+            strategy.store((RuntimeConfigProperty) props.next());
         }
     }
     
@@ -180,8 +180,8 @@ public class JPAPropertiesManagerImpl  extends AbstractManagerImpl implements Pr
                     
                     // do we already have this prop?  if not then add it
                     if(!props.containsKey(propDef.getName())) {
-                        PropertyData newprop =
-                                new PropertyData(propDef.getName(), propDef.getDefaultValue());
+                        RuntimeConfigProperty newprop =
+                                new RuntimeConfigProperty(propDef.getName(), propDef.getDefaultValue());
                         
                         props.put(propDef.getName(), newprop);
                         

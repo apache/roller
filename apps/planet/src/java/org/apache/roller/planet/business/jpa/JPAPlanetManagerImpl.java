@@ -33,10 +33,10 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.business.AbstractManagerImpl;
 
 /**
@@ -64,17 +64,17 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     
-    public void saveGroup(PlanetGroupData group) throws PlanetException {
+    public void saveGroup(PlanetGroup group) throws PlanetException {
         strategy.store(group);
     }
     
-    public void saveEntry(PlanetEntryData entry) throws PlanetException {
+    public void saveEntry(SubscriptionEntry entry) throws PlanetException {
         strategy.store(entry);
     }
     
-    public void saveSubscription(PlanetSubscriptionData sub)
+    public void saveSubscription(Subscription sub)
     throws PlanetException {
-        PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
+        Subscription existing = getSubscription(sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             strategy.store(sub);
         } else {
@@ -82,40 +82,40 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         }
     }
     
-    public void deleteEntry(PlanetEntryData entry) throws PlanetException {
+    public void deleteEntry(SubscriptionEntry entry) throws PlanetException {
         strategy.remove(entry);
     }
     
-    public void deleteGroup(PlanetGroupData group) throws PlanetException {
+    public void deleteGroup(PlanetGroup group) throws PlanetException {
         strategy.remove(group);
     }
     
-    public void deleteSubscription(PlanetSubscriptionData sub)
+    public void deleteSubscription(Subscription sub)
     throws PlanetException {
         strategy.remove(sub);
     }
     
-    public PlanetSubscriptionData getSubscription(String feedUrl)
+    public Subscription getSubscription(String feedUrl)
     throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetSubscriptionData.getByFeedURL");
+        Query q = strategy.getNamedQuery("Subscription.getByFeedURL");
         q.setParameter(1, feedUrl);
         try {
-            return (PlanetSubscriptionData)q.getSingleResult();
+            return (Subscription)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
     
-    public PlanetSubscriptionData getSubscriptionById(String id)
+    public Subscription getSubscriptionById(String id)
     throws PlanetException {
-        return (PlanetSubscriptionData) strategy.load(
-                PlanetSubscriptionData.class, id);
+        return (Subscription) strategy.load(
+                Subscription.class, id);
     }
     
     public Iterator getAllSubscriptions() {
         try {
             return ((List)strategy.getNamedQuery(
-                    "PlanetSubscriptionData.getAll").getResultList()).iterator();
+                    "Subscription.getAll").getResultList()).iterator();
         } catch (Throwable e) {
             throw new RuntimeException(
                     "ERROR fetching subscription collection", e);
@@ -123,7 +123,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public int getSubscriptionCount() throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetSubscriptionData.getAll");
+        Query q = strategy.getNamedQuery("Subscription.getAll");
         return q.getResultList().size();
     }
     
@@ -136,18 +136,18 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
      * Get top X subscriptions, restricted by group.
      */
     public List getTopSubscriptions(
-            PlanetGroupData group, int offset, int len) throws PlanetException {
+            PlanetGroup group, int offset, int len) throws PlanetException {
         List result = null;
         if (group != null) {
             Query q = strategy.getNamedQuery(
-                    "PlanetSubscriptionData.getByGroupOrderByInboundBlogsDesc");
+                    "Subscription.getByGroupOrderByInboundBlogsDesc");
             q.setParameter(1, group);
             if (offset != 0) q.setFirstResult(offset);
             if (len != -1) q.setMaxResults(len);
             result = q.getResultList();
         } else {
             Query q = strategy.getNamedQuery(
-                    "PlanetSubscriptionData.getAllOrderByInboundBlogsDesc");
+                    "Subscription.getAllOrderByInboundBlogsDesc");
             if (offset != 0) q.setFirstResult(offset);
             if (len != -1) q.setMaxResults(len);
             result = q.getResultList();
@@ -155,77 +155,77 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
         return result;
     }
     
-    public PlanetGroupData getGroup(String handle) throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetGroupData.getByHandle");
+    public PlanetGroup getGroup(String handle) throws PlanetException {
+        Query q = strategy.getNamedQuery("PlanetGroup.getByHandle");
         q.setParameter(1, handle);
         try {
-            return (PlanetGroupData)q.getSingleResult();
+            return (PlanetGroup)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
     
-    public PlanetGroupData getGroupById(String id) throws PlanetException {
-        return (PlanetGroupData) strategy.load(PlanetGroupData.class, id);
+    public PlanetGroup getGroupById(String id) throws PlanetException {
+        return (PlanetGroup) strategy.load(PlanetGroup.class, id);
     }        
     
     public void release() {}
     
     
-    public void savePlanet(PlanetData planet) throws PlanetException {
+    public void savePlanet(Planet planet) throws PlanetException {
         strategy.store(planet);
     }
     
-    public PlanetData getPlanet(String handle) throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetData.getByHandle");
+    public Planet getPlanet(String handle) throws PlanetException {
+        Query q = strategy.getNamedQuery("Planet.getByHandle");
         q.setParameter(1, handle);
         try {
-            return (PlanetData)q.getSingleResult();
+            return (Planet)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
     
-    public PlanetData getPlanetById(String id) throws PlanetException {
-        return (PlanetData)strategy.load(PlanetData.class, id);
+    public Planet getPlanetById(String id) throws PlanetException {
+        return (Planet)strategy.load(Planet.class, id);
     }
     
     public List getPlanets() throws PlanetException {
-        return (List)strategy.getNamedQuery("PlanetData.getAll").getResultList();
+        return (List)strategy.getNamedQuery("Planet.getAll").getResultList();
     }
     
-    public List getGroupHandles(PlanetData planet) throws PlanetException {
+    public List getGroupHandles(Planet planet) throws PlanetException {
         List handles = new ArrayList();
         Iterator list = getGroups(planet).iterator();
         while (list.hasNext()) {
-            PlanetGroupData group = (PlanetGroupData) list.next();
+            PlanetGroup group = (PlanetGroup) list.next();
             handles.add(group.getHandle());
         }
         return handles;
     }
     
-    public List getGroups(PlanetData planet) throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetGroupData.getByPlanet");
+    public List getGroups(Planet planet) throws PlanetException {
+        Query q = strategy.getNamedQuery("PlanetGroup.getByPlanet");
         q.setParameter(1, planet.getHandle());
         return q.getResultList();
     }
     
-    public PlanetGroupData getGroup(PlanetData planet, String handle) throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetGroupData.getByPlanetAndHandle");
+    public PlanetGroup getGroup(Planet planet, String handle) throws PlanetException {
+        Query q = strategy.getNamedQuery("PlanetGroup.getByPlanetAndHandle");
         q.setParameter(1, planet.getHandle());
         q.setParameter(2, handle);
         try {
-            return (PlanetGroupData)q.getSingleResult();
+            return (PlanetGroup)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
     
-    public void deletePlanet(PlanetData planet) throws PlanetException {
+    public void deletePlanet(Planet planet) throws PlanetException {
         strategy.remove(planet);
     }
     
-    public void deleteEntries(PlanetSubscriptionData sub) 
+    public void deleteEntries(Subscription sub) 
         throws PlanetException {
         Iterator entries = sub.getEntries().iterator();
         while(entries.hasNext()) {
@@ -237,30 +237,30 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public List getSubscriptions() throws PlanetException {
-        Query q = strategy.getNamedQuery("PlanetSubscriptionData.getAllOrderByFeedURL");
+        Query q = strategy.getNamedQuery("Subscription.getAllOrderByFeedURL");
         return q.getResultList();
     }
 
-    public PlanetEntryData getEntryById(String id) throws PlanetException {
-        return (PlanetEntryData) strategy.load(PlanetEntryData.class, id);
+    public SubscriptionEntry getEntryById(String id) throws PlanetException {
+        return (SubscriptionEntry) strategy.load(SubscriptionEntry.class, id);
     }
 
-    public List getEntries(PlanetSubscriptionData sub, int offset, int len) throws PlanetException {            
+    public List getEntries(Subscription sub, int offset, int len) throws PlanetException {            
         if(sub == null) {
             throw new PlanetException("subscription cannot be null");
         }
-        Query q = strategy.getNamedQuery("PlanetEntryData.getBySubscription");
+        Query q = strategy.getNamedQuery("SubscriptionEntry.getBySubscription");
         q.setParameter(1, sub);
         if (offset != 0) q.setFirstResult(offset);
         if (len != -1) q.setMaxResults(len);
         return q.getResultList();
     }
 
-    public List getEntries(PlanetGroupData group, int offset, int len) throws PlanetException {
+    public List getEntries(PlanetGroup group, int offset, int len) throws PlanetException {
         return getEntries(group, null, null, offset, len);
     }
 
-    public List getEntries(PlanetGroupData group, Date startDate, Date endDate, int offset, int len) throws PlanetException {
+    public List getEntries(PlanetGroup group, Date startDate, Date endDate, int offset, int len) throws PlanetException {
         StringBuffer queryString = new StringBuffer();
                 
         if(group == null) {
@@ -274,7 +274,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             StringBuffer sb = new StringBuffer();
             List params = new ArrayList();
             int size = 0;
-            sb.append("SELECT e FROM PlanetEntryData e ");
+            sb.append("SELECT e FROM SubscriptionEntry e ");
             sb.append("JOIN e.subscription.groups g ");
                         
             params.add(size++, group.getHandle());
