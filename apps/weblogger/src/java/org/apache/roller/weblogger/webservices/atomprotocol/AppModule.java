@@ -17,25 +17,13 @@
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.sun.syndication.feed.module.ModuleImpl;
+import com.sun.syndication.feed.module.Module;
+import java.util.Date;
 
-public class PubControlModuleImpl extends ModuleImpl implements PubControlModule {
-    private boolean _draft = false;
-
-    public PubControlModuleImpl() {
-        super(PubControlModule.class,PubControlModule.URI);
-    }
-    public boolean getDraft() {
-        return _draft;
-    }
-    public void setDraft(boolean draft) {
-        _draft = draft;
-    }
-    public Class getInterface() {
-        return PubControlModule.class;
-    }
-    public void copyFrom(Object obj) {
-        PubControlModule m = (PubControlModule)obj;
-        setDraft(m.getDraft());
-    }
+public interface AppModule extends Module {
+    public static final String URI = "http://www.w3.org/2007/app";
+    public boolean getDraft();
+    public void setDraft(boolean draft);
+    public Date getEdited();
+    public void setEdited(Date edited);
 }
