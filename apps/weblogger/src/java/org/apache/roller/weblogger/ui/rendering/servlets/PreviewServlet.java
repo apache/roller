@@ -95,23 +95,30 @@ public class PreviewServlet extends HttpServlet {
             return;
         }
         
-        // try getting the preview theme
-        log.debug("preview theme = "+previewRequest.getThemeName());
-        Theme previewTheme = previewRequest.getTheme();
+        Weblog tmpWebsite = weblog;
         
-        // construct a temporary Website object for this request
-        // and set the EditorTheme to our previewTheme
-        Weblog tmpWebsite = new Weblog();
-        tmpWebsite.setData(weblog);
-        if(previewTheme != null && previewTheme.isEnabled()) {
-            tmpWebsite.setEditorTheme(previewTheme.getId());
-        } else if(WeblogTheme.CUSTOM.equals(previewRequest.getThemeName())) {
-            tmpWebsite.setEditorTheme(WeblogTheme.CUSTOM);
+        if (previewRequest.getThemeName() != null) {
+            // only create temporary weblog object if theme name was specified
+            // in request, which indicates we're doing a theme preview
+
+            // try getting the preview theme
+            log.debug("preview theme = "+previewRequest.getThemeName());
+            Theme previewTheme = previewRequest.getTheme();
+
+            // construct a temporary Website object for this request
+            // and set the EditorTheme to our previewTheme
+            tmpWebsite = new Weblog();
+            tmpWebsite.setData(weblog);
+            if(previewTheme != null && previewTheme.isEnabled()) {
+                tmpWebsite.setEditorTheme(previewTheme.getId());
+            } else if(WeblogTheme.CUSTOM.equals(previewRequest.getThemeName())) {
+                tmpWebsite.setEditorTheme(WeblogTheme.CUSTOM);
+            }
+
+            // we've got to set the weblog in our previewRequest because that's
+            // the object that gets referenced during rendering operations
+            previewRequest.setWeblog(tmpWebsite);
         }
-        
-        // we've got to set the weblog in our previewRequest because that's
-        // the object that gets referenced during rendering operations
-        previewRequest.setWeblog(tmpWebsite);
         
         // do we need to force a specific locale for the request?
         if(previewRequest.getLocale() == null && !weblog.isShowAllLangs()) {
