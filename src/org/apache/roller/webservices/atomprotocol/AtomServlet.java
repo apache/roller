@@ -60,7 +60,7 @@ import org.apache.roller.config.RollerConfig;
 public class AtomServlet extends HttpServlet {
     public static final String FEED_TYPE = "atom_1.0";
     
-    private static Log mLogger =
+    private static Log log =
             LogFactory.getFactory().getInstance(AtomServlet.class);
     
     //-----------------------------------------------------------------------------
@@ -70,6 +70,7 @@ public class AtomServlet extends HttpServlet {
      */
     private AtomHandler createAtomRequestHandler(HttpServletRequest request) 
     throws ServletException {
+        log.debug("Creating Atom handler");
         boolean enabled = RollerConfig.getBooleanProperty(
             "webservices.atomprotocol.enabled");
         if (!enabled) {
@@ -84,6 +85,7 @@ public class AtomServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException { 
+        log.debug("Entering");
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
@@ -93,7 +95,7 @@ public class AtomServlet extends HttpServlet {
                     // return an Atom Service document
                     AtomService service = handler.getIntrospection();
                     Document doc = AtomService.serviceToDocument(service);
-                    res.setContentType("application/atomserv+xml; charset=utf-8");
+                    res.setContentType("application/atomsvc+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
@@ -130,16 +132,16 @@ public class AtomServlet extends HttpServlet {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (AtomException ae) {
-                res.setStatus(ae.getStatus());
-                mLogger.debug(ae);
-            } catch (Exception ae) {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                mLogger.debug(ae);
+                res.sendError(ae.getStatus(), ae.getMessage());
+            } catch (Exception e) {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                log.debug(e);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+        log.debug("Exiting");
     }
     
     //-----------------------------------------------------------------------------
@@ -149,6 +151,7 @@ public class AtomServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {
+        log.debug("Entering");
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
@@ -166,7 +169,7 @@ public class AtomServlet extends HttpServlet {
                         // call handler to post it
                         Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
                         
-                        // return alternate link as Location header
+                        // return member entry URI as location header
                         Iterator links = savedEntry.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
@@ -187,7 +190,7 @@ public class AtomServlet extends HttpServlet {
                         String title = req.getHeader("Title");
                         String slug = req.getHeader("Slug");
 
-                        // hand input stream of to hander to post file
+                        // hand input stream off to hander to post file
                         Entry resource = handler.postMedia(
                             pathInfo, title, slug, req.getContentType(), req.getInputStream());
                         
@@ -195,7 +198,7 @@ public class AtomServlet extends HttpServlet {
                         com.sun.syndication.feed.atom.Content content = 
                             (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
 
-                        // return alternate link as Location header
+                        // return member entry URI as location header
                         Iterator links = resource.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
@@ -208,23 +211,25 @@ public class AtomServlet extends HttpServlet {
                         serializeEntry(resource, writer);
                         writer.close(); 
                     } else {
-                        res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+                        res.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+                                "No content-type specified in request");
                     }
                     
                 } else {
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    res.sendError(HttpServletResponse.SC_NOT_FOUND,
+                            "Invalid collection specified in request");
                 }
             } catch (AtomException ae) {
-                res.setStatus(ae.getStatus());
-                mLogger.debug(ae);
-            } catch (Exception ae) {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                mLogger.debug(ae);
+                res.sendError(ae.getStatus(), ae.getMessage());
+            } catch (Exception e) {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                log.debug(e);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+        log.debug("Exiting");
     }
     
     //-----------------------------------------------------------------------------
@@ -234,6 +239,7 @@ public class AtomServlet extends HttpServlet {
      */
     protected void doPut(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {
+        log.debug("Entering");
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
@@ -273,16 +279,16 @@ public class AtomServlet extends HttpServlet {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (AtomException ae) {
-                res.setStatus(ae.getStatus());
-                mLogger.debug(ae);
-            } catch (Exception ae) {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                mLogger.debug(ae);
+                res.sendError(ae.getStatus(), ae.getMessage());
+            } catch (Exception e) {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                log.debug(e);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+        log.debug("Exiting");
     }
     
     //-----------------------------------------------------------------------------
@@ -291,6 +297,7 @@ public class AtomServlet extends HttpServlet {
      */
     protected void doDelete(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {
+        log.debug("Entering");
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
@@ -304,16 +311,16 @@ public class AtomServlet extends HttpServlet {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (AtomException ae) {
-                res.setStatus(ae.getStatus());
-                mLogger.debug(ae);
-            } catch (Exception ae) {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                mLogger.debug(ae);
+                res.sendError(ae.getStatus(), ae.getMessage());
+            } catch (Exception e) {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                log.debug(e);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+        log.debug("Exiting");
     }
     
     //-----------------------------------------------------------------------------
@@ -345,24 +352,22 @@ public class AtomServlet extends HttpServlet {
         // Grab entry element from feed and get JDOM to serialize it
         Element entryElement= (Element)feedDoc.getRootElement().getChildren().get(0);
         
-        // Add our own namespaced element, so we can determine if we can 
-        // count on client to preserve foreign markup as it should.
         Element rollerElement = new Element("atom-draft", 
-            "http://rollerweblogger.org/namespaces/app");
-        rollerElement.setText("9");
+            "http://roller.apache.org/namespaces/app");
+        rollerElement.setText("14");
         entryElement.addContent(rollerElement);
         
         XMLOutputter outputter = new XMLOutputter();
         outputter.setFormat(Format.getPrettyFormat());
         
-        if (mLogger.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             StringWriter sw = new StringWriter();
             outputter.output(entryElement, sw); 
-            mLogger.debug(sw.toString());
+            log.debug(sw.toString());
             writer.write(sw.toString()); 
         } else {
             outputter.output(entryElement, writer);
-        }        
+        } 
     }
     
     /**
@@ -383,15 +388,13 @@ public class AtomServlet extends HttpServlet {
         Document feedDoc = wireFeedOutput.outputJDom(feed);
         feedDoc.getRootElement().addContent(fetchedEntryElement);
         
-        // Check for our special namespaced element. If it's there, then we 
-        // know that client is not preserving foreign markup.
         Namespace ns = Namespace.getNamespace(
-            "http://rollerweblogger.org/namespaces/app");
+            "http://roller.apache.org/namespaces/app");
         Element rollerElement = fetchedEntryElement.getChild("atom-draft", ns);
         if (rollerElement == null) {
-            mLogger.debug("Client is NOT preserving foreign markup");
+            log.debug("Client is NOT preserving foreign markup");
         }
-        
+                
         WireFeedInput input = new WireFeedInput();
         Feed parsedFeed = (Feed)input.build(feedDoc);
         return (Entry)parsedFeed.getEntries().get(0);
