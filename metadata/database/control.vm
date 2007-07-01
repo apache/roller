@@ -57,7 +57,7 @@ Special macro to drop NOT NULL requirement from an 'id' column.
     alter table $table drop primary key;
     alter table $table alter column id null;
 #elseif ($DBTYPE == "ORACLE")
-    alter table $table drop id not null;
+    alter table $table drop primary key; 
 #end
 #end
 
