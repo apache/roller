@@ -204,6 +204,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             updateTagCount(name, entry.getWebsite(), -1);
         }  
         
+        entry.setUpdateTime(new Timestamp(new Date().getTime()));
+        
         this.strategy.store(entry);        
         
         // update weblog last modified date.  date updated by saveWebsite()
