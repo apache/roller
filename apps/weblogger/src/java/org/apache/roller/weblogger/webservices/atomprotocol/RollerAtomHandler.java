@@ -120,7 +120,8 @@ public class RollerAtomHandler implements AtomHandler {
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
     
     static {
-        throttle = WebloggerConfig.getBooleanProperty("webservices.atomprotocol.oneSecondThrottle");
+        throttle = WebloggerConfig
+            .getBooleanProperty("webservices.atomprotocol.oneSecondThrottle");
     }
     
     //---------------------------------------------------------------- construction
@@ -488,16 +489,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     //--------------------------------------------------------------------- entries
-    private void oneSecondThrottle() {
-        // Throttle one entry per second per weblog because time-
-        // stamp in MySQL and other DBs has only 1 sec resolution
-        try { 
-            synchronized (getClass()) { 
-                Thread.sleep(1000); 
-            }  
-        } catch (Exception ignored) {} 
-    }
-    
+
     /**
      * Create entry in the entry collection (a Weblogger blog has only one).
      */
@@ -1218,6 +1210,16 @@ public class RollerAtomHandler implements AtomHandler {
         if (entry.isPublished()) {
             manager.addEntryReIndexOperation(entry);
         }
+    }
+    
+    private void oneSecondThrottle() {
+        // Throttle one entry per second per weblog because time-
+        // stamp in MySQL and other DBs has only 1 sec resolution
+        try { 
+            synchronized (getClass()) { 
+                Thread.sleep(1000); 
+            }  
+        } catch (Exception ignored) {} 
     }
 }
 
