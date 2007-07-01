@@ -110,12 +110,18 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * @author David M Johnson
  */
 public class RollerAtomHandler implements AtomHandler {
-    private Weblogger   roller;
-    private User user;
-    private int      maxEntries = 20;
+    private Weblogger roller;
+    private User      user;
+    private int       maxEntries = 20;
+    
+    private static boolean throttle = true;
     
     private static Log log =
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
+    
+    static {
+        throttle = WebloggerConfig.getBooleanProperty("webservices.atomprotocol.oneSecondThrottle");
+    }
     
     //---------------------------------------------------------------- construction
     
@@ -482,6 +488,15 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     //--------------------------------------------------------------------- entries
+    private void oneSecondThrottle() {
+        // Throttle one entry per second per weblog because time-
+        // stamp in MySQL and other DBs has only 1 sec resolution
+        try { 
+            synchronized (getClass()) { 
+                Thread.sleep(1000); 
+            }  
+        } catch (Exception ignored) {} 
+    }
     
     /**
      * Create entry in the entry collection (a Weblogger blog has only one).
@@ -499,6 +514,9 @@ public class RollerAtomHandler implements AtomHandler {
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
+            
+            if (throttle) oneSecondThrottle();
+            
             // Save it and commit it
             WeblogManager mgr = roller.getWeblogManager();
             WeblogEntry rollerEntry = new WeblogEntry();
@@ -507,14 +525,6 @@ public class RollerAtomHandler implements AtomHandler {
             copyToRollerEntry(entry, rollerEntry);
             mgr.saveWeblogEntry(rollerEntry);
             roller.flush();
-
-            // Throttle one entry per second per weblog because time-
-            // stamp in MySQL and other DBs has only 1 sec resolution
-            try { 
-                synchronized (getClass()) { 
-                    Thread.sleep(1000); 
-                }  
-            } catch (Exception ignored) {} 
 
             CacheManager.invalidate(website);
             if (rollerEntry.isPublished()) {
@@ -582,18 +592,13 @@ public class RollerAtomHandler implements AtomHandler {
                         "Cannot find specified entry/resource");  
                 }
                 if (canEdit(rollerEntry)) {
+            
+                    if (throttle) oneSecondThrottle();
+                    
                     WeblogManager mgr = roller.getWeblogManager();
                     copyToRollerEntry(entry, rollerEntry);
                     mgr.saveWeblogEntry(rollerEntry);
                     roller.flush();
-
-                    // Throttle one entry per second per weblog because time-
-                    // stamp in MySQL and other DBs has only 1 sec resolution
-                    try { 
-                        synchronized (getClass()) { 
-                            Thread.sleep(1000); 
-                        }  
-                    } catch (Exception ignored) {} 
                     
                     CacheManager.invalidate(rollerEntry.getWebsite());
                     if (rollerEntry.isPublished()) {
