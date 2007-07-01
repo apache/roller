@@ -187,7 +187,7 @@ public class RollerAtomHandler implements AtomHandler {
                 
                 Collection entryCol = new Collection("Weblog Entries", "text", 
                     URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/entries");
-                entryCol.setAccept("entry");
+                entryCol.setAccept("application/atom+xml;type=entry");
                 entryCol.setHref(URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/entries");
                 try {                    
                     // Add fixed categories using scheme that points to 
