@@ -508,11 +508,18 @@ public class RollerAtomHandler implements AtomHandler {
             mgr.saveWeblogEntry(rollerEntry);
             roller.flush();
 
-            // Throttle one entry per second
-            try { Thread.sleep(1000); } catch (Exception ignored) {}
+            // Throttle one entry per second per weblog because time-
+            // stamp in MySQL and other DBs has only 1 sec resolution
+            try { 
+                synchronized (getClass()) { 
+                    Thread.sleep(1000); 
+                }  
+            } catch (Exception ignored) {} 
 
             CacheManager.invalidate(website);
-            reindexEntry(rollerEntry);
+            if (rollerEntry.isPublished()) {
+                roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
+            }
             
             log.debug("Exiting");
             return createAtomEntry(rollerEntry);
@@ -580,8 +587,18 @@ public class RollerAtomHandler implements AtomHandler {
                     mgr.saveWeblogEntry(rollerEntry);
                     roller.flush();
 
+                    // Throttle one entry per second per weblog because time-
+                    // stamp in MySQL and other DBs has only 1 sec resolution
+                    try { 
+                        synchronized (getClass()) { 
+                            Thread.sleep(1000); 
+                        }  
+                    } catch (Exception ignored) {} 
+                    
                     CacheManager.invalidate(rollerEntry.getWebsite());
-                    reindexEntry(rollerEntry);
+                    if (rollerEntry.isPublished()) {
+                        roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
+                    }
                     log.debug("Exiting");
                     return createAtomEntry(rollerEntry);
                 }
@@ -670,7 +687,8 @@ public class RollerAtomHandler implements AtomHandler {
             }
             if (pathInfo.length > 1) {
                 // Save to temp file
-                String fileName = createFileName(website, (slug != null) ? slug : title, contentType);
+                String fileName = createFileName(website, 
+                    (slug != null) ? slug : Utilities.replaceNonAlphanumeric(title,' '), contentType);
                 try {
                     tempFile = File.createTempFile(fileName, "tmp");
                     FileOutputStream fos = new FileOutputStream(tempFile);
@@ -686,11 +704,6 @@ public class RollerAtomHandler implements AtomHandler {
                     fis.close();
                     
                     ThemeResource resource = fmgr.getFile(website, path + fileName);
-                    
-                    // Throttle one entry per second because blog entry dates 
-                    // are represented by timpstamps in MySQL and therefore 
-                    // have only have 1 second resolution
-                    try { Thread.sleep(1000); } catch (Exception ignored) {}
                     
                     log.debug("Exiting");
                     return createAtomResourceEntry(website, resource);
@@ -741,7 +754,7 @@ public class RollerAtomHandler implements AtomHandler {
      *    content-type  = "image/jpg"
      * Might result in daveblog-200608201034.jpg
      */
-    private String createFileName(Weblog weblog, String title, String contentType) {
+    private String createFileName(Weblog weblog, String slug, String contentType) {
         
         if (weblog == null) throw new IllegalArgumentException("weblog cannot be null");
         if (contentType == null) throw new IllegalArgumentException("contentType cannot be null");
@@ -755,10 +768,9 @@ public class RollerAtomHandler implements AtomHandler {
         String[] typeTokens = contentType.split("/");
         String ext = typeTokens[1];
         
-        if (title != null && !title.trim().equals("")) {              
+        if (slug != null && !slug.trim().equals("")) {              
             // We've got a title, so use it to build file name
-            String base = Utilities.replaceNonAlphanumeric(title, ' ');
-            StringTokenizer toker = new StringTokenizer(base);
+            StringTokenizer toker = new StringTokenizer(slug);
             String tmp = null;
             int count = 0;
             while (toker.hasMoreTokens() && count < 5) {
@@ -975,23 +987,26 @@ public class RollerAtomHandler implements AtomHandler {
     private Entry createAtomEntry(WeblogEntry entry) {
         Entry atomEntry = new Entry();
         
+        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
+        atomEntry.setId(        absUrl + entry.getPermaLink());
+        atomEntry.setTitle(     entry.getTitle());
+        atomEntry.setPublished( entry.getPubTime());
+        atomEntry.setUpdated(   entry.getUpdateTime());
+        
         Content content = new Content();
         content.setType(Content.HTML);
         content.setValue(entry.getText());
         List contents = new ArrayList();
         contents.add(content);
         
-        Content summary = new Content();
-        summary.setType(Content.HTML);
-        summary.setValue(entry.getSummary());
+        atomEntry.setContents(contents);
         
-        String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-        atomEntry.setId(        absUrl + entry.getPermaLink());
-        atomEntry.setTitle(     entry.getTitle());
-        atomEntry.setContents(  contents);
-        atomEntry.setSummary(   summary);
-        atomEntry.setPublished( entry.getPubTime());
-        atomEntry.setUpdated(   entry.getUpdateTime());
+        if (StringUtils.isNotEmpty(entry.getSummary())) {
+            Content summary = new Content();
+            summary.setType(Content.HTML);
+            summary.setValue(entry.getSummary());
+            atomEntry.setSummary(summary);
+        }
         
         User creator = entry.getCreator();
         Person author = new Person();
@@ -1121,7 +1136,7 @@ public class RollerAtomHandler implements AtomHandler {
         rollerEntry.setUpdateTime(updateTime);
         
         AppModule control =
-                (AppModule)entry.getModule("http://purl.org/atom/app#");
+                (AppModule)entry.getModule(AppModule.URI);
         if (control!=null && control.getDraft()) {
             rollerEntry.setStatus(WeblogEntry.DRAFT);
         } else {

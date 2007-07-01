@@ -28,7 +28,7 @@ import org.jdom.Namespace;
 
 /**
  * This class models an Atom Publishing Protocol AtomService Document.
- * Based on: draft-ietf-atompub-protocol-10.txt.
+ * Based on: draft-ietf-atompub-protocol-15.txt.
  * Designed to be Roller independent.
  */
 public class AtomService {
