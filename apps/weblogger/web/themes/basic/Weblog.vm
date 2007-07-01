@@ -69,7 +69,7 @@
     <h2>Referrers</h2>
     <div class="sidebar">
     #set($refs = $model.weblog.getTodaysReferrers())
-    #showReferrersList($refs 30 20)
+    #showReferrersList($refs 30 20 true)
     </div>
   </div>
 </div>
