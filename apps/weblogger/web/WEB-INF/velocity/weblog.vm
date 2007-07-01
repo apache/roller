@@ -510,7 +510,7 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
 #**
  * Display list of referrers.
  *#
-#macro(showReferrersList $refs $max $maxWidth)
+#macro(showReferrersList $refs $max $maxWidth $includeHits)
     <ul class="rReferersList">
     #foreach( $ref in $refs )
         #if ($velocityCount <= $max)
