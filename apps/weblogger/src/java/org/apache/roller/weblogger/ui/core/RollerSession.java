@@ -159,19 +159,7 @@ public class RollerSession
         this.userId = authenticatedUser.getId();
     }
     
-    
-    /**
-     * Does our authenticated user have the global admin role?
-     */
-    public boolean isGlobalAdminUser() throws WebloggerException {
-        
-        User user = getAuthenticatedUser();
-        if (user != null && user.hasRole("admin")
-        && user.getEnabled().booleanValue()) return true;
-        return false;
-    }
-    
-    
+       
     private void clearSession(HttpSessionEvent se) {
         HttpSession session = se.getSession();
         try {
