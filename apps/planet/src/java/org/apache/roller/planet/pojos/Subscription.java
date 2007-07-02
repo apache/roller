@@ -17,20 +17,16 @@
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import org.apache.roller.util.UUIDGenerator;
 
 
 /**
  * Planet Subscription.
- *
- * @hibernate.class lazy="true" table="rag_subscription"
  */
 public class Subscription implements Serializable, Comparable {
     
@@ -46,7 +42,7 @@ public class Subscription implements Serializable, Comparable {
     
     // associations
     private Set groups = new HashSet();
-    private List entries = new ArrayList();
+    private Set entries = new HashSet();
     
     
     public Subscription() {}
@@ -70,10 +66,22 @@ public class Subscription implements Serializable, Comparable {
         return this.feedUrl.hashCode();
     }
     
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        
+        buf.append("{");
+        buf.append(feedUrl).append(", ");
+        buf.append(siteUrl).append(", ");
+        buf.append(title).append(", ");
+        buf.append(author).append(", ");
+        buf.append(lastUpdated);
+        buf.append("}");
+        
+        return buf.toString();
+        
+    }
     
-    /**
-     * @hibernate.id column="id" generator-class="assigned"
-     */
+    
     public String getId() {
         return id;
     }
@@ -83,9 +91,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="title" non-null="false" unique="false"
-     */
     public String getTitle() {
         return title;
     }
@@ -95,9 +100,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="author" non-null="false" unique="false"
-     */
     public String getAuthor() {
         return author;
     }
@@ -107,9 +109,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="feed_url" non-null="true" unique="false"
-     */
     public String getFeedURL() {
         return feedUrl;
     }
@@ -119,9 +118,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="site_url" non-null="false" unique="false"
-     */
     public String getSiteURL() {
         return siteUrl;
     }
@@ -131,9 +127,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="last_updated" non-null="false" unique="false"
-     */
     public Date getLastUpdated() {
         return lastUpdated;
     }
@@ -143,9 +136,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="inbound_links" non-null="false" unique="false"
-     */
     public int getInboundlinks() {
         return inboundlinks;
     }
@@ -155,9 +145,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="inbound_blogs" non-null="false" unique="false"
-     */
     public int getInboundblogs() {
         return inboundblogs;
     }
@@ -167,11 +154,6 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.set table="rag_group_subscription" lazy="true" cascade="none"
-     * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroup"
-     */
     public Set getGroups() {
         return groups;
     }
@@ -182,27 +164,28 @@ public class Subscription implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.bag lazy="true" inverse="true" cascade="all"
-     * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.SubscriptionEntry"
-     */
-    public List getEntries() {
+    public Set getEntries() {
         return entries;
     }
     
     // private because there is no need for people to do this
-    private void setEntries(List entries) {
+    private void setEntries(Set entries) {
         this.entries = entries;
     }
     
     
+    /**
+     * Add a SubscriptionEntry to this Subscription.
+     */
     public void addEntry(SubscriptionEntry entry) {
         // bi-directional one-to-many
         entry.setSubscription(this);
         this.getEntries().add(entry);
     }
     
+    /**
+     * Add a collection of SubscriptionEntry to this Subscription.
+     */
     public void addEntries(Collection newEntries) {
         // bi-directional one-to-many
         for (Iterator it = newEntries.iterator(); it.hasNext();) {

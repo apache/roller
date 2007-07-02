@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.AbstractManagerImpl;
-import org.apache.roller.planet.business.FeedFetcher;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;

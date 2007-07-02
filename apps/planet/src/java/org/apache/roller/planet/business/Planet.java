@@ -20,6 +20,7 @@ package org.apache.roller.planet.business;
 
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PropertiesManager;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 
 
 /**

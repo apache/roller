@@ -20,10 +20,10 @@ package org.apache.roller.planet.tasks;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.PlanetException;
-import org.apache.roller.planet.config.PlanetConfig;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.startup.PlanetStartup;
+import org.apache.roller.planet.business.updater.FeedUpdater;
+import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 
 
 /**
@@ -42,21 +42,25 @@ public class RefreshPlanetTask extends PlanetTask {
         try {            
             // Update all feeds in planet
             log.info("Refreshing Planet entries");
-            Planet planet = PlanetFactory.getPlanet();
-            planet.getFeedFetcher().refreshEntries(
-                PlanetConfig.getProperty("cache.dir"));                        
-            planet.flush();
-            planet.release();
+            FeedUpdater updater = new SingleThreadedFeedUpdater();
+            updater.updateSubscriptions();
+            PlanetFactory.getPlanet().release();
             
-        } catch (PlanetException e) {
+        } catch (Exception e) {
             log.error("ERROR refreshing planet", e);
         }
     }
     
     
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+        
         RefreshPlanetTask task = new RefreshPlanetTask();
         task.initialize();
+        
+        // need to prepare and bootstrap Planet as well
+        PlanetStartup.prepare();
+        PlanetFactory.bootstrap();
+        
         task.run();
     }
     

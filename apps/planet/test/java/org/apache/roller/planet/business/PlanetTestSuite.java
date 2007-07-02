@@ -59,8 +59,12 @@ public class PlanetTestSuite {
         suite.addTestSuite(EntryBasicTests.class);
         suite.addTestSuite(EntryFunctionalTests.class);
         
+        // fetching
         suite.addTestSuite(RomeFeedFetcherTest.class);
-
+        
+        // updating
+        suite.addTestSuite(SingleThreadedFeedUpdaterTest.class);
+        
         return suite;
     }
     

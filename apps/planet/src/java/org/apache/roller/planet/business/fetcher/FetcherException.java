@@ -16,20 +16,22 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.business;
+package org.apache.roller.planet.business.fetcher;
 
 import org.apache.roller.planet.PlanetException;
 
 
 /**
- * A FeedFetcher is what is responsible for actually fetching subscriptions from
- * their urls and persisting them to the db for the application to make use of.
+ * Exception generated from FeedFetcher.
  */
-public interface FeedFetcher {
+public class FetcherException extends PlanetException {
     
-    /** 
-     * Refresh all subscriptions by fetching and parsing feeds. 
-     */
-    public void refreshEntries(String cacheDirPath) throws PlanetException;
+    public FetcherException(String msg) {
+        super(msg);
+    }
+    
+    public FetcherException(String msg, Throwable t) {
+        super(msg, t);
+    }
     
 }
