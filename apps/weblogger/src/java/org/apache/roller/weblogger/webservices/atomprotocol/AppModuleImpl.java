@@ -51,5 +51,6 @@ public class AppModuleImpl extends ModuleImpl implements AppModule {
     public void copyFrom(Object obj) {
         AppModule m = (AppModule)obj;
         setDraft(m.getDraft());
+        setEdited(m.getEdited());
     }
 }
