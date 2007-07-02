@@ -23,14 +23,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.roller.planet.util.Utilities;
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.synd.SyndCategory;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.util.UUIDGenerator;
 
 
@@ -41,8 +34,6 @@ import org.apache.roller.util.UUIDGenerator;
  * The model coded in this class simple, perhaps too simple, and in the future 
  * it should be replaced by more complete model that can fully represent all 
  * forms of RSS and Atom.
- * 
- * @hibernate.class lazy="true" table="rag_entry"
  */
 public class SubscriptionEntry implements Serializable, Comparable {
     
@@ -63,73 +54,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     
     
     public SubscriptionEntry() {}
-    
-    /**
-     * Create entry from Rome entry.
-     */
-    public SubscriptionEntry(
-            SyndFeed romeFeed, SyndEntry romeEntry, Subscription sub) {
-        setSubscription(sub);
-        initFromRomeEntry(romeFeed, romeEntry);
-    }
-    
-    
-    /**
-     * Init entry from Rome entry
-     */
-    private void initFromRomeEntry(SyndFeed romeFeed, SyndEntry romeEntry) {
-        setTitle(romeEntry.getTitle());
-        setPermalink(romeEntry.getLink());
-        
-        // Play some games to get the author
-        DCModule entrydc = (DCModule)romeEntry.getModule(DCModule.URI);
-        DCModule feeddc = (DCModule)romeFeed.getModule(DCModule.URI);
-        if (romeEntry.getAuthor() != null) {
-            setAuthor(romeEntry.getAuthor());
-        } else {
-            setAuthor(entrydc.getCreator()); // use <dc:creator>
-        }
-        
-        // Play some games to get the published date too
-        if (romeEntry.getUpdatedDate() != null) {
-            setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()));
-        }          
-        if (romeEntry.getPublishedDate() != null) {
-            setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
-        } else if (entrydc != null && entrydc.getDate() != null) {
-            setPubTime(new Timestamp(entrydc.getDate().getTime())); // use <dc:date>
-        } else {
-            setPubTime(getUpdateTime());
-        }
-        
-        // get content and unescape if it is 'text/plain'
-        if (romeEntry.getContents().size() > 0) {
-            SyndContent content= (SyndContent)romeEntry.getContents().get(0);
-            if (content != null && content.getType().equals("text/plain")) {
-                setText(StringEscapeUtils.unescapeHtml(content.getValue()));
-            } else if (content != null) {
-                setText(content.getValue());
-            }
-        }
-        
-        // no content, try summary
-        if (getText() == null || getText().trim().length() == 0) {
-            if (romeEntry.getDescription() != null) {
-                setText(romeEntry.getDescription().getValue());
-            }
-        }
-        
-        // copy categories
-        if (romeEntry.getCategories().size() > 0) {
-            List list = new ArrayList();
-            Iterator cats = romeEntry.getCategories().iterator();
-            while (cats.hasNext()) {
-                SyndCategory cat = (SyndCategory)cats.next();
-                list.add(cat.getName());
-            }
-            setCategoriesString(list);
-        }
-    }
     
     
     /**
@@ -158,9 +82,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.id column="id" generator-class="assigned"
-     */
     public String getId() {
         return id;
     }
@@ -170,9 +91,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="handle" non-null="false" unique="false"
-     */
     public String getHandle() {
         return handle;
     }
@@ -182,9 +100,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="title" non-null="false" unique="false"
-     */
     public String getTitle() {
         return title;
     }
@@ -194,9 +109,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="guid" non-null="false" unique="true"
-     */
     public String getGuid() {
         return guid;
     }
@@ -206,9 +118,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="permalink" non-null="true" unique="false"
-     */
     public String getPermalink() {
         return permalink;
     }
@@ -218,9 +127,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="author" non-null="false" unique="false"
-     */
     public String getAuthor() {
         return author;
     }
@@ -230,9 +136,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="content" non-null="false" unique="false"
-     */
     public String getText() {
         return text;
     }
@@ -242,9 +145,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="published" non-null="true" unique="false"
-     */
     public Timestamp getPubTime() {
         return published;
     }
@@ -254,9 +154,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="updated" non-null="false" unique="false"
-     */
     public Timestamp getUpdateTime() {
         return updated;
     }
@@ -266,9 +163,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.property column="categories" non-null="false" unique="false"
-     */
     public String getCategoriesString() {
         return categoriesString;
     }
@@ -278,9 +172,6 @@ public class SubscriptionEntry implements Serializable, Comparable {
     }
     
     
-    /**
-     * @hibernate.many-to-one column="subscription_id" cascade="save-update" not-null="true"
-     */
     public Subscription getSubscription() {
         return subscription;
     }
@@ -339,7 +230,7 @@ public class SubscriptionEntry implements Serializable, Comparable {
         return cat;
     }
 
-    private void setCategoriesString(List categories) {
+    public void setCategoriesString(List categories) {
         StringBuffer sb = new StringBuffer();
         Iterator cats = categories.iterator();
         while (cats.hasNext()) {

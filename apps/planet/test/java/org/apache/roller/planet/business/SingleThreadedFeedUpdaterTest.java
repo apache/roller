@@ -16,43 +16,59 @@
 
 package org.apache.roller.planet.business;
 
-import java.io.File;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.business.updater.FeedUpdater;
+import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
- * Test database implementation of PlanetManager.
+ * Test feed updater.
  */
-public class RomeFeedFetcherTest extends TestCase {
+public class SingleThreadedFeedUpdaterTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(RomeFeedFetcherTest.class);
+    public static Log log = LogFactory.getLog(SingleThreadedFeedUpdaterTest.class);
     
-    String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
+    private Subscription testSub = null;
+    
+    private String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
     
     
     protected void setUp() throws Exception {
         // setup planet
         TestUtils.setupPlanet();
+        
+        // add test subscription
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        testSub = new Subscription();
+        testSub.setTitle(feed_url);
+        testSub.setFeedURL(feed_url);
+        mgr.saveSubscription(testSub);
+        PlanetFactory.getPlanet().flush();
     }
     
     
     protected void tearDown() throws Exception {
+        TestUtils.teardownSubscription(testSub.getId());
     }
     
     
-    public void testFetchFeed() throws Exception {
+    public void testUpdateSubscription() throws Exception {
         
-        FeedFetcher feedFetcher = PlanetFactory.getPlanet().getFeedFetcher();
-
-        // fetch feed
-        Subscription sub = feedFetcher.fetchSubscription(feed_url);
+        PlanetManager mgr = PlanetFactory.getPlanet().getPlanetManager();
+        Subscription sub = mgr.getSubscriptionById(testSub.getId());
+        
+        // update the subscription
+        FeedUpdater updater = new SingleThreadedFeedUpdater();
+        updater.updateSubscription(sub);
+        TestUtils.endSession(true);
+        
+        // verify the results
+        sub = mgr.getSubscription(feed_url);
         assertNotNull(sub);
         assertEquals(feed_url, sub.getFeedURL());
         assertEquals("http://rollerweblogger.org/roller/", sub.getSiteURL());

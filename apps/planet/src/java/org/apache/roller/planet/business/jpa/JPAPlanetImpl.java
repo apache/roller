@@ -25,7 +25,7 @@ import org.apache.roller.planet.business.AbstractManagerImpl;
 import org.apache.roller.planet.business.URLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.FeedFetcher;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.InitializationException;
 import org.apache.roller.planet.business.PropertiesManager;
 

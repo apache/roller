@@ -76,20 +76,16 @@
             unique="false"
         />
 
-        <set name="groups" table="rag_group_subscription"
-            lazy="true" cascade="none" sort="unsorted">
-
+        <set name="groups" table="rag_group_subscription" lazy="true" inverse="true" cascade="none" sort="unsorted">
             <key column="subscription_id" />
-            <many-to-many class="org.apache.roller.planet.pojos.PlanetGroup"
-                column="group_id" outer-join="auto" />
-
+            <many-to-many class="org.apache.roller.planet.pojos.PlanetGroup" column="group_id" outer-join="auto" />
         </set>
-
-        <bag name="entries" lazy="true" inverse="true" cascade="all">
+        
+        <set name="entries" table="rag_entry" lazy="true" inverse="true" cascade="all">
             <key column="subscription_id" />
             <one-to-many class="org.apache.roller.planet.pojos.SubscriptionEntry" />
-      </bag>
-
+        </set>
+        
     </class>
 
 </hibernate-mapping>

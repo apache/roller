@@ -97,7 +97,7 @@
         <many-to-one
             name="subscription"
             class="org.apache.roller.planet.pojos.Subscription"
-            cascade="save-update"
+            cascade="none"
             outer-join="auto"
             update="true"
             insert="true"

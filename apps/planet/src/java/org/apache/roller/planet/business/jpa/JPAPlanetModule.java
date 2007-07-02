@@ -20,12 +20,12 @@ package org.apache.roller.planet.business.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.roller.planet.business.FeedFetcher;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.MultiPlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
-import org.apache.roller.planet.business.RomeFeedFetcher;
+import org.apache.roller.planet.business.fetcher.RomeFeedFetcher;
 import org.apache.roller.planet.business.URLStrategy;
 
 

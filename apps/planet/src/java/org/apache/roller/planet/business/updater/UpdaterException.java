@@ -16,22 +16,22 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.planet.tasks;
+package org.apache.roller.planet.business.updater;
 
-import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.URLStrategy;
-import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.planet.PlanetException;
 
 
 /**
- * An abstract class representing a scheduled task in Roller Planet.
+ * Exception generated from FeedUpdater.
  */
-public abstract class PlanetTask implements Runnable {
+public class UpdaterException extends PlanetException {
     
-    /**
-     * Initialize the task basically the same way the webapp would initialize.
-     */
-    public void initialize() throws Exception {
-    }       
+    public UpdaterException(String msg) {
+        super(msg);
+    }
+    
+    public UpdaterException(String msg, Throwable t) {
+        super(msg, t);
+    }
+    
 }
