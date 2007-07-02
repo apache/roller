@@ -58,6 +58,7 @@ import org.apache.roller.weblogger.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -525,8 +526,8 @@ public class OldWeblogPageModel {
                 String excerpt = referer.getExcerpt();
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
-                    if (   referer.getVisible().booleanValue()
-                    || rses.isUserAuthorizedToAdmin(referer.getWebsite()) ) {
+                    if (referer.getVisible().booleanValue() 
+                     || referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) { 
                         referers.add(WeblogReferrerWrapper.wrap(referer));
                     }
                 }
@@ -554,7 +555,7 @@ public class OldWeblogPageModel {
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (referer.getVisible().booleanValue()
-                    || rses.isUserAuthorizedToAdmin(referer.getWebsite()) ) {
+                    ||  referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) {
                         referers.add(WeblogReferrerWrapper.wrap(referer));
                     }
                 }
@@ -726,7 +727,7 @@ public class OldWeblogPageModel {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
             if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
-                return rses.isUserAuthorizedToAuthor(mWebsite);
+                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.AUTHOR);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToEdit()", e);
@@ -741,7 +742,7 @@ public class OldWeblogPageModel {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
             if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
-                return rses.isUserAuthorizedToAdmin(mWebsite);
+                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToAdmin()", e);

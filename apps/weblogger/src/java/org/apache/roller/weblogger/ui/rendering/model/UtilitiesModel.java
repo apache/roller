@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
@@ -120,7 +121,8 @@ public class UtilitiesModel implements Model {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses != null && rses.getAuthenticatedUser() != null) {
-                return rses.isUserAuthorizedToAuthor(weblog.getPojo());
+                return weblog.getPojo().hasUserPermissions(
+                        rses.getAuthenticatedUser(), WeblogPermission.AUTHOR);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -132,7 +134,8 @@ public class UtilitiesModel implements Model {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses != null && rses.getAuthenticatedUser() != null) {
-                return rses.isUserAuthorizedToAdmin(weblog.getPojo());
+                return weblog.getPojo().hasUserPermissions(
+                        rses.getAuthenticatedUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
