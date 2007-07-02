@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogReferrerWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -141,7 +142,8 @@ public class OldPageHelper {
                     RollerSession.getRollerSession(mRequest);
             if ( rses != null && rses.getAuthenticatedUser() != null
                     && mWebsite != null) {
-                return rses.isUserAuthorizedToAdmin(mWebsite);
+                return mWebsite.hasUserPermissions(
+                        rses.getAuthenticatedUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
             mLogger.warn("PageHelper.isUserAuthorizedToEdit)", e);

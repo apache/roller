@@ -172,54 +172,6 @@ public class RollerSession
     }
     
     
-    /**
-     * Is session's authenticated user authorized to work in current website?
-     */
-    public boolean isUserAuthorized(Weblog website)
-            throws WebloggerException {
-        
-        User user = getAuthenticatedUser();
-        if (user != null && user.getEnabled().booleanValue())
-            return hasPermissions(website,WeblogPermission.LIMITED);
-        return false;
-    }
-    
-    
-    /**
-     * Is session's authenticated user authorized to post in current weblog?
-     */
-    public boolean isUserAuthorizedToAuthor(Weblog website)
-            throws WebloggerException {
-        
-        User user = getAuthenticatedUser();
-        if (user != null && user.getEnabled().booleanValue())
-            return hasPermissions(website,WeblogPermission.AUTHOR);
-        return false;
-    }
-    
-    
-    /**
-     * Is session's authenticated user authorized to admin current weblog?
-     */
-    public boolean isUserAuthorizedToAdmin(Weblog website)
-            throws WebloggerException {
-        
-        User user = getAuthenticatedUser();
-        if (user != null && user.getEnabled().booleanValue())
-            return hasPermissions(website,WeblogPermission.ADMIN);
-        return false;
-    }
-    
-    
-    private boolean hasPermissions(Weblog website, short mask) {
-        
-        User user = getAuthenticatedUser();
-        if (website != null && user != null) {
-            return website.hasUserPermissions(user, mask);
-        }
-        return false;
-    }
-    
     private void clearSession(HttpSessionEvent se) {
         HttpSession session = se.getSession();
         try {
