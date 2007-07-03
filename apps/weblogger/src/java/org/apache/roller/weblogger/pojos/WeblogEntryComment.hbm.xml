@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.WeblogEntryComment"
+        table="roller_comment"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-WeblogEntryComment.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <many-to-one
+            name="weblogEntry"
+            class="org.apache.roller.weblogger.pojos.WeblogEntry"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="entryid"
+            not-null="true"
+        />
+
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="name"
+            unique="false"
+        />
+
+        <property
+            name="email"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="email"
+            unique="false"
+        />
+
+        <property
+            name="url"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="url"
+            unique="false"
+        />
+
+        <property
+            name="content"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="content"
+            unique="false"
+        />
+
+        <property
+            name="postTime"
+            type="java.sql.Timestamp"
+            update="true"
+            insert="true"
+            column="posttime"
+            unique="false"
+        />
+
+        <property
+            name="status"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="status"
+            unique="false"
+        />
+
+        <property
+            name="notify"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="notify"
+            unique="false"
+        />
+
+        <property
+            name="remoteHost"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="remotehost"
+            unique="false"
+        />
+
+        <property
+            name="referrer"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="referrer"
+            unique="false"
+        />
+
+        <property
+            name="userAgent"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="useragent"
+            unique="false"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-WeblogEntryComment.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

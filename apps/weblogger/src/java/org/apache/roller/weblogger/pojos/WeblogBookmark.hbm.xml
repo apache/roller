@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.WeblogBookmark"
+        table="bookmark"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-WeblogBookmark.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="name"
+            unique="false"
+        />
+
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="description"
+            unique="false"
+        />
+
+        <property
+            name="url"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="url"
+            unique="false"
+        />
+
+        <property
+            name="weight"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            column="weight"
+            unique="false"
+        />
+
+        <property
+            name="priority"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            column="priority"
+            unique="false"
+        />
+
+        <property
+            name="image"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="image"
+            unique="false"
+        />
+
+        <property
+            name="feedUrl"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="feedurl"
+            unique="false"
+        />
+
+        <many-to-one
+            name="folder"
+            class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="folderid"
+            not-null="true"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-WeblogBookmark.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

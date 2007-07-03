@@ -49,12 +49,11 @@
     <target name="usage" description="Print usage for key targets">
         <echo>
             Key Targets:
-            all - Build all: gen wrappers/forms, compile, gen web, gen O/R mappings, stage webapp
-            build - Same as 'all' but NO code gen
-            stage-webapp - Build almost all: compile, gen web, gen O/R mappings, stage webapp
-            apache-release - Build binary and source release files
-            clean - Blow away all generated code and all byte code
+            build - Compile all code and make business and web jar files
+            dist - Assemble the weblogger webapp and make distributable WAR file
+            clean - Blow away all build and dist files
             rebuild - Clean and build all
+            apache-release - Build binary and source release files
             
             tests - Build and run all JUnit tests
             build-tests - Build all JUnit tests
@@ -77,15 +76,10 @@
     <!-- ================================================ -->
     <!-- Meta targets -->
     <!-- ================================================ -->
-    <target name="all" depends="stage-webapp" description="Build all">
-    </target>
     
-    <target name="build" depends="stage-webapp" description="Compile code and copy files">
-    </target>
+    <target name="build" depends="build-web" description="Compile code" />
     
-    <target name="rebuild" depends="clean,all" description="Clean and build all">
-        <antcall target="gen-dbscripts" />
-    </target>
+    <target name="rebuild" depends="clean,build" description="Clean and build all" />
     
     <target name="clean" description="Clean out build and dist directory">
         <delete dir="${ro.build}" />
@@ -94,38 +88,9 @@
     
     
     <!-- ********************************************************************* -->
-    <!-- Generate files for the business layer -->
-    <!-- ********************************************************************* -->
-    <target name="gen-business" description="Generate business layer resources">
-        
-        <taskdef name="hibernatedoclet"
-                 classname="xdoclet.modules.hibernate.HibernateDocletTask"
-                 classpathref="xdoclet.path" />
-        
-        <!-- generate hibernate files -->
-        <hibernatedoclet
-            destdir="${build.compile.business}"
-            mergedir="."
-            excludedtags="@version,@author"
-            addedtags="@xdoclet-generated at ${TODAY}"
-            force="true">
-            
-            <fileset dir="${ro.src}" includes="org/apache/roller/weblogger/pojos/*.java" />
-            
-            <hibernate validatexml="true" version="3.0"/>
-            
-        </hibernatedoclet>
-        
-        <!-- allow for custom generation work -->
-        &custom-gen-business;
-        
-    </target>
-    
-    
-    <!-- ********************************************************************* -->
     <!-- Compile and jar Business Tier classes -->
     <!-- ********************************************************************* -->
-    <target name="build-business" depends="gen-business">
+    <target name="build-business" >
         
         <mkdir dir="${build.compile.business}"/>
         <mkdir dir="${build.lib}"/>
@@ -197,7 +162,7 @@
     
     
     <!-- ********************************************************************* -->
-    <!-- Compile and jar Presentation Tier classes -->
+    <!-- Compile and jar Web Tier classes -->
     <!-- ********************************************************************* -->
     <target name="build-web" depends="build-business" >
         
@@ -239,9 +204,9 @@
     
     
     <!-- ********************************************************************* -->
-    <!-- Stage web application -->
+    <!-- Assemble web application -->
     <!-- ********************************************************************* -->
-    <target name="stage-webapp" depends="build-web, gen-dbscripts-conditional" description="Stage webapp, including jars">
+    <target name="dist" depends="build-web, gen-dbscripts-conditional" >
         
         <!-- Copy jars -->
         <mkdir dir="${build.webapp}/WEB-INF/lib"/>
@@ -291,14 +256,6 @@
         <!-- apply custom web task -->
         &custom-web;
         
-    </target>
-    
-    
-    <!-- ********************************************************************* -->
-    <!-- Create distributables -->
-    <!-- ********************************************************************* -->
-    <target name="dist" depends="stage-webapp" description="Create Roller Weblogger distributables">
-        
         <!-- distributable libraries -->
         <mkdir dir="${ro.dist}/lib" />
         <copy todir="${ro.dist}/lib" >
@@ -309,7 +266,7 @@
         <mkdir dir="${ro.dist}/webapp" />
         <jar destfile="${ro.dist}/webapp/roller-weblogger.war"
              basedir="${build.webapp}" />
-        
+             
     </target>
     
     
@@ -693,7 +650,7 @@
     </target>
     
     
-    <target name="build-tests" depends="all" description="Build unit tests">
+    <target name="build-tests" depends="dist" description="Build unit tests">
         
         <mkdir dir="${build.tests}" />
         <mkdir dir="${build.tests}/logs" />
@@ -979,7 +936,7 @@
         </java>
     </target>
     
-    <target name="compile-jsps" depends="stage-webapp">
+    <target name="compile-jsps" depends="dist">
         <mkdir dir="${ro.build}/jspc"/>	
         <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
             <classpath refid="jasper.path"/> 

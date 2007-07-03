@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.Weblog"
+        table="website"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-Weblog.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <bag
+            name="permissions"
+            lazy="true"
+            inverse="true"
+            cascade="delete"
+        >
+
+            <key
+                column="website_id"
+            >
+            </key>
+
+            <one-to-many
+                  class="org.apache.roller.weblogger.pojos.WeblogPermission"
+            />
+
+      </bag>
+
+        <property
+            name="handle"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="handle"
+            unique="true"
+        />
+
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="name"
+            unique="false"
+        />
+
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="description"
+            unique="false"
+        />
+
+        <many-to-one
+            name="creator"
+            class="org.apache.roller.weblogger.pojos.User"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="userid"
+            not-null="true"
+        />
+
+        <property
+            name="defaultPageId"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="defaultpageid"
+            unique="false"
+        />
+
+        <property
+            name="weblogDayPageId"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="weblogdayid"
+            unique="false"
+        />
+
+        <property
+            name="enableBloggerApi"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="enablebloggerapi"
+            unique="false"
+        />
+
+        <many-to-one
+            name="bloggerCategory"
+            class="org.apache.roller.weblogger.pojos.WeblogCategory"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="bloggercatid"
+        />
+
+        <many-to-one
+            name="defaultCategory"
+            class="org.apache.roller.weblogger.pojos.WeblogCategory"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="defaultcatid"
+        />
+
+        <property
+            name="editorPage"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="editorpage"
+            unique="false"
+        />
+
+        <property
+            name="blacklist"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="blacklist"
+            unique="false"
+        />
+
+        <property
+            name="allowComments"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="allowcomments"
+            unique="false"
+        />
+
+        <property
+            name="defaultAllowComments"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="defaultallowcomments"
+            unique="false"
+        />
+
+        <property
+            name="defaultCommentDays"
+            type="int"
+            update="true"
+            insert="true"
+            column="defaultcommentdays"
+            unique="false"
+        />
+
+        <property
+            name="moderateComments"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="commentmod"
+            unique="false"
+        />
+
+        <property
+            name="emailComments"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="emailcomments"
+            unique="false"
+        />
+
+        <property
+            name="emailFromAddress"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="emailfromaddress"
+            unique="false"
+        />
+
+        <property
+            name="emailAddress"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="emailaddress"
+            unique="false"
+        />
+
+        <property
+            name="editorTheme"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="editortheme"
+            unique="false"
+        />
+
+        <property
+            name="locale"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="locale"
+            unique="false"
+        />
+
+        <property
+            name="timeZone"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="timeZone"
+            unique="false"
+        />
+
+        <property
+            name="dateCreated"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            column="datecreated"
+            unique="false"
+        />
+
+        <property
+            name="defaultPlugins"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="defaultplugins"
+            unique="false"
+        />
+
+        <property
+            name="entryDisplayCount"
+            type="int"
+            update="true"
+            insert="true"
+            column="displaycnt"
+            not-null="true"
+        />
+
+        <property
+            name="enabled"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="isenabled"
+            unique="false"
+        />
+
+        <property
+            name="active"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="isactive"
+            not-null="true"
+        />
+
+        <property
+            name="lastModified"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            column="lastmodified"
+            not-null="true"
+        />
+
+        <property
+            name="enableMultiLang"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="enablemultilang"
+            not-null="true"
+        />
+
+        <property
+            name="showAllLangs"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="showalllangs"
+            not-null="true"
+        />
+
+        <property
+            name="pageModels"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="pagemodels"
+            not-null="false"
+        />
+
+        <property
+            name="customStylesheetPath"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="customstylesheet"
+            not-null="false"
+        />
+
+        <property
+            name="iconPath"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="icon"
+            not-null="false"
+        />
+
+        <property
+            name="about"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="about"
+            not-null="false"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-Weblog.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>
