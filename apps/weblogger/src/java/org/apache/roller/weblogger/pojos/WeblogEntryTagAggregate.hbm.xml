@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate"
+        table="roller_weblogentrytagagg"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-WeblogEntryTagAggregate.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <many-to-one
+            name="weblog"
+            class="org.apache.roller.weblogger.pojos.Weblog"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="websiteid"
+            not-null="false"
+        />
+
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="name"
+            unique="false"
+        />
+
+        <property
+            name="total"
+            type="int"
+            update="true"
+            insert="true"
+            column="total"
+            unique="false"
+        />
+
+        <property
+            name="lastUsed"
+            type="java.sql.Timestamp"
+            update="true"
+            insert="true"
+            column="lastused"
+            unique="false"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-WeblogEntryTagAggregate.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

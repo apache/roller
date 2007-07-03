@@ -79,8 +79,8 @@
 <!-- up to date as of Nov. 17, 2006 -->
 
 <!-- Glassfish targets assume you're runnign with "asant" -->
-
-<target name="deploy-glassfish" depends="stage-webapp">
+<!--
+<target name="deploy-glassfish" depends="dist">
     <jar basedir="${build.webapp}" destfile="roller.war" includes="**/**" />
     <sun-appserv-deploy 
         file="roller.war" 
@@ -99,7 +99,7 @@
     <jar basedir="${build.webapp}" destfile="roller.war" includes="**/**" update="yes" />
     <sun-appserv-update file="roller.war" /> 
 </target>
-
+-->
 
 <!-- ====================================================================== -->
 <!-- Other examples -->

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.PingQueueEntry"
+        table="pingqueueentry"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-PingQueueEntry.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <property
+            name="entryTime"
+            type="java.sql.Timestamp"
+            update="true"
+            insert="true"
+            column="entrytime"
+        />
+
+        <many-to-one
+            name="pingTarget"
+            class="org.apache.roller.weblogger.pojos.PingTarget"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="pingtargetid"
+            not-null="true"
+        />
+
+        <many-to-one
+            name="website"
+            class="org.apache.roller.weblogger.pojos.Weblog"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="websiteid"
+            not-null="true"
+        />
+
+        <property
+            name="attempts"
+            type="int"
+            update="true"
+            insert="true"
+            column="attempts"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-PingQueueEntry.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

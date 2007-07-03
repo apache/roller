@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.WeblogTemplate"
+        table="webpage"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-WeblogTemplate.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <many-to-one
+            name="website"
+            class="org.apache.roller.weblogger.pojos.Weblog"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="websiteid"
+            not-null="true"
+        />
+
+        <property
+            name="action"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="action"
+            unique="false"
+        />
+
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="name"
+            unique="false"
+        />
+
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="description"
+            unique="false"
+        />
+
+        <property
+            name="link"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="link"
+            unique="false"
+        />
+
+        <property
+            name="contents"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="template"
+            unique="false"
+        />
+
+        <property
+            name="lastModified"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            column="updatetime"
+            unique="false"
+        />
+
+        <property
+            name="templateLanguage"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="templatelang"
+            unique="false"
+        />
+
+        <property
+            name="navbar"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="navbar"
+            unique="false"
+        />
+
+        <property
+            name="hidden"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="hidden"
+            unique="false"
+        />
+
+        <property
+            name="decoratorName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="decorator"
+            unique="false"
+        />
+
+        <property
+            name="outputContentType"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="outputtype"
+            unique="false"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-WeblogTemplate.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

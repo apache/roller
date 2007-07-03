@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.WeblogReferrer"
+        table="referer"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-WeblogReferrer.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <many-to-one
+            name="website"
+            class="org.apache.roller.weblogger.pojos.Weblog"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="websiteid"
+            not-null="true"
+        />
+
+        <many-to-one
+            name="weblogEntry"
+            class="org.apache.roller.weblogger.pojos.WeblogEntry"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="entryid"
+        />
+
+        <property
+            name="dateString"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="datestr"
+            unique="false"
+        />
+
+        <property
+            name="refererUrl"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="refurl"
+            unique="false"
+        />
+
+        <property
+            name="refererPermalink"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="refpermalink"
+            unique="false"
+        />
+
+        <property
+            name="requestUrl"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="requrl"
+            unique="false"
+        />
+
+        <property
+            name="title"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="title"
+            unique="false"
+        />
+
+        <property
+            name="excerpt"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="excerpt"
+            unique="false"
+        />
+
+        <property
+            name="visible"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="visible"
+            unique="false"
+        />
+
+        <property
+            name="duplicate"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="duplicate"
+            unique="false"
+        />
+
+        <property
+            name="dayHits"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            column="dayhits"
+            unique="false"
+        />
+
+        <property
+            name="totalHits"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            column="totalhits"
+            unique="false"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-WeblogReferrer.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

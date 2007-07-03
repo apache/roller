@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping
+>
+    <class
+        name="org.apache.roller.weblogger.pojos.WeblogEntry"
+        table="weblogentry"
+        lazy="true"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="id"
+            type="java.lang.String"
+        >
+            <generator class="assigned">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-WeblogEntry.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <many-to-one
+            name="category"
+            class="org.apache.roller.weblogger.pojos.WeblogCategory"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="categoryid"
+            not-null="true"
+        />
+
+        <many-to-one
+            name="website"
+            class="org.apache.roller.weblogger.pojos.Weblog"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="websiteid"
+            not-null="true"
+        />
+
+        <many-to-one
+            name="creator"
+            class="org.apache.roller.weblogger.pojos.User"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="userid"
+            not-null="true"
+        />
+
+        <property
+            name="title"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="title"
+            unique="false"
+        />
+
+        <property
+            name="summary"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="summary"
+            unique="false"
+        />
+
+        <property
+            name="text"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="text"
+            unique="false"
+        />
+
+        <property
+            name="contentType"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="content_type"
+            unique="false"
+        />
+
+        <property
+            name="contentSrc"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="content_src"
+            unique="false"
+        />
+
+        <property
+            name="anchor"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="anchor"
+            unique="false"
+        />
+
+        <set
+            name="entryAttributes"
+            lazy="true"
+            inverse="true"
+            cascade="all"
+            sort="unsorted"
+            order-by="name"
+        >
+
+            <key
+                column="entryid"
+            >
+            </key>
+
+            <one-to-many
+                  class="org.apache.roller.weblogger.pojos.WeblogEntryAttribute"
+            />
+
+        </set>
+
+        <property
+            name="pubTime"
+            type="java.sql.Timestamp"
+            update="true"
+            insert="true"
+            column="pubtime"
+            unique="false"
+        />
+
+        <property
+            name="updateTime"
+            type="java.sql.Timestamp"
+            update="true"
+            insert="true"
+            column="updatetime"
+            unique="false"
+        />
+
+        <property
+            name="status"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="status"
+            unique="false"
+        />
+
+        <property
+            name="link"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="link"
+            unique="false"
+        />
+
+        <property
+            name="plugins"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="plugins"
+            unique="false"
+        />
+
+        <property
+            name="allowComments"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="allowcomments"
+            unique="false"
+        />
+
+        <property
+            name="commentDays"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            column="commentdays"
+            unique="false"
+        />
+
+        <property
+            name="rightToLeft"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="righttoleft"
+            unique="false"
+        />
+
+        <property
+            name="pinnedToMain"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            column="pinnedtomain"
+            unique="false"
+        />
+
+        <property
+            name="locale"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="locale"
+            unique="false"
+        />
+
+        <set
+            name="tags"
+            lazy="true"
+            inverse="true"
+            cascade="all"
+            sort="unsorted"
+            order-by="name"
+        >
+
+            <key
+                column="entryid"
+            >
+            </key>
+
+            <one-to-many
+                  class="org.apache.roller.weblogger.pojos.WeblogEntryTag"
+            />
+
+        </set>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-WeblogEntry.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>
