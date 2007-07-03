@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -34,10 +34,10 @@ public abstract class PlanetUIAction extends UIAction {
     public static final String PLANET_HANDLE = "zzz_default_planet_zzz";
     
     // the planet used by all Planet actions
-    private PlanetData planet = null;
+    private Planet planet = null;
     
     
-    public PlanetData getPlanet() {
+    public Planet getPlanet() {
         if(planet == null) {
             try {
                 PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();

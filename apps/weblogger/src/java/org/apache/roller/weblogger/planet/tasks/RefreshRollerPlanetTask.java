@@ -22,12 +22,15 @@ import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.GuicePlanetProvider;
+import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
-import org.apache.roller.planet.config.PlanetConfig;
-import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.PlanetProvider;
+import org.apache.roller.planet.business.updater.FeedUpdater;
+import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -75,6 +78,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
         return this.leaseTime;
     }
     
+    
     public void init() throws WebloggerException {
         
         // get relevant props
@@ -113,22 +117,33 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
         }
     }
     
+    
     public void runTask() {
-        try {            
-            // Update all feeds in planet
-            log.info("Refreshing Planet entries");
-            Planet planet = PlanetFactory.getPlanet();
-            planet.getFeedFetcher().refreshEntries(
-                PlanetConfig.getProperty("cache.dir"));                        
-            planet.flush();
-            planet.release();
+        try {
+            log.info("Refreshing Planet subscriptions");
             
-        } catch (RollerException e) {
-            log.error("ERROR refreshing planet", e);
+            FeedUpdater updater = new SingleThreadedFeedUpdater();
+            updater.updateSubscriptions();
+            
+        } catch (Throwable t) {
+            log.error("ERROR refreshing planet", t);
+        } finally {
+            // always release
+            PlanetFactory.getPlanet().release();
         }
     }
+    
+    
+    public static void main(String[] args) throws Exception {
         
-    public static void main(String[] args) throws Exception{
+        // before we can do anything we need to bootstrap the planet backend
+        PlanetStartup.prepare();
+        
+        // we need to use our own planet provider for integration
+        String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
+        PlanetProvider provider = new GuicePlanetProvider(guiceModule);
+        PlanetFactory.bootstrap(provider);
+                        
         RefreshRollerPlanetTask task = new RefreshRollerPlanetTask();
         task.init();
         task.run();

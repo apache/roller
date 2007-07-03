@@ -17,6 +17,14 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<script type="text/javascript">
+function confirmSubDelete(subUrl, title) {
+  if (window.confirm('Are you sure you want to remove subscription: ' + title)) {
+    document.location.href='<s:url action="planetSubscriptions!delete" />?groupHandle=<s:property value="groupHandle"/>&subUrl='+subUrl;
+  }
+}
+</script>
+        
 <h1>
     <s:text name="planetSubscriptions.title" />    
     <s:if test='groupHandle != "all"' >
@@ -25,66 +33,28 @@
 </h1>
 
 
-<s:if test="subscription == null && groupHandle == 'all'" >
+<s:if test="groupHandle == 'all'" >
     <p class="subtitle"><s:text name="planetSubscriptions.subtitle.addMain" /></p>
     <p><s:text name="planetSubscriptions.prompt.addMain" /></p>
 </s:if>
-<s:elseif test="subscription == null">
+<s:else>
     <p class="subtitle">
         <s:text name="planetSubscriptions.subtitle.add" >
             <s:param value="groupHandle" />
         </s:text>
     </p>
     <p><s:text name="planetSubscriptions.prompt.add" /></p>
-</s:elseif>
-<s:else>
-    <p class="subtitle"><s:text name="planetSubscriptions.subtitle.edit" /></p>
-    <p><s:text name="planetSubscriptions.prompt.edit" /></p>
 </s:else>
 
 
 <s:form action="planetSubscriptions!save">
-    <s:hidden name="bean.id" />
     <s:hidden name="groupHandle" />
     
     <div class="formrow">
-        <label for="title" class="formrow" /><s:text name="planetSubscription.title" /></label>
-        <s:textfield name="bean.title" size="40" maxlength="255" />
-        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetSubscription.tip.title" />' />
-    </div>
-    
-    <div class="formrow">
         <label for="feedURL" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
-        <s:textfield name="bean.newsfeedURL" size="40" maxlength="255" />
-        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetSubscription.tip.feedUrl" />' />
+        <s:textfield name="subUrl" size="40" maxlength="255" />
+        &nbsp;<s:submit key="planetSubscriptions.button.save" />
     </div>
-    
-    <div class="formrow">
-        <label for="siteURL" class="formrow" /><s:text name="planetSubscription.siteUrl" /></label>
-        <s:textfield name="bean.websiteURL" size="40" maxlength="255" />
-        <img src="<s:url value="/images/help.png"/>" alt="help" title='<s:text name="planetSubscription.tip.siteUrl" />' />
-    </div>
-    
-    <p />
-    <div class="formrow">
-        <label class="formrow" />&nbsp;</label>
-        <s:submit key="planetSubscriptions.button.save" />
-        &nbsp;
-        <input type="button" 
-               value='<s:text name="planetSubscriptions.button.cancel" />' 
-               onclick="window.location='<s:url action="planetSubscriptions" />'"/>
-        
-        <s:if test="bean.id != null" >
-            &nbsp;&nbsp;
-            <s:url id="deleteUrl" action="planetSubscriptions!delete">
-                <s:param name="bean.id" value="%{bean.id}" />
-            </s:url>
-            <input type="button" 
-                   value='<s:text name="planetSubscriptions.button.delete" />' 
-                   onclick="window.location='<s:url value="%{deleteUrl}" />'" />
-        </s:if>
-    </div>
-    
 </s:form>
 
 <br style="clear:left" />
@@ -106,7 +76,7 @@
             <s:text name="planetSubscriptions.column.feedUrl" />
         </th>
         <th class="rollertable" width="10%">
-            <s:text name="planetSubscriptions.column.edit" />
+            <s:text name="planetSubscriptions.column.delete" />
         </th>
     </tr>
     <s:iterator id="sub" value="subscriptions" status="rowstatus">
@@ -128,12 +98,8 @@
         </td>
         
         <td class="rollertable">
-            <s:url id="subUrl" action="planetSubscriptions">
-                <s:param name="bean.id" value="#sub.id" />
-                <s:param name="groupHandle" value="%{groupHandle}" />
-            </s:url>
-            <s:a href="%{subUrl}"><img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
-                                       title="<s:text name='planetSubscription.edit.tip' />" /></s:a>
+            <img src='<s:url value="/images/delete.png"/>' />
+            <a href="javascript: void(0);" onclick="confirmSubDelete('<s:property value="feedURL"/>', '<s:property value="title"/>');"><s:text name="planetSubscriptions.button.delete"/></a>
         </td>       
         
         </tr>

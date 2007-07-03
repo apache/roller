@@ -30,7 +30,7 @@ import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.config.runtime.ConfigDef;
 import org.apache.roller.planet.config.runtime.RuntimeConfigDefs;
-import org.apache.roller.planet.pojos.PropertyData;
+import org.apache.roller.planet.pojos.RuntimeConfigProperty;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -74,7 +74,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     @Override
     public void myPrepare() {
         try {
-            // just grab our properties map and put it in the request
+            // just grab our properties map
             PropertiesManager pMgr = PlanetFactory.getPlanet().getPropertiesManager();
             setProperties(pMgr.getProperties());
         } catch (RollerException ex) {
@@ -102,7 +102,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         try {
             // only set values for properties that are already defined
             String propName = null;
-            PropertyData updProp = null;
+            RuntimeConfigProperty updProp = null;
             String incomingProp = null;
             Iterator propsIT = getProperties().keySet().iterator();
             while(propsIT.hasNext()) {
@@ -110,7 +110,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
                 
                 log.debug("Checking property ["+propName+"]");
                 
-                updProp = (PropertyData) getProperties().get(propName);
+                updProp = (RuntimeConfigProperty) getProperties().get(propName);
                 String[] propValues = (String[]) getParameters().get(updProp.getName());
                 if(propValues != null && propValues.length > 0) {
                     // we don't deal with multi-valued props

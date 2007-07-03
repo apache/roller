@@ -24,6 +24,10 @@ import java.sql.Connection;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.GuicePlanetProvider;
+import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.PlanetProvider;
+import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
@@ -144,6 +148,31 @@ public class Install extends UIAction {
             // trigger initialization process
             WebloggerFactory.getWeblogger().initialize();
             
+            // also need to do planet if it's configured
+            if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+                
+                // Now prepare the core services of planet so we can bootstrap it
+                try {
+                    PlanetStartup.prepare();
+                } catch (Throwable ex) {
+                    log.fatal("Roller Planet startup failed during app preparation", ex);
+                }
+                
+                try {
+                    // trigger planet bootstrapping process
+                    // we planet to use our own planet provider for integration
+                    String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
+                    PlanetProvider provider = new GuicePlanetProvider(guiceModule);
+                    PlanetFactory.bootstrap(provider);
+                    
+                    // and now initialize planet
+                    PlanetFactory.getPlanet().initialize();
+                    
+                } catch (Throwable t) {
+                    log.fatal("Roller Planet bootstrapping failed", t);
+                }
+            }
+
             return SUCCESS;
             
         } catch (BootstrapException ex) {

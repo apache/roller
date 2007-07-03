@@ -20,22 +20,26 @@ package org.apache.roller.weblogger.planet.tasks;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.business.GuicePlanetProvider;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.PlanetProvider;
+import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.URLUtilities;
 
@@ -128,74 +132,71 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
      */
     public void runTask() {
         
-        // make sure we have an absolute url value
-        String absUrl = WebloggerRuntimeConfig.getProperty("site.absoluteurl");
-        if(absUrl == null || absUrl.trim().length() == 0) {
-            log.error("ERROR: cannot sync websites with Planet Roller - "
-                    +"absolute URL not specified in Roller Config");
-            return;
-        }
+        log.info("Syncing local weblogs with planet subscriptions list");
         
         try {
-            PlanetManager planet = PlanetFactory.getPlanet().getPlanetManager();
+            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
             UserManager userManager = WebloggerFactory.getWeblogger().getUserManager();
             
-            // first, make sure there is an "all" planet group
-            PlanetData planetObject = planet.getPlanet("zzz_default_planet_zzz");
-            PlanetGroupData group = planet.getGroup(planetObject, "all");
+            // first, make sure there is an "all" pmgr group
+            Planet planetObject = pmgr.getPlanetById("zzz_default_planet_zzz");
+            PlanetGroup group = pmgr.getGroup(planetObject, "all");
             if(group == null) {
-                group = new PlanetGroupData();
+                group = new PlanetGroup();
                 group.setPlanet(planetObject);
                 group.setHandle("all");
                 group.setTitle("all");
-                planet.saveGroup(group);
+                pmgr.saveGroup(group);
             }
             
             // walk through all enable weblogs and add/update subs as needed
             List liveUserFeeds = new ArrayList();
-            Iterator websites =
-                    userManager.getWebsites(null, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1).iterator();
-            while(websites.hasNext()) {
-                Weblog weblog = (Weblog) websites.next();
+            List<Weblog> websites = userManager.getWebsites(null, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
+            for ( Weblog weblog : websites ) {
                 
-                String siteUrl = URLUtilities.getWeblogURL(weblog, null, true);
-                String feedUrl = URLUtilities.getWeblogFeedURL(weblog, null, "entries", "rss", null, null, null, false, true);
+                log.debug("processing weblog - "+weblog.getHandle());
+                String feedUrl = "weblogger:"+weblog.getHandle();
                 
                 // add feed url to the "live" list
                 liveUserFeeds.add(feedUrl);
                 
                 // if sub already exists then update it, otherwise add it
-                PlanetSubscriptionData sub = planet.getSubscription(feedUrl);
+                Subscription sub = pmgr.getSubscription(feedUrl);
                 if (sub == null) {
-                    log.info("ADDING feed: "+feedUrl);
+                    log.debug("ADDING feed: "+feedUrl);
                     
-                    sub = new PlanetSubscriptionData();
+                    sub = new Subscription();
                     sub.setTitle(weblog.getName());
                     sub.setFeedURL(feedUrl);
-                    sub.setSiteURL(siteUrl);
-                    sub.setAuthor(weblog.getHandle());
+                    sub.setSiteURL(URLUtilities.getWeblogURL(weblog, null, true));
+                    sub.setAuthor(weblog.getName());
+                    sub.setLastUpdated(new Date(0));
                     
-                    planet.saveSubscription(sub);
+                    pmgr.saveSubscription(sub);
                     group.getSubscriptions().add(sub);
+                    pmgr.saveGroup(group);
                 } else {
-                    sub.setTitle(weblog.getName());
-                    sub.setAuthor(weblog.getHandle());
+                    log.debug("UPDATING feed: "+feedUrl);
                     
-                    planet.saveSubscription(sub);
+                    sub.setTitle(weblog.getName());
+                    sub.setAuthor(weblog.getName());
+                    
+                    pmgr.saveSubscription(sub);
                 }
+                
+                // save as we go
+                PlanetFactory.getPlanet().flush();
             }
             
             // new subs added, existing subs updated, now delete old subs
-            List deleteSubs = new ArrayList();
-            Iterator subs = group.getSubscriptions().iterator();
-            while(subs.hasNext()) {
-                PlanetSubscriptionData sub =
-                        (PlanetSubscriptionData) subs.next();
+            Set<Subscription> deleteSubs = new HashSet();
+            Set<Subscription> subs = group.getSubscriptions();
+            for( Subscription sub : subs ) {
                 
                 // only delete subs from the group if ...
-                // 1. they are local, meaning they use our absolute url
+                // 1. they are local
                 // 2. they are no longer listed as a weblog 
-                if (sub.getFeedURL().startsWith(absUrl) && 
+                if (sub.getFeedURL().startsWith("weblogger:") && 
                         !liveUserFeeds.contains(sub.getFeedURL())) {
                     deleteSubs.add(sub);
                 }
@@ -205,18 +206,15 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             // this is required because deleting a sub in the loop above
             // causes a ConcurrentModificationException because we can't
             // modify a collection while we iterate over it
-            Iterator deletes = deleteSubs.iterator();
-            while(deletes.hasNext()) {
-                PlanetSubscriptionData sub =
-                        (PlanetSubscriptionData) deletes.next();
+            for( Subscription deleteSub : deleteSubs ) {
                 
-                log.info("DELETING feed: "+sub.getFeedURL());
-                planet.deleteSubscription(sub);
-                group.getSubscriptions().remove(sub);
+                log.debug("DELETING feed: "+deleteSub.getFeedURL());
+                pmgr.deleteSubscription(deleteSub);
+                group.getSubscriptions().remove(deleteSub);
             }
             
             // all done, lets save
-            planet.saveGroup(group);
+            pmgr.saveGroup(group);
             PlanetFactory.getPlanet().flush();
             
         } catch (RollerException e) {
@@ -232,16 +230,19 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     /** 
      * Task may be run from the command line 
      */
-    public static void main(String[] args) {
-        try {
-            SyncWebsitesTask task = new SyncWebsitesTask();
-            task.init();
-            task.run();
-            System.exit(0);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(-1);
-        }
+    public static void main(String[] args) throws Exception {
+        
+        // before we can do anything we need to bootstrap the planet backend
+        PlanetStartup.prepare();
+        
+        // we need to use our own planet provider for integration
+        String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
+        PlanetProvider provider = new GuicePlanetProvider(guiceModule);
+        PlanetFactory.bootstrap(provider);
+        
+        SyncWebsitesTask task = new SyncWebsitesTask();
+        task.init();
+        task.run();
     }
     
 }

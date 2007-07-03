@@ -28,10 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetEntryData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 
 
 /**
@@ -93,17 +93,17 @@ public class PlanetEntriesPager extends AbstractPager {
             List results = new ArrayList();
             try {
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-                PlanetData planet = planetManager.getPlanet("zzz_default_planet_zzz");
+                Planet planet = planetManager.getPlanet("zzz_default_planet_zzz");
                 
                 List rawEntries = null;
                 if (feedURL != null) {
-                    PlanetSubscriptionData sub = planetManager.getSubscription(feedURL);
+                    Subscription sub = planetManager.getSubscription(feedURL);
                     rawEntries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
-                    PlanetGroupData group = planetManager.getGroup(planet, groupHandle);
+                    PlanetGroup group = planetManager.getGroup(planet, groupHandle);
                     rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 } else {
-                    PlanetGroupData group = planetManager.getGroup(planet, "all");
+                    PlanetGroup group = planetManager.getGroup(planet, "all");
                     rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 }
                 
@@ -115,7 +115,7 @@ public class PlanetEntriesPager extends AbstractPager {
                 
                 // wrap 'em
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    PlanetEntryData entry = (PlanetEntryData) it.next();
+                    SubscriptionEntry entry = (SubscriptionEntry) it.next();
                     // TODO needs pojo wrapping from planet
                     results.add(entry);
                 }

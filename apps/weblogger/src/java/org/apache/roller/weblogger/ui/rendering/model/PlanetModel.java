@@ -27,9 +27,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
@@ -166,11 +166,11 @@ public class PlanetModel implements Model {
         List list = new ArrayList();
         try {
             PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            PlanetData defaultPlanet = planetManager.getPlanet("zzz_default_planet_zzz");
-            PlanetGroupData planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
+            Planet defaultPlanet = planetManager.getPlanet("zzz_default_planet_zzz");
+            PlanetGroup planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
             List subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {
-                PlanetSubscriptionData sub = (PlanetSubscriptionData) it.next();
+                Subscription sub = (Subscription) it.next();
                 // TODO needs pojo wrapping from planet
                 list.add(sub); 
             }
