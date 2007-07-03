@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.RegexUtil;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.commons.codec.binary.Base64;

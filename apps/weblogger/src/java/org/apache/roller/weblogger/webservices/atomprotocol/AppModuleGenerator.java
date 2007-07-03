@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.Utilities;
 
 import org.jdom.Element;

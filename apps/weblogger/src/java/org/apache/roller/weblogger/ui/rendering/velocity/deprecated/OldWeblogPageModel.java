@@ -54,7 +54,7 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;

@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.util.DateUtil;
 
 /**
  * Loads MT-Blacklist style blacklist from disk and allows callers to test

@@ -47,7 +47,7 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.RegexUtil;
 import org.apache.roller.weblogger.util.URLUtilities;
 

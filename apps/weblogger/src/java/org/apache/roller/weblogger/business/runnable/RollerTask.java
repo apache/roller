@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 
 
 /**

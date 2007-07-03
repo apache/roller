@@ -35,7 +35,7 @@
     <property name="build.lib"              value="${build}/lib"/>
     
     <fileset id="core-jars" dir="${tools}">
-        <include name="lib/commons-id-0.1-SNAPSHOT.jar"/>
+        <include name="lib/commons-lang-2.1.jar"/>
     </fileset>
     
     <path id="core.path">
