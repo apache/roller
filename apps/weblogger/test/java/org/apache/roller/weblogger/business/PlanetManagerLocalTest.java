@@ -26,8 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -128,8 +128,8 @@ public class PlanetManagerLocalTest extends TestCase {
             RefreshRollerPlanetTask refreshTask = new RefreshRollerPlanetTask();
             refreshTask.run();
             
-            PlanetData planetObject = planet.getPlanet("default");
-            PlanetGroupData group = planet.getGroup(planetObject, "all");
+            Planet planetObject = planet.getPlanet("default");
+            PlanetGroup group = planet.getGroup(planetObject, "all");
             List agg = planet.getEntries(group, 0, -1);
             assertEquals(3, agg.size());
         }
