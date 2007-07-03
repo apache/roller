@@ -33,7 +33,7 @@ import org.apache.roller.planet.util.PropertyExpander;
  */
 public class PlanetConfig {
     
-    private static String default_config = "/planet.properties";
+    private static String default_config = "/org/apache/roller/planet/config/planet.properties";
     private static String custom_config = "/planet-custom.properties";
     private static String custom_jvm_param = "planet.custom.config";
     private static File custom_config_file = null;
