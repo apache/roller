@@ -32,8 +32,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetData;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -131,7 +131,7 @@ public class PlanetFeedServlet extends HttpServlet {
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
-                PlanetData planetObject = planet.getPlanet("zzz_default_planet_zzz");
+                Planet planetObject = planet.getPlanet("zzz_default_planet_zzz");
                 model.put("group", planet.getGroup(planetObject, request.getParameter("group")));
             }
             model.put("planet", planet);

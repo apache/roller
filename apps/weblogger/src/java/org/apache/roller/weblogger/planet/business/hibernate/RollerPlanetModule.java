@@ -20,17 +20,17 @@ package org.apache.roller.weblogger.planet.business.hibernate;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.roller.planet.business.FeedFetcher;
 import org.apache.roller.planet.business.MultiPlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
 import org.apache.roller.planet.business.URLStrategy;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
 import org.apache.roller.planet.business.hibernate.HibernatePropertiesManagerImpl;
-import org.apache.roller.weblogger.planet.business.RollerRomeFeedFetcher;
+import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
 
 
 /**
@@ -47,7 +47,7 @@ public class RollerPlanetModule implements Module {
         binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
         
         // use custom Weblogger feed fetcher
-        binder.bind(FeedFetcher.class).to(       RollerRomeFeedFetcher.class);
+        binder.bind(FeedFetcher.class).to(       WebloggerRomeFeedFetcher.class);
         
         binder.bind(Planet.class).to(HibernatePlanetImpl.class);
     }

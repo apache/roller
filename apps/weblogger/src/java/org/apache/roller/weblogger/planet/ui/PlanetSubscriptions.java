@@ -26,8 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
+import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 
@@ -42,13 +43,10 @@ public class PlanetSubscriptions extends PlanetUIAction {
     private String groupHandle = null;
     
     // the planet group we are working in
-    private PlanetGroupData group = null;
+    private PlanetGroup group = null;
     
-    // a bean for managing submitted data
-    private PlanetSubscriptionsBean bean = new PlanetSubscriptionsBean();
-    
-    // the subscription we are working on
-    private PlanetSubscriptionData subscription = null;
+    // the subscription to deal with
+    private String subUrl = null;
     
     
     public PlanetSubscriptions() {
@@ -84,13 +82,6 @@ public class PlanetSubscriptions extends PlanetUIAction {
         } catch (RollerException ex) {
             log.error("Error looking up planet group - "+getGroupHandle(), ex);
         }
-                
-        // lookup subscription we are working with
-        if(getBean().getId() != null) try {
-            setSubscription(pmgr.getSubscriptionById(getBean().getId()));
-        } catch(Exception ex) {
-            log.error("Error looking up planet subscription - "+getBean().getId(), ex);
-        }
     }
     
     
@@ -98,11 +89,6 @@ public class PlanetSubscriptions extends PlanetUIAction {
      * Populate page model and forward to subscription page
      */
     public String execute() {
-        
-        if(getSubscription() != null) {
-            getBean().copyFrom(getSubscription());
-        }
-        
         return LIST;
     }
 
@@ -116,42 +102,35 @@ public class PlanetSubscriptions extends PlanetUIAction {
         
         if(!hasActionErrors()) try {
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-            PlanetSubscriptionData sub = getSubscription();
+            
+            // check if this subscription already exists before adding it
+            Subscription sub = pmgr.getSubscription(getSubUrl());
             if(sub == null) {
-                // Adding new subscription to group
-                // Does subscription to that feed already exist?
-                sub = pmgr.getSubscription(getBean().getNewsfeedURL());
-                if (sub != null) {
-                    log.debug("Adding Existing Subscription");
-                    
-                    // Subscription already exists
-                    addMessage("planetSubscription.foundExisting", sub.getTitle());
-                } else {
-                    log.debug("Adding New Subscription");
-                    
-                    // Add new subscription
-                    sub = new PlanetSubscriptionData();
-                    getBean().copyTo(sub);
-                    pmgr.saveSubscription(sub);
-                    
-                    // now that we know our new subs id, keep track of that
-                    getBean().setId(sub.getId());
-                }
+                log.debug("Adding New Subscription - "+getSubUrl());
                 
-                // add the subscription to our group
-                getGroup().getSubscriptions().add(sub);
-                sub.getGroups().add(getGroup());
-                pmgr.saveGroup(getGroup());
-            } else {
-                log.debug("Updating Subscription");
+                // sub doesn't exist yet, so we need to fetch it
+                FeedFetcher fetcher = PlanetFactory.getPlanet().getFeedFetcher();
+                sub = fetcher.fetchSubscription(getSubUrl());
                 
-                // User editing an existing subscription within a group
-                getBean().copyTo(sub);
+                // save new sub
                 pmgr.saveSubscription(sub);
+            } else {
+                log.debug("Adding Existing Subscription - "+getSubUrl());
+                
+                // Subscription already exists
+                addMessage("planetSubscription.foundExisting", sub.getTitle());
             }
+            
+            // add the sub to the group
+            group.getSubscriptions().add(sub);
+            sub.getGroups().add(group);
+            pmgr.saveGroup(group);
             
             // flush changes
             PlanetFactory.getPlanet().flush();
+            
+            // clear field after success
+            setSubUrl(null);
             
             addMessage("planetSubscription.success.saved");
             
@@ -169,12 +148,19 @@ public class PlanetSubscriptions extends PlanetUIAction {
      */
     public String delete() {
         
-        if(getSubscription() != null) try {
+        if(getSubUrl() != null) try {
             
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-            getGroup().getSubscriptions().remove(getSubscription());
-            pmgr.deleteSubscription(getSubscription());
+            
+            // remove subscription
+            Subscription sub = pmgr.getSubscription(getSubUrl());
+            getGroup().getSubscriptions().remove(sub);
+            sub.getGroups().remove(getGroup());
+            pmgr.saveGroup(getGroup());
             PlanetFactory.getPlanet().flush();
+            
+            // clear field after success
+            setSubUrl(null);
             
             addMessage("planetSubscription.success.deleted");
             
@@ -192,31 +178,23 @@ public class PlanetSubscriptions extends PlanetUIAction {
      */
     private void myValidate() {
         
-        if(StringUtils.isEmpty(getBean().getTitle())) {
-            addError("planetSubscription.error.title");
-        }
-        
-        if(StringUtils.isEmpty(getBean().getNewsfeedURL())) {
+        if(StringUtils.isEmpty(getSubUrl())) {
             addError("planetSubscription.error.feedUrl");
-        }
-        
-        if(StringUtils.isEmpty(getBean().getWebsiteURL())) {
-            addError("planetSubscription.error.siteUrl");
         }
     }
     
     
-    public List<PlanetSubscriptionData> getSubscriptions() {
+    public List<Subscription> getSubscriptions() {
         
-        List<PlanetSubscriptionData> subs = Collections.EMPTY_LIST;
+        List<Subscription> subs = Collections.EMPTY_LIST;
         if(getGroup() != null) {
-            Set<PlanetSubscriptionData> subsSet = getGroup().getSubscriptions();
+            Set<Subscription> subsSet = getGroup().getSubscriptions();
             
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
             
             // iterate over list and build display list
             subs = new ArrayList();
-            for( PlanetSubscriptionData sub : subsSet ) {
+            for( Subscription sub : subsSet ) {
                 // only include external subs for display
                 if(!sub.getFeedURL().startsWith(absUrl)) {
                     subs.add(sub);
@@ -236,28 +214,20 @@ public class PlanetSubscriptions extends PlanetUIAction {
         this.groupHandle = groupHandle;
     }
     
-    public PlanetGroupData getGroup() {
+    public PlanetGroup getGroup() {
         return group;
     }
 
-    public void setGroup(PlanetGroupData group) {
+    public void setGroup(PlanetGroup group) {
         this.group = group;
     }
-    
-    public PlanetSubscriptionsBean getBean() {
-        return bean;
+
+    public String getSubUrl() {
+        return subUrl;
     }
 
-    public void setBean(PlanetSubscriptionsBean bean) {
-        this.bean = bean;
-    }
-
-    public PlanetSubscriptionData getSubscription() {
-        return subscription;
-    }
-
-    public void setSubscription(PlanetSubscriptionData subscription) {
-        this.subscription = subscription;
+    public void setSubUrl(String subUrl) {
+        this.subUrl = subUrl;
     }
     
 }

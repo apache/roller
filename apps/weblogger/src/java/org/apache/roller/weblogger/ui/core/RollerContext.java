@@ -32,12 +32,14 @@ import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.planet.business.GuicePlanetProvider;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BootstrapException;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.business.PlanetProvider;
 import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
@@ -150,7 +152,13 @@ public class RollerContext extends ContextLoaderListener
         
                     try {
                         // trigger planet bootstrapping process
-                        PlanetFactory.bootstrap();
+                        // we need to use our own planet provider for integration
+                        String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
+                        PlanetProvider provider = new GuicePlanetProvider(guiceModule);
+                        PlanetFactory.bootstrap(provider);
+                        
+                        // and now initialize planet
+                        PlanetFactory.getPlanet().initialize();
                         
                     } catch (Throwable t) {
                         log.fatal("Roller Planet initialization failed", t);

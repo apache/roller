@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetGroup;
 
 
 /**
@@ -40,7 +40,7 @@ public class PlanetGroups extends PlanetUIAction {
     private PlanetGroupsBean bean = new PlanetGroupsBean();
     
     // the planet group we are working on
-    private PlanetGroupData group = null;
+    private PlanetGroup group = null;
     
     
     public PlanetGroups() {
@@ -96,10 +96,10 @@ public class PlanetGroups extends PlanetUIAction {
         
         if (!hasActionErrors()) try {
             
-            PlanetGroupData group = getGroup();
+            PlanetGroup group = getGroup();
             if(group == null) {
                 log.debug("Adding New Group");
-                group = new PlanetGroupData();
+                group = new PlanetGroup();
                 group.setPlanet(getPlanet());
             } else {
                 log.debug("Updating Existing Group");
@@ -169,13 +169,13 @@ public class PlanetGroups extends PlanetUIAction {
     }
     
     
-    public List<PlanetGroupData> getGroups() {
+    public List<PlanetGroup> getGroups() {
         
-        List<PlanetGroupData> displayGroups = new ArrayList();
+        List<PlanetGroup> displayGroups = new ArrayList();
         
         Iterator allgroups = getPlanet().getGroups().iterator();
         while (allgroups.hasNext()) {
-            PlanetGroupData agroup = (PlanetGroupData) allgroups.next();
+            PlanetGroup agroup = (PlanetGroup) allgroups.next();
             
             // The "all" group is considered a special group and cannot be
             // managed independently
@@ -196,11 +196,11 @@ public class PlanetGroups extends PlanetUIAction {
         this.bean = bean;
     }
     
-    public PlanetGroupData getGroup() {
+    public PlanetGroup getGroup() {
         return group;
     }
 
-    public void setGroup(PlanetGroupData group) {
+    public void setGroup(PlanetGroup group) {
         this.group = group;
     }
     
