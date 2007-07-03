@@ -19,11 +19,13 @@
 package org.apache.roller.planet.ui.admin.struts2;
 
 import com.opensymphony.xwork2.Preparable;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
@@ -48,6 +50,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
     private String planetid = null;
     private String groupid = null;
     private String subid = null;
+    private String addSubUrl = null;
     
     
     /**
@@ -100,14 +103,61 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
         setSuccess("PlanetGroupForm.message.saveSucceeded");
         return INPUT;
     }
-
+    
+    
+    // Validation - sub url cannot be null, must be valid url
+    public String addSub() {
+        // add a planet subscription
+        log.debug("Adding Planet Subscription ...");
+        
+        PlanetManager pMgr = PlanetFactory.getPlanet().getPlanetManager();
+        try {
+            PlanetGroup group = getGroup();
+            if(group == null) {
+                setError("PlanetSubscriptionForm.error.groupNull");
+                return INPUT;
+            }
+            
+            // check if this subscription already exists before adding it
+            Subscription sub = pMgr.getSubscription(getAddSubUrl());
+            if(sub == null) {
+                // sub doesn't exist yet, so we need to fetch it
+                FeedFetcher fetcher = PlanetFactory.getPlanet().getFeedFetcher();
+                sub = fetcher.fetchSubscription(getAddSubUrl());
+                
+                // save new sub
+                pMgr.saveSubscription(sub);
+            }
+            
+            // add the sub to the group
+            group.getSubscriptions().add(sub);
+            sub.getGroups().add(group);
+            pMgr.saveGroup(group);
+            
+            // flush changes
+            PlanetFactory.getPlanet().flush();
+            
+            // clear field after success
+            setAddSubUrl(null);
+            
+        } catch (PlanetException ex) {
+            log.error("Error adding subscription", ex);
+            setError("PlanetSubscriptionForm.error.saveFailed");
+            return INPUT;
+        }
+        
+        setSuccess("PlanetSubscriptionForm.message.saveSucceeded");
+        return INPUT;
+    }
+    
+    
     public String deleteSub() {
         // delete a planet subscription
         log.debug("Deleting Planet Subscription ...");
         
-        PlanetManager pmgr= PlanetFactory.getPlanet().getPlanetManager();
+        PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
         try {
-            if(getSubid() != null && !"".equals(getSubid())) {
+            if(!StringUtils.isEmpty(getSubid())) {
                 Subscription sub = pmgr.getSubscriptionById(getSubid());
                 if(sub == null) {
                     setError("PlanetGroupForm.error.nullSubscription");
@@ -121,9 +171,10 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
                 }
                 
                 setSuccess("PlanetGroupForm.message.subscriptionDeleteSucceeded", sub.getTitle());
+            } else {
+                setError("PlanetGroupForm.error.subscriptionNull");
             }
             
-            setError("PlanetGroupForm.error.subscriptionNull");
             return INPUT;
             
         } catch (PlanetException ex) {
@@ -132,6 +183,7 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
             return INPUT;
         }
     }
+    
 
     public String getPlanetid() {
         return planetid;
@@ -163,6 +215,14 @@ public class PlanetGroupForm extends PlanetActionSupport implements Preparable {
 
     public void setGroup(PlanetGroup group) {
         this.group = group;
+    }
+
+    public String getAddSubUrl() {
+        return addSubUrl;
+    }
+
+    public void setAddSubUrl(String addSubUrl) {
+        this.addSubUrl = addSubUrl;
     }
     
 }

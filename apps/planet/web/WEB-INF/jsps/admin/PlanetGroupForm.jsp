@@ -66,28 +66,25 @@
                 <table class="data">
                     <tr>
                         <th><s:text name="PlanetGroupForm.subsTitle" /></th>
-                        <th><s:text name="PlanetGroupForm.subsSiteURL" /></th>
                         <th><s:text name="PlanetGroupForm.subsFeedURL" /></th>
                         <th><s:text name="PlanetGroupForm.action" /></th>
                     </tr>
                     
                     <s:iterator value="group.subscriptions" status="status">
-                        <s:url id="editurl" action="PlanetSubscriptionForm" includeParams="get">
-                            <s:param name="subid"><s:property value="id"/></s:param>
-                        </s:url>
                         <tr class='<s:if test="#status.even">evenRow</s:if><s:else>oddRow</s:else>'>
-                            <td><s:a href="%{editurl}"><s:property value="title"/></s:a></td>
-                            <td><img src='<s:url value="/planet-ui/images/world_link.png"/>' /><a href='<s:property value="siteURL"/>'><s:text name="PlanetGroupForm.subsSiteURL" /></a></td>
+                            <td><a href='<s:property value="siteURL"/>'><s:property value="title"/></a></td>
                             <td><img src='<s:url value="/planet-ui/images/feed_link.png"/>' /><a href='<s:property value="feedURL"/>'><s:text name="PlanetGroupForm.subsFeedURL" /></a></td>
                             <td><img src='<s:url value="/planet-ui/images/delete.png"/>' /><a href="javascript: void(0);" onclick="confirmSubDelete('<s:property value="id"/>', '<s:property value="title"/>');"><s:text name="PlanetGroupForm.deleteSub"/></a></td>
                         </tr>
                     </s:iterator>
                 </table>
                 
-                <s:url id="addsuburl" action="PlanetSubscriptionForm">
-                    <s:param name="groupid"><s:property value="group.id"/></s:param>
-                </s:url>
-                <p><img src='<s:url value="/planet-ui/images/feed_add.png"/>' /><s:a href="%{addsuburl}"><s:text name="PlanetGroupForm.addSub"/></s:a></p>
+                <p><img src='<s:url value="/planet-ui/images/feed_add.png"/>' /><s:text name="PlanetGroupForm.addSub"/></p>
+                <s:form action="PlanetGroupForm!addSub">
+                    <s:hidden name="groupid" />
+                    <s:textfield label="%{getText('PlanetSubscriptionForm.feedURL')}" name="addSubUrl" size="60" />
+                    <s:submit />
+                </s:form>
                 
             </s:if>
             
