@@ -150,13 +150,11 @@ public class SQLScriptRunner {
     
     private void errorMessage(String msg) {
         messages.add(msg);
-        log.error(msg);
     }    
     
     
     private void successMessage(String msg) {
         messages.add(msg);
-        log.error(msg);
     }
+    
 }
-
