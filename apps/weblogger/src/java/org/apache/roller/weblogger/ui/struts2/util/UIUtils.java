@@ -20,23 +20,19 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
-import java.util.TreeMap;
-import org.apache.roller.weblogger.util.LocaleComparator;
 
 
 /**
  * A utilities class used by the Weblogger UI.
  */
-public class UIUtils {
+public final class UIUtils {
     
-    private static List locales = null;
-    private static List timeZones = null;
+    private static final List locales;
+    private static final List timeZones;
     
     
     // load up the locales and time zones lists
@@ -58,6 +54,23 @@ public class UIUtils {
     
     public static List getTimeZones() {
         return timeZones;
+    }
+    
+    
+    // special comparator for sorting locales
+    private static final class LocaleComparator implements Comparator {
+        public int compare(Object obj1, Object obj2) {
+            if (obj1 instanceof Locale && obj2 instanceof Locale) {
+                Locale locale1 = (Locale)obj1;
+                Locale locale2 = (Locale)obj2;
+                int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
+                if (compName == 0) {
+                    return locale1.toString().compareTo(locale2.toString());
+                }
+                return compName;
+            }
+            return 0;
+        }
     }
     
 }
