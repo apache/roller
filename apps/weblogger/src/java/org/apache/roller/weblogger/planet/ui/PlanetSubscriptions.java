@@ -190,13 +190,11 @@ public class PlanetSubscriptions extends PlanetUIAction {
         if(getGroup() != null) {
             Set<Subscription> subsSet = getGroup().getSubscriptions();
             
-            String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            
             // iterate over list and build display list
             subs = new ArrayList();
             for( Subscription sub : subsSet ) {
                 // only include external subs for display
-                if(!sub.getFeedURL().startsWith(absUrl)) {
+                if(!sub.getFeedURL().startsWith("weblogger:")) {
                     subs.add(sub);
                 }
             }
