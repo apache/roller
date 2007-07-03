@@ -30,6 +30,8 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * General purpose date utilities.
+ *
+ * TODO: all date handling functions need to be aware of locale and timezone.
  */
 public abstract class DateUtil {
     

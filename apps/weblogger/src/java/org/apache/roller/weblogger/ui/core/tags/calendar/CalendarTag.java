@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.ui.core.tags.calendar;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

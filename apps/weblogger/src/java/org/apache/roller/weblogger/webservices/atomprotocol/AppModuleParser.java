@@ -17,7 +17,7 @@
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 import org.jdom.Element;
 import org.jdom.Namespace;
 

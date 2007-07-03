@@ -18,16 +18,13 @@
 
 package org.apache.roller.util;
 
-import org.apache.commons.id.uuid.VersionFourGenerator;
+import java.util.UUID;
 
 
 /**
  * Generates UUID values.
  */
 public class UUIDGenerator {
-    
-    private static final VersionFourGenerator uuidGenerator = new VersionFourGenerator();
-    
     
     // non-instantiable
     private UUIDGenerator() {}
@@ -37,7 +34,7 @@ public class UUIDGenerator {
      * Generate a new UUID.
      */
     public static String generateUUID() {
-        return uuidGenerator.nextIdentifier().toString();
+        return UUID.randomUUID().toString();
     }
     
 }

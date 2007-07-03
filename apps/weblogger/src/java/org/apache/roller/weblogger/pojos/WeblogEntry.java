@@ -49,7 +49,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.util.DateUtil;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.util.UUIDGenerator;
