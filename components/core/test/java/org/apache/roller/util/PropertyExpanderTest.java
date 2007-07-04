@@ -16,11 +16,12 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.util;
+package org.apache.roller.util;
 
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
+import org.apache.roller.util.PropertyExpander;
 
 
 /**

@@ -37,7 +37,7 @@ import org.apache.roller.planet.PlanetException;
 //import org.apache.roller.ui.core.RollerSession;
 //import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.planet.util.RegexUtil;
+import org.apache.roller.util.RegexUtil;
 import org.apache.roller.planet.util.Utilities;
 
 /**

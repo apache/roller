@@ -16,11 +16,12 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.util;
+package org.apache.roller.util;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * Property expansion utility.  This utility provides static methods to expand properties appearing in strings.
@@ -29,13 +30,16 @@ import java.util.regex.Pattern;
  *         ROL-613)
  * @since Roller 1.3
  */
-public class PropertyExpander {
-    private PropertyExpander() {
-    }
-
+public final class PropertyExpander {
+    
     // The pattern for a system property.  Matches ${property.name}, with the interior matched reluctantly.
     private static final Pattern EXPANSION_PATTERN = Pattern.compile("(\\$\\{([^}]+?)\\})", java.util.regex.Pattern.MULTILINE);
-
+    
+    
+    // non-instantiable
+    private PropertyExpander() {}
+    
+    
     /**
      * Expand property expressions in the input.  Expands property expressions of the form <code>${propertyname}</code>
      * in the input, replacing each such expression with the value associated to the respective key
@@ -53,10 +57,11 @@ public class PropertyExpander {
      *         supplied property map, null if the input string is null.
      */
     public static String expandProperties(String input, Map props) {
+        
         if (input == null) return null;
-
+        
         Matcher matcher = EXPANSION_PATTERN.matcher(input);
-
+        
         StringBuffer expanded = new StringBuffer(input.length());
         while (matcher.find()) {
             String propName = matcher.group(2);
@@ -68,10 +73,11 @@ public class PropertyExpander {
             expanded.append(value);
         }
         matcher.appendTail(expanded);
-
+        
         return expanded.toString();
     }
-
+    
+    
     /**
      * Expand system properties in the input string.  This is equivalent to calling <code>expandProperties(input,
      * System.getProperties())</code>.
@@ -83,4 +89,5 @@ public class PropertyExpander {
     public static String expandSystemProperties(String input) {
         return expandProperties(input, System.getProperties());
     }
+    
 }

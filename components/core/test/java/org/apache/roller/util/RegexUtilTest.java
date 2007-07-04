@@ -16,11 +16,13 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.util;
+package org.apache.roller.util;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.roller.util.RegexUtil;
+
 
 /**
  * Test regex utils.

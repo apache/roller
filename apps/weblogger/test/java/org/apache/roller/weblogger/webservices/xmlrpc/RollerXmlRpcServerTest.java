@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.MockRollerContext;
-import org.apache.roller.weblogger.util.RegexUtil;
+import org.apache.roller.util.RegexUtil;
 import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
 
