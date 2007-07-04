@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.planet.util.RegexUtil;
+import org.apache.roller.util.RegexUtil;
 import org.apache.roller.planet.util.Utilities;
 
 
