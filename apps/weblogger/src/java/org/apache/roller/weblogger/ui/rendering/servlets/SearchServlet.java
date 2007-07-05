@@ -143,6 +143,9 @@ public class SearchServlet extends HttpServlet {
             initData.put("weblogRequest", pageRequest);
             initData.put("searchRequest", searchRequest);
             
+            // define url strategy
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
+            
             // Load models for pages
             String searchModels = WebloggerConfig.getProperty("rendering.searchModels");
             ModelLoader.loadModels(searchModels, model, initData, true);

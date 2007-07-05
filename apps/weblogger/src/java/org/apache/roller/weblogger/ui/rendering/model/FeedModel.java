@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -46,6 +47,7 @@ public class FeedModel implements Model {
     private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     
     private WeblogFeedRequest feedRequest = null;
+    private URLStrategy urlStrategy = null;
     private Weblog weblog = null;
     
     
@@ -64,6 +66,12 @@ public class FeedModel implements Model {
         } else {
             throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
+        }
+        
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
         
         // extract weblog object
@@ -133,12 +141,12 @@ public class FeedModel implements Model {
         return feedRequest.getTags();
     }    
 
-    public static class FeedEntriesPager extends WeblogEntriesListPager {
+    public class FeedEntriesPager extends WeblogEntriesListPager {
         
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null, false, true), 
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
@@ -166,12 +174,12 @@ public class FeedModel implements Model {
         }
     }
     
-    public static class FeedCommentsPager extends CommentsPager {
+    public class FeedCommentsPager extends CommentsPager {
         
         private WeblogFeedRequest feedRequest;
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
-            super(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);

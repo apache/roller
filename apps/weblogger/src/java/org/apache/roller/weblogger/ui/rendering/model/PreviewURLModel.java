@@ -59,7 +59,11 @@ public class PreviewURLModel extends URLModel {
         this.weblog = weblogRequest.getWeblog();
         this.locale = weblogRequest.getLocale();
         
-        urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName());
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
         
         super.init(initData);
     }

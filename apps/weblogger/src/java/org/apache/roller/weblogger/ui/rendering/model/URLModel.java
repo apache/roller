@@ -77,8 +77,11 @@ public class URLModel implements Model {
         this.weblog = weblogRequest.getWeblog();
         this.locale = weblogRequest.getLocale();
         
-        // url strategy 
-        urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
         
         // need page context as well :(
         pageContext = (PageContext) initData.get("pageContext");

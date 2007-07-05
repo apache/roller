@@ -30,6 +30,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -46,6 +47,7 @@ public class PlanetModel implements Model {
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
     private WeblogRequest  weblogRequest = null;
+    private URLStrategy urlStrategy = null;
     private String pageLink = null;
     private int            pageNum = 0;
     private Weblog    weblog = null;
@@ -69,6 +71,12 @@ public class PlanetModel implements Model {
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  
         
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
+        
         // extract weblog object
         weblog = weblogRequest.getWeblog();
     } 
@@ -82,7 +90,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(int sinceDays, int length) {
         
-        String pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         
@@ -105,7 +113,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
-        String pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         
@@ -128,7 +136,7 @@ public class PlanetModel implements Model {
      */
     public Pager getFeedPager(String feedURL, int length) {
         
-        String pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, 
+        String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         

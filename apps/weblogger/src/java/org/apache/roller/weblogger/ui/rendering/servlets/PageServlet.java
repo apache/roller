@@ -387,6 +387,9 @@ public class PageServlet extends HttpServlet {
             initData.put("weblogRequest", pageRequest);
             initData.put("pageContext", pageContext);
             
+            // define url strategy
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
+            
             // if this was a comment posting, check for comment form
             WeblogEntryCommentForm commentForm = 
                     (WeblogEntryCommentForm) request.getAttribute("commentForm");

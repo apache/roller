@@ -31,6 +31,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Template;
@@ -168,6 +169,9 @@ public class PreviewServlet extends HttpServlet {
             initData.put("request", request);
             initData.put("weblogRequest", previewRequest);
             initData.put("pageContext", pageContext);
+            
+            // define url strategy
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName()));
             
             // Load models for page previewing
             String pageModels = WebloggerConfig.getProperty("rendering.previewModels");
