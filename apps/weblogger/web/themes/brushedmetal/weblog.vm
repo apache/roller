@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>$model.weblog.name : $model.weblogPage.name</title>
+    <title>$model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     <link rel="stylesheet" type="text/css" media="all" href="$model.weblog.stylesheet">
 </head>
@@ -13,31 +13,12 @@
    <div id="container">
 
       <div id="sidebar-a">
-
-         <h1 id="banner">
-            $model.weblog.name
-            <span class="tagline"><em>$model.weblog.description</em></span>
-         </h1>
-
-         <div id="calendar">
-            #showWeblogEntryCalendar($model.weblog "nil")
-         </div>
-	     <hr />
-
-         <h3>Blogroll</h3>
-         #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
-         #showBookmarkLinksList($rootFolder false false) 
-
-         <h3>Newsfeeds</h3>
-         #showAtomFeedsList($model.weblog)
- 
-         <h3>Controls</h3>
-         #showPageMenu($model.weblog)
-
-      </div> <!-- sidebar-a -->
+         #includeTemplate($model.weblog "sidebar")
+      </div>
 
       <div id="content">
 
+        ## show next/previous paging controls
         #set($pager = $model.getWeblogEntriesPager()) 
         <div class="next-previous">
             #if ($model.results)
@@ -48,6 +29,7 @@
             #end
         </div>
 
+        ## show entries
         #showWeblogEntriesPager($pager)
 
         #if ($model.permalink)
