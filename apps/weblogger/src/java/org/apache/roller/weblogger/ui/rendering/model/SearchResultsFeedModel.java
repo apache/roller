@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -61,7 +62,7 @@ public class SearchResultsFeedModel implements Model {
     private static Log log = LogFactory.getLog(SearchResultsFeedModel.class);
     
     private WeblogFeedRequest feedRequest = null;
-
+    private URLStrategy urlStrategy = null;
     private Weblog weblog = null;
         
     // the pager used by the 3.0+ rendering system
@@ -99,11 +100,17 @@ public class SearchResultsFeedModel implements Model {
             throw new WebloggerException("weblogRequest is not a WeblogFeedRequest."+
                     "  FeedModel only supports feed requests.");
         }
-                
+        
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
+        
         // extract weblog object
         weblog = feedRequest.getWeblog();
         
-        String  pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogFeedURL(weblog, 
+        String  pagerUrl = urlStrategy.getWeblogFeedURL(weblog, 
                 feedRequest.getLocale(), feedRequest.getType(),
                 feedRequest.getFormat(), null, null, /* cat and term are null but added to the url in the pager */
                 null, false, true);

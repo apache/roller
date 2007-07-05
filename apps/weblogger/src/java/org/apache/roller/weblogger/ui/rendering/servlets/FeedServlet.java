@@ -227,6 +227,9 @@ public class FeedServlet extends HttpServlet {
             initData.put("request", request);
             initData.put("weblogRequest", feedRequest);
 
+            // define url strategy
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
+            
             // Load models for feeds
             String feedModels = WebloggerConfig.getProperty("rendering.feedModels");
             ModelLoader.loadModels(feedModels, model, initData, true);

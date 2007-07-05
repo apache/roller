@@ -94,10 +94,14 @@ public class SiteModel implements Model {
             pageNum = feedRequest.getPage();
         }
         
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
+        
         // extract weblog object
         weblog = weblogRequest.getWeblog();
-        
-        urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
     }
     
     //----------------------------------------------------------------- Pagers
