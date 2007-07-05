@@ -21,7 +21,7 @@
         <ant  dir="apps/planet" target="dist" />
         <copy file="apps/planet/dist/lib/roller-planet-business.jar" todir="tools/roller-planet" /> 
         
-        <ant dir="apps/weblogger"  target="all" />
+        <ant dir="apps/weblogger"  target="dist" />
         <ant dir="apps/weblogger"  target="apache-release" />
         
     </target>
@@ -30,7 +30,7 @@
         description="Build Core, Planet and Roller separately (i.e. uses Core and Planet jars from Subversion)" >
         <ant dir="components/core" target="dist" />
         <ant dir="apps/planet"     target="dist" />
-        <ant dir="apps/weblogger"  target="all" />
+        <ant dir="apps/weblogger"  target="dist" />
         <ant dir="apps/weblogger"  target="apache-release" />
     </target>
 
