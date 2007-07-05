@@ -76,8 +76,6 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
         WeblogBookmark bd = (WeblogBookmark)
         strategy.load(id,WeblogBookmark.class);
-        // TODO: huh?  why do we do this?
-        if (bd != null) bd.setBookmarkManager(this);
         return bd;
     }
     

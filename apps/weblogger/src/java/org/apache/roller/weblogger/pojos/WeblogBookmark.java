@@ -28,20 +28,15 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * <p>Represents a single URL in a user's favorite web-bookmarks collection.
- * Don't construct one of these yourself, instead use the create method in 
+ * Don't construct one of these yourself, instead use the create method in
  * the your BookmarkManager implementation.</p>
- *
- * @ejb:bean name="WeblogBookmark"
- * @hibernate.class lazy="true" table="bookmark"
- * @hibernate.cache usage="read-write"
  */
-public class WeblogBookmark
-    implements Serializable, Comparable
-{
-    static final long serialVersionUID = 2315131256728236003L;
+public class WeblogBookmark implements Serializable, Comparable {
+    
+    public static final long serialVersionUID = 2315131256728236003L;
     
     private WeblogBookmarkFolder folder;
-
+    
     private String id = UUIDGenerator.generateUUID();
     private String name;
     private String description;
@@ -49,27 +44,23 @@ public class WeblogBookmark
     private Integer weight;
     private Integer priority;
     private String image;
-    private String feedUrl;  
+    private String feedUrl;
     
-    private BookmarkManager bookmarkManager = null;
-
     //----------------------------------------------------------- Constructors
     
     /** Default constructor, for use in form beans only. */
-    public WeblogBookmark()
-    {
+    public WeblogBookmark() {
     }
     
     public WeblogBookmark(
-        WeblogBookmarkFolder parent,
-        String name, 
-        String desc, 
-        String url, 
-        String feedUrl,
-        Integer weight, 
-        Integer priority, 
-        String image)
-    {
+            WeblogBookmarkFolder parent,
+            String name,
+            String desc,
+            String url,
+            String feedUrl,
+            Integer weight,
+            Integer priority,
+            String image) {
         this.folder = parent;
         this.name = name;
         this.description = desc;
@@ -77,205 +68,179 @@ public class WeblogBookmark
         this.feedUrl = feedUrl;
         this.weight = weight;
         this.priority = priority;
-        this.image = image;   
+        this.image = image;
     }
-
-    /** For use by BookmarkManager implementations only. */
-    public WeblogBookmark(BookmarkManager bmgr)
-    {
-        bookmarkManager = bmgr;
-    }
-
+    
     //------------------------------------------------------------- Attributes
     
-    /** 
+    /**
      * @roller.wrapPojoMethod type="simple"
      *
-     * @ejb:persistent-field 
-     * 
+     * @ejb:persistent-field
+     *
      * @hibernate.id column="id"
-     *     generator-class="assigned"  
+     *     generator-class="assigned"
      */
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setId(String id)
-    {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+    public void setId(String id) {
         this.id = id;
     }
-
-    /** 
+    
+    /**
      * Name of bookmark.
-     * 
+     *
      * @roller.wrapPojoMethod type="simple"
      *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator-args arg0resource="bookmarkForm.name"
-     * 
-     * @ejb:persistent-field 
-     * 
+     *
+     * @ejb:persistent-field
+     *
      * @hibernate.property column="name" non-null="true" unique="false"
      */
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
-
-    /** 
+    
+    /**
      * Description of bookmark.
      *
      * @roller.wrapPojoMethod type="simple"
-     * 
-     * @ejb:persistent-field 
-     * 
+     *
+     * @ejb:persistent-field
+     *
      * @hibernate.property column="description" non-null="true" unique="false"
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
-
-    /** 
+    
+    /**
      * URL of bookmark.
      *
      * @roller.wrapPojoMethod type="simple"
-     * 
-     * @ejb:persistent-field 
-     * 
+     *
+     * @ejb:persistent-field
+     *
      * @hibernate.property column="url" non-null="true" unique="false"
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return this.url;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setUrl(String url)
-    {
+    public void setUrl(String url) {
         this.url = url;
     }
-
-    /** 
+    
+    /**
      * Weight indicates prominence of link
      *
      * @roller.wrapPojoMethod type="simple"
-     * 
+     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="integer" msgkey="errors.integer"
      * @struts.validator-args arg0resource="bookmarkForm.weight"
-     * 
-     * @ejb:persistent-field 
-     * 
+     *
+     * @ejb:persistent-field
+     *
      * @hibernate.property column="weight" non-null="true" unique="false"
      */
-    public java.lang.Integer getWeight()
-    {
+    public java.lang.Integer getWeight() {
         return this.weight;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setWeight(java.lang.Integer weight)
-    {
+    public void setWeight(java.lang.Integer weight) {
         this.weight = weight;
     }
-
-    /** 
-     * Priority determines order of display 
+    
+    /**
+     * Priority determines order of display
      *
      * @roller.wrapPojoMethod type="simple"
-     * 
+     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="integer" msgkey="errors.integer"
      * @struts.validator-args arg0resource="bookmarkForm.priority"
-     * 
-     * @ejb:persistent-field 
-     * 
+     *
+     * @ejb:persistent-field
+     *
      * @hibernate.property column="priority" non-null="true" unique="false"
      */
-    public java.lang.Integer getPriority()
-    {
+    public java.lang.Integer getPriority() {
         return this.priority;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setPriority(java.lang.Integer priority)
-    {
+    public void setPriority(java.lang.Integer priority) {
         this.priority = priority;
     }
-
-    /** 
-     * @ejb:persistent-field 
+    
+    /**
+     * @ejb:persistent-field
      *
      * @roller.wrapPojoMethod type="simple"
-     * 
+     *
      * @hibernate.property column="image" non-null="true" unique="false"
      */
-    public String getImage()
-    {
+    public String getImage() {
         return this.image;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setImage(String image)
-    {
+    public void setImage(String image) {
         this.image = image;
     }
-
-    /** 
-     * @ejb:persistent-field 
+    
+    /**
+     * @ejb:persistent-field
      *
      * @roller.wrapPojoMethod type="simple"
-     * 
+     *
      * @hibernate.property column="feedurl" non-null="true" unique="false"
      */
-    public String getFeedUrl()
-    {
+    public String getFeedUrl() {
         return this.feedUrl;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setFeedUrl(String feedUrl)
-    {
+    public void setFeedUrl(String feedUrl) {
         this.feedUrl = feedUrl;
     }
-
+    
     //---------------------------------------------------------- Relationships
     
-    /** 
+    /**
      * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.many-to-one column="folderid" cascade="none" not-null="true"
      */
-    public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder()
-    {
+    public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder() {
         return this.folder;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setFolder(org.apache.roller.weblogger.pojos.WeblogBookmarkFolder folder)
-    {
+    public void setFolder(org.apache.roller.weblogger.pojos.WeblogBookmarkFolder folder) {
         this.folder = folder;
     }
-
+    
     //------------------------------------------------------- Good citizenship
-
+    
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -284,61 +249,36 @@ public class WeblogBookmark
         buf.append("}");
         return buf.toString();
     }
-
+    
     public boolean equals(Object other) {
         if (other == this) return true;
         if (other instanceof WeblogBookmark != true) return false;
         WeblogBookmark o = (WeblogBookmark)other;
         return new EqualsBuilder()
-            .append(getName(), o.getName()) 
-            .append(getFolder(), o.getFolder()) 
-            .isEquals();
+        .append(getName(), o.getName())
+        .append(getFolder(), o.getFolder())
+        .isEquals();
     }
     
-    public int hashCode() { 
+    public int hashCode() {
         return new HashCodeBuilder()
-            .append(getName())
-            .append(getFolder())
-            .toHashCode();
+        .append(getName())
+        .append(getFolder())
+        .toHashCode();
     }
+    
     
     /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(WeblogBookmark other)
-    {
-        this.id = other.getId();
-        this.name = other.getName();
-        this.description = other.getDescription();
-        this.url = other.getUrl();
-        this.weight = other.getWeight();
-        this.priority = other.getPriority();
-        this.folder = other.getFolder();
-        this.image = other.getImage();
-        this.feedUrl = other.getUrl();
-    }
-
-    /** 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o)
-    {
+    public int compareTo(Object o) {
         return bookmarkComparator.compare(this, o);
     }
     
     private BookmarkComparator bookmarkComparator = new BookmarkComparator();
-
-    /**
-     * @param impl
-     */
-    public void setBookmarkManager(BookmarkManager bmgr)
-    {
-        bookmarkManager = bmgr;
-    }
-
-    public Weblog getWebsite()
-    {
+    
+    public Weblog getWebsite() {
         return this.folder.getWebsite();
     }
-
+    
 }

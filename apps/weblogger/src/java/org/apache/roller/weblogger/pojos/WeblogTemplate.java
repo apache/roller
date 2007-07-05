@@ -35,11 +35,6 @@ import org.apache.roller.util.UUIDGenerator;
  *
  * This template is different from the generic template because it also
  * contains a reference to the website it is part of.
- *
- * @ejb:bean name="WeblogTemplate"
- * @struts.form include-all="true"
- * @hibernate.class lazy="true" table="webpage"
- * @hibernate.cache usage="read-write"
  */
 public class WeblogTemplate implements ThemeTemplate, Serializable {
     
@@ -49,6 +44,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private static Log log = LogFactory.getLog(WeblogTemplate.class);
     private static Set requiredTemplates = null;
     
+    // attributes
     private String id = UUIDGenerator.generateUUID();
     private String  action = null;
     private String  name = null;
@@ -62,6 +58,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     private String  decoratorName = null;
     private String  outputContentType = null;
     
+    // associations
     private Weblog weblog = null;
     
     
@@ -77,11 +74,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public WeblogTemplate() {}
     
     
-    public WeblogTemplate( WeblogTemplate otherData ) {
-        setData(otherData);
-    }
-    
-    
     public ThemeTemplate getDecorator() {
         if(decoratorName != null && !id.equals(decoratorName)) {
             try {
@@ -95,41 +87,24 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.id column="id"
-     *  generator-class="assigned"  
-     */
-    public java.lang.String getId() {
+    public String getId() {
         return this.id;
     }
     
-    /** @ejb:persistent-field */
-    public void setId( java.lang.String id ) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+    public void setId( String id ) {
         this.id = id;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
-     */
     public Weblog getWebsite() {
         return this.weblog;
     }
     
-    /** @ejb:persistent-field */
     public void setWebsite( Weblog website ) {
         this.weblog = website;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="action" non-null="true" unique="false"
-     */
     public String getAction() {
         return action;
     }
@@ -139,147 +114,94 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true" unique="false"
-     */
-    public java.lang.String getName() {
+    public String getName() {
         return this.name;
     }
     
-    /** @ejb:persistent-field */
-    public void setName( java.lang.String name ) {
+    public void setName( String name ) {
         this.name = name;
     }
     
     
-    /**
-     * Description
-     * @ejb:persistent-field
-     * @hibernate.property column="description" non-null="true" unique="false"
-     */
-    public java.lang.String getDescription() {
+    public String getDescription() {
         return this.description;
     }
     
-    /** @ejb:persistent-field */
-    public void setDescription( java.lang.String description ) {
+    public void setDescription( String description ) {
         this.description = description;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="link" non-null="true" unique="false"
-     */
-    public java.lang.String getLink() {
+    public String getLink() {
         return this.link;
     }
     
-    /** @ejb:persistent-field */
-    public void setLink( java.lang.String link ) {
+    public void setLink( String link ) {
         this.link = link;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="template" non-null="true" unique="false"
-     */
-    public java.lang.String getContents() {
+    public String getContents() {
         return this.contents;
     }
     
-    /** @ejb:persistent-field */
-    public void setContents( java.lang.String template ) {
+    public void setContents( String template ) {
         this.contents = template;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="updatetime" non-null="true" unique="false"
-     */
-    public java.util.Date getLastModified() {
-        // don't modify fields directly
-        //return (Date)this.lastModified.clone();
+    public Date getLastModified() {
         return lastModified;
     }
     
-    /** @ejb:persistent-field */
-    public void setLastModified(final java.util.Date newtime ) {
-        //if (newtime != null) {
-        //    lastModified = (Date)newtime.clone();
-        //} else {
-        //    lastModified = null;
-        //}
+    public void setLastModified(final Date newtime ) {
         lastModified = newtime;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="templatelang" non-null="true" unique="false"
-     */
     public String getTemplateLanguage() {
         return templateLanguage;
     }
 
-    /** @ejb:persistent-field */
     public void setTemplateLanguage(String templateLanguage) {
         this.templateLanguage = templateLanguage;
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="navbar" non-null="true" unique="false"
-     */
     public boolean isNavbar() {
         return navbar;
     }
 
-    /** @ejb:persistent-field */
     public void setNavbar(boolean navbar) {
         this.navbar = navbar;
     }
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="hidden" non-null="true" unique="false"
-     */
+    
     public boolean isHidden() {
         return hidden;
     }
 
-    /** @ejb:persistent-field */
     public void setHidden(boolean isHidden) {
         this.hidden = isHidden;
     }
         
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="decorator" non-null="false" unique="false"
-     */
+    
     public String getDecoratorName() {
         return decoratorName;
     }
 
-    /** @ejb:persistent-field */
     public void setDecoratorName(String decorator) {
         this.decoratorName = decorator;
     }
     
+    
     /** 
      * Content-type rendered by template or null for auto-detection by link extension.
-     * @ejb:persistent-field
-     * @hibernate.property column="outputtype" non-null="false" unique="false"
      */
     public String getOutputContentType() {
         return outputContentType;
     }
-
-    /** @ejb:persistent-field */
+    
     public void setOutputContentType(String outputContentType) {
         this.outputContentType = outputContentType;
     }
@@ -342,24 +264,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
             .append(getName())
             .append(getWebsite())
             .toHashCode();
-    }    
-    
-    /**
-     * Set bean properties based on other bean.
-     */
-    public void setData( WeblogTemplate otherData ) {
-        WeblogTemplate other = (WeblogTemplate)otherData;
-        this.weblog =     other.getWebsite();
-        this.id =           other.getId();
-        this.name =         other.getName();
-        this.description =  other.getDescription();
-        this.link =         other.getLink();
-        this.navbar =         other.isNavbar();
-        this.contents =     other.getContents();
-        this.lastModified = other.getLastModified()!=null ? (Date)other.getLastModified().clone() : null;
-        this.templateLanguage = other.getTemplateLanguage();
-        this.hidden = other.isHidden();
-        this.decoratorName = other.getDecoratorName();
     }
     
 }

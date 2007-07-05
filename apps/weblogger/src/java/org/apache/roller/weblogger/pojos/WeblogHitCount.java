@@ -22,12 +22,9 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+
 /**
  * Represents hit count data for a weblog.
- *
- * @ejb:bean name="WeblogHitCount"
- * @hibernate.class lazy="true" table="roller_hitcounts"
- * @hibernate.cache usage="read-write"
  */
 public class WeblogHitCount implements Serializable {
     
@@ -37,13 +34,6 @@ public class WeblogHitCount implements Serializable {
     
     
     public WeblogHitCount() {}
-
-    
-    public void setData(WeblogHitCount other) {
-        this.id = other.getId();
-        this.weblog = other.getWeblog();
-        this.dailyHits = other.getDailyHits();
-    }
     
     
     //------------------------------------------------------- Good citizenship
@@ -56,8 +46,6 @@ public class WeblogHitCount implements Serializable {
         buf.append("}");
         return buf.toString();
     }
-
-    //------------------------------------------------------------------------
     
     public boolean equals(Object other) {
         
@@ -76,24 +64,15 @@ public class WeblogHitCount implements Serializable {
     }
     
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
-     */
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" non-null="true"
-     */
+    
     public Weblog getWeblog() {
         return weblog;
     }
@@ -102,10 +81,7 @@ public class WeblogHitCount implements Serializable {
         this.weblog = weblog;
     }
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="dailyhits" non-null="true" unique="false"
-     */
+    
     public int getDailyHits() {
         return dailyHits;
     }

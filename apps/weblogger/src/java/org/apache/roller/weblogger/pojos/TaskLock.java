@@ -23,12 +23,9 @@ import java.util.Calendar;
 import java.util.Date;
 import org.apache.roller.util.UUIDGenerator;
 
+
 /**
  * Represents locking information about a specific RollerTask.
- * 
- * @ejb:bean name="TaskLock"
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="roller_tasklock"
  */
 public class TaskLock implements Serializable {
     
@@ -81,16 +78,6 @@ public class TaskLock implements Serializable {
         
         return cal.getTime();
     }
-    
-    
-    public void setData(TaskLock other) {
-        this.id = other.getId();
-        this.name = other.getName();
-        this.locked = other.isLocked();
-        this.timeAquired = other.getTimeAquired();
-        this.timeLeased = other.getTimeLeased();
-        this.lastRun = other.getLastRun();
-    }
 
     //------------------------------------------------------- Good citizenship
 
@@ -120,24 +107,16 @@ public class TaskLock implements Serializable {
         return this.getName().hashCode();
     }
     
-    /**
-     * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
-     */
+    
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true" unique="true"
-     */
+    
     public String getName() {
         return name;
     }
@@ -146,10 +125,7 @@ public class TaskLock implements Serializable {
         this.name = name;
     }
 
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="timeacquired" non-null="false" unique="false"
-     */
+    
     public Date getTimeAquired() {
         return timeAquired;
     }
@@ -158,10 +134,7 @@ public class TaskLock implements Serializable {
         this.timeAquired = timeAquired;
     }
 
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="lastrun" non-null="false" unique="false"
-     */
+    
     public Date getLastRun() {
         return lastRun;
     }
@@ -170,10 +143,7 @@ public class TaskLock implements Serializable {
         this.lastRun = lastRun;
     }
 
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="islocked" non-null="false" unique="false"
-     */
+    
     public boolean isLocked() {
         
         // this method requires a little extra logic because we return false
@@ -192,10 +162,7 @@ public class TaskLock implements Serializable {
         this.locked = locked;
     }
 
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="timeleased" non-null="false" unique="false"
-     */
+    
     public int getTimeLeased() {
         return timeLeased;
     }
@@ -204,10 +171,7 @@ public class TaskLock implements Serializable {
         this.timeLeased = timeLeased;
     }
 
-    /**
-     * @ejb:persistent-field
-     * @hibernate.property column="client" non-null="false" unique="false"
-     */
+    
     public String getClientId() {
         return clientId;
     }

@@ -24,17 +24,16 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+
 /**
  * Ping queue entry.  Each instance of this class represents an entry on the ping queue. The entry indicates when it was
  * added to the queue, which configuration to apply for the ping, and the number of ping attempts that have been made
  * for this entry so far.
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="PingQueueEntry"
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="pingqueueentry"
  */
 public class PingQueueEntry implements Serializable {
+    
     private String id = UUIDGenerator.generateUUID();
     private Timestamp entryTime = null;
     private PingTarget pingTarget = null;
@@ -43,6 +42,7 @@ public class PingQueueEntry implements Serializable {
 
     public static final long serialVersionUID = -1468021030819538243L;
 
+    
     /**
      * Default constructor.  Leaves all fields at Java-specified default values.
      */
@@ -67,22 +67,9 @@ public class PingQueueEntry implements Serializable {
     }
 
     /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(PingQueueEntry other) {
-        id = other.getId();
-        entryTime = other.getEntryTime();
-        pingTarget = other.getPingTarget();
-        website = other.getWebsite();
-        attempts = other.getAttempts();
-    }
-
-    /**
      * Get the unique id (primary key) of this object.
      *
      * @return the unique id of this object.
-     * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
      */
     public String getId() {
         return id;
@@ -92,11 +79,8 @@ public class PingQueueEntry implements Serializable {
      * Set the unique id (primary key) of this object.
      *
      * @param id
-     * @ejb:persistent-field
      */
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
 
@@ -104,8 +88,6 @@ public class PingQueueEntry implements Serializable {
      * Get the entry time.  Get the time this entry was first added to the queue.
      *
      * @return the time the entry was first added to the queue.
-     * @ejb:persistent-field
-     * @hibernate.property column="entrytime" non-null="true"
      */
     public Timestamp getEntryTime() {
         return entryTime;
@@ -115,7 +97,6 @@ public class PingQueueEntry implements Serializable {
      * Set the entry time.
      *
      * @param entryTime the time the entry was first added to the queue.
-     * @ejb:persistent-field
      */
     public void setEntryTime(Timestamp entryTime) {
         this.entryTime = entryTime;
@@ -125,8 +106,6 @@ public class PingQueueEntry implements Serializable {
      * Get the ping target.  Get the target to ping.
      *
      * @return the ping target to ping.
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="pingtargetid" cascade="none" not-null="true"
      */
     public PingTarget getPingTarget() {
         return pingTarget;
@@ -136,7 +115,6 @@ public class PingQueueEntry implements Serializable {
      * Set the ping target.
      *
      * @param pingTarget target to ping.
-     * @ejb:persistent-field
      */
     public void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
@@ -146,8 +124,6 @@ public class PingQueueEntry implements Serializable {
      * Get the website originating the ping.
      *
      * @return the website originating the ping.
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
     public Weblog getWebsite() {
         return website;
@@ -157,7 +133,6 @@ public class PingQueueEntry implements Serializable {
      * Set the website originating the ping.
      *
      * @param website the website originating the ping.
-     * @ejb:persistent-field
      */
     public void setWebsite(Weblog website) {
         this.website = website;
@@ -167,8 +142,6 @@ public class PingQueueEntry implements Serializable {
      * Get the number of ping attempts that have been made for this queue entry.
      *
      * @return the number of ping attempts that have been made for this queue entry.
-     * @ejb:persistent-field
-     * @hibernate.property column="attempts" non-null="true"
      */
     public int getAttempts() {
         return attempts;
@@ -178,7 +151,6 @@ public class PingQueueEntry implements Serializable {
      * Set the number of failures that have occurred for this queue entry.
      *
      * @param attempts
-     * @ejb:persistent-field
      */
     public void setAttempts(int attempts) {
         this.attempts = attempts;
@@ -221,4 +193,5 @@ public class PingQueueEntry implements Serializable {
             .append(getWebsite())
             .toHashCode();
     }
+    
 }

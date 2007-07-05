@@ -47,19 +47,16 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.util.I18nUtils;
 
+
 /**
  * Website has many-to-many association with users. Website has one-to-many and
  * one-direction associations with weblog entries, weblog categories, folders and
  * other objects. Use UserManager to create, fetch, update and retreive websites.
  *
  * @author David M Johnson
- *
- * @ejb:bean name="Weblog"
- * @struts.form include-all="true"
- * @hibernate.class lazy="true"  table="website"
- * @hibernate.cache usage="read-write"
  */
 public class Weblog implements Serializable {
+    
     public static final long serialVersionUID = 206437645033737127L;
     
     private static Log log = LogFactory.getLog(Weblog.class);
@@ -129,10 +126,6 @@ public class Weblog implements Serializable {
         this.editorTheme = editorTheme;
         this.locale = locale;
         this.timeZone = timeZone;
-    }
-    
-    public Weblog(Weblog otherData) {
-        this.setData(otherData);
     }
     
     //------------------------------------------------------- Good citizenship
@@ -231,8 +224,6 @@ public class Weblog implements Serializable {
     
     /** @ejb:persistent-field */
     public void setId(String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
         this.id = id;
     }
     
