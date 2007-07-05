@@ -19,14 +19,36 @@
     
     <!-- templates -->
     <template action="weblog">
-        <name>Weblog</name>
-        <description>Weblog</description>
+        <name>weblog</name>
+        <description>weblog</description>
 	<link></link>
         <navbar>false</navbar>
         <hidden>true</hidden>
         <templateLanguage>velocity</templateLanguage>
         <contentType>text/html</contentType>
-        <contentsFile>Weblog.vm</contentsFile>
+        <contentsFile>weblog.vm</contentsFile>
+    </template>
+    
+    <template action="permalink">
+        <name>permalink</name>
+        <description>permalink</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>permalink.vm</contentsFile>
+    </template>
+    
+    <template action="search">
+        <name>searchresults</name>
+        <description>searchresults</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>searchresults.vm</contentsFile>
     </template>
     
     <template action="custom">
@@ -38,6 +60,28 @@
         <templateLanguage>velocity</templateLanguage>
         <contentType>text/html</contentType>
         <contentsFile>_day.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>sidebar</name>
+        <description>sidebar</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>sidebar.vm</contentsFile>
+    </template>
+    
+    <template action="custom">
+        <name>header</name>
+        <description>header</description>
+	<link></link>
+        <navbar>false</navbar>
+        <hidden>true</hidden>
+        <templateLanguage>velocity</templateLanguage>
+        <contentType>text/html</contentType>
+        <contentsFile>header.vm</contentsFile>
     </template>
     
     <!-- resources -->
