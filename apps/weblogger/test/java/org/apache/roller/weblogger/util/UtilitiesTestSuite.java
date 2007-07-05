@@ -34,8 +34,6 @@ public class UtilitiesTestSuite {
         suite.addTestSuite(BlacklistTest.class);
         suite.addTestSuite(LRUCache2Test.class);
         suite.addTestSuite(LinkbackExtractorTest.class);
-        suite.addTestSuite(PropertyExpanderTest.class);
-        suite.addTestSuite(RegexUtilTest.class);
         suite.addTestSuite(UtilitiesTest.class);
         
         return suite;
