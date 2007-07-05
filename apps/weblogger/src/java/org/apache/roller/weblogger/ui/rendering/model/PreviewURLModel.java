@@ -20,11 +20,11 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
-import org.apache.roller.weblogger.util.URLUtilities;
-
 
 /**
  * Special subclass of URLModel which can change some of the urls which are
@@ -35,6 +35,8 @@ public class PreviewURLModel extends URLModel {
     private WeblogPreviewRequest previewRequest = null;
     private Weblog weblog = null;
     private String locale = null;
+    
+    private URLStrategy urlStrategy = null;
     
     
     public void init(Map initData) throws WebloggerException {
@@ -57,6 +59,8 @@ public class PreviewURLModel extends URLModel {
         this.weblog = weblogRequest.getWeblog();
         this.locale = weblogRequest.getLocale();
         
+        urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(previewRequest.getThemeName());
+        
         super.init(initData);
     }
     
@@ -68,7 +72,7 @@ public class PreviewURLModel extends URLModel {
      * resources for that theme.
      */
     public String resource(String filePath) {
-        return URLUtilities.getPreviewWeblogResourceURL(previewRequest.getThemeName(), weblog, filePath, true);
+        return urlStrategy.getWeblogResourceURL(weblog, filePath, true);
     }
     
 }

@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.velocity.deprecated;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -29,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.util.URLUtilities;
 
@@ -374,7 +373,7 @@ public class RedirectServlet extends HttpServlet {
     // redirect to new xmlrpc location
     private String figureXmlrpcRedirect(HttpServletRequest request) {
         
-        return URLUtilities.getXmlrpcURL(true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getXmlrpcURL(true);
     }
     
     

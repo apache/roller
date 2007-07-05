@@ -20,11 +20,10 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.Locale;
 import java.util.Map;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
-
 
 /**
  * Pager for navigating through search results.
@@ -83,7 +82,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return URLUtilities.getWeblogURL(weblog, locale, false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(weblog, locale, false);
     }
 
     public String getHomeName() {
@@ -93,7 +92,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     public String getNextLink() {
         if(moreResults) {
-            return URLUtilities.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
         }
         return null;
     }
@@ -107,7 +106,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getPrevLink() {
         if(page > 0) {
-            return URLUtilities.getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
         }
         return null;
     }

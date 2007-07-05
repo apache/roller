@@ -113,7 +113,7 @@ public class MailUtil {
             to = (String[])reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
-            String editURL = URLUtilities.getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
+            String editURL = WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
             
             ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", entry.getWebsite().getLocaleInstance());
@@ -351,7 +351,7 @@ public class MailUtil {
         msg.append((escapeHtml) ? "\n" : "<br />");
         
         // Build link back to comment
-        String commentURL = URLUtilities.getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
+        String commentURL = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
         
         if (escapeHtml) {
             msg.append(commentURL);
@@ -405,7 +405,7 @@ public class MailUtil {
         
         Map<String, String> parameters = new HashMap();
         parameters.put("bean.entryId", entry.getId());
-        String deleteURL = URLUtilities.getActionURL(
+        String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
                 "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
         
         if (escapeHtml) {
@@ -520,7 +520,7 @@ public class MailUtil {
         StringBuffer msg = new StringBuffer();
         msg.append(resources.getString("email.comment.commentApproved"));
         msg.append("\n\n");
-        msg.append(URLUtilities.getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
+        msg.append(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
         
         // send message to author of approved comment
         try {

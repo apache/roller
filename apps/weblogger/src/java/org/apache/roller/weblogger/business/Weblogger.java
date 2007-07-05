@@ -128,6 +128,12 @@ public interface Weblogger {
     
     
     /**
+     * Get the URLStrategy used to build all urls in the system.
+     */
+    public URLStrategy getUrlStrategy();
+    
+    
+    /**
      * Flush object states.
      */
     public void flush() throws WebloggerException;

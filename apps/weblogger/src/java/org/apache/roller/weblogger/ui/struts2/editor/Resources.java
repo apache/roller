@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -249,7 +248,7 @@ public final class Resources extends UIAction {
             
             for(String upload : uploaded) {
                 addMessage("uploadFiles.uploadedFile",
-                        URLUtilities.getWeblogResourceURL(getActionWeblog(), upload, true));
+                        WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(getActionWeblog(), upload, true));
             }
         }
         
@@ -300,7 +299,7 @@ public final class Resources extends UIAction {
     
     
     public String getResourceURL(String path) {
-        return URLUtilities.getWeblogResourceURL(getActionWeblog(), path, false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(getActionWeblog(), path, false);
     }
     
     

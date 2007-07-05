@@ -64,6 +64,9 @@ public abstract class WebloggerImpl implements Weblogger {
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
     
+    // url strategy
+    private final URLStrategy          urlStrategy;
+    
     // some simple attributes
     private final String version;
     private final String buildTime;
@@ -84,7 +87,8 @@ public abstract class WebloggerImpl implements Weblogger {
         ThemeManager         themeManager,
         ThreadManager        threadManager,
         UserManager          userManager,
-        WeblogManager        weblogManager) throws WebloggerException { 
+        WeblogManager        weblogManager,
+        URLStrategy          urlStrategy) throws WebloggerException { 
                 
         this.autoPingManager     = autoPingManager;
         this.bookmarkManager     = bookmarkManager;
@@ -100,7 +104,8 @@ public abstract class WebloggerImpl implements Weblogger {
         this.threadManager       = threadManager;
         this.userManager         = userManager;
         this.weblogManager       = weblogManager;
-            
+        this.urlStrategy         = urlStrategy;
+        
         Properties props = new Properties();
         try {
             props.load(getClass().getResourceAsStream("/version.properties"));
@@ -250,6 +255,14 @@ public abstract class WebloggerImpl implements Weblogger {
      */
     public PluginManager getPagePluginManager() {
         return pluginManager;
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public URLStrategy getUrlStrategy() {
+        return urlStrategy;
     }
     
     

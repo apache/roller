@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -85,7 +84,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                         ((WeblogEntry)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
-                String dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
+                String dayUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
                               
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
@@ -151,10 +150,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             if (nextPrevMonthURL && pageLink != null) { 
                 // next/prev month URLs point to current page
-                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
             } else { 
                 // all other URLs point back to main weblog page
-                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             mLogger.error("ERROR: creating URL",e);

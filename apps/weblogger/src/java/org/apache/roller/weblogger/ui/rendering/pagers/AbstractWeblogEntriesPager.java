@@ -31,9 +31,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
-
 
 /**
  * An abstract implementation of a WeblogEntriesPager.
@@ -237,12 +236,12 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         int pageNum = page + pageAdd;
         
         if (pageLink != null) {
-            return URLUtilities.getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, tags, pageNum, false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, tags, pageNum, false);
         } else if (entryAnchor != null) {
-            return URLUtilities.getWeblogEntryURL(website, locale, entryAnchor, true);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(website, locale, entryAnchor, true);
         }
         
-        return URLUtilities.getWeblogCollectionURL(website, locale, catPath, dateString, tags, pageNum, false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(website, locale, catPath, dateString, tags, pageNum, false);
     }
     
 }

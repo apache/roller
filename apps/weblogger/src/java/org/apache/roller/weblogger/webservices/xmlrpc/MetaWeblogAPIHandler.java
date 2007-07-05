@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -360,7 +359,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // Try to save file
             fmgr.saveFile(website, name, type, bits.length, new ByteArrayInputStream(bits));
             
-            String fileLink = URLUtilities.getWeblogResourceURL(website, name, true);
+            String fileLink = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(website, name, true);
             
             Hashtable returnStruct = new Hashtable(1);
             returnStruct.put("url", fileLink);

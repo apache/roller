@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.weblogger.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.weblogger.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.util.URLUtilities;
+
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -125,7 +125,7 @@ public class OldPageHelper {
     
     /** Build the URL for editing an WeblogEntry **/
     public String getEntryEditUrl(WeblogEntryWrapper entry) {
-        return URLUtilities.getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), false);
     }
     
     
@@ -279,9 +279,9 @@ public class OldPageHelper {
             // a little hacky, but hopefully nobody is really using this anymore
             return WebloggerRuntimeConfig.getRelativeContextURL()+"/roller-ui/authoring/weblogConfig.rol?weblog="+val1;
         } else if("logout-redirect".equals(path)) {
-            return URLUtilities.getLogoutURL(false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getLogoutURL(false);
         } else if("login-redirect".equals(path)) {
-            return URLUtilities.getLoginURL(false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getLoginURL(false);
         } else {
             return "<span class=\"error\">ERROR generating link</span>";
         }

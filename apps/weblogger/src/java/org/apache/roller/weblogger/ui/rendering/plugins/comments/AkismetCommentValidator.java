@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.util.*;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
+
 
 /**
  * Check against Akismet service. Expects to a valid Akismet API key in the
@@ -56,7 +56,7 @@ public class AkismetCommentValidator implements CommentValidator {
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         StringBuffer sb = new StringBuffer();
         sb.append("blog=").append(
-            URLUtilities.getWeblogURL(comment.getWeblogEntry().getWebsite(), null, true)).append("&");
+            WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(comment.getWeblogEntry().getWebsite(), null, true)).append("&");
         sb.append("user_ip="        ).append(comment.getRemoteHost()).append("&");
         sb.append("user_agent="     ).append(comment.getUserAgent()).append("&");
         sb.append("referrer="       ).append(comment.getReferrer()).append("&");

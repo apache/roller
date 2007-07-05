@@ -26,14 +26,13 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
-import org.apache.roller.weblogger.util.URLUtilities;
-
 
 /**
  * Pojo safety wrapper for Weblog objects.
@@ -258,7 +257,7 @@ public class WeblogWrapper {
     public String getStylesheet() throws WebloggerException {
         // custom stylesheet comes from the weblog theme
         if(this.pojo.getTheme().getStylesheet() != null) {
-            return URLUtilities.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
         }
         return null;
     }
@@ -284,7 +283,7 @@ public class WeblogWrapper {
             return iconPath;
         } else {
             // otherwise it's just a plain old url
-            return URLUtilities.getWeblogResourceURL(this.pojo, iconPath, false);
+            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(this.pojo, iconPath, false);
         }
         
     }

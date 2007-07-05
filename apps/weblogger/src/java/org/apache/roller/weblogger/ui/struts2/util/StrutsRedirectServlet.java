@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
@@ -45,11 +45,11 @@ public class StrutsRedirectServlet extends HttpServlet {
             Map<String, String> params = new HashMap();
             params.put("weblog", request.getParameter("weblog"));
             params.put("bean.entryId", request.getParameter("entryId"));
-            redirectUrl = URLUtilities.getActionURL("comments", "/roller-ui/authoring", null, params, true);
+            redirectUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("comments", "/roller-ui/authoring", null, params, true);
             
         } else if(servlet != null && "/roller-ui/yourWebsites.do".equals(servlet)) {
             // redirect to new main menu action
-            redirectUrl = URLUtilities.getActionURL("menu", "/roller-ui", null, null, true);
+            redirectUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("menu", "/roller-ui", null, null, true);
         }
         
         if(redirectUrl != null) {

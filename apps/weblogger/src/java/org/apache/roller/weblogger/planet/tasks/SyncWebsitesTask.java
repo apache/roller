@@ -41,7 +41,6 @@ import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -168,7 +167,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                     sub = new Subscription();
                     sub.setTitle(weblog.getName());
                     sub.setFeedURL(feedUrl);
-                    sub.setSiteURL(URLUtilities.getWeblogURL(weblog, null, true));
+                    sub.setSiteURL(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(weblog, null, true));
                     sub.setAuthor(weblog.getName());
                     sub.setLastUpdated(new Date(0));
                     

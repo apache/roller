@@ -51,7 +51,6 @@ import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -901,10 +900,9 @@ public class WeblogEntry implements Serializable {
         
     /**
      * Returns absolute entry permalink.
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getPermalink() {
-        return URLUtilities.getWeblogEntryURL(getWebsite(), null, anchor, true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(getWebsite(), null, anchor, true);
     }
     
     /**
