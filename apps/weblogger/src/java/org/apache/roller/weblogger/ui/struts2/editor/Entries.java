@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -154,7 +153,7 @@ public class Entries extends UIAction {
             params.put("bean.sortBy", getBean().getSortBy());
         }
         
-        return URLUtilities.getActionURL("entries", "/roller-ui/authoring", 
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("entries", "/roller-ui/authoring", 
                 getActionWeblog().getHandle(), params, false);
     }
     

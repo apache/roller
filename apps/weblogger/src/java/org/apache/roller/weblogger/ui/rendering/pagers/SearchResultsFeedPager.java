@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -88,7 +89,7 @@ public class SearchResultsFeedPager extends AbstractPager {
     }
     
     public String getHomeLink() {
-        return URLUtilities.getWeblogURL(weblog, weblog.getLocale(), false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(weblog, weblog.getLocale(), false);
     }
 
     public String getHomeName() {

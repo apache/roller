@@ -30,14 +30,13 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
-import org.apache.roller.weblogger.util.URLUtilities;
-
 
 /**
  * Model that provides access to planet aggregations, feeds and subscriptions.
@@ -83,7 +82,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(int sinceDays, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         
@@ -106,7 +105,7 @@ public class PlanetModel implements Model {
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         
@@ -129,7 +128,7 @@ public class PlanetModel implements Model {
      */
     public Pager getFeedPager(String feedURL, int length) {
         
-        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+        String pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         

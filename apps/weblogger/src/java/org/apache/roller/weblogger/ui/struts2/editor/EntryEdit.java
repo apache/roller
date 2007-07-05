@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -272,7 +271,7 @@ public final class EntryEdit extends EntryBase {
     }
     
     public String getPreviewURL() {
-        return URLUtilities.getPreviewWeblogEntryURL(getEntry().getAnchor(), getActionWeblog(), null, true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getPreviewURLStrategy(null).getWeblogEntryURL(getActionWeblog(), null, getEntry().getAnchor(), true);
     }
     
     

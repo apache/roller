@@ -23,7 +23,9 @@ import com.google.inject.Module;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
+import org.apache.roller.weblogger.business.MultiWeblogURLStrategy;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -36,7 +38,6 @@ import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
-import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -69,7 +70,8 @@ public class HibernateWebloggerModule implements Module {
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
         binder.bind(PluginManager.class).to(       PluginManagerImpl.class);
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
+        
+        binder.bind(URLStrategy.class).to(          MultiWeblogURLStrategy.class);
     }
     
 }
-

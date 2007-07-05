@@ -35,7 +35,6 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -208,7 +207,7 @@ public abstract class EntryBase extends UIAction {
     
     
     public String getJsonAutocompleteUrl() {
-        return URLUtilities.getWeblogTagsJsonURL(getActionWeblog(), false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false);
     }
     
 }

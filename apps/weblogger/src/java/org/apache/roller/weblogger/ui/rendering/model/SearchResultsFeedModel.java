@@ -49,7 +49,6 @@ import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsFeedPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -104,7 +103,7 @@ public class SearchResultsFeedModel implements Model {
         // extract weblog object
         weblog = feedRequest.getWeblog();
         
-        String  pagerUrl = URLUtilities.getWeblogFeedURL(weblog, 
+        String  pagerUrl = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogFeedURL(weblog, 
                 feedRequest.getLocale(), feedRequest.getType(),
                 feedRequest.getFormat(), null, null, /* cat and term are null but added to the url in the pager */
                 null, false, true);

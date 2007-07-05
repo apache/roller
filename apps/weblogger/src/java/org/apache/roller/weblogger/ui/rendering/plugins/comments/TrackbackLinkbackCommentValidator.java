@@ -21,12 +21,11 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ResourceBundle;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.LinkbackExtractor;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.URLUtilities;
-
 
 /**
  * Validates comment if comment's URL links back to the comment's entry,
@@ -53,7 +52,7 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
         try {
             linkback = new LinkbackExtractor(
                     comment.getUrl(),
-                    URLUtilities.getWeblogEntryURL(
+                    WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(
                     comment.getWeblogEntry().getWebsite(),
                     null,
                     comment.getWeblogEntry().getAnchor(),

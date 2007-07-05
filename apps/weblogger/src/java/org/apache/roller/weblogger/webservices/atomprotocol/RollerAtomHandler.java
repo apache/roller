@@ -67,7 +67,6 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.ThemeResource;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
@@ -114,6 +113,8 @@ public class RollerAtomHandler implements AtomHandler {
     private User      user;
     private int       maxEntries = 20;
     
+    private final String atomURL;
+    
     private static boolean throttle = true;
     
     private static Log log =
@@ -144,6 +145,8 @@ public class RollerAtomHandler implements AtomHandler {
                 log.debug("Getting user", neverHappen);
             } 
         }
+        
+        atomURL = WebloggerFactory.getWeblogger().getUrlStrategy().getAtomProtocolURL(true);
     }
     
     /**
@@ -190,7 +193,7 @@ public class RollerAtomHandler implements AtomHandler {
                 
                 // Create collection for entries within that workspace
                 Collection entryCol = new Collection("Weblog Entries", "text", 
-                    URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/entries");
+                    atomURL+"/"+handle+"/entries");
                 entryCol.setAccept("application/atom+xml;type=entry");
                 try {  
                     // Add fixed categories using scheme that points to 
@@ -221,7 +224,7 @@ public class RollerAtomHandler implements AtomHandler {
 
                 // Add media collection for upload dir
                 Collection uploadCol = new Collection("Media Files", "text", 
-                    URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/resources/");
+                    atomURL+"/"+handle+"/resources/");
                 uploadCol.setAccept(accept);
                 workspace.addCollection(uploadCol);
 
@@ -232,7 +235,7 @@ public class RollerAtomHandler implements AtomHandler {
                     for (int i=0; i<dirs.length; i++) {
                         Collection uploadSubCol = new Collection(
                             "Media Files: " + dirs[i].getPath(), "text",
-                            URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/resources/" + dirs[i].getPath());
+                            atomURL+"/"+handle+"/resources/" + dirs[i].getPath());
                         uploadSubCol.setAccept(accept);
                         workspace.addCollection(uploadSubCol);
                     }
@@ -329,7 +332,7 @@ public class RollerAtomHandler implements AtomHandler {
                     start,             // offset (for range paging)
                     max + 1);          // maxEntries
             Feed feed = new Feed();
-            feed.setId(URLUtilities.getAtomProtocolURL(true)
+            feed.setId(atomURL
                 +"/"+website.getHandle() + "/entries/" + start);
             feed.setTitle(website.getName());
 
@@ -353,7 +356,7 @@ public class RollerAtomHandler implements AtomHandler {
             List links = new ArrayList();
             if (entries.size() > max) { // add next link
                 int nextOffset = start + max;
-                String url = URLUtilities.getAtomProtocolURL(true)+"/"
+                String url = atomURL+"/"
                         + website.getHandle() + "/entries/" + nextOffset;
                 Link nextLink = new Link();
                 nextLink.setRel("next");
@@ -362,7 +365,7 @@ public class RollerAtomHandler implements AtomHandler {
             }
             if (start > 0) { // add previous link
                 int prevOffset = start > max ? start - max : 0;
-                String url = URLUtilities.getAtomProtocolURL(true)+"/"
+                String url = atomURL+"/"
                         +website.getHandle() + "/entries/" + prevOffset;
                 Link prevLink = new Link();
                 prevLink.setRel("previous");
@@ -415,7 +418,7 @@ public class RollerAtomHandler implements AtomHandler {
             }
                         
             Feed feed = new Feed();
-            feed.setId(URLUtilities.getAtomProtocolURL(true)
+            feed.setId(atomURL
                 +"/"+website.getHandle() + "/resources/" + path + start);                
             feed.setTitle(website.getName());
 
@@ -460,7 +463,7 @@ public class RollerAtomHandler implements AtomHandler {
                 List otherLinks = new ArrayList();
                 if (start + count < files.length) { // add next link
                     int nextOffset = start + max;
-                    String url = URLUtilities.getAtomProtocolURL(true)
+                    String url = atomURL
                         +"/"+ website.getHandle() + "/resources/" + path + nextOffset;
                     Link nextLink = new Link();
                     nextLink.setRel("next");
@@ -469,7 +472,7 @@ public class RollerAtomHandler implements AtomHandler {
                 }
                 if (start > 0) { // add previous link
                     int prevOffset = start > max ? start - max : 0;
-                    String url = URLUtilities.getAtomProtocolURL(true)
+                    String url = atomURL
                         +"/"+website.getHandle() + "/resources/" + path + prevOffset;
                     Link prevLink = new Link();
                     prevLink.setRel("previous");
@@ -1037,7 +1040,7 @@ public class RollerAtomHandler implements AtomHandler {
         Link editlink = new Link();
         editlink.setRel("edit");
         editlink.setHref(
-                URLUtilities.getAtomProtocolURL(true)
+                atomURL
                 +"/"+entry.getWebsite().getHandle() + "/entry/" + entry.getId());
         List otherlinks = new ArrayList();
         otherlinks.add(editlink);
@@ -1056,10 +1059,10 @@ public class RollerAtomHandler implements AtomHandler {
     private Entry createAtomResourceEntry(Weblog website, ThemeResource file) {
         String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         String editURI = 
-                URLUtilities.getAtomProtocolURL(true)+"/"+website.getHandle()
+                atomURL+"/"+website.getHandle()
                 + "/resource/" + file.getPath() + ".media-link";
         String editMediaURI = 
-                URLUtilities.getAtomProtocolURL(true)+"/"+ website.getHandle()
+                atomURL+"/"+ website.getHandle()
                 + "/resource/" + file.getPath();
         String viewURI = absUrl
                 + "/resources/" + website.getHandle()
@@ -1184,7 +1187,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
         
     private String getWeblogCategoryScheme(Weblog website) {
-        return URLUtilities.getWeblogURL(website, null, true);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(website, null, true);
     }
     
     private String filePathFromPathInfo(String[] pathInfo) {

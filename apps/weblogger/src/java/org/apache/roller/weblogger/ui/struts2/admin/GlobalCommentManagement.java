@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -144,7 +143,7 @@ public class GlobalCommentManagement extends UIAction {
             params.put("bean.spamString", getBean().getSpamString());
         }
         
-        return URLUtilities.getActionURL("globalCommentManagement", "/roller-ui/admin", 
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL("globalCommentManagement", "/roller-ui/admin", 
                 null, params, false);
     }
     

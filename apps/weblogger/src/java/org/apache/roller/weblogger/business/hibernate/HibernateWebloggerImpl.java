@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.UserManager;
@@ -62,7 +63,8 @@ public class HibernateWebloggerImpl extends WebloggerImpl {
         ThemeManager         themeManager,
         ThreadManager        threadManager,
         UserManager          userManager,
-        WeblogManager        weblogManager) throws WebloggerException {
+        WeblogManager        weblogManager,
+        URLStrategy          urlStrategy) throws WebloggerException {
         
         super(
             autoPingManager,
@@ -78,7 +80,8 @@ public class HibernateWebloggerImpl extends WebloggerImpl {
             themeManager,
             threadManager,
             userManager,
-            weblogManager);
+            weblogManager,
+            urlStrategy);
         
         this.strategy = strategy;
     }

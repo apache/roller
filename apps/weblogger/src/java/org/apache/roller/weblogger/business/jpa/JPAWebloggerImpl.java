@@ -23,7 +23,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerImpl;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -71,7 +71,8 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         ThemeManager         themeManager,
         ThreadManager        threadManager,
         UserManager          userManager,
-        WeblogManager        weblogManager) throws WebloggerException {
+        WeblogManager        weblogManager,
+        URLStrategy          urlStrategy) throws WebloggerException {
         
         super(
             autoPingManager,
@@ -87,7 +88,8 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             themeManager,
             threadManager,
             userManager,
-            weblogManager);
+            weblogManager,
+            urlStrategy);
         
         this.strategy = strategy;
     }

@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -96,7 +95,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
         // build planet subscription from weblog
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
-        newSub.setSiteURL(URLUtilities.getWeblogURL(localWeblog, null, true));
+        newSub.setSiteURL(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(localWeblog, null, true));
         newSub.setTitle(localWeblog.getName());
         newSub.setAuthor(localWeblog.getName());
         newSub.setLastUpdated(localWeblog.getLastModified());

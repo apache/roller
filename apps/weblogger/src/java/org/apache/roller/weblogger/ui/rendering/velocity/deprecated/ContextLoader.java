@@ -49,7 +49,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
-import org.apache.roller.weblogger.util.URLUtilities;
+
 
 /**
  * Load Velocity Context with Weblogger objects, values, and custom plugins.
@@ -402,7 +402,7 @@ public class ContextLoader {
         
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
-            url = URLUtilities.getWeblogURL(website, locale, true);
+            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(website, locale, true);
         } else {
             url= WebloggerRuntimeConfig.getAbsoluteContextURL();
         }

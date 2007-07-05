@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.weblogger.util.URLUtilities;
 
 
 /**
@@ -205,9 +204,9 @@ public class WeblogCalendarModel implements CalendarModel {
         }
         try {
             if (pageLink == null) { // create date URL
-                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
             } else { // create page URL
-                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
+                url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             log.error("ERROR: creating URL",e);
@@ -240,7 +239,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
     
     public String computeTodayMonthUrl() {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, cat, null, null, -1, false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(weblog, locale, cat, null, null, -1, false);
     }
     
 }

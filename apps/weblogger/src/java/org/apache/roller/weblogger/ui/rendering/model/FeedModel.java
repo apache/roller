@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -137,7 +138,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(URLUtilities.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null, false, true), 
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
@@ -170,7 +171,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
-            super(URLUtilities.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
