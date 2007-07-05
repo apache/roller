@@ -31,17 +31,16 @@ import org.apache.roller.util.UUIDGenerator;
  * any category restrictions, the ping target is pinged whenever the corresponding website changes.
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="AutoPing"
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="autoping"
  */
 public class AutoPing implements Serializable {
+    
     private String id = UUIDGenerator.generateUUID();
     private PingTarget pingTarget = null;
     private Weblog website = null;
 
     public static final long serialVersionUID = -9105985454111986435L;
-
+    
+    
     /**
      * Default constructor.  Leaves all fields null.  Required for bean compliance.
      */
@@ -62,20 +61,9 @@ public class AutoPing implements Serializable {
     }
 
     /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(AutoPing other) {
-        id = other.getId();
-        website = other.getWebsite();
-        pingTarget = other.getPingTarget();
-    }
-
-    /**
      * Get the unique id (primary key) of this object.
      *
-     * @return the unique id of this object. -- struts.validator type="required" msgkey="errors.required"
-     * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
+     * @return the unique id of this object. 
      */
     public String getId() {
         return id;
@@ -85,7 +73,6 @@ public class AutoPing implements Serializable {
      * Set the unique id (primary key) of this object
      *
      * @param id
-     * @ejb:persistent-field
      */
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
@@ -98,8 +85,6 @@ public class AutoPing implements Serializable {
      * object.
      *
      * @return the website.
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
     public Weblog getWebsite() {
         return website;
@@ -110,7 +95,6 @@ public class AutoPing implements Serializable {
      * object.
      *
      * @param website the website.
-     * @ejb:persistent-field
      */
     public void setWebsite(Weblog website) {
         this.website = website;
@@ -120,8 +104,6 @@ public class AutoPing implements Serializable {
      * Get the ping target.  Get the target to be pinged when the corresponding website changes.
      *
      * @return the target to be pinged.
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="pingtargetid" cascade="none" not-null="false"
      */
     public PingTarget getPingTarget() {
         return pingTarget;
@@ -131,7 +113,6 @@ public class AutoPing implements Serializable {
      * Set the ping target.  Set the target to be pinged when the corresponding website changes.
      *
      * @param pingtarget the target to be pinged.
-     * @ejb:persistent-field
      */
     public void setPingTarget(PingTarget pingtarget) {
         this.pingTarget = pingtarget;
@@ -161,4 +142,5 @@ public class AutoPing implements Serializable {
     public int hashCode() { 
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
+    
 }

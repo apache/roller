@@ -39,10 +39,6 @@ import org.apache.roller.util.UUIDGenerator;
  * set of Folders (there is no one root folder) and each Folder may contain
  * Folders or Bookmarks. Don't construct one of these yourself, instead use
  * the create method in your BookmarkManager implementation.</p>
- * 
- * @ejb:bean name="WeblogBookmarkFolder"
- * @hibernate.class lazy="true" table="folder"
- * @hibernate.cache usage="read-write"
  */
 public class WeblogBookmarkFolder implements Serializable, Comparable {
     
@@ -87,19 +83,6 @@ public class WeblogBookmarkFolder implements Serializable, Comparable {
         } else {
             this.path = parent.getPath() + "/" + name;
         }
-    }
-    
-    
-    public void setData(WeblogBookmarkFolder otherData) {
-        
-        this.id = otherData.getId();
-        this.name = otherData.getName();
-        this.description = otherData.getDescription();
-        this.path = otherData.getPath();
-        this.website = otherData.getWebsite();
-        this.parentFolder = otherData.getParent();
-        this.childFolders = otherData.getFolders();
-        this.setBookmarks(otherData.getBookmarks());
     }
     
         

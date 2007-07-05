@@ -24,16 +24,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+
 /**
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
  * either common (defined centrally by an administrator and used by any website), or custom (defined by the user of a
  * specific website) for update pings issued for that website.
  * 
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @ejb:bean name="PingTarget"
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="pingtarget"
- * @struts.form include-all="true"
  */
 public class PingTarget implements Serializable {
 
@@ -79,29 +76,11 @@ public class PingTarget implements Serializable {
 
 
     /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(PingTarget other) {
-
-        id = other.getId();
-        name = other.getName();
-        pingUrl = other.getPingUrl();
-        website = other.getWebsite();
-        conditionCode = other.getConditionCode();
-        lastSuccess = other.getLastSuccess();
-        autoEnabled = other.isAutoEnabled();
-    }
-
-
-    /**
      * Get the unique id of this ping target.
      *
      * @return the unique id of this ping target.
-     * @struts.validator type="required" msgkey="errors.required"
-     * @ejb:persistent-field
-     * @hibernate.id column="id" generator-class="assigned"  
      */
-    public java.lang.String getId() {
+    public String getId() {
         return this.id;
     }
 
@@ -110,11 +89,8 @@ public class PingTarget implements Serializable {
      * Set the unique id of this ping target
      *
      * @param id
-     * @ejb:persistent-field
      */
-    public void setId(java.lang.String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -124,10 +100,8 @@ public class PingTarget implements Serializable {
      * It is deescriptive and is not necessarily unique.
      *
      * @return the name of this ping target
-     * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true"
      */
-    public java.lang.String getName() {
+    public String getName() {
         return this.name;
     }
 
@@ -136,9 +110,8 @@ public class PingTarget implements Serializable {
      * Set the name of this ping target.
      *
      * @param name the name of this ping target
-     * @ejb:persistent-field
      */
-    public void setName(java.lang.String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -147,8 +120,6 @@ public class PingTarget implements Serializable {
      * Get the URL to ping.
      *
      * @return the URL to ping.
-     * @ejb:persistent-field
-     * @hibernate.property column="pingurl" non-null="true"
      */
     public String getPingUrl() {
         return pingUrl;
@@ -159,7 +130,6 @@ public class PingTarget implements Serializable {
      * Set the URL to ping.
      *
      * @param pingUrl
-     * @ejb:persistent-field
      */
     public void setPingUrl(String pingUrl) {
         this.pingUrl = pingUrl;
@@ -172,8 +142,6 @@ public class PingTarget implements Serializable {
      *
      * @return the website for which this ping target is a custom target, or null if this ping target is not a custom
      *         target.
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
     public Weblog getWebsite() {
         return website;
@@ -185,7 +153,6 @@ public class PingTarget implements Serializable {
      *
      * @param website the website for which this ping target is a custom target, or null if this ping target is not a
      *                custom target
-     * @ejb:persistent-field
      */
     public void setWebsite(Weblog website) {
         this.website = website;
@@ -199,8 +166,6 @@ public class PingTarget implements Serializable {
      *
      * @return one of the condition codes {@link #CONDITION_OK}, {@link #CONDITION_FAILING}, {@link
      *         #CONDITION_DISABLED}.
-     * @ejb:persistent-field
-     * @hibernate.property column="conditioncode" not-null="true"
      */
     public int getConditionCode() {
         return conditionCode;
@@ -211,7 +176,6 @@ public class PingTarget implements Serializable {
      * Set the condition code value.
      *
      * @param conditionCode the condition code value to set
-     * @ejb:persistent-field
      */
     public void setConditionCode(int conditionCode) {
         this.conditionCode = conditionCode;
@@ -222,8 +186,6 @@ public class PingTarget implements Serializable {
      * Get the timestamp of the last successful ping (UTC/GMT).
      *
      * @return the timestamp of the last successful ping; <code>null</code> if the target has not yet been used.
-     * @ejb:persistent-field
-     * @hibernate.property column="lastsuccess" not-null="false"
      */
     public Timestamp getLastSuccess() {
         return lastSuccess;
@@ -234,7 +196,6 @@ public class PingTarget implements Serializable {
      * Set the timestamp of the last successful ping.
      *
      * @param lastSuccess the timestamp of the last successful ping.
-     * @ejb:persistent-field
      */
     public void setLastSuccess(Timestamp lastSuccess) {
         this.lastSuccess = lastSuccess;
@@ -245,8 +206,6 @@ public class PingTarget implements Serializable {
      * Is this ping target enabled by default for new weblogs?
      *
      * @return true if ping target is auto enabled. false otherwise.
-     * @ejb:persistent-field
-     * @hibernate.property column="autoenabled" not-null="true"
      */
     public boolean isAutoEnabled() {
         return autoEnabled;
@@ -258,7 +217,6 @@ public class PingTarget implements Serializable {
      * applies for common ping targets.
      *
      * @param autoEnabled true if the ping target should be auto enabled.
-     * @ejb:persistent-field
      */
     public void setAutoEnabled(boolean autoEnabled) {
         this.autoEnabled = autoEnabled;

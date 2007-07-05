@@ -28,7 +28,7 @@ public class TagStat implements java.io.Serializable {
 
     private static final long serialVersionUID = 1142064841813545198L;
 
-    private java.lang.String name;
+    private String name;
 
     private int count;
     

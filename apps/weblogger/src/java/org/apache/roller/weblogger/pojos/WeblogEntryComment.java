@@ -24,26 +24,22 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
+
 /**
- * Weblogentry Comment bean.
- *
- * @ejb:bean name="WeblogEntryComment"
- * @struts.form include-all="true"
- *
- * @hibernate.class lazy="true" table="roller_comment"
- * @hibernate.cache usage="read-write"
+ * WeblogEntry comment bean.
  */
 public class WeblogEntryComment implements Serializable {
     
     public static final long serialVersionUID = -6668122596726478462L;
     
+    // status options
     public static final String APPROVED = "APPROVED";
     public static final String DISAPPROVED = "DISAPPROVED";
     public static final String SPAM = "SPAM";
     public static final String PENDING = "PENDING";
     
+    // attributes
     private String    id = UUIDGenerator.generateUUID();
-    
     private String    name = null;
     private String    email = null;
     private String    url = null;
@@ -51,51 +47,28 @@ public class WeblogEntryComment implements Serializable {
     private Timestamp postTime = null;
     private String    status = APPROVED;
     private Boolean   notify = Boolean.FALSE;
-    
     private String    remoteHost = null;
     private String    referrer = null;
     private String    userAgent = null;
     
+    // associations
     private WeblogEntry weblogEntry = null;
     
     
     public WeblogEntryComment() {}
     
-    public WeblogEntryComment(WeblogEntry entry, String name, String email,
-                       String url, String content, Timestamp postTime, 
-                       String status, Boolean notify) {
-        this.name = name;
-        this.email = email;
-        this.url = url;
-        this.content = content;
-        this.postTime = postTime;
-        this.notify = notify;
-        
-        this.weblogEntry = entry;
-    }
-    
-    public WeblogEntryComment(WeblogEntryComment otherData) {
-        this.setData(otherData);
-    }
     
     /**
-     * Database ID of comment
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.id column="id"
-     *    generator-class="assigned"  
+     * Database ID of comment 
      */
-    public java.lang.String getId() {
+    public String getId() {
         return this.id;
     }
     
     /**
      * Database ID of comment
-     * @ejb:persistent-field
      */
-    public void setId(java.lang.String id) {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -123,7 +96,7 @@ public class WeblogEntryComment implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="name" non-null="true" unique="false"
      */
-    public java.lang.String getName() {
+    public String getName() {
         return this.name;
     }
     
@@ -131,7 +104,7 @@ public class WeblogEntryComment implements Serializable {
      * Name of person who wrote comment.
      * @ejb:persistent-field
      */
-    public void setName(java.lang.String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -141,7 +114,7 @@ public class WeblogEntryComment implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="email" non-null="true" unique="false"
      */
-    public java.lang.String getEmail() {
+    public String getEmail() {
         return this.email;
     }
     
@@ -149,7 +122,7 @@ public class WeblogEntryComment implements Serializable {
      * Email of person who wrote comment.
      * @ejb:persistent-field
      */
-    public void setEmail(java.lang.String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
     
@@ -159,7 +132,7 @@ public class WeblogEntryComment implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="url" non-null="true" unique="false"
      */
-    public java.lang.String getUrl() {
+    public String getUrl() {
         return this.url;
     }
     
@@ -167,7 +140,7 @@ public class WeblogEntryComment implements Serializable {
      * URL of person who wrote comment.
      * @ejb:persistent-field
      */
-    public void setUrl(java.lang.String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
     
@@ -177,7 +150,7 @@ public class WeblogEntryComment implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="content" non-null="true" unique="false"
      */
-    public java.lang.String getContent() {
+    public String getContent() {
         return this.content;
     }
     
@@ -185,7 +158,7 @@ public class WeblogEntryComment implements Serializable {
      * Content of comment.
      * @ejb:persistent-field
      */
-    public void setContent(java.lang.String content) {
+    public void setContent(String content) {
         this.content = content;
     }
     
@@ -308,9 +281,6 @@ public class WeblogEntryComment implements Serializable {
         return new Boolean(SPAM.equals(this.status));
     }
     
-    /** No-op to please XDoclet */
-    public void setSpam(Boolean b) {}
-    
     /**
      * True if comment has is pending moderator approval.
      *
@@ -320,9 +290,6 @@ public class WeblogEntryComment implements Serializable {
         return new Boolean(PENDING.equals(this.status));
     }
     
-    /** No-op to please XDoclet */
-    public void setPending(Boolean b) {}
-    
     /**
      * Indicates that comment has been approved for display on weblog.
      *
@@ -331,9 +298,6 @@ public class WeblogEntryComment implements Serializable {
     public Boolean getApproved() {
         return new Boolean(APPROVED.equals(this.status));
     }
-    
-    /** No-op to please XDoclet */
-    public void setApproved(Boolean b) {}
     
     /**
      * Timestamp to be used to formulate comment permlink.
@@ -346,9 +310,6 @@ public class WeblogEntryComment implements Serializable {
         }
         return null;
     }
-    
-    /** No-op to please XDoclet */
-    public void setTimestamp(String timeStamp) {}
     
     //------------------------------------------------------- Good citizenship
 
@@ -380,24 +341,6 @@ public class WeblogEntryComment implements Serializable {
             .append(getPostTime())
             .append(getWeblogEntry())
             .toHashCode();
-    }
-    
-    /**
-     * Set bean properties based on other bean.
-     */
-    public void setData(WeblogEntryComment otherComment) {
-        
-        this.id = otherComment.getId();
-        this.weblogEntry = otherComment.getWeblogEntry();
-        this.name = otherComment.getName();
-        this.email = otherComment.getEmail();
-        this.url = otherComment.getUrl();
-        this.content = otherComment.getContent();
-        this.postTime = otherComment.getPostTime();
-        this.notify = otherComment.getNotify();
-        this.setStatus(otherComment.getStatus());
-        this.setReferrer(otherComment.getReferrer());
-        this.setUserAgent(otherComment.getUserAgent());
     }
     
 }
