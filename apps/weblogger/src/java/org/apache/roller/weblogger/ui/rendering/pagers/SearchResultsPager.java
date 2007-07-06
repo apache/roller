@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.Locale;
 import java.util.Map;
-import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
@@ -32,6 +32,9 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
+    
+    // url strategy
+    URLStrategy urlStrategy = null;
     
     private Map entries = null;
     
@@ -45,7 +48,10 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     public SearchResultsPager() {}
     
-    public SearchResultsPager(WeblogSearchRequest searchRequest, Map entries, boolean more) {
+    public SearchResultsPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map entries, boolean more) {
+        
+        // url strategy for building urls
+        this.urlStrategy = strat;
         
         // store search results
         this.entries = entries;
@@ -82,7 +88,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(weblog, locale, false);
+        return urlStrategy.getWeblogURL(weblog, locale, false);
     }
 
     public String getHomeName() {
@@ -92,7 +98,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     public String getNextLink() {
         if(moreResults) {
-            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
+            return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
         }
         return null;
     }
@@ -106,7 +112,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getPrevLink() {
         if(page > 0) {
-            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
+            return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
         }
         return null;
     }

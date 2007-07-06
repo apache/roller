@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +31,7 @@ import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.business.URLStrategy;
 
 
 /**
@@ -55,6 +55,7 @@ public class PlanetEntriesPager extends AbstractPager {
     
     
     public PlanetEntriesPager(
+            URLStrategy    strat,
             String         feedURL,
             String         groupHandle,
             String         baseUrl,
@@ -63,7 +64,7 @@ public class PlanetEntriesPager extends AbstractPager {
             int            page,
             int            length) {
         
-        super(baseUrl, page);
+        super(strat, baseUrl, page);
         
         this.feedURL = feedURL;
         this.groupHandle = groupHandle;

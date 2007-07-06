@@ -20,12 +20,12 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -47,7 +47,8 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
     
     
     public WeblogEntriesPreviewPager(
-            Weblog        weblog,
+            URLStrategy        strat,
+            Weblog             weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,
@@ -56,7 +57,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
     }
     
     
@@ -78,7 +79,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
                 
                 // store the entry in the collection
                 entries = new TreeMap();
-                entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry)));
+                entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry, urlStrategy)));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching entry", e);

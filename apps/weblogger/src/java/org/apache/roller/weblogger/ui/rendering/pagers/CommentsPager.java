@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -53,6 +54,7 @@ public class CommentsPager extends AbstractPager {
     
     
     public CommentsPager(
+            URLStrategy    strat,
             String         baseUrl,
             Weblog         weblog,
             String         locale,
@@ -60,7 +62,7 @@ public class CommentsPager extends AbstractPager {
             int            page,
             int            length) {
         
-        super(baseUrl, page);
+        super(strat, baseUrl, page);
         
         this.weblog = weblog;
         this.locale = locale;
@@ -103,7 +105,7 @@ public class CommentsPager extends AbstractPager {
                 // wrap the results
                 for (Iterator it = entries.iterator(); it.hasNext();) {
                     WeblogEntryComment comment = (WeblogEntryComment) it.next();
-                    results.add(WeblogEntryCommentWrapper.wrap(comment));
+                    results.add(WeblogEntryCommentWrapper.wrap(comment, urlStrategy));
                 }
                 
             } catch (Exception e) {

@@ -127,6 +127,7 @@ public class SiteModel implements Model {
         }
         
         return new WeblogEntriesListPager(
+            urlStrategy,
             pagerUrl, null, null, null,
             tags,
             weblogRequest.getLocale(),
@@ -183,6 +184,7 @@ public class SiteModel implements Model {
         }
        
         return new WeblogEntriesListPager(
+            urlStrategy,
             pagerUrl, queryWeblog, user, cat,
             tags,
             weblogRequest.getLocale(),
@@ -213,6 +215,7 @@ public class SiteModel implements Model {
         }
         
         return new CommentsPager(
+            urlStrategy,
             pagerUrl,
             null,
             weblogRequest.getLocale(),
@@ -241,6 +244,7 @@ public class SiteModel implements Model {
         }
         
         return new UsersPager(
+            urlStrategy,
             pagerUrl,
             letter,
             weblogRequest.getLocale(),
@@ -262,6 +266,7 @@ public class SiteModel implements Model {
         }
         
         return new WeblogsPager(
+            urlStrategy,
             pagerUrl,
             letter,
             weblogRequest.getLocale(),
@@ -320,7 +325,7 @@ public class SiteModel implements Model {
             List perms = umgr.getAllPermissions(user);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 WeblogPermission perm = (WeblogPermission) it.next();
-                results.add(WeblogWrapper.wrap(perm.getWebsite()));
+                results.add(WeblogWrapper.wrap(perm.getWebsite(), urlStrategy));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -373,7 +378,7 @@ public class SiteModel implements Model {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             Weblog website = umgr.getWebsiteByHandle(handle);
-            wrappedWebsite = WeblogWrapper.wrap(website);
+            wrappedWebsite = WeblogWrapper.wrap(website, urlStrategy);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
         }
@@ -402,7 +407,7 @@ public class SiteModel implements Model {
                 null, Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 Weblog website = (Weblog) it.next();
-                results.add(WeblogWrapper.wrap(website));
+                results.add(WeblogWrapper.wrap(website, urlStrategy));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -529,7 +534,7 @@ public class SiteModel implements Model {
             List weblogs = wmgr.getWeblogEntriesPinnedToMain(new Integer(length));
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 WeblogEntry entry = (WeblogEntry) it.next();
-                results.add(WeblogEntryWrapper.wrap(entry));
+                results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching pinned weblog entries", e);

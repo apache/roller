@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -59,9 +60,10 @@ public class WeblogEntriesListPager extends AbstractPager {
     
     
     public WeblogEntriesListPager(
+            URLStrategy    strat,
             String         baseUrl,
-            Weblog    queryWeblog,
-            User       queryUser,
+            Weblog         queryWeblog,
+            User           queryUser,
             String         queryCat,
             List           queryTags,
             String         locale,
@@ -69,7 +71,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             int            pageNum,
             int            length) {
         
-        super(baseUrl, pageNum);
+        super(strat, baseUrl, pageNum);
         
         // store the data
         this.queryWeblog = queryWeblog;
@@ -125,7 +127,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     WeblogEntry entry = (WeblogEntry) it.next();
                     if (count++ < length) {
-                        results.add(WeblogEntryWrapper.wrap(entry));
+                        results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
                     }
                 }
                 if (rawEntries.size() > length) more = true;

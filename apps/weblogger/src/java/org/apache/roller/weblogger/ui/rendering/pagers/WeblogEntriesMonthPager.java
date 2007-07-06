@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.business.URLStrategy;
 
 
 /**
@@ -58,7 +58,8 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     
     public WeblogEntriesMonthPager(
-            Weblog        weblog,
+            URLStrategy        strat,
+            Weblog             weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,
@@ -67,7 +68,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         monthFormat = new SimpleDateFormat(
             messageUtils.getString("weblogEntriesPager.month.dateFormat"));
@@ -131,7 +132,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                     List unwrapped= (List) mmap.get(key);
                     for(int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i)));
+                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i), urlStrategy));
                         } else {
                             more = true;
                         }

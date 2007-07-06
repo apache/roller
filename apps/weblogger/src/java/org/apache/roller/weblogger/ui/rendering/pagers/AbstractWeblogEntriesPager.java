@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.I18nMessages;
 
@@ -48,6 +49,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
     
+    // url strategy for building urls
+    URLStrategy urlStrategy = null;
+    
     Weblog weblog = null;
     String locale = null;
     String pageLink = null;
@@ -61,7 +65,8 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     
     public AbstractWeblogEntriesPager(
-            Weblog        weblog,
+            URLStrategy        strat,
+            Weblog             weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,
@@ -69,6 +74,8 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             String             catPath,
             List               tags,
             int                page) {
+        
+        this.urlStrategy = strat;
         
         this.weblog = weblog;
         this.locale = locale;
@@ -236,12 +243,12 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         int pageNum = page + pageAdd;
         
         if (pageLink != null) {
-            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, tags, pageNum, false);
+            return urlStrategy.getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, tags, pageNum, false);
         } else if (entryAnchor != null) {
-            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(website, locale, entryAnchor, true);
+            return urlStrategy.getWeblogEntryURL(website, locale, entryAnchor, true);
         }
         
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogCollectionURL(website, locale, catPath, dateString, tags, pageNum, false);
+        return urlStrategy.getWeblogCollectionURL(website, locale, catPath, dateString, tags, pageNum, false);
     }
     
 }

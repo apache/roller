@@ -95,6 +95,7 @@ public class PlanetModel implements Model {
                 null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
+            urlStrategy,
             null,
             null,    
             pagerUrl,
@@ -118,6 +119,7 @@ public class PlanetModel implements Model {
                 null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
+            urlStrategy,
             null,
             groupHandle,
             pagerUrl,
@@ -141,6 +143,7 @@ public class PlanetModel implements Model {
                 null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
+            urlStrategy,
             feedURL,
             null,
             pagerUrl,

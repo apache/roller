@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 
@@ -30,16 +31,21 @@ public class WeblogEntryCommentWrapper {
     // keep a reference to the wrapped pojo
     private final WeblogEntryComment pojo;
     
+    // url strategy to use for any url building
+    private final URLStrategy urlStrategy;
+    
+    
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogEntryCommentWrapper(WeblogEntryComment toWrap) {
+    private WeblogEntryCommentWrapper(WeblogEntryComment toWrap, URLStrategy strat) {
         this.pojo = toWrap;
+        this.urlStrategy = strat;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WeblogEntryCommentWrapper wrap(WeblogEntryComment toWrap) {
+    public static WeblogEntryCommentWrapper wrap(WeblogEntryComment toWrap, URLStrategy strat) {
         if(toWrap != null)
-            return new WeblogEntryCommentWrapper(toWrap);
+            return new WeblogEntryCommentWrapper(toWrap, strat);
         
         return null;
     }
@@ -51,7 +57,7 @@ public class WeblogEntryCommentWrapper {
     
     
     public WeblogEntryWrapper getWeblogEntry() {
-        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
+        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(), urlStrategy);
     }
     
     

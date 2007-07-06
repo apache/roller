@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -52,13 +53,14 @@ public class UsersPager extends AbstractPager {
     
     
     public UsersPager(
+            URLStrategy    strat,
             String         baseUrl,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
         
-        super(baseUrl, page);
+        super(strat, baseUrl, page);
         
         this.locale = locale;
         this.sinceDays = sinceDays;
@@ -70,6 +72,7 @@ public class UsersPager extends AbstractPager {
     
     
     public UsersPager(
+            URLStrategy    strat,
             String         baseUrl,
             String         letter,
             String         locale,
@@ -77,7 +80,7 @@ public class UsersPager extends AbstractPager {
             int            page,
             int            length) {
         
-        super(baseUrl, page);
+        super(strat, baseUrl, page);
         
         this.letter = letter;
         this.locale = locale;

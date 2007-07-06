@@ -121,7 +121,7 @@ public class PageModel implements Model {
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog);
+        return WeblogWrapper.wrap(weblog, urlStrategy);
     }
     
     
@@ -147,7 +147,7 @@ public class PageModel implements Model {
      */
     public WeblogEntryWrapper getWeblogEntry() {
         if(pageRequest.getWeblogEntry() != null) {
-            return WeblogEntryWrapper.wrap(pageRequest.getWeblogEntry());
+            return WeblogEntryWrapper.wrap(pageRequest.getWeblogEntry(), urlStrategy);
         }
         return null;
     }
@@ -176,7 +176,7 @@ public class PageModel implements Model {
      */
     public WeblogCategoryWrapper getWeblogCategory() {
         if(pageRequest.getWeblogCategory() != null) {
-            return WeblogCategoryWrapper.wrap(pageRequest.getWeblogCategory());
+            return WeblogCategoryWrapper.wrap(pageRequest.getWeblogCategory(), urlStrategy);
         }
         return null;
     }
@@ -241,6 +241,7 @@ public class PageModel implements Model {
         // determine which mode to use
         if (pageRequest.getWeblogAnchor() != null) {
             return new WeblogEntriesPermalinkPager(
+                    urlStrategy,
                     weblog,
                     pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
@@ -251,6 +252,7 @@ public class PageModel implements Model {
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 8) {
             return new WeblogEntriesDayPager(
+                    urlStrategy,
                     weblog,
                     pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
@@ -261,6 +263,7 @@ public class PageModel implements Model {
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 6) {
             return new WeblogEntriesMonthPager(
+                    urlStrategy,
                     weblog,
                     pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
@@ -272,6 +275,7 @@ public class PageModel implements Model {
           
         } else {
             return new WeblogEntriesLatestPager(
+                    urlStrategy,
                     weblog,
                     pageRequest.getLocale(),
                     pageRequest.getWeblogPageName(),
