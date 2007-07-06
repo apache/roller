@@ -16,7 +16,7 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.weblogger.business.utils;
+package org.apache.roller.weblogger.util;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
