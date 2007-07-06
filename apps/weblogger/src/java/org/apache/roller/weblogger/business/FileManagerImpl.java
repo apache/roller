@@ -261,6 +261,48 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
+     * @inheritDoc
+     */
+    public void deleteAllFiles(Weblog weblog) throws FileIOException {
+        
+        try {
+            // get path to root folder
+            File delFile = this.getRealFile(weblog, "/");
+            
+            // delete folder and it's contents
+            deleteAllFiles(delFile);
+            
+        } catch (FileNotFoundException ex) {
+            // if it doesn't exist then we already have no files, so we're done
+            return;
+        } catch (FilePathException ex) {
+            // should never happen when trying to get root folder
+        }
+    }
+    
+    
+    // convenience method to delete a folder and all of it's contents.  called recursively
+    private void deleteAllFiles(File dir) {
+        
+        // delete directory contents
+        File[] dirFiles = dir.listFiles();
+        if(dirFiles != null && dirFiles.length > 0) {
+            for( File file : dirFiles ) {
+                if(file.isDirectory()) {
+                    // recursive call
+                    deleteAllFiles(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        
+        // delete directory itself
+        dir.delete();
+    }
+    
+    
+    /**
      * @see org.apache.roller.weblogger.model.FileManager#overQuota(weblog)
      */
     public boolean overQuota(Weblog weblog) {

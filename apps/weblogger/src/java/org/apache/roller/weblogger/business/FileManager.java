@@ -140,6 +140,18 @@ public interface FileManager {
         throws FileNotFoundException, FilePathException, FileIOException;
     
     
+    /**
+     * Delete all files associated with a given weblog, including the root folder.
+     *
+     * The only real use of this method is for when a weblog is being deleted.
+     *
+     * @param weblog The weblog to delete all files from.
+     * @throws FileIOException If there is an unexpected error during the delete.
+     */
+    public void deleteAllFiles(Weblog weblog)
+        throws FileIOException;
+    
+    
     /** 
      * Is the given weblog over the file-upload quota limit?
      *

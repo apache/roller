@@ -43,8 +43,9 @@ import java.util.TreeMap;
 import java.util.Collection;
 import java.util.Comparator;
 import javax.persistence.Query;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /*
  * JPAUserManagerImpl.java
@@ -220,6 +221,10 @@ public class JPAUserManagerImpl implements UserManager {
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
         this.strategy.flush();
+        
+        // remove uploaded files
+        FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
+        fmgr.deleteAllFiles(website);
     }
     
     protected void updateTagAggregates(List tags) throws WebloggerException {
