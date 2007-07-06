@@ -49,6 +49,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.weblogger.business.URLStrategy;
 
 
 /**
@@ -99,7 +100,8 @@ public class ContextLoader {
             HttpServletRequest  request,
             HttpServletResponse response,
             PageContext pageContext,
-            WeblogPageRequest pageRequest) throws WebloggerException {
+            WeblogPageRequest pageRequest,
+            URLStrategy urlStrategy) throws WebloggerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
@@ -155,7 +157,8 @@ public class ContextLoader {
         try {
             // Add old page model object to context
             OldWeblogPageModel pageModel = new OldWeblogPageModel();
-            pageModel.init(request,
+            pageModel.init(urlStrategy,
+                    request,
                     weblog,
                     entry,
                     category,
@@ -185,8 +188,8 @@ public class ContextLoader {
         ctx.put("pageHelper", pageHelper);
         
         // Load standard Weblogger objects and values into the context
-        loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request);
-        loadPathValues(ctx, request, weblog, locale);
+        loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request, urlStrategy);
+        loadPathValues(ctx, request, weblog, locale, urlStrategy);
         loadRssValues(ctx, request, weblog, category);
         loadUtilityObjects(ctx, request, weblog, page);
         loadRequestParamKeys(ctx);
@@ -194,7 +197,7 @@ public class ContextLoader {
         
         // If single entry is specified, load comments too
         if (entry != null) {
-            loadCommentValues(ctx, request, entry);
+            loadCommentValues(ctx, request, entry, urlStrategy);
         }
     }
     
@@ -206,7 +209,8 @@ public class ContextLoader {
             Map ctx,
             Weblog weblog,
             Locale locale,
-            HttpServletRequest request) throws WebloggerException {
+            HttpServletRequest request,
+            URLStrategy urlStrategy) throws WebloggerException {
         
         // weblog cannot be null
         if(weblog == null)
@@ -227,7 +231,7 @@ public class ContextLoader {
         // setup Timezone for future rendering
         ctx.put("timezone", weblog.getTimeZoneInstance());
         ctx.put("timeZone", weblog.getTimeZoneInstance());
-        ctx.put("website",WeblogWrapper.wrap(weblog) );
+        ctx.put("website",WeblogWrapper.wrap(weblog, urlStrategy) );
         
         String siteName = ((RuntimeConfigProperty)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
@@ -268,9 +272,10 @@ public class ContextLoader {
      * Load comments for one weblog entry and related objects.
      */
     private static void loadCommentValues(
-            
             Map ctx,
-            HttpServletRequest request,WeblogEntry entry) throws WebloggerException {
+            HttpServletRequest request,
+            WeblogEntry entry,
+            URLStrategy urlStrategy) throws WebloggerException {
         
         mLogger.debug("Loading comment values");
         
@@ -304,7 +309,7 @@ public class ContextLoader {
         }
         
         if (entry.getStatus().equals(WeblogEntry.PUBLISHED)) {
-            ctx.put("entry",WeblogEntryWrapper.wrap(entry));
+            ctx.put("entry",WeblogEntryWrapper.wrap(entry, urlStrategy));
         }
     }
     
@@ -396,13 +401,14 @@ public class ContextLoader {
             Map ctx,
             HttpServletRequest request,
             Weblog   website,
-            String locale) throws WebloggerException {
+            String locale,
+            URLStrategy urlStrategy) throws WebloggerException {
         
         mLogger.debug("Loading path values");
         
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
-            url = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(website, locale, true);
+            url = urlStrategy.getWeblogURL(website, locale, true);
         } else {
             url= WebloggerRuntimeConfig.getAbsoluteContextURL();
         }

@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -27,13 +26,13 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -53,7 +52,8 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     public WeblogEntriesPermalinkPager(
-            Weblog        weblog,
+            URLStrategy        strat,
+            Weblog             weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,
@@ -62,7 +62,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         getEntries();
     }
@@ -75,7 +75,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 entries = new TreeMap();
-                entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry)));
+                entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching entry");

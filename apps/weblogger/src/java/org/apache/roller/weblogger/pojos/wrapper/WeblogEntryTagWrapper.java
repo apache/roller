@@ -30,6 +30,7 @@ public class WeblogEntryTagWrapper {
     // keep a reference to the wrapped pojo
     private final WeblogEntryTag pojo;
     
+    
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogEntryTagWrapper(WeblogEntryTag toWrap) {
         this.pojo = toWrap;
@@ -44,20 +45,20 @@ public class WeblogEntryTagWrapper {
         return null;
     }
     
+    // NOTE: removing for 4.0 because it is not necessary
+//    public String getId() {
+//        return this.pojo.getId();
+//    }
     
-    public String getId() {
-        return this.pojo.getId();
-    }
+    // NOTE: removing for 4.0 because it is not necessary
+//    public WeblogWrapper getWeblog() {
+//        return WeblogWrapper.wrap(this.pojo.getWeblog());
+//    }
     
-    
-    public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(this.pojo.getWeblog());
-    }
-    
-    
-    public WeblogEntryWrapper getWeblogEntry() {
-        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
-    }
+    // NOTE: removing for 4.0 because it is not necessary
+//    public WeblogEntryWrapper getWeblogEntry() {
+//        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
+//    }
     
     
     public UserWrapper getUser() {

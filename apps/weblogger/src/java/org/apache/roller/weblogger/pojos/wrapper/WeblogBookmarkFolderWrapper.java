@@ -69,10 +69,10 @@ public class WeblogBookmarkFolderWrapper {
         return this.pojo.getPath();
     }
     
-    
-    public WeblogWrapper getWebsite() {
-        return WeblogWrapper.wrap(this.pojo.getWebsite());
-    }
+    // NOTE: removing this for 4.0 since there is really no need for this in templates
+//    public WeblogWrapper getWebsite() {
+//        return WeblogWrapper.wrap(this.pojo.getWebsite());
+//    }
     
     
     public WeblogBookmarkFolderWrapper getParent() {

@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.URLUtilities;
 
 
@@ -28,12 +29,14 @@ import org.apache.roller.weblogger.util.URLUtilities;
  */
 public abstract class AbstractPager implements Pager {
     
+    final URLStrategy urlStrategy;
     private String url = null;
     private int page = 0;
     
     
-    public AbstractPager(String baseUrl, int pageNum) {
+    public AbstractPager(URLStrategy strat, String baseUrl, int pageNum) {
         
+        this.urlStrategy = strat;
         this.url = baseUrl;
         if(pageNum > 0) {
             this.page = pageNum;

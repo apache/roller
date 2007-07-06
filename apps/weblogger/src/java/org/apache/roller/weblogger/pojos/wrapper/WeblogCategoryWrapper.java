@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -35,16 +36,21 @@ public class WeblogCategoryWrapper {
     // keep a reference to the wrapped pojo
     private final WeblogCategory pojo;
     
+    // url strategy to use for any url building
+    private final URLStrategy urlStrategy;
+    
+    
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogCategoryWrapper(WeblogCategory toWrap) {
+    private WeblogCategoryWrapper(WeblogCategory toWrap, URLStrategy strat) {
         this.pojo = toWrap;
+        this.urlStrategy = strat;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WeblogCategoryWrapper wrap(WeblogCategory toWrap) {
+    public static WeblogCategoryWrapper wrap(WeblogCategory toWrap, URLStrategy strat) {
         if(toWrap != null)
-            return new WeblogCategoryWrapper(toWrap);
+            return new WeblogCategoryWrapper(toWrap, strat);
         
         return null;
     }
@@ -76,12 +82,12 @@ public class WeblogCategoryWrapper {
     
     
     public WeblogWrapper getWebsite() {
-        return WeblogWrapper.wrap(this.pojo.getWebsite());
+        return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
     }
     
     
     public WeblogCategoryWrapper getParent() {
-        return WeblogCategoryWrapper.wrap(this.pojo.getParent());
+        return WeblogCategoryWrapper.wrap(this.pojo.getParent(), urlStrategy);
     }
     
     
@@ -95,7 +101,7 @@ public class WeblogCategoryWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next()));
+            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
             i++;
         }
         
@@ -115,7 +121,7 @@ public class WeblogCategoryWrapper {
         Iterator it = initialCollection.iterator();
         int i = 0;
         while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next()));
+            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next(), urlStrategy));
             i++;
         }
         

@@ -62,7 +62,8 @@ public class WeblogEntryCommentForm {
     }
     
     public WeblogEntryCommentWrapper getPreviewComment() {
-        return WeblogEntryCommentWrapper.wrap(previewComment);
+        // NOTE: no need for url strategy when wrapping preview comment
+        return WeblogEntryCommentWrapper.wrap(previewComment, null);
     }
     
     public boolean isPreview() {

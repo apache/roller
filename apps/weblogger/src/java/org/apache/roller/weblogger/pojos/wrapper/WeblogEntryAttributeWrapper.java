@@ -43,15 +43,15 @@ public class WeblogEntryAttributeWrapper {
         return null;
     }
     
+    // NOTD: removing this for 4.0 because there is no need for it
+//    public String getId() {
+//        return this.pojo.getId();
+//    }
     
-    public String getId() {
-        return this.pojo.getId();
-    }
-    
-    
-    public WeblogEntryWrapper getEntry() {
-        return WeblogEntryWrapper.wrap(this.pojo.getEntry());
-    }
+    // NOTE: removing this for 4.0 because there is no need for it
+//    public WeblogEntryWrapper getEntry() {
+//        return WeblogEntryWrapper.wrap(this.pojo.getEntry());
+//    }
     
     
     public String getName() {

@@ -20,6 +20,8 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
@@ -34,6 +36,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 public class PreviewPageModel extends PageModel {
     
     private WeblogPreviewRequest previewRequest = null;
+    private URLStrategy urlStrategy = null;
     
     
     /** 
@@ -56,6 +59,12 @@ public class PreviewPageModel extends PageModel {
                     "  PreviewPageModel only supports preview requests.");
         }
         
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
+        
         super.init(initData);
     }    
     
@@ -70,7 +79,7 @@ public class PreviewPageModel extends PageModel {
         
         if(previewRequest.getPreviewEntry() != null ||
                 previewRequest.getWeblogAnchor() != null) {
-            return WeblogEntryWrapper.wrap(previewRequest.getWeblogEntry());
+            return WeblogEntryWrapper.wrap(previewRequest.getWeblogEntry(), urlStrategy);
         }
         return null;
     }
@@ -90,6 +99,7 @@ public class PreviewPageModel extends PageModel {
         
         if (anchor != null) {
             return new WeblogEntriesPreviewPager(
+                    urlStrategy,
                     previewRequest.getWeblog(),
                     previewRequest.getLocale(),
                     previewRequest.getWeblogPageName(),
@@ -100,6 +110,7 @@ public class PreviewPageModel extends PageModel {
                     previewRequest.getPageNum());
         } else {
             return new WeblogEntriesLatestPager(
+                    urlStrategy,
                     previewRequest.getWeblog(),
                     previewRequest.getLocale(),
                     previewRequest.getWeblogPageName(),

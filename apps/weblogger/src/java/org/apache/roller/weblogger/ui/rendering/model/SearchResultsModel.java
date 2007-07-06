@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.I18nMessages;
 
 
@@ -60,6 +61,7 @@ public class SearchResultsModel extends PageModel {
     
     // the original search request
     WeblogSearchRequest searchRequest = null;
+    private URLStrategy urlStrategy = null;
     
     // the actual search results mapped by Day -> Set of entries
     private TreeMap results = new TreeMap(new ReverseComparator());
@@ -83,12 +85,18 @@ public class SearchResultsModel extends PageModel {
             throw new WebloggerException("expected searchRequest from init data");
         }
         
+        // look for url strategy
+        urlStrategy = (URLStrategy) initData.get("urlStrategy");
+        if(urlStrategy == null) {
+            urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        }
+        
         // let parent initialize
         super.init(initData);
         
         // if there is no query, then we are done
         if(searchRequest.getQuery() == null) {
-            pager = new SearchResultsPager(searchRequest, results, false);
+            pager = new SearchResultsPager(urlStrategy, searchRequest, results, false);
             return;
         }
         
@@ -123,7 +131,7 @@ public class SearchResultsModel extends PageModel {
         }
         
         // search completed, setup pager based on results
-        pager = new SearchResultsPager(searchRequest, results, (hits > (offset+limit)));
+        pager = new SearchResultsPager(urlStrategy, searchRequest, results, (hits > (offset+limit)));
     }
     
     /**
@@ -193,7 +201,7 @@ public class SearchResultsModel extends PageModel {
                 // or entry's user is not the requested user.
                 // but don't return future posts
                 if (entry != null && entry.getPubTime().before(now)) {
-                    addEntryToResults(WeblogEntryWrapper.wrap(entry));
+                    addEntryToResults(WeblogEntryWrapper.wrap(entry, urlStrategy));
                 }
             }
             
@@ -261,7 +269,7 @@ public class SearchResultsModel extends PageModel {
     
     public WeblogCategoryWrapper getWeblogCategory() {
         if(searchRequest.getWeblogCategory() != null) {
-            return WeblogCategoryWrapper.wrap(searchRequest.getWeblogCategory());
+            return WeblogCategoryWrapper.wrap(searchRequest.getWeblogCategory(), urlStrategy);
         }
         return null;
     }

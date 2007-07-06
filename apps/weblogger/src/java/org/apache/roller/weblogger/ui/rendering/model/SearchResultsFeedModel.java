@@ -117,7 +117,7 @@ public class SearchResultsFeedModel implements Model {
         
         // if there is no query, then we are done
         if(feedRequest.getTerm() == null) {
-            pager = new SearchResultsFeedPager(pagerUrl, feedRequest.getPage(),
+            pager = new SearchResultsFeedPager(urlStrategy, pagerUrl, feedRequest.getPage(),
                     feedRequest, results, false);
             return;
         }
@@ -152,7 +152,7 @@ public class SearchResultsFeedModel implements Model {
         }
         
         // search completed, setup pager based on results
-        pager = new SearchResultsFeedPager(pagerUrl, feedRequest.getPage(),
+        pager = new SearchResultsFeedPager(urlStrategy, pagerUrl, feedRequest.getPage(),
                 feedRequest, results, (hits > (offset+limit)));
     }
     
@@ -210,7 +210,7 @@ public class SearchResultsFeedModel implements Model {
                 // or entry's user is not the requested user.
                 // but don't return future posts
                 if (entry != null && entry.getPubTime().before(now)) {
-                    results.add(WeblogEntryWrapper.wrap(entry));
+                    results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
                 }
             }
             
@@ -226,7 +226,7 @@ public class SearchResultsFeedModel implements Model {
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog);
+        return WeblogWrapper.wrap(weblog, urlStrategy);
     }
     
     public String getTerm() {
@@ -267,7 +267,7 @@ public class SearchResultsFeedModel implements Model {
     
     public WeblogCategoryWrapper getWeblogCategory() {
         if(feedRequest.getWeblogCategory() != null) {
-            return WeblogCategoryWrapper.wrap(feedRequest.getWeblogCategory());
+            return WeblogCategoryWrapper.wrap(feedRequest.getWeblogCategory(), urlStrategy);
         }
         return null;
     }    

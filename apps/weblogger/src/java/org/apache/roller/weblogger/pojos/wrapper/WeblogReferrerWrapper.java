@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
 
 
@@ -29,16 +30,21 @@ public class WeblogReferrerWrapper {
     // keep a reference to the wrapped pojo
     private final WeblogReferrer pojo;
     
+    // url strategy to use for any url building
+    private final URLStrategy urlStrategy;
+    
+    
     // this is private so that we can force the use of the .wrap(pojo) method
-    private WeblogReferrerWrapper(WeblogReferrer toWrap) {
+    private WeblogReferrerWrapper(WeblogReferrer toWrap, URLStrategy strat) {
         this.pojo = toWrap;
+        this.urlStrategy = strat;
     }
     
     
     // wrap the given pojo if it is not null
-    public static WeblogReferrerWrapper wrap(WeblogReferrer toWrap) {
+    public static WeblogReferrerWrapper wrap(WeblogReferrer toWrap, URLStrategy strat) {
         if(toWrap != null)
-            return new WeblogReferrerWrapper(toWrap);
+            return new WeblogReferrerWrapper(toWrap, strat);
         
         return null;
     }
@@ -50,12 +56,12 @@ public class WeblogReferrerWrapper {
     
     
     public WeblogWrapper getWebsite() {
-        return WeblogWrapper.wrap(this.pojo.getWebsite());
+        return WeblogWrapper.wrap(this.pojo.getWebsite(), urlStrategy);
     }
     
     
     public WeblogEntryWrapper getWeblogEntry() {
-        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry());
+        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(), urlStrategy);
     }
     
     

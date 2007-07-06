@@ -97,7 +97,7 @@ public class FeedModel implements Model {
      * Get weblog being displayed.
      */
     public WeblogWrapper getWeblog() {
-        return WeblogWrapper.wrap(weblog);
+        return WeblogWrapper.wrap(weblog, urlStrategy);
     }
     
     
@@ -146,7 +146,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
-            super(urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null, null, false, true), 
                     feedRequest.getWeblog(), null, feedRequest.getWeblogCategoryName(), feedRequest.getTags(),
@@ -179,7 +179,7 @@ public class FeedModel implements Model {
         private WeblogFeedRequest feedRequest;
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
-            super(urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);

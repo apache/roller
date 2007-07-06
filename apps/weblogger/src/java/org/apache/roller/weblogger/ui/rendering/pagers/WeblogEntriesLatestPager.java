@@ -27,12 +27,11 @@ import java.util.TreeMap;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
@@ -52,7 +51,8 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     
     
     public WeblogEntriesLatestPager(
-            Weblog        weblog,
+            URLStrategy        strat,
+            Weblog             weblog,
             String             locale,
             String             pageLink,
             String             entryAnchor,
@@ -61,7 +61,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
+        super(strat, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         // initialize the pager collection
         getEntries();
@@ -98,7 +98,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                     List unwrapped= (List) mmap.get(key);
                     for(int i=0; i < unwrapped.size(); i++) {
                         if (count++ < length) {
-                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i)));
+                            wrapped.add(i,WeblogEntryWrapper.wrap((WeblogEntry)unwrapped.get(i), urlStrategy));
                         } else {
                             more = true;
                         }
