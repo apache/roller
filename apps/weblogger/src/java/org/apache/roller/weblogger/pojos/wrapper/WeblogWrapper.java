@@ -264,7 +264,7 @@ public class WeblogWrapper {
     public String getStylesheet() throws WebloggerException {
         // custom stylesheet comes from the weblog theme
         if(this.pojo.getTheme().getStylesheet() != null) {
-            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
+            return urlStrategy.getWeblogPageURL(this.pojo, null, this.pojo.getTheme().getStylesheet().getLink(), null, null, null, null, 0, false);
         }
         return null;
     }
@@ -290,7 +290,7 @@ public class WeblogWrapper {
             return iconPath;
         } else {
             // otherwise it's just a plain old url
-            return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(this.pojo, iconPath, false);
+            return urlStrategy.getWeblogResourceURL(this.pojo, iconPath, false);
         }
         
     }

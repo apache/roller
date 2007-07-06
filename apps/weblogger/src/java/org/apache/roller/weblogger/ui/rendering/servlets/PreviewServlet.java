@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.Theme;
+import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.RollerContext;
@@ -127,19 +128,50 @@ public class PreviewServlet extends HttpServlet {
         }
         
         Template page = null;
-        try {
-            // we just want to show the default view
-            page = tmpWebsite.getTheme().getDefaultTemplate();
+        if("page".equals(previewRequest.getContext())) {
+            page = previewRequest.getWeblogPage();
             
-            if(page == null) {
-                throw new WebloggerException("No default page for weblog: "+tmpWebsite.getHandle());
+        // If request specified tags section index, then look for custom template
+        } else if("tags".equals(previewRequest.getContext()) &&
+                previewRequest.getTags() == null) {
+            try {
+                page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_TAGSINDEX);
+            } catch(Exception e) {
+                log.error("Error getting weblog page for action 'tagsIndex'", e);
             }
-        } catch(WebloggerException re) {
-            // couldn't get page
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            log.error("Error getting default page for preview", re);
+            
+            // if we don't have a custom tags page then 404, we don't let
+            // this one fall through to the default template
+            if(page == null) {
+                if(!response.isCommitted()) response.reset();
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
+        // If this is a permalink then look for a permalink template
+        } else if(previewRequest.getWeblogAnchor() != null) {
+            try {
+                page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_PERMALINK);
+            } catch(Exception e) {
+                log.error("Error getting weblog page for action 'permalink'", e);
+            }
+        }
+        
+        if(page == null) {
+            try {
+                page = tmpWebsite.getTheme().getDefaultTemplate();
+            } catch(WebloggerException re) {
+                log.error("Error getting default page for preview", re);
+            }
+        }
+        
+        // Still no page?  Then that is a 404
+        if (page == null) {
+            if(!response.isCommitted()) response.reset();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        
         
         log.debug("preview page found, dealing with it");
         
