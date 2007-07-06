@@ -41,10 +41,12 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -212,6 +214,10 @@ public class HibernateUserManagerImpl implements UserManager {
         for (Iterator iter = permissions.iterator(); iter.hasNext(); ) {
             this.removePermissions((WeblogPermission) iter.next());
         }
+        
+        // remove uploaded files
+        FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
+        fmgr.deleteAllFiles(website);
     }
         
     public void saveUser(User data) throws WebloggerException {
