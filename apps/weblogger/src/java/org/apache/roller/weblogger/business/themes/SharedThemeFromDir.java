@@ -234,8 +234,6 @@ public class SharedThemeFromDir extends SharedTheme {
             } else {
                 
                 // construct ThemeTemplate representing this file
-                // a few restrictions for now:
-                //   - decorator is always "_decorator" or null
                 SharedThemeTemplate theme_template = new SharedThemeTemplate(
                         this,
                         themeMetadata.getId()+":"+stylesheetTmpl.getName(),
@@ -247,8 +245,7 @@ public class SharedThemeFromDir extends SharedTheme {
                         new Date(templateFile.lastModified()),
                         stylesheetTmpl.getTemplateLanguage(),
                         false,
-                        false,
-                        null);
+                        false);
                 
                 // store it
                 this.stylesheet = theme_template;
@@ -295,14 +292,7 @@ public class SharedThemeFromDir extends SharedTheme {
                 continue;
             }
             
-            String decorator = "_decorator";
-            if("_decorator".equals(templateMetadata.getName())) {
-                decorator = null;
-            }
-            
             // construct ThemeTemplate representing this file
-            // a few restrictions for now:
-            //   - decorator is always "_decorator" or null
             theme_template = new SharedThemeTemplate(
                     this,
                     themeMetadata.getId()+":"+templateMetadata.getName(),
@@ -314,8 +304,7 @@ public class SharedThemeFromDir extends SharedTheme {
                     new Date(templateFile.lastModified()),
                     templateMetadata.getTemplateLanguage(),
                     templateMetadata.isHidden(),
-                    templateMetadata.isNavbar(),
-                    decorator);
+                    templateMetadata.isNavbar());
 
             // add it to the theme
             addTemplate(theme_template);
