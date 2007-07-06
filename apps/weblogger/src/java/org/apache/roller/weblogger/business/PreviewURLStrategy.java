@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -102,11 +103,76 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         }
         
         Map params = new HashMap();
+        if(previewTheme != null) {
+            params.put("theme", URLUtilities.encode(previewTheme));
+        }
         if(previewAnchor != null) {
             params.put("previewEntry", URLUtilities.encode(previewAnchor));
         }
         
         return url.toString() + URLUtilities.getQueryString(params);
+    }
+    
+    
+    /**
+     * Get url for a custom page on a given weblog.
+     */
+    @Override
+    public String getWeblogPageURL(Weblog weblog,
+                                                String locale,
+                                                String pageLink,
+                                                String entryAnchor,
+                                                String category,
+                                                String dateString,
+                                                List tags,
+                                                int pageNum,
+                                                boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer pathinfo = new StringBuffer();
+        Map params = new HashMap();
+        
+        if(absolute) {
+            pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        pathinfo.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        
+        if(locale != null) {
+            pathinfo.append(locale).append("/");
+        }
+        
+        if(previewTheme != null) {
+            params.put("theme", URLUtilities.encode(previewTheme));
+        }
+        
+        if(pageLink != null) {
+            pathinfo.append("page/").append(pageLink);
+            
+            // for custom pages we only allow query params
+            if(dateString != null) {
+                params.put("date", dateString);
+            }
+            if(category != null) {
+                params.put("cat", URLUtilities.encode(category));
+            }
+            if(tags != null && tags.size() > 0) {
+                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+            }
+            if(pageNum > 0) {
+                params.put("page", Integer.toString(pageNum));
+            }
+        } else {
+            // if there is no page link then this is just a typical collection url
+            return getWeblogCollectionURL(weblog, locale, category, dateString, tags, pageNum, absolute);
+        }
+        
+        return pathinfo.toString() + URLUtilities.getQueryString(params);
     }
     
     
