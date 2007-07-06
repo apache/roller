@@ -390,26 +390,21 @@
         <!-- copy in release documents -->
         <copy todir="${build.dist.binary}">
             <fileset dir="${basedir}">
-                <include name="docs/**" />
-                <include name="CHANGES.txt" />
                 <include name="LICENSE.txt" />
                 <include name="NOTICE.txt" />
                 <include name="README.txt" />
-                
-                <exclude name="**/codewright*/**"/>
-                <exclude name="docs/installguide/old/**"/>
-                <exclude name="docs/userguide/old/**"/>
-                <exclude name="docs/testing/**"/>
-                <exclude name="**/CVS/**"/>
-                <exclude name="**/*.bak"/>
-                <exclude name="**/*-hide"/>
-                <exclude name="**/*.diff"/>
-                <exclude name="**/*.patch"/>
-                <exclude name="**/*~"/>
-                <exclude name="**/*.#*"/>
-                <exclude name="**/WS_FTP.LOG"/>
-                <exclude name="**/.nbattrs"/>
-            </fileset>
+            </fileset>            
+            <fileset dir="${basedir}/../.." includes="LICENSE.txt" />
+        </copy>
+        
+        <mkdir dir="${build.dist.binary}/docs"/>
+        <copy todir="${build.dist.binary}/docs">    
+            <fileset dir="${basedir}/docs/installguide"            includes="roller-install-guide.odt" />
+            <fileset dir="${basedir}/docs/installguide/generated"  includes="roller-install-guide.pdf" />            
+            <fileset dir="${basedir}/docs/userguide"               includes="roller-user-guide.odt" />
+            <fileset dir="${basedir}/docs/userguide/generated"     includes="roller-user-guide.pdf" />            
+            <fileset dir="${basedir}/docs/templateguide"           includes="roller-template-guide.odt" />
+            <fileset dir="${basedir}/docs/templateguide/generated" includes="roller-template-guide.pdf" />
         </copy>
         
         <!-- and of course we'll want the webapp too -->
@@ -474,7 +469,7 @@
         </zip>
         
         <!-- Tar and GZip the apache binary unshippables -->
-        <tar destfile="${ro.dist}/required-jars-roller-${ro.version}.tar.gz"
+        <tar destfile="${ro.dist}/hibernate-jars-roller-${ro.version}.tar.gz"
              longfile="gnu"
              compression="gzip">
             
