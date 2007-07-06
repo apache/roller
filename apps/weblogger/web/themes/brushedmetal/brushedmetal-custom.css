@@ -99,6 +99,17 @@ td.hCalendarDayLinked {
 
 /* comments ----------------------------------------------- */
 
+span.error {
+    display: block;
+    background: white;
+    color: #c00;
+    border: 1px solid #c00;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 p.comment-details {
     font-size: 80%;
     color: #999;
