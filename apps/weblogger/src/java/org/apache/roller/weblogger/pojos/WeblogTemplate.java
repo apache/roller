@@ -66,7 +66,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         requiredTemplates = new HashSet();
         requiredTemplates.add("Weblog");
         requiredTemplates.add("_day");
-        requiredTemplates.add("_css");
     }
     
     
