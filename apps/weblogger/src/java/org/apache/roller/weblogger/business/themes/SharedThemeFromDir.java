@@ -288,8 +288,7 @@ public class SharedThemeFromDir extends SharedTheme {
             String contents = loadTemplateFile(templateFile);
             if(contents == null) {
                 // if we don't have any contents then skip this one
-                log.error("Couldn't load theme template file ["+templateFile+"]");
-                continue;
+                throw new ThemeInitializationException("Couldn't load theme template file ["+templateFile+"]");
             }
             
             // construct ThemeTemplate representing this file
