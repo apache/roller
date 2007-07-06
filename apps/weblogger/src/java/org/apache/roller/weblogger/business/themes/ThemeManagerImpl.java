@@ -229,7 +229,8 @@ public class ThemeManagerImpl implements ThemeManager {
                     template.setHidden(themeTemplate.isHidden());
                     template.setNavbar(themeTemplate.isNavbar());
                     template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
-                    template.setDecoratorName(themeTemplate.getDecoratorName());
+                    // NOTE: decorators are deprecated starting in 4.0
+                    template.setDecoratorName(null);
                     template.setLastModified(new Date());
                     
                     // save it

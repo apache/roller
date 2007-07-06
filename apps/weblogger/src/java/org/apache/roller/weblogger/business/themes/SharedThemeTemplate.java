@@ -40,7 +40,6 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String templateLanguage = null;
     private boolean hidden = false;
     private boolean navbar = false;
-    private String decoratorName = null;
     private String  outputContentType = null;
     
     private SharedTheme myTheme = null;
@@ -50,7 +49,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     
     public SharedThemeTemplate(SharedTheme theme, String id, String action, String name, 
             String desc, String contents, String link, Date date, 
-            String tempLang, boolean hid, boolean navbar, String decor) {
+            String tempLang, boolean hid, boolean navbar) {
         
         this.myTheme = theme;
         this.id = id;
@@ -63,18 +62,12 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
         this.templateLanguage = tempLang;
         this.hidden = hid;
         this.navbar = navbar;
-        this.decoratorName = decor;
     }
     
     
+    // NOTE: decorators are deprecated as of 4.0 but we leave this here because
+    //       they need to be left in place for backwards compatability
     public ThemeTemplate getDecorator() {
-        if(decoratorName != null && !id.equals(decoratorName)) {
-            try {
-                return myTheme.getTemplateByName(decoratorName);
-            } catch (WebloggerException ex) {
-                // some kind of error getting decorator
-            }
-        }
         return null;
     }
     
@@ -151,11 +144,11 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     }
 
     public String getDecoratorName() {
-        return decoratorName;
+        return null;
     }
 
     public void setDecoratorName(String decorator) {
-        this.decoratorName = decorator;
+        // no-op
     }
 
     public String getOutputContentType() {
