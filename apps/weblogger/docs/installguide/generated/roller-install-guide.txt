@@ -1,12 +1,16 @@
+﻿
+
+
+
+
+
+
 
 
 
 
 Installation Guide
-
-
-Apache Roller
-Version 3.2
+DRAFT 20070707
 
 
 
@@ -29,502 +33,356 @@ Version 3.2
 
 
 
-
-
-
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  The ASF licenses this file to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.  For additional information regarding copyright in this work, please see the NOTICE file in the top level directory of this distribution.
+Apache Roller Weblogger
+Version 4.0
+July 2007
 
 Table of Contents
-Introduction	4
-STEP 1: Before you install Roller	5
-STEP 2: Unpack the Roller distribution	6
-UNIX example	6
-Windows example	6
-Roller distribution layout	6
-The ROLLER environment variable	6
-STEP 3: Install required third party jars	7
-STEP 3.1: Download and install Hibernate	7
-STEP 3.2: Install JDBC driver jar(s)	7
-UNIX example	7
-Windows example	7
-NOTES	7
-STEP 3.3: Install JavaMail and Activation jars	9
-UNIX example	9
-Windows example	9
-NOTES	9
-STEP 4: Create Roller tables in your database	10
-UNIX example	10
-Windows example	10
-STEP 5: Deploy Roller to your application server	12
-STEP 6: Check your internationalization settings	14
-Check your application server's URI encoding setting!	14
-STEP 7: Setup Roller data directories 	15
-STEP 7.1: Create uploads directory	15
-STEP 7.2: Create search-index directory	15
-STEP 7.3: Create planet-cache directory (optional)	15
-STEP 7.4: Make sure that the logs subdirectory exists	15
-STEP 8: Review Roller configuration	16
-STEP 8.1: Review the WEB-INF/classes/roller.properties file	16
-Where to define custom properties	16
-What properties you should set	16
-STEP 8.2: Change keys in the WEB-INF/security.xml file	17
-STEP 8.3: Verify the database dialet setting in the Hibernate configuration file	17
-STEP 9: Start Tomcat and start using Roller	18
-UNIX example	18
-Windows example	18
-You're done! 	18
-Appendix A: Upgrading an existing Roller installation	19
-Important notes about Roller 3.0	19
-UPGRADE STEP 1: Shutdown and backup your old Roller 	20
-UPGRADE STEP 2: Install the new Roller 	20
-UPGRADE STEP 3: Copy resources and update configs 	20
-3.1 Copy your old resources and other files you've added	20
-3.2 Remove JavaMail jars if duplicated	20
-3.3 Review configuration properties	21
-UPGRADE STEP 4: Upgrade the database 	21
-UPGRADE STEP 5: Startup your app server 	21
-And you're done! 	21
-Appendix B: The WEB-INF/roller.properties file	23
+1   Overview	3
+1.1   Copyright and trademark information	3
+1.2   Feedback	3
+1.3   Acknowledgments	3
+1.4   Modifications and Updates	3
+2   The 5-minute install	4
+3   Ready to roll?	5
+3.1   Tomcat: JavaMail and Activation	5
+3.2   Tomcat: URI encoding needed for I118N	5
+4   Download and un-package Roller	6
+4.1   Installation directory layout	6
+4.2   The Roller Weblogger WAR 	6
+5   Prepare your database for Roller	7
+5.1   Create a database for Roller 	7
+5.2   Check your JDBC driver setup	7
+5.3   MySQL and Oracle considerations	7
+6   Configure Roller	8
+6.1   MySQL example	8
+7   Deploy Roller	9
+7.1   Put roller-custom.properties in classpath	9
+7.2   Deploy Roller via administration console	9
+8   Getting started with Roller	10
+8.1   Navigate to Roller and finish the install 	10
+8.2   Register a user and create a weblog	10
+9   Configuration tips and tricks	12
+9.1   Setting up Roller's Planet feed aggregator	12
+9.2   Changing keys in security.xml	13
+9.3   Using Server-provided database and mail resources	14
+9.4   Manual table creation and upgrade	15
+10   Upgrading Roller	16
+10.1   For those upgrading from Roller 2.x to Roller 4.0	16
+10.2   Backup your old Roller 	17
+10.3   Install and startup the new Roller 	18
+11   roller.properties	19
 
-Introduction
-This document describes how to install Roller in the following environment: 
-Operating System: 		UNIX or Windows based operating system 
-Java development kit: 		Java 2 SE 1.4 SDK (or later)
-Application server: 		Tomcat 5.X (or later)
-Relational Database:		MySQL 4.X (or later)
+1Overview
+This document describes how to install the Apache Roller Weblogger software. It explains what you need to install first, how to download Roller, how to configure Roller and how to install it to your existing Java application server and relational database. If also offers a 5-minute install option   for more advanced folks.
+1.1Copyright and trademark information
+The contents of this document are subject to the terms of the Apache Software License.
 
-NOTE: If you're upgrading from an earlier release of Roller, read Appendix A first
+All trademarks within this document belong to legitimate owners.
 
-What do you need to know to install Roller? You need to know how to use the UNIX or Windows command-line, how to set environment variables, how to create a database in MySQL and how to start and stop Tomcat.
-What about other servlet containers? These instructions target Tomcat, but you should be able to make Roller work with just about any standard Servlet 2.3 compatible application server. For full support of Roller's internationalization features, we recommend Servlet 2.4. If you deploy Roller to a non-Tomcat server, please contribute your install notes to help others who might want to do the same. 
-What about other databases? These instructions target MySQL, but Roller also includes database setup scripts for PostgreSQL 7.X later, Apache Derby, IBM DB2, Oracle and HSQL-DB.
-What platform combinations are known to work? For information on which platforms we can vouch for, see the the Platforms page on the Roller wiki.
+1.2Feedback
+Please direct any comments or suggestions about this document to: user@roller.apache.org
 
+1.3Acknowledgments
+The original version of this document was written by Dave Johnson. The document is currently written and updated by the Apache Roller project of the Apache Software Foundation.
 
-STEP 1: Before you install Roller
-Before you install Roller software you should install and configure the Java development kit, your application server and your database.
-As part of the Tomcat install you should have set the environment variable CATALINA_HOME to point to your Tomcat installation directory. If not, you might want to set it now because we will refer to it in this installation guide. Below are some examples that show how to set this variable. Make sure you substitute the right path to your Tomcat installation.
-For UNIX with bash shell:
-	% export CATALINA_HOME=/opt/jakarta-tomcat-5.5.9
+The general format of this document was based on the documentation template used by the OpenDS project which in turn was based on the templates used by the OpenOffice.org project.
 
-For UNIX with c-shell:
-	% setenv CATALINA_HOME /opt/jakarta-tomcat-5.5.9
+1.4Modifications and Updates
+Date
+Description of Change
+July 2007
+Rewritten for simplified Roller 4.0 installation process
 
-For Windows with DOS shell
-	C> set CATALINA_HOME d:\jakarta-tomcat-5.5.9
+2The 5-minute install
+If you really know what you're doing, you just want to get Roller up-and-running for a quick evaluation and you are using a well-supported platform (e.g. Tomcat and MySQL), you can probably get up and running in about 5-minutes by following the simple instructions on this page. If you're not so confident, then skip this page and go on to Section 3. Here's what you do for the 5-minute install:
 
-NOTES
-For MySQL, make sure you enable UTF-8 support. See the page Setting Up UTF-8 on MySQL page on the Roller wiki for details.
-For MySQL, make sure that TCP/IP networking is enabled. In some versions of MySQL, this option is off by default. See the page Debian MySQL for details. The Connector/J JDBC driver can only access MySQL via TCP/IP. 
+STEP 1: Download Roller and un-package into a directory on your disk via Zip or GNU Tar.
+STEP 2: Create a database for the Roller tables. 
+For exmaple, on MySQL you might do something like this:
+   % mysql -u root -p
+   password: *****
+   mysql> create database rollerdb;
+   mysql> grant all on rollerdb.* to scott@'%' identified by 'tiger';
+   mysql> grant all on rollerdb.* to scott@localhost identified by 'tiger';
 
-STEP 2: Unpack the Roller distribution
-Pick a directory on your computer and unpack the Roller distribution using either GNU tar on UNIX or WinZip on Windows. Here are some examples to show you how you might unpack Roller on your computer.
-UNIX example
-Assuming you download the distribution into your home directory and you'd like to install Roller into /usr/local you might do something like this in the bash shell:
-	% cd /usr/local
-	% tar xzvf ~/apache-roller-3.2.tar.gz
+STEP 3: Create a roller-custom.properties file in your Servlet container's classpath, e.g. on Tomcat you'd put it in common/classes. Put the settings below into the file and substitute your database and mail connection parameters for those in bold.
+        installation.type=auto
+        database.configurationType=jdbc
+        database.jdbc.driverClass=com.mysql.jdbc.Driver
+        database.jdbc.connectionURL=jdbc:mysql://localhost:3306/rollerdb
+        database.jdbc.username=scott
+        database.jdbc.password=tiger
+        mail.configurationType=properties
+        mail.hostName=smtp-server.example.com
+        mail.username=scott
+        mail.password=tiger
 
-That would create the Roller installation directory /usr/local/apache-roller-3.2. 
-Windows example
-You can Use WinZip to extract the Roller distribution file into the directory of your choice. 
-Roller distribution layout
-Once you've extracted the files you'll see that the Roller release contains two directories and a couple of text files:
-	docs			Directory containing Roller documentation
-	webapp/roller		Directory containing rhe Roller web application in WAR directory layout
-	README.txt		Explains what Roller is
-	CHANGES.txt	Lists changes made in each release
-	NOTICE.txt		Copyright notices and credits
-	LICENSE.txt		The Apache Software License
-The ROLLER environment variable
-In this guide, we'll refer to the Roller web application directory using the ROLLER environment variable. In UNIX this will be $ROLLER. In Windows, it will be %ROLLER%. You don't have to set the ROLLER environment variable, we just use it to simplify the installation guide, but here's how you'd do it.
-UNIX example (assuming you installed into /usr/local):
-	% set $ROLLER = /usr/local/apache-roller-3.2/webapp/roller
-Windows example (assuming you installed into c:\)
-	% set %ROLLER% = c:\apache-roller-3.2/webapp/roller
+STEP 4: Check your Servlet container's JDBC and JavaMail setup. Make sure you've got the JDBC driver for your database in your Servlet container's classpath, e.g. on Tomcat place the driver JAR in common/lib. And on Tomcat, if you want to be able to send mail you'll need to add the JavaMail and Activation jars (mail.jar and activation.jar) there too.
+STEP 5: Deploy Roller to your Servlet container using your container's Admin Console deploy Roller as a directory. The Roller WAR directory is in the installation directory under webapp/roller.
+STEP 6: Browse to Roller and get Rollin' (probably at http://localhost:8080/roller). If Roller is up and running, then proceed to Section 8 Getting started with Roller. If Roller isn't up and running and you can 't figure out why, then try the normal installation procedure starting with Section 3 below. 
 
-
-STEP 3: Install required third party jars
-You also need to download and install some third-party jars, jars that we can't include in Roller due to licensing restrictions. These are the JDBC driver, JavaMail and Activation jars.
-STEP 3.1: Download and install Hibernate
-Roller requires Hibernate Version 3.1.2, which you must download separately from Roller. 
-	Download Hibernate 3.1.2 from SourceForge
-	http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz
-Copy the following files from Hibernate into the Roller WEB-INF/lib directory:
-hibernate3.jar
-asm-attrs.jar
-asm.jar
-cglib-2.1.3.jar
-dom4j.1.6.1.jar
-ehcache-1.1.jar
-jdbc2_0-stdext.jar
-jta.jar
-
-The Roller Support project at Java.Net offers some bundles that might make this part of the installation easier. Visit http://roller.dev.java.net for more information.
-STEP 3.2: Install JDBC driver jar(s)
-Download the JDBC driver jar for your database and put it in the classpath of your application server. For example, assuming Tomcat and MySQL, you'd download the J/Connector JDBC driver from mysql.com and you'd place it in the Tomcat common/lib directory.
-UNIX example
-	% cp mysql-connector.jar $CATALINA_HOME/common/lib
-Windows example
-	C> copy mysql-connector.jar %CATALINA_HOME%\common\lib
-NOTES
-For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. If you must use J/Connector/J 3.1.X then please read Installation FAQ page item #13 on the Roller wiki.
-For MySQL 5.X users, we recommend that you use the J/Connector 3.1.X JDBC drivers instead of the newer 3.1.X series, you'll also need to change the Hibernate configuration file to use the MySQL5 dialect (see Section 8.3 for details on that).
-For Oracle users, we recommend that you use the 10g (10.1.0.2 or higher) drivers which should
-be packaged as ojdbc14.jar -- even if operating on Oracle 9 server.
-
-STEP 3.3: Install JavaMail and Activation jars
-If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. Currently, we ship these jars with Roller, but you will need to  move them from the Roller WEB-INF/lib directory and into the Tomcat common/lib directory, or your server's equivalent location.
-UNIX example
-	% mv $ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib
-	% mv $ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib	
-Windows example
-	c> move %ROLLER%\WEB-INF\lib\mail.jar %CATALINA_HOME%\common\lib
-	C> move %ROLLER%\WEB-INF\lib\activation.jar %CATALINA_HOME%\common\lib
-NOTES
-To enable the Roller's e-mail notification features, you'll also need to setup a mail session resource in your application server configuration file (see the next section) and you'll need to configure e-mail notification in the Roller UI.
-STEP 4: Create Roller tables in your database
-Create a new database within your MySQL installation, create a user with all privileges within that database and run the Roller database creation script to create tables within that new database. Roller includes database creation scripts for a variety of database, but MySQL is the most widely used and best supported option. You can find the database creation scripts in the Roller webapp directory $ROLLER/WEB-INF/dbscripts/<dbname>. Here's the list of scripts currently in Roller:
-WEB-INF/dbscripts/mysql/creatdb.sql	
-WEB-INF/dbscripts/postgresql/creatdb.sql	
-WEB-INF/dbscripts/hsqldb/creatdb.sql
-WEB-INF/dbscripts/derby/creatdb.sql
-WEB-INF/dbscripts/db2/creatdb.sql
-WEB-INF/dbscripts/oracle/creatdb.sql
-Here are some examples to show you how you might create the Roller tables in MySQL:
-UNIX example
-	% cd $ROLLER/WEB-INF/dbscripts/mysql
-	% mysql -u root -p
-	password: *****
-	mysql> create database roller;
-	mysql> grant all on roller.* to scott@'%' identified by 'tiger';
-	mysql> grant all on roller.* to scott@localhost identified by 'tiger';
-	mysql> use roller;
-	mysql> source createdb.sql
-	mysql> quit
-Windows example
-	C> cd %ROLLER%\WEB-INF\dbscripts\mysql
-	C> mysql -u root -p
-	password: *****
-	mysql> create database roller;
-	mysql> grant all on roller.* to scott@'%' identified by 'tiger';
-	mysql> grant all on roller.* to scott@'localhost' identified by 'tiger';
-	mysql> use roller;
-	mysql> source createdb.sql
-	mysql> quit
-NOTES
-For MySQL, don't forget to call flush privileges to commit your changes to MySQL.
-To check whether your MySQL is setup properly, use the command line mysql program to connect using the user name and password you created. For example (we use 127.0.0.1 here instead of localhost to ensure that TCP/IP networking is enabled):
-		mysql roller -h 127.0.0.1 -u scott -ptiger
-STEP 5: Deploy Roller to your application server
-To deploy Roller you will need to inform your application server:
-Where to find the Roller installation directory
-How to configure the Roller database data-source under the JNDI name jdbc/rollerdb 
-How to configure the Roller email session under the JNDI name mail/Session
-For Tomcat you can do this by creating what's known as a context configuration file named roller.xml and placing that file in the Tomcat conf/Catalina/localhost directory. 
-
-Example context configuration file for Tomcat 5.0.X users
-
-The portions shown in bold are the ones that you'll probably have to change. Make sure you set the docBase to point to your Roller installation directory. Make sure you set the JDBC connection string to point to your database and the database username and password too.
-
-<Context path="/roller" 
-  docBase="/usr/local/apache-roller-3.2/webapp/roller" debug="0">
-  <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource" />
-  <ResourceParams name="jdbc/rollerdb">
-    <parameter>
-       <name>factory</name>
-       <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
-    </parameter>
-    <parameter>
-       <name>driverClassName</name>
-       <value>com.mysql.jdbc.Driver</value>
-    </parameter>
-    <parameter>        
-       <name>url</name>
-       <value>
-       jdbc:mysql://localhost:3306/roller?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8
-       </value>
-    </parameter>
-    <parameter><name>username</name><value>scott</value></parameter>
-    <parameter><name>password</name><value>tiger</value></parameter>
-    <parameter><name>maxActive</name><value>20</value></parameter>
-    <parameter><name>maxIdle</name><value>3</value></parameter>
-    <parameter><name>removeAbandoned</name><value>true</value></parameter>
-    <parameter><name>maxWait</name><value>3000</value></parameter>
-  </ResourceParams>
-  <!-- If you want e-mail features, un-comment the section below -->
-  <!--
-  <Resource name="mail/Session" auth="Container" type="javax.mail.Session"/>
-    <ResourceParams name="mail/Session">
-      <parameter>
-        <name>mail.smtp.host</name>
-        <value>mailhost.example.com</value>
-      </parameter>
-  </ResourceParams>
-  -->
-</Context>
-Example context configuration file for Tomcat 5.5.X users
-
-The portions shown in bold are the ones that you'll probably have to change. Make sure you set the docBase to point to your Roller installation directory. Make sure you set the JDBC connection string to point to your database and the database username and password too.
-
-<Context path="/roller" 
-  docBase="/usr/local/apache-roller-3.2/webapp/roller" debug="0">
-  <Resource name="jdbc/rollerdb" auth="Container" 
-      type="javax.sql.DataSource"
-    driverClassName="com.mysql.jdbc.Driver"
-    url="jdbc:mysql://localhost:3306/roller?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8"
-    username="scott"
-    password="tiger"
-    maxActive="20"
-    maxIdle="3"
-    removeAbandoned="true"
-    maxWait="3000" />
-  <!-- If you want e-mail features, un-comment the section below -->
-  <!--
-  <Resource name="mail/Session" auth="Container" 
-     type="javax.mail.Session"
-     mail.smtp.host="mailhost.example.com" />
-  -->
-</Context>
-
-NOTES
-Email configuration. If you want to use email notification of comments, group blogging invitations and other events, you'll have  to enable that in your application server. For Tomcat, you can do that by uncommenting the indicated sections of the context configuration file above. No matter what application server you use, you'll also have to uncomment the mail/Session resource reference <resource-ref> near the end of the roller/WEB-INF/web.xml file.
-The max_user_connections error. If Roller starts up fine but later fails and you find an error like the one below in your roller.log file then try dropping your maxActive, maxIdle, and removeAbandoned values. Depending on your database configuration you may have to go pretty low, such as setting maxActive to 6, maxIdle to 3 and removeAbandonedTimeout to 60. 
-	User scott@localhost has more than 'max_user_connections' active connections
-
-
-
-STEP 6: Check your internationalization settings
-Roller's approach to internationalization (I18N) is to do everything in UTF-8. So, if you want I18N to work properly, you'll need to configure your application server and your web server to use UTF-8 encoding. 
-Check your application server's URI encoding setting!
-Make sure that your web application server uses UTF-8 to encode URI's. This allows you to use diacritical characters like '�' in your URLs. This is important for Roller because weblog entry titles are used in URLs. 
-
-For example, in Tomcat the URI encoding is specified in the connectors that are configured in the Tomcat configuration file conf/server.xml. Here's a connector with the URI encoding attribute set properly:
-
-    <Connector port="8080"
-        maxThreads="150" 
-        minSpareThreads="25" maxSpareThreads="75"
-        enableLookups="false" 
-        redirectPort="8443" 
-        acceptCount="100"
-        debug="0" 
-        connectionTimeout="20000"
-        disableUploadTimeout="true" 
-        URIEncoding="UTF-8"  />
+3Ready to roll?
+First, let's make sure you have everything you need to install and run Roller.
+Roller is a database-driven Java web application. To run it you need Java, a Java Servlet container such as Tomcat and a database such as MySQL. More specifically, here's what you need to install and run Roller:
+The Java development kit, specifically the Sun Java 2 SE 1.5 JDK. The computer on which you install Roller should be configured to run with the Java SE 5. Roller 3.x was the last major Roller release to support Java 1.4.2.
+A Java application server, or more specifically a Servlet container that supports the Servlet 2.4 API. Hereinafter, we'll just call this your server. The Roller community tends to use and is best able to answer questions about Tomcat 5.5, Tomcat 6.0, Sun Web Server 7.0 and Glassfish 2.0. 
+A relational database such as MySQL or Apache Derby. The Roller community tends to use and is best able to answer questions about MySQL and Apache Derby, but it is possible to use other databases with Roller. Roller includes database creation scripts for DB2, Derby, HSQL-DB, Microsoft SQL Server, MySQL, Oracle and PostgreSQL.
+If you're using Tomcat, check the Tomcat Considerations section below, otherwise you are ready to move on to Section 4: Download and un-package Roller.
+3.1Tomcat: JavaMail and Activation
+Tomcat does not include the Java Mail and Activation jars that Roller needs for email notification, So, if you like to use Roller's e-mail notification features, you'll need to download those jars and place them in Tomcat's classpath. Download them from Sun (http://java.sun.com/products/javamail) and place them in Tomcat's common/lib directory.
+3.2Tomcat: URI encoding needed for I118N
+Roller supports internationalization (I18N), but on Tomcat some additional configuration is necessary. You must ensure that Tomcat's URI encoding is set to UTF-8. You can do this by editing the Tomcat configuration file conf/server.xml and adding URIEncoding=”UTF-8” to each connector element, as shown below:
+   <Connector port="8080"
+      maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+      enableLookups="false" redirectPort="8443" debug="0" 
+      acceptCount="100" connectionTimeout="20000"
+      disableUploadTimeout="true" 
+      URIEncoding="UTF-8" />
 
 And make sure you do this for every connector through which you use Roller. For example, if you use the AJP connector or HTTPS connector you need to add the URIEncoding="UTF-8" attribute to those connectors as well.
+4Download and un-package Roller
+Download the Apache Roller release file from http://roller.apache.org. If you're a Windows user download the .zip file and use your favorite ZIP program to unzip the release into a directory on your computer's disk. Unix users can download the .tar.gz file and use GNU tar to un-package. 
+4.1Installation directory layout
+Once you've unpackaged the files you'll find a directory structure like this:
 
+The LICENCE.txt and NOTICE.txt files contain the Apache Software License and other legal notices related to the release. The README.txt file just points to the documentation in the docs directory.
+4.2The Roller Weblogger WAR 
+The Roller Weblogger application itself is in the directory webapp/roller and is organized using the standard Java EE WAR directory structure. Generally speaking, you won't need to modify any files in side the director. You can deploy it as is, in directory form, or you can package it up as a .war if you prefer to deploy as a file.
+For example, here's how you'd package it up as a WAR:
+   % cd apache-roller-X.0/webapp/roller
+   % jar cvf ../roller.war *
 
+5Prepare your database for Roller
+Before you can install Roller you'll probably need to some work to prepare your database for Roller. 
+You need some place to put the Roller tables. Some folks call this a table-space, but we refer to it as a database. You need to create a database for Roller, or get your database administrator to do it for you. And second, you need to have a JDBC driver installed for you database of choice.
+If you're installing on Glasfish and using it's built-in JavaDB/Derby database, you can skip this section; there's no need to create a database in Derby and Glassfish already includes the Derby JDBC driver.
+5.1Create a database for Roller 
+If you're luck enough to have your own database administrator, ask them to setup a database for Roller. When they are done, ask them to provide you with this information, you'll need it later:
+Username and password for connecting to database
+JDBC connection URL for database
+JDBC driver class name
+If you don't have a database administrator then you'll have to refer to the documentation for your database and do it yourself. You need to create a database for Roller, protected by username and password. For example, if you're using MySQL you might do something like this:
+   % mysql -u root -p
+   password: *****
+   mysql> create database rollerdb;
+   mysql> grant all on rollerdb.* to scott@'%' identified by 'tiger';
+   mysql> grant all on rollerdb.* to scott@localhost identified by 'tiger';
+5.2Check your JDBC driver setup
+Make sure that you have the correct JDBC driver installed in your server. Usually, this is as simple as downloading the JDBC driver jar(s) and placing it (or them) into your server's classpath. For example, on Tomcat you place them in common/lib.
+5.3MySQL and Oracle considerations
+Based on our experience supporting MySQL, we have the following recommendations:
+For MySQL, make sure that TCP/IP networking is enabled. 
+For MySQL 4.1.x use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series.
+For MySQL 5.X use the J/Connector 3.1.X JDBC drivers instead of the newer 3.1.X series.
+Make sure you enable MySQL's UTF-8 support. See this page for details:
+http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL 
+For Oracle users, use the 10g (10.1.0.2 higher) drivers which should be packaged as ojdbc14.jar, even if operating on Oracle 9 server.
+6Configure Roller
+It is possible for you to configure Roller by creating and editing only one file:
+   roller-custom.properties
+That file is a simple Java properties file, a text file that overrides settings defined in Roller's internal roller.properties file. To configure Roller you look at Roller's internal properties file, decide which properties you need to override and then set those in your roller-custom.properties file.
+You can find the full text of Roller's internal roller.properties file in Section 11 and we encourage you to read it over, but we'll get you started right here and now with a simple example that shows you the bare minimum database configuration settings that you need to run Roller.
+Create a text file named roller-custom.properties with the content below, but replacing the bold/italic text the settings appropriate for your database and mail server.
+   installation.type=auto
+   database.configurationType=jdbc
+   database.jdbc.driverClass=JDBC driver class name]
+   database.jdbc.connectionURL=JDBC connection URL
+   database.jdbc.username=database username
+   database.jdbc.password=database password
+   mail.configurationType=properties
+   mail.hostName=mail server hostname
 
-STEP 7: Setup Roller data directories 
-Roller stores file uploads, search index files, cache files and log files on disk. So before you start, check to make sure the directories that Roller expects exist and are writable by the Tomcat process. 
-STEP 7.1: Create uploads directory
-By default, Roller saves uploaded files under the directory:
+The installation.type=auto property tells Roller to operate in automatic installation mode. In this mode Roller will provide very detailed error output to help you debug database connection problems. If Roller finds that the database exists but its tables are not, it will offer to run the database creation scripts. If find finds that the tables are there, but they are not up-to-date Roller will offer to upgrade them for you. Once your Roller installation is complete and you are ready to go “live” then you should set installation.type=manual.
+6.1MySQL example
+Here is an example roller-custom.properties file that shows how to setup a MySQL connection. It shows the MySQL JDBC driver class name, an example MySQL connection URL and username/password settings for the mail connection.
+   installation.type=auto
+   database.configurationType=jdbc
+   database.jdbc.driverClass=com.mysql.jdbc.Driver
+   database.jdbc.connectionURL=jdbc:mysql://localhost:3306/rollerdb
+   database.jdbc.username=scott
+   database.jdbc.password=tiger
+   mail.configurationType=properties
+   mail.hostName=smtp-server.example.com
+   mail.username=scott
+   mail.password=tiger
 
-	${user.home}/roller_data/uploads
+Next, we'll deploy Roller.
+7Deploy Roller
+Now that you've got the Roller WAR and you've created your roller-custom.properties file, you're ready to deploy Roller to your server. First, deploy your properties file.
+7.1Put roller-custom.properties in classpath
+Roller can look for your properties file in a number of ways and you can see Section 11 for details. The simplest thing for you to do is to place the file in your application server's classpath, by dropping it into a classes directory. On startup, Roller will find it there. Here's how to do it on some popular servers:
+On Tomcat you can simply copy the file into Tomcat's common/classes directory.
+On Glassfish, copy can copy it to your domain's lib/classes directory.
+Now you're ready to deploy Roller itself.
+7.2Deploy Roller via administration console
+Use your server's administration console to deploy the Roller web application. You can deploy as a directory, in which case you'll have to enter the path to your Roller installation's webapp/roller directory. Or you can deploy as a WAR file, in which case you will have to have created a WAR file as we described in Section 4.2. 
+For example, here's the Web Application deployment page in the Tomcat Admin Console:
+TODO Screenshot of Tomcat Admin Console
+And, another example is Web Application deployment page in the Glassfish Admin Console:
+TODO Screenshot of Glassfish Admin Console
+8Getting started with Roller
+You're not quite done with the installation process Now you're ready to start using Roller, so we'll walk you through getting started, registering a user and setting up a blog. We'll also discuss briefly what happens when there is an error. 
+8.1Navigate to Roller and finish the install 
+Navigate to Roller, if you are using a default Tomcat or Glassfish installation then then URL of Roller is probably http://localhost:8080/roller. You will see either a web page of error messages, a web page offering to create database tables for you or web page asking you to complete the installation by registering an admin user and creating a front-page blog. First, let's talk about what happens when things go wrong.
+Problems?
+If there's a problem with your database configuration, Roller will display a page or error messages to help you diagnose the problem. It's possible that you entered the wrong JDBC driver class name, connection URL, username or password. Or perhaps your database is not running. Use the information provided to determine what is wrong, fix it and then redeploy Roller.
+TODO Screenshot of error page
+Automatic tables creation
+If your database configuration is good but Roller cannot find its database tables, then Roller will offer to create those pages automatically for you. If you give the go-ahead, Roller will run the appropriate database creation script for your database and then show you the results. You can then proceed to the next step to setup your first user account and weblog.
+8.2Register a user and create a weblog
+If Roller starts up fine but doesn't find a front-page weblog then it will display the Completing Your Installation below that explains how to register your first user, create your first weblog and setup your site's front page.
+TODO Screenshot of register/create page
+You have to decide what you want as the front-page of your Roller site. If you are using Roller to run your personal weblog, then you probably want your weblog to be the front-page of the site. In this case, create a weblog for yourself, don't choose the front-page theme but do set your weblog as the front-page weblog for the site. 
+If you are using Roller to run a community of multiple weblogs, then you'll probably want to display an aggregated front-page combining all weblogs on the site. In that case, create a weblog to serve as the front-page, set it as the front-page weblog and make sure you set the “aggregated front-page” setting on the Server Admin page.   
+Don't forget: Reset the installation.type flag
+Now that you're done with the installation you should turn off Roller's auto-installation system. Edit your roller-custom.properties file and set:
+    installation.type=manual
 
-Where ${user.home}is the Java system property that normally evaluates to the home directory of the user identity executing the server's JVM process. 
+Then restart your server or Roller so that it accepts the new setting.
+What's next?
+Once you've gotten Roller up and running refer to the Roller User Guide for more information on running your Roller system and your weblog. For information on customizing your weblog, refer to the Roller Template Guide. If you can't find what you want in the documentation then subscribe to the Roller user mailing list and ask your questions there.
+   Roller user and developer mailing lists:
+   http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists 
+9Configuration tips and tricks
+This section covers some tips and tricks that can help you get the most out of Roller. It covers Roller's Planet feed aggregator, Acegi setup and how to setup Roller to use server-provided resources.
+9.1Setting up Roller's Planet feed aggregator
+Roller includes a RSS/Atom feed aggregator that makes it possible to run a site like http://blogs.sun.com which provides weblogs for thousands of writers and an aggregated front-page that displays the most recent posts form those plus dozens of Sun bloggers from other sites such as blogger.com, typepad.com and other services. Here's what you need to do.
+STEP 1: Create a Planet cache directory
+Roller Planet needs a cache directory in which to store the feeds it fetches. By default, Roller Planet will put it's cache in your home directory under roller_data/planetcache. If you want to place the cache somewhere else, you must override the planet.aggregator.cache.dir property in your roller-custom.properties file. For example:
+    planet.aggregator.cache.dir=c:\\roller_data\planetcache
 
-In most cases, this default will probably work fine for you. However, for security reasons some application servers are set up to run as a server user identity whose home directory does not exist or is not writable by the server user itself. If this is the case for your server, override the property uploads.dir in the roller.properties file. See step 8 for more information on the roller.properties file.
-STEP 7.2: Create search-index directory
-By default, Roller creates and maintains its text search index data in files under the directory
-	${user.home}/roller_data/search-index 
-Again, ${user.home} is the Java system property that normally evaluates to the home directory of the user identity executing the server's JVM process. You can specify a different directory by overriding the property search.index.dir in roller.properties. See step 8 for more information on the Roller configuration override file.
-STEP 7.3: Create planet-cache directory (optional)
-You only need to do this if you are planning on using Roller's integrated planet aggregator: create a directory for the planet cache (e.g. /var/roller/planet-cache).  See the Roller User Guide for more information on configuring Roller's built-in aggregator.
-STEP 7.4: Make sure that the logs subdirectory exists
-The roller.log file is written to the location:
+Whether you override that property or not, you must create the cache directory. Planet will not work unless the cache directory exists and is writable by Roller.
+STEP 2: Enable Planet Roller properties
+Enable Planet by adding the following to your roller-custom.properties file:
+   planet.aggregator.enabled=true
 
-	${catalina.base}/logs/roller.log
+   # Tasks which are enabled.  Only tasks listed here will be run.
+   tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\
+   TurnoverReferersTask,PingQueueTask,RefreshPlanetTask,SyncWebsitesTask
+   
+   # Set of page models specifically for site-wide rendering
+   rendering.siteModels=\
+   org.apache.roller.weblogger.ui.rendering.model.SiteModel,\
+   org.apache.roller.weblogger.ui.rendering.model.PlanetModel
 
-Make sure that that this directory exists. Tomcat 5.0.X users will normally have this directory by default. Tomcat 5.5.x users may need to create this subdirectory under their base directory. 
-STEP 8: Review Roller configuration
-Before you start Roller for the first time, review your configuration.
-STEP 8.1: Review the WEB-INF/classes/roller.properties file
-Roller tries to pick a good set of configuration defaults which should let anyone start up the application without much work, but here are a few properties which are custom to each install and should be set before you start up Roller. We'll first talk about what ways there are for defining your custom Roller configuration, then show which properties we think you should set.  NOTE: the default roller.properties file is shown in Appendix B.
-Where to define custom properties
-There are three ways you can alter the default configuration for Roller. 
+Those property settings enable Planet and enable the Planet tasks, both the RefreshPlanetTask, which runs every hour and fetches all RSS/Atom feed subsciptions, and the SyncWebsitesTask, which runs every midnight and ensures that each weblog in the Roller system is represented by a subscription in the Planet aggregator. To enable usage of the PlanetModel in the front-page weblog, we also override the rendering.siteModels property.
+Once you've made those property settings restart Roller and proceed to the next step.
+Display your Planet aggregations
+You can use Roller's UI to add external RSS/Atom feeds to the Planet setup. To display these feeds you'll need to do a little template customization. The easier way to get started is to Roller's existing Front-Page theme. Here's how.
+Create a weblog to server as the front-page of your Roller site. Start with the Front-Page theme and customize it. Edit the weblog template and look for the part that mentions PLANET-entries. Comment-out the SITE-WIDE part and un-comment the PLANET-entries part. The double hash “##” marks indicate a commented-out line. The code should look like this:
 
-1) Define a roller-custom.properties file and place it somewhere at the root of one of your classpath locations. This is the recommended way to override Roller configuration properties. For example:
+   ## 1) SITE-WIDE entries (the default)
+   ##set($pager = $site.getWeblogEntriesPager($since, $maxResults))
 
-	$TOMCAT_HOME/common/classes/roller-custom.properties
+   ## 2) PLANET-entries
+   #set($pager = $planet.getAggregationPager($since, $maxResults))
 
-2) Specify a custom properties file via JVM option. This is another good option but is more dependant on what servlet container you use. For example:
-
-	# this is how you might do it for tomcat
-	JAVA_OPTS="-Droller.custom.config=/path/to/properties/file"
-	export $JAVA_OPTS
-	$TOMCAT_HOME/bin/startup.sh
-What properties you should set
-We are going to assume you have defined a roller-custom.properties file and placed it in your classpath somewhere. To override any of the default Roller properties you simply add a line with the proper key and the new value you wish to use. 
-
-Here is a sample roller-custom.properties with the few properties that should be overridden.
- 
-	uploads.dir=/app/roller/roller_data/uploads
-	search.index.dir=/app/roller/roller_data/search-index
-     passwds.encryption.enabled=true
-
-	# etc, etc, etc ... any other properties you want to override
-
-NOTE: Setting password encryption to true is a very good idea for new Roller sites, but if you are upgrading an existing Roller site you'll need to come up with a strategy for converting your old unencrypted passwords before you turn encryption on.
-STEP 8.2: Change keys in the WEB-INF/security.xml file
+With that in place, your front-page will be display your Planet entries. You can find your Planet feeds at the following URLs:
+TODO Planet feed URLs
+9.2Changing keys in security.xml
 Starting with version 2.1, Roller uses the Acegi security infrastructure. Several of the security features rely on keys that are intended to be site-specific. These keys are used to compute HMAC (hash-based message authentication code) values for Remember Me cookies. Knowledge of these keys could allow an attacker to forge invalid cookies, and thereby gain unauthorized access to your Roller installation (at the application level). 
-Roller ships with default values, and these should assumed to be widely known. You should change your keys to be secret values specific to your own site. 
-Here is how to change the keys. 
+Roller ships with default values, and these should assumed to be widely known. You should change your keys to be secret values specific to your own site (the reason you should change the anonymous provider key is that a granted authorities list is embedded within the anonymous authentication token). Here is how to change the keys. 
 1.Find your WEB-INF/security.xml file and open it in a text editor.
 2.For the beans with ids "anonymousAuthenticationProvider" and "anonymousProcessingFilter" change the value field of the property with name="key" to be different from the default value of "anonymous". You can use any string value of your choosing. It should be a secret specific to your site. Use the same key value in these two beans; they must match.
 3.For the beans with ids "rememberMeServices" and "rememberMeAuthenticationProvider" change the value field of the property with name="key" to be different from the default value of "rollerlovesacegi". You can use any string value of your choosing. It should be a secret specific to your site. Use the same key value in these two beans; they must match 
 
-NOTES 
-The reason one should change the anonymous provider key is that a granted authorities list is embedded within the anonymous authentication token.
-STEP 8.3: Verify the database dialet setting in the Hibernate configuration file
-If you're using MySQL 4.X for Roller, then you can skip this step.
-If you're using some other database with Roller, then you must check the Hibernate dialect setting in the file WEB-INF/classes/hibernate.cfg.xml.  In that file, you'll see the section of code shown below. The line shown in bold is the current dialect setting. If you want to switch to another database, move the MySQLDialect line inside the <!-- --> comments and replace it with the line for your database of choice. 
+9.3Using Server-provided database and mail resources
+It's easiest to setup the database connection using the 'jdbc' approach and the mail connection using 'properties' but in some cases you might want to use the datasource and mail session resources provided by your application server instead. You might do this for a couple of reasons, for example you might want to take advantage of the database connection pool management that is built into your server. Or, your boss might want everything to be managed via your server's Admin Console. No matter the reason, it's easy to do in Roller.
+Instead of setting up your database and mail connections in roller-custom.properties like this:
+   installation.type=auto
 
-<!-- select SQL dialect, MySQL 3.X or 4.X by default -->
-<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+   database.configurationType=jdbc
+   database.jdbc.driverClass=JDBC driver class name]
+   database.jdbc.connectionURL=JDBC connection URL
+   database.jdbc.username=database username
+   database.jdbc.password=database password
 
-<!--
-If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle, SQLServer then use the right dialect   
-<property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
-<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-<property name="dialect">org.hibernate.dialect.DB2Dialect</property>
-<property name="dialect">org.hibernate.dialect.DerbyDialect</property>
-<property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
-<property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
+   mail.configurationType=properties
+   mail.hostName=mail server hostname
 
-For MySQL 5.X, use the MySQL5 dialect and J/Connector 3.1.X
-<property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
--->
+You do it like this:
+    installation.type=auto
 
+    database.configurationType=jndi
+    database.jndi.name=jdbc/rollerdb
 
-STEP 9: Start Tomcat and start using Roller
-Start your Servlet Container, open your web browser, browse to the Roller start page and start using Roller. 
-UNIX example
-	% cd $CATALINA_HOME/bin
-	% ./startup.sh
-Windows example
-	C> cd %CATALINA_HOME%\bin
-	C> startup
+    mail.configurationType=jndi
+    mail.jndi.name=mail/Session
 
-If you installed  Roller on Tomcat then your Roller start page URL is probably:
+The database.configurationType=jndi setting tells Roller to look up it's datasource via Java Naming and Directory Interface (JNDI). Roller will look for a datasource with the JNDI name jdbc/rollerdb. You must set that datasource up in your server.
+The mail.configurationType=jndi setting tells Roller to look up it's mail sessions via JNDI. Roller will look for a mail session provider with the JNDI name mail/Session. You must set that provider up in your server. Let's discuss how to do that on Tomcat.
 
-	http://localhost:8080/roller
+Setting up database and mail resources on Tomcat 
+There are a couple of different ways to setup database and mail resources on Tomcat. One way is to provide a Context Configuration file. Here's how to do that on Tomcat 5.5 and 6.0. 
+Instead of deploying Roller via the Tomcat Admin Console or by copying it to Tomcat's webapps directory, you will create a Context Configuration file that tells Tomcat where to find Roller and sets up the datasource and mail session resources needed by Roller. 
+First, create new file called roller.xml with the content below, but substitute your own values where you see the bold text.
+    <Context path="/roller" 
+        docBase="/usr/local/apache-roller-4.0/webapp/roller" debug="0">
 
-When Roller starts up, it will display a startup page that gives you instructions on how to complete the installation by creating a Roller user account, creating a weblog and designating the front-page weblog for the site. Follow those instructions and . . . 
-You're done! 
-Roller should be working perfectly now. If not, then please consult the Installation FAQ page on the Roller wiki and then check with the experts on the Roller mailing lists. Somebody has probably encountered the very same problems that you are encountering. 
+        <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource"
+            driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8"
+            username="scott"
+            password="tiger"
+            maxActive="20" maxIdle="3" removeAbandoned="true" maxWait="3000" />
 
-Appendix A: Upgrading an existing Roller installation
-This document describes how to upgrade an existing installation to the latest release of Roller by upgrading the Roller database and replacing the old Roller files (which are typically found in tomcat/webapps/roller) with the new release. The steps are:
-STEP 1: Shutdown and backup your old Roller
-STEP 2: Install the new Roller
-STEP 3: Copy old configuration
-STEP 4: Upgrade the database
-STEP 5: Startup Tomcat 
-Important notes for those upgrading from Roller 2.x to Roller 3.2
-WARNING! Roller 3.0 was a major release and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of the new URL structure and the new template system.
-The new URL structure
-The most significant change is the new URL structure - we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are redirected (using HTTP 301) redirects to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
+        <Resource name="mail/Session" auth="Container" type="javax.mail.Session" 
+            mail.smtp.host="mailhost.example.com" />
+    </Context>
+
+Second, place your roller.xml file in conf/Catalina/localhost directory and third, restart Tomcat and Roller will be deployed.
+9.4Manual table creation and upgrade
+If you would rather create your database tables yourself instead of letting Roller do it automatically, you can. Instead of enabling automatic installation you should disable it by putting this in your roller-custom.properties file:
+    installation.type=manual
+
+Now you've got to run the database creation script. You can find the database creation scripts in the webapp/roller/WEB-INF/classes/dbscripts directory. You'll find a createdb.sql script for each of the databases we hope to support.
+And if you are upgrading Roller, you'll have to run the migration scripts. You'll find those under the dbscripts directory too.
+10Upgrading Roller
+This section describes how to upgrade an existing Roller installation to the latest release of Roller by shutting down, backing up and then following the installation instructions with a couple of key exceptions. But first, there is some required reading for those upgrading from ancient versions of Roller.
+10.1For those upgrading from Roller 2.x to Roller 4.0
+Roller 3.0 and Roller 4.0 were major releases and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of them and especially the new URL structure and the new template system.
+New URL structure
+The most significant change is the new URL structure – we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
 	http://<hostname>/roller/page/<weblog-handle>
 To use the new format, which is:
 	http://<hostname>/roller/<weblog-handle>
 Unfortunately, some custom templates that use relative URLs will have problem with this new URL structure. So, before you go live you should set-up a test server and allow your users to take a look at their weblogs.
-The new template system
+New template system
 We've developed a completely new and greatly improved template system for Roller, which includes new models and new macros. We want to encourage people to start using this new system for all new template and theme development, so we have made it the default. And, by default, we've turned off the old system. 
-So, if you are upgrading and you want your weblogs to work, you MUST override this Roller property to enable the old "legacy" template system to work:
+So, if you are upgrading and you want your weblogs to work, you must override this Roller property to enable the old “legacy” template system to work:
 	rendering.legacyModels.enabled=true
-See section 8 for information on overriding Roller startup properties.
+See Section 11 for information on overriding Roller startup properties.
+New task management system
+In Roller 3.1 we changed the scheduled task properties, so if you were overriding  the tasks.daily or tasks.hourly properties you need to change your roller-custom.properties file. Refer to the notes in Section 11   roller.properties in the Scheduled Tasks Configuration area.
+New package names
+In Roller 3.0 or package names went from from org.roller to org.apache.roller. In Roller 4.0 they've changed again to org.apache.roller.weblogger. So check your configuration files for references to the old package names. And if you created any plugins, you'll have to recompile them against the new code base.
 Non-core themes removed
 The Roller project is establishing a community site for sharing and maintaining of themes and plugins. 
 From now only, Roller will ship with only a core set of four themes (Basic, BrushedMetal, Sotto and a new Frontpage themes, which is just for site-wide front-page weblogs) . All other themes have been removed from Roller and moved to the Roller Support project at Java.net (http://roller.dev.java.net). If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
 Non-core plugins removed
 The same applies to plugins. The JSPWiki, Textile and Read More plugins have also been moved to the Roller Support project at Java.net (http://roller.dev.java.net) to become part of a community maintained repository. If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
-UPGRADE STEP 1: Shutdown and backup your old Roller 
-Before you get started with your upgrade, you should shutdown your existing Roller install, make a backup of your data, and move the old Roller files out of the way. Here is an example of how you'd do this with a Tomcat/MySQL setup: 
-Run shutdown.sh to stop Tomcat, for example: 
+10.2Backup your old Roller 
+Before you get started with your upgrade, shutdown your existing Roller install and make a backup of your Roller data. 
+Backup your database to somewhere safe on your system or to a remote file-system. Here are a couple of examples: of how to do that on various databases:
+On MySQL you create a dump file
+mysqldump -u scott -p rollerdb > /somewhere/safe/roller.dmp
+With PostgreSQL you can do the same thing
+pg_dump -h 127.0.0.1 -W -U scott rollerdb > /somewhere/safe/roller.db
+And backup any other data. Make a copy of your Roller data directory, i.e. the one with your Roller resources and search-index files. If you added or modified any files within your old Roller web application directory, then you'll want to backup that whole directory. 
+Don't store files inside of Roller
+If you do, you'll have to move them around on every Roller upgrade. Put your uploads and themes in a separate directory and point to them via the upoads.dir and themes.dir properties.
+If you're upgrading from an older version of Roller you may have been storing uploaded files inside the Roller web application, in a /resources subdirectory. In Roller 4.0 the default is to store those files your home directory under roller_data/uploads, so you'll have to copy your uploads there. If you want to change the location of the uploads directory, overload the property upoads.dir.
 
-   % cd $CATALINA_HOME/bin
-   % ./shutdown.sh
-Backup your database to somewhere safe on your system or to a remote file-system, for example if you use MySQL you might do something like this:
+10.3Install and startup the new Roller 
+Follow the normal installation instructions for the new version of Roller, but...
+When creating your roller-custom.properites, copy of your old one. Carefully review each property and compare it to the property settings in the Roller 4.0 property file in Section 11. 
+Don't create a new database for Roller. Instead point Roller to your existing Roller database. This is completely safe because you created a backup of your database (right?).
+When you deploy and startup, Roller will detect that your database needs to be upgraded and it will offer to run each of the migrations scripts necessary to upgrade you from your old version to the new version of Roller.
+NOTE: if you would rather run the database migration scripts yourself, you can. See Section 9.4.
+NOTE: On Tomcat, before startup you should delete the contents of the Tomcat work directory
+11roller.properties
 
-   % mysqldump -u scott -p rollerdb > \
-   /somewhere/safe/roller-backup-20050420.dmp
-
-Here's an example for PostgreSQL users: 
-
-   pg_dump -h 127.0.0.1 -W -U scott rollerdb > roller.db
-
-Move your Roller files to somewhere safe, for example: 
-
-   % cd $CATALINA_HOME/webapps
-   % mkdir /somewhere/safe/roller-old
-   % mv roller /somewhere/safe/roller-old
-UPGRADE STEP 2: Install the new Roller 
-Follow the normal installation instructions to install Roller, except: 
-Don't create a new database for Roller, instead point the new Roller to your old Roller database 
-DO NOT start Tomcat when you are done with the installation, we'll do that later 
-UPGRADE STEP 3: Copy resources and update configs 
-3.1 Copy your old resources and other files you've added
-User uploaded files are, by default, stored in the /resources sub-directory of the Roller context directory. You should copy your old resources directory into your new Roller installation. 
-For example, on UNIX you can use cp -r to copy the whole directory: 
-   % cd %CATALINA_HOME/webapps/roller
-   % cp -r /somewhere/safe/roller-old/roller/resources .
-NOTE: If you have any new themes under roller/themes, make sure to copy those as well. 
-
-3.3 Review configuration properties
-Review properties as described in STEP #8 of the installation guide.
-NOTE: In Roller 3.1 we changed the scheduled task properties, so if you were overriding  the tasks.daily or tasks.hourly properties you need to change your roller-custom.properties file. Refer to the notes in roller.properties in the section "Scheduled Background Tasks" for details.
-
-NOTE: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
-
-NOTE: The files required for Roller's JSPWiki plugin, Ekit editor and Javascript enhanced editor have been removed from the Roller distribution. If you'd like to continue to use these plugins, please visit the Roller Support project on Java.Net (http://roller.dev.java.net).
-UPGRADE STEP 4: Upgrade the database 
-Use the appropriate database upgrade script to upgrade your database. To do this, login to your database and run one (or more) of the Roller upgrade scripts located in Roller's WEB-INF/dbscripts directory that corresponds to your database. There's a directory for MySQL, PostgreSQL, HSQLDB and more. 
-The database script directories 
-WEB-INF/dbscripts/mysql 
-WEB-INF/dbscripts/postgresql 
-WEB-INF/dbscripts/hsql 
-and more... 
-There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.3, which was the last release before 3.0 you'll need to run three scripts: 230-to-240-migration.sql, 240-to-300-migration.sql (Roller 2.4 was never officially released) and finally 300-to-310-migration.sql. For example, here's how you'd do that for a MySQL database running on UNIX: 
-    % cd $CATALINA_HOME/webapps/roller/WEB-INF/dbscripts/mysql
-    % mysql -u root -p
-    password: *****
-    mysql> use roller;
-    mysql> source 230-to-240-migration.sql
-    mysql> source 240-to-300-migration.sql
-    mysql> source 300-to-310-migration.sql
-    mysql> quit
-
-If you're upgrading from an earlier release you'll have to run each of the older scripts in order to upgrade your database.
-
-UPGRADE STEP 5: Startup your app server 
-Use the standard Tomcat startup.sh (or startup.bat on Windows) script to start Tomcat. As Roller starts up, it will perform some final steps to upgrade your database, this may take few seconds longer than your average Roller startup. 
-NOTE: before you startup Tomcat, you should remove contents of the Tomcat work directory, a temporary, it may contain old classes from your previous Roller installation directory.
-And you're done! 
-If Roller doesn't come up, check the logs for exceptions and error messages. You should see these messages in the tomcat/logs/catalina.out file and in tomcat/logs/roller.log. If you still can't diagnose and fix your startup program, then subscribe to the Roller user mailing list for help. If there are any interesting messages in the log files, send those along too. 
-Appendix B: The WEB-INF/roller.properties file
-This file defines the default start-up properties for Roller. See step 8 for instructions on how to override the properties in this file.
-# Licensed to the Apache Software Foundation (ASF) under one or more
-#  contributor license agreements.  The ASF licenses this file to You
-# under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.  For additional information regarding
-# copyright in this work, please see the NOTICE file in the top level
-# directory of this distribution.
-
-# roller.properties
-#
 # This file is for meant for Roller deployment properties
 # Any properties that don't change at runtime are defined here
 #
@@ -547,30 +405,70 @@ This file defines the default start-up properties for Roller. See step 8 for ins
 #           each of you roller installations.
 #
 # properties in this file are accessed like this ...
-#    RollerConfig.getProperty("propname");
+#    WebloggerConfig.getProperty("propname");
+
+#-----------------------------------------------------------------------------
+# Table of contents
+#-----------------------------------------------------------------------------
+
+# -- Required configuration settings
+# -- Directory settings
+# -- Feature specific settings
+# -- Scheduled tasks configuration
+# -- Cache configuratation
+# -- Security settings
+# -- Rendering system
+# -- Weblog ping system
+# -- Pluggable backend, page and editor plugins
+# -- Other settings
+# -- Experimental, deprecated and "undocumented" settings
+
+
+#-----------------------------------------------------------------------------
+# Required configuration settings
+#-----------------------------------------------------------------------------
+
+# Installation type 'auto' or 'manual'
+# - Set to 'auto' if you'd like tables to be auto-created if they are not found
+#   on startup and auto-upgraded if they need it.
+# - Set to 'manual' if you'd want to run the SQL scripts by hand. 
+installation.type=manual
+
+
 
 #---------------------------------
 # Database configuration settings
 
-# Hibernate dialect: You must override this to use a database other than MySQL4
-hibernate.dialect=org.hibernate.dialect.MySQLDialect
+# Specify database configuration type of 'jndi' or 'jdbc'
+database.configurationType=jndi
+
+# For database configuration type 'jndi',this will be used
+database.jndi.name=jdbc/rollerdb
+
+# For database configuration type of 'jdbc', you MUST override these
+database.jdbc.driverClass=
+database.jdbc.connectionURL=
+database.jdbc.username=
+database.jdbc.password=
 
 #---------------------------------
-# User management settings
+# Mail server connection parameters
 
-# True to enable group blogging. False to prevent users from creating more 
-# than one weblog and from joining other weblogs.
-groupblogging.enabled=true
+# Specify mail configuration type of 'jndi' or 'properties'
+mail.configurationType=jndi
 
-#---------------------------------
-# Property expansion settings
+# For mail configuration type 'jndi', this will be used
+mail.jndi.name=mail/Session
 
-# Values of the properties in this list get system property expansion 
-# applied to them when loaded.
-config.expandedProperties=uploads.dir,search.index.dir
+# For database configuration type of 'properties', you MUST override these
+mail.hostname=
+mail.username=
+mail.password=
 
-#----------------------------------
-# Upload settings
+
+#-----------------------------------------------------------------------------
+# Directory settings
+#-----------------------------------------------------------------------------
 
 # The directory in which Roller will upload files
 uploads.dir=${user.home}/roller_data/uploads
@@ -578,112 +476,195 @@ uploads.dir=${user.home}/roller_data/uploads
 # The context path under which resoures will be made available 
 uploads.url=/resources
 
-#----------------------------------
-# Themes settings
-
 # The directory in which Roller will look for themes
 themes.dir=${webapp.context}
 
+# Directory in which search index is to be created 
+# (delete this directory to force Roller to recreate the entire search index)
+search.index.dir=${user.home}/roller_data/search-index
+
+# If you enable Planet (see below), then you must specify the path to a cache
+# directory that exists and is writable by the Roller process 
+planet.aggregator.cache.dir=${user.home}/roller_data/planetcache
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------
+# Feature specific settings
+#-----------------------------------------------------------------------------
+
+# True to enable group blogging. False to prevent users from creating more 
+# than one weblog and from joining other weblogs.
+groupblogging.enabled=true
+
 #----------------------------------
-# Search index settings
+# search
 
 # Enables indexing of weblog entries and comments and enables search servlet
 search.enabled=true
-
-# Directory in which search index is to be created (delete this directory to
-# force Roller to recreate the entire search index)
-search.index.dir=${user.home}/roller_data/search-index
 
 # Whether or not to include comments in the search index.  If this
 # is false, comments are not included in the index.
 search.index.comments=true
 
 #----------------------------------
-# Rendering system settings.
+# comments and trackbacks
 
-# Are the old pre-3.0 models and macros enabled?
-rendering.legacyModels.enabled=false
+comment.notification.hideCommenterAddresses=false
 
-# The set of default Roller renderer factories.
-rendering.rollerRendererFactories=\
-org.apache.roller.ui.rendering.velocity.VelocityRendererFactory
+# comment throttleing
+comment.throttle.enabled=false
+comment.throttle.threshold=25
+comment.throttle.interval=60
+comment.throttle.maxentries=250
 
-# The set of user defined renderer factories.  These are prepended to the list above.
-rendering.userRendererFactories=
+# Plugable comment authentication
+comment.authenticator.classname=\
+org.apache.roller.weblogger.ui.rendering.plugins.comments.MathCommentAuthenticator
 
-# The set of default Roller request mappers
-rendering.rollerRequestMappers=\
-org.apache.roller.ui.rendering.WeblogRequestMapper
+# pluggable comment validation
+comment.validator.classnames=\
+org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator,\
+org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator,\
+org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator
+#org.apache.roller.weblogger.ui.rendering.plugins.comments.AkismetCommentValidator
 
-# The set of user defined request mappers.  These are prepended to the list above.
-rendering.userRequestMappers=
+comment.validator.excessLinks.threshold=3
+comment.validator.excessSize.threshold=1000
+#comment.validator.akismet.key=<get one at wordpress.com>
 
-# Url path elements which can NEVER be considered a weblog url
-# each represents a url at the application root, i.e. /<elem>/*
-rendering.weblogMapper.rollerProtectedUrls=\
-roller-ui,images,theme,themes,CommentAuthenticatorServlet,\
-index.jsp,favicon.ico,robots.txt,\
-page,flavor,rss,atom,language,search,comments,rsd,resource,xmlrpc,planetrss
+# enables site full blacklist check on comment posts (default: true)
+site.blacklist.enable.comments=true
 
-# Set of user defined protected urls.  These are added to the set above.
-rendering.weblogMapper.userProtectedUrls=
+# enables site full blacklist check at time of trackback post (default: true)
+site.blacklist.enable.trackbacks=true
 
-# Set of models to be made available for weblog page rendering
-rendering.pageModels=\
-org.apache.roller.ui.rendering.model.PageModel,\
-org.apache.roller.ui.rendering.model.ConfigModel,\
-org.apache.roller.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.ui.rendering.model.URLModel,\
-org.apache.roller.ui.rendering.model.MessageModel,\
-org.apache.roller.ui.rendering.model.CalendarModel,\
-org.apache.roller.ui.rendering.model.MenuModel
+# enables partial blacklist check (not including blacklist.txt) for each incoming referrer
+site.blacklist.enable.referrers=true
 
-# Set of models to be made available for weblog feed rendering
-rendering.feedModels=\
-org.apache.roller.ui.rendering.model.FeedModel,\
-org.apache.roller.ui.rendering.model.ConfigModel,\
-org.apache.roller.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.ui.rendering.model.URLModel,\
-org.apache.roller.ui.rendering.model.MessageModel
 
-# Set of models to be made available for weblog search rendering
-rendering.searchModels=\
-org.apache.roller.ui.rendering.model.SearchResultsModel,\
-org.apache.roller.ui.rendering.model.ConfigModel,\
-org.apache.roller.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.ui.rendering.model.URLModel,\
-org.apache.roller.ui.rendering.model.MessageModel,\
-org.apache.roller.ui.rendering.model.CalendarModel,\
-org.apache.roller.ui.rendering.model.MenuModel
 
-# Set of models to be made available for weblog page *preview* rendering
-# NOTE: this *does* have some differences between the pageModels
-rendering.previewModels=\
-org.apache.roller.ui.rendering.model.PreviewPageModel,\
-org.apache.roller.ui.rendering.model.ConfigModel,\
-org.apache.roller.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.ui.rendering.model.PreviewURLModel,\
-org.apache.roller.ui.rendering.model.MessageModel,\
-org.apache.roller.ui.rendering.model.CalendarModel,\
-org.apache.roller.ui.rendering.model.MenuModel
 
-# Set of page models specifically for site-wide rendering
-rendering.siteModels=\
-org.apache.roller.ui.rendering.model.SiteModel
 
-# Velocity settings
-velocity.properties=/WEB-INF/velocity.properties
+# Trackback protection. Set this only if you need to limit the URLs to
+# which users may send trackbacks. Regex expressions are allowed, for example:
+# trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*
+trackback.allowedURLs=
 
-# Old velocity macro libraries
-velocity.oldMacroLibraries=\
-deprecated/roller.vm,deprecated/bookmark.vm,deprecated/comments.vm,\
-deprecated/navbar.vm,deprecated/newsfeed.vm,deprecated/referer.vm,\
-deprecated/atommacros.vm,deprecated/rssmacros.vm,deprecated/user.vm,\
-deprecated/weblog.vm,deprecated/website.vm
 
 #----------------------------------
-# Cache settings.
-# Remember ... times are in seconds
+# Planet Aggregator settings
+
+# Set to true to enable the Planet aggregator. You also need to enable the 
+# RefreshRollerPlanetTask task below to get the feed fetcher running.
+planet.aggregator.enabled=false
+
+# Planet backend guice module, customized for use with Weblogger
+planet.aggregator.guice.module=\
+org.apache.roller.weblogger.planet.business.jpa.RollerPlanetModule
+
+# Number of queries allowed per day
+planet.aggregator.technorati.limit=500
+
+
+#----------------------------------
+# referrer processing
+
+# Enable built-in referrer processing?
+referrers.processing.enabled=true
+
+# Change to true if you want to process referrers asynchronously.
+# You can choose how many threads to use and sleep time (in seconds) 
+referrers.asyncProcessing.enabled=false
+referrers.queue.numWorkers=3
+referrers.queue.sleepTime=10
+
+# Robot check in referral processing.  If this pattern is set and the User-Agent 
+# in the request matches this pattern, all referral processing is skipped; this
+# means that the referral spam check is skipped, the request is allowed to 
+# proceed, but the referrer is not recorded and hit count is not incremented.  
+# Recommended for large sites that get a lot of legitimate crawler bot traffic.
+# The pattern here is a suggestion that has been reported to work well.
+#referrer.robotCheck.userAgentPattern=.*(slurp|bot|java).*
+
+
+#-----------------------------------------------------------------------------
+# Scheduled tasks configuration
+#-----------------------------------------------------------------------------
+
+# Scheduled Background Tasks ... all times are in minutes.
+#
+# Task properties should follow the given format ...
+#     tasks.<taskname>.<prop>=<value>
+#
+# The *enabled* tasks are defined by tasks.enabled=<taskname>[,<taskname>]
+
+# Tasks which are enabled.  Only tasks listed here will be run.
+tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,TurnoverReferersTask,PingQueueTask
+
+
+# client identifier.  should be unique for each instance in a cluster.
+tasks.clientId=defaultClientId
+
+# Publish scheduled weblog entries
+tasks.ScheduledEntriesTask.class=org.apache.roller.weblogger.business.runnable.ScheduledEntriesTask
+tasks.ScheduledEntriesTask.startTime=immediate
+tasks.ScheduledEntriesTask.interval=1
+tasks.ScheduledEntriesTask.leaseTime=30
+
+# Reset hit counts
+tasks.ResetHitCountsTask.class=org.apache.roller.weblogger.business.runnable.ResetHitCountsTask
+tasks.ResetHitCountsTask.startTime=startOfDay
+tasks.ResetHitCountsTask.interval=1440
+tasks.ResetHitCountsTask.leaseTime=30
+
+# Reset referer counts
+tasks.TurnoverReferersTask.class=org.apache.roller.weblogger.business.runnable.TurnoverReferersTask
+tasks.TurnoverReferersTask.startTime=startOfDay
+tasks.TurnoverReferersTask.interval=1440
+tasks.TurnoverReferersTask.leaseTime=30
+
+# Ping processor, does sending of pings
+tasks.PingQueueTask.class=org.apache.roller.weblogger.business.pings.PingQueueTask
+tasks.PingQueueTask.startTime=immediate
+tasks.PingQueueTask.interval=5
+tasks.PingQueueTask.leaseTime=30
+
+# Sync Roller weblogs with planet
+tasks.SyncWebsitesTask.class=org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask
+tasks.SyncWebsitesTask.startTime=startOfDay
+tasks.SyncWebsitesTask.interval=1440
+tasks.SyncWebsitesTask.leaseTime=30
+
+# Refresh entries for planet feeds
+tasks.RefreshRollerPlanetTask.class=org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask
+tasks.RefreshRollerPlanetTask.startTime=startOfHour
+tasks.RefreshRollerPlanetTask.interval=60
+tasks.RefreshRollerPlanetTask.leaseTime=30
+
+# Technorati rankings for planet feeds
+tasks.TechnoratiRankingsTask.class=org.apache.roller.weblogger.planet.tasks.TechnoratiRankingsTask
+tasks.TechnoratiRankingsTask.startTime=startOfDay
+tasks.TechnoratiRankingsTask.interval=1440
+tasks.TechnoratiRankingsTask.leaseTime=30
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------
+# Cache configuratation
+#-----------------------------------------------------------------------------
+
+# Remember... times are in seconds
 # Default settings suitable for 100 user system
 
 # Cache properties all follow the given format ...
@@ -693,10 +674,10 @@ deprecated/weblog.vm,deprecated/website.vm
 # be used by the specified CacheFactory you are using.
 #
 # NOTE: it is expected that property validation happens in the CacheFactory
-#-----------------------------------
 
 # The default cache implementation we want to use
-cache.defaultFactory=org.apache.roller.util.cache.ExpiringLRUCacheFactoryImpl
+cache.defaultFactory=\
+org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl
 cache.customHandlers=
 
 # set "true" to NOT cache the custom pages for users who are logged in
@@ -727,8 +708,10 @@ cache.planet.enabled=true
 cache.planet.size=10
 cache.planet.timeout=1800
 
-#----------------------------------
-# Secure login configs
+
+#-----------------------------------------------------------------------------
+# Security settings
+#-----------------------------------------------------------------------------
 
 # Enables HTTPS for login page only
 securelogin.enabled=false
@@ -736,136 +719,140 @@ securelogin.enabled=false
 # Enable scheme enforcement?
 # Scheme enforcement ensures that specific URLs are viewed only via HTTPS
 schemeenforcement.enabled=false
+
 # URL patterns that require HTTPS
-schemeenforcement.https.urls=/j_security_check,/roller-ui/login-redirect.jsp,\
-/roller-ui/login.do,/roller-ui/user.do,/roller-ui/yourProfile.do,\
-/roller-ui/admin/user.do,/roller-ui/authoring/userdata
+schemeenforcement.https.urls=/roller_j_security_check,\
+/roller-ui/login-redirect.jsp,\
+/roller-ui/login.rol,\
+/roller-ui/register.rol,/roller-ui/register!save.rol,\
+/roller-ui/profile.rol,/roller-ui/profile!save.rol,\
+/roller-ui/admin/userAdmin.rol,\
+/roller-ui/admin/createUser.rol,/roller-ui/admin/createUser!save.rol,\
+/roller-ui/authoring/userdata,\
+/roller-ui/authoring/membersInvite.rol,/roller-ui/authoring/membersInvite!save.rol
 
 # Password security settings
 passwds.encryption.enabled=false
 passwds.encryption.algorithm=SHA
 
 #----------------------------------
-# Enabled plugins ... remember, order does matter!!
+# Single-Sign-On
 
-# Weblog entry plugins
-plugins.page=\
-org.apache.roller.ui.rendering.plugins.ConvertLineBreaksPlugin \
-,org.apache.roller.ui.rendering.plugins.TopicTagPlugin \
-,org.apache.roller.ui.rendering.plugins.ObfuscateEmailPlugin \
-,org.apache.roller.ui.rendering.plugins.SmileysPlugin 
-#,org.apache.roller.ui.rendering.plugins.WikipediaLinkPlugin \
-#,org.apache.roller.ui.rendering.plugins.GoogleLinkPlugin \
-#,org.apache.roller.ui.rendering.plugins.AcronymsPlugin \
-#,org.apache.roller.ui.rendering.plugins.BookmarkPlugin
+# Enables Roller to behave differently when registering new users
+# in an SSO-enabled environment. You must configure security.xml appropriately.
+users.sso.enabled=false
 
-# The list of configured WeblogEntryEditors available to users
-plugins.weblogEntryEditors=\
-org.apache.roller.ui.core.plugins.TextEditor,\
-org.apache.roller.ui.core.plugins.XinhaEditor
+# Set these properties for a custom LDAP schema (optional)
+#users.sso.registry.ldap.attributes.name=cn
+#users.sso.registry.ldap.attributes.email=mail
+#users.sso.registry.ldap.attributes.locale=locale
+#users.sso.registry.ldap.attributes.timezone=timezone
 
-# The "id" of the default editor to use.  NOT the class name
-plugins.defaultEditor=editor-text.jsp
+# If you don't want user credentials from LDAP/etc to be stored in Roller
+# (possibly in clear-text) leave this alone, otherwise set to true.
+# i.e. you would like a backup auth mechanism in case LDAP is down.
+users.sso.passwords.save=false
 
-#----------------------------------
-# Scheduled Background Tasks ... all times are in minutes.
-#
-# Task properties should follow the given format ...
-#     tasks.<taskname>.<prop>=<value>
-#
-# The *enabled* tasks are defined by tasks.enabled=<taskname>[,<taskname>]
-#-----------------------------------
+# if you don't want passwords stored in DB, set this to the default value.
+users.sso.passwords.defaultValue=<unknown>
 
-# Tasks which are enabled.  Only tasks listed here will be run.
-tasks.enabled=ResetHitCountsTask,TurnoverReferersTask,PingQueueTask
-
-# Reset hit counts
-tasks.ResetHitCountsTask.class=org.apache.roller.business.runnable.ResetHitCountsTask
-tasks.ResetHitCountsTask.startTime=startOfDay
-tasks.ResetHitCountsTask.interval=1440
-tasks.ResetHitCountsTask.leaseTime=30
-
-# Reset referer counts
-tasks.TurnoverReferersTask.class=org.apache.roller.business.runnable.TurnoverReferersTask
-tasks.TurnoverReferersTask.startTime=startOfDay
-tasks.TurnoverReferersTask.interval=1440
-tasks.TurnoverReferersTask.leaseTime=30
-
-# Ping processor, does sending of pings
-tasks.PingQueueTask.class=org.apache.roller.business.pings.PingQueueTask
-tasks.PingQueueTask.startTime=immediate
-tasks.PingQueueTask.interval=5
-tasks.PingQueueTask.leaseTime=30
-
-# Sync Roller weblogs with planet
-tasks.SyncWebsitesTask.class=org.apache.roller.planet.tasks.SyncWebsitesTask
-tasks.SyncWebsitesTask.startTime=startOfDay
-tasks.SyncWebsitesTask.interval=1440
-tasks.SyncWebsitesTask.leaseTime=30
-
-# Refresh entries for planet feeds
-tasks.RefreshEntriesTask.class=org.apache.roller.planet.tasks.RefreshEntriesTask
-tasks.RefreshEntriesTask.startTime=startOfHour
-tasks.RefreshEntriesTask.interval=60
-tasks.RefreshEntriesTask.leaseTime=30
-
-# Technorati rankings for planet feeds
-tasks.TechnoratiRankingsTask.class=org.apache.roller.planet.tasks.TechnoratiRankingsTask
-tasks.TechnoratiRankingsTask.startTime=startOfDay
-tasks.TechnoratiRankingsTask.interval=1440
-tasks.TechnoratiRankingsTask.leaseTime=30
+users.sso.autoProvision.enabled=false
+users.sso.autoProvision.className=\
+org.apache.roller.weblogger.ui.core.security.BasicUserAutoProvision
 
 
-#----------------------------------
-# Persistence settings
+#-----------------------------------------------------------------------------
+# Rendering system
+#-----------------------------------------------------------------------------
 
-persistence.roller.classname=org.apache.roller.business.hibernate.HibernateRollerImpl
-persistence.filemanager.classname=org.apache.roller.business.FileManagerImpl
+# Are the old pre-3.0 models and macros enabled?
+rendering.legacyModels.enabled=false
 
-#----------------------------------
-# comment, referrer and trackback settings
+# The set of default Roller renderer factories.
+rendering.rollerRendererFactories=\
+org.apache.roller.weblogger.ui.rendering.velocity.VelocityRendererFactory
 
-comment.authenticator.classname=org.apache.roller.ui.rendering.util.MathCommentAuthenticator
-comment.notification.separateOwnerMessage=false
-comment.notification.hideCommenterAddresses=false
-comment.throttle.enabled=false
-comment.throttle.threshold=25
-comment.throttle.interval=60
-comment.throttle.maxentries=250
+# List of available template languages
+rendering.templateLanguages=velocity
 
-# enables site full blacklist check on comment posts (default: true)
-site.blacklist.enable.comments=true
 
-# enables site full blacklist check at time of trackback post (default: true)
-site.blacklist.enable.trackbacks=true
+# The set of user defined renderer factories.  These are prepended to the list above.
+rendering.userRendererFactories=
 
-# enables partial blacklist check (not including blacklist.txt) for each incoming referrer
-site.blacklist.enable.referrers=true
+# The set of default Roller request mappers
+rendering.rollerRequestMappers=\
+org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper
 
-# Trackback protection. Set this only if you need to limit the URLs to
-# which users may send trackbacks. Regex expressions are allowed, for example:
-# trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*
-trackback.allowedURLs=
+# The set of user defined request mappers.  These are prepended to the list above.
+rendering.userRequestMappers=
 
-#Robot check in referral processing.  If this pattern is set and the User-Agent in the
-#request matches this pattern, all referral processing is skipped; this means that
-#the referral spam check is skipped, the request is allowed to proceed, but the
-#referrer is not recorded and hit count is not incremented.  Recommended for large sites
-#that get a lot of legitimate crawler bot traffic.  The pattern here is a suggestion that
-#has been reported to work well.
-#referrer.robotCheck.userAgentPattern=.*(slurp|bot|java).*
+# Url path elements which can NEVER be considered a weblog url
+# each represents a url at the application root, i.e. /<elem>/*
+rendering.weblogMapper.rollerProtectedUrls=\
+roller-ui,images,theme,themes,CommentAuthenticatorServlet,\
+index.jsp,favicon.ico,robots.txt,\
+page,flavor,rss,atom,language,search,comments,rsd,resource,xmlrpc,planetrss
 
-# Enable built-in referrer processing?
-referrers.processing.enabled=true
+# Set of user defined protected urls.  These are added to the set above.
+rendering.weblogMapper.userProtectedUrls=
 
-# Change to true if you want to process referrers asynchronously.
-# You can choose how many threads to use and sleep time (in seconds) 
-referrers.asyncProcessing.enabled=false
-referrers.queue.numWorkers=3
-referrers.queue.sleepTime=10
+# Set of models to be made available for weblog page rendering
+rendering.pageModels=\
+org.apache.roller.weblogger.ui.rendering.model.PageModel,\
+org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
+org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.weblogger.ui.rendering.model.URLModel,\
+org.apache.roller.weblogger.ui.rendering.model.MessageModel,\
+org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\
+org.apache.roller.weblogger.ui.rendering.model.MenuModel
 
-#----------------------------------
-# ping settings
+# Set of models to be made available for weblog feed rendering
+rendering.feedModels=\
+org.apache.roller.weblogger.ui.rendering.model.FeedModel,\
+org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
+org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.weblogger.ui.rendering.model.URLModel,\
+org.apache.roller.weblogger.ui.rendering.model.MessageModel
+
+# Set of models to be made available for weblog search rendering
+rendering.searchModels=\
+org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel,\
+org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
+org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.weblogger.ui.rendering.model.URLModel,\
+org.apache.roller.weblogger.ui.rendering.model.MessageModel,\
+org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\
+org.apache.roller.weblogger.ui.rendering.model.MenuModel
+
+# Set of models to be made available for weblog page *preview* rendering
+# NOTE: this *does* have some differences between the pageModels
+rendering.previewModels=\
+org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel,\
+org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
+org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
+org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel,\
+org.apache.roller.weblogger.ui.rendering.model.MessageModel,\
+org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\
+org.apache.roller.weblogger.ui.rendering.model.MenuModel
+
+# Set of page models specifically for site-wide rendering
+rendering.siteModels=\
+org.apache.roller.weblogger.ui.rendering.model.SiteModel
+
+# Velocity settings
+velocity.properties=/WEB-INF/velocity.properties
+
+# Old velocity macro libraries
+velocity.oldMacroLibraries=\
+deprecated/roller.vm,deprecated/bookmark.vm,deprecated/comments.vm,\
+deprecated/navbar.vm,deprecated/newsfeed.vm,deprecated/referer.vm,\
+deprecated/atommacros.vm,deprecated/rssmacros.vm,deprecated/user.vm,\
+deprecated/weblog.vm,deprecated/website.vm
+
+
+#-----------------------------------------------------------------------------
+# Weblog ping system
+#-----------------------------------------------------------------------------
 
 # The number of attempts to try to reach a ping target before refusing to 
 # requeue it for further retrials. If absent, this defaults to 3.
@@ -895,17 +882,14 @@ pings.initialCommonTargets=\
 ,{{IceRocket}{http://rpc.icerocket.com:10080/}}
 
 # Specify variant options for known buggy ping targets.
-pings.variantOptions=\
-{{http://rpc.icerocket.com:10080/}{noname}}
-
+pings.variantOptions={{http://rpc.icerocket.com:10080/}{noname}}
 
 # This controls whether users are allowed to add custom ping targets.  
 # Set this to false to disallow adding custom targets; if false, the 
 # Weblog:Custom Ping Targets menu item will not appear and associated actions 
 # will result in access denied messages.  Leave this false or commented for 
-# normal behavior. 
-# CAUTION: Setting this to true will cause the server to remove all users' 
-# existing custom targets on startup.
+# normal behavior. CAUTION: Setting this to true will cause the server to remove 
+# all users' existing custom targets on startup.
 pings.disallowCustomTargets=false
 
 # This controls whether the Weblog:Pings menu item and its associated actions 
@@ -928,78 +912,43 @@ pings.disablePingUsage=false
 # commented for normal behavior.
 pings.logOnly=false
 
-#----------------------------------
-# Planet Aggregator settings
 
-# Set to true to enable the Planet aggregator. This will cause:
-# - A new menu tab will appear for Roller admin users. This allows admins to 
-#   add/remove newsfeed subscriptions in the 'external' group.
-# - Users can then subscribe to several newsfeeds:
-#      - http://localhost:8080/roller/rss
-#      - http://localhost:8080/roller/planetrss
-#      - http://localhost:8080/roller/planetrss?group=external
-# - You'll be able to add the $planet model to the list of page models available
-#   to blogs (rendering.pageModels) or to only site-wide blogs (rendering.siteModels) 
-#   (classname org.apache.roller.ui.rendering.model.SiteModel)
-#   
-planet.aggregator.enabled=false
+#-----------------------------------------------------------------------------
+# Pluggable backend, page and editor plugins
+#-----------------------------------------------------------------------------
 
-# Planet cache must exist and must be writable by Roller process
-planet.aggregator.cache.dir=/var/roller/planetcache
+# Backend Guice module
+guice.backend.module=org.apache.roller.weblogger.business.jpa.JPAWebloggerModule
 
-# Number of queries allowed per day
-planet.aggregator.technorati.limit=500
+#---------------------------------
+# Weblog entry plugins
 
-#----------------------------------
-# defaults for new weblogs
+plugins.page=\
+org.apache.roller.weblogger.business.plugins.entry.ConvertLineBreaksPlugin \
+,org.apache.roller.weblogger.business.plugins.entry.TopicTagPlugin \
+,org.apache.roller.weblogger.business.plugins.entry.ObfuscateEmailPlugin \
+,org.apache.roller.weblogger.business.plugins.entry.SmileysPlugin 
+#,org.apache.roller.weblogger.business.plugins.entry.WikipediaLinkPlugin \
+#,org.apache.roller.weblogger.business.plugins.entry.GoogleLinkPlugin \
+#,org.apache.roller.weblogger.business.plugins.entry.AcronymsPlugin \
+#,org.apache.roller.weblogger.business.plugins.entry.BookmarkPlugin
 
-# list of links to include in root bookmark folder of each new blog
-# format is like so: linktitle2|linkurl2,linktitle2|linkurl2,linktitle3|linkurl3
-newuser.blogroll=\
-Dave Johnson|http://rollerweblogger.org/page/roller,\
-Matt Raible|http://raibledesigns.com/page/rd,\
-Lance Lavandowska|http://brainopolis.dnsalias.com/roller/page/lance,\
-Henri Yandell|http://blog.generationjava.com/roller/page/bayard,\
-Elias Torres|http://torrez.us/,\
-Jeff Blattman|http://blogs.sun.com/jtb,\
-blogs.sun.com|http://blogs.sun.com,\
-jroller.com|http://jroller.com,\
+# The list of configured WeblogEntryEditors available to users
+plugins.weblogEntryEditors=\
+org.apache.roller.weblogger.ui.core.plugins.TextEditor,\
+org.apache.roller.weblogger.ui.core.plugins.XinhaEditor
 
-# comma-separated list of top-level categories to be created in each new weblog
-newuser.categories=\
-General,Status,Java,Music,Politics
+# The "id" of the default editor to use. NOT the class name
+plugins.defaultEditor=editor-text.jsp
 
 # Default weblog editor
 # The list of available editors is in rollerRuntimeConfigDefs.xml
 newweblog.editor=editor-text.jsp
 
 
-#----------------------------------
-# Single-Sign-On
 
-# Enables Roller to behave differently when registering new users
-# in an SSO-enabled environment. You must configure security.xml appropriately.
-users.sso.enabled=false
 
-# Set these properties for a custom LDAP schema (optional)
-#users.sso.registry.ldap.attributes.name=cn
-#users.sso.registry.ldap.attributes.email=mail
-#users.sso.registry.ldap.attributes.locale=locale
-#users.sso.registry.ldap.attributes.timezone=timezone
 
-# If you don't want user credentials from LDAP/etc to be stored in Roller
-# (possibly in clear-text) leave this alone, otherwise set to true.
-# i.e. you would like a backup auth mechanism in case LDAP is down.
-users.sso.passwords.save=false
-
-# if you don't want passwords stored in DB, set this to the default value.
-users.sso.passwords.defaultValue=<unknown>
-
-users.sso.autoProvision.enabled=false
-users.sso.autoProvision.className=org.apache.roller.ui.core.security.BasicUserAutoProvision
-
-#---------------------------------
-# settings for various plugins
 
 # Optional site-wide customization settings for the TopicTag plugin.
 # n.b. these default settings match the coded default values that would be 
@@ -1013,8 +962,17 @@ plugins.topictag.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
 # Set to true to allow only default topic tag site (and avoid costly bookmark queries)
 plugins.topictag.ignoreBookmarks=true
 
-#----------------------------------
-# misc settings
+
+#-----------------------------------------------------------------------------
+# Other settings
+#-----------------------------------------------------------------------------
+
+# Values of the properties in this list get system property expansion 
+# applied to them when loaded.
+config.expandedProperties=uploads.dir,search.index.dir
+
+# True to enable history in Atom feeds with next/prev links
+site.newsfeeds.history.enabled=false
 
 # Some folks consider remember-me type functionality to be a security
 rememberme.enabled=true
@@ -1031,37 +989,42 @@ username.allowedChars=A-Za-z0-9
 # editor theme to be used (corresponds to directory name under /theme)
 editor.theme=tan
 
-# Hibernate config resource (a classpath-based path)
-# NO NEED TO OVERRIDE this unless you are customizing Roller
-hibernate.configResource=/hibernate.cfg.xml
+# list of links to include in root bookmark folder of each new blog
+# format is like so: linktitle2|linkurl2,linktitle2|linkurl2,linktitle3|linkurl3
+newuser.blogroll=\
+Dave Johnson|http://rollerweblogger.org/roller,\
+Matt Raible|http://raibledesigns.com/page/rd,\
+Lance Lavandowska|http://rollerweblogger.org/lance,\
+Henri Yandell|http://blog.generationjava.com/,\
+Elias Torres|http://torrez.us/,\
+Jeff Blattman|http://blogs.sun.com/jtb,\
+blogs.sun.com|http://blogs.sun.com,\
+jroller.com|http://jroller.com
 
-# JDBC configuration parameters for standalone tasks
-# Don't override these in the roller-custom.properties file you use with the 
-# Roller webapp, but for the standalone tasks that you run outside of Roller 
-# (e.g. refresh entries) you'll need to override these properties. Do it in a 
-# separate roller-custom.properties file.
-jdbc.driverClass=
-jdbc.connectionURL=
-jdbc.username=
-jdbc.password=
+# comma-separated list of top-level categories to be created in each new weblog
+newuser.categories=General,Status,Java,Music,Politics
 
-#---------------------------------
-# Experimental settings
+
+
+
+#-----------------------------------------------------------------------------
+# Experimental, deprecated and "undocumented" settings
+#-----------------------------------------------------------------------------
 
 # Atom Publishing Protocol (APP) - this is an incomplete and untested 
 # implementation of an unfinished IETF specification. 
 # Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!
 webservices.atomprotocol.enabled=false
 
+# For databases with one sec timestamp resolution, we need a one sec throttle
+webservices.atomprotocol.oneSecondThrottle=true
+
 # Atom-like Admin Publishing Protocol (AAPP) - this is an experimental admin
 # protocol based on ideas from the Atom protocol. 
 # Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!
 webservices.adminprotocol.enabled=false
 
-#----------------------------------
-# legacy settings (things that should be deprecated)
+# If you are using the Hibernate backend (deprecated as of Roller 4.0), 
+# you MUST override this to use a database other than MySQL4
+hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
-# settings for old #showNewseeds macro (not related to Planet stuff)
-aggregator.enabled=false
-aggregator.cache.enabled=
-aggregator.cache.timeout=14400
