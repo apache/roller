@@ -159,25 +159,22 @@ public class UtilitiesModel implements Model {
      * Format date using SimpleDateFormat format string.
      */
     public String formatDate(Date d, String fmt) {
-        if(d == null || fmt == null)
-            return fmt;
-        
-        SimpleDateFormat format = new SimpleDateFormat(fmt);
-        if (weblog != null) {
-            format.setTimeZone(weblog.getTimeZoneInstance());
-        }
-        return format.format(d);
+        return formatDate(d, fmt, weblog.getTimeZoneInstance());
     }
     
     /**
      * Format date using SimpleDateFormat format string.
      */
     public String formatDate(Date d, String fmt, TimeZone tzOverride) {
+        
         if(d == null || fmt == null)
             return fmt;
         
-        SimpleDateFormat format = new SimpleDateFormat(fmt);
-        format.setTimeZone(tzOverride);
+        SimpleDateFormat format = new SimpleDateFormat(fmt, weblog.getLocaleInstance());
+        if(tzOverride != null) {
+            format.setTimeZone(tzOverride);
+        }
+        
         return format.format(d);
     }
     
@@ -203,7 +200,7 @@ public class UtilitiesModel implements Model {
     }
     
     /**
-     * Return a date in RFC-822 format.
+     * Return a date in 8 character format YYYYMMDD.
      */
     public String format8charsDate(Date date) {
         return DateUtil.format8chars(date);
