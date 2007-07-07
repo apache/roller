@@ -140,7 +140,7 @@ public class SearchServlet extends HttpServlet {
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
             pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
-            initData.put("weblogRequest", pageRequest);
+            initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);
             
             // define url strategy

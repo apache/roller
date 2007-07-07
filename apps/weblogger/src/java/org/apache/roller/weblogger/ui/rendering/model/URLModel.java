@@ -56,9 +56,6 @@ public class URLModel implements Model {
     
     private URLStrategy urlStrategy = null;
     
-    /** TODO: remove dependency on pageContext */
-    private PageContext pageContext = null;
-    
     
     public URLModel() {}
     
@@ -69,7 +66,7 @@ public class URLModel implements Model {
     public void init(Map initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("Expected 'weblogRequest' init param!");
         }
@@ -82,9 +79,6 @@ public class URLModel implements Model {
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
-        
-        // need page context as well :(
-        pageContext = (PageContext) initData.get("pageContext");
     }
     
     

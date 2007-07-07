@@ -42,7 +42,7 @@ public class PreviewURLModel extends URLModel {
     public void init(Map initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("Expected 'weblogRequest' init param!");
         }

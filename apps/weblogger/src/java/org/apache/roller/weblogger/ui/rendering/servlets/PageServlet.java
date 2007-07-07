@@ -382,9 +382,8 @@ public class PageServlet extends HttpServlet {
             
             // populate the rendering model
             Map initData = new HashMap();
-            initData.put("request", request);
             initData.put("requestParameters", request.getParameterMap());
-            initData.put("weblogRequest", pageRequest);
+            initData.put("parsedRequest", pageRequest);
             initData.put("pageContext", pageContext);
             
             // define url strategy

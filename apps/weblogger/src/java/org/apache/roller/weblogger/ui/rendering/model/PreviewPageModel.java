@@ -45,7 +45,7 @@ public class PreviewPageModel extends PageModel {
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }
