@@ -224,8 +224,7 @@ public class FeedServlet extends HttpServlet {
 
             // populate the rendering model
             Map initData = new HashMap();
-            initData.put("request", request);
-            initData.put("weblogRequest", feedRequest);
+            initData.put("parsedRequest", feedRequest);
 
             // define url strategy
             initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());

@@ -57,7 +57,7 @@ public class CalendarModel implements Model {
         this.pageContext = (PageContext) initData.get("pageContext");
         
         // we expect the init data to contain a weblogRequest object
-        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
         if(weblogRequest == null) {
             throw new WebloggerException("expected weblogRequest from init data");
         }

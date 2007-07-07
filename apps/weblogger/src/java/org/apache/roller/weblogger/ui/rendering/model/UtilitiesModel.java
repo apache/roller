@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -36,6 +35,8 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -89,8 +90,8 @@ public class UtilitiesModel implements Model {
     private static final Pattern QUOTE_PATTERN = 
             Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
     
-    private HttpServletRequest request = null;
-    private TimeZone tz = null;
+    private ParsedRequest parsedRequest = null;
+    private Weblog weblog = null;
     
     
     /** Template context name to be used for model */
@@ -100,15 +101,18 @@ public class UtilitiesModel implements Model {
     
     
     /** Init page model based on request */
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map initData) throws WebloggerException {      
         
-        // extract request object
-        this.request = (HttpServletRequest) initData.get("request");        
-
-        // extract timezone if available
-        WeblogRequest weblogRequest = (WeblogRequest)initData.get("weblogRequest");
-        if (weblogRequest != null && weblogRequest.getWeblog() != null) {
-            tz = weblogRequest.getWeblog().getTimeZoneInstance();
+        // we expect the init data to contain a parsedRequest object
+        parsedRequest = (ParsedRequest) initData.get("parsedRequest");
+        if(parsedRequest == null) {
+            throw new WebloggerException("expected parsedRequest from init data");
+        }
+        
+        // extract weblog object if possible
+        if(parsedRequest instanceof WeblogRequest) {
+            WeblogRequest weblogRequest = (WeblogRequest) parsedRequest;
+            weblog = weblogRequest.getWeblog();
         }
     }
      
@@ -117,10 +121,9 @@ public class UtilitiesModel implements Model {
     
     public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
-            RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses != null && rses.getAuthenticatedUser() != null) {
+            if (parsedRequest.getAuthenticUser() != null) {
                 return weblog.getPojo().hasUserPermissions(
-                        rses.getAuthenticatedUser(), WeblogPermission.AUTHOR);
+                        parsedRequest.getUser(), WeblogPermission.AUTHOR);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -130,10 +133,9 @@ public class UtilitiesModel implements Model {
     
     public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
-            RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses != null && rses.getAuthenticatedUser() != null) {
+            if (parsedRequest.getAuthenticUser() != null) {
                 return weblog.getPojo().hasUserPermissions(
-                        rses.getAuthenticatedUser(), WeblogPermission.ADMIN);
+                        parsedRequest.getUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -142,7 +144,7 @@ public class UtilitiesModel implements Model {
     }
     
     public boolean isUserAuthenticated() {
-        return (request.getUserPrincipal() != null);
+        return (parsedRequest.getAuthenticUser() != null);
     }
         
     //-------------------------------------------------------------- Date utils
@@ -161,8 +163,8 @@ public class UtilitiesModel implements Model {
             return fmt;
         
         SimpleDateFormat format = new SimpleDateFormat(fmt);
-        if (tz != null) {
-            format.setTimeZone(tz);
+        if (weblog != null) {
+            format.setTimeZone(weblog.getTimeZoneInstance());
         }
         return format.format(d);
     }
