@@ -18,9 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -39,6 +36,7 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -172,7 +170,7 @@ public class UtilitiesModel implements Model {
     /**
      * Format date using SimpleDateFormat format string.
      */
-    public static String formatDate(Date d, String fmt, TimeZone tzOverride) {
+    public String formatDate(Date d, String fmt, TimeZone tzOverride) {
         if(d == null || fmt == null)
             return fmt;
         
@@ -184,96 +182,95 @@ public class UtilitiesModel implements Model {
     /**
      * Format date in ISO-8601 format.
      */
-    public static String formatIso8601Date(Date d) {
+    public String formatIso8601Date(Date d) {
         return DateUtil.formatIso8601(d);
     }
     
     /**
      * Format date in ISO-8601 format.
      */
-    public static String formatIso8601Day(Date d) {
+    public String formatIso8601Day(Date d) {
         return DateUtil.formatIso8601Day(d);
     }
     
     /**
      * Return a date in RFC-822 format.
      */
-    public static String formatRfc822Date(Date date) {
+    public String formatRfc822Date(Date date) {
         return DateUtil.formatRfc822(date);
     }
     
     /**
      * Return a date in RFC-822 format.
      */
-    public static String format8charsDate(Date date) {
+    public String format8charsDate(Date date) {
         return DateUtil.format8chars(date);
     }
 
+    
     //------------------------------------------------------------ String utils
     
-    public static boolean isEmpty(String str) {
-        if (str == null) return true;
-        return "".equals(str.trim());
+    public boolean isEmpty(String str) {
+        return StringUtils.isEmpty(str);
     }
     
-    public static boolean isNotEmpty(String str) {
-        return !isEmpty(str);
+    public boolean isNotEmpty(String str) {
+        return StringUtils.isNotEmpty(str);
     }
     
-    public static String[] split(String str1, String str2) {
+    public String[] split(String str1, String str2) {
         return StringUtils.split(str1, str2);
     }
     
-    
-    public static boolean equals(String str1, String str2) {
+    public boolean equals(String str1, String str2) {
         return StringUtils.equals(str1, str2);
     }
     
-    public static boolean isAlphanumeric(String str) {
+    public boolean isAlphanumeric(String str) {
         return StringUtils.isAlphanumeric(str);
     }
     
-    public static String[] stripAll(String[] strs) {
+    public String[] stripAll(String[] strs) {
         return StringUtils.stripAll(strs);
     }
     
-    public static String left(String str, int length) {
+    public String left(String str, int length) {
         return StringUtils.left(str, length);
     }
     
-    public static String escapeHTML(String str) {
+    public String escapeHTML(String str) {
         return StringEscapeUtils.escapeHtml(str);
     }
     
-    public static String unescapeHTML(String str) {
+    public String unescapeHTML(String str) {
         return StringEscapeUtils.unescapeHtml(str);
     }
     
-    public static String escapeXML(String str) {
+    public String escapeXML(String str) {
         return StringEscapeUtils.escapeXml(str);
     }
     
-    public static String unescapeXML(String str) {
+    public String unescapeXML(String str) {
         return StringEscapeUtils.unescapeXml(str);
     }
     
-    public static String escapeJavaScript(String str) {
+    public String escapeJavaScript(String str) {
         return StringEscapeUtils.escapeJavaScript(str);
     }
     
-    public static String unescapeJavaScript(String str) {
+    public String unescapeJavaScript(String str) {
         return StringEscapeUtils.unescapeJavaScript(str);
     }
     
-    public static String replace(String src, String target, String rWith) {
+    public String replace(String src, String target, String rWith) {
         return StringUtils.replace(src, target, rWith);
     }
     
-    public static String replace(String src, String target, String rWith, int maxCount) {
+    public String replace(String src, String target, String rWith, int maxCount) {
         return StringUtils.replace(src, target, rWith, maxCount);
     }
     
-    private static String replace(String string, Pattern pattern, String replacement) {
+    private String replace(String string, Pattern pattern, String replacement) {
         Matcher m = pattern.matcher(string);
         return m.replaceAll(replacement);
     }
@@ -283,7 +280,7 @@ public class UtilitiesModel implements Model {
      * between the characters "&lt;" and "&gt;".  Replace
      * any HTML tags with a space.
      */
-    public static String removeHTML(String str) {
+    public String removeHTML(String str) {
         return removeHTML(str, true);
     }
     
@@ -292,101 +289,40 @@ public class UtilitiesModel implements Model {
      * between the characters "&lt;" and "&gt;".
      * Optionally replace HTML tags with a space.
      */
-    public static String removeHTML(String str, boolean addSpace) {
+    public String removeHTML(String str, boolean addSpace) {
         return Utilities.removeHTML(str, addSpace);
     }
         
     /**
      * Autoformat.
      */
-    public static String autoformat(String s) {
-        String ret = StringUtils.replace(s, "\n", "<br />");
-        return ret;
+    public String autoformat(String s) {
+        return Utilities.autoformat(s);
     }
+    
     /**
      * Strips HTML and truncates.
      */
-    public static String truncate(
-            String str, int lower, int upper, String appendToEnd) {
-        // strip markup from the string
-        String str2 = removeHTML(str, false);
-        
-        // quickly adjust the upper if it is set lower than 'lower'
-        if (upper < lower) {
-            upper = lower;
-        }
-        
-        // now determine if the string fits within the upper limit
-        // if it does, go straight to return, do not pass 'go' and collect $200
-        if(str2.length() > upper) {
-            // the magic location int
-            int loc;
-            
-            // first we determine where the next space appears after lower
-            loc = str2.lastIndexOf(' ', upper);
-            
-            // now we'll see if the location is greater than the lower limit
-            if(loc >= lower) {
-                // yes it was, so we'll cut it off here
-                str2 = str2.substring(0, loc);
-            } else {
-                // no it wasnt, so we'll cut it off at the upper limit
-                str2 = str2.substring(0, upper);
-                loc = upper;
-            }
-            
-            // the string was truncated, so we append the appendToEnd String
-            str2 = str2 + appendToEnd;
-        }
-        
-        return str2;
+    public String truncate(String str, int lower, int upper, String appendToEnd) {
+        // this method is a dupe of truncateText() method
+        return truncateText(str, lower, upper, appendToEnd);
     }
     
-    public static String truncateNicely(String str, int lower, int upper, String appendToEnd) {
+    public String truncateNicely(String str, int lower, int upper, String appendToEnd) {
         return Utilities.truncateNicely(str, lower, upper, appendToEnd);
     }
     
-    public static String truncateText(String str, int lower, int upper, String appendToEnd) {
-        // strip markup from the string
-        String str2 = removeHTML(str, false);
-        boolean diff = (str2.length() < str.length());
-        
-        // quickly adjust the upper if it is set lower than 'lower'
-        if(upper < lower) {
-            upper = lower;
-        }
-        
-        // now determine if the string fits within the upper limit
-        // if it does, go straight to return, do not pass 'go' and collect $200
-        if(str2.length() > upper) {
-            // the magic location int
-            int loc;
-            
-            // first we determine where the next space appears after lower
-            loc = str2.lastIndexOf(' ', upper);
-            
-            // now we'll see if the location is greater than the lower limit
-            if(loc >= lower) {
-                // yes it was, so we'll cut it off here
-                str2 = str2.substring(0, loc);
-            } else {
-                // no it wasnt, so we'll cut it off at the upper limit
-                str2 = str2.substring(0, upper);
-                loc = upper;
-            }
-            // the string was truncated, so we append the appendToEnd String
-            str = str2 + appendToEnd;
-        }
-        return str;
+    public String truncateText(String str, int lower, int upper, String appendToEnd) {
+        return Utilities.truncateText(str, lower, upper, appendToEnd);
     }    
     
-    public static String hexEncode(String str) {
+    public String hexEncode(String str) {
         if (StringUtils.isEmpty(str)) return str;
         
         return RegexUtil.encode(str);
     }
     
-    public static String encodeEmail(String str) {
+    public String encodeEmail(String str) {
         return str!=null ? RegexUtil.encodeEmail(str) : null;
     }
     
@@ -395,14 +331,10 @@ public class UtilitiesModel implements Model {
      * @param s a string to be URL-encoded
      * @return URL encoding of s using character encoding UTF-8; null if s is null.
      */
-    public static final String encode(String s) {
-        try {
-            if (s != null)
-                return URLEncoder.encode(s, "UTF-8");
-            else
-                return s;
-        } catch (UnsupportedEncodingException e) {
-            // Java Spec requires UTF-8 be in all Java environments, so this should not happen
+    public final String encode(String s) {
+        if(s != null) {
+            return URLUtilities.encode(s);
+        } else {
             return s;
         }
     }
@@ -412,14 +344,10 @@ public class UtilitiesModel implements Model {
      * @param s a URL-encoded string to be URL-decoded
      * @return URL decoded value of s using character encoding UTF-8; null if s is null.
      */
-    public static final String decode(String s) {
-        try {
-            if (s != null)
-                return URLDecoder.decode(s, "UTF-8");
-            else
-                return s;
-        } catch (UnsupportedEncodingException e) {
-            // Java Spec requires UTF-8 be in all Java environments, so this should not happen
+    public final String decode(String s) {
+        if(s != null) {
+            return URLUtilities.decode(s);
+        } else {
             return s;
         }
     }
@@ -427,7 +355,7 @@ public class UtilitiesModel implements Model {
     /**
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
      */
-    public static String addNofollow(String html) {
+    public String addNofollow(String html) {
         if (html == null || html.length() == 0) {
             return html;
         }
@@ -459,79 +387,15 @@ public class UtilitiesModel implements Model {
      * @param s   the String to transform
      * @return    the transformed String
      */
-    public static String transformToHTMLSubset(String s) {
-        
-        if (s == null) {
-            return null;
-        }
-        
-        s = replace(s, OPENING_B_TAG_PATTERN, "<b>");
-        s = replace(s, CLOSING_B_TAG_PATTERN, "</b>");
-        s = replace(s, OPENING_I_TAG_PATTERN, "<i>");
-        s = replace(s, CLOSING_I_TAG_PATTERN, "</i>");
-        s = replace(s, OPENING_BLOCKQUOTE_TAG_PATTERN, "<blockquote>");
-        s = replace(s, CLOSING_BLOCKQUOTE_TAG_PATTERN, "</blockquote>");
-        s = replace(s, BR_TAG_PATTERN, "<br />");
-        s = replace(s, OPENING_P_TAG_PATTERN, "<p>");
-        s = replace(s, CLOSING_P_TAG_PATTERN, "</p>");
-        s = replace(s, OPENING_PRE_TAG_PATTERN, "<pre>");
-        s = replace(s, CLOSING_PRE_TAG_PATTERN, "</pre>");
-        s = replace(s, OPENING_UL_TAG_PATTERN, "<ul>");
-        s = replace(s, CLOSING_UL_TAG_PATTERN, "</ul>");
-        s = replace(s, OPENING_OL_TAG_PATTERN, "<ol>");
-        s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
-        s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
-        s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
-        s = replace(s, QUOTE_PATTERN, "\"");
-        
-        // HTTP links
-        s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
-        Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = s.substring(start, end);
-            link = "<" + link.substring(4, link.length() - 4) + ">";
-            s = s.substring(0, start) + link + s.substring(end, s.length());
-            m = OPENING_A_TAG_PATTERN.matcher(s);
-        }
-        
-        // escaped angle brackets
-        s = s.replaceAll("&amp;lt;", "&lt;");
-        s = s.replaceAll("&amp;gt;", "&gt;");
-        s = s.replaceAll("&amp;#", "&#");
-        
-        return s;
+    public String transformToHTMLSubset(String s) {
+        return Utilities.transformToHTMLSubset(s);
     }
     
     /**
      * Convert a byte array into a Base64 string (as used in mime formats)
      */
-    public static String toBase64(byte[] aValue) {
-        
-        final String m_strBase64Chars =
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        
-        int byte1;
-        int byte2;
-        int byte3;
-        int iByteLen = aValue.length;
-        StringBuffer tt = new StringBuffer();
-        
-        for (int i = 0; i < iByteLen; i += 3) {
-            boolean bByte2 = (i + 1) < iByteLen;
-            boolean bByte3 = (i + 2) < iByteLen;
-            byte1 = aValue[i] & 0xFF;
-            byte2 = (bByte2) ? (aValue[i + 1] & 0xFF) : 0;
-            byte3 = (bByte3) ? (aValue[i + 2] & 0xFF) : 0;
-            
-            tt.append(m_strBase64Chars.charAt(byte1 / 4));
-            tt.append(m_strBase64Chars.charAt((byte2 / 16) + ((byte1 & 0x3) * 16)));
-            tt.append(((bByte2) ? m_strBase64Chars.charAt((byte3 / 64) + ((byte2 & 0xF) * 4)) : '='));
-            tt.append(((bByte3) ? m_strBase64Chars.charAt(byte3 & 0x3F) : '='));
-        }
-        
-        return tt.toString();
+    public String toBase64(byte[] aValue) {
+        return Utilities.toBase64(aValue);
     }
        
 }
