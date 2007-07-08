@@ -118,10 +118,16 @@ public class RollerAtomHandler implements AtomHandler {
     //private MessageDigest    md5Helper = null;
     //private MD5Encoder       md5Encoder = new MD5Encoder();
     
+    private static boolean throttle = true;
+    
     private static Log mLogger =
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
+        
+    static {
+        throttle = RollerConfig.getBooleanProperty("webservices.atomprotocol.oneSecondThrottle");
+    }
     
-    //---------------------------------------------------------------- construction
+   //---------------------------------------------------------------- construction
     
     /**
      * Create Atom handler for a request and attempt to authenticate user.
@@ -1164,5 +1170,15 @@ public class RollerAtomHandler implements AtomHandler {
             }
         }
         return path;
+    }
+
+    private void oneSecondThrottle() {
+        // Throttle one entry per second per weblog because time-
+        // stamp in MySQL and other DBs has only 1 sec resolution
+        try { 
+            synchronized (getClass()) { 
+                Thread.sleep(1000); 
+            }  
+        } catch (Exception ignored) {} 
     }
 }
