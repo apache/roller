@@ -484,7 +484,7 @@
             </tarfileset>
         </tar>
         
-        <zip destfile="${ro.dist}/required-jars-roller-${ro.version}.zip" >
+        <zip destfile="${ro.dist}/hibernate-jars-roller-${ro.version}.zip" >
             <zipfileset dir="${build.dist.binary}"
                         prefix="apache-roller-${ro.version}">
                 <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
