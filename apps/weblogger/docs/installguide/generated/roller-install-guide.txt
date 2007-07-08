@@ -8,9 +8,8 @@
 
 
 
+ Installation Guide
 
-Installation Guide
-DRAFT 20070707
 
 
 
@@ -59,19 +58,19 @@ Table of Contents
 7   Deploy Roller	9
 7.1   Put roller-custom.properties in classpath	9
 7.2   Deploy Roller via administration console	9
-8   Getting started with Roller	10
-8.1   Navigate to Roller and finish the install 	10
-8.2   Register a user and create a weblog	10
-9   Configuration tips and tricks	12
-9.1   Setting up Roller's Planet feed aggregator	12
-9.2   Changing keys in security.xml	13
-9.3   Using Server-provided database and mail resources	14
-9.4   Manual table creation and upgrade	15
-10   Upgrading Roller	16
-10.1   For those upgrading from Roller 2.x to Roller 4.0	16
-10.2   Backup your old Roller 	17
-10.3   Install and startup the new Roller 	18
-11   roller.properties	19
+8   Getting started with Roller	12
+8.1   Navigate to Roller and finish the install 	12
+8.2   Register a user and create a weblog	13
+9   Configuration tips and tricks	14
+9.1   Setting up Roller's Planet feed aggregator	14
+9.2   Changing keys in security.xml	15
+9.3   Using Server-provided database and mail resources	16
+9.4   Manual table creation and upgrade	17
+10   Upgrading Roller	18
+10.1   For those upgrading from Roller 2.x to Roller 4.0	18
+10.2   Backup your old Roller 	19
+10.3   Install and startup the new Roller 	20
+11   roller.properties	21
 
 1Overview
 This document describes how to install the Apache Roller Weblogger software. It explains what you need to install first, how to download Roller, how to configure Roller and how to install it to your existing Java application server and relational database. If also offers a 5-minute install option   for more advanced folks.
@@ -169,7 +168,7 @@ If you don't have a database administrator then you'll have to refer to the docu
    mysql> grant all on rollerdb.* to scott@'%' identified by 'tiger';
    mysql> grant all on rollerdb.* to scott@localhost identified by 'tiger';
 5.2Check your JDBC driver setup
-Make sure that you have the correct JDBC driver installed in your server. Usually, this is as simple as downloading the JDBC driver jar(s) and placing it (or them) into your server's classpath. For example, on Tomcat you place them in common/lib.
+Make sure that you have the correct JDBC driver installed in your server. Usually, this is as simple as downloading the JDBC driver jar(s) and placing it (or them) into your server's classpath. For example, on Tomcat 5.5 you place them in common/lib, on Tomcat 6.0 in lib and on Glassfish in your domain's lib directory. 
 5.3MySQL and Oracle considerations
 Based on our experience supporting MySQL, we have the following recommendations:
 For MySQL, make sure that TCP/IP networking is enabled. 
@@ -212,34 +211,40 @@ Next, we'll deploy Roller.
 Now that you've got the Roller WAR and you've created your roller-custom.properties file, you're ready to deploy Roller to your server. First, deploy your properties file.
 7.1Put roller-custom.properties in classpath
 Roller can look for your properties file in a number of ways and you can see Section 11 for details. The simplest thing for you to do is to place the file in your application server's classpath, by dropping it into a classes directory. On startup, Roller will find it there. Here's how to do it on some popular servers:
-On Tomcat you can simply copy the file into Tomcat's common/classes directory.
+On Tomcat 5.5, copy the file into Tomcat's common/classes directory.
+On Tomcat 6.0, copy it into Tomcat's lib directory.
 On Glassfish, copy can copy it to your domain's lib/classes directory.
 Now you're ready to deploy Roller itself.
 7.2Deploy Roller via administration console
-Use your server's administration console to deploy the Roller web application. You can deploy as a directory, in which case you'll have to enter the path to your Roller installation's webapp/roller directory. Or you can deploy as a WAR file, in which case you will have to have created a WAR file as we described in Section 4.2. 
-For example, here's the Web Application deployment page in the Tomcat Admin Console:
-TODO Screenshot of Tomcat Admin Console
-And, another example is Web Application deployment page in the Glassfish Admin Console:
-TODO Screenshot of Glassfish Admin Console
+Use your server's administration console to deploy the Roller web application. 
+You can deploy as a directory, in which case you'll have to enter the path to your Roller installation's webapp/roller directory. Or you can deploy as a WAR file, in which case you will have to have created a WAR file as we described in Section 4.2. 
+Let's discuss how to do that for Tomcat 6.0 and Glassfish v2.0.
+
+Deploying to Apache Tomcat 6.0
+You can deploy to Tomcat as either a directory or a WAR file. The screens-hot below shows directory-based deployment options.
+
+Once Roller is deployed, you'll see that it's listed among the other applications. There's a /roller link to Roller itself and there are options to start, stop, reload and undeploy.
+If Roller doesn't start-up, look for the problem in the logs. You can find them in Tomcat's logs directory. The Tomcat log file is catalina.out and the Roller log  is roller.log.
+Deploying to Glassfish v2.0
+You can also deploy to Glassfish as either a directory or a WAR file. The screenshot below shows directory-based deployment options.
+
+Once Roller is deployed, you'll see that it's listed among the other applications. There's a Launch link to Roller itself and there are buttons to enable, display and redeploy.
+If Roller doesn't start-up, look for the problem in the logs. You can find them in your Glassfish domain's  logs directory. The Glassfish log file is server.log and the Roller log  is roller.log.
 8Getting started with Roller
 You're not quite done with the installation process Now you're ready to start using Roller, so we'll walk you through getting started, registering a user and setting up a blog. We'll also discuss briefly what happens when there is an error. 
 8.1Navigate to Roller and finish the install 
 Navigate to Roller, if you are using a default Tomcat or Glassfish installation then then URL of Roller is probably http://localhost:8080/roller. You will see either a web page of error messages, a web page offering to create database tables for you or web page asking you to complete the installation by registering an admin user and creating a front-page blog. First, let's talk about what happens when things go wrong.
-Problems?
 If there's a problem with your database configuration, Roller will display a page or error messages to help you diagnose the problem. It's possible that you entered the wrong JDBC driver class name, connection URL, username or password. Or perhaps your database is not running. Use the information provided to determine what is wrong, fix it and then redeploy Roller.
-TODO Screenshot of error page
+
 Automatic tables creation
 If your database configuration is good but Roller cannot find its database tables, then Roller will offer to create those pages automatically for you. If you give the go-ahead, Roller will run the appropriate database creation script for your database and then show you the results. You can then proceed to the next step to setup your first user account and weblog.
 8.2Register a user and create a weblog
 If Roller starts up fine but doesn't find a front-page weblog then it will display the Completing Your Installation below that explains how to register your first user, create your first weblog and setup your site's front page.
-TODO Screenshot of register/create page
+
 You have to decide what you want as the front-page of your Roller site. If you are using Roller to run your personal weblog, then you probably want your weblog to be the front-page of the site. In this case, create a weblog for yourself, don't choose the front-page theme but do set your weblog as the front-page weblog for the site. 
 If you are using Roller to run a community of multiple weblogs, then you'll probably want to display an aggregated front-page combining all weblogs on the site. In that case, create a weblog to serve as the front-page, set it as the front-page weblog and make sure you set the “aggregated front-page” setting on the Server Admin page.   
 Don't forget: Reset the installation.type flag
-Now that you're done with the installation you should turn off Roller's auto-installation system. Edit your roller-custom.properties file and set:
-    installation.type=manual
-
-Then restart your server or Roller so that it accepts the new setting.
+Now that you're done with the installation you should turn off Roller's auto-installation system. Edit your roller-custom.properties file and set installation.type=manual. Then restart your server or Roller so that it accepts the new setting.
 What's next?
 Once you've gotten Roller up and running refer to the Roller User Guide for more information on running your Roller system and your weblog. For information on customizing your weblog, refer to the Roller Template Guide. If you can't find what you want in the documentation then subscribe to the Roller user mailing list and ask your questions there.
    Roller user and developer mailing lists:
@@ -279,7 +284,10 @@ Create a weblog to server as the front-page of your Roller site. Start with the 
    #set($pager = $planet.getAggregationPager($since, $maxResults))
 
 With that in place, your front-page will be display your Planet entries. You can find your Planet feeds at the following URLs:
-TODO Planet feed URLs
+Main Planet feed
+http://localhost:8080/roller/planetrss
+Per group feed
+http://localhost:8080/roller/planetrss?group=<group-name>
 9.2Changing keys in security.xml
 Starting with version 2.1, Roller uses the Acegi security infrastructure. Several of the security features rely on keys that are intended to be site-specific. These keys are used to compute HMAC (hash-based message authentication code) values for Remember Me cookies. Knowledge of these keys could allow an attacker to forge invalid cookies, and thereby gain unauthorized access to your Roller installation (at the application level). 
 Roller ships with default values, and these should assumed to be widely known. You should change your keys to be secret values specific to your own site (the reason you should change the anonymous provider key is that a granted authorities list is embedded within the anonymous authentication token). Here is how to change the keys. 
@@ -315,8 +323,7 @@ The mail.configurationType=jndi setting tells Roller to look up it's mail sessio
 
 Setting up database and mail resources on Tomcat 
 There are a couple of different ways to setup database and mail resources on Tomcat. One way is to provide a Context Configuration file. Here's how to do that on Tomcat 5.5 and 6.0. 
-Instead of deploying Roller via the Tomcat Admin Console or by copying it to Tomcat's webapps directory, you will create a Context Configuration file that tells Tomcat where to find Roller and sets up the datasource and mail session resources needed by Roller. 
-First, create new file called roller.xml with the content below, but substitute your own values where you see the bold text.
+Before you deploy Roller to Tomcat, create a new Context Configuration file in the installation directory  webapp/roller/META-INF. You'll find an example configuration file there, shown below. Rename it from context.xml-example to context.xml and substitute the correct values for your system where you see the bold text. 
     <Context path="/roller" 
         docBase="/usr/local/apache-roller-4.0/webapp/roller" debug="0">
 
@@ -331,7 +338,7 @@ First, create new file called roller.xml with the content below, but substitute 
             mail.smtp.host="mailhost.example.com" />
     </Context>
 
-Second, place your roller.xml file in conf/Catalina/localhost directory and third, restart Tomcat and Roller will be deployed.
+Once your context.xml file is in place, deploy Roller to Tomcat as described in Section 7.
 9.4Manual table creation and upgrade
 If you would rather create your database tables yourself instead of letting Roller do it automatically, you can. Instead of enabling automatic installation you should disable it by putting this in your roller-custom.properties file:
     installation.type=manual
