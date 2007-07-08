@@ -587,42 +587,42 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
 #macro(showPageMenu $weblog)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site/">$config.siteShortName</a>
+            <a href="$url.site/"><span>$config.siteShortName</span></a>
         </li>
         <li class="rNavItem">
-            <a href="$url.home">Weblog</a>
+            <a href="$url.home"><span>Weblog</span></a>
         </li>
         #foreach($iPage in $weblog.pages)
             #if (!$iPage.hidden && $iPage.navbar && $iPage.link != "Weblog")
                 #set($isSelected = false)
                 #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
                 #if (!$isSelected)
-                    <li class="rNavItem"><a href="$url.page($iPage.link)">$iPage.name</a></li>
+                    <li class="rNavItem"><a href="$url.page($iPage.link)"><span>$iPage.name</span></a></li>
                 #else
-                    <li class="rNavItem">$iPage.name</li>
+                    <li class="rNavItem"><span>$iPage.name</span></li>
                 #end
             #end
         #end
         #if ($utils.isUserAuthorizedToAuthor($weblog))
             <li class="rNavItem">
-               <a href="$url.createEntry">$text.get("navigationBar.newEntry")</a>
+               <a href="$url.createEntry"><span>$text.get("navigationBar.newEntry")</span></a>
             </li>
             #if($utils.isUserAuthorizedToAdmin($weblog))
                <li class="rNavItem">
-                   <a href="$url.editSettings">$text.get("navigationBar.settings")</a>
+                   <a href="$url.editSettings"><span>$text.get("navigationBar.settings")</span></a>
                </li>
             #end
                 <li class="rNavItem">
-                    <a href="$url.logout">$text.get("navigationBar.logout")</a>
+                    <a href="$url.logout"><span>$text.get("navigationBar.logout")</span></a>
                 </li>
         #else
             #if ($utils.isUserAuthenticated())
                 <li class="rNavItem">
-                    <a href="$url.logout">$text.get("navigationBar.logout")</a>
+                    <a href="$url.logout"><span>$text.get("navigationBar.logout")</span></a>
                 </li>
             #else
                 <li class="rNavItem">
-                    <a href="$url.login">$text.get("navigationBar.login")</a>
+                    <a href="$url.login"><span>$text.get("navigationBar.login")</span></a>
                 </li>
             #end
         #end
@@ -723,7 +723,7 @@ Show search form for a weblog.
             #end
             </select>
           #end
-          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
+          <input type="submit" class="button" value="$text.get( "macro.weblog.searchbutton" )" />
         </p>
     </form>
     <script type="text/javascript">
