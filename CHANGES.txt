@@ -2,6 +2,21 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 3.1.1: minor bug fixes 
+
+    * [ROL-1410] - Cast database results to Number, not Integer
+    * [ROL-1471] - Resource servlet does not work properly on Windows
+    * [ROL-1363] - Migration Oracle database 3.0 to 3.1 partitialy failed
+    * [ROL-1406] - Optional themes use incorrect $url method
+    * [ROL-1412] - Mail session should not be commented out in web.xml
+    * [ROL-1458] - Referrers macro not showing count
+    * XSS fixes 
+
+(see full list here: http://tinyurl.com/2amlw3)
+
+
+-------------------------------------------------------------------------------
+
 Roller 3.1: weblog tagging, better theme encapsulation, and other small features
 
 Please refer to the What's New page for an overview of the changes:
