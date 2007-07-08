@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import org.apache.commons.lang.StringUtils;
 
 /**
  * The Theme object encapsulates all elements of a single weblog theme.  It
@@ -146,7 +146,9 @@ public class Theme implements Serializable {
      * Set the value for a given resource path.
      */
     public void setResource(String path, File resource) {
-        this.resources.put(path, resource);
+        // normalize to use web-style separators
+        String normalizedPath = StringUtils.replace(path, "\\", "/");
+        this.resources.put(normalizedPath, resource);
     }
     
     
