@@ -5,7 +5,12 @@ ROLLER CHANGE LOG
 Roller 4.0: Infrastructure upgrade - Java SE 5, Struts 2 and new JPA backend
 
     * New Java Persistence Architecture (JPA) backend added to Roller
+    * For a detailed list of fixed see these URLs:
+      - Roller 4.0 issues - http://tinyurl.com/2r39e3
+      - Roller 3.2 issues - http://tinyurl.com/2ssl65
 
+
+-------------------------------------------------------------------------------
 
 Roller 3.1: weblog tagging, better theme encapsulation, and other small features
 
