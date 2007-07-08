@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.ThemeResource;
@@ -354,7 +355,9 @@ public class SharedThemeFromDir extends SharedTheme {
      * Set the value for a given resource path.
      */
     private void setResource(String path, SharedThemeResourceFromDir resource) {
-        this.resources.put(path, resource);
+        // normalize to use web-style separators
+        String normalizedPath = StringUtils.replace(path, "\\", "/");
+        this.resources.put(normalizedPath, resource);
     }
     
 }
