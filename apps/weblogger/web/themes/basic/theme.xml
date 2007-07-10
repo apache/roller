@@ -73,7 +73,4 @@
         <contentsFile>sidebar.vm</contentsFile>
     </template>
     
-    <!-- resources -->
-    <resource path="theme.css" />
-    
 </weblogtheme>
