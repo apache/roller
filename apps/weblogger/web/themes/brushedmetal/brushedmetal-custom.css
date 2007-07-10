@@ -99,6 +99,17 @@ td.hCalendarDayLinked {
 
 /* comments ----------------------------------------------- */
 
+div.comments-form span.status {
+    display: block;
+    background: white;
+    color: green;
+    border: 1px solid green;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 span.error {
     display: block;
     background: white;
@@ -208,8 +219,8 @@ Brushedmetal theme styles
 /* Layout ----------------------------------------------*/
 		#container {
 			width: 760px;
-			\width: 780px;
-			w\idth: 760px;
+			width: 780px;
+			width: 760px;
 			margin: 10px;
 			margin-right: auto;
 			padding: 10px;
@@ -217,8 +228,8 @@ Brushedmetal theme styles
 		#sidebar-a {
 			float: left;
 			width: 240px;
-			\width: 250px;
-			w\idth: 240px;
+			width: 250px;
+			width: 240px;
 			margin: 0;
 			margin-right: 5px;
 			background: url($url.resource("images/metalLine.gif")) top right repeat-y;
@@ -360,7 +371,7 @@ Brushedmetal theme styles
 			}
 		.hCalendarDayCurrent, .dCalendarDayCurrent
 			{
-			background-color:#5A5A5A;;
+			background-color:#5A5A5A;
 			}
 	/* Discussion--------------------------------------------- */
 		.dlHeader{

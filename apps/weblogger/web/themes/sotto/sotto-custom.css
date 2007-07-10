@@ -109,6 +109,17 @@ td.hCalendarDayLinked {
 
 /* comments ----------------------------------------------- */
 
+div.comments-form span.status {
+    display: block;
+    background: white;
+    color: green;
+    border: 1px solid green;
+    margin: 10px 0px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 span.error {
     display: block;
     background: white;
