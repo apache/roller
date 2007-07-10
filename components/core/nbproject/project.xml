@@ -61,6 +61,7 @@
             <compilation-unit>
                 <package-root>test/java</package-root>
                 <unit-tests/>
+                <classpath mode="compile">../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/buildtime/junit-4.1.jar:src/java</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
