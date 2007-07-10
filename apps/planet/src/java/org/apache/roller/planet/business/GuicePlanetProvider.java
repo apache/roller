@@ -21,6 +21,7 @@ package org.apache.roller.planet.business;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import org.apache.roller.planet.config.PlanetConfig;
 
 
 /**
@@ -33,6 +34,28 @@ public class GuicePlanetProvider implements PlanetProvider {
     
     // maintain our own singleton instance of Planet
     private Planet planetInstance = null;
+    
+    
+    /**
+     * Instantiate a new GuicePlanetProvider using default guice module 
+     * configured in PlanetConfig via 'guice.backend.module' property.
+     */
+    public GuicePlanetProvider() {
+        
+        String moduleClassname = PlanetConfig.getProperty("guice.backend.module");
+        if(moduleClassname == null) {
+            throw new NullPointerException("unable to lookup default guice module via property 'guice.backend.module'");
+        }
+        
+        try {
+            Class moduleClass = Class.forName(moduleClassname);
+            Module module = (Module)moduleClass.newInstance();
+            injector = Guice.createInjector(module);
+        } catch (Throwable e) {                
+            // Fatal misconfiguration, cannot recover
+            throw new RuntimeException("Error instantiating backend module " + moduleClassname, e);
+        }
+    }
     
     
     /**

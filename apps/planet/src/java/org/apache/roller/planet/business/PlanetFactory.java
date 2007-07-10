@@ -79,14 +79,22 @@ public abstract class PlanetFactory {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         
-        // default provider is Guice, so lookup our module from PlanetConfig
-        String guiceModule = PlanetConfig.getProperty("guice.backend.module");
-        
-        // instantiate guice provider using the configured module
-        PlanetProvider guiceProvider = new GuicePlanetProvider(guiceModule);
-        
-        // finish things off by calling bootstrap() with our guice provider
-        bootstrap(guiceProvider);
+        // lookup our default provider and instantiate it
+        PlanetProvider defaultProvider;
+        String providerClassname = PlanetConfig.getProperty("planet.provider.class");
+        if(providerClassname != null) {
+            try {
+                Class providerClass = Class.forName(providerClassname);
+                defaultProvider = (PlanetProvider) providerClass.newInstance();
+            } catch (Exception ex) {
+                throw new BootstrapException("Error instantiating default provider: "+providerClassname, ex);
+            }
+        } else {
+            throw new NullPointerException("No provider specified in config property 'planet.provider.class'");
+        }
+
+        // now just bootstrap using our default provider
+        bootstrap(defaultProvider);
     }
     
     
