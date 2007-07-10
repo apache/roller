@@ -18,9 +18,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
@@ -34,23 +31,8 @@ public final class WebloggerFactory {
     
     private static final Log log = LogFactory.getLog(WebloggerFactory.class);
     
-    // a reference to the bootstrapped Weblogger instance
-    private static Weblogger rollerInstance = null;
-    
-    private static Injector injector = null;
-  
-    
-    static {
-        String moduleClassname = WebloggerConfig.getProperty("guice.backend.module");
-        try {
-            Class moduleClass = Class.forName(moduleClassname);
-            Module module = (Module)moduleClass.newInstance();
-            injector = Guice.createInjector(module);
-        } catch (Throwable e) {
-            // Fatal misconfiguration, cannot recover
-            throw new RuntimeException("Error instantiating backend module" + moduleClassname, e);
-        }
-    } 
+    // our configured weblogger provider
+    private static WebloggerProvider webloggerProvider = null;
     
     
     // non-instantiable
@@ -63,7 +45,7 @@ public final class WebloggerFactory {
      * True if bootstrap process has been completed, False otherwise.
      */
     public static boolean isBootstrapped() {
-        return (rollerInstance != null);
+        return (webloggerProvider != null);
     }
     
     
@@ -74,29 +56,21 @@ public final class WebloggerFactory {
      * @throws IllegalStateException If the app has not been properly bootstrapped yet.
      */
     public static final Weblogger getWeblogger() {
-        if (rollerInstance == null) {
+        if (webloggerProvider == null) {
             throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
         }
         
-        return rollerInstance;
+        return webloggerProvider.getWeblogger();
     }
     
     
     /**
-     * Access to Guice injector so that developers can add new injected objects.
-     */
-    public static Injector getInjector() {
-        return injector;
-    }
-    
-    
-    /**
-     * Bootstrap the Weblogger Weblogger business tier.
-     * 
+     * Bootstrap the Roller Weblogger business tier, uses default WebloggerProvider.
+     *
      * Bootstrapping the application effectively instantiates all the necessary
      * pieces of the business tier and wires them together so that the app is 
      * ready to run.
-     * 
+     *
      * @throws IllegalStateException If the app has not been properly prepared yet.
      * @throws BootstrapException If an error happens during the bootstrap process.
      */
@@ -107,10 +81,63 @@ public final class WebloggerFactory {
             throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
         }
         
+        // lookup our default provider and instantiate it
+        WebloggerProvider defaultProvider;
+        String providerClassname = WebloggerConfig.getProperty("weblogger.provider.class");
+        if(providerClassname != null) {
+            try {
+                Class providerClass = Class.forName(providerClassname);
+                defaultProvider = (WebloggerProvider) providerClass.newInstance();
+            } catch (Exception ex) {
+                throw new BootstrapException("Error instantiating default provider: "+providerClassname, ex);
+            }
+        } else {
+            throw new NullPointerException("No provider specified in config property 'weblogger.provider.class'");
+        }
+
+        // now just bootstrap using our default provider
+        bootstrap(defaultProvider);
+    }
+    
+    
+    /**
+     * Bootstrap the Roller Weblogger business tier, uses specified WebloggerProvider.
+     *
+     * Bootstrapping the application effectively instantiates all the necessary
+     * pieces of the business tier and wires them together so that the app is 
+     * ready to run.
+     *
+     * @param provider A WebloggerProvider to use for bootstrapping.
+     * @throws IllegalStateException If the app has not been properly prepared yet.
+     * @throws BootstrapException If an error happens during the bootstrap process.
+     */
+    public static final void bootstrap(WebloggerProvider provider) 
+            throws BootstrapException {
+        
+        // if the app hasn't been properly started so far then bail
+        if (!WebloggerStartup.isPrepared()) {
+            throw new IllegalStateException("Cannot bootstrap until application has been properly prepared");
+        }
+        
+        if (provider == null) {
+            throw new NullPointerException("WebloggerProvider is null");
+        }
+        
         log.info("Bootstrapping Roller Weblogger business tier");
         
-        rollerInstance = injector.getInstance(Weblogger.class);
-            
+        log.info("Weblogger Provider = "+provider.getClass().getName());
+        
+        // save reference to provider
+        webloggerProvider = provider;
+        
+        // bootstrap weblogger provider
+        webloggerProvider.bootstrap();
+        
+        // make sure we are all set
+        if(webloggerProvider.getWeblogger() == null) {
+            throw new BootstrapException("Bootstrapping failed, Weblogger instance is null");
+        }
+        
         log.info("Roller Weblogger business tier successfully bootstrapped");
     }
     
