@@ -15,6 +15,11 @@
                     <location>web</location>
                 </source-folder>
                 <source-folder>
+                    <label>WEB-INF</label>
+                    <type>web_inf</type>
+                    <location>web/WEB-INF</location>
+                </source-folder>
+                <source-folder>
                     <label>src</label>
                     <type>java</type>
                     <location>src/java</location>
@@ -27,23 +32,24 @@
             </folders>
             <ide-actions>
                 <action name="build">
-                    <script>${ant.script}</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>build</target>
                 </action>
                 <action name="clean">
-                    <script>${ant.script}</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                 </action>
                 <action name="test">
-                    <script>${ant.script}</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test</target>
                 </action>
                 <action name="rebuild">
-                    <script>${ant.script}</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                     <target>build</target>
                 </action>
                 <action name="debug.single">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-selected-files</target>
                     <context>
                         <property>classname</property>
@@ -56,6 +62,7 @@
                     </context>
                 </action>
                 <action name="debug.test.single">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test-selected-files</target>
                     <context>
                         <property>classname</property>
@@ -73,6 +80,10 @@
                     <source-folder style="tree">
                         <label>Web Pages</label>
                         <location>web</location>
+                    </source-folder>
+                    <source-folder style="tree">
+                        <label>WEB-INF Content</label>
+                        <location>web/WEB-INF</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>src</label>
@@ -98,13 +109,13 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/java</package-root>
-                <classpath mode="compile">../../tools/lib/activation.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/mail.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/jdom.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/roller-core/roller-core.jar:../../tools/struts-2.0.6/lib/antlr-2.7.2.jar:../../tools/struts-2.0.6/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.6/lib/commons-chain-1.1.jar:../../tools/struts-2.0.6/lib/commons-fileupload-1.2.jar:../../tools/struts-2.0.6/lib/commons-io-1.3.1.jar:../../tools/struts-2.0.6/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.6/lib/freemarker-2.3.8.jar:../../tools/struts-2.0.6/lib/ognl-2.6.11.jar:../../tools/struts-2.0.6/lib/oro-2.0.8.jar:../../tools/struts-2.0.6/lib/struts2-core-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-spring-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-tiles-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/tiles-api-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/tiles-core-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/xwork-2.0.1.jar:../../tools/lib/commons-collections-3.2.jar:../../tools/lib/commons-id-0.1-SNAPSHOT.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/guice-1.0.jar:../../tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar</classpath>
+                <classpath mode="compile">../../tools/lib/activation.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/mail.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/jdom.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/roller-core/roller-core.jar:../../tools/struts-2.0.6/lib/antlr-2.7.2.jar:../../tools/struts-2.0.6/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.6/lib/commons-chain-1.1.jar:../../tools/struts-2.0.6/lib/commons-fileupload-1.2.jar:../../tools/struts-2.0.6/lib/commons-io-1.3.1.jar:../../tools/struts-2.0.6/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.6/lib/freemarker-2.3.8.jar:../../tools/struts-2.0.6/lib/ognl-2.6.11.jar:../../tools/struts-2.0.6/lib/oro-2.0.8.jar:../../tools/struts-2.0.6/lib/struts2-core-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-spring-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-tiles-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/tiles-api-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/tiles-core-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/xwork-2.0.1.jar:../../tools/lib/commons-collections-3.2.jar:../../tools/lib/commons-id-0.1-SNAPSHOT.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/guice-1.0.jar:../../tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/lib/velocity-1.5.jar:../../tools/spring-1.2/spring.jar:../../tools/buildtime/activation.jar:../../tools/buildtime/mail.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>test/java</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../tools/lib/commons-codec-1.3.jar:../../tools/lib/commons-collections-3.2.jar:../../tools/lib/commons-digester-1.6.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/guice-1.0.jar:../../tools/lib/jdom.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/velocity-1.5.jar:../../tools/buildtime/activation.jar:../../tools/buildtime/mail.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar:../../tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar:../../tools/openjpa-0.9.7/openjpa-0.9.7-incubating.jar:../../tools/openjpa-0.9.7/serp-1.11.0.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../tools/struts-2.0.6/lib/antlr-2.7.2.jar:../../tools/struts-2.0.6/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.6/lib/commons-chain-1.1.jar:../../tools/struts-2.0.6/lib/commons-fileupload-1.2.jar:../../tools/struts-2.0.6/lib/commons-io-1.3.1.jar:../../tools/struts-2.0.6/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.6/lib/freemarker-2.3.8.jar:../../tools/struts-2.0.6/lib/ognl-2.6.11.jar:../../tools/struts-2.0.6/lib/oro-2.0.8.jar:../../tools/struts-2.0.6/lib/struts2-core-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-spring-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-tiles-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/tiles-api-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/tiles-core-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/xwork-2.0.1.jar:../../tools/spring-1.2/spring.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/buildtime/junit-4.1.jar</classpath>
+                <classpath mode="compile">../../tools/lib/activation.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/mail.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/jdom.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/hibernate-3.1/lib/asm-attrs.jar:../../tools/hibernate-3.1/lib/asm.jar:../../tools/hibernate-3.1/lib/cglib-2.1.3.jar:../../tools/hibernate-3.1/lib/dom4j-1.6.1.jar:../../tools/hibernate-3.1/lib/ehcache-1.1.jar:../../tools/hibernate-3.1/lib/jdbc2_0-stdext.jar:../../tools/hibernate-3.1/lib/jta.jar:../../tools/roller-core/roller-core.jar:../../tools/struts-2.0.6/lib/antlr-2.7.2.jar:../../tools/struts-2.0.6/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.6/lib/commons-chain-1.1.jar:../../tools/struts-2.0.6/lib/commons-fileupload-1.2.jar:../../tools/struts-2.0.6/lib/commons-io-1.3.1.jar:../../tools/struts-2.0.6/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.6/lib/freemarker-2.3.8.jar:../../tools/struts-2.0.6/lib/ognl-2.6.11.jar:../../tools/struts-2.0.6/lib/oro-2.0.8.jar:../../tools/struts-2.0.6/lib/struts2-core-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-spring-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/struts2-tiles-plugin-2.0.6.jar:../../tools/struts-2.0.6/lib/tiles-api-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/tiles-core-2.0-20070207.130156-4.jar:../../tools/struts-2.0.6/lib/xwork-2.0.1.jar:../../tools/lib/commons-collections-3.2.jar:../../tools/lib/commons-id-0.1-SNAPSHOT.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/guice-1.0.jar:../../tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/lib/velocity-1.5.jar:../../tools/spring-1.2/spring.jar:../../tools/buildtime/activation.jar:../../tools/buildtime/mail.jar:src/java:../../tools/buildtime/derby.jar:../../tools/buildtime/derbyclient.jar:../../tools/buildtime/derbynet.jar:../../tools/buildtime/junit-4.1.jar:../../tools/buildtime/ant-1.7.0/ant-junit.jar:../../tools/buildtime/ant-1.7.0/ant.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
@@ -113,6 +124,7 @@
                 <doc-root>web</doc-root>
                 <context-path>/planet</context-path>
                 <j2ee-spec-level>1.5</j2ee-spec-level>
+                <web-inf>web/WEB-INF</web-inf>
             </web-module>
         </web-data>
     </configuration>

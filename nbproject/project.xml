@@ -136,6 +136,7 @@
                 <classpath>web</classpath>
                 <context-path>/roller</context-path>
                 <j2ee-spec-level>1.4</j2ee-spec-level>
+                <web-inf>apps/weblogger/web/WEB-INF</web-inf>
             </web-module>
         </web-data>
     </configuration>
