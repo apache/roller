@@ -915,6 +915,115 @@ public class DatabaseInstaller {
             throw new StartupException("Problem upgrading database to version 400", e);
         }
         
+        
+        // upgrade comments to use new plugin mechanism
+        try {
+            successMessage("Upgrading existing comments to use new comment plugins");
+            
+            // we are just going to set the 'plugins' value for comments to
+            // include 'AutoFormat' if it was configured previously
+            
+            // look in db and see if comment autoformatting is enabled
+            boolean autoformatEnabled = false;
+            String autoformat = null;
+            PreparedStatement selectIsAutoformtEnabled = con.prepareStatement(
+                "select value from roller_properties where name = 'users.comments.autoformat'");
+            ResultSet rs = selectIsAutoformtEnabled.executeQuery();
+            if (rs.next()) {
+                autoformat = rs.getString(1);
+                if(autoformat != null && "true".equals(autoformat)) {
+                    autoformatEnabled = true;
+                }
+            }
+            
+            // look in db and see if comment html escaping is enabled
+            boolean htmlsubsetEnabled = false;
+            String escapehtml = null;
+            PreparedStatement selectIsEscapehtmlEnabled = con.prepareStatement(
+                "select value from roller_properties where name = 'users.comments.escapehtml'");
+            ResultSet rs1 = selectIsEscapehtmlEnabled.executeQuery();
+            if (rs1.next()) {
+                escapehtml = rs1.getString(1);
+                // NOTE: we enforce an html subset only when html escaping is OFF
+                if(escapehtml != null && !"true".equals(escapehtml)) {
+                    htmlsubsetEnabled = true;
+                }
+            }
+            
+            // now update existing comments with necessary plugins
+            if(htmlsubsetEnabled && autoformatEnabled) {
+                
+                // set new global config property for enabled coment plugins
+                PreparedStatement addCommentPluginsProp = con.prepareStatement(
+                        "insert into roller_properties(name,value) values(?,?)");
+                addCommentPluginsProp.clearParameters();
+                addCommentPluginsProp.setString( 1, "users.comments.plugins");
+                addCommentPluginsProp.setString( 2, "HTMLSubset, AutoFormat");
+                addCommentPluginsProp.executeUpdate();
+                
+                // update existing comments
+                PreparedStatement updateComments = con.prepareStatement(
+                        "update roller_comment set plugins = ?");
+                updateComments.clearParameters();
+                updateComments.setString( 1, "HTMLSubset, AutoFormat");
+                updateComments.executeUpdate();
+                
+            } else if(autoformatEnabled) {
+                
+                // set new global config property for enabled coment plugins
+                PreparedStatement addCommentPluginsProp = con.prepareStatement(
+                        "insert into roller_properties(name,value) values(?,?)");
+                addCommentPluginsProp.clearParameters();
+                addCommentPluginsProp.setString( 1, "users.comments.plugins");
+                addCommentPluginsProp.setString( 2, "AutoFormat");
+                addCommentPluginsProp.executeUpdate();
+                
+                // update existing comments
+                PreparedStatement updateComments = con.prepareStatement(
+                        "update roller_comment set plugins = ?");
+                updateComments.clearParameters();
+                updateComments.setString( 1, "AutoFormat");
+                updateComments.executeUpdate();
+                
+            } else if(htmlsubsetEnabled) {
+                
+                // set new global config property for enabled coment plugins
+                PreparedStatement addCommentPluginsProp = con.prepareStatement(
+                        "insert into roller_properties(name,value) values(?,?)");
+                addCommentPluginsProp.clearParameters();
+                addCommentPluginsProp.setString( 1, "users.comments.plugins");
+                addCommentPluginsProp.setString( 2, "HTMLSubset");
+                addCommentPluginsProp.executeUpdate();
+                
+                // update existing comments
+                PreparedStatement updateComments = con.prepareStatement(
+                        "update roller_comment set plugins = ?");
+                updateComments.clearParameters();
+                updateComments.setString( 1, "HTMLSubset");
+                updateComments.executeUpdate();
+                
+            } else {
+                
+                // set new global config property for enabled coment plugins
+                PreparedStatement addCommentPluginsProp = con.prepareStatement(
+                        "insert into roller_properties(name,value) values(?,?)");
+                addCommentPluginsProp.clearParameters();
+                addCommentPluginsProp.setString( 1, "users.comments.plugins");
+                addCommentPluginsProp.setString( 2, "");
+                addCommentPluginsProp.executeUpdate();
+                
+                // no need to update existing comments because plugins aren't enabled
+            }
+            
+            if (!con.getAutoCommit()) con.commit();
+           
+            successMessage("Comments successfully updated to use new comment plugins.");
+            
+        } catch (Exception e) {
+            errorMessage("Problem upgrading database to version 400", e);
+            throw new StartupException("Problem upgrading database to version 400", e);
+        }
+        
         // finally, upgrade db version string to 400
         updateDatabaseVersion(con, 400);
     }

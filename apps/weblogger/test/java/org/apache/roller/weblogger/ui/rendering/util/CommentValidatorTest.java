@@ -43,6 +43,9 @@ public class CommentValidatorTest extends TestCase {
     } 
 
     protected void setUp() throws Exception {
+        // setup weblogger
+        TestUtils.setupWeblogger();
+        
         mgr = new CommentValidationManager();
         
         user = TestUtils.setupUser("johndoe");

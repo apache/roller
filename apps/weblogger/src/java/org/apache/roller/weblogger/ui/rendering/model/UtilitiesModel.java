@@ -355,27 +355,7 @@ public class UtilitiesModel implements Model {
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
      */
     public String addNofollow(String html) {
-        if (html == null || html.length() == 0) {
-            return html;
-        }
-        Matcher m = mLinkPattern.matcher(html);
-        StringBuffer buf = new StringBuffer();
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = html.substring(start, end);
-            buf.append(html.substring(0, start));
-            if (link.indexOf("rel=\"nofollow\"") == -1) {
-                buf.append(
-                        link.substring(0, link.length() - 1) + " rel=\"nofollow\">");
-            } else {
-                buf.append(link);
-            }
-            html = html.substring(end, html.length());
-            m = mLinkPattern.matcher(html);
-        }
-        buf.append(html);
-        return buf.toString();
+        return Utilities.addNofollow(html);
     }
     
     /**

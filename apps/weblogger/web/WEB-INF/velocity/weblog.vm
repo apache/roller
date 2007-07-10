@@ -179,19 +179,10 @@ Show comments for weblog entry according to Roller configuration.
     <br/>
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
-            #if($config.commentEscapeHtml)
-                #set($content = $comment.content))
-            #else 
-                #set($content = $utils.transformToHTMLSubset($comment.content))
-            #end
-            #if($config.commentAutoFormat)
-                #set($content = $utils.autoformat($content))
-            #end
-            #set($content = $utils.addNofollow($content))
-
             <a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
-                ${content}
+
+                $comment.content
 
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")

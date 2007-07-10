@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.business.plugins;
 
-import org.apache.roller.weblogger.business.plugins.PluginManager;
+import java.util.ArrayList;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,6 +30,8 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 
 /**
@@ -42,12 +44,19 @@ public class PluginManagerImpl implements PluginManager {
     // Plugin classes keyed by plugin name
     static Map mPagePlugins = new LinkedHashMap();
     
+    // Comment plugins
+    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList();
+    
     
     /**
      * Creates a new instance of PluginManagerImpl
      */
     public PluginManagerImpl() {
+        // load weblog entry plugins
         loadPagePluginClasses();
+        
+        // load weblog entry comment plugins
+        loadCommentPlugins();
     }
     
     
@@ -98,6 +107,39 @@ public class PluginManagerImpl implements PluginManager {
     
     
     /**
+     * @inheritDoc
+     */
+    public List<WeblogEntryCommentPlugin> getCommentPlugins() {
+        return commentPlugins;
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public String applyCommentPlugins(WeblogEntryComment comment) {
+        
+        if(comment == null) {
+            throw new IllegalArgumentException("comment cannot be null");
+        }
+        
+        String content = comment.getContent();
+        
+        if (commentPlugins.size() > 0) {
+            for( WeblogEntryCommentPlugin plugin : commentPlugins ) {
+                if(comment.getPlugins() != null &&
+                        comment.getPlugins().indexOf(plugin.getName()) != -1) {
+                    log.debug("Invoking comment plugin "+plugin.getName());
+                    content = plugin.render(comment, content);
+                }
+            }
+        }
+        
+        return content;
+    }
+    
+    
+    /**
      * Initialize PagePlugins declared in roller.properties.
      * By using the full class name we also allow for the implementation of
      * "external" Plugins (maybe even packaged seperately). These classes are
@@ -130,6 +172,44 @@ public class PluginManagerImpl implements PluginManager {
                 }
             }
         }
+    }
+    
+    
+    /**
+     * Initialize all comment plugins defined in weblogger config.
+     */
+    private void loadCommentPlugins() {
+        
+        log.debug("Initializing comment plugins");
+        
+        String pluginStr = WebloggerConfig.getProperty("comment.formatter.classnames");
+        if (pluginStr != null) {
+            String[] plugins = StringUtils.stripAll(StringUtils.split(pluginStr, ","));
+            for (int i=0; i < plugins.length; i++) {
+                log.debug("trying " + plugins[i]);
+                
+                try {
+                    Class pluginClass = Class.forName(plugins[i]);
+                    WeblogEntryCommentPlugin plugin = 
+                            (WeblogEntryCommentPlugin) pluginClass.newInstance();
+                    
+                    // make sure and maintain ordering
+                    commentPlugins.add(i, plugin);
+                    
+                    log.debug("Configured comment plugin: "+plugins[i]);
+                    
+                } catch (ClassCastException e) {
+                    log.error("ClassCastException for " + plugins[i]);
+                } catch (ClassNotFoundException e) {
+                    log.error("ClassNotFoundException for " + plugins[i]);
+                } catch (InstantiationException e) {
+                    log.error("InstantiationException for " + plugins[i]);
+                } catch (IllegalAccessException e) {
+                    log.error("IllegalAccessException for " + plugins[i]);
+                }
+            }
+        }
+        
     }
     
     

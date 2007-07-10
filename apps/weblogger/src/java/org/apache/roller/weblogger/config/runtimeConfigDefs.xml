@@ -154,6 +154,10 @@
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
+      <property-def  name="users.comments.plugins"  key="configForm.commentPlugins">
+         <type>string</type>
+         <default-value></default-value>
+      </property-def>
       <property-def  name="users.comments.autoformat"  key="configForm.autoformatComments">
          <type>boolean</type>
          <default-value>true</default-value>

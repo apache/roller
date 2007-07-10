@@ -18,9 +18,13 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.sql.Timestamp;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -61,27 +65,67 @@ public class WeblogEntryCommentWrapper {
     }
     
     
+    /**
+     * Get the name of the comment writer.
+     *
+     * Value is always html escaped.
+     */
     public String getName() {
         return StringEscapeUtils.escapeHtml(this.pojo.getName());
     }
     
     
+    /**
+     * Get the email address of the comment writer, if specified.
+     *
+     * Value is always html escaped.
+     */
     public String getEmail() {
         return StringEscapeUtils.escapeHtml(this.pojo.getEmail());
     }
     
     
+    /**
+     * Get the url of the comment writer, if specified.
+     *
+     * Value is always html escaped.
+     */
     public String getUrl() {
         return StringEscapeUtils.escapeHtml(this.pojo.getUrl());
     }
     
     
+    /**
+     * Get the comment contents.
+     *
+     * Any configured comment plugins are applied first, then the value is 
+     * always html escaped.
+     */
     public String getContent() {
-        return StringEscapeUtils.escapeHtml(this.pojo.getContent());
+        
+        String content = this.pojo.getContent();
+        
+        // encode email
+        content = Utilities.encodeEmail(content);
+        
+        // escape html
+        content = StringEscapeUtils.escapeHtml(content);
+        
+        // apply plugins for transformation
+        PluginManager pmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
+        content = pmgr.applyCommentPlugins(this.pojo);
+        
+        // always add rel=nofollow for links
+        content = Utilities.addNofollow(content);
+        
+        return content;
     }
     
     
-    public java.sql.Timestamp getPostTime() {
+    /**
+     * Get the time the comment was posted.
+     */
+    public Timestamp getPostTime() {
         return this.pojo.getPostTime();
     }
     
@@ -101,6 +145,11 @@ public class WeblogEntryCommentWrapper {
     }
     
     
+    /**
+     * Get the http referrer of the comment poster, used for trackbacks.
+     *
+     * Value is always html escaped.
+     */
     public String getReferrer() {
         return StringEscapeUtils.escapeHtml(this.pojo.getReferrer());
     }
