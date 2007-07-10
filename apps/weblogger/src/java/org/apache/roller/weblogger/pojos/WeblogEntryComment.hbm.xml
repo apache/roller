@@ -127,6 +127,15 @@
             column="useragent"
             unique="false"
         />
+        
+        <property
+            name="plugins"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="plugins"
+            unique="false"
+        />
 
         <!--
             To add non XDoclet property mappings, create a file named

@@ -18,9 +18,12 @@
 
 package org.apache.roller.weblogger.business.plugins;
 
+import java.util.List;
 import java.util.Map;
+import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 
 /**
@@ -54,6 +57,26 @@ public interface PluginManager {
      * @return        the transformed text
      */
     public String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str);
+    
+    
+    /**
+     * Get the list of WeblogEntryCommentPlugin classes configured.
+     *
+     * This lists the set of plugins which are available to the system, not the
+     * set of plugins which are enabled.
+     *
+     * Should return an empty list if no plugins are configured.
+     */
+    public List<WeblogEntryCommentPlugin> getCommentPlugins();
+    
+    
+    /**
+     * Apply comment plugins.
+     *
+     * @param comment The comment to apply plugins for.
+     * @return String The transformed comment text.
+     */
+    public String applyCommentPlugins(WeblogEntryComment comment);
     
     
     /**

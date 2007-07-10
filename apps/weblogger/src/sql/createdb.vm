@@ -266,14 +266,12 @@ create table roller_comment (
     url        varchar(255),
     content    $db.TEXT_SQL_TYPE,
     posttime   $db.TIMESTAMP_SQL_TYPE   not null,
-    spam       $db.BOOLEAN_SQL_TYPE_FALSE not null,
     notify     $db.BOOLEAN_SQL_TYPE_FALSE not null,
     remotehost varchar(128),
-    pending    $db.BOOLEAN_SQL_TYPE_TRUE not null,
-    approved   $db.BOOLEAN_SQL_TYPE_FALSE not null,
     referrer   varchar(255),
     useragent  varchar(255),
-    status     varchar(20) not null
+    status     varchar(20) not null,
+    plugins    varchar(255)
 );
 create index co_entryid_idx on roller_comment( entryid );
 create index co_status_idx on roller_comment( status );

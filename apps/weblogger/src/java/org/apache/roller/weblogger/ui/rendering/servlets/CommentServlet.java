@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -48,7 +49,9 @@ import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.URLUtilities;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 
@@ -82,20 +85,22 @@ public class CommentServlet extends HttpServlet {
         
         log.info("Initializing CommentServlet");
         
-        commentValidationManager = new CommentValidationManager();
-        
         // lookup the authenticator we are going to use and instantiate it
         try {
             String name = WebloggerConfig.getProperty("comment.authenticator.classname");
-            
             Class clazz = Class.forName(name);
             this.authenticator = (CommentAuthenticator) clazz.newInstance();
-            
         } catch(Exception e) {
             log.error(e);
             this.authenticator = new DefaultCommentAuthenticator();
         }
         
+        // instantiate a comment validation manager for comment spam checking
+        commentValidationManager = new CommentValidationManager();
+        
+        // instantiate a comment format manager for comment formatting
+        String fmtrs = WebloggerConfig.getProperty("comment.formatter.classnames");
+        String[] formatters = Utilities.stringToStringArray(fmtrs, ",");
         
         // are we doing throttling?
         if(WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
@@ -232,6 +237,9 @@ public class CommentServlet extends HttpServlet {
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
         
+        // set whatever comment plugins are configured
+        comment.setPlugins(WebloggerRuntimeConfig.getProperty("users.comments.plugins"));
+        
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);
         if (preview) {
@@ -272,11 +280,36 @@ public class CommentServlet extends HttpServlet {
             } else if (validationScore == 100) {
                 // else they're approved
                 comment.setStatus(WeblogEntryComment.APPROVED);
+                message = messageUtils.getString("commentServlet.commentAccepted");
             } else {
                 // Invalid comments are marked as spam
+                log.debug("Comment marked as spam");
                 comment.setStatus(WeblogEntryComment.SPAM);
                 error = messageUtils.getString("commentServlet.commentMarkedAsSpam");
-                log.debug("Comment marked as spam");
+                
+                // add specific error messages if they exist
+                if(messages.getErrorCount() > 0) {
+                    Iterator errors = messages.getErrors();
+                    RollerMessage errorKey = null;
+                    
+                    StringBuffer buf = new StringBuffer();
+                    buf.append("<ul>");
+                    while(errors.hasNext()) {
+                        errorKey = (RollerMessage)errors.next();
+                        
+                        buf.append("<li>");
+                        if(errorKey.getArgs() != null) {
+                            buf.append(messageUtils.getString(errorKey.getKey(), errorKey.getArgs()));
+                        } else {
+                            buf.append(messageUtils.getString(errorKey.getKey()));
+                        }
+                        buf.append("</li>");
+                    }
+                    buf.append("</ul>");
+                    
+                    error += buf.toString();
+                }
+                
             }
             
             try {               

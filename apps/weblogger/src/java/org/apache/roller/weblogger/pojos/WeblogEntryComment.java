@@ -50,6 +50,7 @@ public class WeblogEntryComment implements Serializable {
     private String    remoteHost = null;
     private String    referrer = null;
     private String    userAgent = null;
+    private String    plugins = null;
     
     // associations
     private WeblogEntry weblogEntry = null;
@@ -72,11 +73,9 @@ public class WeblogEntryComment implements Serializable {
         this.id = id;
     }
     
+    
     /**
-     * Weblog entry assocaited with comment
-     * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="entryid" cascade="none" not-null="true"
+     * Weblog entry associated with comment.
      */
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
@@ -84,17 +83,14 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * Weblog entry assocaited with comment
-     * @ejb:persistent-field
      */
     public void setWeblogEntry(WeblogEntry entry) {
         weblogEntry = entry;
     }
     
+    
     /**
      * Name of person who wrote comment.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true" unique="false"
      */
     public String getName() {
         return this.name;
@@ -102,17 +98,14 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * Name of person who wrote comment.
-     * @ejb:persistent-field
      */
     public void setName(String name) {
         this.name = name;
     }
     
+    
     /**
      * Email of person who wrote comment.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="email" non-null="true" unique="false"
      */
     public String getEmail() {
         return this.email;
@@ -120,17 +113,14 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * Email of person who wrote comment.
-     * @ejb:persistent-field
      */
     public void setEmail(String email) {
         this.email = email;
     }
     
+    
     /**
      * URL of person who wrote comment.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="url" non-null="true" unique="false"
      */
     public String getUrl() {
         return this.url;
@@ -138,17 +128,14 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * URL of person who wrote comment.
-     * @ejb:persistent-field
      */
     public void setUrl(String url) {
         this.url = url;
     }
     
+    
     /**
      * Content of comment.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="content" non-null="true" unique="false"
      */
     public String getContent() {
         return this.content;
@@ -156,36 +143,29 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * Content of comment.
-     * @ejb:persistent-field
      */
     public void setContent(String content) {
         this.content = content;
     }
     
+    
     /**
      * Time that comment was posted.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="posttime" non-null="true" unique="false"
      */
-    public java.sql.Timestamp getPostTime() {
+    public Timestamp getPostTime() {
         return this.postTime;
     }
     
     /**
      * Time that comment was posted.
-     * @ejb:persistent-field
      */
-    public void setPostTime(java.sql.Timestamp postTime) {
+    public void setPostTime(Timestamp postTime) {
         this.postTime = postTime;
     }
     
+    
     /**
      * Status of the comment, i.e. APPROVED, SPAM, PENDING, etc.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="status" non-null="true" unique="false"
      */
     public String getStatus() {
         return status;
@@ -198,12 +178,10 @@ public class WeblogEntryComment implements Serializable {
         this.status = status;
     }
     
+    
     /**
      * True if person who wrote comment wishes to be notified of new comments
      * on the same weblog entry.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="notify" non-null="false" unique="false"
      */
     public Boolean getNotify() {
         return this.notify;
@@ -212,17 +190,14 @@ public class WeblogEntryComment implements Serializable {
     /**
      * True if person who wrote comment wishes to be notified of new comments
      * on the same weblog entry.
-     * @ejb:persistent-field
      */
     public void setNotify(Boolean notify) {
         this.notify = notify;
     }
     
+    
     /**
      * Host name or IP of person who wrote comment.
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="remotehost" non-null="true" unique="false"
      */
     public String getRemoteHost() {
         return this.remoteHost;
@@ -230,17 +205,14 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * Host name or IP of person who wrote comment.
-     * @ejb:persistent-field
      */
     public void setRemoteHost(String remoteHost) {
         this.remoteHost = remoteHost;
     }
     
+    
     /**
      * HTTP referrer from comment post request
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="referrer" non-null="true" unique="false"
      */
     public String getReferrer() {
         return referrer;
@@ -248,17 +220,14 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * HTTP referrer from comment post request
-     * @ejb:persistent-field
      */
     public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
     
+    
     /**
      * HTTP user-agent from comment post request
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="useragent" non-null="true" unique="false"
      */
     public String getUserAgent() {
         return userAgent;
@@ -266,43 +235,53 @@ public class WeblogEntryComment implements Serializable {
     
     /**
      * HTTP user-agent from comment post request
-     * @ejb:persistent-field
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }
     
+    
+    /**
+     * Comma separated list of comment plugins to apply.
+     */
+    public String getPlugins() {
+        return plugins;
+    }
+    
+    /**
+     * Comma separated list of comment plugins to apply.
+     */
+    public void setPlugins(String plugins) {
+        this.plugins = plugins;
+    }
+    
+    
     /**
      * Indicates that weblog owner considers this comment to be spam.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public Boolean getSpam() {
         return new Boolean(SPAM.equals(this.status));
     }
     
+    
     /**
      * True if comment has is pending moderator approval.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public Boolean getPending() {
         return new Boolean(PENDING.equals(this.status));
     }
     
+    
     /**
      * Indicates that comment has been approved for display on weblog.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public Boolean getApproved() {
         return new Boolean(APPROVED.equals(this.status));
     }
     
+    
     /**
      * Timestamp to be used to formulate comment permlink.
-     *
-     * @roller.wrapPojoMethod type="simple"
      */
     public String getTimestamp() {
         if (postTime != null) {
