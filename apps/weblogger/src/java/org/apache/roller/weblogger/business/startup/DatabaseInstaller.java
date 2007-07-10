@@ -220,10 +220,6 @@ public class DatabaseInstaller {
                 upgradeTo310(con, runScripts);
                 dbversion = 310;
             }
-            if(dbversion < 320) {
-                upgradeTo320(con, runScripts);
-                dbversion = 320;
-            }
             if(dbversion < 400) {
                 upgradeTo400(con, runScripts);
                 dbversion = 400;
@@ -632,25 +628,33 @@ public class DatabaseInstaller {
         
         updateDatabaseVersion(con, 310);
     }
-
+    
     
     /**
-     * Upgrade database for Roller 3.2.0
+     * Upgrade database for Roller 4.0.0
      */
-    private void upgradeTo320(Connection con, boolean runScripts) throws StartupException {
+    private void upgradeTo400(Connection con, boolean runScripts) throws StartupException {
         
-        successMessage("Doing upgrade to 320 ...");
+        successMessage("Doing upgrade to 400 ...");
         
+        // first we need to run upgrade scripts 
         try {    
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/310-to-320-migration.sql";
+                String scriptPath = handle + "/310-to-400-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
-            
+        } catch(Exception ex) {
+            errorMessage("Problem upgrading database to version 400", ex);
+            throw new StartupException("Problem upgrading database to version 400", ex);
+        }
+        
+        
+        // now upgrade hierarchical objects data model
+        try {
             successMessage("Populating parentid columns for weblogcategory and folder tables");
             
             // Populate parentid in weblogcategory and folder tables.
@@ -856,28 +860,9 @@ public class DatabaseInstaller {
             throw new StartupException("Problem upgrading database to version 320", e);
         }
         
-        // finally, upgrade db version string to 320
-        updateDatabaseVersion(con, 320);
-    }
-    
-    
-    /**
-     * Upgrade database for Roller 4.0.0
-     */
-    private void upgradeTo400(Connection con, boolean runScripts) throws StartupException {
         
-        successMessage("Doing upgrade to 400 ...");
-        
-        try {    
-            if (runScripts) {
-                String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/320-to-400-migration.sql";
-                successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
-                runner.runScript(con, true);
-                messages.addAll(runner.getMessages());
-            }
-            
+        // 4.0 changes the planet data model a bit, so we need to clean that up
+        try {
             successMessage("Merging planet groups 'all' and 'external'");
             
             // Move all subscriptions in the planet group 'external' to group 'all'
