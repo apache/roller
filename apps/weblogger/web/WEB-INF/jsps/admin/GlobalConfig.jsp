@@ -17,8 +17,8 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle"><s:text name="configForm.subtitle" /></a>
-<p><s:text name="configForm.prompt" /></a>
+<p class="subtitle"><s:text name="configForm.subtitle" /></p>
+<p><s:text name="configForm.prompt" /></p>
 
 <s:form action="globalConfig!save">
 
@@ -34,11 +34,16 @@
             
             <tr>
                 <td class="label"><s:text name="%{#pd.key}" /></td>
-              
-                  <%-- "string" type means use a simple textbox --%>
-                  <s:if test="#pd.type == 'string'">
-                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>' value='<s:property value="properties[#pd.name].value"/>' size="35" /></td>
+                
+                  <%-- special condition for comment plugins --%>
+                  <s:if test="#pd.name == 'users.comments.plugins'">
+                      <td class="field"><s:checkboxlist theme="roller" list="pluginsList" name="commentPlugins" listKey="name" listValue="name" /></td>
                   </s:if>
+                  
+                  <%-- "string" type means use a simple textbox --%>
+                  <s:elseif test="#pd.type == 'string'">
+                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>' value='<s:property value="properties[#pd.name].value"/>' size="35" /></td>
+                  </s:elseif>
                   
                   <%-- "text" type means use a full textarea --%>
                   <s:elseif test="#pd.type == 'text'">
