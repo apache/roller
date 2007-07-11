@@ -90,7 +90,7 @@ public class WeblogConfig extends UIAction {
             }
             
             // set plugins list
-            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
             List plugins = new ArrayList();
             Iterator iter = pluginsMap.values().iterator();

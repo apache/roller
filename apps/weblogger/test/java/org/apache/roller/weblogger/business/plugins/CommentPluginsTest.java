@@ -44,7 +44,7 @@ public class CommentPluginsTest extends TestCase {
     
     public void testAutoFormatPlugin() {
         
-        PluginManager pmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
+        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
         
         // setup test comment
         WeblogEntryComment comment = new WeblogEntryComment();

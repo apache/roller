@@ -92,7 +92,7 @@ public class OldPageHelper {
         
         // init plugins
         Weblogger roller = WebloggerFactory.getWeblogger();
-        PluginManager ppmgr = roller.getPagePluginManager();
+        PluginManager ppmgr = roller.getPluginManager();
         mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite);
     }
     

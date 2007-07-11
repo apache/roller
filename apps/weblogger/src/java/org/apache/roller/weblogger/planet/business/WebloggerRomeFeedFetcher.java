@@ -126,7 +126,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
                     entryCount);
             
             // Populate subscription object with new entries
-            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map pagePlugins = ppmgr.getWeblogEntryPlugins(localWeblog);
             for ( WeblogEntry rollerEntry : entries ) {
                 SubscriptionEntry entry = new SubscriptionEntry();
