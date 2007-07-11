@@ -23,11 +23,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
@@ -52,6 +55,12 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     // the runtime config def used to populate the display
     private ConfigDef globalConfigDef = null;
     
+    // list of comment plugins
+    private List<WeblogEntryCommentPlugin> pluginsList = Collections.EMPTY_LIST;
+    
+    // comment plugins that are enabled.  this is what the html form submits to
+    private String[] commentPlugins = new String[0];
+    
     
     public GlobalConfig() {
         this.actionName = "globalConfig";
@@ -60,10 +69,12 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     }
     
     
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
     
+    @Override
     public String requiredUserRole() {
         return "admin";
     }
@@ -72,6 +83,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     /**
      * Prepare action by loading runtime properties map.
      */
+    @Override
     public void myPrepare() {
         try {
             // just grab our properties map and make it available to the action
@@ -91,6 +103,10 @@ public class GlobalConfig extends UIAction implements ParameterAware {
                 setGlobalConfigDef(configDef);
             }
         }
+        
+        // load plugins list
+        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
+        setPluginsList(pmgr.getCommentPlugins());
     }
     
     
@@ -98,6 +114,12 @@ public class GlobalConfig extends UIAction implements ParameterAware {
      * Display global properties editor form.
      */
     public String execute() {
+        
+        // setup array of configured plugins
+        if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("users.comments.plugins"))) {
+            setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("users.comments.plugins"), ","));
+        }
+        
         return SUCCESS;
     }
     
@@ -142,6 +164,15 @@ public class GlobalConfig extends UIAction implements ParameterAware {
             }
         }
         
+        // special handling for comment plugins
+        String enabledPlugins = "";
+        if(getCommentPlugins().length > 0) {
+            enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
+        }
+        RuntimeConfigProperty prop = 
+                    (RuntimeConfigProperty) getProperties().get("users.comments.plugins");
+        prop.setValue(enabledPlugins);
+            
         try {
             // save 'em and flush
             PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
@@ -198,6 +229,22 @@ public class GlobalConfig extends UIAction implements ParameterAware {
 
     public void setGlobalConfigDef(ConfigDef globalConfigDef) {
         this.globalConfigDef = globalConfigDef;
+    }
+    
+    public List<WeblogEntryCommentPlugin> getPluginsList() {
+        return pluginsList;
+    }
+
+    public void setPluginsList(List<WeblogEntryCommentPlugin> pluginsList) {
+        this.pluginsList = pluginsList;
+    }
+    
+    public String[] getCommentPlugins() {
+        return commentPlugins;
+    }
+
+    public void setCommentPlugins(String[] commentPlugins) {
+        this.commentPlugins = commentPlugins;
     }
     
 }
