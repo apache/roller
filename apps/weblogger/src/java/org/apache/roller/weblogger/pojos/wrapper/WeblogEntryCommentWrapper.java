@@ -112,7 +112,7 @@ public class WeblogEntryCommentWrapper {
         content = StringEscapeUtils.escapeHtml(content);
         
         // apply plugins for transformation
-        PluginManager pmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
+        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
         content = pmgr.applyCommentPlugins(this.pojo);
         
         // always add rel=nofollow for links

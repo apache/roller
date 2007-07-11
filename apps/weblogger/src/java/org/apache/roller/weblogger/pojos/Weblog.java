@@ -916,7 +916,7 @@ public class Weblog implements Serializable {
         if (initializedPlugins == null) {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
-                PluginManager ppmgr = roller.getPagePluginManager();
+                PluginManager ppmgr = roller.getPluginManager();
                 initializedPlugins = ppmgr.getWeblogEntryPlugins(this); 
             } catch (Exception e) {
                 this.log.error("ERROR: initializing plugins");

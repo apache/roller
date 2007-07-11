@@ -124,7 +124,7 @@ public interface Weblogger {
     /**
      * Get PluginManager associated with this Weblogger instance.
      */
-    public PluginManager getPagePluginManager();
+    public PluginManager getPluginManager();
     
     
     /**

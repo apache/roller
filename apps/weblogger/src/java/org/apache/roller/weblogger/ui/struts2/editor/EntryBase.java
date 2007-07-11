@@ -179,7 +179,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntryPlugin> getEntryPlugins() {
         List<WeblogEntryPlugin> availablePlugins = Collections.EMPTY_LIST;
         try {
-            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPagePluginManager();
+            PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map<String, WeblogEntryPlugin> plugins = ppmgr.getWeblogEntryPlugins(getActionWeblog());
             
             if(plugins.size() > 0) {

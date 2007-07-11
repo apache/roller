@@ -253,7 +253,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.modelWebloggerr#getPluginManager()
      */
-    public PluginManager getPagePluginManager() {
+    public PluginManager getPluginManager() {
         return pluginManager;
     }
     
