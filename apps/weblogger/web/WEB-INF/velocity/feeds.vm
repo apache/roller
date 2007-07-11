@@ -95,16 +95,7 @@
         <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
-        #if($config.commentescapeXML)
-            #set($content = $utils.escapeXML($utils.removeHTML($comment.content)))
-        #else 
-            #set($content = $utils.escapeXML($utils.transformToHTMLSubset($utils.escapeXML($comment.content))))
-        #end
-        #if($config.commentAutoFormat)
-            #set($content = $utils.autoformat($content))
-        #end
-        #set($content = $utils.addNofollow($content))
-        <content type="html">${content}</content>
+        <content type="html">$comment.content</content>
     </entry>
     #end
 #end
@@ -116,16 +107,7 @@
         <title>Re: $utils.escapeXML($comment.weblogEntry.title)</title>
         <dc:creator>$utils.escapeXML($utils.removeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
-        #if($config.commentescapeXML)
-            #set($content = $utils.escapeXML($utils.removeHTML($comment.content)))
-        #else 
-            #set($content = $utils.escapeXML($utils.transformToHTMLSubset($utils.escapeXML($comment.content))))
-        #end
-        #if($config.commentAutoFormat)
-            #set($content = $utils.autoformat($content))
-        #end
-        #set($content = $utils.addNofollow($content))
-        <description>${content}</description>
+        <description>$comment.content</description>
     </item>
     #end
 #end
