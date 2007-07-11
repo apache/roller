@@ -127,7 +127,16 @@
                        <s:a href="%{manageComments}"><s:text name="yourWebsites.manageComments" /> (<s:property value="#perms.website.commentCount" />)</s:a> 
                        <br />
                        
+                       <%-- Only adming get access to theme and config settings --%>
                        <s:if test="#perms.permissionMask == 3">
+                           <s:url action="themeEdit" namespace="/roller-ui/authoring" id="weblogTheme">
+                               <s:param name="weblog" value="#perms.website.handle" />
+                           </s:url>
+                           <img src='<s:url value="/roller-ui/images/layout.png"/>' />
+                           <a href='<s:property value="weblogTheme" />'>
+                               <s:text name="yourWebsites.theme" /></a> 
+                           <br />
+                           
                            <s:url action="weblogConfig" namespace="/roller-ui/authoring" id="manageWeblog">
                                <s:param name="weblog" value="#perms.website.handle" />
                            </s:url>
