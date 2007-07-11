@@ -94,18 +94,10 @@
     #set( $comments = $model.weblog.getRecentComments($numComments) )
     <div class="comments" id="comments">
     #foreach( $comment in $comments )
-        #set($content = $utils.encodeEmail($comment.content))
-        #if($config.commentEscapeHtml)
-            #set($content = $utils.escapeHTML($content))
-        #end
-        #if($config.commentAutoFormat)
-            #set($content = $utils.replace($content,"\n","<br />"))
-        #end
-        #set($content = $utils.addNofollow($content))
         <div class="comment" style="border: 1px solid #dadada; padding-left: 3px; padding-right: 5px;" >
         <p>Commenting on <a class="entrypermalink"
             href="$url.entry($comment.weblogEntry.anchor)">${comment.weblogEntry.title}</a>:</p>
-        ${content}
+        $comment.content
         #showCommentDetails($comment false)
         </div>
     #end
