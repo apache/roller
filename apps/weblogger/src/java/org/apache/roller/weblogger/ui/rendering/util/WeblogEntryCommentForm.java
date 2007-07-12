@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 
@@ -71,7 +72,7 @@ public class WeblogEntryCommentForm {
     }
     
     public String getName() {
-        return name;
+        return StringEscapeUtils.escapeHtml(name);
     }
 
     public void setName(String name) {
@@ -79,7 +80,7 @@ public class WeblogEntryCommentForm {
     }
 
     public String getEmail() {
-        return email;
+        return StringEscapeUtils.escapeHtml(email);
     }
 
     public void setEmail(String email) {
@@ -87,7 +88,7 @@ public class WeblogEntryCommentForm {
     }
 
     public String getUrl() {
-        return url;
+        return StringEscapeUtils.escapeHtml(url);
     }
 
     public void setUrl(String url) {
@@ -95,7 +96,7 @@ public class WeblogEntryCommentForm {
     }
 
     public String getContent() {
-        return content;
+        return StringEscapeUtils.escapeHtml(content);
     }
 
     public void setContent(String content) {
