@@ -45,7 +45,7 @@ public class AppModuleParser implements ModuleParser {
                 if ("no".equals(draftElem.getText())) m.setDraft(false);                
             }
         }
-        Element edited = elem.getChild("editied", getContentNamespace());
+        Element edited = elem.getChild("edited", getContentNamespace());
         if (edited != null) {
             try {
                 m.setEdited(DateUtil.parseIso8601(edited.getTextTrim()));
