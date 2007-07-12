@@ -235,15 +235,15 @@ Show comments form for weblog entry.
         <ul>
             <li>
                 <label class="desc">$text.get( "macro.weblog.name" )</label>
-                <input type="text" name="name" class="text large" value="$utils.escapeHTML($cform.name)" size="50" maxlength="255" />
+                <input type="text" name="name" class="text large" value="$cform.name" size="50" maxlength="255" />
             </li>
 
             <li><label class="desc">$text.get( "macro.weblog.email" )</label>
-                <input type="text" name="email" class="text large" value="$utils.escapeHTML($cform.email)" size="50" maxlength="255" />
+                <input type="text" name="email" class="text large" value="$cform.email" size="50" maxlength="255" />
             </li>
 
             <li><label class="desc">$text.get( "macro.weblog.url" )</label>
-                <input type="text" name="url" class="text large" value="$utils.escapeHTML($cform.url)" size="50" maxlength="255" />
+                <input type="text" name="url" class="text large" value="$cform.url" size="50" maxlength="255" />
             </li>
 
         #if ($config.commentEmailNotify)
@@ -257,13 +257,8 @@ Show comments form for weblog entry.
             </li>
             <li>
                 <label class="desc">$text.get( "macro.weblog.yourcomment" )</label>
-
-            #if($config.commentEscapeHtml)
-                #set($content = $utils.escapeHTML($cform.content))
-            #else 
-                #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($cform.content)))
-            #end               
-            <textarea name="content" class="textarea large" cols="40" rows="10">$utils.escapeHTML($content)</textarea>
+             
+            <textarea name="content" class="textarea large" cols="40" rows="10">$cform.content</textarea>
 
             </li>
             <li class="info">
