@@ -99,6 +99,9 @@
             <basic name="plugins">
                 <column name="plugins" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <basic name="contentType">
+                <column name="contenttype" insertable="true" updatable="true" unique="false"/>
+            </basic>
             <many-to-one name="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntry">
                 <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>

@@ -85,13 +85,19 @@ public class ConfigModel implements Model {
     public boolean getFeedStyle() {
         return getBooleanProperty("site.newsfeeds.styledFeeds");
     }
-            
+    
+    public boolean getCommentHtmlAllowed() {
+        return getBooleanProperty("users.comments.htmlenabled");
+    }
+    
     public boolean getCommentAutoFormat() {
-        return getBooleanProperty("users.comments.autoformat");
+        // this prop was removed in 4.0
+        return false;
     }
     
     public boolean getCommentEscapeHtml() {
-        return getBooleanProperty("users.comments.escapehtml");
+        // replaced by new htmlallowed property in 4.0
+        return !getCommentHtmlAllowed();
     }
     
     public boolean getCommentEmailNotify() {

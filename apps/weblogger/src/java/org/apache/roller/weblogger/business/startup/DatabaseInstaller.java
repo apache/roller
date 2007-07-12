@@ -92,7 +92,7 @@ public class DatabaseInstaller {
     /** 
      * Determine if database schema needs to be upgraded.
      */
-    public boolean isUpgradeRequired() {        
+    public boolean isUpgradeRequired() {
         int desiredVersion = parseVersionString(version);
         int databaseVersion;
         try {
@@ -103,6 +103,22 @@ public class DatabaseInstaller {
         
         // if dbversion is unset then assume a new install, otherwise compare
         if (databaseVersion < 0) {
+            // if this is a fresh db then we need to set the database version
+            Connection con = null;
+            try {
+                con = db.getConnection();
+                setDatabaseVersion(con, version);
+            } catch (Exception ioe) {
+                errorMessage("ERROR setting database version");
+            } finally {
+                try {
+                    if (con != null) {
+                        con.close();
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+
             return false;
         } else {
             return databaseVersion < desiredVersion;
@@ -138,7 +154,7 @@ public class DatabaseInstaller {
      */
     public void createDatabase() throws StartupException {
         
-        log.debug("Attempting to create database");
+        log.info("Creating Roller Weblogger database tables.");
         
         Connection con = null;
         SQLScriptRunner create = null;
@@ -918,10 +934,7 @@ public class DatabaseInstaller {
         
         // upgrade comments to use new plugin mechanism
         try {
-            successMessage("Upgrading existing comments to use new comment plugins");
-            
-            // we are just going to set the 'plugins' value for comments to
-            // include 'AutoFormat' if it was configured previously
+            successMessage("Upgrading existing comments with content-type & plugins");
             
             // look in db and see if comment autoformatting is enabled
             boolean autoformatEnabled = false;
@@ -937,83 +950,67 @@ public class DatabaseInstaller {
             }
             
             // look in db and see if comment html escaping is enabled
-            boolean htmlsubsetEnabled = false;
+            boolean htmlEnabled = false;
             String escapehtml = null;
             PreparedStatement selectIsEscapehtmlEnabled = con.prepareStatement(
                 "select value from roller_properties where name = 'users.comments.escapehtml'");
             ResultSet rs1 = selectIsEscapehtmlEnabled.executeQuery();
             if (rs1.next()) {
                 escapehtml = rs1.getString(1);
-                // NOTE: we enforce an html subset only when html escaping is OFF
+                // NOTE: we allow html only when html escaping is OFF
                 if(escapehtml != null && !"true".equals(escapehtml)) {
-                    htmlsubsetEnabled = true;
+                    htmlEnabled = true;
                 }
             }
             
-            // now update existing comments with necessary plugins
-            if(htmlsubsetEnabled && autoformatEnabled) {
-                
-                // set new global config property for enabled coment plugins
-                PreparedStatement addCommentPluginsProp = con.prepareStatement(
-                        "insert into roller_properties(name,value) values(?,?)");
-                addCommentPluginsProp.clearParameters();
-                addCommentPluginsProp.setString( 1, "users.comments.plugins");
-                addCommentPluginsProp.setString( 2, "HTMLSubset, AutoFormat");
-                addCommentPluginsProp.executeUpdate();
-                
-                // update existing comments
-                PreparedStatement updateComments = con.prepareStatement(
-                        "update roller_comment set plugins = ?");
-                updateComments.clearParameters();
-                updateComments.setString( 1, "HTMLSubset, AutoFormat");
-                updateComments.executeUpdate();
-                
-            } else if(autoformatEnabled) {
-                
-                // set new global config property for enabled coment plugins
-                PreparedStatement addCommentPluginsProp = con.prepareStatement(
-                        "insert into roller_properties(name,value) values(?,?)");
-                addCommentPluginsProp.clearParameters();
-                addCommentPluginsProp.setString( 1, "users.comments.plugins");
-                addCommentPluginsProp.setString( 2, "AutoFormat");
-                addCommentPluginsProp.executeUpdate();
-                
-                // update existing comments
-                PreparedStatement updateComments = con.prepareStatement(
-                        "update roller_comment set plugins = ?");
-                updateComments.clearParameters();
-                updateComments.setString( 1, "AutoFormat");
-                updateComments.executeUpdate();
-                
-            } else if(htmlsubsetEnabled) {
-                
-                // set new global config property for enabled coment plugins
-                PreparedStatement addCommentPluginsProp = con.prepareStatement(
-                        "insert into roller_properties(name,value) values(?,?)");
-                addCommentPluginsProp.clearParameters();
-                addCommentPluginsProp.setString( 1, "users.comments.plugins");
-                addCommentPluginsProp.setString( 2, "HTMLSubset");
-                addCommentPluginsProp.executeUpdate();
-                
-                // update existing comments
-                PreparedStatement updateComments = con.prepareStatement(
-                        "update roller_comment set plugins = ?");
-                updateComments.clearParameters();
-                updateComments.setString( 1, "HTMLSubset");
-                updateComments.executeUpdate();
-                
+            // first lets set the new 'users.comments.htmlenabled' property
+            PreparedStatement addCommentHtmlProp = con.prepareStatement("insert into roller_properties(name,value) values(?,?)");
+            addCommentHtmlProp.clearParameters();
+            addCommentHtmlProp.setString(1, "users.comments.htmlenabled");
+            if(htmlEnabled) {
+                addCommentHtmlProp.setString(2, "true");
             } else {
-                
-                // set new global config property for enabled coment plugins
-                PreparedStatement addCommentPluginsProp = con.prepareStatement(
-                        "insert into roller_properties(name,value) values(?,?)");
-                addCommentPluginsProp.clearParameters();
-                addCommentPluginsProp.setString( 1, "users.comments.plugins");
-                addCommentPluginsProp.setString( 2, "");
-                addCommentPluginsProp.executeUpdate();
-                
-                // no need to update existing comments because plugins aren't enabled
+                addCommentHtmlProp.setString(2, "false");
             }
+            addCommentHtmlProp.executeUpdate();
+            
+            // determine content-type for existing comments
+            String contentType = "text/plain";
+            if(htmlEnabled) {
+                contentType = "text/html";
+            }
+            
+            // determine plugins for existing comments
+            String plugins = "";
+            if(htmlEnabled && autoformatEnabled) {
+                plugins = "HTMLSubset,AutoFormat";
+            } else if(htmlEnabled) {
+                plugins = "HTMLSubset";
+            } else if(autoformatEnabled) {
+                plugins = "AutoFormat";
+            }
+            
+            // set new comment plugins configuration property 'users.comments.plugins'
+            PreparedStatement addCommentPluginsProp = 
+                    con.prepareStatement("insert into roller_properties(name,value) values(?,?)");
+            addCommentPluginsProp.clearParameters();
+            addCommentPluginsProp.setString(1, "users.comments.plugins");
+            addCommentPluginsProp.setString(2, plugins);
+            addCommentPluginsProp.executeUpdate();
+            
+            // set content-type for all existing comments
+            PreparedStatement updateCommentsContentType = 
+                    con.prepareStatement("update roller_comment set contenttype = ?");
+            updateCommentsContentType.clearParameters();
+            updateCommentsContentType.setString(1, contentType);
+            updateCommentsContentType.executeUpdate();
+
+            // set plugins for all existing comments
+            PreparedStatement updateCommentsPlugins = 
+                    con.prepareStatement("update roller_comment set plugins = ?");
+            updateCommentsPlugins.clearParameters();
+            updateCommentsPlugins.setString(1, plugins);
+            updateCommentsPlugins.executeUpdate();
             
             if (!con.getAutoCommit()) con.commit();
            

@@ -154,17 +154,13 @@
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      <property-def  name="users.comments.plugins"  key="configForm.commentPlugins">
-         <type>string</type>
-         <default-value></default-value>
-      </property-def>
-      <property-def  name="users.comments.autoformat"  key="configForm.autoformatComments">
+      <property-def  name="users.comments.htmlenabled"  key="configForm.commentHtmlAllowed">
          <type>boolean</type>
          <default-value>true</default-value>
       </property-def>
-      <property-def  name="users.comments.escapehtml"  key="configForm.escapeCommentHtml">
-         <type>boolean</type>
-         <default-value>false</default-value>
+      <property-def  name="users.comments.plugins"  key="configForm.commentPlugins">
+         <type>string</type>
+         <default-value></default-value>
       </property-def>
       <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
          <type>boolean</type>

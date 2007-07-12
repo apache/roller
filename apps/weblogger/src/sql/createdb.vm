@@ -271,7 +271,8 @@ create table roller_comment (
     referrer   varchar(255),
     useragent  varchar(255),
     status     varchar(20) not null,
-    plugins    varchar(255)
+    plugins    varchar(255),
+    contenttype varchar(128) default 'text/plain' not null
 );
 create index co_entryid_idx on roller_comment( entryid );
 create index co_status_idx on roller_comment( status );
