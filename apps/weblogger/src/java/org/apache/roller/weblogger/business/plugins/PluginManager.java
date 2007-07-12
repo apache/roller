@@ -74,9 +74,10 @@ public interface PluginManager {
      * Apply comment plugins.
      *
      * @param comment The comment to apply plugins for.
+     * @param text The text to apply the plugins to.
      * @return String The transformed comment text.
      */
-    public String applyCommentPlugins(WeblogEntryComment comment);
+    public String applyCommentPlugins(WeblogEntryComment comment, String text);
     
     
     /**

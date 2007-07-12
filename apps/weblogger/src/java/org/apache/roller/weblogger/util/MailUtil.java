@@ -324,7 +324,7 @@ public class MailUtil {
         // Determine with mime type to use for e-mail
         StringBuffer msg = new StringBuffer();
         StringBuffer ownermsg = new StringBuffer();
-        boolean escapeHtml = WebloggerRuntimeConfig.getBooleanProperty("users.comments.escapehtml");
+        boolean escapeHtml = !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
         
         // first the commenter message
         

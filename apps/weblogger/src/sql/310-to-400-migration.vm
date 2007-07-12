@@ -57,8 +57,9 @@ create index fo_path_idx on folder( path );
 #addColumnNull("roller_comment" "referrer" "varchar(255)")
 #addColumnNull("roller_comment" "useragent" "varchar(255)")
 
--- add new field to support comment plugins
+-- add new field to support comment plugins and content-type
 #addColumnNull("roller_comment" "plugins" "varchar(255)")
+#addColumnNotNull("roller_comment" "contenttype" "varchar(128)" "'text/plain'")
 
 -- add new status field to comment table to simplify queries
 #addColumnNotNull("roller_comment" "status" "varchar(20)" "'APPROVED'")

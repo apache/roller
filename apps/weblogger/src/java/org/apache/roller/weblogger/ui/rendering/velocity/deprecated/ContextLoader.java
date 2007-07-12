@@ -279,13 +279,11 @@ public class ContextLoader {
         
         mLogger.debug("Loading comment values");
         
-        String escapeHtml =
-                WebloggerRuntimeConfig.getProperty("users.comments.escapehtml");
-        String autoFormat =
-                WebloggerRuntimeConfig.getProperty("users.comments.autoformat");
+        boolean escapeHtml =
+                !WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled");
         ctx.put("isCommentPage",     Boolean.TRUE);
         ctx.put("escapeHtml",        new Boolean(escapeHtml) );
-        ctx.put("autoformat",        new Boolean(autoFormat) );
+        ctx.put("autoformat",        new Boolean(false) );
         
         // Make sure comment form object is available in context
         WeblogEntryCommentForm commentForm =

@@ -237,6 +237,13 @@ public class CommentServlet extends HttpServlet {
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
         
+        // set comment content-type depending on if html is allowed
+        if(WebloggerRuntimeConfig.getBooleanProperty("users.comments.htmlenabled")) {
+            comment.setContentType("text/html");
+        } else {
+            comment.setContentType("text/plain");
+        }
+        
         // set whatever comment plugins are configured
         comment.setPlugins(WebloggerRuntimeConfig.getProperty("users.comments.plugins"));
         
@@ -253,7 +260,7 @@ public class CommentServlet extends HttpServlet {
         if(!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
             
-            // if this is a real comment post then authenticate request
+        // if this is a real comment post then authenticate request
         } else if(!preview && !this.authenticator.authenticate(request)) {
             error = messageUtils.getString("error.commentAuthFailed");
             log.debug("Comment failed authentication");

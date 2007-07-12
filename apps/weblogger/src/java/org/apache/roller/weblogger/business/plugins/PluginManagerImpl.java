@@ -117,13 +117,13 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * @inheritDoc
      */
-    public String applyCommentPlugins(WeblogEntryComment comment) {
+    public String applyCommentPlugins(WeblogEntryComment comment, String text) {
         
-        if(comment == null) {
+        if(comment == null || text == null) {
             throw new IllegalArgumentException("comment cannot be null");
         }
         
-        String content = comment.getContent();
+        String content = text;
         
         if (commentPlugins.size() > 0) {
             for( WeblogEntryCommentPlugin plugin : commentPlugins ) {

@@ -105,15 +105,14 @@ public class WeblogEntryCommentWrapper {
         
         String content = this.pojo.getContent();
         
-        // encode email
-        content = Utilities.encodeEmail(content);
+        // escape content if content-type is text/plain
+        if("text/plain".equals(this.pojo.getContentType())) {
+            content = StringEscapeUtils.escapeHtml(content);
+        }
         
-        // escape html
-        content = StringEscapeUtils.escapeHtml(content);
-        
-        // apply plugins for transformation
+        // apply plugins
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
-        content = pmgr.applyCommentPlugins(this.pojo);
+        content = pmgr.applyCommentPlugins(this.pojo, content);
         
         // always add rel=nofollow for links
         content = Utilities.addNofollow(content);

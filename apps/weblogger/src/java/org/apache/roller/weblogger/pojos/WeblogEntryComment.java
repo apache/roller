@@ -51,6 +51,8 @@ public class WeblogEntryComment implements Serializable {
     private String    referrer = null;
     private String    userAgent = null;
     private String    plugins = null;
+    private String    contentType = "text/plain";
+
     
     // associations
     private WeblogEntry weblogEntry = null;
@@ -253,6 +255,21 @@ public class WeblogEntryComment implements Serializable {
      */
     public void setPlugins(String plugins) {
         this.plugins = plugins;
+    }
+    
+    
+    /**
+     * The content-type of the comment.
+     */
+    public String getContentType() {
+        return contentType;
+    }
+    
+    /**
+     * The content-type of the comment.
+     */
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
     
     
