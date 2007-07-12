@@ -738,6 +738,9 @@
                     <!-- supplemental weblog services.  files, bookmarks, pings, etc -->
                     <include name="org/apache/roller/weblogger/business/SupplementalWeblogServicesTestSuite.class"/>
                     
+                    <!-- plugins test suite -->
+                    <include name="org/apache/roller/weblogger/business/plugins/PluginsTestSuite.class" />
+                    
                 </fileset>
             </batchtest>
         </junit>
