@@ -99,10 +99,27 @@
             <format property="ro.buildTime" pattern="yyyyMMddhhmmss" />
         </tstamp>
         
+        <!-- Get the SVN last changed rev value w/o using the overly flakey 
+             svnant task. This will fail if svn is not in your PATH but the only 
+             negative impact will be that the rev number that appears in your 
+             log will be "${svn.LastChangedRev}" instead of the correct value. -->
+        <delete file="${ro.build}/svn.properties" />
+        <exec executable="svn" output="${ro.build}/svn.properties" failifexecutionfails="false">
+            <arg value="info" />
+            <arg value="${root}" />
+        </exec>
+        <replace dir="${ro.build}">
+           <include name="svn.properties" />
+           <replacetoken> </replacetoken>
+           <replacevalue></replacevalue>
+        </replace>
+        <property prefix="svn" file="${ro.build}/svn.properties"/>       
+        
         <echo file="${build.compile.business}/version.properties">
-            ro.version=${ro.version}
-            ro.buildTime=${ro.buildTime}
-            ro.buildUser=${user.name}
+ro.version=${ro.version}
+ro.revision=${svn.LastChangedRev}
+ro.buildTime=${ro.buildTime}
+ro.buildUser=${user.name}
         </echo>
         
         <!-- compile roller business classes -->

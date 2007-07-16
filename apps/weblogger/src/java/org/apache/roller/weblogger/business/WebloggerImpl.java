@@ -69,6 +69,7 @@ public abstract class WebloggerImpl implements Weblogger {
     
     // some simple attributes
     private final String version;
+    private final String revision;
     private final String buildTime;
     private final String buildUser;
     
@@ -114,6 +115,7 @@ public abstract class WebloggerImpl implements Weblogger {
         }
         
         version = props.getProperty("ro.version", "UNKNOWN");
+        revision = props.getProperty("ro.revision", "UNKNOWN");
         buildTime = props.getProperty("ro.buildTime", "UNKNOWN");
         buildUser = props.getProperty("ro.buildUser", "UNKNOWN");
     }
@@ -360,7 +362,13 @@ public abstract class WebloggerImpl implements Weblogger {
         return version;
     }
     
-    
+    /**
+     * Get source code repository revision # used to create build
+     */
+    public String getRevision() {
+        return revision;
+    }
+        
     /**
      * Weblogger build time
      */

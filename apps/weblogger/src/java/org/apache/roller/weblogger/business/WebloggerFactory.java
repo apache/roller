@@ -139,6 +139,8 @@ public final class WebloggerFactory {
         }
         
         log.info("Roller Weblogger business tier successfully bootstrapped");
+        log.info("   Version: " + webloggerProvider.getWeblogger().getVersion());
+        log.info("   Revision: " + webloggerProvider.getWeblogger().getRevision());
     }
     
 }

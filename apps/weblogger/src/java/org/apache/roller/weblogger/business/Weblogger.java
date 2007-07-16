@@ -163,6 +163,11 @@ public interface Weblogger {
     public String getVersion();    
     
     /**
+     * Weblogger source code management revision
+     */
+    public String getRevision();
+    
+    /**
      * Weblogger build time
      */
     public String getBuildTime();
