@@ -932,6 +932,53 @@ public class DatabaseInstaller {
         }
         
         
+        // update local planet subscriptions to use new local feed format
+        try {
+            successMessage("Upgrading local planet subscription feeds to new feed url format");
+            
+            // need to start by looking up absolute site url
+            PreparedStatement selectAbsUrl = 
+                    con.prepareStatement("select value from roller_properties where name = 'site.absoluteurl'");
+            String absUrl = null;
+            ResultSet rs = selectAbsUrl.executeQuery();
+            if(rs.next()) {
+                absUrl = rs.getString(1);
+            }
+            
+            if(absUrl != null && absUrl.length() > 0) {
+                PreparedStatement selectSubs = 
+                        con.prepareStatement("select id,feed_url,author from rag_subscription");
+            
+            PreparedStatement updateSubUrl = 
+                    con.prepareStatement("update rag_subscription set feed_url = ? where id = ?");
+            
+            ResultSet rset = selectSubs.executeQuery();
+            while (rset.next()) {
+                String id = rset.getString(1);
+                String feed_url = rset.getString(2);
+                String handle = rset.getString(3);
+                
+                // only work on local feed urls
+                if (feed_url.startsWith(absUrl)) {
+                    // update feed_url to 'weblogger:<handle>'
+                    updateSubUrl.clearParameters();
+                    updateSubUrl.setString( 1, "weblogger:"+handle);
+                    updateSubUrl.setString( 2, id);
+                    updateSubUrl.executeUpdate();
+                }
+            }
+            }
+            
+            if (!con.getAutoCommit()) con.commit();
+           
+            successMessage("Comments successfully updated to use new comment plugins.");
+            
+        } catch (Exception e) {
+            errorMessage("Problem upgrading database to version 400", e);
+            throw new StartupException("Problem upgrading database to version 400", e);
+        }
+        
+        
         // upgrade comments to use new plugin mechanism
         try {
             successMessage("Upgrading existing comments with content-type & plugins");
