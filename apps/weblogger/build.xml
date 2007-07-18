@@ -49,7 +49,7 @@
     
     <!-- Ensure JUnit is defined even if not installed in Ant -->
     <taskdef name="junit" 
-        classpath="${ro.tools}/buildtime/junit-4.1.jar,${ro.tools}/buildtime/ant-1.7.0/ant-junit.jar"
+        classpath="${ro.tools}/buildtime/junit-4.1.jar"
         classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" /> 
         
        
