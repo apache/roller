@@ -66,9 +66,14 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         try {
             // fetch the latest version of the subscription
             FeedFetcher fetcher = PlanetFactory.getPlanet().getFeedFetcher();
-            updatedSub = fetcher.fetchSubscription(sub.getFeedURL());
+            updatedSub = fetcher.fetchSubscription(sub.getFeedURL(), sub.getLastUpdated());
         } catch (FetcherException ex) {
             throw new UpdaterException("Error fetching updated subscription", ex);
+        }
+        
+        // if sub was unchanged then we are done
+        if(updatedSub == null) {
+            return;
         }
         
         // if this subscription hasn't changed since last update then we're done

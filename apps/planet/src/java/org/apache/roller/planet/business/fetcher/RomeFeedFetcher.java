@@ -63,6 +63,15 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
      */
     public Subscription fetchSubscription(String feedURL) 
             throws FetcherException {
+        return fetchSubscription(feedURL, null);
+    }
+    
+    
+    /**
+     * @inheritDoc
+     */
+    public Subscription fetchSubscription(String feedURL, Date lastModified) 
+            throws FetcherException {
         
         if(feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
@@ -114,6 +123,11 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
             } catch (MalformedURLException ex) {
                 // should never happen since we check this above
             }
+        }
+        
+        // check if feed is unchanged and bail now if so
+        if(lastModified != null && !newSub.getLastUpdated().after(lastModified)) {
+            return null;
         }
         
         if(log.isDebugEnabled()) {
