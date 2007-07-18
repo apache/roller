@@ -65,7 +65,6 @@ function confirmSubDelete(subUrl, title) {
         &nbsp;[group: <s:property value="groupHandle" />]
     </s:if>
 </h2>
-<p><i><s:text name="planetSubscriptions.existingPrompt" /></i></p>
 
 <table class="rollertable">
     <tr class="rHeaderTr">
