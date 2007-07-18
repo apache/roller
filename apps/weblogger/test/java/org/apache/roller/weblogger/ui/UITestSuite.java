@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcherTest;
 import org.apache.roller.weblogger.ui.rendering.util.CommentValidatorTest;
 
 
@@ -34,7 +35,10 @@ public class UITestSuite {
 	
         // comment plugins
         suite.addTestSuite(CommentValidatorTest.class);
-
+        
+        // custom planet fetcher
+        suite.addTestSuite(WebloggerRomeFeedFetcherTest.class);
+        
         return suite;
     }
     
