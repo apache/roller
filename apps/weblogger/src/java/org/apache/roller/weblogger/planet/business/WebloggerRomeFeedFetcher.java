@@ -57,7 +57,8 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
     }
     
     
-    public Subscription fetchSubscription(String feedURL)
+    @Override
+    public Subscription fetchSubscription(String feedURL, Date lastModified)
             throws FetcherException {
         
         if(feedURL == null) {
@@ -68,7 +69,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
         // feedURLs defined as ... weblogger:<blog handle>
         if(!feedURL.startsWith("weblogger:")) {
             log.debug("Feed is remote, letting parent handle it - "+feedURL);            
-            return super.fetchSubscription(feedURL);
+            return super.fetchSubscription(feedURL, lastModified);
         }
         
         // extract blog handle from our special feed url
@@ -90,6 +91,12 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             
         } catch (WebloggerException ex) {
             throw new FetcherException("Problem looking up local weblog - "+weblogHandle, ex);
+        }
+        
+        // if weblog hasn't changed since last fetch then bail
+        if(lastModified != null && !localWeblog.getLastModified().after(lastModified)) {
+            log.debug("Skipping unmodified LOCAL weblog");
+            return null;
         }
         
         // build planet subscription from weblog
