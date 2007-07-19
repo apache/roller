@@ -126,7 +126,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         }
         
         // check if feed is unchanged and bail now if so
-        if(lastModified != null && !newSub.getLastUpdated().after(lastModified)) {
+        if(lastModified != null && newSub.getLastUpdated() != null &&
+                !newSub.getLastUpdated().after(lastModified)) {
             return null;
         }
         
