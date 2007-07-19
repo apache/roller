@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -101,7 +102,7 @@ public class PreviewResourceServlet extends HttpServlet {
         InputStream resourceStream = null;
         
         // first, see if we have a preview theme to operate from
-        if(resourceRequest.getThemeName() != null) {
+        if(!StringUtils.isEmpty(resourceRequest.getThemeName())) {
             Theme theme = resourceRequest.getTheme();
             ThemeResource resource = theme.getResource(resourceRequest.getResourcePath());
             if(resource != null) {
