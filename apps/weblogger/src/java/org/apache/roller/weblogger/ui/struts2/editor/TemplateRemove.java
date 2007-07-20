@@ -84,12 +84,13 @@ public class TemplateRemove extends UIAction {
         if(getTemplate() != null) try {
             if(!getTemplate().isRequired()) {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                umgr.removePage(getTemplate());
-                WebloggerFactory.getWeblogger().flush();
-                
+
                 // notify cache
                 CacheManager.invalidate(getTemplate());
-                
+
+                umgr.removePage(getTemplate());
+                WebloggerFactory.getWeblogger().flush();
+                                
                 return SUCCESS;
             } else {
                 // TODO: i18n
