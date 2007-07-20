@@ -47,12 +47,11 @@
 
             <td style="vertical-align:middle">
                 <s:if test="! #p.hidden">
-                    <s:url id="editIcon" value="/images/page_white.png"/>
+                    <img src='<s:url value="/images/page_white.png"/>' border="0" alt="icon" />
                 </s:if>
                 <s:else>
-                    <s:url id="editIcon" value="/images/page_white_gear.png"/>
+                    <img src='<s:url value="/images/page_white_gear.png"/>' border="0" alt="icon" />
                 </s:else>
-                <img src='<s:url value="%{editIcon}"/>' border="0" alt="icon" />
                 <s:url id="edit" action="templateEdit">
                     <s:param name="weblog" value="actionWeblog.handle" />
                     <s:param name="bean.id" value="#p.id" />
