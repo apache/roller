@@ -47,10 +47,12 @@
     <available file="./build/webapp/WEB-INF/dbscripts/derby/createdb.sql" 
         property="dbscripts-exist" />
     
-    <!-- Ensure JUnit is defined even if not installed in Ant -->
+    <!-- Ensure JUnit is defined even if not installed in Ant.
+         We need a version of JUnitTask that doesn't load junit from ant/lib.
     <taskdef name="junit" 
         classpath="${ro.tools}/buildtime/junit-4.1.jar"
         classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" /> 
+    -->
         
        
     <target name="usage" description="Print usage for key targets">
