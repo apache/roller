@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.rendering.model;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -51,10 +50,10 @@ public class URLModel implements Model {
     
     private static Log log = LogFactory.getLog(URLModel.class);
     
-    private Weblog weblog = null;
-    private String locale = null;
+    protected Weblog weblog = null;
+    protected String locale = null;
     
-    private URLStrategy urlStrategy = null;
+    protected URLStrategy urlStrategy = null;
     
     
     public URLModel() {}
