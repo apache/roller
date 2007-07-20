@@ -243,6 +243,14 @@ public class PageServlet extends HttpServlet {
         } else if("page".equals(pageRequest.getContext())) {
             page = pageRequest.getWeblogPage();
             
+            // if we don't have this page then 404, we don't let
+            // this one fall through to the default template
+            if(page == null) {
+                if(!response.isCommitted()) response.reset();
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
         // If request specified tags section index, then look for custom template
         } else if("tags".equals(pageRequest.getContext()) &&
                 pageRequest.getTags() == null) {
