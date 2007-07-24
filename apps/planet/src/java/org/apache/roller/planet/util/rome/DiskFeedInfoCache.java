@@ -71,7 +71,7 @@ public class DiskFeedInfoCache implements FeedFetcherCache
             // Error writing to cahce is fatal
             throw new RuntimeException("Attempting to read from cache", fnfe);
         }
-        if (info == null) logger.info("Cache MISS!");
+        if (info == null) logger.debug("Cache MISS!");
         return info;
     }
 
