@@ -54,6 +54,32 @@ public abstract class DateUtil {
     
     
     /**
+     * Returns a Date set to the first possible millisecond of the day, just
+     * after midnight. If a null day is passed in, a new Date is created.
+     * midnight (00m 00h 00s)
+     */
+    public static Date getStartOfDay(Date day) {
+        return getStartOfDay(day, Calendar.getInstance());
+    }
+    
+    
+    /**
+     * Returns a Date set to the first possible millisecond of the day, just
+     * after midnight. If a null day is passed in, a new Date is created.
+     * midnight (00m 00h 00s)
+     */
+    public static Date getStartOfDay(Date day, Calendar cal) {
+        if (day == null) day = new Date();
+        cal.setTime(day);
+        cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE,      cal.getMinimum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND,      cal.getMinimum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
+        return cal.getTime();
+    }
+    
+    
+    /**
      * Returns a Date set to the last possible millisecond of the day, just
      * before midnight. If a null day is passed in, a new Date is created.
      * midnight (00m 00h 00s)
@@ -75,6 +101,29 @@ public abstract class DateUtil {
     
     
     /**
+     * Returns a Date set to the first possible millisecond of the hour.
+     * If a null day is passed in, a new Date is created.
+     */
+    public static Date getStartOfHour(Date day) {
+        return getStartOfHour(day, Calendar.getInstance());
+    }
+    
+    
+    /**
+     * Returns a Date set to the first possible millisecond of the hour.
+     * If a null day is passed in, a new Date is created.
+     */
+    public static Date getStartOfHour(Date day, Calendar cal) {
+        if (day == null) day = new Date();
+        cal.setTime(day);
+        cal.set(Calendar.MINUTE,      cal.getMinimum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND,      cal.getMinimum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
+        return cal.getTime();
+    }
+    
+    
+    /**
      * Returns a Date set to the last possible millisecond of the day, just
      * before midnight. If a null day is passed in, a new Date is created.
      * midnight (00m 00h 00s)
@@ -91,6 +140,49 @@ public abstract class DateUtil {
         
         cal.setTime(day);
         cal.set(Calendar.MINUTE,      cal.getMaximum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND,      cal.getMaximum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+        return cal.getTime();
+    }
+    
+    
+    /**
+     * Returns a Date set to the first possible millisecond of the minute.
+     * If a null day is passed in, a new Date is created.
+     */
+    public static Date getStartOfMinute(Date day) {
+        return getStartOfMinute(day, Calendar.getInstance());
+    }
+    
+    
+    /**
+     * Returns a Date set to the first possible millisecond of the minute.
+     * If a null day is passed in, a new Date is created.
+     */
+    public static Date getStartOfMinute(Date day, Calendar cal) {
+        if (day == null) day = new Date();
+        cal.setTime(day);
+        cal.set(Calendar.SECOND,      cal.getMinimum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
+        return cal.getTime();
+    }
+    
+    
+    /**
+     * Returns a Date set to the last possible millisecond of the minute.
+     * If a null day is passed in, a new Date is created.
+     */
+    public static Date getEndOfMinute(Date day) {
+        return getEndOfMinute(day, Calendar.getInstance());
+    }
+    
+    
+    public static Date getEndOfMinute(Date day, Calendar cal) {
+        if (day == null || cal == null) {
+            return day;
+        }
+        
+        cal.setTime(day);
         cal.set(Calendar.SECOND,      cal.getMaximum(Calendar.SECOND));
         cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
         return cal.getTime();
@@ -153,32 +245,6 @@ public abstract class DateUtil {
         // back up one day
         cal.add(Calendar.DAY_OF_MONTH, -1);
         
-        return cal.getTime();
-    }
-    
-    
-    /**
-     * Returns a Date set to the first possible millisecond of the day, just
-     * after midnight. If a null day is passed in, a new Date is created.
-     * midnight (00m 00h 00s)
-     */
-    public static Date getStartOfDay(Date day) {
-        return getStartOfDay(day, Calendar.getInstance());
-    }
-    
-    
-    /**
-     * Returns a Date set to the first possible millisecond of the day, just
-     * after midnight. If a null day is passed in, a new Date is created.
-     * midnight (00m 00h 00s)
-     */
-    public static Date getStartOfDay(Date day, Calendar cal) {
-        if (day == null) day = new Date();
-        cal.setTime(day);
-        cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE,      cal.getMinimum(Calendar.MINUTE));
-        cal.set(Calendar.SECOND,      cal.getMinimum(Calendar.SECOND));
-        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
         return cal.getTime();
     }
     
