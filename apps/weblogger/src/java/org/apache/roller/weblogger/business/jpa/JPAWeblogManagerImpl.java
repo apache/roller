@@ -596,9 +596,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         if (text != null) {
             params.add(size++, '%' + text + '%');
-            queryString.append(" AND ( text LIKE ?").append(size);
-            queryString.append("    OR summary LIKE ? ").append(size);
-            queryString.append("    OR title LIKE ?").append(size);
+            queryString.append(" AND ( e.text LIKE ?").append(size);
+            queryString.append("    OR e.summary LIKE ? ").append(size);
+            queryString.append("    OR e.title LIKE ?").append(size);
             queryString.append(") ");
         }
         
