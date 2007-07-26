@@ -86,7 +86,7 @@ function onMove()
     <input type="button" value="<s:text name="bookmarksForm.checkNone"/>" onclick="setChecked(0)" />
     
     <%-- Delete-selected button --%>
-    <s:submit type="button" key="bookmarksForm.delete" onclick="onDelete()" /> 
+    <input type="button" value="<s:text name="bookmarksForm.delete"/>" onclick="onDelete()" /> 
     
     <s:if test="!allFolders.isEmpty">
         <%-- Move-selected button --%>
