@@ -81,6 +81,16 @@ public abstract class RollerTask implements Runnable {
     
     
     /**
+     * Get a string description of the start time of the given task.
+     * 
+     * Should be one of ... 'immediate', 'startOfDay', 'startOfHour'
+     * 
+     * @return The start time description.
+     */
+    public abstract String getStartTimeDesc();
+    
+    
+    /**
      * How often should the task run, in seconds.
      *
      * example: 3600 means this task runs once every hour.

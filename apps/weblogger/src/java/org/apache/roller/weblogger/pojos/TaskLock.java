@@ -31,7 +31,6 @@ public class TaskLock implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
     private String name = null;
-    private boolean locked = false;
     private Date timeAquired = null;
     private int timeLeased = 0;
     private Date lastRun = null;
@@ -42,19 +41,19 @@ public class TaskLock implements Serializable {
     
     
     /**
-     * Calculate the next allowed time the task managed by this lock would
-     * be allowed to run.  i.e. lastRun + interval
+     * Calculate the next allowed time this task is allowed to run allowed to run.  
+     * i.e. lastRun + interval
      */
-    public Date getNextRun(int interval) {
+    public Date getNextAllowedRun(int interval) {
         
-        Date lastRun = this.getLastRun();
-        if(lastRun == null) {
-            return null;
+        Date previousRun = getLastRun();
+        if(previousRun == null) {
+            return new Date(0);
         }
         
         // calculate next run time
         Calendar cal = Calendar.getInstance();
-        cal.setTime(lastRun);
+        cal.setTime(previousRun);
         cal.add(Calendar.MINUTE, interval);
         
         return cal.getTime();
@@ -62,18 +61,21 @@ public class TaskLock implements Serializable {
     
     
     /**
-     * Get the time the lease for this lock will expire, or null if this task
-     * lock is not currently locked.
+     * Get the time the last/current lease for this lock expires.
+     * 
+     * expireTime = timeAcquired + (timeLeased * 60sec/min) - 1 sec
+     * we remove 1 second to adjust for precision differences
      */
-    public Date getLeaseExpires() {
+    public Date getLeaseExpiration() {
         
-        if(!locked || timeAquired == null) {
-            return null;
+        Date leaseAcquisitionTime = new Date(0);
+        if(getTimeAquired() != null) {
+            leaseAcquisitionTime = getTimeAquired();
         }
         
         // calculate lease expiration time
         Calendar cal = Calendar.getInstance();
-        cal.setTime(timeAquired);
+        cal.setTime(leaseAcquisitionTime);
         cal.add(Calendar.MINUTE, timeLeased);
         
         return cal.getTime();
@@ -81,6 +83,7 @@ public class TaskLock implements Serializable {
 
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
@@ -92,6 +95,7 @@ public class TaskLock implements Serializable {
         return buf.toString();
     }
 
+    @Override
     public boolean equals(Object other) {
         
         if(this == other) return true;
@@ -102,6 +106,7 @@ public class TaskLock implements Serializable {
         return this.getName().equals(that.getName());
     }
     
+    @Override
     public int hashCode() {
         // our natrual key, or business key, is our name
         return this.getName().hashCode();
@@ -142,26 +147,7 @@ public class TaskLock implements Serializable {
     public void setLastRun(Date lastRun) {
         this.lastRun = lastRun;
     }
-
     
-    public boolean isLocked() {
-        
-        // this method requires a little extra logic because we return false
-        // even if a task is locked when it's lease has expired
-        if(!locked) {
-            return false;
-        }
-        
-        Date now = new Date();
-        Date leaseExpiration = this.getLeaseExpires();
-        
-        return now.before(leaseExpiration);
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-    }
-
     
     public int getTimeLeased() {
         return timeLeased;

@@ -18,23 +18,6 @@
 
 package org.apache.roller.weblogger.planet.tasks;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.planet.business.GuicePlanetProvider;
-import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
-import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.business.PlanetManager;
-import org.apache.roller.planet.business.PlanetProvider;
-import org.apache.roller.planet.business.startup.PlanetStartup;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
@@ -76,6 +59,10 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
+    }
+    
+    public String getStartTimeDesc() {
+        return startTimeDesc;
     }
     
     public int getInterval() {

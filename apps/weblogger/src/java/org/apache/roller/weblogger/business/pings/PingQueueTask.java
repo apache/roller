@@ -67,6 +67,10 @@ public class PingQueueTask extends RollerTaskWithLeasing {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
     
+    public String getStartTimeDesc() {
+        return startTimeDesc;
+    }
+    
     public int getInterval() {
         return this.interval;
     }

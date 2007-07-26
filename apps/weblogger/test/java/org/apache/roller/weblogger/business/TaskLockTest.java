@@ -86,6 +86,7 @@ public class TaskLockTest extends TestCase {
         public String getName() { return "TestTask"; }
         public String getClientId() { return "TestTaskClientId"; }
         public Date getStartTime(Date current) { return current; }
+        public String getStartTimeDesc() { return "immediate"; }
         public int getLeaseTime() { return 300; }
         public int getInterval() { return 1800; }
         public void runTask() { }

@@ -30,6 +30,7 @@ import org.apache.roller.planet.business.PlanetProvider;
 import org.apache.roller.planet.business.updater.FeedUpdater;
 import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
@@ -70,6 +71,10 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
     
+    public String getStartTimeDesc() {
+        return startTimeDesc;
+    }
+    
     public int getInterval() {
         return this.interval;
     }
@@ -79,6 +84,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
     }
     
     
+    @Override
     public void init() throws WebloggerException {
         
         // get relevant props
@@ -129,6 +135,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
             log.error("ERROR refreshing planet", t);
         } finally {
             // always release
+            WebloggerFactory.getWeblogger().release();
             PlanetFactory.getPlanet().release();
         }
     }
