@@ -18,6 +18,8 @@
 
 package org.apache.roller.planet.business.fetcher;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import org.apache.roller.planet.PlanetException;
 
 
@@ -32,6 +34,54 @@ public class FetcherException extends PlanetException {
     
     public FetcherException(String msg, Throwable t) {
         super(msg, t);
+    }
+    
+    
+    /**
+     * Print stack trace for exception and for root cause exception if htere is one.
+     * @see java.lang.Throwable#printStackTrace()
+     */
+    @Override
+    public void printStackTrace() {
+        // just print our message since we know this exception should be wrapping
+        // a more detailed exception from whatever fetching solution is used
+        System.out.println(super.getMessage());
+        if (getRootCause() != null) {
+            System.out.println("--- ROOT CAUSE ---");
+            getRootCause().printStackTrace();
+        }
+    }
+    
+    
+    /**
+     * Print stack trace for exception and for root cause exception if htere is one.
+     * @param s Stream to print to.
+     */
+    @Override
+    public void printStackTrace(PrintStream s) {
+        // just print our message since we know this exception should be wrapping
+        // a more detailed exception from whatever fetching solution is used
+        s.println(super.getMessage());
+        if (getRootCause() != null) {
+            s.println("--- ROOT CAUSE ---");
+            getRootCause().printStackTrace(s);
+        }
+    }
+    
+    
+    /**
+     * Print stack trace for exception and for root cause exception if htere is one.
+     * @param s Writer to write to.
+     */
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        // just print our message since we know this exception should be wrapping
+        // a more detailed exception from whatever fetching solution is used
+        s.println(super.getMessage());
+        if (getRootCause() != null) {
+            s.println("--- ROOT CAUSE ---");
+            getRootCause().printStackTrace(s);
+        }
     }
     
 }

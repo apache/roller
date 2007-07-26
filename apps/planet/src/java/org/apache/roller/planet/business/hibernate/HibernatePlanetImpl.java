@@ -94,6 +94,9 @@ public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {
     
     @Override
     public void initialize() throws InitializationException {
+        
+        log.info("Initializing Roller Planet business tier");
+        
         getPropertiesManager().initialize();
         getPlanetManager().initialize();
         
@@ -104,6 +107,8 @@ public class HibernatePlanetImpl extends AbstractManagerImpl implements Planet {
         } catch(PlanetException ex) {
             throw new InitializationException("Error flushing after initialization", ex);
         }
+        
+        log.info("Roller Planet business tier successfully initialized");
     }
     
     
