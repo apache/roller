@@ -809,6 +809,7 @@ ro.buildUser=${user.name}
             <jvmarg value="-Dcatalina.base=${build.tests}"/>
             <jvmarg value="-Dro.build=${ro.build}"/>
             <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+            <jvmarg value="-Dplanet.custom.config=${build.tests}/planet-custom.properties"/>
             <formatter type="xml"/>
             <batchtest toDir="${build.reports}/presentation/xml">
                 <fileset dir="${build.compile.tests}">
