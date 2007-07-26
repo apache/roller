@@ -58,7 +58,7 @@ public class ModifyUser extends UIAction {
     }
     
     // no weblog required
-    public boolean isWeblogRequired() {
+    public boolean isWeblogRequired() { 
         return false;
     }
     
@@ -130,12 +130,24 @@ public class ModifyUser extends UIAction {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 
                 // grant/revoke admin role if needed
-                if(getUser().hasRole("admin") && !getBean().isAdministrator()) {
-                    // revoke role
-                    mgr.revokeRole("admin", getUser());
+                if (getUser().hasRole("admin") && !getBean().isAdministrator()) {
+                    
+                    if (!isUserEditingSelf()) {
+                        // revoke role
+                        mgr.revokeRole("admin", getUser());
+                    } else {
+                        addError("userAdmin.cantChangeOwnRole");
+                    }
+                    
                 } else if(!getUser().hasRole("admin") && getBean().isAdministrator()) {
-                    // grant role
-                    getUser().grantRole("admin");
+                    
+                    if (!isUserEditingSelf()) {
+                        // grant role
+                        getUser().grantRole("admin");
+                    } else {
+                        addError("userAdmin.cantChangeOwnRole"); 
+                    }
+                    
                 }
             
                 RollerContext.flushAuthenticationUserCache(getUser().getUserName());
@@ -194,6 +206,10 @@ public class ModifyUser extends UIAction {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+    
+    public boolean isUserEditingSelf() {
+        return getUser().equals(getAuthenticatedUser());
     }
     
 }
