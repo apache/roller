@@ -55,15 +55,6 @@
         />
 
         <property
-            name="locked"
-            type="boolean"
-            update="true"
-            insert="true"
-            column="islocked"
-            unique="false"
-        />
-
-        <property
             name="timeLeased"
             type="int"
             update="true"

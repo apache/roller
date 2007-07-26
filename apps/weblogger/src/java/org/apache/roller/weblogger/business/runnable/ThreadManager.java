@@ -18,8 +18,9 @@
 
 package org.apache.roller.weblogger.business.runnable;
 
-import java.util.Date;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.pojos.TaskLock;
 
 
 /**
@@ -55,15 +56,24 @@ public interface ThreadManager {
     
     
     /**
-     * Schedule task to run at fixed rate.
-     *
-     * @param task The RollerTask to schedule.
-     * @param startTime The Date at which to start the task.
-     * @param long The interval (in minutes) at which the task should run.
+     * Lookup a TaskLock by name.
+     * 
+     * @param name The name of the task.
+     * @return The TaskLock for the task, or null if not found.
+     * @throws WebloggerException If there is an error looking up the TaskLock.
      */
-    public void scheduleFixedRateTimerTask(RollerTask task, Date startTime, long intervalMins);
+    public TaskLock getTaskLockByName(String name) throws WebloggerException;
+
     
-    
+    /**
+     * Save a TaskLock.
+     * 
+     * @param tasklock The TaskLock to save.
+     * @throws WebloggerException If there is an error saving the TaskLock.
+     */
+    public void saveTaskLock(TaskLock tasklock) throws WebloggerException;
+
+
     /**
      * Try to register a lease for a given RollerTask.
      *

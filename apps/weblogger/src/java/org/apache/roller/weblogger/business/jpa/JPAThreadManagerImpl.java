@@ -24,7 +24,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.runnable.ThreadManagerImpl;
@@ -61,13 +61,22 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     /**
      * Try to aquire a lock for a given RollerTask.
      */
+    @Override
     public boolean registerLease(RollerTask task) {
+        
+        log.debug("Attempting to register lease for task - "+task.getName());
+        
+        // keep a copy of the current time
+        Date currentTime = new Date();
+        
         // query for existing lease record first
         TaskLock taskLock = null;
         try {
             taskLock = this.getTaskLockByName(task.getName());
 
             if(taskLock == null) {
+                log.debug("Task record does not exist, inserting empty record to start with");
+                
                 // insert an empty record, then we will actually acquire the
                 // lease below using an update statement
                 taskLock = new TaskLock();
@@ -88,18 +97,39 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         // try to acquire lease
         try {
             // calculate lease expiration time
-            // expireTime = startTime + (timeLeased * 60sec/min) - 1 sec
-            // we remove 1 second to adjust for precision differences
-            long leaseExpireTime = taskLock.getTimeAquired().getTime()+
-                    (60000*taskLock.getTimeLeased())-1000;
+            Date leaseExpiration = taskLock.getLeaseExpiration();
+            
+            // calculate run time for task, this is expected time, not actual time
+            // i.e. if a task is meant to run daily at midnight this should
+            // reflect 00:00:00 on the current day
+            Date runTime = currentTime;
+            if("startOfDay".equals(task.getStartTimeDesc())) {
+                // start of today
+                runTime = DateUtil.getStartOfDay(currentTime);
+            } else if("startOfHour".equals(task.getStartTimeDesc())) {
+                // start of this hour
+                runTime = DateUtil.getStartOfHour(currentTime);
+            } else {
+                // start of this minute
+                runTime = DateUtil.getStartOfMinute(currentTime);
+            }
+            
+            if(log.isDebugEnabled()) {
+                log.debug("last run = "+taskLock.getLastRun());
+                log.debug("new run time = "+runTime);
+                log.debug("last acquired = "+taskLock.getTimeAquired());
+                log.debug("time leased = "+taskLock.getTimeLeased());
+                log.debug("lease expiration = "+leaseExpiration);
+            }
 
             Query q = strategy.getNamedUpdate(
-                    "TaskLock.updateClient&Timeacquired&TimeleasedByName&Timeacquired");
+                    "TaskLock.updateClient&Timeacquired&Timeleased&LastRunByName&Timeacquired");
             q.setParameter(1, task.getClientId());
             q.setParameter(2, Integer.valueOf(task.getLeaseTime()));
-            q.setParameter(3, task.getName());
-            q.setParameter(4, taskLock.getTimeAquired());
-            q.setParameter(5, new Timestamp(leaseExpireTime));
+            q.setParameter(3, new Timestamp(runTime.getTime()));
+            q.setParameter(4, task.getName());
+            q.setParameter(5, taskLock.getTimeAquired());
+            q.setParameter(6, new Timestamp(leaseExpiration.getTime()));
             int result = q.executeUpdate();
             
             if(result == 1) {
@@ -118,6 +148,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     /**
      * Try to release the lock for a given RollerTask.
      */
+    @Override
     public boolean unregisterLease(RollerTask task) {
 
         // query for existing lease record first
@@ -138,7 +169,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
         try {
             Query q = strategy.getNamedUpdate(
                     "TaskLock.updateTimeLeasedByName&Client");
-            q.setParameter(1, Integer.valueOf(task.getInterval()));
+            q.setParameter(1, Integer.valueOf(0));
             q.setParameter(2, task.getName());
             q.setParameter(3, task.getClientId());
             int result = q.executeUpdate();
@@ -156,8 +187,11 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
 
     }
     
-
-    private TaskLock getTaskLockByName(String name) throws WebloggerException {
+    
+    /**
+     * @inheritDoc
+     */
+    public TaskLock getTaskLockByName(String name) throws WebloggerException {
         // do lookup
         Query q = strategy.getNamedQuery("TaskLock.getByName");
         q.setParameter(1, name);
@@ -169,7 +203,10 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     }
 
     
-    private void saveTaskLock(TaskLock data) throws WebloggerException {
+    /**
+     * @inheritDoc
+     */
+    public void saveTaskLock(TaskLock data) throws WebloggerException {
         this.strategy.store(data);
     }
 

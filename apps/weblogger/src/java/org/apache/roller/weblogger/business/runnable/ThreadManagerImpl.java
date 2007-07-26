@@ -18,11 +18,9 @@
 
 package org.apache.roller.weblogger.business.runnable;
 
-import java.util.Date;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,25 +33,30 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * Manage Roller's thread use.
  */
 @com.google.inject.Singleton
-public class ThreadManagerImpl implements ThreadManager {
+public abstract class ThreadManagerImpl implements ThreadManager {
     
     private static final Log log = LogFactory.getLog(ThreadManagerImpl.class);
     
-    // background task scheduler
-    private final ScheduledExecutorService serviceScheduler;
+    // our own scheduler thread
+    private Thread schedulerThread = null;
+    
+    // a simple thread executor
+    private final ExecutorService serviceScheduler;
     
     
-    protected ThreadManagerImpl() {
+    public ThreadManagerImpl() {
         
         log.info("Instantiating Thread Manager");
         
-        serviceScheduler = Executors.newScheduledThreadPool(10);
+        serviceScheduler = Executors.newCachedThreadPool();
     }
+    
     
     public void initialize() throws InitializationException {
         
-        Date now = new Date();
-        
+        // create scheduler
+        TaskScheduler scheduler = new TaskScheduler();
+                    
         // okay, first we look for what tasks have been enabled
         String tasksStr = WebloggerConfig.getProperty("tasks.enabled");
         String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
@@ -68,13 +71,8 @@ public class ThreadManagerImpl implements ThreadManager {
                     RollerTask task = (RollerTask) taskClass.newInstance();
                     task.init();
                     
-                    Date startTime = task.getStartTime(now);
-                    if(startTime == null || now.after(startTime)) {
-                        startTime = now;
-                    }
-                    
                     // schedule it
-                    scheduleFixedRateTimerTask(task, startTime, task.getInterval());
+                    scheduler.scheduleTask(task);
                     
                 } catch (ClassCastException ex) {
                     log.warn("Task does not extend RollerTask class", ex);
@@ -84,39 +82,30 @@ public class ThreadManagerImpl implements ThreadManager {
                     log.error("Error instantiating task", ex);
                 }
             }
-        }        
+        }
+        
+        // only start if we aren't already running
+        if (schedulerThread == null && scheduler != null) {
+            log.debug("Starting scheduler thread");
+            schedulerThread = new Thread(scheduler, "Roller Weblogger Task Scheduler");
+            schedulerThread.start();
+        }
     }
+    
     
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
-        ScheduledFuture scheduledTask = serviceScheduler.schedule(runnable, 0, TimeUnit.SECONDS);
+        Future task = serviceScheduler.submit(runnable);
     }
     
     
     public void executeInForeground(Runnable runnable)
             throws InterruptedException {
-        ScheduledFuture scheduledTask = serviceScheduler.schedule(runnable, 0, TimeUnit.SECONDS);
+        Future task = serviceScheduler.submit(runnable);
         
         // if this task is really meant to be executed within this calling thread
         // then we can add a little code here to loop until it realizes the task is done
         // while(!scheduledTask.isDone())
-    }
-    
-    
-    public void scheduleFixedRateTimerTask(RollerTask task, Date startTime, long intervalMins) {
-        
-        if (intervalMins < MIN_RATE_INTERVAL_MINS) {
-            throw new IllegalArgumentException("Interval (" + intervalMins +
-                    ") shorter than minimum allowed (" + MIN_RATE_INTERVAL_MINS + ")");
-        }
-        
-        ScheduledFuture scheduledTask = serviceScheduler.scheduleAtFixedRate(
-                task, 
-                startTime.getTime() - System.currentTimeMillis(), 
-                intervalMins * 60 * 1000, 
-                TimeUnit.MILLISECONDS);
-        
-        log.debug("Scheduled "+task.getClass().getName()+" at "+new Date(System.currentTimeMillis()+scheduledTask.getDelay(TimeUnit.MILLISECONDS)));
     }
     
     
@@ -126,17 +115,37 @@ public class ThreadManagerImpl implements ThreadManager {
         
         // trigger an immediate shutdown of any backgrounded tasks
         serviceScheduler.shutdownNow();
+        
+        // only stop if we are already running
+        if(schedulerThread != null) {
+            log.debug("Stopping scheduler");
+            schedulerThread.interrupt();
+        }
     }
     
     
     public void release() {
+        // no-op
     }
     
     
+    /**
+     * Default implementation of lease registration, always returns true.
+     * 
+     * Subclasses should override this method if they plan to run in an
+     * environment that supports clustered deployments.
+     */
     public boolean registerLease(RollerTask task) {
         return true;
     }
     
+    
+    /**
+     * Default implementation of lease unregistration, always returns true.
+     * 
+     * Subclasses should override this method if they plan to run in an
+     * environment that supports clustered deployments.
+     */
     public boolean unregisterLease(RollerTask task) {
         return true;
     }

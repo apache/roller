@@ -19,8 +19,8 @@
             <query>SELECT t FROM TaskLock t WHERE t.name = ?1</query>
         </named-query>
         
-        <named-query name="TaskLock.updateClient&amp;Timeacquired&amp;TimeleasedByName&amp;Timeacquired">
-            <query> UPDATE TaskLock t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2 WHERE t.name=?3 AND t.timeAquired=?4 AND ?5 &lt; CURRENT_TIMESTAMP</query>
+        <named-query name="TaskLock.updateClient&amp;Timeacquired&amp;Timeleased&amp;LastRunByName&amp;Timeacquired">
+            <query> UPDATE TaskLock t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2, t.lastRun= ?3 WHERE t.name=?4 AND t.timeAquired=?5 AND ?6 &lt; CURRENT_TIMESTAMP</query>
         </named-query>
         
         <named-query name="TaskLock.updateTimeLeasedByName&amp;Client">
@@ -42,17 +42,12 @@
                 <column name="lastrun" insertable="true" updatable="true" unique="false"/>
                 <temporal>TIMESTAMP</temporal>
             </basic>
-            <basic name="locked">
-                <column name="islocked" insertable="true" updatable="true" unique="false"/>
-            </basic>
             <basic name="timeLeased">
                 <column name="timeleased" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="clientId">
                 <column name="client" insertable="true" updatable="true" unique="false"/>
             </basic>
-            
-            <transient name="leaseExpires" />
             
         </attributes>
     </entity>
