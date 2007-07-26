@@ -125,12 +125,13 @@
          
     <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
          <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
-         <property name="userCache" ref="userCache"/>
+         <!-- <property name="userCache" ref="userCache"/> -->
     </bean>
     
     <!-- Read users from Roller API -->
     <bean id="jdbcAuthenticationDao" class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
 
+    <!--
     <bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
         <property name="cache">
             <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
@@ -141,6 +142,7 @@
             </bean>
         </property>
     </bean>
+    -->
    
     <bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
         <property name="key" value="anonymous"/>
