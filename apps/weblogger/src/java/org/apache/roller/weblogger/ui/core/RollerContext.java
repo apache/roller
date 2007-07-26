@@ -26,6 +26,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
+import org.acegisecurity.providers.dao.UserCache;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
@@ -43,6 +44,7 @@ import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetProvider;
 import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
@@ -62,11 +64,30 @@ public class RollerContext extends ContextLoaderListener
     private static Log log = LogFactory.getLog(RollerContext.class);
     
     private static ServletContext servletContext = null;
-    
+
     
     public RollerContext() {
         super();
     }
+    
+    
+    /**
+     * Access to the plugin manager for the UI layer. TODO: we may want 
+     * something similar to the Roller interface for the UI layer if we dont 
+     * want methods like this here in RollerContext.
+     */
+    public static UIPluginManager getUIPluginManager() {
+        return UIPluginManagerImpl.getInstance();
+    }
+    
+    
+    /**
+     * Get the ServletContext.
+     * @return ServletContext
+     */
+    public static ServletContext getServletContext() {
+        return servletContext;
+    } 
     
     
     /**
@@ -313,15 +334,20 @@ public class RollerContext extends ContextLoaderListener
         */
     }
     
-    /**
-     * Get the ServletContext.
-     * @return ServletContext
-     */
-    public static ServletContext getServletContext() {
-        return servletContext;
-    }
     
-
+    /**
+     * Flush user from any caches maintained by security system.
+     */
+    public static void flushAuthenticationUserCache(String userName) {                                
+        ApplicationContext ctx = 
+            WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        UserCache userCache = (UserCache)ctx.getBean("userCache");
+        if (userCache != null) {
+            userCache.removeUserFromCache(userName);
+        }
+    }
+ 
+    
     /**
      * Get an instance of AutoProvision, if available in roller.properties
      * @return AutoProvision
@@ -358,15 +384,5 @@ public class RollerContext extends ContextLoaderListener
             }
         }        
         return null;        
-    }
-
-    
-    /**
-     * Access to the plugin manager for the UI layer. TODO: we may want 
-     * something similar to the Roller interface for the UI layer if we dont 
-     * want methods like this here in RollerContext.
-     */
-    public static UIPluginManager getUIPluginManager() {
-        return UIPluginManagerImpl.getInstance();
-    }
+    }   
 }
