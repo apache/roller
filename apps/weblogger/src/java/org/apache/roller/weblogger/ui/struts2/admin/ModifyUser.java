@@ -89,12 +89,12 @@ public class ModifyUser extends UIAction {
      */
     public String execute() {
         
-        if(getUser().getId() != null) {
+        if (getUser() != null && getUser().getId() != null) {
             // populate form data from user profile data
             getBean().copyFrom(getUser(), getLocale());
         } else {
-            // TODO: i18n
-            addError("No user specified");
+            addError("userAdmin.error.userNotFound");
+            return ERROR;
         }
 
         return INPUT;

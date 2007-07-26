@@ -148,6 +148,8 @@
         <action name="userAdmin"
                 class="org.apache.roller.weblogger.ui.struts2.admin.UserAdmin">
             <result name="success" type="tiles">.UserAdmin</result>
+            <result name="error" type="tiles">.UserAdmin</result>
+            <result name="input" type="tiles">.UserAdmin</result>
         </action>
         
         <action name="createUser!*" method="{1}"
@@ -158,6 +160,7 @@
         <action name="modifyUser!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.admin.ModifyUser">
             <result name="input" type="tiles">.ModifyUser</result>
+            <result name="error" type="chain">userAdmin</result>
         </action>
         
         <action name="globalCommentManagement!*" method="{1}"
