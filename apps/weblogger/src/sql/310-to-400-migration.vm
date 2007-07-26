@@ -17,6 +17,13 @@ create table rag_planet (
 );
 alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 
+-- ensure that every weblog entry has a valid locale
+update weblogentry e set 
+   e.pubtime=pubtime, 
+   e.updatetime=updatetime, 
+   e.locale=(select locale from website where website.id=e.websiteid) 
+   where e.locale is null or length(e.locale)=0;
+
 -- add new planet_id column to planet group table
 #addColumnNull("rag_group" "planet_id" "varchar(48)")
 
