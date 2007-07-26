@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.BookmarkComparator;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
@@ -115,7 +117,24 @@ public class WeblogBookmarkFolderWrapper {
         return wrappedCollection;
     }
     
-    
+    public List getBookmarksSorted() {
+        TreeSet initialCollection = new TreeSet(new BookmarkComparator());
+        initialCollection.addAll(this.pojo.getBookmarks());
+        
+        // iterate through and wrap
+        // we force the use of an ArrayList because it should be good enough to cover
+        // for any Collection type we encounter.
+        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
+        Iterator it = initialCollection.iterator();
+        int i = 0;
+        while(it.hasNext()) {
+            wrappedCollection.add(i,WeblogBookmarkWrapper.wrap((WeblogBookmark) it.next()));
+            i++;
+        }
+        
+        return wrappedCollection;
+    }    
+        
     public List retrieveBookmarks(boolean subfolders)
             throws WebloggerException {
         
