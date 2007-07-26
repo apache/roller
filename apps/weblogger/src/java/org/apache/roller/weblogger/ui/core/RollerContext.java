@@ -32,6 +32,7 @@ import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.roller.planet.business.GuicePlanetProvider;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BootstrapException;
@@ -82,6 +83,10 @@ public class RollerContext extends ContextLoaderListener
         // context files specified in web.xml. This is necessary because
         // listeners don't initialize in the order specified in 2.3 containers
         super.contextInitialized(sce);
+        
+        // Initialize logging subsystem via WebloggerConfig
+        Properties log4jprops = new Properties();
+        PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
         
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");

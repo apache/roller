@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -203,7 +204,20 @@ public class WebloggerConfig {
     public static Enumeration keys() {
         return mConfig.keys();
     }
-   
+    
+    
+    /**
+     * Get properties starting with a specified string.
+     */
+    public static Properties getPropertiesStartingWith(String startingWith) {
+        Properties props = new Properties();
+        for (Enumeration it = mConfig.keys(); it.hasMoreElements();) {
+            String key = (String)it.nextElement();
+            props.put(key, mConfig.get(key));
+        }
+        return props;
+    }
+    
 
     /**
      * Set the "uploads.dir" property at runtime.
