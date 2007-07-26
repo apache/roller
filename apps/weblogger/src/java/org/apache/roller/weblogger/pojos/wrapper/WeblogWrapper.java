@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -112,7 +112,7 @@ public class WeblogWrapper {
     
     
     public String getName() {
-        return this.pojo.getName();
+        return StringEscapeUtils.escapeHtml(this.pojo.getName());
     }
     
     
