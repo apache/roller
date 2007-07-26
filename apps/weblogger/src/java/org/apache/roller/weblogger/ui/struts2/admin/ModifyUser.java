@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -137,19 +138,20 @@ public class ModifyUser extends UIAction {
                     getUser().grantRole("admin");
                 }
             
+                RollerContext.flushAuthenticationUserCache(getUser().getUserName());
+
                 // save the updated profile
                 mgr.saveUser(getUser());
                 WebloggerFactory.getWeblogger().flush();
                 
-                // TODO: i18n
-                addMessage("user updated.");
-                
+                addMessage("userAdmin.userSaved");
+                                
                 return INPUT;
                 
             } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
                 // TODO: i18n
-                addError("unexpected error doing profile save");
+                addError("userAdmin.error.unexpectedError");
             }
             
         }
@@ -162,8 +164,7 @@ public class ModifyUser extends UIAction {
     private void myValidate() {
         
         if(getUser().getId() == null) {
-            // TODO: i18n
-            addError("user not found");
+            addError("userAdmin.error.userNotFound");
         }
         if (StringUtils.isEmpty(getBean().getEmailAddress())) {
             addError("error.add.user.missingEmailAddress");
