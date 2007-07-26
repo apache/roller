@@ -185,7 +185,10 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
                 updateSubscription(sub);
             } catch(UpdaterException ex) {
                 // do a little work to get at the source of the problem
-                Throwable cause = ex.getCause();
+                Throwable cause = ex;
+                if(ex.getRootCause() != null) {
+                    cause = ex.getRootCause();
+                }
                 if(cause.getCause() != null) {
                     cause = cause.getCause();
                 }
