@@ -69,7 +69,10 @@ public class ModifyUser extends UIAction {
         if(getUserName() != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                setUser(mgr.getUserByUserName(getUserName()));
+                
+                // use enabled = 'null' to get both enabled and disabled users
+                setUser(mgr.getUserByUserName(getUserName(), null));
+                
             } catch(Exception e) {
                 log.error("Error looking up user - "+getUserName(), e);
             }
