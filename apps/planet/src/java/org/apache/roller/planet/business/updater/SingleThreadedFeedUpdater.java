@@ -77,7 +77,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         }
         
         // if this subscription hasn't changed since last update then we're done
-        if(sub.getLastUpdated() != null &&
+        if(sub.getLastUpdated() != null && updatedSub.getLastUpdated() != null &&
                 !updatedSub.getLastUpdated().after(sub.getLastUpdated())) {
             log.debug("Skipping update, feed hasn't changed - "+sub.getFeedURL());
         }
@@ -183,6 +183,15 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
             // this updates and saves
             try {
                 updateSubscription(sub);
+            } catch(UpdaterException ex) {
+                // do a little work to get at the source of the problem
+                Throwable cause = ex.getCause();
+                if(cause.getCause() != null) {
+                    cause = cause.getCause();
+                }
+                
+                log.warn("Error updating subscription - "+sub.getFeedURL(), cause);
+                
             } catch(Exception ex) {
                 log.warn("Error updating subscription - "+sub.getFeedURL(), ex);
             }
