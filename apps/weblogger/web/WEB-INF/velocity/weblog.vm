@@ -366,7 +366,7 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
 *#
 #macro(_showBookmarkLinksList $folderObject $subfolders $expanding )
     #if ($expanding) #_showCommonJavascript() #end
-    #set($bookmarks = $folderObject.getBookmarks())
+    #set($bookmarks = $folderObject.getBookmarksSorted())
     #set($folders = $folderObject.getFolders())
     #set($divId = $utils.replace($folderObject.name, " ", "_" ))
     #if ($folderObject.name != "root" && $expanding && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
