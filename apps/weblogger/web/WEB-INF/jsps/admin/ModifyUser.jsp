@@ -15,9 +15,13 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %> 
 
-<p class="subtitle"><s:text name="userAdmin.subtitle.editUser" /></p>
+<p class="subtitle">
+    <s:text name="userAdmin.subtitle.editUser">
+        <s:param value="bean.userName" />
+    </s:text>
+</p>
 
 <s:form action="modifyUser!save">
     <s:hidden name="bean.id" />
