@@ -23,7 +23,7 @@
 
 <s:text name="footer.productName">
     <s:param value="#request.version" />
-</s:text>|
+</s:text> |
 
 <a href="http://opensource2.atlassian.com/projects/roller/">
     <s:text name="footer.reportIssue" /></a> | 
