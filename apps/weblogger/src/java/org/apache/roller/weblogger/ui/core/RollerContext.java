@@ -105,10 +105,6 @@ public class RollerContext extends ContextLoaderListener
         // listeners don't initialize in the order specified in 2.3 containers
         super.contextInitialized(sce);
         
-        // Initialize logging subsystem via WebloggerConfig
-        Properties log4jprops = new Properties();
-        PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
-        
         // get the *real* path to <context>/resources
         String ctxPath = servletContext.getRealPath("/");
         if(!ctxPath.endsWith(File.separator))
