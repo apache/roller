@@ -16,6 +16,10 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
+<!DOCTYPE project [
+<!ENTITY custom-build      SYSTEM "custom/custom-build.xmlf">
+<!ENTITY custom-dist       SYSTEM "custom/custom-dist.xmlf">
+]>
 <project name="Roller Planet" default="build" basedir=".">
     
     <description>Builds, tests, and runs the project Roller Planet.</description>
@@ -40,6 +44,7 @@
     <property name="build.compile"                  value="${build}/compile"/>
     <property name="build.compile.business"         value="${build.compile}/business"/>
     <property name="build.compile.web"              value="${build.compile}/web"/>
+    <property name="build.compile.custom"           value="${build.compile}/custom"/>
     <property name="build.compile.test"             value="${build.compile}/test"/>
     <property name="build.lib"           value="${build}/lib"/>
     <property name="build.webapp"        value="${build}/webapp"/>
@@ -160,7 +165,7 @@
     
     <!-- ============================================== -->
     <!-- build all code -->
-    <target name="build" depends="build-business, build-web" >
+    <target name="build" depends="build-business, build-web, build-custom" >
     </target>
     
     <!-- build the business layer code and jar it up -->
@@ -258,9 +263,17 @@
     </target>
     
     
+    <!-- build custom code and jar it up -->
+    <target name="build-custom" depends="build-web">
+        
+        &custom-build;
+        
+    </target>
+    
+    
     <!-- ============================================== -->
     <!-- create distributable components -->
-    <target name="dist" depends="build-web" description="Create Roller Planet distributables">
+    <target name="dist" depends="build" description="Create Roller Planet distributables">
         
         <!-- distributable libraries -->
         <mkdir dir="${dist}/lib" />
@@ -268,7 +281,7 @@
             <fileset dir="${build.lib}" />
         </copy>
         
-        <!-- TODO: distributable webapp -->
+        <!-- assemble distributable webapp -->
         <mkdir dir="${build.webapp}/WEB-INF/lib" />
         <copy todir="${build.webapp}/WEB-INF/lib" flatten="true">
             <!-- our compiled Roller Planet libraries -->
@@ -285,6 +298,9 @@
             <fileset dir="${web}" includes="**/**" />
         </copy>         
         <chmod perm="+x" dir="${build.webapp}/WEB-INF/scripts" includes="*.sh" />
+        
+        <!-- allow for custom mods to webapp -->
+        &custom-dist;
         
         <!-- distributable WAR file -->
         <mkdir dir="${dist}/webapp" />
