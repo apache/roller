@@ -18,6 +18,9 @@
 
 package org.apache.roller.weblogger.business.runnable;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -27,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.TaskLock;
 
 
 /**
@@ -53,26 +57,40 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     
     
     public void initialize() throws InitializationException {
-        
-        // create scheduler
-        TaskScheduler scheduler = new TaskScheduler();
                     
-        // okay, first we look for what tasks have been enabled
+        // initialize tasks, making sure that each task has a tasklock record in the db
+        List<RollerTask> webloggerTasks = new ArrayList<RollerTask>();
         String tasksStr = WebloggerConfig.getProperty("tasks.enabled");
         String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
-        for (int i=0; i < tasks.length; i++) {
+        for ( String taskName : tasks ) {
             
-            String taskClassName = WebloggerConfig.getProperty("tasks."+tasks[i]+".class");
+            String taskClassName = WebloggerConfig.getProperty("tasks."+taskName+".class");
             if(taskClassName != null) {
-                log.info("Initializing task: "+tasks[i]);
+                log.info("Initializing task: "+taskName);
                 
                 try {
                     Class taskClass = Class.forName(taskClassName);
                     RollerTask task = (RollerTask) taskClass.newInstance();
                     task.init();
                     
-                    // schedule it
-                    scheduler.scheduleTask(task);
+                    // make sure there is a tasklock record in the db
+                    TaskLock taskLock = getTaskLockByName(task.getName());
+                    if (taskLock == null) {
+                        log.debug("Task record does not exist, inserting empty record to start with");
+
+                        // insert an empty record
+                        taskLock = new TaskLock();
+                        taskLock.setName(task.getName());
+                        taskLock.setLastRun(new Date(0));
+                        taskLock.setTimeAquired(new Date(0));
+                        taskLock.setTimeLeased(0);
+
+                        // save it
+                        this.saveTaskLock(taskLock);
+                    }
+                    
+                    // add it to the list of configured tasks
+                    webloggerTasks.add(task);
                     
                 } catch (ClassCastException ex) {
                     log.warn("Task does not extend RollerTask class", ex);
@@ -84,10 +102,15 @@ public abstract class ThreadManagerImpl implements ThreadManager {
             }
         }
         
-        // only start if we aren't already running
+        // create scheduler
+        TaskScheduler scheduler = new TaskScheduler(webloggerTasks);
+        
+        // start scheduler thread, but only if it's not already running
         if (schedulerThread == null && scheduler != null) {
             log.debug("Starting scheduler thread");
             schedulerThread = new Thread(scheduler, "Roller Weblogger Task Scheduler");
+            // set thread priority between MAX and NORM so we get slightly preferential treatment
+            schedulerThread.setPriority((Thread.MAX_PRIORITY + Thread.NORM_PRIORITY)/2);
             schedulerThread.start();
         }
     }

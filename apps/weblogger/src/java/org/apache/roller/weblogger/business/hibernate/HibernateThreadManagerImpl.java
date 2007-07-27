@@ -73,30 +73,17 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
         // query for existing lease record first
         TaskLock taskLock = null;
         try {
-            taskLock = this.getTaskLockByName(task.getName());
-            
+            taskLock = getTaskLockByName(task.getName());
             if(taskLock == null) {
-                log.debug("Task record does not exist, inserting empty record to start with");
-                
-                // insert an empty record, then we will actually acquire the
-                // lease below using an update statement 
-                taskLock = new TaskLock();
-                taskLock.setName(task.getName());
-                taskLock.setTimeAquired(new Date(0));
-                taskLock.setTimeLeased(0);
-                
-                // save it and flush
-                this.saveTaskLock(taskLock);
-                roller.flush();
+                log.warn("Cannot acquire lease when no tasklock record exists for task - "+task.getName());
             }
-            
         } catch (WebloggerException ex) {
-            log.warn("Error getting or inserting TaskLock", ex);
+            log.warn("Error getting TaskLock", ex);
             return false;
         }
         
         // try to acquire lease
-        try {
+        if(taskLock != null) try {
             // calculate lease expiration time
             Date leaseExpiration = taskLock.getLeaseExpiration();
             

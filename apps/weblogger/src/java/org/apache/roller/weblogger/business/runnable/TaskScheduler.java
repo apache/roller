@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business.runnable;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -50,18 +49,16 @@ public class TaskScheduler implements Runnable {
     private static final long ONE_MINUTE_MS = (60 * 1000);
     
     private final ExecutorService pool;
-    private List<RollerTask> tasks = new ArrayList<RollerTask>();
+    private final List<RollerTask> tasks;
     
     
-    public TaskScheduler() {
+    public TaskScheduler(List<RollerTask> webloggerTasks) {
+        
+        // store list of tasks available to run
+        tasks = webloggerTasks;
+        
         // use an expanding thread executor pool
         pool = Executors.newCachedThreadPool();
-    }
-    
-    
-    // TODO: this should probably be a constructor arg so the list can be final
-    public void scheduleTask(RollerTask task) {
-        tasks.add(task);
     }
     
     
@@ -72,7 +69,7 @@ public class TaskScheduler implements Runnable {
         // run forever, or until we get interrupted
         while(true) {
             try {
-                // get current time (from db?)
+                // get current time
                 Date now = new Date();
                 log.debug("Current time = "+now);
                 
@@ -98,10 +95,22 @@ public class TaskScheduler implements Runnable {
                 }
                 
                 // wait 'til next minute
-                // TODO: make sure we don't get a negative value here
+                // NOTE: we add 50ms of adjustment time to make sure we awaken
+                //       during the next minute, and not before.  awakening at
+                //       exactly the .000ms is not of any concern to us
                 Date endOfMinute = DateUtil.getEndOfMinute(now);
-                log.debug("sleeping - "+(endOfMinute.getTime() - System.currentTimeMillis()));
-                Thread.sleep(endOfMinute.getTime() - System.currentTimeMillis());
+                long sleepTime = (endOfMinute.getTime() + 50) - System.currentTimeMillis();
+                if(sleepTime > 0) {
+                    log.debug("sleeping - "+sleepTime);
+                    Thread.sleep(sleepTime);
+                } else {
+                    // it's taken us more than 1 minute for the last loop
+                    // so recalculate to sleep 'til the end of the current minute
+                    endOfMinute = DateUtil.getEndOfMinute(new Date());
+                    sleepTime = (endOfMinute.getTime() + 50) - System.currentTimeMillis();
+                    log.debug("sleeping - "+sleepTime);
+                    Thread.sleep(sleepTime);
+                }
                 
             } catch (InterruptedException ex) {
                 // thread interrupted
