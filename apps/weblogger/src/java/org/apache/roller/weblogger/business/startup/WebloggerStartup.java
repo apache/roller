@@ -179,7 +179,7 @@ public final class WebloggerStartup {
             mailProvider = new MailProvider();
         } catch(StartupException ex) {
             log.warn("Failed to setup mail provider, continuing anways.\n"+
-                    "Reason: "+ex.getMessage());
+                    "Reason: "+ex.getMessage(), ex);
         }
         
         // now we need to deal with database install/upgrade logic
