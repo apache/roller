@@ -143,7 +143,7 @@
             </many-to-one>
             <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryAttribute" fetch="LAZY">
                 <cascade>
-                    <cascade-remove/>
+                    <cascade-persist/>
                 </cascade>
             </one-to-many>
             <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryTag" fetch="LAZY">

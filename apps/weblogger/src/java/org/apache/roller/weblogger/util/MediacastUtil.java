@@ -84,20 +84,7 @@ public final class MediacastUtil {
         } catch (Exception e) {
             log.error("ERROR while checking MediaCast URL: " + url + ": " + e.getMessage());
             throw new MediacastException(CHECK_FAILED, "weblogEdit.mediaCastFailedFetchingInfo", e);
-        }
-        
-//        if (!valid) {
-//            log.debug("Removing MediaCast attributes");
-//            WeblogManager weblogManager = WebloggerFactory.getRoller().getWeblogManager();
-//            try {
-//                weblogManager.removeWeblogEntryAttribute("att_mediacast_url", entry);
-//                weblogManager.removeWeblogEntryAttribute("att_mediacast_type", entry);
-//                weblogManager.removeWeblogEntryAttribute("att_mediacast_length", entry);
-//            } catch (Exception e) {
-//                log.error("ERROR removing invalid MediaCast attributes");
-//            }
-//        }
-        
+        }      
         return resource;
     }
     

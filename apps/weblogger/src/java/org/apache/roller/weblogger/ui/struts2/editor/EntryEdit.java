@@ -35,6 +35,9 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.util.MediacastException;
+import org.apache.roller.weblogger.util.MediacastResource;
+import org.apache.roller.weblogger.util.MediacastUtil;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
@@ -150,13 +153,31 @@ public final class EntryEdit extends EntryBase {
                 entry.setPinnedToMain(getBean().getPinnedToMain());
             }
             
-//            // Fetch MediaCast content type and length
-//            log.debug("Checking MediaCast attributes");
-//            if (!checkMediaCast(entry)) {
-//                log.debug("Invalid MediaCast attributes");
-//            } else {
-//                log.debug("Validated MediaCast attributes");
-//            }
+            if(!StringUtils.isEmpty(getBean().getEnclosureURL())) {
+                try {
+                    // Fetch MediaCast resource
+                    log.debug("Checking MediaCast attributes");
+                    MediacastResource mediacast = MediacastUtil.lookupResource(getBean().getEnclosureURL());
+
+                    // set mediacast attributes
+                    entry.putEntryAttribute("att_mediacast_url", mediacast.getUrl());
+                    entry.putEntryAttribute("att_mediacast_type", mediacast.getContentType());
+                    entry.putEntryAttribute("att_mediacast_length", ""+mediacast.getLength());
+
+                } catch (MediacastException ex) {
+                    addMessage(getText(ex.getErrorKey()));
+                }
+            } else {
+                try {
+                    // if MediaCast string is empty, clean out MediaCast attributes
+                    weblogMgr.removeWeblogEntryAttribute("att_mediacast_url", entry);
+                    weblogMgr.removeWeblogEntryAttribute("att_mediacast_type", entry);
+                    weblogMgr.removeWeblogEntryAttribute("att_mediacast_length", entry);
+                    
+                } catch (WebloggerException e) {
+                    addMessage(getText("weblogEdit.mediaCastErrorRemoving"));
+                }
+            }
             
             if(log.isDebugEnabled()) {
                 log.debug("entry bean is ...\n"+getBean().toString());
