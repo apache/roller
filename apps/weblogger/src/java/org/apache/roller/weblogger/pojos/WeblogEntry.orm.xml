@@ -78,9 +78,7 @@
             <query>SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.website = ?2</query>
         </named-query>
         <named-query name="WeblogEntry.updateAllowComments&amp;CommentDaysByWebsite">
-            <query>UPDATE WeblogEntry SET allowComments = ?1, commentDays = ?2, 
-                                              pubTime=pubTime, updateTime=updateTime
-                                          WHERE website = ?3</query>
+            <query>UPDATE WeblogEntry e SET e.allowComments = ?1, e.commentDays = ?2 WHERE e.website = ?3</query>
         </named-query>
         <attributes>
             <id name="id">
