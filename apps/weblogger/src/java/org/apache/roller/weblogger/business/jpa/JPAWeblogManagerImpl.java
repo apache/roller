@@ -859,19 +859,19 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (searchString != null) {
             params.add(size++, "%" + searchString + "%");
             appendConjuctionToWhereclause(whereClause, "(c.url LIKE ?")
-            .append(size).append(" OR c.content LIKE ?").append(size).append(")");
+                .append(size).append(" OR c.content LIKE ?").append(size).append(")");
         }
         
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
             params.add(size++, start);
-            appendConjuctionToWhereclause(whereClause, "c.postTime >= ?");
+            appendConjuctionToWhereclause(whereClause, "c.postTime >= ?").append(size);
         }
         
         if (endDate != null) {
             Timestamp end = new Timestamp(endDate.getTime());
             params.add(size++, end);
-            appendConjuctionToWhereclause(whereClause, "c.postTime <= ?");
+            appendConjuctionToWhereclause(whereClause, "c.postTime <= ?").append(size);
         }
         
         if (status != null) {
@@ -886,7 +886,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
             params.add(size++, status);
             appendConjuctionToWhereclause(whereClause, "c.status ")
-            .append(comparisionOperator).append('?').append(size);
+                .append(comparisionOperator).append('?').append(size);
         }
         
         if(whereClause.length() != 0) {
