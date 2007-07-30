@@ -429,9 +429,11 @@ public class WeblogEntry implements Serializable {
             att.setValue(value);
         }
     }
+    
     public void onRemoveEntryAttribute(WeblogEntryAttribute att) throws WebloggerException {
         attMap.remove(att.getName());
     }
+    
     //-------------------------------------------------------------------------
     
     /**

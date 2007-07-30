@@ -59,8 +59,12 @@ function fullPreviewMode() {
                         <s:text name="weblogEdit.published" />
                         (<s:text name="weblogEdit.updateTime" />
                         <s:date name="entry.updateTime" format="dd/MM/yyyy hh:mm a" />)
-                        &nbsp;&nbsp;&nbsp;&nbsp;<img src="<s:url value="/images/launch-link.png"/>" />
-                        <a href='<s:property value="entry.permalink" />'><s:text name="weblogEdit.permaLink" /></a>
+                        
+                        <s:if test='!getBooleanProp("weblogentry.editor.showFullPermalink")'>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<img src='<s:url value="/images/launch-link.png"/>' />
+                            <a href='<s:property value="entry.permalink" />'><s:text name="weblogEdit.permaLink" /></a>
+                        </s:if>
+                        
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">
@@ -81,6 +85,23 @@ function fullPreviewMode() {
             </td>
         </tr>
     
+        <s:if test='getBooleanProp("weblogentry.editor.showFullPermalink")'>
+            <tr>
+                <td class="permalinkLabel">
+                    <label for="permalink"><s:text name="weblogEdit.permaLink" /></label>
+                </td>
+                <td>
+                    <s:if test="bean.published">
+                        <a href='<s:property value="entry.permalink" />'><s:property value="entry.permalink" /></a>
+                        <img src='<s:url value="/images/launch-link.png"/>' />
+                    </s:if>
+                    <s:else>
+                        <s:property value="entry.permalink" />
+                    </s:else>
+                </td>
+            </tr>
+        </s:if>
+        
         <tr>
             <td class="entryEditFormLabel">
                 <label for="categoryId"><s:text name="weblogEdit.category" /></label>
@@ -205,8 +226,8 @@ function fullPreviewMode() {
         
         <s:text name="weblogEdit.enclosureURL" />: <s:textfield name="bean.enclosureURL" size="40" maxlength="255" />
         <s:if test="bean.enclosureURL != null">
-            <s:text name="weblogEdit.enclosureType" />: <s:property value="entry.attributes['att_mediacast_type']" />
-            <s:text name="weblogEdit.enclosureLength" />: <s:property value="entry.attributes['att_mediacast_length']" />
+            <s:text name="weblogEdit.enclosureType" />: <s:property value='entry.findEntryAttribute("att_mediacast_type")' />
+            <s:text name="weblogEdit.enclosureLength" />: <s:property value='entry.findEntryAttribute("att_mediacast_length")' />
         </s:if>
     </div>
     
