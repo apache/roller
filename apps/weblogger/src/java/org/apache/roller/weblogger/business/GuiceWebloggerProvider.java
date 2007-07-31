@@ -30,10 +30,10 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 public class GuiceWebloggerProvider implements WebloggerProvider {
     
     // Guice injector
-    private final Injector injector;
+    protected final Injector injector;
     
     // maintain our own singleton instance of Weblogger
-    private Weblogger webloggerInstance = null;
+    protected Weblogger webloggerInstance = null;
     
     
     /**
@@ -95,4 +95,10 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
         return webloggerInstance;
     }
     
+    /**
+     * Get injected instance, for custom managers.
+     */
+    public <T> T getInstance(Class<T> type) {
+        return injector.getInstance(type);
+    }   
 }
