@@ -1,13 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="NeoOffice 2.1  (Unix)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.1  (Solaris x86)">
 	<META NAME="CREATED" CONTENT="20070706;11182000">
-	<META NAME="CHANGED" CONTENT="20070708;7323300">
+	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
+	<META NAME="CHANGED" CONTENT="20070731;17051700">
 	<META NAME="KEYWORDS" CONTENT="OpenDS Directory Server Administration Framework">
-	<STYLE TYPE="text/css">
+	<STYLE>
 	<!--
 		P { margin-bottom: 0.08in; widows: 2; orphans: 2 }
 		P.western { font-family: "Times New Roman", serif }
@@ -40,10 +41,7 @@
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
 <P CLASS="western" ALIGN=RIGHT STYLE="margin-bottom: 0in; background: transparent">
-<IMG SRC="roller-install-guide_html_m3d0892e2.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=210 HEIGHT=85 BORDER=0></P>
-<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<BR>
-</P>
+<IMG SRC="roller-install-guide_html_490f4977.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=210 HEIGHT=85 BORDER=0></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -72,7 +70,8 @@
 <BR>
 </P>
 <P CLASS="western" ALIGN=RIGHT STYLE="margin-bottom: 0in; background: transparent">
-<FONT FACE="Helvetica, sans-serif"><FONT SIZE=7><B>Installation Guide</B></FONT></FONT></P>
+ <FONT FACE="Helvetica, sans-serif"><FONT SIZE=7><B>Installation
+Guide</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=RIGHT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -147,7 +146,7 @@
 Roller Weblogger</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Version
-4.0</B></FONT></FONT></P>
+4.0 (DRAFT)</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">July 2007</SDFIELD></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
@@ -400,7 +399,7 @@ supports internationalization (I18N), but on Tomcat some additional
 configuration is necessary. You must ensure that Tomcat's URI
 encoding is set to UTF-8. You can do this by editing the Tomcat
 configuration file </FONT><FONT FACE="Courier New">conf/server.xml</FONT><FONT FACE="Times New Roman, serif">
-and adding </FONT><FONT FACE="Courier New, monospace">URIEncoding=”UTF-8”</FONT><FONT FACE="Times New Roman, serif">
+and adding </FONT><FONT FACE="Courier New, monospace">URIEncoding=&rdquo;UTF-8&rdquo;</FONT><FONT FACE="Times New Roman, serif">
 to each connector element, as shown below:</FONT></FONT></SPAN></P>
 <PRE>   &lt;Connector port=&quot;8080&quot;
       maxThreads=&quot;150&quot; minSpareThreads=&quot;25&quot; maxSpareThreads=&quot;75&quot;
@@ -426,7 +425,7 @@ un-package.
 <H2 CLASS="western">4.1Installation directory layout</H2>
 <P CLASS="western">Once you've unpackaged the files you'll find a
 directory structure like this:</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_m74822c69.png" NAME="graphics2" ALIGN=LEFT WIDTH=257 HEIGHT=379 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m7709e33.png" NAME="graphics2" ALIGN=LEFT WIDTH=257 HEIGHT=379 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western">The <FONT FACE="Courier New, monospace">LICENCE.txt</FONT>
 and <FONT FACE="Courier New, monospace">NOTICE.txt</FONT> files
@@ -548,7 +547,7 @@ debug database connection problems. If Roller finds that the database
 exists but its tables are not, it will offer to run the database
 creation scripts. If find finds that the tables are there, but they
 are not up-to-date Roller will offer to upgrade them for you. Once
-your Roller installation is complete and you are ready to go “live”
+your Roller installation is complete and you are ready to go &ldquo;live&rdquo;
 then you should set<FONT FACE="Courier New, monospace">
 installation.type=manual</FONT>.</P>
 <H2 CLASS="western">6.1MySQL example</H2>
@@ -610,13 +609,13 @@ Apache Tomcat 6.0</H4>
 <P CLASS="western">You can deploy to Tomcat as either a directory or
 a WAR file. The screens-hot below shows directory-based deployment
 options.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_m755bd4bb.png" NAME="graphics3" ALIGN=LEFT WIDTH=594 HEIGHT=588 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m6a96024.png" NAME="graphics3" ALIGN=LEFT WIDTH=594 HEIGHT=588 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
 is deployed, you'll see that it's listed among the other
 applications. There's a <B>/roller</B> link to Roller itself and
 there are options to start, stop, reload and undeploy.</SPAN></P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_m6315ba1e.png" NAME="graphics4" ALIGN=LEFT WIDTH=596 HEIGHT=77 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m21a69a6a.png" NAME="graphics4" ALIGN=LEFT WIDTH=596 HEIGHT=77 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
 Roller doesn't start-up, look for the problem in the logs. You can
 find them in Tomcat's <FONT FACE="Courier New, monospace">logs</FONT>
 directory. The Tomcat log file is <FONT FACE="Courier New, monospace">catalina.out</FONT>
@@ -626,13 +625,13 @@ Glassfish v2.0</H4>
 <P CLASS="western">You can also deploy to Glassfish as either a
 directory or a WAR file. The screenshot below shows directory-based
 deployment options.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_mc5f2767.png" NAME="graphics5" ALIGN=LEFT WIDTH=594 HEIGHT=548 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_54a5dedd.png" NAME="graphics5" ALIGN=LEFT WIDTH=594 HEIGHT=548 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
 is deployed, you'll see that it's listed among the other
 applications. There's a <B>Launch</B> link to Roller itself and there
 are buttons to enable, display and redeploy.</SPAN></P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_3cb2f8b3.png" NAME="graphics6" ALIGN=LEFT WIDTH=591 HEIGHT=106 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
+<P CLASS="western"><IMG SRC="roller-install-guide_html_me1768f1.png" NAME="graphics6" ALIGN=LEFT WIDTH=591 HEIGHT=106 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
 Roller doesn't start-up, look for the problem in the logs. You can
 find them in your Glassfish domain's  <FONT FACE="Courier New, monospace">logs</FONT>
 directory. The Glassfish log file is <FONT FACE="Courier New, monospace">server.log</FONT>
@@ -659,10 +658,10 @@ you diagnose the problem. It's possible that you entered the wrong
 JDBC driver class name, connection URL, username or password. Or
 perhaps your database is not running. Use the information provided to
 determine what is wrong, fix it and then redeploy Roller.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_56ece5ab.png" NAME="graphics7" ALIGN=LEFT WIDTH=485 HEIGHT=276 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_79ee0277.png" NAME="graphics7" ALIGN=LEFT WIDTH=485 HEIGHT=276 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <H4 CLASS="western">Automatic tables creation</H4>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_aeabd6d.png" NAME="graphics8" ALIGN=LEFT WIDTH=466 HEIGHT=106 BORDER=0><BR CLEAR=LEFT>If
+<P CLASS="western"><IMG SRC="roller-install-guide_html_2bf00c9b.png" NAME="graphics8" ALIGN=LEFT WIDTH=466 HEIGHT=106 BORDER=0><BR CLEAR=LEFT>If
 your database configuration is good but Roller cannot find its
 database tables, then Roller will offer to create those pages
 automatically for you. If you give the go-ahead, Roller will run the
@@ -674,7 +673,7 @@ first user account and weblog.</P>
 front-page weblog then it will display the Completing Your
 Installation below that explains how to register your first user,
 create your first weblog and setup your site's front page.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_m32408f25.png" NAME="graphics9" ALIGN=LEFT WIDTH=440 HEIGHT=326 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="roller-install-guide_html_m61aa845.png" NAME="graphics9" ALIGN=LEFT WIDTH=440 HEIGHT=326 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western">You have to decide what you want as the front-page
 of your Roller site. If you are using Roller to run your personal
@@ -687,8 +686,8 @@ front-page weblog for the site.
 multiple weblogs, then you'll probably want to display an aggregated
 front-page combining all weblogs on the site. In that case, create a
 weblog to serve as the front-page, set it as the front-page weblog
-and make sure you set the “aggregated front-page” setting on the
-Server Admin page.   
+and make sure you set the &ldquo;aggregated front-page&rdquo; setting
+on the Server Admin page.   
 </P>
 <H4 CLASS="western">Don't forget: Reset the <FONT FACE="Courier New, monospace">installation.type</FONT>
 flag</H4>
@@ -704,9 +703,9 @@ the Roller User Guide for more information on running your Roller
 system and your weblog. For information on customizing your weblog,
 refer to the Roller Template Guide. If you can't find what you want
 in the documentation then subscribe to the Roller user mailing list
-and ask your questions there.</P>
-<P CLASS="western">   Roller user and developer mailing lists:<BR>  
-<A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A>
+and ask your questions there:
+<A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A><BR>
+  
 </P>
 <H1 CLASS="western">9Configuration tips and tricks</H1>
 <P CLASS="western">This section covers some tips and tricks that can
@@ -766,8 +765,8 @@ weblog to server as the front-page of your Roller site. Start with
 the Front-Page theme and customize it. Edit the weblog template and
 look for the part that mentions PLANET-entries. Comment-out the
 SITE-WIDE part and un-comment the PLANET-entries part. The double
-hash “##” marks indicate a commented-out line. The code should
-look like this:<BR></SPAN><BR><BR>
+hash &ldquo;##&rdquo; marks indicate a commented-out line. The code
+should look like this:<BR></SPAN><BR><BR>
 </P>
 <PRE><SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=3>## 1) SITE-WIDE entries (the default)</SPAN></FONT></FONT>
 <SPAN STYLE="background: transparent">   <FONT FACE="Courier New, monospace"><FONT SIZE=3><B>##</B>set($pager = $site.getWeblogEntriesPager($since, $maxResults))</SPAN></FONT></FONT>
@@ -936,7 +935,7 @@ you need to be aware of them and especially the new URL structure and
 the new template system.</SPAN></P>
 <H4 CLASS="western">New URL structure</H4>
 <P CLASS="western"><SPAN STYLE="background: transparent">The most
-significant change is the new URL structure – we've completely
+significant change is the new URL structure &ndash; we've completely
 change all of the Roller weblog URLs. We continue to support old
 Roller URLs, but they are forwarded to the new system. That ensures
 that nobody will get a 404 when accessing your weblog using an old
@@ -960,8 +959,8 @@ default, we've turned off the old system. </SPAN>
 </P>
 <P CLASS="western"><SPAN STYLE="background: transparent">So, if you
 are upgrading and you want your weblogs to work, you <I>must</I>
-override this Roller property to enable the old “legacy” template
-system to work:</SPAN></P>
+override this Roller property to enable the old &ldquo;legacy&rdquo;
+template system to work:</SPAN></P>
 <P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	rendering.legacyModels.enabled=true</SPAN></FONT></P>
 <P CLASS="western"><SPAN STYLE="background: transparent">See <B>Section
 11</B> for information on overriding Roller startup properties.</SPAN></P>
@@ -1036,7 +1035,6 @@ subdirectory. In Roller 4.0 the default is to store those files your
 home directory under <FONT FACE="Courier New, monospace">roller_data/uploads</FONT>,
 so you'll have to copy your uploads there. If you want to change the
 location of the uploads directory, overload the property <FONT FACE="Courier New, monospace">upoads.dir</FONT>.</P>
-<H2 CLASS="western"></H2>
 <H2 CLASS="western" STYLE="page-break-before: always"><A NAME="ref-UpgradeGuide_2.1-2"></A>
 10.3Install and startup the new Roller 
 </H2>
@@ -1062,652 +1060,695 @@ migration scripts yourself, you can. See <B>Section 9.4</B>.</P>
 <P CLASS="western"><B>NOTE</B>: On Tomcat, before startup you should
 delete the contents of the Tomcat work directory</P>
 <H1 CLASS="western">11roller.properties</H1>
-<P CLASS="western"><BR><BR>
-</P>
-<PRE># This file is for meant for Roller deployment properties
-# Any properties that don't change at runtime are defined here
-#
-# You can override the values in this file in a couple ways ..
-#   1. define a roller-custom.properties file and place it somewhere
-#       at the root of one of your classpath locations.
-#       for example:
-#           $TOMCAT_HOME/common/classes
-#           $ROLLER_LOCATION/WEB-INF/classes
-#
-#   2. specify a custom properties file via jvm option
-#       example:
-#           roller.custom.config=/path/to/properties/file
-#
-#   **NOTE: if you run multiple instances of roller on the same server
-#           then you should beware of the fact that the override options above
-#           may affect *all* of you running instances.  if you want to do
-#           custom overrides for each instance then you must do it by
-#           placing a roller-custom.properties file at WEB-INF/classes/ in
-#           each of you roller installations.
-#
-# properties in this file are accessed like this ...
-#    WebloggerConfig.getProperty(&quot;propname&quot;);
+<PRE><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># roller.properties</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This file is for meant for Roller deployment properties</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Any properties that don't change at runtime are defined here</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># You can override the values in this file in a couple ways ..</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#   1. define a roller-custom.properties file and place it somewhere</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#       at the root of one of your classpath locations.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#       for example:</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           $TOMCAT_HOME/common/classes</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           $ROLLER_LOCATION/WEB-INF/classes</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#   2. specify a custom properties file via jvm option</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#       example:</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           roller.custom.config=/path/to/properties/file</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#   **NOTE: if you run multiple instances of roller on the same server</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           then you should beware of the fact that the override options above</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           may affect *all* of you running instances.  if you want to do</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           custom overrides for each instance then you must do it by</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           placing a roller-custom.properties file at WEB-INF/classes/ in</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#           each of you roller installations.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># properties in this file are accessed like this ...</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#    WebloggerConfig.getProperty(&quot;propname&quot;);</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Table of contents</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Required configuration settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Directory settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Feature specific settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Scheduled tasks configuration</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Cache configuratation</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Security settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Rendering system</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Weblog ping system</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Pluggable backend, page and editor plugins</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Log4j logging settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Other settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Experimental, deprecated and &quot;undocumented&quot; settings</FONT></FONT>
+
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Required configuration settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Installation type 'auto' or 'manual'</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># - Set to 'auto' if you'd like tables to be auto-created if they are not found</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#   on startup and auto-upgraded if they need it.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># - Set to 'manual' if you'd want to run the SQL scripts by hand. </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">installation.type=manual</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#---------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Database configuration settings</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Specify database configuration type of 'jndi' or 'jdbc'</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">database.configurationType=jndi</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># For database configuration type 'jndi',this will be used</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">database.jndi.name=jdbc/rollerdb</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># For database configuration type of 'jdbc', you MUST override these</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">database.jdbc.driverClass=</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">database.jdbc.connectionURL=</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">database.jdbc.username=</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">database.jdbc.password=</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#---------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Mail server connection parameters</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Specify mail configuration type of 'jndi' or 'properties'</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">mail.configurationType=jndi</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># For mail configuration type 'jndi', this will be used</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">mail.jndi.name=mail/Session</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># For mail configuration type of 'properties', you MUST override hostname</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">mail.hostname=</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Only override mail username and password if your mail server requires them</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#mail.username=</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#mail.password=</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Directory settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 
-#-----------------------------------------------------------------------------
-# Table of contents
-#-----------------------------------------------------------------------------
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The directory in which Roller will upload files</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">uploads.dir=${user.home}/roller_data/uploads</FONT></FONT>
 
-# -- Required configuration settings
-# -- Directory settings
-# -- Feature specific settings
-# -- Scheduled tasks configuration
-# -- Cache configuratation
-# -- Security settings
-# -- Rendering system
-# -- Weblog ping system
-# -- Pluggable backend, page and editor plugins
-# -- Other settings
-# -- Experimental, deprecated and &quot;undocumented&quot; settings
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The context path under which resoures will be made available </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">uploads.url=/resources</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Directory in which search index is to be created </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># (delete this directory to force Roller to recreate the entire search index)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">search.index.dir=${user.home}/roller_data/search-index</FONT></FONT>
 
-#-----------------------------------------------------------------------------
-# Required configuration settings
-#-----------------------------------------------------------------------------
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The directory in which Roller will look for themes</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">themes.dir=${webapp.context}</FONT></FONT>
 
-# Installation type 'auto' or 'manual'
-# - Set to 'auto' if you'd like tables to be auto-created if they are not found
-#   on startup and auto-upgraded if they need it.
-# - Set to 'manual' if you'd want to run the SQL scripts by hand. 
-installation.type=manual
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If you enable Planet (see below), then you must specify the path to a cache</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># directory that exists and is writable by the Roller process </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.cache.dir=${user.home}/roller_data/planetcache</FONT></FONT>
 
 
 
-#---------------------------------
-# Database configuration settings
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Feature specific settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 
-# Specify database configuration type of 'jndi' or 'jdbc'
-database.configurationType=jndi
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># True to enable group blogging. False to prevent users from creating more </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># than one weblog and from joining other weblogs.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">groupblogging.enabled=true</FONT></FONT>
 
-# For database configuration type 'jndi',this will be used
-database.jndi.name=jdbc/rollerdb
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># search</FONT></FONT>
 
-# For database configuration type of 'jdbc', you MUST override these
-database.jdbc.driverClass=
-database.jdbc.connectionURL=
-database.jdbc.username=
-database.jdbc.password=
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enables indexing of weblog entries and comments and enables search servlet</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">search.enabled=true</FONT></FONT>
 
-#---------------------------------
-# Mail server connection parameters
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Whether or not to include comments in the search index.  If this</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># is false, comments are not included in the index.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">search.index.comments=true</FONT></FONT>
 
-# Specify mail configuration type of 'jndi' or 'properties'
-mail.configurationType=jndi
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># comments and trackbacks</FONT></FONT>
 
-# For mail configuration type 'jndi', this will be used
-mail.jndi.name=mail/Session
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.notification.hideCommenterAddresses=false</FONT></FONT>
 
-# For database configuration type of 'properties', you MUST override these
-mail.hostname=
-mail.username=
-mail.password=
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># comment throttleing</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.throttle.enabled=false</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.throttle.threshold=25</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.throttle.interval=60</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.throttle.maxentries=250</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Plugable comment authentication</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.authenticator.classname=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.plugins.comments.MathCommentAuthenticator</FONT></FONT>
 
-#-----------------------------------------------------------------------------
-# Directory settings
-#-----------------------------------------------------------------------------
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># pluggable comment validation</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.validator.classnames=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#org.apache.roller.weblogger.ui.rendering.plugins.comments.AkismetCommentValidator</FONT></FONT>
 
-# The directory in which Roller will upload files
-uploads.dir=${user.home}/roller_data/uploads
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.validator.excessLinks.threshold=3</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.validator.excessSize.threshold=1000</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#comment.validator.akismet.key=&lt;get one at wordpress.com&gt;</FONT></FONT>
 
-# The context path under which resoures will be made available 
-uploads.url=/resources
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># pluggable comment formatters</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.formatter.classnames=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin</FONT></FONT>
 
-# The directory in which Roller will look for themes
-themes.dir=${webapp.context}
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># enables site full blacklist check on comment posts (default: true)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">site.blacklist.enable.comments=true</FONT></FONT>
 
-# Directory in which search index is to be created 
-# (delete this directory to force Roller to recreate the entire search index)
-search.index.dir=${user.home}/roller_data/search-index
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># enables site full blacklist check at time of trackback post (default: true)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">site.blacklist.enable.trackbacks=true</FONT></FONT>
 
-# If you enable Planet (see below), then you must specify the path to a cache
-# directory that exists and is writable by the Roller process 
-planet.aggregator.cache.dir=${user.home}/roller_data/planetcache
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># enables partial blacklist check (not including blacklist.txt) for each incoming referrer</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">site.blacklist.enable.referrers=true</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Trackback protection. Set this only if you need to limit the URLs to</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># which users may send trackbacks. Regex expressions are allowed, for example:</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">trackback.allowedURLs=</FONT></FONT>
 
 
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Planet Aggregator settings</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set to true to enable the Planet aggregator. You also need to enable the </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># RefreshRollerPlanetTask task below to get the feed fetcher running.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.enabled=false</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Planet backend guice module, customized for use with Weblogger</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.guice.module=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.planet.business.jpa.RollerPlanetModule</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Number of queries allowed per day</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.technorati.limit=500</FONT></FONT>
 
-#-----------------------------------------------------------------------------
-# Feature specific settings
-#-----------------------------------------------------------------------------
 
-# True to enable group blogging. False to prevent users from creating more 
-# than one weblog and from joining other weblogs.
-groupblogging.enabled=true
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># referrer processing</FONT></FONT>
 
-#----------------------------------
-# search
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enable built-in referrer processing?</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">referrers.processing.enabled=true</FONT></FONT>
 
-# Enables indexing of weblog entries and comments and enables search servlet
-search.enabled=true
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Change to true if you want to process referrers asynchronously.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># You can choose how many threads to use and sleep time (in seconds) </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">referrers.asyncProcessing.enabled=false</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">referrers.queue.numWorkers=3</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">referrers.queue.sleepTime=10</FONT></FONT>
 
-# Whether or not to include comments in the search index.  If this
-# is false, comments are not included in the index.
-search.index.comments=true
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Robot check in referral processing.  If this pattern is set and the User-Agent </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># in the request matches this pattern, all referral processing is skipped; this</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># means that the referral spam check is skipped, the request is allowed to </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># proceed, but the referrer is not recorded and hit count is not incremented.  </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Recommended for large sites that get a lot of legitimate crawler bot traffic.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The pattern here is a suggestion that has been reported to work well.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#referrer.robotCheck.userAgentPattern=.*(slurp|bot|java).*</FONT></FONT>
 
-#----------------------------------
-# comments and trackbacks
 
-comment.notification.hideCommenterAddresses=false
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Scheduled tasks configuration</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 
-# comment throttleing
-comment.throttle.enabled=false
-comment.throttle.threshold=25
-comment.throttle.interval=60
-comment.throttle.maxentries=250
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Scheduled Background Tasks ... all times are in minutes.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Task properties should follow the given format ...</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#     tasks.&lt;taskname&gt;.&lt;prop&gt;=&lt;value&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The *enabled* tasks are defined by tasks.enabled=&lt;taskname&gt;[,&lt;taskname&gt;]</FONT></FONT>
 
-# Plugable comment authentication
-comment.authenticator.classname=\
-org.apache.roller.weblogger.ui.rendering.plugins.comments.MathCommentAuthenticator
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Tasks which are enabled.  Only tasks listed here will be run.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,TurnoverReferersTask,PingQueueTask</FONT></FONT>
 
-# pluggable comment validation
-comment.validator.classnames=\
-org.apache.roller.weblogger.ui.rendering.plugins.comments.BlacklistCommentValidator,\
-org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator,\
-org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator
-#org.apache.roller.weblogger.ui.rendering.plugins.comments.AkismetCommentValidator
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># client identifier.  should be unique for each instance in a cluster.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.clientId=defaultClientId</FONT></FONT>
 
-comment.validator.excessLinks.threshold=3
-comment.validator.excessSize.threshold=1000
-#comment.validator.akismet.key=&lt;get one at wordpress.com&gt;
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Publish scheduled weblog entries</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ScheduledEntriesTask.class=org.apache.roller.weblogger.business.runnable.ScheduledEntriesTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ScheduledEntriesTask.startTime=immediate</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ScheduledEntriesTask.interval=1</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ScheduledEntriesTask.leaseTime=30</FONT></FONT>
 
-# enables site full blacklist check on comment posts (default: true)
-site.blacklist.enable.comments=true
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Reset hit counts</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ResetHitCountsTask.class=org.apache.roller.weblogger.business.runnable.ResetHitCountsTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ResetHitCountsTask.startTime=startOfDay</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ResetHitCountsTask.interval=1440</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.ResetHitCountsTask.leaseTime=30</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Reset referer counts</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TurnoverReferersTask.class=org.apache.roller.weblogger.business.runnable.TurnoverReferersTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TurnoverReferersTask.startTime=startOfDay</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TurnoverReferersTask.interval=1440</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TurnoverReferersTask.leaseTime=30</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Ping processor, does sending of pings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.PingQueueTask.class=org.apache.roller.weblogger.business.pings.PingQueueTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.PingQueueTask.startTime=immediate</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.PingQueueTask.interval=5</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.PingQueueTask.leaseTime=30</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Sync Roller weblogs with planet</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.SyncWebsitesTask.class=org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.SyncWebsitesTask.startTime=startOfDay</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.SyncWebsitesTask.interval=1440</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.SyncWebsitesTask.leaseTime=30</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Refresh entries for planet feeds</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.RefreshRollerPlanetTask.class=org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.RefreshRollerPlanetTask.startTime=startOfHour</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.RefreshRollerPlanetTask.interval=60</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.RefreshRollerPlanetTask.leaseTime=30</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Technorati rankings for planet feeds</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TechnoratiRankingsTask.class=org.apache.roller.weblogger.planet.tasks.TechnoratiRankingsTask</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TechnoratiRankingsTask.startTime=startOfDay</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TechnoratiRankingsTask.interval=1440</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tasks.TechnoratiRankingsTask.leaseTime=30</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Cache configuratation</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 
-# enables site full blacklist check at time of trackback post (default: true)
-site.blacklist.enable.trackbacks=true
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Remember... times are in seconds</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Default settings suitable for 100 user system</FONT></FONT>
 
-<FONT SIZE=2 STYLE="font-size: 9pt"># enables partial blacklist check (not including blacklist.txt) for each incoming referrer</FONT>
-site.blacklist.enable.referrers=true
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Cache properties all follow the given format ...</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#     cache.&lt;cache_id&gt;.&lt;prop&gt;=&lt;value&gt;</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># we then pass all &lt;prop&gt;=&lt;value&gt; pairs into the cache manager when the cache</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># is being constructed.  this makes it easy to add cache properties that can</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># be used by the specified CacheFactory you are using.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># NOTE: it is expected that property validation happens in the CacheFactory</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The default cache implementation we want to use</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.defaultFactory=org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.customHandlers=</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># set &quot;true&quot; to NOT cache the custom pages for users who are logged in</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.excludeOwnerEditPages=false</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This sets how many minutes into the future we look to prepare</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># entries posted into the future which need to be invalidated from the cache.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># It is very unlikely that this should ever need to be changed</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.futureInvalidations.peerTime=3</FONT></FONT>
 
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Site-wide cache (all content for site-wide frontpage weblog)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.sitewide.enabled=true</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.sitewide.size=50</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.sitewide.timeout=1800</FONT></FONT>
 
-# Trackback protection. Set this only if you need to limit the URLs to
-# which users may send trackbacks. Regex expressions are allowed, for example:
-# trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*
-trackback.allowedURLs=
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Weblog page cache (all the weblog content)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.weblogpage.enabled=true</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.weblogpage.size=400</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.weblogpage.timeout=3600</FONT></FONT>
 
-
-#----------------------------------
-# Planet Aggregator settings
-
-# Set to true to enable the Planet aggregator. You also need to enable the 
-# RefreshRollerPlanetTask task below to get the feed fetcher running.
-planet.aggregator.enabled=false
-
-# Planet backend guice module, customized for use with Weblogger
-planet.aggregator.guice.module=\
-org.apache.roller.weblogger.planet.business.jpa.RollerPlanetModule
-
-# Number of queries allowed per day
-planet.aggregator.technorati.limit=500
-
-
-#----------------------------------
-# referrer processing
-
-# Enable built-in referrer processing?
-referrers.processing.enabled=true
-
-# Change to true if you want to process referrers asynchronously.
-# You can choose how many threads to use and sleep time (in seconds) 
-referrers.asyncProcessing.enabled=false
-referrers.queue.numWorkers=3
-referrers.queue.sleepTime=10
-
-# Robot check in referral processing.  If this pattern is set and the User-Agent 
-# in the request matches this pattern, all referral processing is skipped; this
-# means that the referral spam check is skipped, the request is allowed to 
-# proceed, but the referrer is not recorded and hit count is not incremented.  
-# Recommended for large sites that get a lot of legitimate crawler bot traffic.
-# The pattern here is a suggestion that has been reported to work well.
-#referrer.robotCheck.userAgentPattern=.*(slurp|bot|java).*
-
-
-#-----------------------------------------------------------------------------
-# Scheduled tasks configuration
-#-----------------------------------------------------------------------------
-
-# Scheduled Background Tasks ... all times are in minutes.
-#
-# Task properties should follow the given format ...
-#     tasks.&lt;taskname&gt;.&lt;prop&gt;=&lt;value&gt;
-#
-# The *enabled* tasks are defined by tasks.enabled=&lt;taskname&gt;[,&lt;taskname&gt;]
-
-# Tasks which are enabled.  Only tasks listed here will be run.
-tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,TurnoverReferersTask,PingQueueTask
-
-
-# client identifier.  should be unique for each instance in a cluster.
-tasks.clientId=defaultClientId
-
-# Publish scheduled weblog entries
-tasks.ScheduledEntriesTask.class=org.apache.roller.weblogger.business.runnable.ScheduledEntriesTask
-tasks.ScheduledEntriesTask.startTime=immediate
-tasks.ScheduledEntriesTask.interval=1
-tasks.ScheduledEntriesTask.leaseTime=30
-
-# Reset hit counts
-tasks.ResetHitCountsTask.class=org.apache.roller.weblogger.business.runnable.ResetHitCountsTask
-tasks.ResetHitCountsTask.startTime=startOfDay
-tasks.ResetHitCountsTask.interval=1440
-tasks.ResetHitCountsTask.leaseTime=30
-
-# Reset referer counts
-tasks.TurnoverReferersTask.class=org.apache.roller.weblogger.business.runnable.TurnoverReferersTask
-tasks.TurnoverReferersTask.startTime=startOfDay
-tasks.TurnoverReferersTask.interval=1440
-tasks.TurnoverReferersTask.leaseTime=30
-
-# Ping processor, does sending of pings
-tasks.PingQueueTask.class=org.apache.roller.weblogger.business.pings.PingQueueTask
-tasks.PingQueueTask.startTime=immediate
-tasks.PingQueueTask.interval=5
-tasks.PingQueueTask.leaseTime=30
-
-# Sync Roller weblogs with planet
-tasks.SyncWebsitesTask.class=org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask
-tasks.SyncWebsitesTask.startTime=startOfDay
-tasks.SyncWebsitesTask.interval=1440
-tasks.SyncWebsitesTask.leaseTime=30
-
-# Refresh entries for planet feeds
-tasks.RefreshRollerPlanetTask.class=org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask
-tasks.RefreshRollerPlanetTask.startTime=startOfHour
-tasks.RefreshRollerPlanetTask.interval=60
-tasks.RefreshRollerPlanetTask.leaseTime=30
-
-# Technorati rankings for planet feeds
-tasks.TechnoratiRankingsTask.class=org.apache.roller.weblogger.planet.tasks.TechnoratiRankingsTask
-tasks.TechnoratiRankingsTask.startTime=startOfDay
-tasks.TechnoratiRankingsTask.interval=1440
-tasks.TechnoratiRankingsTask.leaseTime=30
-
-
-
-
-
-
-
-
-#-----------------------------------------------------------------------------
-# Cache configuratation
-#-----------------------------------------------------------------------------
-
-# Remember... times are in seconds
-# Default settings suitable for 100 user system
-
-# Cache properties all follow the given format ...
-#     cache.&lt;cache_id&gt;.&lt;prop&gt;=&lt;value&gt;
-# we then pass all &lt;prop&gt;=&lt;value&gt; pairs into the cache manager when the cache
-# is being constructed.  this makes it easy to add cache properties that can
-# be used by the specified CacheFactory you are using.
-#
-# NOTE: it is expected that property validation happens in the CacheFactory
-
-# The default cache implementation we want to use
-cache.defaultFactory=\
-org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl
-cache.customHandlers=
-
-# set &quot;true&quot; to NOT cache the custom pages for users who are logged in
-cache.excludeOwnerEditPages=false
-
-# This sets how many minutes into the future we look to prepare
-# entries posted into the future which need to be invalidated from the cache.
-# It is very unlikely that this should ever need to be changed
-cache.futureInvalidations.peerTime=3
-
-# Site-wide cache (all content for site-wide frontpage weblog)
-cache.sitewide.enabled=true
-cache.sitewide.size=50
-cache.sitewide.timeout=1800
-
-# Weblog page cache (all the weblog content)
-cache.weblogpage.enabled=true
-cache.weblogpage.size=400
-cache.weblogpage.timeout=3600
-
-# Feed cache (xml feeds like rss, atom, etc)
-cache.weblogfeed.enabled=true
-cache.weblogfeed.size=200
-cache.weblogfeed.timeout=3600
-
-# Planet cache (planet page and rss feed)
-cache.planet.enabled=true
-cache.planet.size=10
-cache.planet.timeout=1800
-
-
-#-----------------------------------------------------------------------------
-# Security settings
-#-----------------------------------------------------------------------------
-
-# Enables HTTPS for login page only
-securelogin.enabled=false
-
-# Enable scheme enforcement?
-# Scheme enforcement ensures that specific URLs are viewed only via HTTPS
-schemeenforcement.enabled=false
-
-# URL patterns that require HTTPS
-schemeenforcement.https.urls=/roller_j_security_check,\
-/roller-ui/login-redirect.jsp,\
-/roller-ui/login.rol,\
-/roller-ui/register.rol,/roller-ui/register!save.rol,\
-/roller-ui/profile.rol,/roller-ui/profile!save.rol,\
-/roller-ui/admin/userAdmin.rol,\
-/roller-ui/admin/createUser.rol,/roller-ui/admin/createUser!save.rol,\
-/roller-ui/authoring/userdata,\
-/roller-ui/authoring/membersInvite.rol,/roller-ui/authoring/membersInvite!save.rol
-
-# Password security settings
-passwds.encryption.enabled=false
-passwds.encryption.algorithm=SHA
-
-#----------------------------------
-# Single-Sign-On
-
-# Enables Roller to behave differently when registering new users
-# in an SSO-enabled environment. You must configure security.xml appropriately.
-users.sso.enabled=false
-
-# Set these properties for a custom LDAP schema (optional)
-#users.sso.registry.ldap.attributes.name=cn
-#users.sso.registry.ldap.attributes.email=mail
-#users.sso.registry.ldap.attributes.locale=locale
-#users.sso.registry.ldap.attributes.timezone=timezone
-
-# If you don't want user credentials from LDAP/etc to be stored in Roller
-# (possibly in clear-text) leave this alone, otherwise set to true.
-# i.e. you would like a backup auth mechanism in case LDAP is down.
-users.sso.passwords.save=false
-
-# if you don't want passwords stored in DB, set this to the default value.
-users.sso.passwords.defaultValue=&lt;unknown&gt;
-
-users.sso.autoProvision.enabled=false
-users.sso.autoProvision.className=\
-org.apache.roller.weblogger.ui.core.security.BasicUserAutoProvision
-
-
-#-----------------------------------------------------------------------------
-# Rendering system
-#-----------------------------------------------------------------------------
-
-# Are the old pre-3.0 models and macros enabled?
-rendering.legacyModels.enabled=false
-
-# The set of default Roller renderer factories.
-rendering.rollerRendererFactories=\
-org.apache.roller.weblogger.ui.rendering.velocity.VelocityRendererFactory
-
-# List of available template languages
-rendering.templateLanguages=velocity
-
-
-# The set of user defined renderer factories.  These are prepended to the list above.
-rendering.userRendererFactories=
-
-# The set of default Roller request mappers
-rendering.rollerRequestMappers=\
-org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper
-
-# The set of user defined request mappers.  These are prepended to the list above.
-rendering.userRequestMappers=
-
-# Url path elements which can NEVER be considered a weblog url
-# each represents a url at the application root, i.e. /&lt;elem&gt;/*
-rendering.weblogMapper.rollerProtectedUrls=\
-roller-ui,images,theme,themes,CommentAuthenticatorServlet,\
-index.jsp,favicon.ico,robots.txt,\
-page,flavor,rss,atom,language,search,comments,rsd,resource,xmlrpc,planetrss
-
-# Set of user defined protected urls.  These are added to the set above.
-rendering.weblogMapper.userProtectedUrls=
-
-# Set of models to be made available for weblog page rendering
-rendering.pageModels=\
-org.apache.roller.weblogger.ui.rendering.model.PageModel,\
-org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
-org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.weblogger.ui.rendering.model.URLModel,\
-org.apache.roller.weblogger.ui.rendering.model.MessageModel,\
-org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\
-org.apache.roller.weblogger.ui.rendering.model.MenuModel
-
-# Set of models to be made available for weblog feed rendering
-rendering.feedModels=\
-org.apache.roller.weblogger.ui.rendering.model.FeedModel,\
-org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
-org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.weblogger.ui.rendering.model.URLModel,\
-org.apache.roller.weblogger.ui.rendering.model.MessageModel
-
-# Set of models to be made available for weblog search rendering
-rendering.searchModels=\
-org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel,\
-org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
-org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.weblogger.ui.rendering.model.URLModel,\
-org.apache.roller.weblogger.ui.rendering.model.MessageModel,\
-org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\
-org.apache.roller.weblogger.ui.rendering.model.MenuModel
-
-# Set of models to be made available for weblog page *preview* rendering
-# NOTE: this *does* have some differences between the pageModels
-rendering.previewModels=\
-org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel,\
-org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\
-org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\
-org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel,\
-org.apache.roller.weblogger.ui.rendering.model.MessageModel,\
-org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\
-org.apache.roller.weblogger.ui.rendering.model.MenuModel
-
-# Set of page models specifically for site-wide rendering
-rendering.siteModels=\
-org.apache.roller.weblogger.ui.rendering.model.SiteModel
-
-# Velocity settings
-velocity.properties=/WEB-INF/velocity.properties
-
-# Old velocity macro libraries
-velocity.oldMacroLibraries=\
-deprecated/roller.vm,deprecated/bookmark.vm,deprecated/comments.vm,\
-deprecated/navbar.vm,deprecated/newsfeed.vm,deprecated/referer.vm,\
-deprecated/atommacros.vm,deprecated/rssmacros.vm,deprecated/user.vm,\
-deprecated/weblog.vm,deprecated/website.vm
-
-
-#-----------------------------------------------------------------------------
-# Weblog ping system
-#-----------------------------------------------------------------------------
-
-# The number of attempts to try to reach a ping target before refusing to 
-# requeue it for further retrials. If absent, this defaults to 3.
-pings.maxPingAttempts=3
-
-# The interval between ping queue processing runs in minutes.  Must be between 
-# 0 and 120. If set to 0, ping queue processing is disabled on this server; 
-# this is for clustered environments. Make sure it is nonzero on one host in 
-# a cluster.  Don't use the value 0 here to disable ping functionality, you 
-# will instead get an infinitely growing ping queue.  See the documentation on 
-# the properties below to disable ping functionality if you need to.
-# If absent, this defaults to 5.
-pings.queueProcessingIntervalMins=5
-
-# The set of initial common ping targets.  This is used to initialize the 
-# database if there are no common ping targets at startup.  Ping targets are 
-# specified as a comma-separated list, each target in the form {{name}{url}}.  
-# To disable initialization of common ping targets, comment this out, or set it
-# to the empty value.  Common targets can be edited in the UI; this is just 
-# used to set up some typical ones.
-pings.initialCommonTargets=\
-{{Technorati}{http://rpc.technorati.com/rpc/ping}}\
-,{{Weblogs.com}{http://rpc.weblogs.com/RPC2}}\
-,{{blo.gs}{http://ping.blo.gs/}}\
-,{{java.blogs}{http://javablogs.com/xmlrpc}}\
-,{{blogrolling.com}{http://rpc.blogrolling.com/pinger/}}\
-,{{IceRocket}{http://rpc.icerocket.com:10080/}}
-
-# Specify variant options for known buggy ping targets.
-pings.variantOptions={{http://rpc.icerocket.com:10080/}{noname}}
-
-# This controls whether users are allowed to add custom ping targets.  
-# Set this to false to disallow adding custom targets; if false, the 
-# Weblog:Custom Ping Targets menu item will not appear and associated actions 
-# will result in access denied messages.  Leave this false or commented for 
-# normal behavior. CAUTION: Setting this to true will cause the server to remove 
-# all users' existing custom targets on startup.
-pings.disallowCustomTargets=false
-
-# This controls whether the Weblog:Pings menu item and its associated actions 
-# are enabled.  Set this to false to disallow users from configuring autopings 
-# and doing manual pings.  If absent, this defaults to true.
-# NOTE: There is a separate runtime property (configurable from the 
-# Admin:Configuration page, that can be used to suspend ping processing without 
-# disabling the UI.
-# CAUTION: Setting this to true will cause the server to remove all users' 
-# existing autoping configurations on startup. Leave this false or commented 
-# for normal behavior.
-pings.disablePingUsage=false
-
-# Setting both pings.disallowCustomTarget=true and pings.disablePingUsage=true 
-# will effectively disable the ping functionality.
-
-# This is used for debugging the ping mechanism in Roller.  If this is set 
-# to true, pings that would normally be sent will cause log messages to be sent 
-# but will NOT actually result in real pings being sent.  Leave this false or 
-# commented for normal behavior.
-pings.logOnly=false
-
-
-#-----------------------------------------------------------------------------
-# Pluggable backend, page and editor plugins
-#-----------------------------------------------------------------------------
-
-# Backend Guice module
-guice.backend.module=org.apache.roller.weblogger.business.jpa.JPAWebloggerModule
-
-#---------------------------------
-# Weblog entry plugins
-
-plugins.page=\
-org.apache.roller.weblogger.business.plugins.entry.ConvertLineBreaksPlugin \
-,org.apache.roller.weblogger.business.plugins.entry.TopicTagPlugin \
-,org.apache.roller.weblogger.business.plugins.entry.ObfuscateEmailPlugin \
-,org.apache.roller.weblogger.business.plugins.entry.SmileysPlugin 
-#,org.apache.roller.weblogger.business.plugins.entry.WikipediaLinkPlugin \
-#,org.apache.roller.weblogger.business.plugins.entry.GoogleLinkPlugin \
-#,org.apache.roller.weblogger.business.plugins.entry.AcronymsPlugin \
-#,org.apache.roller.weblogger.business.plugins.entry.BookmarkPlugin
-
-# The list of configured WeblogEntryEditors available to users
-plugins.weblogEntryEditors=\
-org.apache.roller.weblogger.ui.core.plugins.TextEditor,\
-org.apache.roller.weblogger.ui.core.plugins.XinhaEditor
-
-# The &quot;id&quot; of the default editor to use. NOT the class name
-plugins.defaultEditor=editor-text.jsp
-
-# Default weblog editor
-# The list of available editors is in rollerRuntimeConfigDefs.xml
-newweblog.editor=editor-text.jsp
-
-
-
-
-
-
-# Optional site-wide customization settings for the TopicTag plugin.
-# n.b. these default settings match the coded default values that would be 
-# applied if these were omitted.
-plugins.topictag.defaultTopicBookmarkName=Default Topic Site
-plugins.topictag.defaultTopicSite=http://www.technorati.com/tag
-plugins.topictag.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]
-plugins.topictag.tagRegexWithoutBookmark=topic:\\[(.*?)\\]
-plugins.topictag.linkFormatString=&lt;a rel=\&quot;tag\&quot; href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;
-
-# Set to true to allow only default topic tag site (and avoid costly bookmark queries)
-plugins.topictag.ignoreBookmarks=true
-
-
-#-----------------------------------------------------------------------------
-# Other settings
-#-----------------------------------------------------------------------------
-
-# Values of the properties in this list get system property expansion 
-# applied to them when loaded.
-config.expandedProperties=uploads.dir,search.index.dir
-
-# True to enable history in Atom feeds with next/prev links
-site.newsfeeds.history.enabled=false
-
-# Some folks consider remember-me type functionality to be a security
-rememberme.enabled=true
-
-# You might want to disable GZIP if your app server already supports it
-compression.gzipResponse.enabled=true
-
-# specifies the max number of tags allowed in URL ( /feed?tags=foo+bar+baz )
-tags.queries.maxIntersectionSize=3
-
-# Characters to be allowed in user names (change at your own risk)
-username.allowedChars=A-Za-z0-9
-
-# editor theme to be used (corresponds to directory name under /theme)
-editor.theme=tan
-
-# list of links to include in root bookmark folder of each new blog
-# format is like so: linktitle2|linkurl2,linktitle2|linkurl2,linktitle3|linkurl3
-newuser.blogroll=\
-Dave Johnson|http://rollerweblogger.org/roller,\
-Matt Raible|http://raibledesigns.com/page/rd,\
-Lance Lavandowska|http://rollerweblogger.org/lance,\
-Henri Yandell|http://blog.generationjava.com/,\
-Elias Torres|http://torrez.us/,\
-Jeff Blattman|http://blogs.sun.com/jtb,\
-blogs.sun.com|http://blogs.sun.com,\
-jroller.com|http://jroller.com
-
-# comma-separated list of top-level categories to be created in each new weblog
-newuser.categories=General,Status,Java,Music,Politics
-
-
-
-
-#-----------------------------------------------------------------------------
-# Experimental, deprecated and &quot;undocumented&quot; settings
-#-----------------------------------------------------------------------------
-
-# Atom Publishing Protocol (APP) - this is an incomplete and untested 
-# implementation of an unfinished IETF specification. 
-# Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!
-webservices.atomprotocol.enabled=false
-
-# For databases with one sec timestamp resolution, we need a one sec throttle
-webservices.atomprotocol.oneSecondThrottle=true
-
-# Atom-like Admin Publishing Protocol (AAPP) - this is an experimental admin
-# protocol based on ideas from the Atom protocol. 
-# Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!
-webservices.adminprotocol.enabled=false
-
-# If you are using the Hibernate backend (deprecated as of Roller 4.0), 
-# you MUST override this to use a database other than MySQL4
-hibernate.dialect=org.hibernate.dialect.MySQLDialect
-</PRE>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Feed cache (xml feeds like rss, atom, etc)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.weblogfeed.enabled=true</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.weblogfeed.size=200</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.weblogfeed.timeout=3600</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Planet cache (planet page and rss feed)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.planet.enabled=true</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.planet.size=10</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.planet.timeout=1800</FONT></FONT>
+
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Security settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enables HTTPS for login page only</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">securelogin.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enable scheme enforcement?</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Scheme enforcement ensures that specific URLs are viewed only via HTTPS</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">schemeenforcement.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># URL patterns that require HTTPS</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">schemeenforcement.https.urls=/roller_j_security_check,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/login-redirect.jsp,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/login.rol,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/register.rol,/roller-ui/register!save.rol,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/profile.rol,/roller-ui/profile!save.rol,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/admin/userAdmin.rol,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/admin/createUser.rol,/roller-ui/admin/createUser!save.rol,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/authoring/userdata,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/authoring/membersInvite.rol,/roller-ui/authoring/membersInvite!save.rol</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Password security settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">passwds.encryption.enabled=false</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">passwds.encryption.algorithm=SHA</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Single-Sign-On</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enables Roller to behave differently when registering new users</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># in an SSO-enabled environment. You must configure security.xml appropriately.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">users.sso.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set these properties for a custom LDAP schema (optional)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#users.sso.registry.ldap.attributes.name=cn</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#users.sso.registry.ldap.attributes.email=mail</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#users.sso.registry.ldap.attributes.locale=locale</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#users.sso.registry.ldap.attributes.timezone=timezone</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If you don't want user credentials from LDAP/etc to be stored in Roller</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># (possibly in clear-text) leave this alone, otherwise set to true.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># i.e. you would like a backup auth mechanism in case LDAP is down.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">users.sso.passwords.save=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># if you don't want passwords stored in DB, set this to the default value.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">users.sso.passwords.defaultValue=&lt;unknown&gt;</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">users.sso.autoProvision.enabled=false</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">users.sso.autoProvision.className=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.core.security.BasicUserAutoProvision</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Rendering system</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Are the old pre-3.0 models and macros enabled?</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.legacyModels.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The set of default Roller renderer factories.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.rollerRendererFactories=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.velocity.VelocityRendererFactory</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># List of available template languages</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.templateLanguages=velocity</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The set of user defined renderer factories.  These are prepended to the list above.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.userRendererFactories=</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The set of default Roller request mappers</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.rollerRequestMappers=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The set of user defined request mappers.  These are prepended to the list above.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.userRequestMappers=</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Url path elements which can NEVER be considered a weblog url</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># each represents a url at the application root, i.e. /&lt;elem&gt;/*</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.weblogMapper.rollerProtectedUrls=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">roller-ui,images,theme,themes,CommentAuthenticatorServlet,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">index.jsp,favicon.ico,robots.txt,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">page,flavor,rss,atom,language,search,comments,rsd,resource,xmlrpc,planetrss</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of user defined protected urls.  These are added to the set above.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.weblogMapper.userProtectedUrls=</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of models to be made available for weblog page rendering</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.pageModels=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.PageModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.URLModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MessageModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MenuModel</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of models to be made available for weblog feed rendering</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.feedModels=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.FeedModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.URLModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MessageModel</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of models to be made available for weblog search rendering</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.searchModels=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.URLModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MessageModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MenuModel</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of models to be made available for weblog page *preview* rendering</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># NOTE: this *does* have some differences between the pageModels</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.previewModels=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.PreviewPageModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.ConfigModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.PreviewURLModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MessageModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.CalendarModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.MenuModel</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of page models specifically for site-wide rendering</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.siteModels=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.SiteModel</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Velocity settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">velocity.properties=/WEB-INF/velocity.properties</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Old velocity macro libraries</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">velocity.oldMacroLibraries=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">deprecated/roller.vm,deprecated/bookmark.vm,deprecated/comments.vm,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">deprecated/navbar.vm,deprecated/newsfeed.vm,deprecated/referer.vm,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">deprecated/atommacros.vm,deprecated/rssmacros.vm,deprecated/user.vm,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">deprecated/weblog.vm,deprecated/website.vm</FONT></FONT>
+
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Weblog ping system</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The number of attempts to try to reach a ping target before refusing to </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># requeue it for further retrials. If absent, this defaults to 3.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.maxPingAttempts=3</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The interval between ping queue processing runs in minutes.  Must be between </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># 0 and 120. If set to 0, ping queue processing is disabled on this server; </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># this is for clustered environments. Make sure it is nonzero on one host in </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># a cluster.  Don't use the value 0 here to disable ping functionality, you </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># will instead get an infinitely growing ping queue.  See the documentation on </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># the properties below to disable ping functionality if you need to.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If absent, this defaults to 5.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.queueProcessingIntervalMins=5</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The set of initial common ping targets.  This is used to initialize the </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># database if there are no common ping targets at startup.  Ping targets are </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># specified as a comma-separated list, each target in the form {{name}{url}}.  </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># To disable initialization of common ping targets, comment this out, or set it</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># to the empty value.  Common targets can be edited in the UI; this is just </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># used to set up some typical ones.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.initialCommonTargets=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">{{Technorati}{http://rpc.technorati.com/rpc/ping}}\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,{{Weblogs.com}{http://rpc.weblogs.com/RPC2}}\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,{{blo.gs}{http://ping.blo.gs/}}\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,{{java.blogs}{http://javablogs.com/xmlrpc}}\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,{{blogrolling.com}{http://rpc.blogrolling.com/pinger/}}\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,{{IceRocket}{http://rpc.icerocket.com:10080/}}</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Specify variant options for known buggy ping targets.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.variantOptions={{http://rpc.icerocket.com:10080/}{noname}}</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This controls whether users are allowed to add custom ping targets.  </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set this to false to disallow adding custom targets; if false, the </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Weblog:Custom Ping Targets menu item will not appear and associated actions </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># will result in access denied messages.  Leave this false or commented for </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># normal behavior. </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># CAUTION: Setting this to true will cause the server to remove all users' </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># existing custom targets on startup.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.disallowCustomTargets=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This controls whether the Weblog:Pings menu item and its associated actions </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># are enabled.  Set this to false to disallow users from configuring autopings </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># and doing manual pings.  If absent, this defaults to true.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># NOTE: There is a separate runtime property (configurable from the </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Admin:Configuration page, that can be used to suspend ping processing without </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># disabling the UI.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># CAUTION: Setting this to true will cause the server to remove all users' </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># existing autoping configurations on startup. Leave this false or commented </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># for normal behavior.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.disablePingUsage=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Setting both pings.disallowCustomTarget=true and pings.disablePingUsage=true </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># will effectively disable the ping functionality.</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This is used for debugging the ping mechanism in Roller.  If this is set </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># to true, pings that would normally be sent will cause log messages to be sent </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># but will NOT actually result in real pings being sent.  Leave this false or </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># commented for normal behavior.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.logOnly=false</FONT></FONT>
+
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Pluggable backend, page and editor plugins</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Backend Provider</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">weblogger.provider.class=org.apache.roller.weblogger.business.GuiceWebloggerProvider</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Backend Guice module</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">guice.backend.module=org.apache.roller.weblogger.business.jpa.JPAWebloggerModule</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#---------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Weblog entry plugins</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.page=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.entry.ConvertLineBreaksPlugin \</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,org.apache.roller.weblogger.business.plugins.entry.TopicTagPlugin \</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,org.apache.roller.weblogger.business.plugins.entry.ObfuscateEmailPlugin \</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">,org.apache.roller.weblogger.business.plugins.entry.SmileysPlugin </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#,org.apache.roller.weblogger.business.plugins.entry.WikipediaLinkPlugin \</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#,org.apache.roller.weblogger.business.plugins.entry.GoogleLinkPlugin \</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#,org.apache.roller.weblogger.business.plugins.entry.AcronymsPlugin \</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#,org.apache.roller.weblogger.business.plugins.entry.BookmarkPlugin</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The list of configured WeblogEntryEditors available to users</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.weblogEntryEditors=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.core.plugins.TextEditor,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.core.plugins.XinhaEditor</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The &quot;id&quot; of the default editor to use. NOT the class name</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.defaultEditor=editor-text.jsp</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Default weblog editor</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The list of available editors is in rollerRuntimeConfigDefs.xml</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">newweblog.editor=editor-text.jsp</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Optional site-wide customization settings for the TopicTag plugin.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># n.b. these default settings match the coded default values that would be </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># applied if these were omitted.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.topictag.defaultTopicBookmarkName=Default Topic Site</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.topictag.defaultTopicSite=http://www.technorati.com/tag</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.topictag.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.topictag.tagRegexWithoutBookmark=topic:\\[(.*?)\\]</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.topictag.linkFormatString=&lt;a rel=\&quot;tag\&quot; href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set to true to allow only default topic tag site (and avoid costly bookmark queries)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">plugins.topictag.ignoreBookmarks=true</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Log4j logging settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.rootCategory=INFO, roller</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.appender.roller=org.apache.log4j.DailyRollingFileAppender</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.appender.roller.File=${catalina.base}/logs/roller.log</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.appender.roller.layout=org.apache.log4j.PatternLayout</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.appender.roller.layout.ConversionPattern=%-5p %d{yyyy-MM-dd HH:mm:ss,SSS} %C{1}:%M - %m%n</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Options are: DEBUG, INFO, WARN, ERROR, FATAL</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller code</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.roller=INFO</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.net.java.roller=INFO</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller dependent libraries</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.hibernate=INFO</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.struts2=INFO</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># the struts2 file upload stuff has some overly verbose messaging</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.springframework=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.acegisecurity=ERROR</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Velocity talks a lot, so by default it is set to STFU mode</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.velocity=FATAL</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller extras</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.ecyrd.jspwiki=ERROR</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.tuckey.web.filters.urlrewrite=DEBUG</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.opensymphony.oscache=ERROR</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.danga.MemCached=WARN</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Ask OpenJPA to log to Log4J via Apache Commons Logging</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">openjpa.Log=commons</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Tool=INFO</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Runtime=INFO</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Remote=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.DataCache=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.MetaData=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Enhance=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Query=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.jdbc.SQL=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.jdbc.JDBC=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.jdbc.Schema=WARN</FONT></FONT>
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Other settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Values of the properties in this list get system property expansion </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># applied to them when loaded.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">config.expandedProperties=uploads.dir,search.index.dir</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># True to enable history in Atom feeds with next/prev links</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">site.newsfeeds.history.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Some folks consider remember-me type functionality to be a security</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rememberme.enabled=true</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># You might want to disable GZIP if your app server already supports it</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">compression.gzipResponse.enabled=true</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># specifies the max number of tags allowed in URL ( /feed?tags=foo+bar+baz )</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">tags.queries.maxIntersectionSize=3</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Characters to be allowed in user names (change at your own risk)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">username.allowedChars=A-Za-z0-9</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># weblog entry editor</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">weblogentry.editor.showFullPermalink=true</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># editor theme to be used (corresponds to directory name under /theme)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">editor.theme=tan</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># list of links to include in root bookmark folder of each new blog</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># format is like so: linktitle2|linkurl2,linktitle2|linkurl2,linktitle3|linkurl3</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">newuser.blogroll=\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Dave Johnson|http://rollerweblogger.org/roller,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Matt Raible|http://raibledesigns.com/page/rd,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Lance Lavandowska|http://rollerweblogger.org/lance,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Henri Yandell|http://blog.generationjava.com/,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Elias Torres|http://torrez.us/,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Jeff Blattman|http://blogs.sun.com/jtb,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">blogs.sun.com|http://blogs.sun.com,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">jroller.com|http://jroller.com</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># comma-separated list of top-level categories to be created in each new weblog</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">newuser.categories=General,Status,Java,Music,Politics</FONT></FONT>
+
+
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Experimental, deprecated and &quot;undocumented&quot; settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Atom Publishing Protocol (APP) - this is an incomplete and untested </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># implementation of an unfinished IETF specification. </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">webservices.atomprotocol.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># For databases with one sec timestamp resolution, we need a one sec throttle</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">webservices.atomprotocol.oneSecondThrottle=true</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Atom-like Admin Publishing Protocol (AAPP) - this is an experimental admin</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># protocol based on ideas from the Atom protocol. </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">webservices.adminprotocol.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If you are using the Hibernate backend (deprecated as of Roller 4.0), </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># you MUST override this to use a database other than MySQL4</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">hibernate.dialect=org.hibernate.dialect.MySQLDialect</FONT></FONT></PRE>
 </BODY>
 </HTML>
