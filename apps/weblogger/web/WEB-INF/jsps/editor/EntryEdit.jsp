@@ -87,7 +87,7 @@ function fullPreviewMode() {
     
         <s:if test='getBooleanProp("weblogentry.editor.showFullPermalink")'>
             <tr>
-                <td class="permalinkLabel">
+                <td class="entryEditFormLabel">
                     <label for="permalink"><s:text name="weblogEdit.permaLink" /></label>
                 </td>
                 <td>
