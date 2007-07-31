@@ -474,7 +474,7 @@ public class MailUtil {
                 }
             }
         } catch (Exception e) {
-            log.warn("Exception sending comment mail: " + e.getMessage());
+            log.warn("Exception sending comment notification mail", e);
             // This will log the stack trace if debug is enabled
             if (log.isDebugEnabled()) {
                 log.debug(e);

@@ -63,7 +63,10 @@ public class MailProvider {
         mailUsername = WebloggerConfig.getProperty("mail.username");
         mailPassword = WebloggerConfig.getProperty("mail.password");
         try {
-            mailPort = Integer.parseInt(WebloggerConfig.getProperty("mail.port"));
+            String portString = WebloggerConfig.getProperty("mail.port");
+            if (portString != null) {
+                mailPort = Integer.parseInt(portString);
+            }
         } catch (Throwable t) {
             log.warn("mail server port not a valid integer, ignoring");
         }
@@ -80,8 +83,12 @@ public class MailProvider {
         } else {
             Properties props = new Properties();
             props.put("mail.smtp.host", mailHostname);
-            props.put("mail.smtp.auth", "true");
-            if (mailPort != -1) props.put("mail.smtp.port", ""+mailPort);
+            if (mailUsername != null && mailPassword != null) {
+                props.put("mail.smtp.auth", "true");   
+            }
+            if (mailPort != -1) {
+                props.put("mail.smtp.port", ""+mailPort);
+            }
             session = Session.getDefaultInstance(props, null);
         }
         
@@ -117,6 +124,8 @@ public class MailProvider {
                 transport.connect(mailHostname, mailPort, mailUsername, mailPassword); 
             } else if (mailUsername != null && mailPassword != null) {
                 transport.connect(mailHostname, mailUsername, mailPassword); 
+            } else {
+                transport.connect();
             }
         } else {
             // Assume container set things up properly
