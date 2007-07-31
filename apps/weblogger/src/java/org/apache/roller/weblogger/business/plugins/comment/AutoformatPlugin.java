@@ -39,8 +39,16 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     }
     
     
-    public String getName() {
+    /**
+     * Unique identifier.  This should never change. 
+     */
+    public String getId() {
         return "AutoFormat";
+    }
+    
+    
+    public String getName() {
+        return "Auto Format";
     }
     
     

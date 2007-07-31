@@ -37,8 +37,16 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
     }
     
     
-    public String getName() {
+    /**
+     * Unique identifier.  This should never change. 
+     */
+    public String getId() {
         return "HTMLSubset";
+    }
+    
+    
+    public String getName() {
+        return "HTML Subset Restriction";
     }
     
     

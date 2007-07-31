@@ -128,8 +128,8 @@ public class PluginManagerImpl implements PluginManager {
         if (commentPlugins.size() > 0) {
             for( WeblogEntryCommentPlugin plugin : commentPlugins ) {
                 if(comment.getPlugins() != null &&
-                        comment.getPlugins().indexOf(plugin.getName()) != -1) {
-                    log.debug("Invoking comment plugin "+plugin.getName());
+                        comment.getPlugins().indexOf(plugin.getId()) != -1) {
+                    log.debug("Invoking comment plugin "+plugin.getId());
                     content = plugin.render(comment, content);
                 }
             }

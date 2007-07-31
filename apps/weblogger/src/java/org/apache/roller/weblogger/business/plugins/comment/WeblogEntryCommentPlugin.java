@@ -29,6 +29,12 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 public interface WeblogEntryCommentPlugin {
     
     /**
+     * A unique identifier for the plugin.
+     */
+    public String getId();
+    
+    
+    /**
      * Returns the display name of this Plugin.
      */
     public String getName();
