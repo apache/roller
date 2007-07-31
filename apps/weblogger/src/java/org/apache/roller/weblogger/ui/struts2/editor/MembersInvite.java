@@ -132,7 +132,7 @@ public class MembersInvite extends UIAction {
             
             addMessage("inviteMember.userInvited");
             
-            try {
+            if (MailUtil.isMailConfigured()) try {
                 MailUtil.sendWeblogInvitation(getActionWeblog(), user);
             } catch (WebloggerException e) {
                 // TODO: this should be an error except that struts2 misbehaves
