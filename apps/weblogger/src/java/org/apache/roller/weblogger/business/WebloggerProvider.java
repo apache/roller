@@ -35,4 +35,9 @@ public interface WebloggerProvider {
      */
     public Weblogger getWeblogger();
     
+    
+    /**
+     * Get injected instance, for custom managers.
+     */
+    public <T> T getInstance(Class<T> type);
 }

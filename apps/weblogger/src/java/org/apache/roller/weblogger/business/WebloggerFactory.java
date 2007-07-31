@@ -65,6 +65,18 @@ public final class WebloggerFactory {
     
     
     /**
+     * Get injected instance, for custom managers.
+     */
+    public <T> T getInstance(Class<T> type) {
+        if (webloggerProvider == null) {
+            throw new IllegalStateException("Roller Weblogger has not been bootstrapped yet");
+        }
+        
+        return webloggerProvider.getInstance(type);
+    }
+    
+    
+    /**
      * Bootstrap the Roller Weblogger business tier, uses default WebloggerProvider.
      *
      * Bootstrapping the application effectively instantiates all the necessary
