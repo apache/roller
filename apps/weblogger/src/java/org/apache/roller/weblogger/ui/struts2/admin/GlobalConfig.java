@@ -113,6 +113,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     /**
      * Display global properties editor form.
      */
+    @Override
     public String execute() {
         
         // setup array of configured plugins
