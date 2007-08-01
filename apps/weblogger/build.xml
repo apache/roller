@@ -48,14 +48,14 @@
         property="dbscripts-exist" />
     
     <!-- Use Java.net JUnit-AntTask to work around problem in default Ant task,
-         see here for details: https://junit-anttask.dev.java.net/ -->
+         see here for details: https://junit-anttask.dev.java.net/
     <taskdef name="junit2" classname="com.sun.ant.junit.JUnitTask">
       <classpath>
         <pathelement path="${ro.tools}/buildtime/junit-anttask.jar" />
         <pathelement path="${ro.tools}/buildtime/junit-4.1.jar" />
       </classpath>
     </taskdef>
-        
+     -->
        
     <target name="usage" description="Print usage for key targets">
         <echo>
@@ -248,7 +248,6 @@ ro.buildUser=${user.name}
             <fileset refid="hibernate.jar" />
             <fileset refid="hibernate.jars" />
             <fileset refid="jpa.jars" />
-            <fileset refid="struts.jars" />
             <fileset refid="struts2.jars" />
             <fileset refid="spring.jars" /> 
             <fileset refid="jstl.jars" />
