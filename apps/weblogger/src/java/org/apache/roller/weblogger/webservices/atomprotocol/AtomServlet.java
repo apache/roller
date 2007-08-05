@@ -47,6 +47,7 @@ import java.io.BufferedReader;
 import java.io.StringWriter;
 import org.jdom.Namespace;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
@@ -125,6 +126,13 @@ public class AtomServlet extends HttpServlet {
                     } else {
                         res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     }
+                } else if (handler.isMediaEditURI(pathInfo)) {
+                    AtomMediaResource entry = handler.getMediaResource(pathInfo);
+                    res.setContentType(entry.getContentType());
+                    res.setContentLength(entry.getContentLength());
+                    Utilities.copyInputToOutput(entry.getInputStream(), res.getOutputStream());
+                    res.getOutputStream().flush();
+                    res.getOutputStream().close();                
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
