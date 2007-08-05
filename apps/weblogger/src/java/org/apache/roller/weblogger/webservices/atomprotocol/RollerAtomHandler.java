@@ -55,10 +55,12 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 import javax.activation.FileTypeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -439,9 +441,6 @@ public class RollerAtomHandler implements AtomHandler {
                     else if (f1.getLastModified() == f2.getLastModified()) return 0;
                     else return -1;
                 }
-                public boolean equals(Object obj) {
-                    return false;
-                }               
             });
                                     
             if (files != null && start < files.length) {  
@@ -449,9 +448,11 @@ public class RollerAtomHandler implements AtomHandler {
                     sortedSet.add(files[j]);
                 }
                 int count = 0;
+                ThemeResource[] sortedResources = 
+                   (ThemeResource[])sortedSet.toArray(new ThemeResource[sortedSet.size()]);
                 List atomEntries = new ArrayList();
-                for (int i=start; i<(start + max) && i<(sortedSet.size()); i++) {
-                    Entry entry = createAtomResourceEntry(website, files[i]);
+                for (int i=start; i<(start + max) && i<(sortedResources.length); i++) {
+                    Entry entry = createAtomResourceEntry(website, sortedResources[i]);
                     atomEntries.add(entry);
                     if (count == 0) {
                         // first entry is most recent
@@ -554,13 +555,13 @@ public class RollerAtomHandler implements AtomHandler {
                         return createAtomEntry(entry);
                     }
                 } else if (pathInfo[1].equals("resource") && pathInfo[pathInfo.length - 1].endsWith(".media-link")) {
-                    String path = filePathFromPathInfo(pathInfo);                    
-                    String fileName = path.substring(0, path.length() - ".media-link".length());
+                    String filePath = filePathFromPathInfo(pathInfo);
+                    filePath = filePath.substring(0, filePath.length() - ".media-link".length());
                     String handle = pathInfo[0];
                     Weblog website = 
                         roller.getUserManager().getWebsiteByHandle(handle);                    
                     ThemeResource resource = 
-                        roller.getFileManager().getFile(website, fileName);
+                        roller.getFileManager().getFile(website, filePath);
                     
                     log.debug("Exiting");
                     if (resource != null) return createAtomResourceEntry(website, resource);
@@ -569,6 +570,39 @@ public class RollerAtomHandler implements AtomHandler {
             throw new AtomNotFoundException("Cannot find specified entry/resource");
         } catch (WebloggerException re) {
             throw new AtomException("Getting entry");
+        }
+    }
+    
+    /**
+     * Expects pathInfo of form /blog-name/resource/path/name
+     */
+    public AtomMediaResource getMediaResource(String[] pathInfo) throws AtomException {
+        log.debug("Entering");
+        try {
+            // authenticated client posted a weblog entry
+            File tempFile = null;
+            String handle = pathInfo[0];
+            FileManager fmgr = roller.getFileManager();
+            UserManager umgr = roller.getUserManager();
+            Weblog website = umgr.getWebsiteByHandle(handle);
+            if (!canEdit(website)) {
+                throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
+            }
+            if (pathInfo.length > 1) {
+                try {                                        
+                    // Parse pathinfo to determine file path
+                    String filePath = filePathFromPathInfo(pathInfo);
+                    ThemeResource resource = fmgr.getFile(website, filePath);                    
+                    return new AtomMediaResource(resource);
+                } catch (Exception e) {
+                    throw new AtomException(
+                        "Unexpected error during file upload", e);
+                }
+            }
+            throw new AtomException("Incorrect path information");
+        
+        } catch (WebloggerException re) {
+            throw new AtomException("Posting media");
         }
     }
     
@@ -779,8 +813,11 @@ public class RollerAtomHandler implements AtomHandler {
                 tmp = (tmp == null) ? s : tmp + "_" + s;
                 count++;
             }
-            fileName = tmp + "." + ext;
-            
+            if (!tmp.endsWith("." + ext)) {
+                fileName = tmp + "." + ext;
+            } else {
+                fileName = tmp;
+            }            
         } else {            
             // No title or text, so instead we'll use the item's date
             // in YYYYMMDD format to form the file name
@@ -799,13 +836,53 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public Entry putMedia(String[] pathInfo,
             String contentType, InputStream is) throws AtomException {
-        log.debug("Entering");
-        if (pathInfo.length > 2) {
-            String name = pathInfo[pathInfo.length - 1];
-            log.debug("Exiting");
-            return postMedia(pathInfo, name, name, contentType, is);
+        try {
+            // authenticated client posted a weblog entry
+            File tempFile = null;
+            String handle = pathInfo[0];
+            FileManager fmgr = roller.getFileManager();
+            UserManager umgr = roller.getUserManager();
+            Weblog website = umgr.getWebsiteByHandle(handle);
+            if (!canEdit(website)) {
+                throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
+            }
+            if (pathInfo.length > 1) {
+                // Save to temp file
+                try {
+                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
+                    FileOutputStream fos = new FileOutputStream(tempFile);
+                    Utilities.copyInputToOutput(is, fos);
+                    fos.close();
+                                        
+                    // Parse pathinfo to determine file path
+                    String path = filePathFromPathInfo(pathInfo);
+                    
+                    // Attempt to load file, to ensure it exists
+                    ThemeResource resource = fmgr.getFile(website, path);                    
+                    
+                    FileInputStream fis = new FileInputStream(tempFile);  
+                    fmgr.saveFile(website, path, contentType, tempFile.length(), fis);
+                    fis.close();
+                    
+                    log.debug("Exiting");
+                    return createAtomResourceEntry(website, resource);
+
+                } catch (FileIOException fie) {
+                    throw new AtomException(
+                        "File upload disabled, over-quota or other error", fie);
+                } catch (Exception e) {
+                    throw new AtomException(
+                        "Unexpected error during file upload", e);
+                } finally {
+                    if (tempFile != null) tempFile.delete();
+                }
+            }
+            throw new AtomException("Incorrect path information");
+        
+        } catch (WebloggerException re) {
+            throw new AtomException("Posting media");
         }
-        throw new AtomException("Bad pathInfo");
+
     }
             
     //------------------------------------------------------------------ URI testers
@@ -823,7 +900,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isEntryURI(String[] pathInfo) {
         if (pathInfo.length > 2 && pathInfo[1].equals("entry")) return true;
-        if (pathInfo.length > 2 && pathInfo[1].equals("resource")) return true;
+        if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[pathInfo.length-1].endsWith(".media-link")) return true;
         return false;
     }
         
@@ -1058,15 +1135,16 @@ public class RollerAtomHandler implements AtomHandler {
     
     private Entry createAtomResourceEntry(Weblog website, ThemeResource file) {
         String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
+        String filePath = 
+            file.getPath().startsWith("/") ? file.getPath().substring(1) : file.getPath();
         String editURI = 
                 atomURL+"/"+website.getHandle()
-                + "/resource/" + file.getPath() + ".media-link";
+                + "/resource/" + filePath + ".media-link";
         String editMediaURI = 
                 atomURL+"/"+ website.getHandle()
-                + "/resource/" + file.getPath();
-        String viewURI = absUrl
-                + "/resources/" + website.getHandle()
-                + "/" + file.getPath();
+                + "/resource/" + filePath;
+        URLStrategy urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
+        String viewURI = urlStrategy.getWeblogResourceURL(website, filePath, true);
         
         FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
         // TODO: figure out why PNG is missing from Java MIME types
@@ -1190,15 +1268,18 @@ public class RollerAtomHandler implements AtomHandler {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(website, null, true);
     }
     
+
     private String filePathFromPathInfo(String[] pathInfo) {
-        String path = "";
+        String path = null;
         if (pathInfo.length > 2) {
             for (int i = 2; i < pathInfo.length; i++) {
-                if (path.length() > 0)
+                if (path != null && path.length() > 0)
                     path = path + File.separator + pathInfo[i];
                 else
                     path = pathInfo[i];
             }
+        } if (pathInfo.length == 2) {
+            path = "";
         }
         return path;
     }
@@ -1224,6 +1305,7 @@ public class RollerAtomHandler implements AtomHandler {
             }  
         } catch (Exception ignored) {} 
     }
+
 }
 
 

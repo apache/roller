@@ -71,6 +71,12 @@ public interface AtomHandler
     public void deleteEntry(String[] pathInfo) throws AtomException;
     
     /**
+     * Get media resource specified by pathInfo.
+     * @param pathInfo Path info portion of URL
+     */
+    public AtomMediaResource getMediaResource(String[] pathInfo) throws AtomException;
+    
+    /**
      * Create a new media-link entry.
      * @param pathInfo Path info portion of URL
      * @param contentType MIME type of uploaded content
