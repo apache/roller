@@ -126,7 +126,7 @@
         </replace>
         <property prefix="svn" file="${ro.build}/svn.properties"/>       
         
-        <echo file="${build.compile.business}/version.properties">
+        <echo file="${build.compile.business}/roller-version.properties">
 ro.version=${ro.version}
 ro.revision=${svn.LastChangedRev}
 ro.buildTime=${ro.buildTime}

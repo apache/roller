@@ -109,9 +109,9 @@ public abstract class WebloggerImpl implements Weblogger {
         
         Properties props = new Properties();
         try {
-            props.load(getClass().getResourceAsStream("/version.properties"));
+            props.load(getClass().getResourceAsStream("/roller-version.properties"));
         } catch (IOException e) {
-            log.error("version.properties not found", e);
+            log.error("roller-version.properties not found", e);
         }
         
         version = props.getProperty("ro.version", "UNKNOWN");
