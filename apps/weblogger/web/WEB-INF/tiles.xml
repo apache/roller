@@ -52,6 +52,14 @@
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
     
+    <definition name=".tiles-installpage" template="/WEB-INF/jsps/tiles/tiles-installpage.jsp">
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+    
     <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -104,25 +112,25 @@
         <put-attribute name="content" value="/WEB-INF/jsps/core/Setup.jsp" />
     </definition>
     
-    <definition name=".CreateDatabase" extends=".tiles-errorpage" >
+    <definition name=".CreateDatabase" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/CreateDatabase.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
 
-    <definition name=".UpgradeDatabase" extends=".tiles-errorpage" >
+    <definition name=".UpgradeDatabase" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/UpgradeDatabase.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
     
-    <definition name=".DatabaseError" extends=".tiles-errorpage" >
+    <definition name=".DatabaseError" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/DatabaseError.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
     </definition>
     
-    <definition name=".Bootstrap" extends=".tiles-errorpage" >
+    <definition name=".Bootstrap" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/UnknownError.jsp" />
         <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
