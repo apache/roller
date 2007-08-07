@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class SmileysPlugin implements WeblogEntryPlugin {
     
-    private static Log mLogger = LogFactory.getLog(SmileysPlugin.class);
+    private static Log log = LogFactory.getLog(SmileysPlugin.class);
     
     public static Pattern[] smileyPatterns = new Pattern[0]; // public for tests
     static String[] imageTags = new String[0];
@@ -52,13 +52,13 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         try {
             smileyDefs.load(SmileysPlugin.class.getResourceAsStream("smileys.properties"));
         } catch (Exception e) {
-            mLogger.error("Unable to load smileys.properties", e);
+            log.error("Unable to load smileys.properties", e);
         }
     }
 
     
     public SmileysPlugin() {
-        mLogger.debug("SmileysPlugin instantiated.");
+        log.debug("SmileysPlugin instantiated.");
     }
     
     
@@ -84,7 +84,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
             
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
-            System.out.println("# smileys: " + smileyDefs.size());
+            log.debug("# smileys: " + smileyDefs.size());
             int count = 0;
             Enumeration enum1 = SmileysPlugin.smileyDefs.propertyNames();
             while(enum1.hasMoreElements()) {
@@ -97,7 +97,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
                         "\" class=\"smiley\"" +
                         " alt=\"" + smileyAlt + "\"" +
                         " title=\"" + smileyAlt +"\" />";
-                System.out.println(smiley + "=" + tempS[count]);
+                log.debug(smiley + "=" + tempS[count]);
                 count++;
             }
             SmileysPlugin.smileyPatterns = tempP;
