@@ -90,7 +90,7 @@ public class GlobalCommentManagement extends UIAction {
         boolean hasMore = false;
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            comments = wmgr.getComments(
+            List rawComments = wmgr.getComments(
                     null,
                     null,
                     getBean().getSearchString(),
@@ -100,6 +100,8 @@ public class GlobalCommentManagement extends UIAction {
                     true, // reverse  chrono order
                     getBean().getPage() * COUNT,
                     COUNT + 1);
+            comments = new ArrayList();
+            comments.addAll(rawComments);   
             
             if(comments != null && comments.size() > 0) {
                 if(comments.size() > COUNT) {
