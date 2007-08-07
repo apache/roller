@@ -124,14 +124,6 @@ public class CommentsBean {
         this.spamString = spamString;
     }
     
-    public String getPendingString() {
-        return approvedString;
-    }
-    
-    public void setPendingString(String pendingString) {
-        this.approvedString = pendingString;
-    }
-    
     public String getIds() {
         return ids;
     }
