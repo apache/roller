@@ -105,7 +105,7 @@
         <include name="jakarta-taglibs-standard-1.1.2/lib/serializer.jar" />
         
         <!-- Struts 2 -->
-        <include name="struts-2.0.6/lib/*.jar"/>
+        <include name="struts-2.0.9/lib/*.jar"/>
         
         <!-- Struts 2 depends on Spring -->
         <include name="spring-1.2/spring.jar"/>

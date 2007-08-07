@@ -194,7 +194,7 @@
     </listener>
     
     <listener>
-        <listener-class>org.apache.tiles.listener.TilesListener</listener-class>
+        <listener-class>org.apache.tiles.web.startup.TilesListener</listener-class>
     </listener>
     
     
