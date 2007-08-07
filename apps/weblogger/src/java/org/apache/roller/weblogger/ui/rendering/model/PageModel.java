@@ -305,9 +305,11 @@ public class PageModel implements Model {
      * Get request parameter by name.
      */
     public String getRequestParameter(String paramName) {
-        String[] values = (String[])requestParameters.get(paramName);
-        if (values != null && values.length > 0) {
-            return values[0];
+        if (requestParameters != null) {
+            String[] values = (String[])requestParameters.get(paramName);
+            if (values != null && values.length > 0) {
+                return values[0];
+            }
         }
         return null;
     }
