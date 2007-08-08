@@ -294,7 +294,8 @@ public interface WeblogManager {
      */
     public List getComments(
             
-            Weblog     website,WeblogEntry entry,
+            Weblog          website,
+            WeblogEntry     entry,
             String          searchString,
             Date            startDate,
             Date            endDate,
@@ -316,7 +317,8 @@ public interface WeblogManager {
      */
     public int removeMatchingComments(
             
-            Weblog     website,WeblogEntry entry,
+            Weblog          website,
+            WeblogEntry     entry,
             String          searchString,
             Date            startDate,
             Date            endDate,
