@@ -857,12 +857,12 @@ public class WeblogEntry implements Serializable {
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             return wmgr.getComments(
-                    
                     getWebsite(),
                     this,
                     null,  // search String
                     null,  // startDate
-                    null,WeblogEntryComment.APPROVED,  // approved comments only
+                    null,
+                    approvedOnly ? WeblogEntryComment.APPROVED : null,
                     false, // we want chrono order
                     0,    // offset
                     -1);   // no limit

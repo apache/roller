@@ -330,8 +330,13 @@ public class Comments extends UIAction {
             addMessage("commentManagement.updateSuccess");
             
             // reset form and load fresh comments list
-            setBean(new CommentsBean());
-            
+            CommentsBean freshBean = new CommentsBean();
+            // but if we're editing an entry's comments stick with that entry
+            if (bean.getEntryId() != null) {
+                freshBean.setEntryId(bean.getEntryId());
+            }
+            setBean(freshBean);
+                        
             return execute();
             
         } catch (Exception ex) {

@@ -24,7 +24,20 @@
             <div class="sidebarInner">
                 
                 <h3><s:text name="weblogEdit.comments" /></h3>
-                <span><s:text name="application.none" /></span>
+
+                <s:if test="bean.commentCount > 0">
+                    <s:url action="comments" id="commentsURL">
+                       <s:param name="bean.entryId" value="bean.id" />
+                       <s:param name="weblog" value="weblog" />
+                    </s:url>
+                    <s:text name="weblogEdit.hasComments">
+                        <s:param value="%{commentsURL}" />
+                        <s:param value="bean.commentCount" />
+                    </s:text>
+                </s:if>
+                <s:else>
+                    <span><s:text name="application.none" /></span>
+                </s:else>
                 
                 <hr size="1" noshade="noshade" />  
                 <h3><s:text name="weblogEdit.pendingEntries" /></h3>
