@@ -38,7 +38,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item action="comments" 
                    name="tabbedmenu.admin.commentManagement" 
                    roles="editor"
-                   perms="admin" />
+                   perms="author" />
         
         <menu-item action="categories"   
                    name="tabbedmenu.weblog.categories" 
