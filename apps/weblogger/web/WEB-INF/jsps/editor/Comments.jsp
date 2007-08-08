@@ -74,9 +74,16 @@ function handleCommentResponse() {
 </script>
 
 <p class="subtitle">
-    <s:text name="commentManagement.website.subtitle">
-        <s:param value="%{actionWeblog.handle}"/>
-    </s:text>
+    <s:if test="bean.entryId != null">        
+        <s:text name="Manage comments for entry titled <span>{0}</span>">
+            <s:param><s:property value="firstComment.weblogEntry.title" /></s:param>
+        </s:text>
+    </s:if>
+    <s:else>
+        <s:text name="commentManagement.website.subtitle">
+            <s:param value="%{actionWeblog.handle}"/>
+        </s:text>
+    </s:else>
 </p>
 
 <p class="pagetip"><s:text name="commentManagement.tip" /></p>
@@ -94,6 +101,7 @@ function handleCommentResponse() {
 <s:form action="comments!update">
     <s:hidden name="weblog" />
     <s:hidden name="bean.ids" />
+    <s:hidden name="bean.entryId" />
     <s:hidden name="bean.offset" />
     <s:hidden name="bean.count" />
     <s:hidden name="bean.startDateString" />

@@ -34,6 +34,7 @@ function fullPreviewMode() {
 <s:form id="entry" action="entryEdit!save" onsubmit="editorCleanup()">
     <s:hidden name="weblog" />
     <s:hidden name="bean.id" />
+    <s:hidden name="bean.commentCount" />
     
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>

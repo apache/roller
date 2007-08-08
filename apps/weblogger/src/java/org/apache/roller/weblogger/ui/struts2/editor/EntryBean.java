@@ -52,6 +52,7 @@ public class EntryBean {
     private String summary = null;
     private String text = null;
     private String status = null;
+    private String weblogHandle = null;
     
     private String[] plugins = null;
     private String dateString = null;
@@ -63,6 +64,7 @@ public class EntryBean {
     private boolean rightToLeft = false;
     private boolean pinnedToMain = false;
     private String enclosureURL = null;
+    private int commentCount = 0;
     
     
     public String getId() {
@@ -186,6 +188,14 @@ public class EntryBean {
         this.commentDays = commentDays;
     }
     
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
     public boolean getRightToLeft() {
         return this.rightToLeft;
     }
@@ -317,6 +327,9 @@ public class EntryBean {
         setCategoryId(entry.getCategory().getId());
         setTagsAsString(entry.getTagsAsString());
         
+        // set comment count, ignoreSpam=false, approvedOnly=false
+        setCommentCount(entry.getComments(false, false).size());
+        
         // init plugins values
         if(entry.getPlugins() != null) {
             setPlugins(StringUtils.split(entry.getPlugins(), ","));
@@ -383,5 +396,4 @@ public class EntryBean {
         
         return buf.toString();
     }
-    
 }
