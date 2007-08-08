@@ -83,13 +83,16 @@ public class EntryRemove extends UIAction {
                 log.warn("Trouble triggering entry indexing", ex);
             }
             
+            // remove from search index
+            removeEntryIndex(entry);
+            
+            // flush caches
+            CacheManager.invalidate(entry);
+            
             // remove entry itself
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             wmgr.removeWeblogEntry(entry);
             WebloggerFactory.getWeblogger().flush();
-            
-            // flush caches
-            CacheManager.invalidate(entry);
             
             // note to user
             addMessage("weblogEdit.entryRemoved");
@@ -107,7 +110,24 @@ public class EntryRemove extends UIAction {
         
         return INPUT;
     }
-
+    
+    
+    /**
+     * Trigger reindexing of modified entry.
+     */
+    protected void removeEntryIndex(WeblogEntry entry) {
+        IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
+        
+        // if published, index the entry
+        if (entry.isPublished()) {
+            try {
+                manager.removeEntryIndexOperation(entry);
+            } catch (WebloggerException ex) {
+                log.warn("Trouble triggering entry indexing", ex);
+            }
+        }
+    }
+    
     
     public String getRemoveId() {
         return removeId;
