@@ -126,9 +126,12 @@ public abstract class ThreadManagerImpl implements ThreadManager {
             throws InterruptedException {
         Future task = serviceScheduler.submit(runnable);
         
-        // if this task is really meant to be executed within this calling thread
-        // then we can add a little code here to loop until it realizes the task is done
-        // while(!scheduledTask.isDone())
+        // since this task is really meant to be executed within this calling 
+        // thread, here we can add a little code here to loop until it realizes 
+        // the task is done
+        while(!task.isDone()) {
+            Thread.sleep(500);
+        }
     }
     
     
