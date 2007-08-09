@@ -299,7 +299,7 @@ public class FolderData extends HierarchicalPersistentObject
      *
      * @ejb:persistent-field
      * 
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan" 
+     * @hibernate.set lazy="true" order-by="priority, weight, name" inverse="true" cascade="all-delete-orphan" 
      * @hibernate.collection-key column="folderid" 
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.BookmarkData"
      */
