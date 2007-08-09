@@ -18,7 +18,7 @@
 <%@ include file="/taglibs.jsp" %>
 
 <h2>
-<jsp:useBean id="weblogEntryFormEx"  scope="session"
+<jsp:useBean id="weblogEntryFormEx"  scope="request"
     class="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx"/>
 <fmt:message key="weblogEntryRemove.removeWeblogEntry" /> [<jsp:getProperty name="weblogEntryFormEx" property="title"/>]
 </h2>

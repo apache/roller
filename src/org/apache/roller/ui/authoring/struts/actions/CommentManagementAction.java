@@ -89,7 +89,7 @@ public final class CommentManagementAction extends DispatchAction {
         
         ActionForward fwd = null;
         // Ensure user is authorized to view comments in weblog
-        if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())) {
+        if (rreq.getWebsite() != null && rses.isUserAuthorizedToAuthor(rreq.getWebsite())) {
             fwd =  mapping.findForward("commentManagement.page");
         }
         // Ensure only global admins can see all comments
