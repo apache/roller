@@ -816,7 +816,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
         IndexManager manager = roller.getIndexManager();
         
         // remove entry before (re)adding it, or in case it isn't Published
-        //manager.removeEntryIndexOperation(entry);
+        manager.removeEntryIndexOperation(entry);
         
         // if published, index the entry
         if (entry.isPublished()) {
