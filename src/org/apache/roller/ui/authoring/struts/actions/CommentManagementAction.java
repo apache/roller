@@ -22,8 +22,10 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +44,8 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.search.IndexManager;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.BasePageModel;
@@ -127,8 +131,31 @@ public final class CommentManagementAction extends DispatchAction {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())
                 || rses.isGlobalAdminUser()) {
+                
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 CommentManagementForm queryForm = (CommentManagementForm)actionForm;
+
+                // if search is enabled, we will need to re-index all entries with
+                // comments that have been deleted, so build a list of those entries
+                Set reindexEntries = new HashSet();
+                if (RollerConfig.getBooleanProperty("search.enabled")) {                 
+                    List targetted = wmgr.getComments(
+                        rreq.getWebsite(), 
+                        rreq.getWeblogEntry(), 
+                        queryForm.getSearchString(),
+                        queryForm.getStartDate(request.getLocale()),  
+                        queryForm.getEndDate(request.getLocale()), 
+                        queryForm.getPending(),
+                        queryForm.getApproved(),
+                        queryForm.getSpam(),
+                        true,
+                        0, -1);
+                    for (Iterator it = targetted.iterator(); it.hasNext();) {
+                        CommentData cd = (CommentData)it.next();
+                        reindexEntries.add(cd.getWeblogEntry());
+                    }
+                }
+
                 wmgr.removeMatchingComments(
                     rreq.getWebsite(),
                     rreq.getWeblogEntry(), 
@@ -138,7 +165,18 @@ public final class CommentManagementAction extends DispatchAction {
                     queryForm.getPending(),
                     queryForm.getApproved(),
                     queryForm.getSpam());
-            }  
+            
+                // if we've got entries to reindex then do so
+                if (!reindexEntries.isEmpty()) {
+                    IndexManager imgr = RollerFactory.getRoller().getIndexManager();
+                    for (Iterator it = reindexEntries.iterator(); it.hasNext();) {
+                        WeblogEntryData entry = (WeblogEntryData)it.next();
+                         imgr.addEntryReIndexOperation(entry);
+                    }
+                }
+            }
+
+            
             CommentManagementForm queryForm = (CommentManagementForm)actionForm;
         }
         return query(mapping, actionForm, request, response);
@@ -172,6 +210,9 @@ public final class CommentManagementAction extends DispatchAction {
             if (rses.isGlobalAdminUser() 
                 || (rreq.getWebsite()!=null && rses.isUserAuthorizedToAuthor(rreq.getWebsite())) ) { 
                 WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
+
+                // we'll collect entries that need to be re-indexes
+                Set reindexList = new HashSet();
                 
                 // delete all comments with delete box checked
                 CommentData deleteComment = null;
@@ -180,7 +221,7 @@ public final class CommentManagementAction extends DispatchAction {
                 if (deleteIds != null && deleteIds.length > 0) {
                     for(int j=0; j < deleteIds.length; j++) {
                         deleteComment = mgr.getComment(deleteIds[j]);
-                        
+                        reindexList.add(deleteComment.getWeblogEntry());
                         mgr.removeComment(deleteComment);
                     }
                 }
@@ -195,6 +236,7 @@ public final class CommentManagementAction extends DispatchAction {
                 for (int i=0; i<ids.length; i++) {                    
                     if (deletedList.contains(ids[i])) continue;                    
                     CommentData comment = mgr.getComment(ids[i]);
+                    reindexList.add(comment.getWeblogEntry());
                     
                     // apply spam checkbox 
                     List spamIds = Arrays.asList(queryForm.getSpamComments());
@@ -221,7 +263,7 @@ public final class CommentManagementAction extends DispatchAction {
                             Arrays.asList(queryForm.getApprovedComments());
                         if (approvedIds.contains(ids[i])) {
                             comment.setApproved(Boolean.TRUE);
-                            
+                        
                         } else {
                             comment.setApproved(Boolean.FALSE);
                         }
@@ -233,6 +275,15 @@ public final class CommentManagementAction extends DispatchAction {
                 RollerFactory.getRoller().flush();
                 for (Iterator comments=flushList.iterator(); comments.hasNext();) {
                     CacheManager.invalidate((CommentData)comments.next());
+                }
+                
+                // if we've got entries to reindex then do so
+                if (!reindexList.isEmpty()) {
+                    IndexManager imgr = RollerFactory.getRoller().getIndexManager();
+                    for (Iterator it = reindexList.iterator(); it.hasNext();) {
+                        WeblogEntryData entry = (WeblogEntryData)it.next();
+                         imgr.addEntryReIndexOperation(entry);
+                    }
                 }
                 
                 sendCommentNotifications(request, approvedComments);
