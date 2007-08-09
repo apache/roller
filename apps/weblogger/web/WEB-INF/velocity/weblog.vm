@@ -739,7 +739,7 @@ Show search again form for a weblog.
 
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat">
-            <option value="">- In Category -</option>
+            <option value="">$text.get( "macro.searchresults.incategory" )</option>
             #foreach( $cat in $cats )
               <option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
             #end
