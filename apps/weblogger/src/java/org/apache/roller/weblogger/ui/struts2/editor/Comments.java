@@ -22,14 +22,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -37,6 +41,8 @@ import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -61,6 +67,9 @@ public class Comments extends UIAction {
     
     // last comment in the list
     private WeblogEntryComment lastComment = null;
+    
+    // entry associated with comments or null if none
+    private WeblogEntry queryEntry = null;
     
     // indicates number of comments that would be deleted by bulk removal
     // a non-zero value here indicates bulk removal is a valid option
@@ -88,19 +97,17 @@ public class Comments extends UIAction {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             // lookup weblog entry if necessary
-            WeblogEntry queryEntry = null;
             if(!StringUtils.isEmpty(getBean().getEntryId())) {
-                queryEntry = wmgr.getWeblogEntry(getBean().getEntryId());
+                setQueryEntry(wmgr.getWeblogEntry(getBean().getEntryId()));
             }
             
             // query for comments
             List rawComments = wmgr.getComments(
                     getActionWeblog(),
-                    queryEntry,
+                    getQueryEntry(),
                     getBean().getSearchString(),
                     getBean().getStartDate(),
-                    getBean().getEndDate(),
-                    getBean().getStatus(),
+                    getBean().getEndDate(),getBean().getStatus(),
                     true, // reverse  chrono order
                     getBean().getPage() * COUNT,
                     COUNT + 1);
@@ -213,6 +220,25 @@ public class Comments extends UIAction {
         
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            
+            // if search is enabled, we will need to re-index all entries with
+            // comments that have been deleted, so build a list of those entries
+            Set<WeblogEntry> reindexEntries = new HashSet<WeblogEntry>();
+            if (WebloggerConfig.getBooleanProperty("search.enabled")) {                 
+                List<WeblogEntryComment> targetted = (List<WeblogEntryComment>)wmgr.getComments(
+                    getActionWeblog(), 
+                    getQueryEntry(), 
+                    getBean().getSearchString(),
+                    getBean().getStartDate(),
+                    getBean().getEndDate(),
+                    getBean().getStatus(), 
+                    true, 
+                    0, -1);
+                for (WeblogEntryComment comment : targetted) {
+                    reindexEntries.add(comment.getWeblogEntry());
+                }
+            }
+            
             int deleted = wmgr.removeMatchingComments(
                     getActionWeblog(),
                     null,
@@ -221,8 +247,15 @@ public class Comments extends UIAction {
                     getBean().getEndDate(),
                     getBean().getStatus());
             
-            // TODO: i18n
-            addMessage("Successfully deleted "+deleted+" comments");
+            // if we've got entries to reindex then do so
+            if (!reindexEntries.isEmpty()) {
+                IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
+                for (WeblogEntry entry : reindexEntries) {
+                    imgr.addEntryReIndexOperation(entry);
+                }
+            }
+                    
+            addMessage("commentManagement.deleteSuccess", Integer.toString(deleted));
             
             // reset form and load fresh comments list
             setBean(new CommentsBean());
@@ -248,6 +281,10 @@ public class Comments extends UIAction {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             List<WeblogEntryComment> flushList = new ArrayList();
+
+            // if search is enabled, we will need to re-index all entries with
+            // comments that have been approved, so build a list of those entries
+            Set<WeblogEntry> reindexList = new HashSet<WeblogEntry>();
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
@@ -260,8 +297,9 @@ public class Comments extends UIAction {
                     
                     // make sure comment is tied to action weblog
                     if(getActionWeblog().equals(deleteComment.getWeblogEntry().getWebsite())) {
-                        wmgr.removeComment(deleteComment);
                         flushList.add(deleteComment);
+                        reindexList.add(deleteComment.getWeblogEntry());
+                        wmgr.removeComment(deleteComment);
                     }
                 }
             }
@@ -301,6 +339,7 @@ public class Comments extends UIAction {
                         wmgr.saveComment(comment);
                         
                         flushList.add(comment);
+                        reindexList.add(comment.getWeblogEntry());
                         
                     } else if(spamIds.contains(ids[i])) {
                         log.debug("Marking as spam - "+comment.getId());
@@ -325,7 +364,20 @@ public class Comments extends UIAction {
                 CacheManager.invalidate(comm);
             }
             
-//            sendCommentNotifications(request, approvedComments);
+            // send notification for all comments changed
+            if (MailUtil.isMailConfigured()) {
+                I18nMessages resources = 
+                    I18nMessages.getMessages(getActionWeblog().getLocaleInstance());
+                MailUtil.sendEmailApprovalNotifications(approvedComments, resources);
+            }
+            
+            // if we've got entries to reindex then do so
+            if (!reindexList.isEmpty()) {
+                IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
+                for (WeblogEntry entry : reindexList) {
+                    imgr.addEntryReIndexOperation(entry);
+                }
+            }            
             
             addMessage("commentManagement.updateSuccess");
             
@@ -411,5 +463,12 @@ public class Comments extends UIAction {
     public void setPager(CommentsPager pager) {
         this.pager = pager;
     }
-    
+
+    public WeblogEntry getQueryEntry() {
+        return queryEntry;
+    }
+
+    public void setQueryEntry(WeblogEntry queryEntry) {
+        this.queryEntry = queryEntry;
+    }    
 }
