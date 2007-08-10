@@ -35,6 +35,9 @@ import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.apache.roller.planet.PlanetException;
 import org.apache.roller.planet.business.DatabaseProvider;
 import org.apache.roller.planet.business.startup.PlanetStartup;
@@ -64,64 +67,74 @@ public class JPAPersistenceStrategy {
             
     /**
      * Construct by finding JPA EntityManagerFactory.
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
-    protected JPAPersistenceStrategy() throws PlanetException { 
+    protected JPAPersistenceStrategy() throws PlanetException {
 
-        DatabaseProvider dbProvider = PlanetStartup.getDatabaseProvider();
-        
-        // Pull in any properties defined in JMAEMF.properties config file
-        Properties emfProps = loadPropertiesFromResourceName(
-           "JPAEMF.properties", getContextClassLoader());
-                
-        // Add all OpenJPA and Toplinks properties found in RollerConfig
-        Enumeration keys = PlanetConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = PlanetConfig.getProperty(key);
-                logger.info(key + ": " + value);
-                emfProps.setProperty(key, value);
+        String jpaConfigurationType = PlanetConfig.getProperty("jpa.configurationType");
+        if ("jndi".equals(jpaConfigurationType)) {
+            String emfJndiName = "java:comp/env/" + PlanetConfig.getProperty("jpa.emf.jndi.name");
+            try {
+                emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
+            } catch (NamingException e) {
+                throw new PlanetException("Could not look up EntityManagerFactory in jndi at " + emfJndiName, e);
             }
-        }
-        
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-            // We're doing JNDI, so set OpenJPA JNDI name property
-            String jndiName = "java:comp/env/" + dbProvider.getJndiName();
-            emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
-            
         } else {
-            // So set JDBD properties for OpenJPA
-            emfProps.setProperty("openjpa.ConnectionDriverName",     dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("openjpa.ConnectionURL",            dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("openjpa.ConnectionUserName",       dbProvider.getJdbcUsername());
-            emfProps.setProperty("openjpa.ConnectionPassword",       dbProvider.getJdbcPassword()); 
+            DatabaseProvider dbProvider = PlanetStartup.getDatabaseProvider();
 
-            // And Toplink JPA
-            emfProps.setProperty("toplink.jdbc.driver",              dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("toplink.jdbc.url",                 dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("toplink.jdbc.user",                dbProvider.getJdbcUsername());
-            emfProps.setProperty("toplink.jdbc.password",            dbProvider.getJdbcPassword());
+            // Pull in any properties defined in JMAEMF.properties config file
+            Properties emfProps = loadPropertiesFromResourceName(
+                    "JPAEMF.properties", getContextClassLoader());
 
-            // And Hibernate JPA
-            emfProps.setProperty("hibernate.connection.driver_class",dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("hibernate.connection.url",         dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("hibernate.connection.username",    dbProvider.getJdbcUsername());
-            emfProps.setProperty("hibernate.connection.password",    dbProvider.getJdbcPassword()); 
-        }
-        
-        try {
-            this.emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
-        } catch (PersistenceException pe) {
-            logger.error("ERROR: creating entity manager", pe);
-            throw new PlanetException(pe);
+            // Add all OpenJPA and Toplinks properties found in RollerConfig
+            Enumeration keys = PlanetConfig.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
+                    String value = PlanetConfig.getProperty(key);
+                    logger.info(key + ": " + value);
+                    emfProps.setProperty(key, value);
+                }
+            }
+
+            if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
+                // We're doing JNDI, so set OpenJPA JNDI name property
+                String jndiName = "java:comp/env/" + dbProvider.getJndiName();
+                emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
+
+            } else {
+                // So set JDBD properties for OpenJPA
+                emfProps.setProperty("openjpa.ConnectionDriverName", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("openjpa.ConnectionURL", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("openjpa.ConnectionUserName", dbProvider.getJdbcUsername());
+                emfProps.setProperty("openjpa.ConnectionPassword", dbProvider.getJdbcPassword());
+
+                // And Toplink JPA
+                emfProps.setProperty("toplink.jdbc.driver", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("toplink.jdbc.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("toplink.jdbc.user", dbProvider.getJdbcUsername());
+                emfProps.setProperty("toplink.jdbc.password", dbProvider.getJdbcPassword());
+
+                // And Hibernate JPA
+                emfProps.setProperty("hibernate.connection.driver_class", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("hibernate.connection.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("hibernate.connection.username", dbProvider.getJdbcUsername());
+                emfProps.setProperty("hibernate.connection.password", dbProvider.getJdbcPassword());
+            }
+
+            try {
+                this.emf = Persistence.createEntityManagerFactory("PlanetPU", emfProps);
+            } catch (PersistenceException pe) {
+                logger.error("ERROR: creating entity manager", pe);
+                throw new PlanetException(pe);
+            }
         }
     }
           
     
     /**
      * Flush changes to the datastore, commit transaction, release em.
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public void flush() throws PlanetException {
         try {
@@ -148,7 +161,7 @@ public class JPAPersistenceStrategy {
      * Store object using an existing transaction.
      * @param obj the object to persist
      * @return the object persisted
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public Object store(Object obj) throws PlanetException {
         EntityManager em = getEntityManager(true);
@@ -174,7 +187,7 @@ public class JPAPersistenceStrategy {
     /**
      * Remove object from persistence storage.
      * @param po the persistent object to remove
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public void remove(Object po) throws PlanetException {
         EntityManager em = getEntityManager(true);
@@ -184,7 +197,7 @@ public class JPAPersistenceStrategy {
     /**
      * Remove object from persistence storage.
      * @param pos the persistent objects to remove
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public void removeAll(Collection pos) throws PlanetException {
         EntityManager em = getEntityManager(true);
@@ -255,9 +268,8 @@ public class JPAPersistenceStrategy {
     
     /**
      * Get named query with FlushModeType.COMMIT
-     * @param clazz the class of instances to find
      * @param queryName the name of the query
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public Query getNamedQuery(String queryName)
     throws PlanetException {
@@ -271,7 +283,7 @@ public class JPAPersistenceStrategy {
     /**
      * Create query from queryString with FlushModeType.COMMIT
      * @param queryString the quuery
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public Query getDynamicQuery(String queryString)
     throws PlanetException {
@@ -284,9 +296,8 @@ public class JPAPersistenceStrategy {
     
     /**
      * Get named update query with default flush mode
-     * @param clazz the class of instances to find
      * @param queryName the name of the query
-     * @throws org.apache.roller.PlanetException on any error
+     * @throws org.apache.roller.planet.PlanetException on any error
      */
     public Query getNamedUpdate(String queryName)
     throws PlanetException {

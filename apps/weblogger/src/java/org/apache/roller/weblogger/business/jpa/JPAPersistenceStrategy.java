@@ -36,6 +36,9 @@ import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.apache.roller.weblogger.business.DatabaseProvider;
 
 
@@ -61,62 +64,73 @@ public class JPAPersistenceStrategy {
             
     /**
      * Construct by finding JPA EntityManagerFactory.
-     * @throws org.apache.roller.WebloggerException on any error
+     * @param dbProvider database configuration information for manual configuration.
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     @com.google.inject.Inject
-    protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws WebloggerException { 
-        
-        // Pull in any properties defined in JMAEMF.properties config file
-        Properties emfProps = loadPropertiesFromResourceName(
-           "JPAEMF.properties", getContextClassLoader());
-                
-        // Add all OpenJPA and Toplinks properties found in WebloggerConfig
-        Enumeration keys = WebloggerConfig.keys(); 
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
-                String value = WebloggerConfig.getProperty(key);
-                logger.info(key + ": " + value);
-                emfProps.setProperty(key, value);
+    protected JPAPersistenceStrategy(DatabaseProvider dbProvider) throws WebloggerException {
+        String jpaConfigurationType = WebloggerConfig.getProperty("jpa.configurationType");
+        if ("jndi".equals(jpaConfigurationType)) {
+            String emfJndiName = "java:comp/env/" + WebloggerConfig.getProperty("jpa.emf.jndi.name");
+            try {
+                emf = (EntityManagerFactory) new InitialContext().lookup(emfJndiName);
+            } catch (NamingException e) {
+                throw new WebloggerException("Could not look up EntityManagerFactory in jndi at " + emfJndiName, e);
             }
-        }
-        
-        if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) { 
-            // We're doing JNDI, so set OpenJPA JNDI name property
-            String jndiName = "java:comp/env/" + dbProvider.getJndiName();
-            emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
-            
         } else {
-            // So set JDBD properties for OpenJPA
-            emfProps.setProperty("openjpa.ConnectionDriverName",     dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("openjpa.ConnectionURL",            dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("openjpa.ConnectionUserName",       dbProvider.getJdbcUsername());
-            emfProps.setProperty("openjpa.ConnectionPassword",       dbProvider.getJdbcPassword()); 
 
-            // And Toplink JPA
-            emfProps.setProperty("toplink.jdbc.driver",              dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("toplink.jdbc.url",                 dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("toplink.jdbc.user",                dbProvider.getJdbcUsername());
-            emfProps.setProperty("toplink.jdbc.password",            dbProvider.getJdbcPassword());
+            // Pull in any properties defined in JMAEMF.properties config file
+            Properties emfProps = loadPropertiesFromResourceName(
+                    "JPAEMF.properties", getContextClassLoader());
 
-            // And Hibernate JPA
-            emfProps.setProperty("hibernate.connection.driver_class",dbProvider.getJdbcDriverClass());
-            emfProps.setProperty("hibernate.connection.url",         dbProvider.getJdbcConnectionURL());
-            emfProps.setProperty("hibernate.connection.username",    dbProvider.getJdbcUsername());
-            emfProps.setProperty("hibernate.connection.password",    dbProvider.getJdbcPassword()); 
-        }
-        
-        try {
-            this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
-        } catch (PersistenceException pe) {
-            logger.error("ERROR: creating entity manager", pe);
-            throw new WebloggerException(pe);
+            // Add all OpenJPA and Toplinks properties found in WebloggerConfig
+            Enumeration keys = WebloggerConfig.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
+                    String value = WebloggerConfig.getProperty(key);
+                    logger.info(key + ": " + value);
+                    emfProps.setProperty(key, value);
+                }
+            }
+
+            if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
+                // We're doing JNDI, so set OpenJPA JNDI name property
+                String jndiName = "java:comp/env/" + dbProvider.getJndiName();
+                emfProps.setProperty("openjpa.ConnectionFactoryName", jndiName);
+
+            } else {
+                // So set JDBD properties for OpenJPA
+                emfProps.setProperty("openjpa.ConnectionDriverName", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("openjpa.ConnectionURL", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("openjpa.ConnectionUserName", dbProvider.getJdbcUsername());
+                emfProps.setProperty("openjpa.ConnectionPassword", dbProvider.getJdbcPassword());
+
+                // And Toplink JPA
+                emfProps.setProperty("toplink.jdbc.driver", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("toplink.jdbc.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("toplink.jdbc.user", dbProvider.getJdbcUsername());
+                emfProps.setProperty("toplink.jdbc.password", dbProvider.getJdbcPassword());
+
+                // And Hibernate JPA
+                emfProps.setProperty("hibernate.connection.driver_class", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("hibernate.connection.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("hibernate.connection.username", dbProvider.getJdbcUsername());
+                emfProps.setProperty("hibernate.connection.password", dbProvider.getJdbcPassword());
+            }
+
+            try {
+                this.emf = Persistence.createEntityManagerFactory("RollerPU", emfProps);
+            } catch (PersistenceException pe) {
+                logger.error("ERROR: creating entity manager", pe);
+                throw new WebloggerException(pe);
+            }
         }
     }
                         
     /**
      * Flush changes to the datastore, commit transaction, release em.
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public void flush() throws WebloggerException {
         try {
@@ -143,7 +157,7 @@ public class JPAPersistenceStrategy {
      * Store object using an existing transaction.
      * @param obj the object to persist
      * @return the object persisted
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public Object store(Object obj) throws WebloggerException {
         EntityManager em = getEntityManager(true);
@@ -169,7 +183,7 @@ public class JPAPersistenceStrategy {
     /**
      * Remove object from persistence storage.
      * @param po the persistent object to remove
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public void remove(Object po) throws WebloggerException {
         EntityManager em = getEntityManager(true);
@@ -179,7 +193,7 @@ public class JPAPersistenceStrategy {
     /**
      * Remove object from persistence storage.
      * @param pos the persistent objects to remove
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public void removeAll(Collection pos) throws WebloggerException {
         EntityManager em = getEntityManager(true);
@@ -250,9 +264,8 @@ public class JPAPersistenceStrategy {
     
     /**
      * Get named query with FlushModeType.COMMIT
-     * @param clazz the class of instances to find
      * @param queryName the name of the query
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public Query getNamedQuery(String queryName)
     throws WebloggerException {
@@ -266,7 +279,7 @@ public class JPAPersistenceStrategy {
     /**
      * Create query from queryString with FlushModeType.COMMIT
      * @param queryString the quuery
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public Query getDynamicQuery(String queryString)
     throws WebloggerException {
@@ -279,9 +292,8 @@ public class JPAPersistenceStrategy {
     
     /**
      * Get named update query with default flush mode
-     * @param clazz the class of instances to find
      * @param queryName the name of the query
-     * @throws org.apache.roller.WebloggerException on any error
+     * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
     public Query getNamedUpdate(String queryName)
     throws WebloggerException {
@@ -300,7 +312,7 @@ public class JPAPersistenceStrategy {
     private static Properties loadPropertiesFromResourceName(
             String resourceName, ClassLoader cl) throws WebloggerException {
         Properties props = new Properties();
-        InputStream in = null;
+        InputStream in;
         in = cl.getResourceAsStream(resourceName);
         if (in == null) {
             //TODO: Check how i18n is done in roller
@@ -313,11 +325,9 @@ public class JPAPersistenceStrategy {
             throw new WebloggerException(
                     "Could not load properties from " + resourceName);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioe) {
-                }
+            try {
+                in.close();
+            } catch (IOException ioe) {
             }
         }
         
