@@ -17,7 +17,7 @@
 */
 
 try {
-    roller = org.apache.roller.business.RollerFactory.getRoller();
+    roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
     users = roller.getUserManager().getUsers(null, null, null, null, 0, -1);
     for (u in users) {
        println "   User [${u.userName}] has password [${u.password}]";

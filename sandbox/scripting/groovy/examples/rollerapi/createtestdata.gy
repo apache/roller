@@ -13,12 +13,12 @@ if (args[0] != "droptables") {
 
 class RollerDatabaseGenerator {
 
-    def roller = org.apache.roller.business.RollerFactory.getRoller();
+    def roller = null;
 
-    def userCount = 50
+    def userCount = 5
     def blogCount = 2*userCount
-    def entryCount = 50
-    def commentCount = 4
+    def entryCount = 10
+    def commentCount = 3
 
     def users = []
 
@@ -109,7 +109,7 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
         println "Creating user: " + username
         def locale   = "en_US";
         def timeZone = "America/New_York";
-        def user = new org.apache.roller.pojos.UserData();
+        def user = new org.apache.roller.weblogger.pojos.User();
         user.setUserName(username);
         user.setScreenName(username);
         user.setPassword(password);
@@ -130,7 +130,7 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createBlog(user, handle, name, desc, theme) {
         println "Creating blog: " + handle
-        def website = new org.apache.roller.pojos.WebsiteData(
+        def website = new org.apache.roller.weblogger.pojos.Weblog(
             handle, 
             user,
             name,
@@ -140,7 +140,7 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
             theme,
             user.getLocale(),
             user.getTimeZone());
-            def cat = new org.apache.roller.pojos.WeblogCategoryData(
+            def cat = new org.apache.roller.weblogger.pojos.WeblogCategory(
                 website, null, "cat1", "cat1", null);
         try {
             roller.getWeblogManager().saveWeblogCategory(cat);
@@ -155,7 +155,7 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createEntry(blog, title, text, pubTime) {
         println "Creating entry title: " + title
-        def entry = new org.apache.roller.pojos.WeblogEntryData();
+        def entry = new org.apache.roller.weblogger.pojos.WeblogEntry();
         entry.setWebsite(blog);
         entry.setCreator(blog.getCreator());
         def catName = categories.get((int)(Math.random() * categories.size()))
@@ -163,9 +163,10 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
         entry.setCategory(category);
         entry.setPubTime(new java.sql.Timestamp(pubTime.getTime()));
         entry.setUpdateTime(new java.sql.Timestamp(pubTime.getTime()));
-        entry.setStatus(org.apache.roller.pojos.WeblogEntryData.PUBLISHED);
+        entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PUBLISHED);
         entry.setText(text);
         entry.setTitle(title);
+        entry.setLocale("en_US");
         try {
             roller.getWeblogManager().saveWeblogEntry(entry);
             roller.flush();
@@ -177,13 +178,13 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createComment(entry, commentername, content) { 
         println "Creating comment from user: " + commentername
-        def comment = new org.apache.roller.pojos.CommentData();
+        def comment = new org.apache.roller.weblogger.pojos.WeblogEntryComment();
         comment.setWeblogEntry(entry);
         comment.setName(commentername);
         comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         comment.setContent(content);
         comment.setNotify(Boolean.FALSE);
-        comment.setPending(Boolean.FALSE);
+        comment.setStatus(org.apache.roller.weblogger.pojos.WeblogEntryComment.APPROVED);
         try {
             roller.getWeblogManager().saveComment(comment);
             roller.flush();
@@ -195,27 +196,37 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
     def createDatabase() {
         def properties = new Properties()
         properties.load(new FileInputStream("roller-custom.properties"))
-        def jdbcClass    = properties.get("jdbc.driverClass")
-        def jdbcUrl      = properties.get("jdbc.connectionURL")
-        def jdbcUser     = properties.get("jdbc.username")
-        def jdbcPassword = properties.get("jdbc.password")
+        def jdbcClass    = properties.get("database.jdbc.driverClass")
+        def jdbcUrl      = properties.get("database.jdbc.connectionURL")
+        def jdbcUser     = properties.get("database.jdbc.username")
+        def jdbcPassword = properties.get("database.jdbc.password")
         def ant = new AntBuilder()   
         
         // drop any existing Roller tables
         ant.sql(onerror:"continue", driver:jdbcClass, url:jdbcUrl, 
             userid:jdbcUser, password:jdbcPassword,
-            src:"../../../../../build/webapp/WEB-INF/dbscripts/droptables.sql")   
+            src:"../../../../../apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/droptables.sql")   
         
         // create fresh set of Roller tables
         ant.sql(onerror:"continue", driver:jdbcClass, url:jdbcUrl, 
             userid:jdbcUser, password:jdbcPassword,
-            src:"../../../../../build/webapp/WEB-INF/dbscripts/derby/createdb.sql") 
+            src:"../../../../../apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/derby/createdb.sql") 
+
+        bootstrap()
 
         // set database version to 400  
-        def propManager = roller.getPropertiesManager();
-        def versionProp = new org.apache.roller.pojos.RollerPropertyData(
-            "roller.database.version","400")
-        propManager.saveProperty(versionProp)
+        //def propManager = roller.getPropertiesManager();
+        //def versionProp = new org.apache.roller.weblogger.pojos.RuntimeConfigProperty(
+            //"roller.database.version","400")
+        //propManager.saveProperty(versionProp)
+    }
+
+    def bootstrap() {
+        org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+        org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
+        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getPropertiesManager().initialize();
+        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().flush();
+        roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
     }
 
     def createMainBlog() {
@@ -283,6 +294,7 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
         }
     }
 }
+
 
 def generator = new RollerDatabaseGenerator()
 generator.createDatabase()

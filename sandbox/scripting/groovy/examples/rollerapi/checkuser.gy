@@ -21,7 +21,7 @@ if (args.length < 1) {
     return;
 }
 
-roller = org.apache.roller.business.RollerFactory.getRoller();
+roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
 user = roller.getUserManager().getUserByUserName(args[0]);
 
 if (user == null) {
