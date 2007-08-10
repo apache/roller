@@ -198,11 +198,15 @@ ro.buildUser=${user.name}
         <mkdir dir="${build.compile.web}" />
         <javac debug="${build.debug}" 
                source="${build.sourcelevel}"
-               destdir="${build.compile.web}"
-               includes="org/apache/roller/weblogger/ui/**, org/apache/roller/weblogger/webservices/**, org/apache/roller/weblogger/planet/**" >
+               destdir="${build.compile.web}">
             
             <src path="${ro.src}"  />
+            <include name="org/apache/roller/weblogger/ui/**" />
+            <include name="org/apache/roller/weblogger/webservices/**" />
+            <include name="org/apache/roller/weblogger/planet/**" />
+            
             &custom-src-web;
+            
             <classpath>
                 <path refid="presentation.path"/>
                 <fileset dir="${build.lib}" includes="*.jar" />
