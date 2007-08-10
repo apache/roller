@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="toplevel" default="build" basedir=".">
+<project name="toplevel" default="build" basedir="." xmlns:artifact="urn:maven-artifact-ant">
     
     <!-- 
     Build/test script intended to be run by build/test server.
@@ -38,5 +38,25 @@
         <ant dir="apps/planet" target="test" />
         <ant dir="apps/weblogger" target="tests" />
     </target>
+	
+	<target name="mvn-init">
+	    <xmlproperty file="pom.xml" prefix="pom.xml" />
+		<path id="maven-ant-tasks.classpath" path="tools/buildtime/maven/maven-ant-tasks-2.0.7.jar" />
+		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" 
+			classpathref="maven-ant-tasks.classpath" />
+	</target>	
+	
+  	<!--This target will place the roller-weblogger.war file in a maven repository alongside with its 
+  	    corresponding pom.xml file. Before deploying be sure to check the version tag in the 
+  	    pom_ant_weblogger.xml file.
+  	    For real usage change the repository url to http://www.ibiblio.org/maven2 or some other 
+  	    public repository of your choice. To test deployment localy use somting like file://localhost/xxx -->  
+	<target name="mvn-deploy" depends="build, mvn-init">
+	  <artifact:pom id="maven.project" file="apps/weblogger/pom_ant_weblogger.xml" />
+	  <artifact:deploy file="apps/weblogger/dist/webapp/roller-weblogger.war">
+	  	<remoteRepository url="file://localhost/maven/deploy/test"/>
+	    <pom refid="maven.project"/>
+	  </artifact:deploy>
+	</target>		
 
 </project>
