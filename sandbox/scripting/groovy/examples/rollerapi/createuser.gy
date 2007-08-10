@@ -29,7 +29,7 @@ fullName = username;
 locale   = "en_US";
 timeZone = "America/New_York";
 
-user = new org.apache.roller.pojos.UserData();
+user = new org.apache.roller.weblogger.pojos.User();
 user.setUserName(username);
 user.setScreenName(username);
 user.setPassword(password);
@@ -39,7 +39,7 @@ user.setLocale(locale);
 user.setTimeZone(timeZone);
 user.setDateCreated(new java.util.Date());
 
-roller = org.apache.roller.business.RollerFactory.getRoller();
+roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
 roller.getUserManager().addUser(user);
 roller.flush();
 

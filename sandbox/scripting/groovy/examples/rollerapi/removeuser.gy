@@ -18,7 +18,7 @@
 
 username = "scratch";
 
-roller = org.apache.roller.business.RollerFactory.getRoller();
+roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
 user = roller.getUserManager().getUserByUserName(username);
 roller.getUserManager().removeUser(user);
 roller.flush();

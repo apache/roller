@@ -27,7 +27,7 @@ title =    args[2];
 text =     args[3];
 catpath =  args[4];
  
-roller = org.apache.roller.business.RollerFactory.getRoller();
+roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
 user = roller.getUserManager().getUser(username);
 if (user == null) {
    println "ERROR: user ${username} not found";
@@ -44,7 +44,7 @@ if (category == null) {
    return;
 }
 
-entry = new org.apache.roller.pojos.WeblogEntryData();
+entry = new org.apache.roller.weblogger.pojos.WeblogEntry();
 entry.setWebsite(blog);
 entry.setCreator(user);
 entry.setCategory(category);
@@ -52,7 +52,7 @@ entry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
 entry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
 entry.setTitle(title);
 entry.setText(text);
-entry.setStatus(org.apache.roller.pojos.WeblogEntryData.PUBLISHED);
+entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PUBLISHED);
 
 roller.getWeblogManager().save(entry);
 roller.flush();
