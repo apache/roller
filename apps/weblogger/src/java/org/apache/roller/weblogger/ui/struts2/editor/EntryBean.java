@@ -233,15 +233,17 @@ public class EntryBean {
             // TODO: at some point this date conversion should be locale sensitive,
             // however at this point our calendar widget does not take into account
             // locales and only operates in the standard English US locale.
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+
+            // Don't require user add preceding '0' of month and day.
+            DateFormat df = new SimpleDateFormat("M/d/yy");
+            df.setTimeZone(timezone);
             Date newDate = df.parse(getDateString());
             
             log.debug("dateString yields date - "+newDate);
             
             // Now handle the time from the hour, minute and second combos
-            Calendar cal = Calendar.getInstance(locale);
+            Calendar cal = Calendar.getInstance(timezone,locale);
             cal.setTime(newDate);
-            cal.setTimeZone(timezone);
             cal.set(Calendar.HOUR_OF_DAY, getHours());
             cal.set(Calendar.MINUTE, getMinutes());
             cal.set(Calendar.SECOND, getSeconds());
@@ -351,7 +353,7 @@ public class EntryBean {
             // TODO: at some point this date conversion should be locale sensitive,
             // however at this point our calendar widget does not take into account
             // locales and only operates in the standard English US locale.
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+            DateFormat df = new SimpleDateFormat("MM/dd/yy");
             df.setTimeZone(entry.getWebsite().getTimeZoneInstance());
             setDateString(df.format(entry.getPubTime()));
             
