@@ -181,13 +181,13 @@
     
     <br>
     <div class="control">
+        <s:submit key="weblogEdit.save" onclick="$('entry_bean_status').value='DRAFT';" />
         <s:if test="userAnAuthor">
             <s:submit key="weblogEdit.post" onclick="$('entry_bean_status').value='PUBLISHED';"/>
         </s:if>
         <s:else>
             <s:submit key="weblogEdit.submitForReview" onclick="$('entry_bean_status').value='PENDING';"/>
         </s:else>
-        <s:submit key="weblogEdit.save" onclick="$('entry_bean_status').value='DRAFT';" />
     </div>
     
 </s:form>
