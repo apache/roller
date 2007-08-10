@@ -347,12 +347,15 @@ public class Comments extends UIAction {
                         wmgr.saveComment(comment);
                         
                         flushList.add(comment);
+                        reindexList.add(comment.getWeblogEntry());
+
                     } else if(!WeblogEntryComment.DISAPPROVED.equals(comment.getStatus())) {
                         log.debug("Marking as disapproved - "+comment.getId());
                         comment.setStatus(WeblogEntryComment.DISAPPROVED);
                         wmgr.saveComment(comment);
                         
                         flushList.add(comment);
+                        reindexList.add(comment.getWeblogEntry());
                     }
                 }
             }
