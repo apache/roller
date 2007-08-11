@@ -2,18 +2,25 @@
 ROLLER CHANGE LOG
 -----------------
 
-Roller 3.1.1: minor bug fixes 
+Roller 3.1.1: minor bug fixes: 
 
-    * [ROL-1410] - Cast database results to Number, not Integer
-    * [ROL-1471] - Resource servlet does not work properly on Windows
     * [ROL-1363] - Migration Oracle database 3.0 to 3.1 partitialy failed
     * [ROL-1406] - Optional themes use incorrect $url method
+    * [ROL-1410] - Cast database results to Number, not Integer
     * [ROL-1412] - Mail session should not be commented out in web.xml
+    * [ROL-1419] - There are text in English on velocity macros
     * [ROL-1458] - Referrers macro not showing count
-    * XSS fixes 
+    * [ROL-1471] - Resource servlet does not work properly on Windows
+    * [ROL-1498] - Delete entry display null value
+    * [ROL-1499] - Deleted entry is still searchable
+    * [ROL-1509] - Critical Error durant Preview when a template uses getRequestParameter
+    * [ROL-1510] - Priority and Weight do not sort the bookmarks
+    * [ROL-1511] - Access to Comment Management page through email link results in Permission Denied except for global administrator
+    * [ROL-1513] - AUTHORs can not manage comments except through email links
+    * [ROL-1523] - Comment cannot be searched after it is approved
+    * [ROL-1526] - Preferences->Themes Unexpected Error
 
 (see full list here: http://tinyurl.com/2amlw3)
-
 
 -------------------------------------------------------------------------------
 
