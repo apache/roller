@@ -1,4 +1,3 @@
-﻿
 
 
 
@@ -8,7 +7,8 @@
 
 
 
- Installation Guide
+
+Installation Guide
 
 
 
@@ -33,8 +33,8 @@
 
 
 Apache Roller Weblogger
-Version 4.0
-July 2007
+Version 4.0 
+August 2007
 
 Table of Contents
 1   Overview	3
@@ -131,7 +131,7 @@ If you're using Tomcat, check the Tomcat Considerations section below, otherwise
 3.1Tomcat: JavaMail and Activation
 Tomcat does not include the Java Mail and Activation jars that Roller needs for email notification, So, if you like to use Roller's e-mail notification features, you'll need to download those jars and place them in Tomcat's classpath. Download them from Sun (http://java.sun.com/products/javamail) and place them in Tomcat's common/lib directory.
 3.2Tomcat: URI encoding needed for I118N
-Roller supports internationalization (I18N), but on Tomcat some additional configuration is necessary. You must ensure that Tomcat's URI encoding is set to UTF-8. You can do this by editing the Tomcat configuration file conf/server.xml and adding URIEncoding=”UTF-8” to each connector element, as shown below:
+Roller supports internationalization (I18N), but on Tomcat some additional configuration is necessary. You must ensure that Tomcat's URI encoding is set to UTF-8. You can do this by editing the Tomcat configuration file conf/server.xml and adding URIEncoding="UTF-8" to each connector element, as shown below:
    <Connector port="8080"
       maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
       enableLookups="false" redirectPort="8443" debug="0" 
@@ -192,7 +192,7 @@ Create a text file named roller-custom.properties with the content below, but re
    mail.configurationType=properties
    mail.hostName=mail server hostname
 
-The installation.type=auto property tells Roller to operate in automatic installation mode. In this mode Roller will provide very detailed error output to help you debug database connection problems. If Roller finds that the database exists but its tables are not, it will offer to run the database creation scripts. If find finds that the tables are there, but they are not up-to-date Roller will offer to upgrade them for you. Once your Roller installation is complete and you are ready to go “live” then you should set installation.type=manual.
+The installation.type=auto property tells Roller to operate in automatic installation mode. In this mode Roller will provide very detailed error output to help you debug database connection problems. If Roller finds that the database exists but its tables are not, it will offer to run the database creation scripts. If find finds that the tables are there, but they are not up-to-date Roller will offer to upgrade them for you. Once your Roller installation is complete and you are ready to go "live" then you should set installation.type=manual.
 6.1MySQL example
 Here is an example roller-custom.properties file that shows how to setup a MySQL connection. It shows the MySQL JDBC driver class name, an example MySQL connection URL and username/password settings for the mail connection.
    installation.type=auto
@@ -242,13 +242,12 @@ If your database configuration is good but Roller cannot find its database table
 If Roller starts up fine but doesn't find a front-page weblog then it will display the Completing Your Installation below that explains how to register your first user, create your first weblog and setup your site's front page.
 
 You have to decide what you want as the front-page of your Roller site. If you are using Roller to run your personal weblog, then you probably want your weblog to be the front-page of the site. In this case, create a weblog for yourself, don't choose the front-page theme but do set your weblog as the front-page weblog for the site. 
-If you are using Roller to run a community of multiple weblogs, then you'll probably want to display an aggregated front-page combining all weblogs on the site. In that case, create a weblog to serve as the front-page, set it as the front-page weblog and make sure you set the “aggregated front-page” setting on the Server Admin page.   
+If you are using Roller to run a community of multiple weblogs, then you'll probably want to display an aggregated front-page combining all weblogs on the site. In that case, create a weblog to serve as the front-page, set it as the front-page weblog and make sure you set the "aggregated front-page" setting on the Server Admin page.   
 Don't forget: Reset the installation.type flag
 Now that you're done with the installation you should turn off Roller's auto-installation system. Edit your roller-custom.properties file and set installation.type=manual. Then restart your server or Roller so that it accepts the new setting.
 What's next?
-Once you've gotten Roller up and running refer to the Roller User Guide for more information on running your Roller system and your weblog. For information on customizing your weblog, refer to the Roller Template Guide. If you can't find what you want in the documentation then subscribe to the Roller user mailing list and ask your questions there.
-   Roller user and developer mailing lists:
-   http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists 
+Once you've gotten Roller up and running refer to the Roller User Guide for more information on running your Roller system and your weblog. For information on customizing your weblog, refer to the Roller Template Guide. If you can't find what you want in the documentation then subscribe to the Roller user mailing list and ask your questions there: http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists
+   
 9Configuration tips and tricks
 This section covers some tips and tricks that can help you get the most out of Roller. It covers Roller's Planet feed aggregator, Acegi setup and how to setup Roller to use server-provided resources.
 9.1Setting up Roller's Planet feed aggregator
@@ -275,7 +274,7 @@ Those property settings enable Planet and enable the Planet tasks, both the Refr
 Once you've made those property settings restart Roller and proceed to the next step.
 Display your Planet aggregations
 You can use Roller's UI to add external RSS/Atom feeds to the Planet setup. To display these feeds you'll need to do a little template customization. The easier way to get started is to Roller's existing Front-Page theme. Here's how.
-Create a weblog to server as the front-page of your Roller site. Start with the Front-Page theme and customize it. Edit the weblog template and look for the part that mentions PLANET-entries. Comment-out the SITE-WIDE part and un-comment the PLANET-entries part. The double hash “##” marks indicate a commented-out line. The code should look like this:
+Create a weblog to server as the front-page of your Roller site. Start with the Front-Page theme and customize it. Edit the weblog template and look for the part that mentions PLANET-entries. Comment-out the SITE-WIDE part and un-comment the PLANET-entries part. The double hash "##" marks indicate a commented-out line. The code should look like this:
 
    ## 1) SITE-WIDE entries (the default)
    ##set($pager = $site.getWeblogEntriesPager($since, $maxResults))
@@ -350,14 +349,14 @@ This section describes how to upgrade an existing Roller installation to the lat
 10.1For those upgrading from Roller 2.x to Roller 4.0
 Roller 3.0 and Roller 4.0 were major releases and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of them and especially the new URL structure and the new template system.
 New URL structure
-The most significant change is the new URL structure – we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
+The most significant change is the new URL structure - we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
 	http://<hostname>/roller/page/<weblog-handle>
 To use the new format, which is:
 	http://<hostname>/roller/<weblog-handle>
 Unfortunately, some custom templates that use relative URLs will have problem with this new URL structure. So, before you go live you should set-up a test server and allow your users to take a look at their weblogs.
 New template system
 We've developed a completely new and greatly improved template system for Roller, which includes new models and new macros. We want to encourage people to start using this new system for all new template and theme development, so we have made it the default. And, by default, we've turned off the old system. 
-So, if you are upgrading and you want your weblogs to work, you must override this Roller property to enable the old “legacy” template system to work:
+So, if you are upgrading and you want your weblogs to work, you must override this Roller property to enable the old "legacy" template system to work:
 	rendering.legacyModels.enabled=true
 See Section 11 for information on overriding Roller startup properties.
 New task management system
@@ -380,7 +379,6 @@ And backup any other data. Make a copy of your Roller data directory, i.e. the o
 Don't store files inside of Roller
 If you do, you'll have to move them around on every Roller upgrade. Put your uploads and themes in a separate directory and point to them via the upoads.dir and themes.dir properties.
 If you're upgrading from an older version of Roller you may have been storing uploaded files inside the Roller web application, in a /resources subdirectory. In Roller 4.0 the default is to store those files your home directory under roller_data/uploads, so you'll have to copy your uploads there. If you want to change the location of the uploads directory, overload the property upoads.dir.
-
 10.3Install and startup the new Roller 
 Follow the normal installation instructions for the new version of Roller, but...
 When creating your roller-custom.properites, copy of your old one. Carefully review each property and compare it to the property settings in the Roller 4.0 property file in Section 11. 
@@ -389,7 +387,8 @@ When you deploy and startup, Roller will detect that your database needs to be u
 NOTE: if you would rather run the database migration scripts yourself, you can. See Section 9.4.
 NOTE: On Tomcat, before startup you should delete the contents of the Tomcat work directory
 11roller.properties
-
+# roller.properties
+#
 # This file is for meant for Roller deployment properties
 # Any properties that don't change at runtime are defined here
 #
@@ -414,6 +413,7 @@ NOTE: On Tomcat, before startup you should delete the contents of the Tomcat wor
 # properties in this file are accessed like this ...
 #    WebloggerConfig.getProperty("propname");
 
+
 #-----------------------------------------------------------------------------
 # Table of contents
 #-----------------------------------------------------------------------------
@@ -427,8 +427,10 @@ NOTE: On Tomcat, before startup you should delete the contents of the Tomcat wor
 # -- Rendering system
 # -- Weblog ping system
 # -- Pluggable backend, page and editor plugins
+# -- Log4j logging settings
 # -- Other settings
 # -- Experimental, deprecated and "undocumented" settings
+
 
 
 #-----------------------------------------------------------------------------
@@ -440,8 +442,6 @@ NOTE: On Tomcat, before startup you should delete the contents of the Tomcat wor
 #   on startup and auto-upgraded if they need it.
 # - Set to 'manual' if you'd want to run the SQL scripts by hand. 
 installation.type=manual
-
-
 
 #---------------------------------
 # Database configuration settings
@@ -467,10 +467,12 @@ mail.configurationType=jndi
 # For mail configuration type 'jndi', this will be used
 mail.jndi.name=mail/Session
 
-# For database configuration type of 'properties', you MUST override these
+# For mail configuration type of 'properties', you MUST override hostname
 mail.hostname=
-mail.username=
-mail.password=
+
+# Only override mail username and password if your mail server requires them
+#mail.username=
+#mail.password=
 
 
 #-----------------------------------------------------------------------------
@@ -483,21 +485,16 @@ uploads.dir=${user.home}/roller_data/uploads
 # The context path under which resoures will be made available 
 uploads.url=/resources
 
-# The directory in which Roller will look for themes
-themes.dir=${webapp.context}
-
 # Directory in which search index is to be created 
 # (delete this directory to force Roller to recreate the entire search index)
 search.index.dir=${user.home}/roller_data/search-index
 
+# The directory in which Roller will look for themes
+themes.dir=${webapp.context}
+
 # If you enable Planet (see below), then you must specify the path to a cache
 # directory that exists and is writable by the Roller process 
 planet.aggregator.cache.dir=${user.home}/roller_data/planetcache
-
-
-
-
-
 
 
 
@@ -545,6 +542,12 @@ comment.validator.excessLinks.threshold=3
 comment.validator.excessSize.threshold=1000
 #comment.validator.akismet.key=<get one at wordpress.com>
 
+# pluggable comment formatters
+comment.formatter.classnames=\
+org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,\
+org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin,\
+org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin
+
 # enables site full blacklist check on comment posts (default: true)
 site.blacklist.enable.comments=true
 
@@ -554,14 +557,11 @@ site.blacklist.enable.trackbacks=true
 # enables partial blacklist check (not including blacklist.txt) for each incoming referrer
 site.blacklist.enable.referrers=true
 
-
-
-
-
 # Trackback protection. Set this only if you need to limit the URLs to
 # which users may send trackbacks. Regex expressions are allowed, for example:
 # trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*
 trackback.allowedURLs=
+
 
 
 #----------------------------------
@@ -614,7 +614,6 @@ referrers.queue.sleepTime=10
 # Tasks which are enabled.  Only tasks listed here will be run.
 tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,TurnoverReferersTask,PingQueueTask
 
-
 # client identifier.  should be unique for each instance in a cluster.
 tasks.clientId=defaultClientId
 
@@ -661,12 +660,6 @@ tasks.TechnoratiRankingsTask.interval=1440
 tasks.TechnoratiRankingsTask.leaseTime=30
 
 
-
-
-
-
-
-
 #-----------------------------------------------------------------------------
 # Cache configuratation
 #-----------------------------------------------------------------------------
@@ -683,8 +676,7 @@ tasks.TechnoratiRankingsTask.leaseTime=30
 # NOTE: it is expected that property validation happens in the CacheFactory
 
 # The default cache implementation we want to use
-cache.defaultFactory=\
-org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl
+cache.defaultFactory=org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl
 cache.customHandlers=
 
 # set "true" to NOT cache the custom pages for users who are logged in
@@ -716,6 +708,7 @@ cache.planet.size=10
 cache.planet.timeout=1800
 
 
+
 #-----------------------------------------------------------------------------
 # Security settings
 #-----------------------------------------------------------------------------
@@ -739,7 +732,7 @@ schemeenforcement.https.urls=/roller_j_security_check,\
 /roller-ui/authoring/membersInvite.rol,/roller-ui/authoring/membersInvite!save.rol
 
 # Password security settings
-passwds.encryption.enabled=false
+passwds.encryption.enabled=true
 passwds.encryption.algorithm=SHA
 
 #----------------------------------
@@ -781,7 +774,6 @@ org.apache.roller.weblogger.ui.rendering.velocity.VelocityRendererFactory
 
 # List of available template languages
 rendering.templateLanguages=velocity
-
 
 # The set of user defined renderer factories.  These are prepended to the list above.
 rendering.userRendererFactories=
@@ -857,6 +849,7 @@ deprecated/atommacros.vm,deprecated/rssmacros.vm,deprecated/user.vm,\
 deprecated/weblog.vm,deprecated/website.vm
 
 
+
 #-----------------------------------------------------------------------------
 # Weblog ping system
 #-----------------------------------------------------------------------------
@@ -891,12 +884,14 @@ pings.initialCommonTargets=\
 # Specify variant options for known buggy ping targets.
 pings.variantOptions={{http://rpc.icerocket.com:10080/}{noname}}
 
+
 # This controls whether users are allowed to add custom ping targets.  
 # Set this to false to disallow adding custom targets; if false, the 
 # Weblog:Custom Ping Targets menu item will not appear and associated actions 
 # will result in access denied messages.  Leave this false or commented for 
-# normal behavior. CAUTION: Setting this to true will cause the server to remove 
-# all users' existing custom targets on startup.
+# normal behavior. 
+# CAUTION: Setting this to true will cause the server to remove all users' 
+# existing custom targets on startup.
 pings.disallowCustomTargets=false
 
 # This controls whether the Weblog:Pings menu item and its associated actions 
@@ -920,9 +915,13 @@ pings.disablePingUsage=false
 pings.logOnly=false
 
 
+
 #-----------------------------------------------------------------------------
 # Pluggable backend, page and editor plugins
 #-----------------------------------------------------------------------------
+
+# Backend Provider
+weblogger.provider.class=org.apache.roller.weblogger.business.GuiceWebloggerProvider
 
 # Backend Guice module
 guice.backend.module=org.apache.roller.weblogger.business.jpa.JPAWebloggerModule
@@ -952,11 +951,6 @@ plugins.defaultEditor=editor-text.jsp
 # The list of available editors is in rollerRuntimeConfigDefs.xml
 newweblog.editor=editor-text.jsp
 
-
-
-
-
-
 # Optional site-wide customization settings for the TopicTag plugin.
 # n.b. these default settings match the coded default values that would be 
 # applied if these were omitted.
@@ -968,6 +962,53 @@ plugins.topictag.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
 
 # Set to true to allow only default topic tag site (and avoid costly bookmark queries)
 plugins.topictag.ignoreBookmarks=true
+
+
+#-----------------------------------------------------------------------------
+# Log4j logging settings
+#-----------------------------------------------------------------------------
+
+log4j.rootCategory=INFO, roller
+
+log4j.appender.roller=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.roller.File=${catalina.base}/logs/roller.log
+log4j.appender.roller.layout=org.apache.log4j.PatternLayout
+log4j.appender.roller.layout.ConversionPattern=%-5p %d{yyyy-MM-dd HH:mm:ss,SSS} %C{1}:%M - %m%n
+
+# Options are: DEBUG, INFO, WARN, ERROR, FATAL
+# Roller code
+log4j.category.org.apache.roller=INFO
+log4j.category.net.java.roller=INFO
+
+# Roller dependent libraries
+log4j.category.org.hibernate=INFO
+log4j.category.org.apache.struts2=INFO
+# the struts2 file upload stuff has some overly verbose messaging
+log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=WARN
+log4j.category.org.springframework=WARN
+log4j.category.org.acegisecurity=ERROR
+# Velocity talks a lot, so by default it is set to STFU mode
+log4j.category.org.apache.velocity=FATAL
+
+# Roller extras
+log4j.category.com.ecyrd.jspwiki=ERROR
+log4j.category.org.tuckey.web.filters.urlrewrite=DEBUG
+log4j.category.com.opensymphony.oscache=ERROR
+log4j.category.com.danga.MemCached=WARN
+
+# Ask OpenJPA to log to Log4J via Apache Commons Logging
+openjpa.Log=commons
+
+log4j.category.openjpa.Tool=INFO
+log4j.category.openjpa.Runtime=INFO
+log4j.category.openjpa.Remote=WARN
+log4j.category.openjpa.DataCache=WARN
+log4j.category.openjpa.MetaData=WARN
+log4j.category.openjpa.Enhance=WARN
+log4j.category.openjpa.Query=WARN
+log4j.category.openjpa.jdbc.SQL=WARN
+log4j.category.openjpa.jdbc.JDBC=WARN
+log4j.category.openjpa.jdbc.Schema=WARN
 
 
 #-----------------------------------------------------------------------------
@@ -993,6 +1034,9 @@ tags.queries.maxIntersectionSize=3
 # Characters to be allowed in user names (change at your own risk)
 username.allowedChars=A-Za-z0-9
 
+# weblog entry editor
+weblogentry.editor.showFullPermalink=true
+
 # editor theme to be used (corresponds to directory name under /theme)
 editor.theme=tan
 
@@ -1010,7 +1054,6 @@ jroller.com|http://jroller.com
 
 # comma-separated list of top-level categories to be created in each new weblog
 newuser.categories=General,Status,Java,Music,Politics
-
 
 
 
@@ -1034,4 +1077,3 @@ webservices.adminprotocol.enabled=false
 # If you are using the Hibernate backend (deprecated as of Roller 4.0), 
 # you MUST override this to use a database other than MySQL4
 hibernate.dialect=org.hibernate.dialect.MySQLDialect
-
