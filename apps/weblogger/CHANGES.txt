@@ -1,13 +1,163 @@
-
 ROLLER CHANGE LOG
 -----------------
 
-Roller 4.0: Infrastructure upgrade - Java SE 5, Struts 2 and new JPA backend
+Roller 4.0: Major new feature and infrasructure improvement release
 
-    * New Java Persistence Architecture (JPA) backend added to Roller
-    * For a detailed list of fixed see these URLs:
-      - Roller 4.0 issues - http://tinyurl.com/2r39e3
-      - Roller 3.2 issues - http://tinyurl.com/2ssl65
+In Roller 4.0 we moved to Java 1.5, rewrote the editor/admin UI using Struts 2, 
+replaced Hibernate with OpenJPA and added Dependency Injection (DI) support via
+Google Guice. We also added major new features such as:
+   * Easy installer, which diagnoses problems and creates/upgrades tables
+   * Easy customization with new theme chooser UI and stylesheet override
+   * Theme encapsulation: each themes now specified by an XML file
+
+For individual feature proposals, here's a link to the main release proposal:
+http://cwiki.apache.org/confluence/display/ROLLER/Proposal+Roller+4.0+Release
+
+For a feature summary with sceenshots, here's the What's new in Roller 4.0 page:
+http://cwiki.apache.org/confluence/display/ROLLER/What%27s+New+in+Roller+4.0
+
+Here's a list of the features added, improvements made and bugs fixed.
+(see the full list here: http://tinyurl.com/2r39e3)
+
+New Feature
+    * [ROL-947] - Check comment/trackbacks against Akismet anti-spam service
+    * [ROL-1061] - RSS for Comment
+    * [ROL-1136] - Enable the use of Screen Name [Was: Allow users to change username]
+    * [ROL-1185] - Spellchecker
+    * [ROL-1235] - Modular Planet
+    * [ROL-1246] - Roller template model for site/blog statistics
+    * [ROL-1302] - Macro to retrieve entries by tag
+    * [ROL-1310] - Individual templates by action (feeds, tags, archived entries, category, search, etc.)
+    * [ROL-1311] - Show current hits by blog on the main menu page
+    * [ROL-1324] - Pliuggable Comment Validators
+    * [ROL-1366] - Ease of weblog customization: custom bio blurp & thumbnail entry
+    * [ROL-1368] - Ease of weblog customization: Stylesheet overrides for shared themes
+    * [ROL-1449] - Account activaton via email
+    * [ROL-1527] - Minimalistic maven integration
+
+Improvement
+    * [ROL-840] - Calendar: do not show indication of future posts
+    * [ROL-921] - Store category path in category table
+    * [ROL-978] - Replace HSQLDB with Apache Derby in JUnit test targets
+    * [ROL-979] - Fix compile JSP target for better testing
+    * [ROL-1122] - Hot blogs: only list blogs if an entry is present w/i the last X days
+    * [ROL-1214] - Update a theme or two to support multi-language blog entry navigation
+    * [ROL-1279] - Bookmark form should check for valid URLs
+    * [ROL-1284] - Improve process for publishing entries to future
+    * [ROL-1288] - Fix hibernate config & lazy fetching
+    * [ROL-1291] - Ability to fetch single entry via $model.weblog.getEntry($anchor)
+    * [ROL-1301] - Spam comments: disable 'Notify me by email of new comments'
+    * [ROL-1303] - Parse trackback response and display user-friendly message
+    * [ROL-1307] - Get most commented: add weblog handle
+    * [ROL-1309] - Query Optimization (tag searches, etc)
+    * [ROL-1314] - Option to show full comment in Comment Management page
+    * [ROL-1323] - Remove 'Referrers' tab for sites that don't use this functionality
+    * [ROL-1329] - Improve comment tracking with new [backend] status field
+    * [ROL-1334] - Remove query criteria against "enabled" for getting weblogs by handle.
+    * [ROL-1335] - Future invalidations job should be a task and only run on 1 machine per cluster.
+    * [ROL-1350] - Refine trackback message...
+    * [ROL-1352] - Convert comment line breaks
+    * [ROL-1355] - Theme improvement: use post entry name in the HTML page
+    * [ROL-1365] - Filter by Search String on the Entries page
+    * [ROL-1378] - Upgrade to Apache Velocity 1.5
+    * [ROL-1379] - Upgrade to Apache XMLRPC 3.0
+    * [ROL-1380] - Rename Atom Admin Publishing Protocol
+    * [ROL-1439] - Struts2 Migration
+    * [ROL-1440] - Project refactorings to tidy up project space
+    * [ROL-1447] - Replace Hibernate with ASF policy compatible persistence engine
+    * [ROL-1448] - Make Roller installation easy
+    * [ROL-1451] - Add content-type and template-language settings to template editor
+    * [ROL-1464] - Update Atom protocol to use final namespace and pass draft #15 Ape tests
+    * [ROL-1482] - Allow jndi lookup of jpa emf
+    * [ROL-1491] - Make log4j configurable via roller-custom.properties
+    * [ROL-1508] - Suppress extraneous logging
+
+Bug
+    * [ROL-548] - Bookmark display macro not obeying sort order
+    * [ROL-932] - Code Cleanup: Refine user-facing error messages
+    * [ROL-940] - Minor typos in ApplicationResources
+    * [ROL-1053] - Missing resource for email.comment.commentApproved
+    * [ROL-1119] - IllegalStateException on 404 page
+    * [ROL-1120] - email.comment.commentApproved not found in ApplicationResources.properties
+    * [ROL-1158] - OracleDialect => Oracle9Dialect in HibernateRefererManagerImpl
+    * [ROL-1182] - Create weblog page minor improvements - description mispelled and beginning cursor should land on Name field.
+    * [ROL-1216] - HTML in weblog name causes display problems in themes
+    * [ROL-1286] - Removing weblogs are not removing resource files
+    * [ROL-1294] - Task scheduling is inconsistent due to use of java.util.Timer
+    * [ROL-1298] - 404 on Preview
+    * [ROL-1306] - Race condition in task lock management
+    * [ROL-1316] - Missing "<<" nav element on the calendar
+    * [ROL-1325] - Category names can't be changed
+    * [ROL-1330] - Unable to change a bookmark folder name
+    * [ROL-1341] - Cannot pick date from calendar during edit of existing entry (current trunk)
+    * [ROL-1359] - a small bug about bookmarks
+    * [ROL-1360] - Notify email value $cform.notify is always false, and no value written into DB
+    * [ROL-1363] - Migration Oracle database 3.0 to 3.1 partitialy failed
+    * [ROL-1371] - Bad links in site-wide comment links
+    * [ROL-1376] - Possible code error in UserData.java
+    * [ROL-1381] - bug in runtimeconfig
+    * [ROL-1386] - Keywords on blacklist still let through in comments while non blacklisted terms are trapped
+    * [ROL-1393] - APP interop: attrbibutes in service doc should not be namespaced
+    * [ROL-1394] - APP interop: wrong content-type for service doc
+    * [ROL-1410] - Cast database results to Number, not Integer
+    * [ROL-1412] - Mail session should not be commented out in web.xml
+    * [ROL-1415] - Comment nofication on group blogs failing
+    * [ROL-1419] - There are text in English on velocity macros
+    * [ROL-1458] - Referrers macro not showing count
+    * [ROL-1465] - PreviewServlet broken due to OpenJPA detached object limitations
+    * [ROL-1471] - Resource servlet does not work properly on Windows
+    * [ROL-1474] - Exception (500) occurs when clicks to "Add Ping Target"
+    * [ROL-1475] - Bitmap icon missing from Design (Template) Name
+    * [ROL-1477] - NPE should not appear and should be handled gracefully
+    * [ROL-1483] - Unclear/Confusing error message appears when deleting a template theme element
+    * [ROL-1484] - Saving changes in comment mgmt page works, but indicates error
+    * [ROL-1487] - Restore permalink display to Weblog Edit page
+    * [ROL-1488] - RenderingException occurs in roller.log file when select to review a recently saved weblog entry
+    * [ROL-1489] - Cancel button of the delete bookmark function does not work
+    * [ROL-1490] - "Locale is a required field" when re-saving old entry
+    * [ROL-1492] - Change users profile and admin permissions feature does not work
+    * [ROL-1493] - NPE occurs when select to edit a disable user
+    * [ROL-1494] - Build fails on systems with different JUnit version in ant/lib
+    * [ROL-1495] - Admin user should not be allowed to disable administrator privilege if there is no other admin users in the system
+    * [ROL-1497] - First Roller server page is title as "error"
+    * [ROL-1499] - Deleted entry is still searchable
+    * [ROL-1501] - ArgumentException occurs when click at Filter Entry buuton
+    * [ROL-1502] - generateParseException occurs when setting comment option "existing entry for (this time only)"
+    * [ROL-1504] - Problems with Enclosures/MediaCast
+    * [ROL-1506] - ArgumentException occurs when select to query comments with date data
+    * [ROL-1509] - Critical Error durant Preview when a template uses getRequestParameter
+    * [ROL-1513] - AUTHORs can not manage comments except through email links
+    * [ROL-1514] - Finalize/fix Atom protocol support
+    * [ROL-1515] - WeblogCalendarModel should use timezone setting of weblog consistently
+    * [ROL-1516] - Spam & Pending Query Comment Filter does not work
+    * [ROL-1523] - Comment cannot be searched after it is approved
+    * [ROL-1525] - Drafts erroneously published if user hits enter while in title or tags field.
+    * [ROL-1528] - JVM's default locale cause EntryAdd and EntryEdit set pubTime to updateTime constantly
+
+
+-------------------------------------------------------------------------------
+
+Roller 3.1.1: minor bug fixes: 
+
+Unreleased at the time of this writing, this list reflects 3.1.1 RC2:
+
+    * [ROL-1363] - Migration Oracle database 3.0 to 3.1 partitialy failed
+    * [ROL-1406] - Optional themes use incorrect $url method
+    * [ROL-1410] - Cast database results to Number, not Integer
+    * [ROL-1412] - Mail session should not be commented out in web.xml
+    * [ROL-1419] - There are text in English on velocity macros
+    * [ROL-1458] - Referrers macro not showing count
+    * [ROL-1471] - Resource servlet does not work properly on Windows
+    * [ROL-1498] - Delete entry display null value
+    * [ROL-1499] - Deleted entry is still searchable
+    * [ROL-1509] - Critical Error durant Preview when a template uses getRequestParameter
+    * [ROL-1510] - Priority and Weight do not sort the bookmarks
+    * [ROL-1511] - Access to Comment Management page through email link results in Permission Denied except for global administrator
+    * [ROL-1513] - AUTHORs can not manage comments except through email links
+    * [ROL-1523] - Comment cannot be searched after it is approved
+    * [ROL-1526] - Preferences->Themes Unexpected Error
+
+(see full list here: http://tinyurl.com/2amlw3)
 
 
 -------------------------------------------------------------------------------
