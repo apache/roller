@@ -215,7 +215,8 @@ public class PingsTest extends TestCase {
         // lookup all common pings
         List commonPings = mgr.getCommonPingTargets();
         assertNotNull(commonPings);
-        assertEquals(1, commonPings.size());
+        // correct answer is: 6 pings in config + 1 new one = 7
+        assertEquals(7, commonPings.size());
         
         // lookup all custom pings for weblog
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
