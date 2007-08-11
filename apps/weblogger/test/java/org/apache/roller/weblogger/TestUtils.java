@@ -62,8 +62,7 @@ public final class TestUtils {
             WebloggerFactory.bootstrap();
             
             // always initialize the properties manager and flush
-            WebloggerFactory.getWeblogger().getPropertiesManager().initialize();
-            WebloggerFactory.getWeblogger().flush();
+            WebloggerFactory.getWeblogger().initialize();
         }
     }
     
