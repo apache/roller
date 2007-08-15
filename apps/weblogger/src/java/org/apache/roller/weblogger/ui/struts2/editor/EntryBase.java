@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
@@ -202,7 +202,7 @@ public abstract class EntryBase extends UIAction {
     
     
     public boolean isUserAnAuthor() {
-        return getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR);
+        return getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogUserPermission.AUTHOR);
     }
     
     

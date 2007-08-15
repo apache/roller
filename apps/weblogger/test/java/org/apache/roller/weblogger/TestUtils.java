@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -220,7 +220,7 @@ public final class TestUtils {
         
         // lookup the permissions
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        WeblogPermission perm = mgr.getPermissions(id);
+        WeblogUserPermission perm = mgr.getPermissions(id);
         
         // remove the permissions
         mgr.removePermissions(perm);

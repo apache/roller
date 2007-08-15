@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.PingConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetsBase;
 
 
@@ -49,7 +49,7 @@ public class CustomPingTargets extends PingTargetsBase {
     }
     
     public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+        return WeblogUserPermission.ADMIN;
     }
     
     

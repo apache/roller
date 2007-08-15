@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -249,19 +249,19 @@ public interface UserManager {
     /**
      * Save permissions object.
      */
-    public void savePermissions(WeblogPermission perms) throws WebloggerException;
+    public void savePermissions(WeblogUserPermission perms) throws WebloggerException;
     
     
     /**
      * Remove permissions object.
      */
-    public void removePermissions(WeblogPermission perms) throws WebloggerException;
+    public void removePermissions(WeblogUserPermission perms) throws WebloggerException;
     
     
     /**
      * Get permissions object by id.
      */
-    public WeblogPermission getPermissions(String id) throws WebloggerException;
+    public WeblogUserPermission getPermissions(String id) throws WebloggerException;
     
     
     /**
@@ -286,7 +286,7 @@ public interface UserManager {
      * @param user    User (not null)
      * @return        PermissionsData object
      */
-    public WeblogPermission getPermissions(Weblog website, User user)
+    public WeblogUserPermission getPermissions(Weblog website, User user)
         throws WebloggerException;
     
     
@@ -313,7 +313,7 @@ public interface UserManager {
      * @param perms   Permissions mask (see statics in PermissionsData)
      * @return        New PermissionsData object, with pending=true
      */
-    public WeblogPermission inviteUser(Weblog website, User user, short perms)
+    public WeblogUserPermission inviteUser(Weblog website, User user, short perms)
         throws WebloggerException;
     
     

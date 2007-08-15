@@ -173,7 +173,7 @@ public class Weblog implements Serializable {
     /**
      * Remove permission from collection.
      */
-    public void removePermission(WeblogPermission perms) {
+    public void removePermission(WeblogUserPermission perms) {
         permissions.remove(perms);
     }
     
@@ -650,10 +650,10 @@ public class Weblog implements Serializable {
      */
     public boolean hasUserPermissions(User user, short mask) {
         // look for user in website's permissions
-        WeblogPermission userPerms = null;
+        WeblogUserPermission userPerms = null;
         Iterator iter = getPermissions().iterator();
         while (iter.hasNext()) {
-            WeblogPermission perms = (WeblogPermission) iter.next();
+            WeblogUserPermission perms = (WeblogUserPermission) iter.next();
             if (perms.getUser().getId().equals(user.getId())) {
                 userPerms = perms;
                 break;
@@ -683,11 +683,11 @@ public class Weblog implements Serializable {
     
     public int getAdminUserCount() {
         int count = 0;
-        WeblogPermission userPerms = null;
+        WeblogUserPermission userPerms = null;
         Iterator iter = getPermissions().iterator();
         while (iter.hasNext()) {
-            WeblogPermission perms = (WeblogPermission) iter.next();
-            if (perms.getPermissionMask() == WeblogPermission.ADMIN) {
+            WeblogUserPermission perms = (WeblogUserPermission) iter.next();
+            if (perms.getPermissionMask() == WeblogUserPermission.ADMIN) {
                 count++;
             }
         }

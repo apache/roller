@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.business.FilePathException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -185,7 +185,7 @@ public class RollerAtomHandler implements AtomHandler {
         }
         if (perms != null) {
             for (Iterator iter=perms.iterator(); iter.hasNext();) {
-                WeblogPermission perm = (WeblogPermission)iter.next();
+                WeblogUserPermission perm = (WeblogUserPermission)iter.next();
                 String handle = perm.getWebsite().getHandle();
                 
                 // Create workspace to represent weblog
@@ -941,7 +941,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private boolean canEdit(Weblog website) {
         try {
-            return website.hasUserPermissions(this.user,WeblogPermission.AUTHOR);
+            return website.hasUserPermissions(this.user,WeblogUserPermission.AUTHOR);
         } catch (Exception e) {
             log.error("Checking website.hasUserPermissions()");
         }

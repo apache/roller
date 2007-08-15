@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
@@ -57,7 +57,7 @@ public class Members extends UIAction implements ParameterAware {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+        return WeblogUserPermission.ADMIN;
     }
     
     
@@ -75,19 +75,19 @@ public class Members extends UIAction implements ParameterAware {
         
         UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
         
-        List<WeblogPermission> permissions = getActionWeblog().getPermissions();
+        List<WeblogUserPermission> permissions = getActionWeblog().getPermissions();
         
         // we have to copy the permissions list so that when we remove permissions
         // below we don't get ConcurrentModificationExceptions
-        List<WeblogPermission> permsList = new ArrayList();
-        for( WeblogPermission perm : permissions ) {
+        List<WeblogUserPermission> permsList = new ArrayList();
+        for( WeblogUserPermission perm : permissions ) {
             permsList.add(perm);
         }
         
         int removed = 0;
         int changed = 0;
         try {
-            for( WeblogPermission perms : permsList ) {
+            for( WeblogUserPermission perms : permsList ) {
                 
                 String sval = getParameter("perm-" + perms.getId());
                 if (sval != null) {

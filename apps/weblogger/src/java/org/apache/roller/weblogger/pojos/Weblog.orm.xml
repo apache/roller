@@ -23,7 +23,7 @@
 		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3  AND w.active = ?4
-                                                 AND EXISTS (SELECT p from WeblogPermission p where
+                                                 AND EXISTS (SELECT p from WeblogUserPermission p where
                                                          p.website = w
                                                          AND p.user = ?5
                                                          AND p.pending = ?6 )
@@ -32,7 +32,7 @@
 		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                  AND w.enabled = ?2
-                                                 AND EXISTS (SELECT p from WeblogPermission p where
+                                                 AND EXISTS (SELECT p from WeblogUserPermission p where
                                                          p.website = w
                                                          AND p.user = ?3
                                                          AND p.pending = ?4 )
@@ -40,7 +40,7 @@
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1  AND w.dateCreated &gt; ?2
-                                                AND EXISTS (SELECT p from WeblogPermission p where
+                                                AND EXISTS (SELECT p from WeblogUserPermission p where
                                                          p.website = w
                                                          AND p.user = ?3
                                                          AND p.pending = ?4 )
@@ -67,7 +67,7 @@
 		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.enabled = ?3
-                                                 AND EXISTS (SELECT p from WeblogPermission p where
+                                                 AND EXISTS (SELECT p from WeblogUserPermission p where
                                                          p.website = w
                                                          AND p.user = ?4
                                                          AND p.pending = ?5 )
@@ -76,7 +76,7 @@
 		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
                                                  AND w.active = ?3
-                                                 AND EXISTS (SELECT p from WeblogPermission p where
+                                                 AND EXISTS (SELECT p from WeblogUserPermission p where
                                                             p.website = w
                                                             AND p.user = ?4
                                                             AND p.pending = ?5 )
@@ -90,7 +90,7 @@
 		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                 AND w.enabled = ?2 AND w.active = ?3
-                                                AND EXISTS (SELECT p from WeblogPermission p where
+                                                AND EXISTS (SELECT p from WeblogUserPermission p where
                                                            p.website = w
                                                            AND p.user = ?4
                                                            AND p.pending = ?5 )
@@ -109,7 +109,7 @@
 		<named-query name="Weblog.getByEndDate&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
                                                 AND w.active = ?2
-                                                AND EXISTS (SELECT p from WeblogPermission p where
+                                                AND EXISTS (SELECT p from WeblogUserPermission p where
                                                         p.website = w
                                                         AND p.user = ?3
                                                         AND p.pending = ?4 )</query>
@@ -121,7 +121,7 @@
 		</named-query>
 		<named-query name="Weblog.getByEndDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
 			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
-                                                AND EXISTS (SELECT p from WeblogPermission p where
+                                                AND EXISTS (SELECT p from WeblogUserPermission p where
                                                         p.website = w
                                                         AND p.user = ?2
                                                         AND p.pending = ?3 )
@@ -239,7 +239,7 @@
 			<many-to-one name="defaultCategory" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
 				<join-column name="defaultcatid" insertable="true" updatable="true"/>
 			</many-to-one>
-			<one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.weblogger.pojos.WeblogPermission" fetch="LAZY">
+			<one-to-many name="permissions" mapped-by="website" target-entity="org.apache.roller.weblogger.pojos.WeblogUserPermission" fetch="LAZY">
 			</one-to-many>
 			<transient name="absoluteURL"/>
 			<transient name="adminUserCount"/>

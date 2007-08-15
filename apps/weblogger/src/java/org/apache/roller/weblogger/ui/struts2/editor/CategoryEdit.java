@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -54,7 +54,7 @@ public class CategoryEdit extends UIAction {
     
     // author perms required
     public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+        return WeblogUserPermission.AUTHOR;
     }
     
     

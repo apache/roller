@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -59,7 +59,7 @@ public final class EntryAdd extends EntryBase {
     
     @Override
     public short requiredWeblogPermissions() {
-        return WeblogPermission.LIMITED;
+        return WeblogUserPermission.LIMITED;
     }
     
     
@@ -72,7 +72,7 @@ public final class EntryAdd extends EntryBase {
     public String execute() {
         
         // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
-        if(getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
+        if(getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogUserPermission.AUTHOR)) {
             getBean().setStatus(WeblogEntry.PUBLISHED);
         } else {
             getBean().setStatus(WeblogEntry.PENDING);
@@ -123,7 +123,7 @@ public final class EntryAdd extends EntryBase {
                 }
                 
                 // if user does not have author perms then force PENDING status
-                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
+                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogUserPermission.AUTHOR)) {
                     entry.setStatus(WeblogEntry.PENDING);
                 }
             }

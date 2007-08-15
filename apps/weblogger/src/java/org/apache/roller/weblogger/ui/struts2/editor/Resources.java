@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.business.FilePathException;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
@@ -82,7 +82,7 @@ public final class Resources extends UIAction {
     
     // requires author role
     public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+        return WeblogUserPermission.AUTHOR;
     }
     
     

@@ -24,7 +24,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -55,7 +55,7 @@ public class MembersInvite extends UIAction {
     
     // admin perms required
     public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+        return WeblogUserPermission.ADMIN;
     }
     
     
@@ -110,7 +110,7 @@ public class MembersInvite extends UIAction {
         
         // check for existing permissions or invitation
         try {
-            WeblogPermission perms = umgr.getPermissions(getActionWeblog(), user);
+            WeblogUserPermission perms = umgr.getPermissions(getActionWeblog(), user);
             
             if (perms != null && perms.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");

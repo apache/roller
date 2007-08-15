@@ -205,7 +205,7 @@ public class JPAUserManagerImpl implements UserManager {
         // remove permissions
         // make sure that both sides of the relationship are maintained
         for (Iterator iterator = website.getPermissions().iterator(); iterator.hasNext();) {
-            WeblogPermission perms = (WeblogPermission) iterator.next();
+            WeblogUserPermission perms = (WeblogUserPermission) iterator.next();
             
             //Remove it from website
             iterator.remove();
@@ -248,7 +248,7 @@ public class JPAUserManagerImpl implements UserManager {
         //remove permissions
         // make sure that both sides of the relationship are maintained
         for (Iterator iterator = user.getPermissions().iterator(); iterator.hasNext();) {
-            WeblogPermission perms = (WeblogPermission) iterator.next();
+            WeblogUserPermission perms = (WeblogUserPermission) iterator.next();
             //Remove it from database
             this.strategy.remove(perms);
             //Remove it from website
@@ -264,7 +264,7 @@ public class JPAUserManagerImpl implements UserManager {
         this.userNameToIdMap.remove(user.getUserName());
     }
     
-    public void savePermissions(WeblogPermission perms)
+    public void savePermissions(WeblogUserPermission perms)
     throws WebloggerException {
         if (getPermissions(perms.getId()) == null) { 
             // This is a new object make sure that relationship is set on managed
@@ -278,7 +278,7 @@ public class JPAUserManagerImpl implements UserManager {
         this.strategy.store(perms);
     }
     
-    public void removePermissions(WeblogPermission perms)
+    public void removePermissions(WeblogUserPermission perms)
     throws WebloggerException {
         this.strategy.remove(perms);
         // make sure that relationship is set on managed
@@ -350,11 +350,11 @@ public class JPAUserManagerImpl implements UserManager {
     throws WebloggerException {
         
         // grant weblog creator ADMIN permissions
-        WeblogPermission perms = new WeblogPermission();
+        WeblogUserPermission perms = new WeblogUserPermission();
         perms.setUser(newWeblog.getCreator());
         perms.setWebsite(newWeblog);
         perms.setPending(false);
-        perms.setPermissionMask(WeblogPermission.ADMIN);
+        perms.setPermissionMask(WeblogUserPermission.ADMIN);
         savePermissions(perms);
         
         // add default category
@@ -436,16 +436,16 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     /**
-     * Creates and stores a pending WeblogPermission for user and website specified.
+     * Creates and stores a pending WeblogUserPermission for user and website specified.
      * TODO BACKEND: do we really need this?  can't we just use storePermissions()?
      */
-    public WeblogPermission inviteUser(Weblog website,
+    public WeblogUserPermission inviteUser(Weblog website,
             User user, short mask) throws WebloggerException {
         
         if (website == null) throw new WebloggerException("Website cannot be null");
         if (user == null) throw new WebloggerException("User cannot be null");
         
-        WeblogPermission perms = new WeblogPermission();
+        WeblogUserPermission perms = new WeblogUserPermission();
         perms.setWebsite(website);
         perms.setUser(user);
         perms.setPermissionMask(mask);
@@ -465,9 +465,9 @@ public class JPAUserManagerImpl implements UserManager {
         if (user == null) throw new WebloggerException("User cannot be null");
         
         Iterator perms = website.getPermissions().iterator();
-        WeblogPermission target = null;
+        WeblogUserPermission target = null;
         while (perms.hasNext()) {
-            WeblogPermission pd = (WeblogPermission)perms.next();
+            WeblogUserPermission pd = (WeblogUserPermission)perms.next();
             if (pd.getUser().getId().equals(user.getId())) {
                 target = pd;
                 break;
@@ -597,7 +597,7 @@ public class JPAUserManagerImpl implements UserManager {
         }      
         /*if (user != null) { // Toplink likes sub-selects    
             if (whereClause.length() > 0) whereClause.append(" AND ");
-            whereClause.append(" EXISTS (SELECT p from WeblogPermission p WHERE p.website = w ");
+            whereClause.append(" EXISTS (SELECT p from WeblogUserPermission p WHERE p.website = w ");
             params.add(size++, user);         
             whereClause.append("    AND p.user = ?" + size);
             params.add(size++, Boolean.FALSE);
@@ -953,23 +953,23 @@ public class JPAUserManagerImpl implements UserManager {
         return q.getResultList();
     }
     
-    public WeblogPermission getPermissions(String inviteId)
+    public WeblogUserPermission getPermissions(String inviteId)
     throws WebloggerException {
-        return (WeblogPermission)this.strategy.load(
-                WeblogPermission.class, inviteId);
+        return (WeblogUserPermission)this.strategy.load(
+                WeblogUserPermission.class, inviteId);
     }
     
     /**
      * Return permissions for specified user in website
      */
-    public WeblogPermission getPermissions(
+    public WeblogUserPermission getPermissions(
             Weblog website, User user) throws WebloggerException {
         Query q = strategy.getNamedQuery(
-                "WeblogPermission.getByWebsiteAndUser");
+                "WeblogUserPermission.getByWebsiteAndUser");
         q.setParameter(1, website);
         q.setParameter(2, user);
         try {
-            return (WeblogPermission)q.getSingleResult();
+            return (WeblogUserPermission)q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -980,7 +980,7 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public List getPendingPermissions(User user) throws WebloggerException {
         Query q = strategy.getNamedQuery(
-                "WeblogPermission.getByUserAndPending");
+                "WeblogUserPermission.getByUserAndPending");
         q.setParameter(1, user);
         q.setParameter(2, Boolean.TRUE);
         return q.getResultList();
@@ -991,7 +991,7 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public List getPendingPermissions(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery(
-                "WeblogPermission.getByWebsiteAndPending");
+                "WeblogUserPermission.getByWebsiteAndPending");
         q.setParameter(1, website);
         q.setParameter(2, Boolean.TRUE);
         return q.getResultList();
@@ -1002,7 +1002,7 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public List getAllPermissions(Weblog website) throws WebloggerException {
         Query q = strategy.getNamedQuery(
-                "WeblogPermission.getByWebsiteAndPending");
+                "WeblogUserPermission.getByWebsiteAndPending");
         q.setParameter(1, website);
         q.setParameter(2, Boolean.FALSE);
         return q.getResultList();
@@ -1013,7 +1013,7 @@ public class JPAUserManagerImpl implements UserManager {
      */
     public List getAllPermissions(User user) throws WebloggerException {
         Query q = strategy.getNamedQuery(
-                "WeblogPermission.getByUserAndPending");
+                "WeblogUserPermission.getByUserAndPending");
         q.setParameter(1, user);
         q.setParameter(2, Boolean.FALSE);
         return q.getResultList();        

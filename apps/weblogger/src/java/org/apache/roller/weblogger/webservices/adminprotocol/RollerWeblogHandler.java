@@ -33,7 +33,7 @@ import org.jdom.Document;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -314,7 +314,7 @@ class RollerWeblogHandler extends Handler {
             User ud = uds[i];
             List permissions = ud.getPermissions();
             for (Iterator j = permissions.iterator(); j.hasNext(); ) {
-                WeblogPermission pd = (WeblogPermission)j.next();
+                WeblogUserPermission pd = (WeblogUserPermission)j.next();
                 Weblog wd = pd.getWebsite();
                 WeblogEntry we = toWeblogEntry(wd);
                 entries.add(we);

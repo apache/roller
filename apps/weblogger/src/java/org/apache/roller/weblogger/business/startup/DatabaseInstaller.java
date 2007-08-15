@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 
 
 /**
@@ -367,7 +367,7 @@ public class DatabaseInstaller {
                 permsInsert.setString( 1, websiteid+"p");
                 permsInsert.setString( 2, websiteid);
                 permsInsert.setString( 3, userid);
-                permsInsert.setShort(    4,WeblogPermission.ADMIN);
+                permsInsert.setShort(    4,WeblogUserPermission.ADMIN);
                 permsInsert.setBoolean(5, false);
                 permsInsert.executeUpdate();
             }

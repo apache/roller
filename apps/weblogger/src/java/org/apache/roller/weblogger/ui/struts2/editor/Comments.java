@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -85,7 +85,7 @@ public class Comments extends UIAction {
     
     @Override
     public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+        return WeblogUserPermission.AUTHOR;
     }
     
     

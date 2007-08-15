@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
@@ -69,7 +69,7 @@ public class Entries extends UIAction {
     
     @Override
     public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+        return WeblogUserPermission.AUTHOR;
     }
     
     

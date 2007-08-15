@@ -1120,10 +1120,10 @@ public class WeblogEntry implements Serializable {
         
         boolean author = getWebsite().hasUserPermissions(
                 
-                user,(short)(WeblogPermission.AUTHOR));
+                user,(short)(WeblogUserPermission.AUTHOR));
         boolean limited = getWebsite().hasUserPermissions(
                 
-                user,(short)(WeblogPermission.LIMITED));
+                user,(short)(WeblogUserPermission.LIMITED));
         
         if (author || (limited && isDraft()) || (limited && isPending())) {
             return true;

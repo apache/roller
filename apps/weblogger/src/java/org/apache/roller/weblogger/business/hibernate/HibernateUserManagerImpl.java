@@ -53,7 +53,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
@@ -212,7 +212,7 @@ public class HibernateUserManagerImpl implements UserManager {
         // remove permissions
         List permissions = this.getAllPermissions(website);
         for (Iterator iter = permissions.iterator(); iter.hasNext(); ) {
-            this.removePermissions((WeblogPermission) iter.next());
+            this.removePermissions((WeblogUserPermission) iter.next());
         }
         
         // remove uploaded files
@@ -231,11 +231,11 @@ public class HibernateUserManagerImpl implements UserManager {
         this.userNameToIdMap.remove(user.getUserName());
     }
         
-    public void savePermissions(WeblogPermission perms) throws WebloggerException {
+    public void savePermissions(WeblogUserPermission perms) throws WebloggerException {
         this.strategy.store(perms);
     }
         
-    public void removePermissions(WeblogPermission perms) throws WebloggerException {
+    public void removePermissions(WeblogUserPermission perms) throws WebloggerException {
         
         // make sure associations are broken
         perms.getWebsite().getPermissions().remove(perms);
@@ -304,11 +304,11 @@ public class HibernateUserManagerImpl implements UserManager {
         WeblogManager wmgr = roller.getWeblogManager();
         
         // grant weblog creator ADMIN permissions
-        WeblogPermission perms = new WeblogPermission();
+        WeblogUserPermission perms = new WeblogUserPermission();
         perms.setUser(newWeblog.getCreator());
         perms.setWebsite(newWeblog);
         perms.setPending(false);
-        perms.setPermissionMask(WeblogPermission.ADMIN);
+        perms.setPermissionMask(WeblogUserPermission.ADMIN);
         this.strategy.store(perms);
         
         // add default category
@@ -390,13 +390,13 @@ public class HibernateUserManagerImpl implements UserManager {
      * Creates and stores a pending PermissionsData for user and website specified.
      * TODO BACKEND: do we really need this?  can't we just use storePermissions()?
      */
-    public WeblogPermission inviteUser(Weblog website,
+    public WeblogUserPermission inviteUser(Weblog website,
             User user, short mask) throws WebloggerException {
         
         if (website == null) throw new WebloggerException("Website cannot be null");
         if (user == null) throw new WebloggerException("User cannot be null");
         
-        WeblogPermission perms = new WeblogPermission();
+        WeblogUserPermission perms = new WeblogUserPermission();
         perms.setWebsite(website);
         perms.setUser(user);
         perms.setPermissionMask(mask);
@@ -420,9 +420,9 @@ public class HibernateUserManagerImpl implements UserManager {
         if (user == null) throw new WebloggerException("User cannot be null");
         
         Iterator perms = website.getPermissions().iterator();
-        WeblogPermission target = null;
+        WeblogUserPermission target = null;
         while (perms.hasNext()) {
-            WeblogPermission pd = (WeblogPermission)perms.next();
+            WeblogUserPermission pd = (WeblogUserPermission)perms.next();
             if (pd.getUser().getId().equals(user.getId())) {
                 target = pd;
                 break;
@@ -774,24 +774,24 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    public WeblogPermission getPermissions(String inviteId) throws WebloggerException {
-        return (WeblogPermission)this.strategy.load(inviteId,WeblogPermission.class);
+    public WeblogUserPermission getPermissions(String inviteId) throws WebloggerException {
+        return (WeblogUserPermission)this.strategy.load(inviteId,WeblogUserPermission.class);
     }
     
     /**
      * Return permissions for specified user in website
      */
-    public WeblogPermission getPermissions(
+    public WeblogUserPermission getPermissions(
             Weblog website, User user) throws WebloggerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogPermission.class);
+            Criteria criteria = session.createCriteria(WeblogUserPermission.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("user", user));
             
             List list = criteria.list();
-            return list.size()!=0 ? (WeblogPermission)list.get(0) : null;
+            return list.size()!=0 ? (WeblogUserPermission)list.get(0) : null;
         } catch (HibernateException e) {
             throw new WebloggerException(e);
         }
@@ -804,7 +804,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogPermission.class);
+            Criteria criteria = session.createCriteria(WeblogUserPermission.class);
             criteria.add(Expression.eq("user", user));
             criteria.add(Expression.eq("pending", Boolean.TRUE));
             
@@ -821,7 +821,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogPermission.class);
+            Criteria criteria = session.createCriteria(WeblogUserPermission.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("pending", Boolean.TRUE));
             
@@ -838,7 +838,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogPermission.class);
+            Criteria criteria = session.createCriteria(WeblogUserPermission.class);
             criteria.add(Expression.eq("website", website));
             criteria.add(Expression.eq("pending", Boolean.FALSE));
             
@@ -855,7 +855,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogPermission.class);
+            Criteria criteria = session.createCriteria(WeblogUserPermission.class);
             criteria.add(Expression.eq("user", user));
             criteria.add(Expression.eq("pending", Boolean.FALSE));
             

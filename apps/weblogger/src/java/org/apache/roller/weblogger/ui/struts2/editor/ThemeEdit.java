@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -69,7 +69,7 @@ public class ThemeEdit extends UIAction {
     
     
     public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+        return WeblogUserPermission.ADMIN;
     }
     
     

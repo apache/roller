@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.jdom.Document;
@@ -195,11 +195,11 @@ public class MenuHelper {
         if(perm == null) {
             return true;
         } else if("limited".equals(perm)) {
-            permMask = WeblogPermission.LIMITED;
+            permMask = WeblogUserPermission.LIMITED;
         } else if("author".equals(perm)) {
-            permMask = WeblogPermission.AUTHOR;
+            permMask = WeblogUserPermission.AUTHOR;
         } else if("admin".equals(perm)) {
-            permMask = WeblogPermission.ADMIN;
+            permMask = WeblogUserPermission.ADMIN;
         } else {
             // unknown perm
             return false;

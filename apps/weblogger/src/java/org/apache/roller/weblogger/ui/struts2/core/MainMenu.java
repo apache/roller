@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -63,7 +63,7 @@ public class MainMenu extends UIAction {
         
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission perms = userMgr.getPermissions(getInviteId());
+            WeblogUserPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {        
                 // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
                 // TODO EXCEPTIONS: better exception handling
@@ -89,7 +89,7 @@ public class MainMenu extends UIAction {
         
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission perms = userMgr.getPermissions(getInviteId());
+            WeblogUserPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {
                 // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
                 // TODO EXCEPTIONS: better exception handling here
@@ -119,7 +119,7 @@ public class MainMenu extends UIAction {
             Weblog website = mgr.getWebsite(getWebsiteId());
             
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission perms = userMgr.getPermissions(website, user);
+            WeblogUserPermission perms = userMgr.getPermissions(website, user);
             
             if (perms != null) {
                 // TODO ROLLER_2.0: notify website members that user has resigned

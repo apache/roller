@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.User;
@@ -324,7 +324,7 @@ public class SiteModel implements Model {
             User user = umgr.getUserByUserName(userName);
             List perms = umgr.getAllPermissions(user);
             for (Iterator it = perms.iterator(); it.hasNext();) {
-                WeblogPermission perm = (WeblogPermission) it.next();
+                WeblogUserPermission perm = (WeblogUserPermission) it.next();
                 results.add(WeblogWrapper.wrap(perm.getWebsite(), urlStrategy));
             }
         } catch (Exception e) {
@@ -345,7 +345,7 @@ public class SiteModel implements Model {
             Weblog website = umgr.getWebsiteByHandle(handle);
             List perms = umgr.getAllPermissions(website);
             for (Iterator it = perms.iterator(); it.hasNext();) {
-                WeblogPermission perm = (WeblogPermission) it.next();
+                WeblogUserPermission perm = (WeblogUserPermission) it.next();
                 results.add(UserWrapper.wrap(perm.getUser()));
             }
         } catch (Exception e) {

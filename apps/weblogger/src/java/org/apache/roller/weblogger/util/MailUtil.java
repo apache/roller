@@ -45,7 +45,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -105,7 +105,7 @@ public class MailUtil {
                 User websiteUser = (User)websiteUserIter.next();
                 if (entry.getWebsite().hasUserPermissions(
                         
-                        websiteUser,WeblogPermission.AUTHOR)
+                        websiteUser,WeblogUserPermission.AUTHOR)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
                 }
