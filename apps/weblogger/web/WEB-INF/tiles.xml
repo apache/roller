@@ -71,7 +71,7 @@
     
     <!-- error pages -->
     <definition name=".denied" extends=".tiles-errorpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/errors/denied.jsp" />
+        <put-attribute name="content" value="/errors/denied.jsp" />
     </definition>
     
         
