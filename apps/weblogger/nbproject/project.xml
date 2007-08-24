@@ -4,7 +4,7 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
-            <name>roller_weblogger_usermanagement</name>
+            <name>roller_weblogger_4.1_dev</name>
             <properties>
                 <property name="ant.script">build.xml</property>
             </properties>
@@ -122,7 +122,6 @@
                 <doc-root>web</doc-root>
                 <context-path>/roller</context-path>
                 <j2ee-spec-level>1.5</j2ee-spec-level>
-                <web-inf>web/WEB-INF</web-inf>
             </web-module>
         </web-data>
     </configuration>
