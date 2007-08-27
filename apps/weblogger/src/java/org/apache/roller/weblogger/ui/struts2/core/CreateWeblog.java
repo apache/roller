@@ -128,8 +128,7 @@ public class CreateWeblog extends UIAction {
             
             try {
                 // add weblog and flush
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                mgr.addWebsite(wd);
+                WebloggerFactory.getWeblogger().getWeblogManager().addWebsite(wd);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // tell the user their weblog was created
@@ -166,8 +165,8 @@ public class CreateWeblog extends UIAction {
         
         // make sure handle isn't already taken
         if(!StringUtils.isEmpty(getBean().getHandle())) try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            if (mgr.getWebsiteByHandle(getBean().getHandle()) != null) {
+            if (WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getWebsiteByHandle(getBean().getHandle()) != null) {
                 addError("createWeblog.error.handleExists");
                 // reset handle
                 getBean().setHandle(null);

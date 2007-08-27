@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -180,7 +181,7 @@ public final class TestUtils {
         testWeblog.setCreator(creator);
         
         // add weblog
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         mgr.addWebsite(testWeblog);
         
         // flush to db
@@ -202,7 +203,7 @@ public final class TestUtils {
     public static void teardownWeblog(String id) throws Exception {
         
         // lookup the weblog
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         Weblog weblog = mgr.getWebsite(id);
         
         // remove the weblog
@@ -238,7 +239,7 @@ public final class TestUtils {
                                                          WeblogCategory parent)
             throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogCategory root = mgr.getRootWeblogCategory(weblog);
         
         WeblogCategory catParent = root;
@@ -267,7 +268,7 @@ public final class TestUtils {
     public static void teardownWeblogCategory(String id) throws Exception {
         
         // lookup the cat
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogCategory cat = mgr.getWeblogCategory(id);
         
         // remove the cat
@@ -300,7 +301,7 @@ public final class TestUtils {
         testEntry.setCategory(cat);
         
         // store entry
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         mgr.saveWeblogEntry(testEntry);
         
         // flush to db
@@ -322,7 +323,7 @@ public final class TestUtils {
     public static void teardownWeblogEntry(String id) throws Exception {
         
         // lookup the entry
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry = mgr.getWeblogEntry(id);
         
         // remove the entry
@@ -350,7 +351,7 @@ public final class TestUtils {
         testComment.setStatus(WeblogEntryComment.APPROVED);
         
         // store testComment
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         mgr.saveComment(testComment);
         
         // flush to db
@@ -372,7 +373,7 @@ public final class TestUtils {
     public static void teardownComment(String id) throws Exception {
         
         // lookup the comment
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntryComment comment = mgr.getComment(id);
         
         // remove the comment
@@ -475,7 +476,7 @@ public final class TestUtils {
     public static WeblogHitCount setupHitCount(Weblog weblog, int amount)
             throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         // store
         WeblogHitCount testCount = new WeblogHitCount();
@@ -502,7 +503,7 @@ public final class TestUtils {
     public static void teardownHitCount(String id) throws Exception {
         
         // query for it
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogHitCount testCount = mgr.getHitCount(id);
         
         // remove
@@ -573,16 +574,14 @@ public final class TestUtils {
      * Convenience method that returns managed copy of given website.
      */
     public static Weblog getManagedWebsite(Weblog website) throws WebloggerException {
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        return mgr.getWebsite(website.getId());
+        return WebloggerFactory.getWeblogger().getWeblogManager().getWebsite(website.getId());
     }
     
     /**
      * Convenience method that returns managed copy of given WeblogEntry.
      */
     public static WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) throws WebloggerException {
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        return mgr.getWeblogEntry(weblogEntry.getId());
+        return WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntry(weblogEntry.getId());
     }
     
 }

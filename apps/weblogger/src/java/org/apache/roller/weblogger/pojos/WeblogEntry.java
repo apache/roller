@@ -48,7 +48,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.util.UUIDGenerator;
@@ -712,7 +712,7 @@ public class WeblogEntry implements Serializable {
             }
         }
 
-        WeblogManager weblogManager = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager weblogManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         for (Iterator it = removeTags.iterator(); it.hasNext();) {
             weblogManager.removeWeblogEntryTag((String) it.next(), this);
         }
@@ -855,7 +855,7 @@ public class WeblogEntry implements Serializable {
     public List getComments(boolean ignoreSpam, boolean approvedOnly) {
         List list = new ArrayList();
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             return wmgr.getComments(
                     getWebsite(),
                     this,
@@ -977,7 +977,7 @@ public class WeblogEntry implements Serializable {
     
     /** Create anchor for weblog entry, based on title or text */
     protected String createAnchor() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().createAnchor(this);
+        return WebloggerFactory.getWeblogger().getWeblogEntryManager().createAnchor(this);
     }
     
     /** Create anchor for weblog entry, based on title or text */

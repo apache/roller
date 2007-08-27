@@ -28,6 +28,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -116,10 +117,11 @@ public class BaseAPIHandler implements Serializable {
         User user = null;
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
             user = userMgr.getUserByUserName(username);
             userEnabled = user.getEnabled().booleanValue();
             
-            website = userMgr.getWebsiteByHandle(blogid);
+            website = weblogMgr.getWebsiteByHandle(blogid);
             if (website != null) {
                 weblogFound = true;
                 weblogEnabled = website.getEnabled().booleanValue();

@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.pojos;
 
 /**
- *
+ * 
  */
 public class GlobalPermission extends RollerPermission {
     

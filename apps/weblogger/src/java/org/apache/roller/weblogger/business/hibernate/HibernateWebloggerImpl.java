@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
@@ -64,6 +65,7 @@ public class HibernateWebloggerImpl extends WebloggerImpl {
         ThreadManager        threadManager,
         UserManager          userManager,
         WeblogManager        weblogManager,
+        WeblogEntryManager   weblogEntryManager,
         URLStrategy          urlStrategy) throws WebloggerException {
         
         super(
@@ -81,6 +83,7 @@ public class HibernateWebloggerImpl extends WebloggerImpl {
             threadManager,
             userManager,
             weblogManager,
+            weblogEntryManager,
             urlStrategy);
         
         this.strategy = strategy;

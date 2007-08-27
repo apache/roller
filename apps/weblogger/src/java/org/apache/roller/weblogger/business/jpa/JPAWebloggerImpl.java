@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerImpl;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
@@ -72,6 +73,7 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         ThreadManager        threadManager,
         UserManager          userManager,
         WeblogManager        weblogManager,
+        WeblogEntryManager   weblogEntryManager,
         URLStrategy          urlStrategy) throws WebloggerException {
         
         super(
@@ -89,6 +91,7 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             threadManager,
             userManager,
             weblogManager,
+            weblogEntryManager,
             urlStrategy);
         
         this.strategy = strategy;

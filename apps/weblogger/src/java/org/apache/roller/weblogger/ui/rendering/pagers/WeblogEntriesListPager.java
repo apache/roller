@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -105,7 +105,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogManager wmgr = roller.getWeblogManager();
+                WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 UserManager umgr = roller.getUserManager();
                 List rawEntries = wmgr.getWeblogEntries(
                         

@@ -33,6 +33,7 @@ import org.jdom.Document;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -199,7 +200,7 @@ class RollerWeblogHandler extends Handler {
                     log.error("ERROR setting default editor page for weblog", ex);
                 }
                 
-                mgr.addWebsite(wd);
+                WebloggerFactory.getWeblogger().getWeblogManager().addWebsite(wd);
                 getRoller().flush();
                 CacheManager.invalidate(wd);
                 websiteDatas.add(wd);
@@ -249,8 +250,7 @@ class RollerWeblogHandler extends Handler {
         }
         
         try {
-            UserManager mgr = getRoller().getUserManager();
-            mgr.saveWebsite(wd);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(wd);
             getRoller().flush();
             CacheManager.invalidate(wd);
         } catch (WebloggerException re) {
@@ -262,13 +262,12 @@ class RollerWeblogHandler extends Handler {
         String handle = getUri().getEntryId();
         
         try {
-            UserManager mgr = getRoller().getUserManager();
             
             Weblog wd = getWebsiteData(handle);
             Weblog[] wds = new Weblog[] { wd };
             EntrySet es = toWeblogEntrySet(wds);
             
-            mgr.removeWebsite(wd);
+            WebloggerFactory.getWeblogger().getWeblogManager().removeWebsite(wd);
             getRoller().flush();
             CacheManager.invalidate(wd);
             

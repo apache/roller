@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -126,7 +126,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
         log.debug("task started");
         
         try {
-            WeblogManager wMgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             IndexManager searchMgr = WebloggerFactory.getWeblogger().getIndexManager();
             
             Date now = new Date();

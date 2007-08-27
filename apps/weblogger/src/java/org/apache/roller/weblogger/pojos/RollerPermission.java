@@ -21,7 +21,7 @@ package org.apache.roller.weblogger.pojos;
 import java.security.Permission;
 
 /**
- * Base permission class for Roller.
+ * Base permission class for Roller. 
  */
 public class RollerPermission extends java.security.Permission {
     

@@ -77,7 +77,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
 
         // update weblog last modified date (date is updated by saveWebsite())
-        roller.getUserManager().
+        roller.getWeblogManager().
             saveWebsite(bookmark.getWebsite());
     }
 
@@ -91,7 +91,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         //Remove the bookmark from its parent folder
         bookmark.getFolder().getBookmarks().remove(bookmark);
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager()
+        roller.getWeblogManager()
                 .saveWebsite(bookmark.getWebsite());
     }
 
@@ -113,7 +113,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager().saveWebsite(folder.getWebsite());
+        roller.getWeblogManager().saveWebsite(folder.getWebsite());
     }
 
     public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
@@ -124,7 +124,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         }
 
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager().
+        roller.getWeblogManager().
             saveWebsite(folder.getWebsite());
     }
     

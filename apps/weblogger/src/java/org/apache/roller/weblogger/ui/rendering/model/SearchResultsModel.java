@@ -36,7 +36,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
@@ -168,7 +168,7 @@ public class SearchResultsModel extends PageModel {
         try {
             TreeSet categories = new TreeSet();
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             
             WeblogEntry entry = null;
             Document doc = null;

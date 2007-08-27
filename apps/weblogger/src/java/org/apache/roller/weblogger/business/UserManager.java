@@ -22,14 +22,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
 /**
- * Manages users, weblogs, permissions, and weblog pages.
+ * Interface to user, role and permissions management.
  */
 public interface UserManager {
     
@@ -152,99 +151,6 @@ public interface UserManager {
         throws WebloggerException;
     
     
-    /**
-     * Add new website, give creator admin permission, creates blogroll,
-     * creates categories and other objects required for new website.
-     * @param newWebsite New website to be created, must have creator.
-     */
-    public void addWebsite(Weblog newWebsite) throws WebloggerException;
-    
-    
-    /**
-     * Store a single weblog.
-     */
-    public void saveWebsite(Weblog data) throws WebloggerException;
-    
-    
-    /**
-     * Remove website object.
-     */
-    public void removeWebsite(Weblog website) throws WebloggerException;
-    
-    
-    /**
-     * Get website object by name.
-     */
-    public Weblog getWebsite(String id) throws WebloggerException;
-    
-    
-    /**
-     * Get website specified by handle (or null if enabled website not found).
-     * @param handle  Handle of website
-     */
-    public Weblog getWebsiteByHandle(String handle) throws WebloggerException;
-    
-    
-    /**
-     * Get website specified by handle with option to return only enabled websites.
-     * @param handle  Handle of website
-     */
-    public Weblog getWebsiteByHandle(String handle, Boolean enabled)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get websites optionally restricted by user, enabled and active status.
-     * @param user    Get all websites for this user (or null for all)
-     * @param offset  Offset into results (for paging)
-     * @param len     Maximum number of results to return (for paging)
-     * @param enabled Get all with this enabled state (or null or all)
-     * @param active  Get all with this active state (or null or all)
-     * @param startDate Restrict to those created after (or null for all)
-     * @param endDate Restrict to those created before (or null for all)
-     * @returns List of WebsiteData objects.
-     */
-    public List getWebsites(
-            User user,
-            Boolean  enabled,
-            Boolean  active,
-            Date     startDate,
-            Date     endDate,
-            int      offset,
-            int      length)
-            throws WebloggerException;
-    
-    
-    /**
-     * Get websites ordered by descending number of comments.
-     * @param startDate Restrict to those created after (or null for all)
-     * @param endDate Restrict to those created before (or null for all)
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
-     * @returns List of WebsiteData objects.
-     */
-    public List getMostCommentedWebsites(
-            Date startDate,
-            Date endDate,
-            int  offset,
-            int  length)
-            throws WebloggerException;
-    
-    
-    /**
-     * Get map with 26 entries, one for each letter A-Z and
-     * containing integers reflecting the number of weblogs whose
-     * names start with each letter.
-     */
-    public Map getWeblogHandleLetterMap() throws WebloggerException;
-    
-    
-    /** 
-     * Get collection of weblogs whose handles begin with specified letter 
-     */
-    public List getWeblogsByLetter(char letter, int offset, int length) 
-        throws WebloggerException;
-    
     
     /**
      * Save permissions object.
@@ -333,55 +239,7 @@ public interface UserManager {
      */
     public void revokeRole(String roleName, User user)
         throws WebloggerException;
-
-    /**
-     * Store page.
-     */
-    public void savePage(WeblogTemplate data) throws WebloggerException;
     
-    
-    /**
-     * Remove page.
-     */
-    public void removePage(WeblogTemplate page) throws WebloggerException;
-    
-    
-    /**
-     * Get page by id.
-     */
-    public WeblogTemplate getPage(String id) throws WebloggerException;
-    
-    
-    /**
-     * Get user's page by action.
-     */
-    public WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
-    
-    
-    /**
-     * Get user's page by name.
-     */
-    public WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
-    
-    
-    /**
-     * Get website's page by link.
-     */
-    public WeblogTemplate getPageByLink(Weblog w, String p)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get website's pages
-     */
-    public List getPages(Weblog w) throws WebloggerException;
-   
-    
-    /**
-     * Get count of active weblogs
-     */    
-    public long getWeblogCount() throws WebloggerException;
-
     
     /**
      * Get count of enabled users
@@ -402,14 +260,4 @@ public interface UserManager {
      * @throws WebloggerException
      */
     public User getUserByActivationCode(String activationCode) throws WebloggerException;
-    
-    /**
-     * get a user by password request code
-     * @param passwordRequestCode
-     * @return
-     * @throws WebloggerException
-     */
-    //public User getUserByPasswordRequestCode(String passwordRequestCode) throws WebloggerException;
-
-
 }

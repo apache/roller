@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -78,7 +78,7 @@ public final class EntryEdit extends EntryBase {
     public void myPrepare() {
         if(getBean().getId() != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 setEntry(wmgr.getWeblogEntry(getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - "+getBean().getId(), ex);
@@ -124,7 +124,7 @@ public final class EntryEdit extends EntryBase {
         }
         
         if(!hasActionErrors()) try {
-            WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             WeblogEntry entry = getEntry();
             
@@ -283,7 +283,7 @@ public final class EntryEdit extends EntryBase {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             return wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);

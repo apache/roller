@@ -69,7 +69,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager().saveWebsite(bookmark.getWebsite());
+        roller.getWeblogManager().saveWebsite(bookmark.getWebsite());
     }
     
     
@@ -86,7 +86,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         //Now remove it from database
         this.strategy.remove(bookmark);
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager().saveWebsite(bookmark.getWebsite());
+        roller.getWeblogManager().saveWebsite(bookmark.getWebsite());
     }
     
     
@@ -100,7 +100,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(folder);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager().saveWebsite(folder.getWebsite());
+        roller.getWeblogManager().saveWebsite(folder.getWebsite());
     }
     
     
@@ -109,7 +109,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         this.strategy.remove(folder);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getUserManager().saveWebsite(folder.getWebsite());
+        roller.getWeblogManager().saveWebsite(folder.getWebsite());
     }
     
     

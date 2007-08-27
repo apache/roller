@@ -97,7 +97,8 @@ public class WeblogTest extends TestCase {
         
         try {
         
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+
             Weblog weblog = null;
 
             Weblog testWeblog = new Weblog();
@@ -167,7 +168,8 @@ public class WeblogTest extends TestCase {
         Weblog testWeblog1 = null;
         Weblog testWeblog2 = null;
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+
             Weblog weblog = null;
             
             // add test weblogs

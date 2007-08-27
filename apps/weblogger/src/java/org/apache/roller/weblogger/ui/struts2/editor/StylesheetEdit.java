@@ -74,8 +74,8 @@ public class StylesheetEdit extends UIAction {
         if(stylesheet != null) {
             log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                setTemplate(mgr.getPageByLink(getActionWeblog(), stylesheet.getLink()));
+                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getPageByLink(getActionWeblog(), stylesheet.getLink()));
                 
                 if(getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
@@ -93,7 +93,7 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setLastModified(new Date());
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
                     
-                    mgr.savePage(stylesheetTmpl);
+                    WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();
                     
                     setTemplate(stylesheetTmpl);
@@ -139,8 +139,7 @@ public class StylesheetEdit extends UIAction {
             stylesheet.setContents(getContents());
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            mgr.savePage(stylesheet);
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches
@@ -189,8 +188,7 @@ public class StylesheetEdit extends UIAction {
             stylesheet.setContents(theme.getStylesheet().getContents());
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            mgr.savePage(stylesheet);
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches

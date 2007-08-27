@@ -64,6 +64,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -203,7 +204,7 @@ public class RollerAtomHandler implements AtomHandler {
                     Categories cats = new Categories();
                     cats.setFixed(true);
                     cats.setScheme(getWeblogCategoryScheme(perm.getWebsite()));
-                    List rollerCats = roller.getWeblogManager().getWeblogCategories(perm.getWebsite(), false);
+                    List rollerCats = roller.getWeblogEntryManager().getWeblogCategories(perm.getWebsite(), false);
                     for (Iterator it = rollerCats.iterator(); it.hasNext();) {
                         WeblogCategory rollerCat = (WeblogCategory)it.next();
                         Category cat = new Category();
@@ -312,14 +313,14 @@ public class RollerAtomHandler implements AtomHandler {
             }        
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            Weblog website = roller.getUserManager().getWebsiteByHandle(handle);
+            Weblog website = roller.getWeblogManager().getWebsiteByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find specified weblog");
             }
             if (!canView(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            List entries = entries = roller.getWeblogManager().getWeblogEntries( 
+            List entries = entries = roller.getWeblogEntryManager().getWeblogEntries( 
                     website,           // website
                     null,              // user
                     null,              // startDate
@@ -411,7 +412,7 @@ public class RollerAtomHandler implements AtomHandler {
             
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            Weblog website = roller.getUserManager().getWebsiteByHandle(handle);
+            Weblog website = roller.getWeblogManager().getWebsiteByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find weblog: " + handle);
             }
@@ -503,7 +504,7 @@ public class RollerAtomHandler implements AtomHandler {
             // authenticated client posted a weblog entry
             String handle = pathInfo[0];
             Weblog website = 
-                roller.getUserManager().getWebsiteByHandle(handle);
+                roller.getWeblogManager().getWebsiteByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find weblog: " + handle);
             }
@@ -514,7 +515,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (throttle) oneSecondThrottle();
             
             // Save it and commit it
-            WeblogManager mgr = roller.getWeblogManager();
+            WeblogEntryManager mgr = roller.getWeblogEntryManager();
             WeblogEntry rollerEntry = new WeblogEntry();
             rollerEntry.setWebsite(website);
             rollerEntry.setCreator(this.user);
@@ -545,7 +546,7 @@ public class RollerAtomHandler implements AtomHandler {
             {
                 if (pathInfo[1].equals("entry")) {
                     WeblogEntry entry = 
-                        roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
+                        roller.getWeblogEntryManager().getWeblogEntry(pathInfo[2]);
                     if (entry == null) {
                         throw new AtomNotFoundException("Cannot find specified entry/resource");
                     }
@@ -559,7 +560,7 @@ public class RollerAtomHandler implements AtomHandler {
                     filePath = filePath.substring(0, filePath.length() - ".media-link".length());
                     String handle = pathInfo[0];
                     Weblog website = 
-                        roller.getUserManager().getWebsiteByHandle(handle);                    
+                        roller.getWeblogManager().getWebsiteByHandle(handle);                    
                     ThemeResource resource = 
                         roller.getFileManager().getFile(website, filePath);
                     
@@ -583,8 +584,7 @@ public class RollerAtomHandler implements AtomHandler {
             File tempFile = null;
             String handle = pathInfo[0];
             FileManager fmgr = roller.getFileManager();
-            UserManager umgr = roller.getUserManager();
-            Weblog website = umgr.getWebsiteByHandle(handle);
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle(handle);
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -615,7 +615,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (pathInfo.length == 3) // URI is /blogname/entries/entryid
             {
                 WeblogEntry rollerEntry =
-                    roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
+                    roller.getWeblogEntryManager().getWeblogEntry(pathInfo[2]);
                 if (rollerEntry == null) {
                     throw new AtomNotFoundException(
                         "Cannot find specified entry/resource");  
@@ -624,7 +624,7 @@ public class RollerAtomHandler implements AtomHandler {
             
                     if (throttle) oneSecondThrottle();
                     
-                    WeblogManager mgr = roller.getWeblogManager();
+                    WeblogEntryManager mgr = roller.getWeblogEntryManager();
                     copyToRollerEntry(entry, rollerEntry);
                     mgr.saveWeblogEntry(rollerEntry);
                     roller.flush();
@@ -654,12 +654,12 @@ public class RollerAtomHandler implements AtomHandler {
             if (pathInfo.length > 2) {
                 if (pathInfo[1].equals("entry")) // URI is /blogname/entry/entryid
                 {                    
-                    WeblogEntry rollerEntry = roller.getWeblogManager().getWeblogEntry(pathInfo[2]);
+                    WeblogEntry rollerEntry = roller.getWeblogEntryManager().getWeblogEntry(pathInfo[2]);
                     if (rollerEntry == null) {
                         throw new AtomNotFoundException("cannot find specified entry/resource");
                     }
                     if (canEdit(rollerEntry)) {
-                        WeblogManager mgr = roller.getWeblogManager();                                                
+                        WeblogEntryManager mgr = roller.getWeblogEntryManager();                                                
                         CacheManager.invalidate(rollerEntry.getWebsite());                        
                         reindexEntry(rollerEntry);
                         mgr.removeWeblogEntry(rollerEntry);
@@ -669,7 +669,7 @@ public class RollerAtomHandler implements AtomHandler {
                     } 
                 } else if (pathInfo[1].equals("resource")) {
                     String handle = pathInfo[0];
-                    Weblog website = roller.getUserManager().getWebsiteByHandle(handle);
+                    Weblog website = roller.getWeblogManager().getWebsiteByHandle(handle);
                     if (website == null) {
                         throw new AtomNotFoundException("cannot find specified weblog");
                     }
@@ -714,8 +714,7 @@ public class RollerAtomHandler implements AtomHandler {
             File tempFile = null;
             String handle = pathInfo[0];
             FileManager fmgr = roller.getFileManager();
-            UserManager umgr = roller.getUserManager();
-            Weblog website = umgr.getWebsiteByHandle(handle);
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle(handle);
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -841,8 +840,8 @@ public class RollerAtomHandler implements AtomHandler {
             File tempFile = null;
             String handle = pathInfo[0];
             FileManager fmgr = roller.getFileManager();
-            UserManager umgr = roller.getUserManager();
-            Weblog website = umgr.getWebsiteByHandle(handle);
+            WeblogManager wmgr = roller.getWeblogManager();
+            Weblog website = wmgr.getWebsiteByHandle(handle);
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -1234,7 +1233,7 @@ public class RollerAtomHandler implements AtomHandler {
                     String catString = cat.getTerm();
                     if (catString != null) {
                         WeblogCategory rollerCat =
-                                roller.getWeblogManager().getWeblogCategoryByPath(
+                                roller.getWeblogEntryManager().getWeblogCategoryByPath(
                                 rollerEntry.getWebsite(), catString);
                         if (rollerCat != null) {
                             // Found a valid category, so break out

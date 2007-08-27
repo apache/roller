@@ -78,7 +78,7 @@ public class RollerResourceLoader extends ResourceLoader {
         
         try {
             WeblogTemplate page = 
-                    WebloggerFactory.getWeblogger().getUserManager().getPage(name);
+                    WebloggerFactory.getWeblogger().getWeblogManager().getPage(name);
             
             if (page == null) {
                 throw new ResourceNotFoundException(
@@ -116,7 +116,7 @@ public class RollerResourceLoader extends ResourceLoader {
         String name = resource.getName();
         try {
             WeblogTemplate page = 
-                    WebloggerFactory.getWeblogger().getUserManager().getPage(name);
+                    WebloggerFactory.getWeblogger().getWeblogManager().getPage(name);
             
             if (mLogger.isDebugEnabled()) {
                 mLogger.debug(name + ": resource=" + resource.getLastModified() +

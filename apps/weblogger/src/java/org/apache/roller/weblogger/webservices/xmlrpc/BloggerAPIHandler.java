@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -85,7 +85,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     UserId: " + userid);
         
         Weblogger roller = WebloggerFactory.getWeblogger();
-        WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
         // Return false if entry not found
@@ -142,12 +142,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         }
         
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            UserManager userMgr = roller.getUserManager();
-            
-            WeblogTemplate page = userMgr.getPage(templateType);
+            WeblogTemplate page = WebloggerFactory.getWeblogger().getWeblogManager().getPage(templateType);
             page.setContents(templateData);
-            userMgr.savePage(page);
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage(page);
             flushPageCache(page.getWebsite());
             
             return true;
@@ -183,9 +180,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         validate(blogid, userid,password);
         
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            UserManager userMgr = roller.getUserManager();
-            WeblogTemplate page = userMgr.getPage(templateType);
+            WeblogTemplate page = WebloggerFactory.getWeblogger().getWeblogManager().getPage(templateType);
             
             if ( null == page ) {
                 throw new XmlRpcException(UNKNOWN_EXCEPTION,"Template not found");
@@ -280,7 +275,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 User user = umgr.getUserByUserName(userid);
                 // get list of user's enabled websites
-                List websites = umgr.getWebsites(user, Boolean.TRUE, null, null, null, 0, -1);
+                List websites = WebloggerFactory.getWeblogger().getWeblogManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, -1);
                 Iterator iter = websites.iterator();
                 while (iter.hasNext()) {
                     Weblog website = (Weblog)iter.next();
@@ -328,7 +323,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 Timestamp current = new Timestamp(System.currentTimeMillis());
                 
                 Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogManager weblogMgr = roller.getWeblogManager();
+                WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
                 WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
                 entry.setText(content);
                 entry.setUpdateTime(current);
@@ -396,7 +391,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             
             Timestamp current = new Timestamp(System.currentTimeMillis());
             
@@ -462,7 +457,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             Vector results = new Vector();
             
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
                 Map entries = weblogMgr.getWeblogEntryObjectMap(
                         website,                // website

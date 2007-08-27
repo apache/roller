@@ -109,7 +109,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         if (entries == null) {
             entries = new TreeMap(new ReverseComparator());
             try {
-                Map mmap = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntryObjectMap(
+                Map mmap = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
                         
                         weblog,
                         startDate,

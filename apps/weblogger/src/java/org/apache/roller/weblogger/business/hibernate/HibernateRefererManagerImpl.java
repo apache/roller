@@ -47,7 +47,7 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.dialect.Dialect;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.util.LinkbackExtractor;
 import org.apache.roller.weblogger.util.Utilities;
@@ -531,14 +531,12 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         // lookup the weblog now
         try {
-            UserManager userMgr = roller.getUserManager();
-            weblog = userMgr.getWebsiteByHandle(weblogHandle);
+            weblog = roller.getWeblogManager().getWebsiteByHandle(weblogHandle);
             if (weblog == null) return;
             
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
-                WeblogManager weblogMgr = roller.getWeblogManager();
-                entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                entry = roller.getWeblogEntryManager().getWeblogEntryByAnchor(weblog, entryAnchor);
             }
         } catch (WebloggerException re) {
             // problem looking up website, gotta bail

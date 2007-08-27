@@ -65,8 +65,7 @@ public class TemplateEdit extends UIAction {
     
     public void myPrepare() {
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            setTemplate(mgr.getPage(getBean().getId()));
+            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getBean().getId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template - "+getBean().getId(), ex);
         }
@@ -129,8 +128,7 @@ public class TemplateEdit extends UIAction {
             }
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            mgr.savePage(template);
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage(template);
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches
@@ -154,8 +152,7 @@ public class TemplateEdit extends UIAction {
         // if name changed make sure there isn't a conflict
         if(!getTemplate().getName().equals(getBean().getName())) {
             try {
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                if(umgr.getPageByName(getActionWeblog(), getBean().getName()) != null) {
+                if(WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(getActionWeblog(), getBean().getName()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getName());
                 }
             } catch (WebloggerException ex) {
@@ -167,8 +164,7 @@ public class TemplateEdit extends UIAction {
         if(!StringUtils.isEmpty(getBean().getLink()) &&
                 !getBean().getLink().equals(getTemplate().getLink())) {
             try {
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                if(umgr.getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
+                if(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(), getBean().getLink()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getLink());
                 }
             } catch (WebloggerException ex) {

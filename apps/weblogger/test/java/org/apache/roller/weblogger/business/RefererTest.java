@@ -252,11 +252,10 @@ public class RefererTest extends TestCase {
         assertEquals(count, refs.size());
         String origWords = null;
         
-        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         origWords = testWeblog.getBlacklist();
         testWeblog.setBlacklist("test");
-        umgr.saveWebsite(testWeblog);
+        WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(testWeblog);
         TestUtils.endSession(true);
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
