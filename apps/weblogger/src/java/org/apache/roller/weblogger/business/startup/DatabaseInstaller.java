@@ -240,7 +240,11 @@ public class DatabaseInstaller {
                 upgradeTo400(con, runScripts);
                 dbversion = 400;
             }
-
+            if(dbversion < 410) {
+                upgradeTo410(con, runScripts);
+                dbversion = 410;
+            }
+            
             // make sure the database version is the exact version
             // we are upgrading too.
             updateDatabaseVersion(con, myVersion);
@@ -1073,6 +1077,16 @@ public class DatabaseInstaller {
     }
     
     
+    /**
+     * Upgrade database for Roller 4.1.0
+     */
+    private void upgradeTo410(Connection con, boolean runScripts) throws StartupException {
+        
+        // nothing to do here yet...
+        
+    }
+
+
     /**
      * Use database product name to get the database script directory name.
      */

@@ -38,7 +38,7 @@
     </p>
     <p><s:text name="installer.upgradeTables" /></p>
 
-    <s:form action="upgradeDatabase!upgrade">
+    <s:form action="install!upgrade">
         <s:submit key="installer.yesUpgradeTables" />
     </s:form>
 
@@ -50,7 +50,7 @@
     <p><s:text name="installer.tablesUpgradedExplanation" /></p>
     <p>
         <s:text name="installer.tryBootstrapping">
-            <s:param><s:url value="/"/></s:param>
+            <s:param><s:url action="install!bootstrap"/></s:param>
         </s:text>
     </p>
     

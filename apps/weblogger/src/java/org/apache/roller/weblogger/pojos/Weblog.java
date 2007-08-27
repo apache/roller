@@ -1197,7 +1197,7 @@ public class Weblog implements Serializable {
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getPopularTags(this, startDate, length);
+            results = wmgr.getPopularTags(this, startDate, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }

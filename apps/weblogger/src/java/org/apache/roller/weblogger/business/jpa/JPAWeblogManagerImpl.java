@@ -1227,7 +1227,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @inheritDoc
      */
-    public List getPopularTags(Weblog website, Date startDate, int limit)
+    public List getPopularTags(Weblog website, Date startDate, int offset, int limit)
     throws WebloggerException {
         Query query = null;
         List queryResults = null;
@@ -1254,6 +1254,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 query = strategy.getNamedQuery(
                         "WeblogEntryTagAggregate.getPopularTagsByWebsiteNull");
             }
+        }
+        if (offset != 0) {
+            query.setFirstResult(offset);
         }
         if (limit != -1) {
             query.setMaxResults(limit);
@@ -1296,7 +1299,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * @inheritDoc
      */
     public List getTags(Weblog website, String sortBy,
-            String startsWith, int limit) throws WebloggerException {
+            String startsWith, int offset, int limit) throws WebloggerException {
         Query query = null;
         List queryResults = null;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
@@ -1328,6 +1331,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         query = strategy.getDynamicQuery(queryString.toString());
         for (int i=0; i<params.size(); i++) {
             query.setParameter(i+1, params.get(i));
+        }
+        if (offset != 0) {
+            query.setFirstResult(offset);
         }
         if (limit != -1) {
             query.setMaxResults(limit);

@@ -1181,7 +1181,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     /* (non-Javadoc)
      * @see org.apache.roller.weblogger.model.WeblogManager#getPopularTags(org.apache.roller.weblogger.pojos.WebsiteData, java.util.Date, int)
      */
-    public List getPopularTags(Weblog website, Date startDate, int limit)
+    public List getPopularTags(Weblog website, Date startDate, int offset, int limit)
             throws WebloggerException {
         try {
             Session session = ((HibernatePersistenceStrategy) strategy)
@@ -1205,6 +1205,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             queryString.append("group by name, total order by total desc");
 
             Query query = session.createQuery(queryString.toString());
+            if (offset != 0) 
+                query.setFirstResult(offset);
             if (limit > 0)
                 query.setMaxResults(limit);
 
@@ -1256,7 +1258,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
      * @see org.apache.roller.weblogger.model.WeblogManager#getTags(org.apache.roller.weblogger.pojos.WebsiteData,
      *      java.lang.String, java.lang.String, int)
      */
-    public List getTags(Weblog website, String sortBy, String startsWith, int limit) throws WebloggerException {    
+    public List getTags(Weblog website, String sortBy, String startsWith, int offset, int limit) throws WebloggerException {    
         try {
             List results = new ArrayList();
 
@@ -1282,6 +1284,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             queryString.append("group by name, total order by " + sortBy);
 
             Query query = session.createQuery(queryString.toString());
+            if (offset != 0) 
+                query.setFirstResult(offset);
             if (limit > 0)
                 query.setMaxResults(limit);
 

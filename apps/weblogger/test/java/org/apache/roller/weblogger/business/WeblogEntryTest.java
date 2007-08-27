@@ -724,15 +724,15 @@ public class WeblogEntryTest extends TestCase {
             // let's make sure we are starting from scratch
 
             // site-wide
-            List tags = mgr.getTags(null, null, null, -1);
+            List tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // first weblog
-            tags = mgr.getTags(testWeblog, null, null, -1);
+            tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // second weblog
-            tags = mgr.getTags(testWeblog2, null, null, -1);
+            tags = mgr.getTags(testWeblog2, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // setup some test entries to use
@@ -752,7 +752,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            tags = mgr.getTags(testWeblog, null, null, -1);
+            tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
             HashMap expectedWeblogTags = new HashMap();
@@ -782,7 +782,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             // let's fetch "site" tags now
-            tags = mgr.getTags(null, null, null, -1);
+            tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(4, tags.size());
 
             HashMap expectedSiteTags = new HashMap();
@@ -814,7 +814,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            tags = mgr.getTags(testWeblog, null, null, -1);
+            tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(4, tags.size());
 
             expectedWeblogTags = new HashMap();
@@ -834,7 +834,7 @@ public class WeblogEntryTest extends TestCase {
                         expectedCount.intValue(), stat.getCount());
             }
 
-            tags = mgr.getTags(null, null, null, -1);
+            tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(5, tags.size());
 
             expectedSiteTags = new HashMap();
@@ -878,15 +878,15 @@ public class WeblogEntryTest extends TestCase {
         // let's make sure we are starting from scratch
 
         // site-wide
-        List tags = mgr.getTags(null, null, null, -1);
+        List tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // first weblog
-        tags = mgr.getTags(testWeblog, null, null, -1);
+        tags = mgr.getTags(testWeblog, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // second weblog
-        tags = mgr.getTags(testWeblog2, null, null, -1);
+        tags = mgr.getTags(testWeblog2, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // setup some test entries to use
@@ -899,7 +899,7 @@ public class WeblogEntryTest extends TestCase {
 
         TestUtils.endSession(true);
 
-        tags = mgr.getTags(testWeblog, null, null, -1);
+        tags = mgr.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
         HashMap expectedWeblogTags = new HashMap();
@@ -925,7 +925,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // let's fetch "site" tags now
-        tags = mgr.getTags(null, null, null, -1);
+        tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
 
         HashMap expectedSiteTags = new HashMap();

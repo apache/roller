@@ -134,7 +134,7 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         
         // remove site tag aggregates
-        List tags = wmgr.getTags(website, null, null, -1);
+        List tags = wmgr.getTags(website, null, null, 0, -1);
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
             TagStat stat = (TagStat) iter.next();
             Query query = session.createQuery("update WeblogEntryTagAggregate set total = total - ? where name = ? and weblog is null");

@@ -190,6 +190,6 @@ public interface URLStrategy {
     /**
      * Get url to JSON tags service url, optionally for a given weblog.
      */
-    public String getWeblogTagsJsonURL(Weblog weblog, boolean absolute);
+    public String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum);
     
 }

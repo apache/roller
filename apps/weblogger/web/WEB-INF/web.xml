@@ -304,8 +304,8 @@
     </servlet>
     
     <servlet>
-        <servlet-name>TagStatsServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.json.TagStatsServlet</servlet-class>
+        <servlet-name>TagDataServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.tagdata.TagDataServlet</servlet-class>
     </servlet>
     
     
@@ -415,8 +415,8 @@
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>TagStatsServlet</servlet-name>
-        <url-pattern>/roller-services/json/tags/*</url-pattern>
+        <servlet-name>TagDataServlet</servlet-name>
+        <url-pattern>/roller-services/tagdata/*</url-pattern>
     </servlet-mapping>
     
     <!-- Redirect Support for pre-3.0 urls -->

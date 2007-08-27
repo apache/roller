@@ -207,7 +207,7 @@ public abstract class EntryBase extends UIAction {
     
     
     public String getJsonAutocompleteUrl() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false, 0);
     }
     
 }

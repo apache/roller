@@ -334,22 +334,27 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
      * Get url to JSON tags service url, optionally for a given weblog.
      */
     public String getWeblogTagsJsonURL(Weblog weblog,
-                                                    boolean absolute) {
+                                                    boolean absolute,
+                                                    int pageNum) {
         
         StringBuffer url = new StringBuffer();
         
-        if(absolute) {
+        if (absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         // json tags service base
-        url.append("/roller-services/json/tags/");
+        url.append("/roller-services/tagdata/weblog/");
         
         // is this for a specific weblog or site-wide?
-        if(weblog != null) {
+        if (weblog != null) {
             url.append(weblog.getHandle()).append("/");
+        }
+        
+        if (pageNum > 0) {
+            url.append("?page=" + pageNum);
         }
         
         return url.toString();

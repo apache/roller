@@ -363,7 +363,7 @@ public interface WeblogManager {
      * @return
      * @throws WebloggerException
      */
-    public List getPopularTags(Weblog website, Date startDate, int limit)
+    public List getPopularTags(Weblog website, Date startDate, int offset, int limit)
             throws WebloggerException;
     
     /**
@@ -375,7 +375,7 @@ public interface WeblogManager {
      * @return
      * @throws WebloggerException
      */
-    public List getTags(Weblog website, String sortBy, String startsWith, int limit)
+    public List getTags(Weblog website, String sortBy, String startsWith, int offset, int limit)
             throws WebloggerException;    
     
     /**

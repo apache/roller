@@ -119,7 +119,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         // remove site tag aggregates
-        List tags = wmgr.getTags(website, null, null, -1);
+        List tags = wmgr.getTags(website, null, null, 0, -1);
         updateTagAggregates(tags);
         
         // delete all weblog tag aggregates

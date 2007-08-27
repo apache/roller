@@ -561,7 +561,7 @@ public class SiteModel implements Model {
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getPopularTags(null, startDate, length);
+            results = wmgr.getPopularTags(null, startDate, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching site tags list", e);
         }
