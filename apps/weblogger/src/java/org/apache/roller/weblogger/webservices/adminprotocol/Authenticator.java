@@ -55,7 +55,7 @@ abstract class Authenticator {
             throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
         }
         
-        if (!ud.hasRole("admin")) {
+        if (!WebloggerFactory.getWeblogger().getUserManager().hasRole(ud, "admin")) {
             throw new UnauthorizedException("ERROR: User must have the admin role to use the RAP endpoint: " + userName);
         }
         if (!ud.getEnabled().booleanValue()) {

@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Locale;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -155,7 +156,7 @@ public class CreateUserBean {
         this.enabled = dataHolder.getEnabled();
         this.activationCode = dataHolder.getActivationCode();
         
-        this.administrator = dataHolder.hasRole("admin");
+        this.administrator =  WebloggerFactory.getWeblogger().getUserManager().hasRole(dataHolder, "admin");
     }
     
 }

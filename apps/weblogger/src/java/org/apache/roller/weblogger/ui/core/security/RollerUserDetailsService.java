@@ -23,10 +23,10 @@ public class RollerUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) 
         throws UsernameNotFoundException, DataAccessException {
         
+        Weblogger roller = WebloggerFactory.getWeblogger();
+        UserManager umgr = roller.getUserManager();
         User userData = null;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            UserManager umgr = roller.getUserManager();
             userData = umgr.getUserByUserName(userName, Boolean.TRUE); 
         } catch (WebloggerException ex) {
             throw new DataRetrievalFailureException("ERROR in user lookup", ex);
@@ -37,9 +37,9 @@ public class RollerUserDetailsService implements UserDetailsService {
         }
         
         GrantedAuthority[] authorities = 
-            new GrantedAuthorityImpl[userData.getRoles().size()];
+            new GrantedAuthorityImpl[umgr.getRoles(userData).size()];
         int i = 0;
-        for (Iterator it = userData.getRoles().iterator(); it.hasNext();) {
+        for (Iterator it = umgr.getRoles(userData).iterator(); it.hasNext();) {
             UserRole role = (UserRole)it.next();
             authorities[i++] = new GrantedAuthorityImpl(role.getRole());
         }

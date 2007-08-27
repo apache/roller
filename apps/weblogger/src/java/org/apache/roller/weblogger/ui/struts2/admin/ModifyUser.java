@@ -130,7 +130,7 @@ public class ModifyUser extends UIAction {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 
                 // grant/revoke admin role if needed
-                if (getUser().hasRole("admin") && !getBean().isAdministrator()) {
+                if (mgr.hasRole(getUser(), "admin") && !getBean().isAdministrator()) {
                     
                     if (!isUserEditingSelf()) {
                         // revoke role
@@ -139,11 +139,11 @@ public class ModifyUser extends UIAction {
                         addError("userAdmin.cantChangeOwnRole");
                     }
                     
-                } else if(!getUser().hasRole("admin") && getBean().isAdministrator()) {
+                } else if(!mgr.hasRole(getUser(), "admin") && getBean().isAdministrator()) {
                     
                     if (!isUserEditingSelf()) {
                         // grant role
-                        getUser().grantRole("admin");
+                        mgr.grantRole(getUser(), "admin");
                     } else {
                         addError("userAdmin.cantChangeOwnRole"); 
                     }

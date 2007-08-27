@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
 
-import org.apache.roller.weblogger.pojos.StatCount;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -38,28 +38,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.SimpleExpression;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.AutoPing;
-import org.apache.roller.weblogger.pojos.WeblogBookmark;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
-import org.apache.roller.weblogger.pojos.PingQueueEntry;
-import org.apache.roller.weblogger.pojos.PingTarget;
-import org.apache.roller.weblogger.pojos.WeblogReferrer;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.UserRole;
 import org.hibernate.Query;
@@ -136,9 +118,9 @@ public class HibernateUserManagerImpl implements UserManager {
             throw new WebloggerException("error.add.user.userNameInUse");
         }
         
-        newUser.grantRole("editor");
+        grantRole(newUser, "editor");
         if(adminUser) {
-            newUser.grantRole("admin");
+            grantRole(newUser, "admin");
             
             //if user was disabled (because of activation user account with e-mail property), 
             //enable it for admin user
@@ -526,11 +508,37 @@ public class HibernateUserManagerImpl implements UserManager {
         website.removePermission(target);
         this.strategy.remove(target);
     }
-        
+    
+    
+    /**
+     * Returns true if user has role specified.
+     */
+    public boolean hasRole(User user, String roleName) {
+        Iterator iter = user.getRoles().iterator();
+        while (iter.hasNext()) {
+            UserRole role = (UserRole) iter.next();
+            if (role.getRole().equals(roleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    public Set getRoles(User user) {
+        return user.getRoles();
+    }
+    
+     
+    /**
+     * Grant to user role specified by role name.
+     */
+    public void grantRole(User user, String roleName) throws WebloggerException {
+        if (!hasRole(user, roleName)) {
+            UserRole role = new UserRole(null, user, roleName);
+            user.getRoles().add(role);
+            role.setUser(user);
+        }
+    }
 }
-
-
-
-
-
 

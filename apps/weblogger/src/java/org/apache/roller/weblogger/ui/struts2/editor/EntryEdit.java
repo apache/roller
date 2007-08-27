@@ -149,7 +149,7 @@ public final class EntryEdit extends EntryBase {
             }
             
             // if user is an admin then apply pinned to main value as well
-            if(getAuthenticatedUser().hasRole("admin")) {
+            if(WebloggerFactory.getWeblogger().getUserManager().hasRole(getAuthenticatedUser(), "admin")) {
                 entry.setPinnedToMain(getBean().getPinnedToMain());
             }
             

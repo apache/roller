@@ -295,34 +295,7 @@ public class User implements Serializable {
      */
     private void setRoles(Set roles) {
         this.roles = roles;
-    }
-    
-    
-    /**
-     * Returns true if user has role specified.
-     */
-    public boolean hasRole(String roleName) {
-        Iterator iter = getRoles().iterator();
-        while (iter.hasNext()) {
-            UserRole role = (UserRole) iter.next();
-            if (role.getRole().equals(roleName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Grant to user role specified by role name.
-     */
-    public void grantRole(String roleName) throws WebloggerException {
-        if (!hasRole(roleName)) {
-            UserRole role = new UserRole(null, this, roleName);
-            getRoles().add(role);
-            role.setUser(this);
-        }
-    }
-    
+    }   
     
     
     //------------------------------------------------------- Good citizenship

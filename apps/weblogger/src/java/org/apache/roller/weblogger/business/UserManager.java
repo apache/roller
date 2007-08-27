@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -260,4 +261,22 @@ public interface UserManager {
      * @throws WebloggerException
      */
     public User getUserByActivationCode(String activationCode) throws WebloggerException;
+    
+        
+    /**
+     * Returns true if user has role specified.
+     */
+    public boolean hasRole(User user, String roleName);
+    
+    
+    /**
+     * Returns set of user's roles.
+     */
+    public Set getRoles(User user);
+    
+    
+    /**
+     * Grant role to user by name.
+     */
+    public void grantRole(User user, String roleName) throws WebloggerException;
 }

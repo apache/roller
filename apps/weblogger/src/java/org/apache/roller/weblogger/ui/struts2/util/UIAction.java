@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
@@ -96,7 +97,7 @@ public abstract class UIAction extends ActionSupport
     
     // convenient way to tell if user being dealt with is an admin
     public boolean isUserIsAdmin() {
-        return getAuthenticatedUser().hasRole("admin");
+        return WebloggerFactory.getWeblogger().getUserManager().hasRole(getAuthenticatedUser(), "admin");
     }
     
     

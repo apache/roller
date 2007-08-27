@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.util.MediacastResource;
 import org.apache.roller.weblogger.util.MediacastUtil;
@@ -102,6 +103,7 @@ public final class EntryAdd extends EntryBase {
     public String save() {
         
         if(!hasActionErrors()) try {
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             WeblogEntry entry = new WeblogEntry();
@@ -129,7 +131,7 @@ public final class EntryAdd extends EntryBase {
             }
             
             // if user is an admin then apply pinned to main value as well
-            if(getAuthenticatedUser().hasRole("admin")) {
+            if (userMgr.hasRole(getAuthenticatedUser(), "admin")) {
                 entry.setPinnedToMain(getBean().getPinnedToMain());
             }
             

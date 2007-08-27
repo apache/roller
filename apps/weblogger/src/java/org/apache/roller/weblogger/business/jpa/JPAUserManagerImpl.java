@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Set;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.Weblogger;
 
@@ -144,9 +145,9 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("error.add.user.userNameInUse");
         }
         
-        newUser.grantRole("editor");
+        grantRole(newUser, "editor");
         if(adminUser) {
-            newUser.grantRole("admin");
+            grantRole(newUser, "admin");
         }
         
         this.strategy.store(newUser);
@@ -577,5 +578,37 @@ public class JPAUserManagerImpl implements UserManager {
         return (WeblogUserPermission)this.strategy.load(
                 WeblogUserPermission.class, inviteId);
     }
+    
+    
+    /**
+     * Returns true if user has role specified.
+     */
+    public boolean hasRole(User user, String roleName) {
+        Iterator iter = user.getRoles().iterator();
+        while (iter.hasNext()) {
+            UserRole role = (UserRole) iter.next();
+            if (role.getRole().equals(roleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    public Set getRoles(User user) {
+        return user.getRoles();
+    }
+    
+    /**
+     * Grant to user role specified by role name.
+     */
+    public void grantRole(User user, String roleName) throws WebloggerException {
+        if (!hasRole(user, roleName)) {
+            UserRole role = new UserRole(null, user, roleName);
+            user.getRoles().add(role);
+            role.setUser(user);
+        }
+    }
 }
+
 

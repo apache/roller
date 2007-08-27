@@ -98,7 +98,7 @@ public class CreateUser extends UIAction {
             
             // are we granting the user admin rights?
             if(((CreateUserBean)getBean()).isAdministrator()) {
-                newUser.grantRole("admin");
+                mgr.grantRole(newUser, "admin");
             }
             
             // save new user

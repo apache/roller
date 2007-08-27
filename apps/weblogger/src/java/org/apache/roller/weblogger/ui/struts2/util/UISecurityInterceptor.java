@@ -22,6 +22,7 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 
@@ -59,7 +60,7 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                 
                 // are we also enforcing a specific role?
                 if(theAction.requiredUserRole() != null) {
-                    if(!authenticatedUser.hasRole(theAction.requiredUserRole())) {
+                    if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(authenticatedUser, theAction.requiredUserRole())) {
                         log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
                         return "access-denied";
                     }

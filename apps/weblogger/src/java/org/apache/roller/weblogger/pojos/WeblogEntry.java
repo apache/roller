@@ -1114,7 +1114,7 @@ public class WeblogEntry implements Serializable {
     public boolean hasWritePermissions(User user) throws WebloggerException {
         
         // global admins can hack whatever they want
-        if(user.hasRole("admin")) {
+        if(WebloggerFactory.getWeblogger().getUserManager().hasRole(user, "admin")) {
             return true;
         }
         

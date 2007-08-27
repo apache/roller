@@ -186,9 +186,9 @@ public class UserTest extends TestCase {
         // verify user has 2 roles, admin & editor
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertEquals(2, user.getRoles().size());
-        assertTrue(user.hasRole("editor"));
-        assertTrue(user.hasRole("admin"));
+        assertEquals(2, mgr.getRoles(user).size());
+        assertTrue(mgr.hasRole(user,"editor"));
+        assertTrue(mgr.hasRole(user,"admin"));
         
         // remove role
         mgr.revokeRole("admin",user);
@@ -199,12 +199,12 @@ public class UserTest extends TestCase {
         user = null;
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertEquals(1, user.getRoles().size());
-        assertTrue(user.hasRole("editor"));
-        assertFalse(user.hasRole("admin"));
+        assertEquals(1, mgr.getRoles(user).size());
+        assertTrue(mgr.hasRole(user,"editor"));
+        assertFalse(mgr.hasRole(user,"admin"));
         
         // add role
-        user.grantRole("admin");
+        mgr.grantRole(user, "admin");
         mgr.saveUser(user);
         TestUtils.endSession(true);
         
@@ -212,9 +212,9 @@ public class UserTest extends TestCase {
         user = null;
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertEquals(2, user.getRoles().size());
-        assertTrue(user.hasRole("editor"));
-        assertTrue(user.hasRole("admin"));
+        assertEquals(2, mgr.getRoles(user).size());
+        assertTrue(mgr.hasRole(user,"editor"));
+        assertTrue(mgr.hasRole(user,"admin"));
         
         // remove test user
         TestUtils.teardownUser(testUser.getId());

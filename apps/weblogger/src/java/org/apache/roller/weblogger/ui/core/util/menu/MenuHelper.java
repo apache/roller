@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
@@ -106,7 +107,7 @@ public class MenuHelper {
             if(includeTab) {
                 // user roles check
                 if(configTab.getRole() != null) {
-                    if(!user.hasRole(configTab.getRole())) {
+                    if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(user, configTab.getRole())) {
                         includeTab = false;
                     }
                 }
@@ -143,7 +144,7 @@ public class MenuHelper {
                     if(includeItem) {
                         // user roles check
                         if(configTabItem.getRole() != null) {
-                            if(!user.hasRole(configTabItem.getRole())) {
+                            if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(user, configTabItem.getRole())) {
                                 includeItem = false;
                             }
                         }
