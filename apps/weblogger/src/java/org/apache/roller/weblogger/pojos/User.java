@@ -279,25 +279,6 @@ public class User implements Serializable {
     }
     
     
-    /**
-     * The set of roles for this user.
-     *
-     * @hibernate.set lazy="true" inverse="true" cascade="all"
-     * @hibernate.collection-key column="userid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.UserRole"
-     */
-    public Set getRoles() {
-        return roles;
-    }
-    
-    /**
-     * this is private to force the use of grant/revokeRole() methods.
-     */
-    private void setRoles(Set roles) {
-        this.roles = roles;
-    }   
-    
-    
     //------------------------------------------------------- Good citizenship
     
     public String toString() {

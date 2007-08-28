@@ -21,24 +21,29 @@ package org.apache.roller.weblogger.business;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.RollerPermission;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
  * Interface to user, role and permissions management.
  */
 public interface UserManager {
+        
+    
+    //--------------------------------------------------------------- user CRUD
+    
     
     /**
      * Add a new user.
      * 
      * This method is used to provide supplemental data to new user accounts,
-     * such as adding the proper roles for the user.  This method should see
-     * if the new user is the first user and give that user the admin role if so.
+     * such as adding the proper roles for the user.  This method should see if
+     * the new user is the first user and give that user the admin role if so.
      *
      * @param newUser User object to be added.
      * @throws WebloggerException If there is a problem.
@@ -72,6 +77,25 @@ public interface UserManager {
      * @throws WebloggerException If there is a problem.
      */
     public User getUser(String id) throws WebloggerException;
+    
+    
+    /**
+     * Get count of enabled users
+     */    
+    public long getUserCount() throws WebloggerException; 
+    
+    
+    /**
+     * get a user by activation code
+     * @param activationCode
+     * @return
+     * @throws WebloggerException
+     */
+    public User getUserByActivationCode(String activationCode) 
+            throws WebloggerException;
+    
+          
+    //------------------------------------------------------------ user queries
     
     
     /**
@@ -151,24 +175,64 @@ public interface UserManager {
     public List getUsersByLetter(char letter, int offset, int length) 
         throws WebloggerException;
     
+        
+    //-------------------------------------------------------- permissions CRUD
+
+    
+    /**
+     * Return true if user has permission specified.
+     */
+    public boolean checkPermission(RollerPermission perm, User user) 
+            throws WebloggerException;
+
+    
+    /**
+     * Grant permission to user.
+     */
+    public void grantWeblogPermission(WeblogPermission perm, User user) 
+            throws WebloggerException;
+    
+    
+    /**
+     * Revoke permssion from user.
+     */
+    public void revokeWeblogPermission(WeblogPermission perm, User user) 
+            throws WebloggerException;
+
+    
+    /**
+     * Get all of user's weblog permissions.
+     */
+    public List<WeblogPermission> getWeblogPermssions(User user) 
+            throws WebloggerException;
+    
+    
+    /**
+     * Get all permissions associated with a weblog.
+     */
+    public List<WeblogPermission> getWeblogPermssions(Weblog weblog) 
+            throws WebloggerException;
     
     
     /**
      * Save permissions object.
      */
-    public void savePermissions(WeblogUserPermission perms) throws WebloggerException;
+    public void savePermissions(WeblogUserPermission perms) 
+            throws WebloggerException;
     
     
     /**
      * Remove permissions object.
      */
-    public void removePermissions(WeblogUserPermission perms) throws WebloggerException;
+    public void removePermissions(WeblogUserPermission perms) 
+            throws WebloggerException;
     
     
     /**
      * Get permissions object by id.
      */
-    public WeblogUserPermission getPermissions(String id) throws WebloggerException;
+    public WeblogUserPermission getPermissions(String id) 
+            throws WebloggerException;
     
     
     /**
@@ -220,8 +284,8 @@ public interface UserManager {
      * @param perms   Permissions mask (see statics in PermissionsData)
      * @return        New PermissionsData object, with pending=true
      */
-    public WeblogUserPermission inviteUser(Weblog website, User user, short perms)
-        throws WebloggerException;
+    public WeblogUserPermission inviteUser(Weblog website, User user, short perms) 
+            throws WebloggerException;
     
     
     /**
@@ -229,54 +293,41 @@ public interface UserManager {
      * @param website Website to be retired from (persistent instance)
      * @param user    User to be retired (persistent instance)
      */
-    public void retireUser(Weblog website, User user)
-        throws WebloggerException;
+    public void retireUser(Weblog website, User user) throws WebloggerException;    
     
+
+    //--------------------------------------------------------------- role CRUD
+
     
     /**
-     * Revoke role of user
-     * @param roleName Name of the role to be revoked
-     * @param user    User for whom the role is to be revoked
+     * Grant role to user.
      */
-    public void revokeRole(String roleName, User user)
-        throws WebloggerException;
+    public void grantRole(String roleName, User user) throws WebloggerException;
     
     
     /**
-     * Get count of enabled users
-     */    
-    public long getUserCount() throws WebloggerException; 
+     * Revoke role from user.
+     */
+    public void revokeRole(String roleName, User user) throws WebloggerException;
+
+        
+    /**
+     * Returns true if user has role specified.
+     */
+    public boolean hasRole(String roleName, User user) throws WebloggerException;
     
+    
+    /**
+     * Get all roles associated with user.
+     */
+    public List<String> getRoles(User user) throws WebloggerException;
+
     
     /**
      * Release any resources held by manager.
      */
     public void release();
-    
-    
-    /**
-     * get a user by activation code
-     * @param activationCode
-     * @return
-     * @throws WebloggerException
-     */
-    public User getUserByActivationCode(String activationCode) throws WebloggerException;
-    
-        
-    /**
-     * Returns true if user has role specified.
-     */
-    public boolean hasRole(User user, String roleName);
-    
-    
-    /**
-     * Returns set of user's roles.
-     */
-    public Set getRoles(User user);
-    
-    
-    /**
-     * Grant role to user by name.
-     */
-    public void grantRole(User user, String roleName) throws WebloggerException;
 }
+
+
+

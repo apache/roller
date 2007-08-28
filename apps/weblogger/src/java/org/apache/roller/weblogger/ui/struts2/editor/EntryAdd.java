@@ -131,7 +131,7 @@ public final class EntryAdd extends EntryBase {
             }
             
             // if user is an admin then apply pinned to main value as well
-            if (userMgr.hasRole(getAuthenticatedUser(), "admin")) {
+            if (userMgr.hasRole("admin", getAuthenticatedUser())) {
                 entry.setPinnedToMain(getBean().getPinnedToMain());
             }
             

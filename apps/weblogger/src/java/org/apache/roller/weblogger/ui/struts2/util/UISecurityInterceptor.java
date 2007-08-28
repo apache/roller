@@ -60,7 +60,7 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                 
                 // are we also enforcing a specific role?
                 if(theAction.requiredUserRole() != null) {
-                    if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(authenticatedUser, theAction.requiredUserRole())) {
+                    if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(theAction.requiredUserRole(), authenticatedUser)) {
                         log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
                         return "access-denied";
                     }

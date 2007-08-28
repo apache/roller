@@ -124,7 +124,6 @@
                 <doc-root>web</doc-root>
                 <context-path>/planet</context-path>
                 <j2ee-spec-level>1.5</j2ee-spec-level>
-                <web-inf>web/WEB-INF</web-inf>
             </web-module>
         </web-data>
     </configuration>

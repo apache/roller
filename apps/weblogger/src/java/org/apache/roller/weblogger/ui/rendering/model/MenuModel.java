@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -72,9 +74,13 @@ public class MenuModel implements Model {
      * currently logged in and is an admin.
      */
     public Menu getAdminMenu() {
-        if(pageRequest.isLoggedIn() && WebloggerFactory.getWeblogger()
-                .getUserManager().hasRole(pageRequest.getUser(), "admin")) {
-            return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+        try {
+            if (pageRequest.isLoggedIn() && WebloggerFactory.getWeblogger()
+                    .getUserManager().hasRole("admin", pageRequest.getUser())) {
+                return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+            }
+        } catch (WebloggerException ex) {
+            logger.debug("ERROR: fetching user roles");
         }
         return null;
     }

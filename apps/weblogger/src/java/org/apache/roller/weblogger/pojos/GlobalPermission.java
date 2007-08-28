@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.pojos;
+package org.apache.roller.weblogger.pojos; 
 
 /**
  * 

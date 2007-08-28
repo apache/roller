@@ -19,6 +19,9 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 
@@ -144,7 +147,7 @@ public class CreateUserBean {
     
     
     public void copyFrom(User dataHolder, Locale locale) {
-        
+
         this.id = dataHolder.getId();
         this.userName = dataHolder.getUserName();
         this.password = dataHolder.getPassword();
@@ -155,8 +158,11 @@ public class CreateUserBean {
         this.timeZone = dataHolder.getTimeZone();
         this.enabled = dataHolder.getEnabled();
         this.activationCode = dataHolder.getActivationCode();
-        
-        this.administrator =  WebloggerFactory.getWeblogger().getUserManager().hasRole(dataHolder, "admin");
+
+        try {
+            this.administrator = WebloggerFactory.getWeblogger()
+                    .getUserManager().hasRole("admin", dataHolder);
+        } catch (WebloggerException ex) {}
     }
     
 }

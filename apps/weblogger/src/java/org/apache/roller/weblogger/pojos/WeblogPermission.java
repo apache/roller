@@ -18,13 +18,28 @@
 
 package org.apache.roller.weblogger.pojos;
 
-/**
- *
- */
-public class WeblogPermission extends RollerPermission {
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
-        public WeblogPermission(String action) {
-        super(action);
+/**
+ * Permission for one specific weblog
+ */
+public class WeblogPermission extends ObjectPermission { 
+    public static final String EDIT_DRAFT = "editdraft";
+    public static final String POST = "post";
+    public static final String ADMIN = "admin";
+
+    
+    public WeblogPermission(String actions) {
+        super(actions);
+        objectType = "Weblog";
     }
-        
+    
+    public Weblog getWeblog() throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getWeblogManager().getWebsite(objectId);
+    }
+
+    public User getUser() throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getUserManager().getUser(userName);
+    }
 }

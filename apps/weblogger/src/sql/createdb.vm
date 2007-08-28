@@ -28,7 +28,7 @@ create table userrole (
     id               varchar(48) not null primary key,
     rolename         varchar(255) not null,
     username         varchar(255) not null,
-    userid           varchar(48) not null
+    userid           varchar(48)
 );
 create index ur_userid_idx on userrole( userid );
 create index ur_username_idx on userrole( username$!db.INDEXSIZE );
@@ -41,7 +41,8 @@ create table roller_permission (
    username        varchar(255) not null,
    actions         varchar(255) not null, 
    objectid        varchar(48),           
-   objectType      varchar(255),          
+   objecttype      varchar(255), 
+   pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
    datecreated     timestamp not null
 );
 

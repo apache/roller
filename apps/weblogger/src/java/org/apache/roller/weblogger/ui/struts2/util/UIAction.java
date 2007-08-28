@@ -97,7 +97,11 @@ public abstract class UIAction extends ActionSupport
     
     // convenient way to tell if user being dealt with is an admin
     public boolean isUserIsAdmin() {
-        return WebloggerFactory.getWeblogger().getUserManager().hasRole(getAuthenticatedUser(), "admin");
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager()
+                    .hasRole("admin", getAuthenticatedUser());
+        } catch (Exception e) {}
+        return false;
     }
     
     

@@ -666,7 +666,11 @@ public class Weblog implements Serializable {
             }
         }
         // otherwise, check to see if user is a global admin
-        if (user != null && WebloggerFactory.getWeblogger().getUserManager().hasRole(user, "admin")) return true;
+        try {
+            if (user != null && WebloggerFactory.getWeblogger().getUserManager().hasRole("admin", user)) return true;
+        } catch (Exception e) {
+            this.log.debug("ERROR: checking user role", e);
+        }
         return false;
     }
     

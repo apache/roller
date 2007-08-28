@@ -23,8 +23,11 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
@@ -74,7 +77,11 @@ public class MenuHelper {
         // do we know the specified menu config?
         ParsedMenu menuConfig = (ParsedMenu) menus.get(menuId);
         if(menuConfig != null) {
-            menu = buildMenu(menuConfig, currentAction, user, weblog);
+            try {
+                menu = buildMenu(menuConfig, currentAction, user, weblog);
+            } catch (WebloggerException ex) {
+                log.debug("ERROR: fethcing user roles", ex);
+            }
         }
         
         return menu;
@@ -82,7 +89,7 @@ public class MenuHelper {
     
     
     private static Menu buildMenu(ParsedMenu menuConfig, String currentAction, 
-                                  User user, Weblog weblog) {
+                                  User user, Weblog weblog) throws WebloggerException {
         
         log.debug("creating menu for action - "+currentAction);
         
@@ -107,7 +114,12 @@ public class MenuHelper {
             if(includeTab) {
                 // user roles check
                 if(configTab.getRole() != null) {
-                    if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(user, configTab.getRole())) {
+                    try {
+                        if (!WebloggerFactory.getWeblogger().getUserManager().hasRole(configTab.getRole(), user)) {
+                            includeTab = false;
+                        }
+                    } catch (WebloggerException ex) {
+                        log.debug("ERROR: fetching user roles", ex);
                         includeTab = false;
                     }
                 }
@@ -144,7 +156,7 @@ public class MenuHelper {
                     if(includeItem) {
                         // user roles check
                         if(configTabItem.getRole() != null) {
-                            if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(user, configTabItem.getRole())) {
+                            if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(configTabItem.getRole(), user)) {
                                 includeItem = false;
                             }
                         }

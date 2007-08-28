@@ -11,6 +11,15 @@
     <package>org.apache.roller.weblogger.pojos</package>
     <entity metadata-complete="true" name="UserRole" class="org.apache.roller.weblogger.pojos.UserRole">
         <table name="userrole"/>
+        
+        <named-query name="UserRole.getByUserName">
+            <query>SELECT r FROM UserRole r WHERE r.userName = ?1</query>
+        </named-query>
+        
+        <named-query name="UserRole.getByUserNameAndRole">
+            <query>SELECT r FROM UserRole r WHERE r.userName = ?1 AND r.role = ?2</query>
+        </named-query>
+        
         <attributes>
             <id name="id">
                 <column name="id"/>
@@ -20,10 +29,8 @@
             </basic>
             <basic name="role">
                 <column name="rolename" insertable="true" updatable="true" unique="false"/>
-            </basic>
-            <many-to-one name="user" target-entity="org.apache.roller.weblogger.pojos.User">
-                <join-column name="userid" insertable="true" updatable="true" nullable="false"/>
-            </many-to-one>
+            </basic>            
         </attributes>
+        
     </entity>
 </entity-mappings>
