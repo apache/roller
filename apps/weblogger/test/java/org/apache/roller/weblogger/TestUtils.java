@@ -46,6 +46,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 /**
  * Utility class for unit test classes.
@@ -217,14 +218,19 @@ public final class TestUtils {
     /**
      * Convenience method for removing a permission.
      */
-    public static void teardownPermissions(String id) throws Exception {
+    public static void teardownPermissions(WeblogPermission perm) throws Exception {
         
         // lookup the permissions
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        WeblogUserPermission perm = mgr.getPermissions(id);
+        
+        // add all actions so permission object will be completely removed
+        perm.setActions(
+                  WeblogPermission.ADMIN + "," 
+                + WeblogPermission.POST + ","
+                + WeblogPermission.EDIT_DRAFT);
         
         // remove the permissions
-        mgr.removePermissions(perm);
+        mgr.revokeWeblogPermission(perm);
         
         // flush to db
         WebloggerFactory.getWeblogger().flush();

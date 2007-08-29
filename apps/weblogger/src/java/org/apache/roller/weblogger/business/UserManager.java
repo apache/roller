@@ -214,16 +214,31 @@ public interface UserManager {
     
     
     /**
+     * Get all of user's pending weblog permissions.
+     */
+    public List<WeblogPermission> getWeblogPermissionsPending(User user) 
+            throws WebloggerException;
+    
+    
+    /**
      * Get all permissions associated with a weblog.
      */
     public List<WeblogPermission> getWeblogPermissions(Weblog weblog) 
             throws WebloggerException;
     
+    
+    /**
+     * Get all pending permissions associated with a weblog.
+     */
+    public List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog) 
+            throws WebloggerException;
+    
+    
     /**
      * Get user's permission within a weblog or null if none.
      */
     public WeblogPermission getWeblogPermission(Weblog weblog, User user) 
-            throws WebloggerException;
+            throws WebloggerException;        
     
     
     //--------------------------------------------------------------- role CRUD

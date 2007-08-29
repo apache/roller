@@ -35,9 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
 import javax.persistence.Query;
 import org.apache.roller.weblogger.business.Weblogger;
 
@@ -455,7 +453,7 @@ public class JPAUserManagerImpl implements UserManager {
 
     
     public WeblogPermission getWeblogPermission(Weblog weblog, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId&NotPending");
         q.setParameter(1, user.getUserName());
         q.setParameter(2, weblog.getHandle());
         try {
@@ -524,6 +522,20 @@ public class JPAUserManagerImpl implements UserManager {
     
     public List<WeblogPermission> getWeblogPermissions(Weblog weblog) throws WebloggerException {
         Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId");
+        q.setParameter(1, weblog.getHandle());
+        return (List<WeblogPermission>)q.getResultList();
+    }
+    
+    
+    public List<WeblogPermission> getWeblogPermissionsPending(User user) throws WebloggerException {
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&Pending");
+        q.setParameter(1, user.getUserName());
+        return (List<WeblogPermission>)q.getResultList();
+    }
+    
+
+    public List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog) throws WebloggerException {
+        Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId&Pending");
         q.setParameter(1, weblog.getHandle());
         return (List<WeblogPermission>)q.getResultList();
     }
@@ -736,6 +748,7 @@ public class JPAUserManagerImpl implements UserManager {
         return (WeblogUserPermission)this.strategy.load(
                 WeblogUserPermission.class, inviteId);
     }
+
 }
 
 

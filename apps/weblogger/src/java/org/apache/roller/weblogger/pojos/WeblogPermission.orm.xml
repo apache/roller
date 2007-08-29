@@ -17,16 +17,29 @@
             <query>SELECT p FROM WeblogPermission p</query>
         </named-query>
         
-        <named-query name="WeblogPermission.getByUsername">
-            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1</query>
+        <named-query name="WeblogPermission.getByUserName">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.pending &lt;&gt; TRUE</query>
         </named-query>
         
         <named-query name="WeblogPermission.getByWeblogId">
-            <query>SELECT p FROM WeblogPermission p WHERE p.objectId = ?1</query>
+            <query>SELECT p FROM WeblogPermission p WHERE p.objectId = ?1 AND p.pending &lt;&gt; TRUE</query>
         </named-query>
         
         <named-query name="WeblogPermission.getByUserName&amp;WeblogId">
             <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.objectId = ?2</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByUserName&amp;WeblogId&amp;NotPending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.objectId = ?2 AND p.pending &lt;&gt; true</query>
+        </named-query>
+
+        
+        <named-query name="WeblogPermission.getByUserName&amp;Pending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.pending = TRUE</query>
+        </named-query>
+        
+        <named-query name="WeblogPermission.getByWeblogId&amp;Pending">
+            <query>SELECT p FROM WeblogPermission p WHERE p.objectId = ?1 AND p.pending = true</query>
         </named-query>
         
     </entity>
