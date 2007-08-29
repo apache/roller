@@ -28,6 +28,7 @@ public class WeblogPermission extends ObjectPermission {
     public static final String EDIT_DRAFT = "editdraft";
     public static final String POST = "post";
     public static final String ADMIN = "admin";
+    public static final String ALL_ACTIONS = EDIT_DRAFT + "," + POST + "," + ADMIN;
 
     
     public WeblogPermission(Weblog weblog, User user, String actions) {
@@ -38,10 +39,10 @@ public class WeblogPermission extends ObjectPermission {
     }
     
     public Weblog getWeblog() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle((objectId));
+        return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle((objectId));
     }
 
     public User getUser() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getUserManager().getUser(userName);
+        return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
     }
 }

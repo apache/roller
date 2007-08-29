@@ -260,7 +260,7 @@ public class ThemeManagerImpl implements ThemeManager {
             if(theme.getStylesheet() != null) {
                 website.setCustomStylesheetPath(theme.getStylesheet().getLink());
             }
-            wmgr.saveWebsite(website);
+            wmgr.saveWeblog(website);
             
             
             // now lets import all the theme resources

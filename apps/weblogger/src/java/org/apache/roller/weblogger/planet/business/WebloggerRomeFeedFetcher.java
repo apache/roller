@@ -84,7 +84,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
         Weblog localWeblog;
         try {
             localWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWebsiteByHandle(weblogHandle);
+                    .getWeblogByHandle(weblogHandle);
             if (localWeblog == null) {
                 throw new FetcherException("Local feed - "+feedURL+" no longer exists in weblogger");
             }

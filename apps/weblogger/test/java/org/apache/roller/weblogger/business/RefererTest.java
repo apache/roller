@@ -255,7 +255,7 @@ public class RefererTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         origWords = testWeblog.getBlacklist();
         testWeblog.setBlacklist("test");
-        WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(testWeblog);
+        WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(testWeblog);
         TestUtils.endSession(true);
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);

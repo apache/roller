@@ -117,38 +117,38 @@ public class WeblogTest extends TestCase {
             testWeblog.setCreator(testUser);
 
             // make sure test weblog does not exist
-            weblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
+            weblog = mgr.getWeblogByHandle(testWeblog.getHandle());
             assertNull(weblog);
 
             // add test weblog
-            mgr.addWebsite(testWeblog);
+            mgr.addWeblog(testWeblog);
             String id = testWeblog.getId();
             TestUtils.endSession(true);
 
             // make sure test weblog exists
             weblog = null;
-            weblog = mgr.getWebsite(id);
+            weblog = mgr.getWeblog(id);
             assertNotNull(weblog);
             assertEquals(testWeblog, weblog);
 
             // modify weblog and save
             weblog.setName("testtesttest");
-            mgr.saveWebsite(weblog);
+            mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
 
             // make sure changes were saved
             weblog = null;
-            weblog = mgr.getWebsite(id);
+            weblog = mgr.getWeblog(id);
             assertNotNull(weblog);
             assertEquals("testtesttest", weblog.getName());
 
             // remove test weblog
-            mgr.removeWebsite(weblog);
+            mgr.removeWeblog(weblog);
             TestUtils.endSession(true);
 
             // make sure weblog no longer exists
             weblog = null;
-            weblog = mgr.getWebsite(id);
+            weblog = mgr.getWeblog(id);
             assertNull(weblog);
         
         } catch(Throwable t) {
@@ -178,60 +178,60 @@ public class WeblogTest extends TestCase {
             TestUtils.endSession(true);
             
             // lookup by id
-            weblog = mgr.getWebsite(testWeblog1.getId());
+            weblog = mgr.getWeblog(testWeblog1.getId());
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // lookup by weblog handle
             weblog = null;
-            weblog = mgr.getWebsiteByHandle(testWeblog1.getHandle());
+            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // make sure disable weblogs are not returned
             weblog.setEnabled(Boolean.FALSE);
-            mgr.saveWebsite(weblog);
+            mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
             weblog = null;
-            weblog = mgr.getWebsiteByHandle(testWeblog1.getHandle());
+            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
             assertNull(weblog);
             
             // restore enabled state
-            weblog = mgr.getWebsiteByHandle(testWeblog1.getHandle(), Boolean.FALSE);
+            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle(), Boolean.FALSE);
             weblog.setEnabled(Boolean.TRUE);
-            mgr.saveWebsite(weblog);
+            mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
             weblog = null;
-            weblog = mgr.getWebsiteByHandle(testWeblog1.getHandle());
+            weblog = mgr.getWeblogByHandle(testWeblog1.getHandle());
             assertNotNull(weblog);
             
             // get all weblogs for user
             weblog = null;
-            List weblogs1 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
+            List weblogs1 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(2, weblogs1.size());
             weblog = (Weblog) weblogs1.get(0);
             assertNotNull(weblog);
             
             // testing paging
-            List weblogs11 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, 1);
+            List weblogs11 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(1, weblogs11.size());
-            List weblogs12 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 1, 1);
+            List weblogs12 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(1, weblogs12.size());
             
             // make sure disabled weblogs are not returned
             weblog.setEnabled(Boolean.FALSE);
-            mgr.saveWebsite(weblog);
+            mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
-            List weblogs2 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
+            List weblogs2 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(1, weblogs2.size());
             weblog = (Weblog) weblogs2.get(0);
             assertNotNull(weblog);
             
             // make sure inactive weblogs are not returned
             weblog.setActive(Boolean.FALSE);
-            mgr.saveWebsite(weblog);
+            mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
-            List weblogs3 = mgr.getWebsites(TestUtils.getManagedUser(testUser), Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
+            List weblogs3 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(0, weblogs3.size());
             
         } catch(Throwable t) {

@@ -183,13 +183,13 @@ public final class TestUtils {
         
         // add weblog
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        mgr.addWebsite(testWeblog);
+        mgr.addWeblog(testWeblog);
         
         // flush to db
         WebloggerFactory.getWeblogger().flush();
         
         // query for the new weblog and return it
-        Weblog weblog = mgr.getWebsiteByHandle(handle);
+        Weblog weblog = mgr.getWeblogByHandle(handle);
         
         if(weblog == null)
             throw new WebloggerException("error setting up weblog");
@@ -205,10 +205,10 @@ public final class TestUtils {
         
         // lookup the weblog
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        Weblog weblog = mgr.getWebsite(id);
+        Weblog weblog = mgr.getWeblog(id);
         
         // remove the weblog
-        mgr.removeWebsite(weblog);
+        mgr.removeWeblog(weblog);
         
         // flush to db
         WebloggerFactory.getWeblogger().flush();
@@ -580,7 +580,7 @@ public final class TestUtils {
      * Convenience method that returns managed copy of given website.
      */
     public static Weblog getManagedWebsite(Weblog website) throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getWebsite(website.getId());
+        return WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(website.getId());
     }
     
     /**

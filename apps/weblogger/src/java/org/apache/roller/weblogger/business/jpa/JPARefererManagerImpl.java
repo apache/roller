@@ -380,7 +380,7 @@ public class JPARefererManagerImpl implements RefererManager {
 
         // lookup the weblog now
         try {
-            weblog = roller.getWeblogManager().getWebsiteByHandle(weblogHandle);
+            weblog = roller.getWeblogManager().getWeblogByHandle(weblogHandle);
             if (weblog == null) return;
 
             // now lookup weblog entry if possible

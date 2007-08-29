@@ -103,7 +103,7 @@ public class FolderParentDeletesTest extends TestCase {
         // now delete the weblog owning these categories
         Exception ex = null;
         try {
-            WebloggerFactory.getWeblogger().getWeblogManager().removeWebsite(TestUtils.getManagedWebsite(testWeblog));
+            WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(TestUtils.getManagedWebsite(testWeblog));
             TestUtils.endSession(true);
         } catch (WebloggerException e) {
             ex = e;

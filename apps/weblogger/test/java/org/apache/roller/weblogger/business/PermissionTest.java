@@ -242,7 +242,7 @@ public class PermissionTest extends TestCase {
     /**
      * Tests weblog invitation process.
      */
-    public void _testInvitations() throws Exception {
+    public void testInvitations() throws Exception {
         
         log.info("BEGIN");
         
@@ -252,48 +252,51 @@ public class PermissionTest extends TestCase {
 
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-        WeblogUserPermission perm = null;
+        WeblogPermission perm = null;
         List perms = null;
 
         // invite user to weblog
-        perm = umgr.inviteUser(TestUtils.getManagedWebsite(testWeblog), user, WeblogUserPermission.LIMITED);
-        String id = perm.getId();
+        perm = new WeblogPermission(
+                TestUtils.getManagedWebsite(testWeblog), 
+                user, WeblogPermission.EDIT_DRAFT);
+        umgr.grantWeblogPermission(perm);
         TestUtils.endSession(true);
 
         // accept invitation
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         user = TestUtils.getManagedUser(user);
-        perm = umgr.getPermissions(testWeblog, user);
-        perm.setPending(false);
-        umgr.savePermissions(perm);
+        perm = umgr.getWeblogPermission(testWeblog, user);
+        umgr.confirmWeblogPermission(perm);
         TestUtils.endSession(true);
 
         // re-query now that we have changed things
         user = umgr.getUserByUserName(user.getUserName());
-        testWeblog = wmgr.getWebsiteByHandle(testWeblog.getHandle());
+        testWeblog = wmgr.getWeblogByHandle(testWeblog.getHandle());
 
         // assert that invitation list is empty
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         user = TestUtils.getManagedUser(user);
-        assertTrue(umgr.getPendingPermissions(user).isEmpty());
-        assertTrue(umgr.getPendingPermissions(testWeblog).isEmpty());
+        assertTrue(umgr.getWeblogPermissionsPending(user).isEmpty());
+        assertTrue(umgr.getWeblogPermissionsPending(testWeblog).isEmpty());
 
         // assert that user is member of weblog
-        assertFalse(umgr.getPermissions(testWeblog, user).isPending());
-        List weblogs = wmgr.getWebsites(TestUtils.getManagedUser(user), null, null, null, null, 0, -1);
+        assertNotNull(umgr.getWeblogPermission(testWeblog, user));
+        List weblogs = wmgr.getUserWeblogs(TestUtils.getManagedUser(user), true);
         assertEquals(1, weblogs.size());
         assertEquals(testWeblog.getId(), ((Weblog)weblogs.get(0)).getId());
 
         // assert that website has user
-        List users = umgr.getUsers(testWeblog, null, null, null, 0, -1);
+        List users = wmgr.getWeblogUsers(testWeblog, true);
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        umgr.retireUser(testWeblog, user);
+        WeblogPermission revokeAll = new WeblogPermission(
+                testWeblog, user, WeblogPermission.ALL_ACTIONS);
+        umgr.revokeWeblogPermission(revokeAll);
         TestUtils.endSession(true);
 
-        user = umgr.getUser(user.getId());
-        weblogs = wmgr.getWebsites(user, null, null, null, null, 0, -1);
+        //user = umgr.getUser(user.getId());
+        weblogs = wmgr.getUserWeblogs(user, true);
         assertEquals(0, weblogs.size());
 
         // cleanup the extra test user

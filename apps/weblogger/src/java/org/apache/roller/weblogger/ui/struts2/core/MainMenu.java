@@ -115,7 +115,7 @@ public class MainMenu extends UIAction {
         User user = getAuthenticatedUser();
         
         try {
-            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsite(getWebsiteId());
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(getWebsiteId());
             
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogUserPermission perms = userMgr.getPermissions(website, user);

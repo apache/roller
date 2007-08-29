@@ -119,7 +119,7 @@ public class TrackbackServlet extends HttpServlet {
                 
                 // lookup weblog specified by comment request
                 weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getWebsiteByHandle(trackbackRequest.getWeblogHandle());
+                        .getWeblogByHandle(trackbackRequest.getWeblogHandle());
                 
                 if (weblog == null) {
                     throw new WebloggerException("unable to lookup weblog: "+

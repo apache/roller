@@ -152,7 +152,7 @@ public class WeblogConfig extends UIAction {
             }
             
             // save config
-            WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(weblog);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
             
             // ROL-1050: apply comment defaults to existing entries
             if(getBean().getApplyCommentDefaults()) {

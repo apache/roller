@@ -71,7 +71,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         try {
-            this.website = roller.getWeblogManager().getWebsite(this.website.getId());
+            this.website = roller.getWeblogManager().getWeblog(this.website.getId());
         } catch (WebloggerException ex) {
             mLogger.error("Error getting website object", ex);
             return;

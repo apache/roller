@@ -182,7 +182,7 @@ public class OldWeblogPageModel {
         List tops = null;
         try {
             Collection mTops = mBookmarkMgr.getRootFolder(
-                    mWeblogMgr.getWebsiteByHandle(mWebsite.getHandle())).getFolders();
+                    mWeblogMgr.getWeblogByHandle(mWebsite.getHandle())).getFolders();
             
             // wrap pojos
             tops = new ArrayList(mTops.size());
@@ -256,7 +256,7 @@ public class OldWeblogPageModel {
         try {
             return WeblogBookmarkFolderWrapper.wrap(
                     mBookmarkMgr.getFolder(
-                    mWeblogMgr.getWebsiteByHandle(mWebsite.getHandle()), folderPath));
+                    mWeblogMgr.getWeblogByHandle(mWebsite.getHandle()), folderPath));
         } catch (WebloggerException e) {
             mLogger.error("PageModel getFolder()", e);
         }

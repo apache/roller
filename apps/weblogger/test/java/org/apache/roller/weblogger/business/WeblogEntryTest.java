@@ -972,7 +972,7 @@ public class WeblogEntryTest extends TestCase {
 
         Weblog blog3 = TestUtils.setupWeblog("statblog3", user1);
         blog3.setEnabled(Boolean. FALSE);
-        wmgr.saveWebsite(blog3);
+        wmgr.saveWeblog(blog3);
 
         WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", 
                 testWeblog.getDefaultCategory(), blog1, user1);
@@ -995,8 +995,8 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         try {
-            blog1 = wmgr.getWebsite(blog1.getId());
-            blog2 = wmgr.getWebsite(blog2.getId());
+            blog1 = wmgr.getWeblog(blog1.getId());
+            blog2 = wmgr.getWeblog(blog2.getId());
             
             assertEquals(2L, blog1.getEntryCount());
             assertEquals(3L, blog2.getEntryCount());

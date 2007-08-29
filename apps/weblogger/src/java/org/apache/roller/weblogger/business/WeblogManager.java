@@ -37,55 +37,53 @@ public interface WeblogManager {
      * creates categories and other objects required for new website.
      * @param newWebsite New website to be created, must have creator.
      */
-    public void addWebsite(Weblog newWebsite) throws WebloggerException;
+    public void addWeblog(Weblog newWebsite) throws WebloggerException;
     
     
     /**
      * Store a single weblog.
      */
-    public void saveWebsite(Weblog data) throws WebloggerException;
+    public void saveWeblog(Weblog data) throws WebloggerException;
     
     
     /**
      * Remove website object.
      */
-    public void removeWebsite(Weblog website) throws WebloggerException;
+    public void removeWeblog(Weblog website) throws WebloggerException;
     
     
     /**
      * Get website object by name.
      */
-    public Weblog getWebsite(String id) throws WebloggerException;
+    public Weblog getWeblog(String id) throws WebloggerException;
     
     
     /**
      * Get website specified by handle (or null if enabled website not found).
      * @param handle  Handle of website
      */
-    public Weblog getWebsiteByHandle(String handle) throws WebloggerException;
+    public Weblog getWeblogByHandle(String handle) throws WebloggerException;
     
     
     /**
      * Get website specified by handle with option to return only enabled websites.
      * @param handle  Handle of website
      */
-    public Weblog getWebsiteByHandle(String handle, Boolean enabled)
+    public Weblog getWeblogByHandle(String handle, Boolean enabled)
         throws WebloggerException;
     
     
     /**
      * Get websites optionally restricted by user, enabled and active status.
-     * @param user    Get all websites for this user (or null for all)
-     * @param offset  Offset into results (for paging)
-     * @param len     Maximum number of results to return (for paging)
-     * @param enabled Get all with this enabled state (or null or all)
-     * @param active  Get all with this active state (or null or all)
+     * @param enabled   Get all with this enabled state (or null or all)
+     * @param active    Get all with this active state (or null or all)
      * @param startDate Restrict to those created after (or null for all)
-     * @param endDate Restrict to those created before (or null for all)
+     * @param endDate   Restrict to those created before (or null for all)
+     * @param offset    Offset into results (for paging)
+     * @param length    Maximum number of results to return (for paging)
      * @returns List of WebsiteData objects.
      */
-    public List getWebsites(
-            User user,
+    public List getWeblogs(
             Boolean  enabled,
             Boolean  active,
             Date     startDate,
@@ -96,6 +94,24 @@ public interface WeblogManager {
     
     
     /**
+     * Get websites of a user.
+     * @param user        Get all weblogs for this user
+     * @param enabledOnly Include only enabled weblogs?
+     * @returns List of WebsiteData objects.
+     */
+    public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
+    
+    
+    /**
+     * Get users of a weblog.
+     * @param user        Get all users for this weblog
+     * @param enabledOnly Include only enabled users?
+     * @returns List of WebsiteData objects.
+     */
+    public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
+    
+    
+    /**
      * Get websites ordered by descending number of comments.
      * @param startDate Restrict to those created after (or null for all)
      * @param endDate Restrict to those created before (or null for all)
@@ -103,7 +119,7 @@ public interface WeblogManager {
      * @param len       Maximum number of results to return (for paging)
      * @returns List of WebsiteData objects.
      */
-    public List getMostCommentedWebsites(
+    public List getMostCommentedWeblogs(
             Date startDate,
             Date endDate,
             int  offset,

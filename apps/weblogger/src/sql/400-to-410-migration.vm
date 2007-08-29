@@ -18,3 +18,10 @@ create table roller_permission (
 );
 
 #dropNotNullFromColumn("userrole" "userid" "varchar(48)")
+
+
+insert into roller_permission 
+   select u.username, w.id, p.perm
+      from rolleruser as u, website as w, roller_user_permissions as p
+      where p.user_id = u.id and p.website_id = w.id;
+

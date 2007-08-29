@@ -55,7 +55,7 @@ public class WeblogStatsTest extends TestCase {
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();     
-        List list = mgr.getMostCommentedWebsites(null, null, 0, -1);  
+        List list = mgr.getMostCommentedWeblogs(null, null, 0, -1);  
         
         assertNotNull(list);
         assertEquals(2, list.size());

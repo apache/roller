@@ -256,7 +256,7 @@ public class CommentTest extends TestCase {
             ex = null;
             try {
                 weblog = TestUtils.getManagedWebsite(weblog);
-                wmgr.removeWebsite(weblog);
+                wmgr.removeWeblog(weblog);
                 TestUtils.endSession(true);
             } catch (WebloggerException e) {
                 StringWriter sw = new StringWriter();

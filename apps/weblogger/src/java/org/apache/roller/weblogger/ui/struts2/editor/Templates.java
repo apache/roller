@@ -144,7 +144,7 @@ public class Templates extends UIAction {
             // scratch then make sure and set the defaultPageId
             if(WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
                 getActionWeblog().setDefaultPageId(newTemplate.getId());
-                WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(getActionWeblog());
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(getActionWeblog());
             }
             
             // flush results to db

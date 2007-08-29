@@ -193,7 +193,7 @@ public class CommentServlet extends HttpServlet {
             
             // lookup weblog specified by comment request
             weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWebsiteByHandle(commentRequest.getWeblogHandle());
+                    .getWeblogByHandle(commentRequest.getWeblogHandle());
             
             if(weblog == null) {
                 throw new WebloggerException("unable to lookup weblog: "+

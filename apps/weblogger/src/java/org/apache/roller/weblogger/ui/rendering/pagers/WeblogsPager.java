@@ -148,7 +148,7 @@ public class WeblogsPager extends AbstractPager {
                 WeblogManager wmgr = roller.getWeblogManager();
                 List rawWeblogs = null;
                 if (letter == null) {
-                    rawWeblogs = wmgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
+                    rawWeblogs = wmgr.getWeblogs(Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
                     rawWeblogs = wmgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }

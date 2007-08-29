@@ -121,7 +121,7 @@ public class BaseAPIHandler implements Serializable {
             user = userMgr.getUserByUserName(username);
             userEnabled = user.getEnabled().booleanValue();
             
-            website = weblogMgr.getWebsiteByHandle(blogid);
+            website = weblogMgr.getWeblogByHandle(blogid);
             if (website != null) {
                 weblogFound = true;
                 weblogEnabled = website.getEnabled().booleanValue();

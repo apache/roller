@@ -101,7 +101,7 @@ class RollerWeblogHandler extends Handler {
     
     private EntrySet getCollection() throws HandlerException {
         try {
-            List users = getRoller().getUserManager().getUsers(null, null, null, null, 0, -1);
+            List users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
             if (users == null) {
                 users = Collections.EMPTY_LIST;
             }
@@ -200,7 +200,7 @@ class RollerWeblogHandler extends Handler {
                     log.error("ERROR setting default editor page for weblog", ex);
                 }
                 
-                WebloggerFactory.getWeblogger().getWeblogManager().addWebsite(wd);
+                WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
                 getRoller().flush();
                 CacheManager.invalidate(wd);
                 websiteDatas.add(wd);
@@ -250,7 +250,7 @@ class RollerWeblogHandler extends Handler {
         }
         
         try {
-            WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(wd);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(wd);
             getRoller().flush();
             CacheManager.invalidate(wd);
         } catch (WebloggerException re) {
@@ -267,7 +267,7 @@ class RollerWeblogHandler extends Handler {
             Weblog[] wds = new Weblog[] { wd };
             EntrySet es = toWeblogEntrySet(wds);
             
-            WebloggerFactory.getWeblogger().getWeblogManager().removeWebsite(wd);
+            WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(wd);
             getRoller().flush();
             CacheManager.invalidate(wd);
             

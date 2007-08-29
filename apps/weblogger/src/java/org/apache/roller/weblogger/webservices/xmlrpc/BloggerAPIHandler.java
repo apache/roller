@@ -275,7 +275,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 User user = umgr.getUserByUserName(userid);
                 // get list of user's enabled websites
-                List websites = WebloggerFactory.getWeblogger().getWeblogManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, -1);
+                List websites = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
                 Iterator iter = websites.iterator();
                 while (iter.hasNext()) {
                     Weblog website = (Weblog)iter.next();

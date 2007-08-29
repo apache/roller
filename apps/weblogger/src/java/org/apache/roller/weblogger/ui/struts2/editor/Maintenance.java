@@ -88,7 +88,7 @@ public class Maintenance extends UIAction {
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
             
-            WebloggerFactory.getWeblogger().getWeblogManager().saveWebsite(weblog);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
             WebloggerFactory.getWeblogger().flush();
             
             // also notify cache manager

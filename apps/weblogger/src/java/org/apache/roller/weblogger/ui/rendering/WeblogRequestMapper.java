@@ -384,7 +384,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         try {
             Weblog weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWebsiteByHandle(potentialHandle);
+                    .getWeblogByHandle(potentialHandle);
             
             if(weblog != null) {
                 isWeblog = true;

@@ -91,7 +91,7 @@ public class HitCountProcessingJob implements Job {
                 key = (String) it.next();
                 
                 try {
-                    weblog = wmgr.getWebsiteByHandle(key);
+                    weblog = wmgr.getWeblogByHandle(key);
                     emgr.incrementHitCount(weblog, ((Long)hitsTally.get(key)).intValue());
                 } catch (WebloggerException ex) {
                     log.error(ex);

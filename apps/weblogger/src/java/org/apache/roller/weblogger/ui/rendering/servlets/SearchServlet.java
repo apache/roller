@@ -83,7 +83,7 @@ public class SearchServlet extends HttpServlet {
             
             // now make sure the specified weblog really exists
             weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWebsiteByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
+                    .getWeblogByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
             
         } catch(Exception e) {
             // invalid search request format or weblog doesn't exist

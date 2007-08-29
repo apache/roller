@@ -66,7 +66,7 @@ public class JPAWebloggerModule implements Module {
         binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);  
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
-        binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManager.class);   
+        binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);   
                 
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
         binder.bind(FileManager.class).to(         FileManagerImpl.class);   

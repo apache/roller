@@ -140,7 +140,6 @@ public interface UserManager {
      * @throws WebloggerException If there is a problem.
      */
     public List getUsers(
-            Weblog weblog,
             Boolean enabled,
             Date    startDate,
             Date    endDate,
@@ -187,12 +186,23 @@ public interface UserManager {
 
     
     /**
-     * Grant permission and actions to user. 
+     * Grant permission and actions to user. You may set the pending flag if the
+     * permission requires confirmation before becoming valid.
      * 
      * If user already has a permission record for the specified weblog, then 
      * actions specified in argument perm will be added to that record.
      */
     public void grantWeblogPermission(WeblogPermission perm) 
+            throws WebloggerException;
+    
+    
+    /**
+     * Confirm a permission that is currently in pending state.
+     * 
+     * If user already has a permission record for the specified weblog, then 
+     * actions specified in argument perm will be added to that record.
+     */
+    public void confirmWeblogPermission(WeblogPermission perm) 
             throws WebloggerException;
     
     

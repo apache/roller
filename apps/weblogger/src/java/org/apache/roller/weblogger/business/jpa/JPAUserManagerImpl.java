@@ -105,7 +105,7 @@ public class JPAUserManagerImpl implements UserManager {
         
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
-        List existingUsers = this.getUsers(null, Boolean.TRUE, null, null, 0, 1);
+        List existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
         if (existingUsers.size() == 0) {
             // Make first user an admin
             adminUser = true;
@@ -470,20 +470,37 @@ public class JPAUserManagerImpl implements UserManager {
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
         q.setParameter(1, perm.getUserName());
         q.setParameter(2, perm.getObjectId());
-        WeblogPermission oldperm = null;
+        WeblogPermission existingPerm = null;
         try {
-            oldperm = (WeblogPermission)q.getSingleResult();
+            existingPerm = (WeblogPermission)q.getSingleResult();
         } catch (NoResultException ignored) {}
         
         // permission already exists, so add any actions specified in perm argument
-        if (oldperm != null) {
-            oldperm.addActions(perm);
-            this.strategy.store(oldperm);
+        if (existingPerm != null) {
+            existingPerm.addActions(perm);
+            this.strategy.store(existingPerm);
             return;            
         } else {
             // it's a new permission, so store it
             this.strategy.store(perm);
         }
+    }
+    
+    
+    public void confirmWeblogPermission(WeblogPermission perm) throws WebloggerException {
+        
+        // get specified permission
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        q.setParameter(1, perm.getUserName());
+        q.setParameter(2, perm.getObjectId());
+        WeblogPermission existingPerm = null;
+        try {
+            existingPerm = (WeblogPermission)q.getSingleResult();
+        } catch (NoResultException ignored) {
+            throw new WebloggerException("ERROR: permission not found");
+        }
+        existingPerm.setPending(false);
+        this.strategy.store(existingPerm);
     }
 
     
@@ -748,7 +765,6 @@ public class JPAUserManagerImpl implements UserManager {
         return (WeblogUserPermission)this.strategy.load(
                 WeblogUserPermission.class, inviteId);
     }
-
 }
 
 

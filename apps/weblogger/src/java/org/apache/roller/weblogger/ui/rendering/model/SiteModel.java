@@ -338,7 +338,7 @@ public class SiteModel implements Model {
     public List getWeblogsUsers(String handle) {
         List results = new ArrayList();
         try {            
-            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle(handle);
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
             List perms = WebloggerFactory.getWeblogger().getUserManager().getAllPermissions(website);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 WeblogUserPermission perm = (WeblogUserPermission) it.next();
@@ -371,7 +371,7 @@ public class SiteModel implements Model {
     public WeblogWrapper getWeblog(String handle) {
         WeblogWrapper wrappedWebsite = null;
         try {            
-            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle(handle);
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
             wrappedWebsite = WeblogWrapper.wrap(website, urlStrategy);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
@@ -395,8 +395,8 @@ public class SiteModel implements Model {
         cal.add(Calendar.DATE, -1 * sinceDays);
         Date startDate = cal.getTime();
         try {            
-            List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getWebsites(
-                null, Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
+            List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogs(
+                Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 Weblog website = (Weblog) it.next();
                 results.add(WeblogWrapper.wrap(website, urlStrategy));
@@ -418,7 +418,7 @@ public class SiteModel implements Model {
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
-            List users = umgr.getUsers(null, Boolean.TRUE, null, null, 0, length);
+            List users = umgr.getUsers(Boolean.TRUE, null, null, 0, length);
             for (Iterator it = users.iterator(); it.hasNext();) {
                 User user = (User) it.next();
                 results.add(UserWrapper.wrap(user));
@@ -478,7 +478,7 @@ public class SiteModel implements Model {
         Date startDate = cal.getTime();
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
-            results = WebloggerFactory.getWeblogger().getWeblogManager().getMostCommentedWebsites(
+            results = WebloggerFactory.getWeblogger().getWeblogManager().getMostCommentedWeblogs(
                     startDate, new Date(), 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching commented weblog list", e);

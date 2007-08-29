@@ -79,7 +79,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         // lazy initialization problems, so requery for the object now
         if(this.website != null) {
             try {
-                this.website = roller.getWeblogManager().getWebsite(this.website.getId());
+                this.website = roller.getWeblogManager().getWeblog(this.website.getId());
             } catch (WebloggerException ex) {
                 mLogger.error("Error getting website object", ex);
                 return;

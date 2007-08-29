@@ -313,7 +313,7 @@ public class RollerAtomHandler implements AtomHandler {
             }        
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            Weblog website = roller.getWeblogManager().getWebsiteByHandle(handle);
+            Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find specified weblog");
             }
@@ -412,7 +412,7 @@ public class RollerAtomHandler implements AtomHandler {
             
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            Weblog website = roller.getWeblogManager().getWebsiteByHandle(handle);
+            Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find weblog: " + handle);
             }
@@ -504,7 +504,7 @@ public class RollerAtomHandler implements AtomHandler {
             // authenticated client posted a weblog entry
             String handle = pathInfo[0];
             Weblog website = 
-                roller.getWeblogManager().getWebsiteByHandle(handle);
+                roller.getWeblogManager().getWeblogByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find weblog: " + handle);
             }
@@ -560,7 +560,7 @@ public class RollerAtomHandler implements AtomHandler {
                     filePath = filePath.substring(0, filePath.length() - ".media-link".length());
                     String handle = pathInfo[0];
                     Weblog website = 
-                        roller.getWeblogManager().getWebsiteByHandle(handle);                    
+                        roller.getWeblogManager().getWeblogByHandle(handle);                    
                     ThemeResource resource = 
                         roller.getFileManager().getFile(website, filePath);
                     
@@ -584,7 +584,7 @@ public class RollerAtomHandler implements AtomHandler {
             File tempFile = null;
             String handle = pathInfo[0];
             FileManager fmgr = roller.getFileManager();
-            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle(handle);
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -669,7 +669,7 @@ public class RollerAtomHandler implements AtomHandler {
                     } 
                 } else if (pathInfo[1].equals("resource")) {
                     String handle = pathInfo[0];
-                    Weblog website = roller.getWeblogManager().getWebsiteByHandle(handle);
+                    Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
                     if (website == null) {
                         throw new AtomNotFoundException("cannot find specified weblog");
                     }
@@ -714,7 +714,7 @@ public class RollerAtomHandler implements AtomHandler {
             File tempFile = null;
             String handle = pathInfo[0];
             FileManager fmgr = roller.getFileManager();
-            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle(handle);
+            Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -841,7 +841,7 @@ public class RollerAtomHandler implements AtomHandler {
             String handle = pathInfo[0];
             FileManager fmgr = roller.getFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
-            Weblog website = wmgr.getWebsiteByHandle(handle);
+            Weblog website = wmgr.getWeblogByHandle(handle);
             if (!canEdit(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }

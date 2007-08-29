@@ -68,10 +68,10 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
  *
  */
 @com.google.inject.Singleton
-public class JPAWeblogEntryManager implements WeblogEntryManager {
+public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     
     protected static Log log = LogFactory.getLog(
-            JPAWeblogEntryManager.class);
+            JPAWeblogEntryManagerImpl.class);
     
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
@@ -92,7 +92,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
     
     
     @com.google.inject.Inject
-    protected JPAWeblogEntryManager(Weblogger roller, JPAPersistenceStrategy strategy) {
+    protected JPAWeblogEntryManagerImpl(Weblogger roller, JPAPersistenceStrategy strategy) {
         log.debug("Instantiating JPA Weblog Manager");
         this.roller = roller;
         this.strategy = strategy;
@@ -116,7 +116,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWebsite(cat.getWebsite());        
+        roller.getWeblogManager().saveWeblog(cat.getWebsite());        
         this.strategy.store(cat);
     }
     
@@ -151,7 +151,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWebsite(
+        roller.getWeblogManager().saveWeblog(
                 cat.getWebsite());
     }
     
@@ -270,7 +270,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
         this.strategy.store(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWebsite(comment.getWeblogEntry().getWebsite());
+        roller.getWeblogManager().saveWeblog(comment.getWeblogEntry().getWebsite());
     }
     
     /**
@@ -280,7 +280,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
         this.strategy.remove(comment);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWebsite(comment.getWeblogEntry().getWebsite());
+        roller.getWeblogManager().saveWeblog(comment.getWeblogEntry().getWebsite());
     }
     
     /**
@@ -318,7 +318,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            roller.getWeblogManager().saveWebsite(entry.getWebsite());
+            roller.getWeblogManager().saveWeblog(entry.getWebsite());
         }
         
         if(entry.isPublished()) {
@@ -371,7 +371,7 @@ public class JPAWeblogEntryManager implements WeblogEntryManager {
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
-            roller.getWeblogManager().saveWebsite(entry.getWebsite());
+            roller.getWeblogManager().saveWeblog(entry.getWebsite());
         }
         
         // remove entry from cache mapping

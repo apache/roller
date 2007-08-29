@@ -105,13 +105,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Update existing website.
      */
-    public void saveWebsite(Weblog website) throws WebloggerException {
+    public void saveWeblog(Weblog website) throws WebloggerException {
         
         website.setLastModified(new java.util.Date());
         strategy.store(website);
     }
     
-    public void removeWebsite(Weblog weblog) throws WebloggerException {
+    public void removeWeblog(Weblog weblog) throws WebloggerException {
         
         // remove contents first, then remove website
         this.removeWebsiteContents(weblog);
@@ -271,17 +271,17 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.store(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWebsite(page.getWebsite());
+        roller.getWeblogManager().saveWeblog(page.getWebsite());
     }
     
     public void removePage(WeblogTemplate page) throws WebloggerException {
         this.strategy.remove(page);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().saveWebsite(page.getWebsite());
+        roller.getWeblogManager().saveWeblog(page.getWebsite());
     }
     
-    public void addWebsite(Weblog newWeblog) throws WebloggerException {
+    public void addWeblog(Weblog newWeblog) throws WebloggerException {
         
         this.strategy.store(newWeblog);
         this.strategy.flush();
@@ -382,18 +382,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public Weblog getWebsite(String id) throws WebloggerException {
+    public Weblog getWeblog(String id) throws WebloggerException {
         return (Weblog) this.strategy.load(Weblog.class, id);
     }
     
-    public Weblog getWebsiteByHandle(String handle) throws WebloggerException {
-        return getWebsiteByHandle(handle, Boolean.TRUE);
+    public Weblog getWeblogByHandle(String handle) throws WebloggerException {
+        return getWeblogByHandle(handle, Boolean.TRUE);
     }
     
     /**
      * Return website specified by handle.
      */
-    public Weblog getWebsiteByHandle(String handle, Boolean enabled)
+    public Weblog getWeblogByHandle(String handle, Boolean enabled)
     throws WebloggerException {
         
         if (handle==null )
@@ -403,7 +403,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // NOTE: if we ever allow changing handles then this needs updating
         if(this.weblogHandleToIdMap.containsKey(handle)) {
             
-            Weblog weblog = this.getWebsite(
+            Weblog weblog = this.getWeblog(
                     (String) this.weblogHandleToIdMap.get(handle));
             if(weblog != null) {
                 // only return weblog if enabled status matches
@@ -443,8 +443,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Get websites of a user
      */
-    public List getWebsites(
-            User user, Boolean enabled, Boolean active,
+    public List getWeblogs(
+            Boolean enabled, Boolean active,
             Date startDate, Date endDate, int offset, int length) throws WebloggerException {
         
         //if (endDate == null) endDate = new Date();
@@ -454,16 +454,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         StringBuffer queryString = new StringBuffer();
         StringBuffer whereClause = new StringBuffer();
         
-        //queryString.append("SELECT w FROM Weblog w WHERE ");
-        if (user == null) { // OpenJPA likes JOINs
-            queryString.append("SELECT w FROM Weblog w WHERE ");
-        } else {
-            queryString.append("SELECT w FROM Weblog w JOIN w.permissions p WHERE ");
-            params.add(size++, user);
-            whereClause.append(" p.user = ?" + size);
-            params.add(size++, Boolean.FALSE);
-            whereClause.append(" AND p.pending = ?" + size);
-        }
+        queryString.append("SELECT w FROM Weblog w WHERE ");
+
         if (startDate != null) {
             Timestamp start = new Timestamp(startDate.getTime());
             if (whereClause.length() > 0) whereClause.append(" AND ");
@@ -486,14 +478,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             params.add(size++, active);
             whereClause.append(" w.active = ?" + size);
         }      
-        /*if (user != null) { // Toplink likes sub-selects    
-            if (whereClause.length() > 0) whereClause.append(" AND ");
-            whereClause.append(" EXISTS (SELECT p from WeblogUserPermission p WHERE p.website = w ");
-            params.add(size++, user);         
-            whereClause.append("    AND p.user = ?" + size);
-            params.add(size++, Boolean.FALSE);
-            whereClause.append("    AND p.pending = ?" + size + ")");   
-        }*/
                 
         whereClause.append(" ORDER BY w.dateCreated DESC");
         
@@ -510,7 +494,35 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         return query.getResultList();
     }
+        
+    public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
+        List weblogs = new ArrayList();
+        List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(user);
+        for (WeblogPermission perm : perms) {
+            Weblog weblog = perm.getWeblog();
+            if (!enabledOnly || weblog.getEnabled().booleanValue()) {
+                weblogs.add(weblog);
+            }
+        }
+        return weblogs;
+    }
     
+    public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
+        List users = new ArrayList();
+        List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(weblog);
+        for (WeblogPermission perm : perms) {
+            User user = perm.getUser();
+            if (user == null) {
+                log.error("ERROR user is null, userName:" + perm.getUserName());
+                continue;
+            }
+            if (!enabledOnly || user.getEnabled().booleanValue()) {
+                users.add(user);
+            }
+        }
+        return users;
+    }
+
     public WeblogTemplate getPage(String id) throws WebloggerException {
         // Don't hit database for templates stored on disk
         if (id != null && id.endsWith(".vm")) return null;
@@ -627,7 +639,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
     
-    public List getMostCommentedWebsites(Date startDate, Date endDate,
+    public List getMostCommentedWeblogs(Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
         
@@ -684,4 +696,5 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         return ret;
     }
+
 }
