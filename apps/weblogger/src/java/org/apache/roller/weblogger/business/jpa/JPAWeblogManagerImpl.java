@@ -59,6 +59,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 import org.apache.roller.weblogger.pojos.WeblogUserPermission;
@@ -297,6 +298,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         perms.setPending(false);
         perms.setPermissionMask(WeblogUserPermission.ADMIN);
         roller.getUserManager().savePermissions(perms);
+        
+        WeblogPermission weblogPermission = 
+            new WeblogPermission(newWeblog, newWeblog.getCreator(), 
+                WeblogPermission.ADMIN + "," + WeblogPermission.POST);
+        roller.getUserManager().grantWeblogPermission(weblogPermission);
         
         // add default category
         WeblogCategory rootCat = new WeblogCategory(

@@ -30,13 +30,15 @@ public class WeblogPermission extends ObjectPermission {
     public static final String ADMIN = "admin";
 
     
-    public WeblogPermission(String actions) {
+    public WeblogPermission(Weblog weblog, User user, String actions) {
         super(actions);
         objectType = "Weblog";
+        objectId = weblog.getHandle();
+        userName = user.getUserName();
     }
     
     public Weblog getWeblog() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getWebsite(objectId);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getWebsiteByHandle((objectId));
     }
 
     public User getUser() throws WebloggerException {

@@ -187,115 +187,45 @@ public interface UserManager {
 
     
     /**
-     * Grant permission to user.
+     * Grant permission and actions to user. 
+     * 
+     * If user already has a permission record for the specified weblog, then 
+     * actions specified in argument perm will be added to that record.
      */
-    public void grantWeblogPermission(WeblogPermission perm, User user) 
+    public void grantWeblogPermission(WeblogPermission perm) 
             throws WebloggerException;
     
     
     /**
      * Revoke permssion from user.
+     * 
+     * Locates permission record for specified user and weblog, then removes
+     * the actions specified in the argument perm.
      */
-    public void revokeWeblogPermission(WeblogPermission perm, User user) 
+    public void revokeWeblogPermission(WeblogPermission perm) 
             throws WebloggerException;
 
     
     /**
      * Get all of user's weblog permissions.
      */
-    public List<WeblogPermission> getWeblogPermssions(User user) 
+    public List<WeblogPermission> getWeblogPermissions(User user) 
             throws WebloggerException;
     
     
     /**
      * Get all permissions associated with a weblog.
      */
-    public List<WeblogPermission> getWeblogPermssions(Weblog weblog) 
+    public List<WeblogPermission> getWeblogPermissions(Weblog weblog) 
+            throws WebloggerException;
+    
+    /**
+     * Get user's permission within a weblog or null if none.
+     */
+    public WeblogPermission getWeblogPermission(Weblog weblog, User user) 
             throws WebloggerException;
     
     
-    /**
-     * Save permissions object.
-     */
-    public void savePermissions(WeblogUserPermission perms) 
-            throws WebloggerException;
-    
-    
-    /**
-     * Remove permissions object.
-     */
-    public void removePermissions(WeblogUserPermission perms) 
-            throws WebloggerException;
-    
-    
-    /**
-     * Get permissions object by id.
-     */
-    public WeblogUserPermission getPermissions(String id) 
-            throws WebloggerException;
-    
-    
-    /**
-     * Get pending permissions for user.
-     * @param user User (not null)
-     * @returns List of PermissionsData objects.
-     */
-    public List getPendingPermissions(User user) throws WebloggerException;
-    
-    
-    /**
-     * Get pending permissions for website.
-     * @param website Website (not null)
-     * @returns List of PermissionsData objects.
-     */
-    public List getPendingPermissions(Weblog user) throws WebloggerException;
-    
-    
-    /**
-     * Get permissions of user in website.
-     * @param website Website (not null)
-     * @param user    User (not null)
-     * @return        PermissionsData object
-     */
-    public WeblogUserPermission getPermissions(Weblog website, User user)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get all permissions in website
-     * @param website Website (not null)
-     * @return        PermissionsData object
-     */
-    public List getAllPermissions(Weblog website) throws WebloggerException;
-    
-    
-    /**
-     * Get all permissions of user
-     * @param user User (not null)
-     * @return     PermissionsData object
-     */
-    public List getAllPermissions(User user) throws WebloggerException;
-    
-    
-    /**
-     * Invite user to join a website with specific permissions
-     * @param website Website to be joined (persistent instance)
-     * @param user    User to be invited (persistent instance)
-     * @param perms   Permissions mask (see statics in PermissionsData)
-     * @return        New PermissionsData object, with pending=true
-     */
-    public WeblogUserPermission inviteUser(Weblog website, User user, short perms) 
-            throws WebloggerException;
-    
-    
-    /**
-     * Retire user from a website
-     * @param website Website to be retired from (persistent instance)
-     * @param user    User to be retired (persistent instance)
-     */
-    public void retireUser(Weblog website, User user) throws WebloggerException;    
-    
-
     //--------------------------------------------------------------- role CRUD
 
     
@@ -327,6 +257,35 @@ public interface UserManager {
      * Release any resources held by manager.
      */
     public void release();
+    
+    
+    
+    // TO BE REWRITTEN
+    
+    public void savePermissions(WeblogUserPermission perms) 
+            throws WebloggerException;
+    
+    public void removePermissions(WeblogUserPermission perms) 
+            throws WebloggerException;
+    
+    public WeblogUserPermission getPermissions(String id) 
+            throws WebloggerException;
+    
+    public List getPendingPermissions(User user) throws WebloggerException;
+    
+    public List getPendingPermissions(Weblog user) throws WebloggerException;
+    
+    public WeblogUserPermission getPermissions(Weblog website, User user)
+        throws WebloggerException;
+    
+    public List getAllPermissions(Weblog website) throws WebloggerException;
+    
+    public List getAllPermissions(User user) throws WebloggerException;
+    
+    public WeblogUserPermission inviteUser(Weblog website, User user, short perms) 
+            throws WebloggerException;
+    
+    public void retireUser(Weblog website, User user) throws WebloggerException;    
 }
 
 

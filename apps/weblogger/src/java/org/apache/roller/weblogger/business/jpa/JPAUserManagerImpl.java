@@ -454,11 +454,23 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public void grantWeblogPermission(WeblogPermission perm, User user) throws WebloggerException {
+    public WeblogPermission getWeblogPermission(Weblog weblog, User user) throws WebloggerException {
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
+        try {
+            return (WeblogPermission)q.getSingleResult();
+        } catch (NoResultException ignored) {
+            return null;
+        }
+    }
+
+    
+    public void grantWeblogPermission(WeblogPermission perm) throws WebloggerException {
         
         // first, see if user already has a permission for the specified object
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, user.getUserName());
+        q.setParameter(1, perm.getUserName());
         q.setParameter(2, perm.getObjectId());
         WeblogPermission oldperm = null;
         try {
@@ -477,11 +489,11 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public void revokeWeblogPermission(WeblogPermission perm, User user) throws WebloggerException {
+    public void revokeWeblogPermission(WeblogPermission perm) throws WebloggerException {
         
         // get specified permission
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, user.getUserName());
+        q.setParameter(1, perm.getUserName());
         q.setParameter(2, perm.getObjectId());
         WeblogPermission oldperm = null;
         try {
@@ -503,23 +515,86 @@ public class JPAUserManagerImpl implements UserManager {
     }
     
     
-    public List<WeblogPermission> getWeblogPermssions(User user) throws WebloggerException { 
+    public List<WeblogPermission> getWeblogPermissions(User user) throws WebloggerException { 
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName");
         q.setParameter(1, user.getUserName());
         return (List<WeblogPermission>)q.getResultList();
     }
     
     
-    public List<WeblogPermission> getWeblogPermssions(Weblog weblog) throws WebloggerException {
+    public List<WeblogPermission> getWeblogPermissions(Weblog weblog) throws WebloggerException {
         Query q = strategy.getNamedQuery("WeblogPermission.getByWeblogId");
-        q.setParameter(1, weblog.getId());
+        q.setParameter(1, weblog.getHandle());
         return (List<WeblogPermission>)q.getResultList();
     }
     
-
+    
+    //-------------------------------------------------------------- role CRUD
+ 
+    
+    /**
+     * Returns true if user has role specified.
+     */
+    public boolean hasRole(String roleName, User user) throws WebloggerException {
+        Query q = strategy.getNamedQuery("UserRole.getByUserNameAndRole");
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, roleName);
+        try {
+            q.getSingleResult();
+        } catch (NoResultException e) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    /**
+     * Get all of user's roles.
+     */
+    public List<String> getRoles(User user) throws WebloggerException { 
+        Query q = strategy.getNamedQuery("UserRole.getByUserName");
+        q.setParameter(1, user.getUserName());
+        List roles = q.getResultList();
+        List<String> roleNames = new ArrayList<String>();
+        for (Iterator it = roles.iterator(); it.hasNext();) {
+            UserRole userRole = (UserRole)it.next();
+            roleNames.add(userRole.getRole());
+        }
+        return roleNames;
+    }
+    
+    
+    /**
+     * Grant to user role specified by role name.
+     */
+    public void grantRole(String roleName, User user) throws WebloggerException {
+        if (!hasRole(roleName, user)) {
+            UserRole role = new UserRole(user.getUserName(), roleName);
+            this.strategy.store(role);
+        }
+    }
+    
+    
+    public void revokeRole(String roleName, User user) throws WebloggerException {
+        Query q = strategy.getNamedQuery("UserRole.getByUserNameAndRole");
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, roleName);
+        try {
+            UserRole role = (UserRole)q.getSingleResult();
+            this.strategy.remove(role);
+            
+        } catch (NoResultException e) {
+            throw new WebloggerException("ERROR: removing role", e);
+        }
+    }
+    
+    
+       
     
     
     
+    // TO BE REWRITTEN
+       
     public void savePermissions(WeblogUserPermission perms)
     throws WebloggerException {
         if (getPermissions(perms.getId()) == null) { 
@@ -661,67 +736,6 @@ public class JPAUserManagerImpl implements UserManager {
         return (WeblogUserPermission)this.strategy.load(
                 WeblogUserPermission.class, inviteId);
     }
-    
-    
-    //-------------------------------------------------------------- role CRUD
- 
-    
-    /**
-     * Returns true if user has role specified.
-     */
-    public boolean hasRole(String roleName, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserRole.getByUserNameAndRole");
-        q.setParameter(1, user.getUserName());
-        q.setParameter(2, roleName);
-        try {
-            q.getSingleResult();
-        } catch (NoResultException e) {
-            return false;
-        }
-        return true;
-    }
-    
-    
-    /**
-     * Get all of user's roles.
-     */
-    public List<String> getRoles(User user) throws WebloggerException { 
-        Query q = strategy.getNamedQuery("UserRole.getByUserName");
-        q.setParameter(1, user.getUserName());
-        List roles = q.getResultList();
-        List<String> roleNames = new ArrayList<String>();
-        for (Iterator it = roles.iterator(); it.hasNext();) {
-            UserRole userRole = (UserRole)it.next();
-            roleNames.add(userRole.getRole());
-        }
-        return roleNames;
-    }
-    
-    
-    /**
-     * Grant to user role specified by role name.
-     */
-    public void grantRole(String roleName, User user) throws WebloggerException {
-        if (!hasRole(roleName, user)) {
-            UserRole role = new UserRole(user.getUserName(), roleName);
-            this.strategy.store(role);
-        }
-    }
-    
-    
-    public void revokeRole(String roleName, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery("UserRole.getByUserNameAndRole");
-        q.setParameter(1, user.getUserName());
-        q.setParameter(2, roleName);
-        try {
-            UserRole role = (UserRole)q.getSingleResult();
-            this.strategy.remove(role);
-            
-        } catch (NoResultException e) {
-            throw new WebloggerException("ERROR: removing role", e);
-        }
-    }
-   
 }
 
 

@@ -19,9 +19,13 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.security.Permission;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -29,13 +33,19 @@ import org.apache.roller.weblogger.util.Utilities;
  * Base permission class for Roller. 
  */
 public abstract class ObjectPermission extends RollerPermission {
-    protected String       id;
+    private static Log log = LogFactory.getLog(ObjectPermission.class);
+
+    protected String       id = UUIDGenerator.generateUUID();;
     protected String       userName;
     protected String       actions;
     protected String       objectType;
     protected String       objectId;
-    protected Date         dateCreated;
+    protected Date         dateCreated = new Date();
     
+    
+    public ObjectPermission() {
+        super("");
+    }
     
     public ObjectPermission(String actions) {
         super(actions);
@@ -43,7 +53,7 @@ public abstract class ObjectPermission extends RollerPermission {
     }
     
     public boolean hasAction(String action) {
-        List<String> actionList = Arrays.asList(actions);
+        List<String> actionList = getActionsAsList();
         return actionList.contains(action);
     }
     
@@ -51,26 +61,27 @@ public abstract class ObjectPermission extends RollerPermission {
      * Merge actions into this permission.
      */
     public void addActions(ObjectPermission perm) {
-        List<String> newActions = Arrays.asList(perm.getActions());
-        List<String> oldActions = Arrays.asList(actions);
+        List<String> newActions = perm.getActionsAsList();
+        List<String> updatedActions = getActionsAsList();
         for (String newAction : newActions) {
-            if (!oldActions.contains(newAction)) {
-                oldActions.add(newAction);
+            if (!updatedActions.contains(newAction)) {
+                updatedActions.add(newAction);
             }
         }
-        actions = Utilities.stringArrayToString(oldActions.toArray(new String[0]), ",");
+        setActionsAsList(updatedActions);
     }
     
     /**
      * Merge actions into this permission.
      */
     public void removeActions(ObjectPermission perm) {
-        List<String> actionsToRemove = Arrays.asList(perm.getActions());
-        List<String> oldActions = Arrays.asList(actions);
+        List<String> actionsToRemove = perm.getActionsAsList();
+        List<String> updatedActions = getActionsAsList();
         for (String actionToRemove : actionsToRemove) {
-            oldActions.remove(actionToRemove);
+            updatedActions.remove(actionToRemove);
         }
-        actions = Utilities.stringArrayToString(oldActions.toArray(new String[0]), ",");
+        log.debug("updatedActions2: " + updatedActions);
+        setActionsAsList(updatedActions);
     }
     
     /**
@@ -89,6 +100,20 @@ public abstract class ObjectPermission extends RollerPermission {
 
     public String getActions() {
         return actions;
+    }
+    
+    public List<String> getActionsAsList() {
+        List<String> list = new ArrayList<String>();
+        List<String> rolist = Arrays.asList(Utilities.stringToStringArray(getActions(), ","));
+        list.addAll(rolist);
+        return list;
+    }
+    
+    public void setActionsAsList(List<String> actionsList) {
+        if (actionsList.size() == 0) {
+            setActions("");
+        }
+        setActions(Utilities.stringArrayToString(actionsList.toArray(new String[0]), ","));
     }
 
     public String getId() {

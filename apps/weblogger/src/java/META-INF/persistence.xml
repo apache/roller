@@ -25,6 +25,8 @@
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryTagAggregate.orm.xml        </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryTag.orm.xml                 </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogTemplate.orm.xml                 </mapping-file>
+        <mapping-file>org/apache/roller/weblogger/pojos/ObjectPermission.orm.xml               </mapping-file>
+        <mapping-file>org/apache/roller/weblogger/pojos/WeblogPermission.orm.xml               </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/Weblog.orm.xml                         </mapping-file>
     </persistence-unit> 
     

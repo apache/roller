@@ -14,19 +14,19 @@
         <discriminator-value>Weblog</discriminator-value>
         
         <named-query name="WeblogPermission.getAll">
-            <query>SELECT a FROM WeblogPermission p</query>
+            <query>SELECT p FROM WeblogPermission p</query>
         </named-query>
         
         <named-query name="WeblogPermission.getByUsername">
-            <query>SELECT a FROM WeblogPermission p WHERE p.username = ?1</query>
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1</query>
         </named-query>
         
         <named-query name="WeblogPermission.getByWeblogId">
-            <query>SELECT a FROM WeblogPermission p WHERE p.objectId = ?1</query>
+            <query>SELECT p FROM WeblogPermission p WHERE p.objectId = ?1</query>
         </named-query>
         
         <named-query name="WeblogPermission.getByUserName&amp;WeblogId">
-            <query>SELECT a FROM WeblogPermission p WHERE p.username = ?1 AND p.objectId = ?2</query>
+            <query>SELECT p FROM WeblogPermission p WHERE p.userName = ?1 AND p.objectId = ?2</query>
         </named-query>
         
     </entity>

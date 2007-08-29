@@ -13,23 +13,26 @@
             class="org.apache.roller.weblogger.pojos.ObjectPermission">
         <table name="roller_permission"/>
         <inheritance />
-        <discriminator-column name="objectType" />
+        <discriminator-column name="objecttype" />
         <attributes>
             <id name="id">
                 <column name="id"/>
             </id>
-            <id name="objectId">
+            <basic name="objectId">
                 <column name="objectid"/>
-            </id>
-            <id name="objectType">
+            </basic>
+            <basic name="objectType">
                 <column name="objecttype"/>
-            </id>
-            <id name="actions">
+            </basic>
+            <basic name="userName">
+                <column name="username"/>
+            </basic>
+            <basic name="actions">
                 <column name="actions"/>
-            </id>
-            <id name="dateCreated">
-                <column name="dateCreated"/>
-            </id>
+            </basic>
+            <basic name="dateCreated">
+                <column name="datecreated"/>
+            </basic>
         </attributes>
     </entity>
 </entity-mappings>
