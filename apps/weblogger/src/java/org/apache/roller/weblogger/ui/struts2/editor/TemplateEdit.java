@@ -26,9 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
@@ -58,8 +57,8 @@ public class TemplateEdit extends UIAction {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.ADMIN;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.ADMIN;
     }
     
     

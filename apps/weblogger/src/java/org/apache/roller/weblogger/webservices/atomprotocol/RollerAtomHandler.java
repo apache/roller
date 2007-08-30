@@ -38,7 +38,6 @@ import org.apache.roller.weblogger.business.FilePathException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -70,6 +69,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.ThemeResource;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
@@ -174,7 +174,7 @@ public class RollerAtomHandler implements AtomHandler {
         AtomService service = new AtomService();
         List perms = null;
         try {
-            perms = roller.getUserManager().getAllPermissions(user);
+            perms = roller.getUserManager().getWeblogPermissions(user);
         } catch (WebloggerException re) {
             throw new AtomException("Getting user's weblogs", re);
         }
@@ -186,25 +186,29 @@ public class RollerAtomHandler implements AtomHandler {
         }
         if (perms != null) {
             for (Iterator iter=perms.iterator(); iter.hasNext();) {
-                WeblogUserPermission perm = (WeblogUserPermission)iter.next();
-                String handle = perm.getWebsite().getHandle();
-                
-                // Create workspace to represent weblog
-                Workspace workspace = new Workspace(
-                    Utilities.removeHTML(perm.getWebsite().getName()), "text");
-                service.addWorkspace(workspace);
-                
-                // Create collection for entries within that workspace
-                Collection entryCol = new Collection("Weblog Entries", "text", 
-                    atomURL+"/"+handle+"/entries");
-                entryCol.setAccept("application/atom+xml;type=entry");
+                WeblogPermission perm = (WeblogPermission)iter.next();
+                Workspace workspace = null;
+                Weblog weblog = null;
                 try {  
+                    String handle = perm.getWeblog().getHandle();
+
+                    // Create workspace to represent weblog
+                    workspace = new Workspace(
+                        Utilities.removeHTML(perm.getWeblog().getName()), "text");
+                    service.addWorkspace(workspace);
+
+                    // Create collection for entries within that workspace
+                    Collection entryCol = new Collection("Weblog Entries", "text", 
+                        atomURL+"/"+handle+"/entries");
+                    entryCol.setAccept("application/atom+xml;type=entry");
+                    
                     // Add fixed categories using scheme that points to 
                     // weblog because categories are weblog specific
+                    weblog = perm.getWeblog();
                     Categories cats = new Categories();
                     cats.setFixed(true);
-                    cats.setScheme(getWeblogCategoryScheme(perm.getWebsite()));
-                    List rollerCats = roller.getWeblogEntryManager().getWeblogCategories(perm.getWebsite(), false);
+                    cats.setScheme(getWeblogCategoryScheme(weblog));
+                    List rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog, false);
                     for (Iterator it = rollerCats.iterator(); it.hasNext();) {
                         WeblogCategory rollerCat = (WeblogCategory)it.next();
                         Category cat = new Category();
@@ -220,25 +224,26 @@ public class RollerAtomHandler implements AtomHandler {
                     tags.setFixed(false);
                     entryCol.addCategories(tags);
                     
+                    workspace.addCollection(entryCol);
+
+                    // Add media collection for upload dir
+                    Collection uploadCol = new Collection("Media Files", "text", 
+                        atomURL+"/"+handle+"/resources/");
+                    uploadCol.setAccept(accept);
+                    workspace.addCollection(uploadCol);
+                    
                 } catch (Exception e) {
                     throw new AtomException("Fetching weblog categories");
                 }                               
-                workspace.addCollection(entryCol);
-
-                // Add media collection for upload dir
-                Collection uploadCol = new Collection("Media Files", "text", 
-                    atomURL+"/"+handle+"/resources/");
-                uploadCol.setAccept(accept);
-                workspace.addCollection(uploadCol);
 
                 // And add one media collection for each of weblog's upload sub-directories
                 ThemeResource[] dirs;
                 try {
-                    dirs = roller.getFileManager().getDirectories(perm.getWebsite());
+                    dirs = roller.getFileManager().getDirectories(weblog);
                     for (int i=0; i<dirs.length; i++) {
                         Collection uploadSubCol = new Collection(
                             "Media Files: " + dirs[i].getPath(), "text",
-                            atomURL+"/"+handle+"/resources/" + dirs[i].getPath());
+                            atomURL+"/"+weblog.getHandle()+"/resources/" + dirs[i].getPath());
                         uploadSubCol.setAccept(accept);
                         workspace.addCollection(uploadSubCol);
                     }
@@ -940,7 +945,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private boolean canEdit(Weblog website) {
         try {
-            return website.hasUserPermissions(this.user,WeblogUserPermission.AUTHOR);
+            return website.hasUserPermissions(this.user, WeblogPermission.POST);
         } catch (Exception e) {
             log.error("Checking website.hasUserPermissions()");
         }

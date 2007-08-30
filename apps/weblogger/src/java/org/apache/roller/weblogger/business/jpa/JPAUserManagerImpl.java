@@ -80,15 +80,11 @@ public class JPAUserManagerImpl implements UserManager {
     public void removeUser(User user) throws WebloggerException {
         //remove permissions
         // make sure that both sides of the relationship are maintained
-        for (Iterator iterator = user.getPermissions().iterator(); iterator.hasNext();) {
-            WeblogUserPermission perms = (WeblogUserPermission) iterator.next();
+        List<WeblogPermission> perms = getWeblogPermissions(user);
+        for (WeblogPermission perm : perms) {
+           
             //Remove it from database
             this.strategy.remove(perms);
-            //Remove it from website
-            iterator.remove();
-            //Remove it from corresponding user
-            Weblog website = perms.getWebsite();
-            website.getPermissions().remove(perms);
         }
         
         this.strategy.remove(user);
@@ -448,25 +444,24 @@ public class JPAUserManagerImpl implements UserManager {
     //-------------------------------------------------------- permissions CRUD
  
     public boolean checkPermission(RollerPermission perm, User user) throws WebloggerException {
+        RollerPermission existingPerm = null;
         
         // if permission a weblog permission
         if (perm instanceof WeblogPermission) {
             // if user has specified permission in weblog return true
             WeblogPermission permToCheck = (WeblogPermission)perm;
-            RollerPermission existingPerm = null;
             try {
                 existingPerm = getWeblogPermission(permToCheck.getWeblog(), user);
-                if (existingPerm.hasActions(permToCheck.getActionsAsList())) return true;
             } catch (WebloggerException ignored) {}        
         }
 
         if (perm instanceof GlobalPermission) {
             // if user has specified global permission return true
-            GlobalPermission permToCheck = (GlobalPermission)perm;
-            GlobalPermission existingPerm = new GlobalPermission(user);
-            if (existingPerm.hasActions(permToCheck.getActionsAsList())) return true;
+            existingPerm = new GlobalPermission(user);
         }
         
+        if (existingPerm.hasActions(perm.getActionsAsList())) return true;
+        if (existingPerm.implies(perm)) return true;
         return false;
     }
 
@@ -477,6 +472,22 @@ public class JPAUserManagerImpl implements UserManager {
         q.setParameter(2, weblog.getHandle());
         try {
             return (WeblogPermission)q.getSingleResult();
+        } catch (NoResultException ignored) {
+            return null;
+        }
+    }
+
+    
+    public WeblogPermission setWeblogPermissionActions(WeblogPermission perm, String newActions) throws WebloggerException {
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        q.setParameter(1, perm.getUser().getUserName());
+        q.setParameter(2, perm.getWeblog().getHandle());
+        try {
+            WeblogPermission permToUpdate = (WeblogPermission)q.getSingleResult();
+            permToUpdate.setActions(newActions);
+            strategy.store(permToUpdate);
+            return permToUpdate;
+            
         } catch (NoResultException ignored) {
             return null;
         }
@@ -518,8 +529,26 @@ public class JPAUserManagerImpl implements UserManager {
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
         }
+        // set pending to false
         existingPerm.setPending(false);
         this.strategy.store(existingPerm);
+    }
+
+    
+    public void declineWeblogPermission(WeblogPermission perm) throws WebloggerException {
+        
+        // get specified permission
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        q.setParameter(1, perm.getUserName());
+        q.setParameter(2, perm.getObjectId());
+        WeblogPermission existingPerm = null;
+        try {
+            existingPerm = (WeblogPermission)q.getSingleResult();           
+        } catch (NoResultException ignored) {
+            throw new WebloggerException("ERROR: permission not found");
+        }
+        // remove permission
+        this.strategy.remove(existingPerm);
     }
 
     
@@ -634,155 +663,6 @@ public class JPAUserManagerImpl implements UserManager {
         } catch (NoResultException e) {
             throw new WebloggerException("ERROR: removing role", e);
         }
-    }
-    
-    
-       
-    
-    
-    
-    // TO BE REWRITTEN
-       
-    public void savePermissions(WeblogUserPermission perms)
-    throws WebloggerException {
-        if (getPermissions(perms.getId()) == null) { 
-            // This is a new object make sure that relationship is set on managed
-            // copy of other side
-            Weblog website = perms.getWebsite(); //(Weblog) getManagedObject(perms.getWebsite());
-            website.getPermissions().add(perms);
-            
-            User user = perms.getUser(); //(User) getManagedObject(perms.getUser());
-            user.getPermissions().add(perms);
-        }
-        this.strategy.store(perms);
-    }
-    
-    
-    public void removePermissions(WeblogUserPermission perms)
-    throws WebloggerException {
-        this.strategy.remove(perms);
-        // make sure that relationship is set on managed
-        // copy of other side
-        Weblog website = perms.getWebsite(); //Weblog) getManagedObject(perms.getWebsite());
-        website.getPermissions().remove(perms);
-        
-        User user = perms.getUser(); //(User) getManagedObject(perms.getUser());
-        user.getPermissions().remove(perms);
-    }
-    
-       
-    /**
-     * Return permissions for specified user in website
-     */
-    public WeblogUserPermission getPermissions(
-            Weblog website, User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "WeblogUserPermission.getByWebsiteAndUser");
-        q.setParameter(1, website);
-        q.setParameter(2, user);
-        try {
-            return (WeblogUserPermission)q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    
-    /**
-     * Get pending permissions for user
-     */
-    public List getPendingPermissions(User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "WeblogUserPermission.getByUserAndPending");
-        q.setParameter(1, user);
-        q.setParameter(2, Boolean.TRUE);
-        return q.getResultList();
-    }
-    
-    
-    /**
-     * Get pending permissions for website
-     */
-    public List getPendingPermissions(Weblog website) throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "WeblogUserPermission.getByWebsiteAndPending");
-        q.setParameter(1, website);
-        q.setParameter(2, Boolean.TRUE);
-        return q.getResultList();
-    }
-    
-    
-    /**
-     * Get all permissions of a website (pendings not including)
-     */
-    public List getAllPermissions(Weblog website) throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "WeblogUserPermission.getByWebsiteAndPending");
-        q.setParameter(1, website);
-        q.setParameter(2, Boolean.FALSE);
-        return q.getResultList();
-    }
-   
-    
-    /**
-     * Get all permissions of a user.
-     */
-    public List getAllPermissions(User user) throws WebloggerException {
-        Query q = strategy.getNamedQuery(
-                "WeblogUserPermission.getByUserAndPending");
-        q.setParameter(1, user);
-        q.setParameter(2, Boolean.FALSE);
-        return q.getResultList();        
-    }
-    
-    
-    /**
-     * Creates and stores a pending WeblogUserPermission for user and website specified.
-     */
-    public WeblogUserPermission inviteUser(Weblog website,
-            User user, short mask) throws WebloggerException {
-        
-        if (website == null) throw new WebloggerException("Website cannot be null");
-        if (user == null) throw new WebloggerException("User cannot be null");
-        
-        WeblogUserPermission perms = new WeblogUserPermission();
-        perms.setWebsite(website);
-        perms.setUser(user);
-        perms.setPermissionMask(mask);
-        savePermissions(perms);
-        
-        return perms;
-    }
-    
-    
-    /**
-     * Remove user permissions from a website.
-     */
-    public void retireUser(Weblog website, User user) throws WebloggerException {
-        
-        if (website == null) throw new WebloggerException("Website cannot be null");
-        if (user == null) throw new WebloggerException("User cannot be null");
-        
-        Iterator perms = website.getPermissions().iterator();
-        WeblogUserPermission target = null;
-        while (perms.hasNext()) {
-            WeblogUserPermission pd = (WeblogUserPermission)perms.next();
-            if (pd.getUser().getId().equals(user.getId())) {
-                target = pd;
-                break;
-            }
-        }
-        if (target == null) throw new WebloggerException("User not member of website");
-        
-        website.removePermission(target);
-        this.strategy.remove(target);
-    }
-    
-        
-    public WeblogUserPermission getPermissions(String inviteId)
-    throws WebloggerException {
-        return (WeblogUserPermission)this.strategy.load(
-                WeblogUserPermission.class, inviteId);
     }
 }
 

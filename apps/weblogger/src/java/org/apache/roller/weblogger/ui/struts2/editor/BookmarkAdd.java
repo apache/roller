@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -58,8 +58,8 @@ public class BookmarkAdd extends UIAction {
     }
     
     
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.ADMIN;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.ADMIN;
     }
     
     

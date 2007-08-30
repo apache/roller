@@ -31,8 +31,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -69,8 +69,8 @@ public class WeblogConfig extends UIAction {
     
     
     // admin perms required
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.ADMIN;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.ADMIN;
     }
     
     

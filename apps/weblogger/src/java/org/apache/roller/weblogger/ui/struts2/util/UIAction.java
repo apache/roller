@@ -91,8 +91,8 @@ public abstract class UIAction extends ActionSupport
     }
     
     // default action permissions, no perms required
-    public short requiredWeblogPermissions() {
-        return -1;
+    public String requiredWeblogPermissions() {
+        return null;
     }
     
     // convenient way to tell if user being dealt with is an admin

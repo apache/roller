@@ -33,14 +33,14 @@
         </s:text>
         
         <s:url action="menu!accept" id="acceptInvite">
-            <s:param name="inviteId" value="#invite.id" />
+            <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="acceptInvite" />'>
             <s:text name="yourWebsites.accept" />
         </a> 
         &nbsp;|&nbsp;
         <s:url action="menu!decline" id="declineInvite">
-            <s:param name="inviteId" value="#invite.id" />
+            <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="declineInvite" />'>
             <s:text name="yourWebsites.decline" />

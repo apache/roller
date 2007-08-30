@@ -102,8 +102,4 @@ public abstract class RollerPermission extends java.security.Permission {
         }
         return false;
     }
-    
-    public boolean implies(Permission perm) {
-        return false;
-    }
 }

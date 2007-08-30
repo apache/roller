@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -45,6 +44,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.I18nUtils;
 
 
@@ -169,12 +169,6 @@ public class Weblog implements Serializable {
     }
     public void setPermissions(List perms) {
         permissions = perms;
-    }
-    /**
-     * Remove permission from collection.
-     */
-    public void removePermission(WeblogUserPermission perms) {
-        permissions.remove(perms);
     }
     
     
@@ -648,35 +642,36 @@ public class Weblog implements Serializable {
     /**
      * Returns true if user has all permissions specified by mask.
      */
-    public boolean hasUserPermissions(User user, short mask) {
-        // look for user in website's permissions
-        WeblogUserPermission userPerms = null;
-        Iterator iter = getPermissions().iterator();
-        while (iter.hasNext()) {
-            WeblogUserPermission perms = (WeblogUserPermission) iter.next();
-            if (perms.getUser().getId().equals(user.getId())) {
-                userPerms = perms;
-                break;
-            }
-        }
-        // if we found one, does it satisfy the mask?
-        if (userPerms != null && !userPerms.isPending()) {
-            if (userPerms != null && (userPerms.getPermissionMask() & mask) == mask) {
-                return true;
-            }
-        }
-        // otherwise, check to see if user is a global admin
+    public boolean hasUserPermissions(User user, String actions) {
         try {
-            if (user != null && WebloggerFactory.getWeblogger().getUserManager().hasRole("admin", user)) return true;
-        } catch (Exception e) {
-            this.log.debug("ERROR: checking user role", e);
+            // look for user in website's permissions
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogPermission userPerms = new WeblogPermission(this, user, actions);
+            return umgr.checkPermission(userPerms, user);
+            
+        } catch (WebloggerException ex) {
+            // something is going seriously wrong, not much we can do here
+            log.error("ERROR checking user permssion", ex);
         }
         return false;
     }
     
     /** Get number of users associated with website */
     public int getUserCount() {
-        return getPermissions().size();
+        int count = 0;
+        try {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            Iterator iter = umgr.getWeblogPermissions(this).iterator();
+            while (iter.hasNext()) {
+                WeblogPermission perm = (WeblogPermission) iter.next();
+                count++;
+            }
+            
+        } catch (WebloggerException ex) {
+            // something is seriously wrong, not me we can do here
+            log.error("ERROR error getting admin user count", ex);
+        }
+        return count;
     }
     
     /** No-op needed to please XDoclet generated code */
@@ -687,13 +682,19 @@ public class Weblog implements Serializable {
     
     public int getAdminUserCount() {
         int count = 0;
-        WeblogUserPermission userPerms = null;
-        Iterator iter = getPermissions().iterator();
-        while (iter.hasNext()) {
-            WeblogUserPermission perms = (WeblogUserPermission) iter.next();
-            if (perms.getPermissionMask() == WeblogUserPermission.ADMIN) {
-                count++;
+        try {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            Iterator iter = umgr.getWeblogPermissions(this).iterator();
+            while (iter.hasNext()) {
+                WeblogPermission perm = (WeblogPermission) iter.next();
+                if (perm.hasAction(WeblogPermission.ADMIN)) {
+                    count++;
+                }
             }
+            
+        } catch (WebloggerException ex) {
+            // something is seriously wrong, not me we can do here
+            log.error("ERROR error getting admin user count", ex);
         }
         return count;
     }

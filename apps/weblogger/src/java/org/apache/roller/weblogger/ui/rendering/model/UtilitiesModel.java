@@ -29,13 +29,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
-import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
@@ -123,7 +122,7 @@ public class UtilitiesModel implements Model {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
                 return weblog.getPojo().hasUserPermissions(
-                        parsedRequest.getUser(), WeblogUserPermission.AUTHOR);
+                        parsedRequest.getUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -135,7 +134,7 @@ public class UtilitiesModel implements Model {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
                 return weblog.getPojo().hasUserPermissions(
-                        parsedRequest.getUser(), WeblogUserPermission.ADMIN);
+                        parsedRequest.getUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);

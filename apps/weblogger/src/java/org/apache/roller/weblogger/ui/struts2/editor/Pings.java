@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -72,8 +72,8 @@ public class Pings extends UIAction {
     
     
     // admin perms required
-    public short requireWeblogPermissions() {
-        return WeblogUserPermission.ADMIN;
+    public String requireWeblogPermissions() {
+        return WeblogPermission.ADMIN;
     }
     
     

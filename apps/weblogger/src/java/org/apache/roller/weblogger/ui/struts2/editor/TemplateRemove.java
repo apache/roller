@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -51,8 +51,8 @@ public class TemplateRemove extends UIAction {
     
     
     // must be a weblog admin to use this action
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.ADMIN;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.ADMIN;
     }
     
     

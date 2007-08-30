@@ -62,12 +62,13 @@ public interface UISecurityEnforced {
     
     /**
      * What are the required weblog permissions for this action, if any?
+     * Returns comma separaed list of required weblog permission actions
      *
      * This method only takes effect if both isUserRequired() and isWeblogRequired()
      * are 'true'.
      *
      * @return short The required weblog permissions, or -1 if no permissions required.
      */
-    public short requiredWeblogPermissions();
+    public String requiredWeblogPermissions();
     
 }

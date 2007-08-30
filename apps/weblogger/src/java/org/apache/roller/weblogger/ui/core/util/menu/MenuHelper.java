@@ -23,16 +23,14 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -204,15 +202,15 @@ public class MenuHelper {
     private static boolean isPermitted(String perm, User user, Weblog weblog) {
         
         // convert permissions string to short
-        short permMask = -1;
+        String permMask = null;
         if(perm == null) {
             return true;
         } else if("limited".equals(perm)) {
-            permMask = WeblogUserPermission.LIMITED;
+            permMask = WeblogPermission.EDIT_DRAFT;
         } else if("author".equals(perm)) {
-            permMask = WeblogUserPermission.AUTHOR;
+            permMask = WeblogPermission.POST;
         } else if("admin".equals(perm)) {
-            permMask = WeblogUserPermission.ADMIN;
+            permMask = WeblogPermission.ADMIN;
         } else {
             // unknown perm
             return false;

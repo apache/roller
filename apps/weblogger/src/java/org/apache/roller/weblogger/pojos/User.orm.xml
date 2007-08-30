@@ -106,8 +106,6 @@
             <basic name="timeZone">
                 <column name="timeZone" insertable="true" updatable="true" unique="false"/>
             </basic>
-            <one-to-many name="permissions" mapped-by="user" target-entity="org.apache.roller.weblogger.pojos.WeblogUserPermission" fetch="LAZY">
-            </one-to-many>
         </attributes>
     </entity>
 </entity-mappings>

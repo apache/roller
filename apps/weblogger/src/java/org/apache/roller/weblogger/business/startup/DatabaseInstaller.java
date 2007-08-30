@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.DatabaseProvider;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -332,21 +332,22 @@ public class DatabaseInstaller {
                     + "pubtime=pubtime, updatetime=updatetime "
                     + "where publishentry=? and websiteid=?");
             PreparedStatement permsInsert = con.prepareStatement(
-                    "insert into roller_user_permissions "
-                    + "(id, website_id, user_id, permission_mask, pending) "
-                    + "values (?,?,?,?,?)");
+                    "insert into roller_permissions "
+                    + "(id, username, actions, objectid, objecttype, pending, datecreated) "
+                    + "values (?,?,?,?,?,?,?)");
             
             // loop through websites, each has a user
+            java.sql.Date now = new java.sql.Date(new Date().getTime());
             ResultSet websiteSet = websitesQuery.executeQuery();
             while (websiteSet.next()) {
                 String websiteid = websiteSet.getString("wid");
                 String userid = websiteSet.getString("uid");
-                String handle = websiteSet.getString("uname");
-                successMessage("Processing website: " + handle);
+                String username = websiteSet.getString("uname");
+                successMessage("Processing website: " + username);
                 
                 // use website user's username as website handle
                 websiteUpdate.clearParameters();
-                websiteUpdate.setString(1, handle);
+                websiteUpdate.setString(1, username);
                 websiteUpdate.setString(2, websiteid);
                 websiteUpdate.executeUpdate();
                 
@@ -369,9 +370,12 @@ public class DatabaseInstaller {
                 // add  permission for user in website
                 permsInsert.clearParameters();
                 permsInsert.setString( 1, websiteid+"p");
-                permsInsert.setString( 2, websiteid);
-                permsInsert.setString( 3, userid);
-                permsInsert.setShort(    4,WeblogUserPermission.ADMIN);
+                permsInsert.setString( 2, username);
+                permsInsert.setString( 3, WeblogPermission.ADMIN);
+                permsInsert.setString( 4, websiteid);
+                permsInsert.setString( 5, "Weblog");
+                permsInsert.setBoolean(6, false);
+                permsInsert.setDate(   7, now);
                 permsInsert.setBoolean(5, false);
                 permsInsert.executeUpdate();
             }

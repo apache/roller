@@ -11,8 +11,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetAddBase;
 
 
@@ -32,8 +32,8 @@ public class CustomPingTargetAdd extends PingTargetAddBase {
     
     
     // admin perms required
-    public short requiredWeblogPermission() {
-        return WeblogUserPermission.ADMIN;
+    public String requiredWeblogPermission() {
+        return WeblogPermission.ADMIN;
     }
     
     

@@ -24,8 +24,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 
@@ -54,8 +54,8 @@ public class MembersInvite extends UIAction {
     
     
     // admin perms required
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.ADMIN;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.ADMIN;
     }
     
     
@@ -110,11 +110,11 @@ public class MembersInvite extends UIAction {
         
         // check for existing permissions or invitation
         try {
-            WeblogUserPermission perms = umgr.getPermissions(getActionWeblog(), user);
+            WeblogPermission perm = umgr.getWeblogPermission(getActionWeblog(), user);
             
-            if (perms != null && perms.isPending()) {
+            if (perm != null && perm.isPending()) {
                 addError("inviteMember.error.userAlreadyInvited");
-            } else if (perms != null) {
+            } else if (perm != null) {
                 addError("inviteMember.error.userAlreadyMember");
             }
             
@@ -126,8 +126,9 @@ public class MembersInvite extends UIAction {
         
         // if no errors then send the invitation
         if(!hasActionErrors()) try {
-            
-            umgr.inviteUser(getActionWeblog(), user, Short.parseShort(getPermissionsMask()));
+            WeblogPermission perm = new WeblogPermission(getActionWeblog(), user, getPermissionsMask());
+            perm.setPending(true);
+            umgr.grantWeblogPermission(perm);
             WebloggerFactory.getWeblogger().flush();
             
             addMessage("inviteMember.userInvited");

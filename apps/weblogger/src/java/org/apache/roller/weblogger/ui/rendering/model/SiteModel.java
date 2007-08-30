@@ -35,12 +35,12 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
@@ -320,10 +320,9 @@ public class SiteModel implements Model {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             User user = umgr.getUserByUserName(userName);
-            List perms = umgr.getAllPermissions(user);
-            for (Iterator it = perms.iterator(); it.hasNext();) {
-                WeblogUserPermission perm = (WeblogUserPermission) it.next();
-                results.add(WeblogWrapper.wrap(perm.getWebsite(), urlStrategy));
+            List<WeblogPermission> perms = umgr.getWeblogPermissions(user);
+            for (WeblogPermission perm : perms) {
+                results.add(WeblogWrapper.wrap(perm.getWeblog(), urlStrategy));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -338,10 +337,11 @@ public class SiteModel implements Model {
     public List getWeblogsUsers(String handle) {
         List results = new ArrayList();
         try {            
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            UserManager umgr = roller.getUserManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
-            List perms = WebloggerFactory.getWeblogger().getUserManager().getAllPermissions(website);
-            for (Iterator it = perms.iterator(); it.hasNext();) {
-                WeblogUserPermission perm = (WeblogUserPermission) it.next();
+            List<WeblogPermission> perms = umgr.getWeblogPermissions(website);
+            for (WeblogPermission perm : perms) {
                 results.add(UserWrapper.wrap(perm.getUser()));
             }
         } catch (Exception e) {

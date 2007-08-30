@@ -60,7 +60,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -536,7 +536,7 @@ public class OldWeblogPageModel {
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (referer.getVisible().booleanValue() 
-                     || referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogUserPermission.ADMIN) ) { 
+                     || referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) { 
                         referers.add(WeblogReferrerWrapper.wrap(referer, urlStrategy));
                     }
                 }
@@ -564,7 +564,7 @@ public class OldWeblogPageModel {
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (referer.getVisible().booleanValue()
-                    ||  referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogUserPermission.ADMIN) ) {
+                    ||  referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) {
                         referers.add(WeblogReferrerWrapper.wrap(referer, urlStrategy));
                     }
                 }
@@ -736,7 +736,7 @@ public class OldWeblogPageModel {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
             if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
-                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogUserPermission.AUTHOR);
+                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToEdit()", e);
@@ -751,7 +751,7 @@ public class OldWeblogPageModel {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
             if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
-                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogUserPermission.ADMIN);
+                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToAdmin()", e);

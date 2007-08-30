@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.pojos;
 
+import java.security.Permission;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -54,4 +55,23 @@ public class WeblogPermission extends ObjectPermission {
     public int hashCode() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public boolean implies(Permission perm) {
+        if (perm instanceof WeblogPermission) {
+            WeblogPermission weblogPerm = (WeblogPermission)perm;
+            if (getObjectId().equals(weblogPerm.getObjectId())) {
+                if (hasAction(ADMIN)) {
+                    return true;
+                }
+                if (hasAction(POST) && weblogPerm.hasAction(EDIT_DRAFT)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
+
+
+
+

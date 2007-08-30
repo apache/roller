@@ -31,8 +31,8 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.MediacastException;
@@ -70,8 +70,8 @@ public final class EntryEdit extends EntryBase {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.LIMITED;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.EDIT_DRAFT;
     }
     
     
@@ -143,7 +143,7 @@ public final class EntryEdit extends EntryBase {
                 }
                 
                 // if user does not have author perms then force PENDING status
-                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogUserPermission.AUTHOR)) {
+                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.POST)) {
                     entry.setStatus(WeblogEntry.PENDING);
                 }
             }

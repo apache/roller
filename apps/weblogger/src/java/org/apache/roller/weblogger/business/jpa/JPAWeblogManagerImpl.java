@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -62,15 +63,10 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
-
-
 
 /*
  * JPAWeblogManagerImpl.java
- *
  * Created on May 31, 2006, 4:08 PM
- *
  */
 @com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
@@ -128,9 +124,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private void removeWebsiteContents(Weblog website)
     throws  WebloggerException {
         
-        BookmarkManager bmgr = roller.getBookmarkManager();
-        WeblogManager wmgr = roller.getWeblogManager();
+        UserManager        umgr = roller.getUserManager();
+        WeblogManager      wmgr = roller.getWeblogManager();
         WeblogEntryManager emgr = roller.getWeblogEntryManager();
+        BookmarkManager    bmgr = roller.getBookmarkManager();
         
         // remove tags
         Query tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog");
@@ -228,18 +225,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // remove permissions
         // make sure that both sides of the relationship are maintained
-        for (Iterator iterator = website.getPermissions().iterator(); iterator.hasNext();) {
-            WeblogUserPermission perms = (WeblogUserPermission) iterator.next();
-            
-            //Remove it from website
-            iterator.remove();
-            
-            //Remove it from corresponding user
-            User user = perms.getUser();
-            user.getPermissions().remove(perms);
-
-            //Remove it from database
-            this.strategy.remove(perms);
+        for (Iterator iterator = umgr.getWeblogPermissions(website).iterator(); iterator.hasNext();) {
+            WeblogPermission perm = (WeblogPermission) iterator.next();
+            umgr.revokeWeblogPermission(perm);
         }
         
         // flush the changes before returning. This is required as there is a
@@ -292,13 +280,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     throws WebloggerException {
         
         // grant weblog creator ADMIN permissions
-        WeblogUserPermission perms = new WeblogUserPermission();
-        perms.setUser(newWeblog.getCreator());
-        perms.setWebsite(newWeblog);
-        perms.setPending(false);
-        perms.setPermissionMask(WeblogUserPermission.ADMIN);
-        roller.getUserManager().savePermissions(perms);
-        
         WeblogPermission weblogPermission = 
             new WeblogPermission(newWeblog, newWeblog.getCreator(), 
                 WeblogPermission.ADMIN + "," + WeblogPermission.POST);

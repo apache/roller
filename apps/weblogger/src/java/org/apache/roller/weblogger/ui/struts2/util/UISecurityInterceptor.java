@@ -22,9 +22,11 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -50,7 +52,9 @@ public class UISecurityInterceptor extends AbstractInterceptor {
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
             
             // are we requiring an authenticated user?
-            if(theAction.isUserRequired()) {
+            if (theAction.isUserRequired()) {
+                
+                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 
                 User authenticatedUser = ((UIAction)theAction).getAuthenticatedUser();
                 if(authenticatedUser == null) {
@@ -59,15 +63,15 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                 }
                 
                 // are we also enforcing a specific role?
-                if(theAction.requiredUserRole() != null) {
-                    if(!WebloggerFactory.getWeblogger().getUserManager().hasRole(theAction.requiredUserRole(), authenticatedUser)) {
+                if (theAction.requiredUserRole() != null) {
+                    if(!umgr.hasRole(theAction.requiredUserRole(), authenticatedUser)) {
                         log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
                         return "access-denied";
                     }
                 }
                 
                 // are we requiring a valid action weblog?
-                if(theAction.isWeblogRequired()) {
+                if (theAction.isWeblogRequired()) {
                     
                     Weblog actionWeblog = ((UIAction)theAction).getActionWeblog();
                     if(actionWeblog == null) {
@@ -76,10 +80,14 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                     }
                     
                     // are we also enforcing a specific weblog permission?
-                    if(theAction.requiredWeblogPermissions() > -1) {
+                    if (theAction.requiredWeblogPermissions() != null) {
                         
-                        if(!actionWeblog.hasUserPermissions(authenticatedUser,
-                                theAction.requiredWeblogPermissions())) {
+                        WeblogPermission required = new WeblogPermission(
+                                actionWeblog, 
+                                authenticatedUser, 
+                                theAction.requiredWeblogPermissions());
+                        
+                        if (!umgr.checkPermission(required, authenticatedUser)) {
                             log.debug("DENIED: user does not have required weblog permissions = "+
                                     theAction.requiredWeblogPermissions());
                             return "access-denied";

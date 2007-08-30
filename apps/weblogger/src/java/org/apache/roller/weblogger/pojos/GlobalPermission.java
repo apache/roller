@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.pojos; 
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
@@ -50,7 +51,14 @@ public class GlobalPermission extends RollerPermission {
         }
         setActionsAsList(actionsList);
     }
-
+        
+    public boolean implies(Permission perm) {
+        if (perm instanceof WeblogPermission) {
+            if (hasAction("admin")) return true;
+        }
+        return false;
+    }
+    
     public boolean equals(Object arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

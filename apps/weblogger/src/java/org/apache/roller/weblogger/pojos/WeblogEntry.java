@@ -52,6 +52,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -1118,12 +1119,19 @@ public class WeblogEntry implements Serializable {
             return true;
         }
         
-        boolean author = getWebsite().hasUserPermissions(
-                
-                user,(short)(WeblogUserPermission.AUTHOR));
-        boolean limited = getWebsite().hasUserPermissions(
-                
-                user,(short)(WeblogUserPermission.LIMITED));
+        WeblogPermission perm = null;
+        try {
+            // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            perm = umgr.getWeblogPermission(getWebsite(), user);
+            
+        } catch (WebloggerException ex) {
+            // security interceptor should ensure this never happens
+            mLogger.error("ERROR retrieving user's permission", ex);
+        }
+
+        boolean author = perm.hasAction(WeblogPermission.POST) || perm.hasAction(WeblogPermission.ADMIN);
+        boolean limited = !author && perm.hasAction(WeblogPermission.EDIT_DRAFT);
         
         if (author || (limited && isDraft()) || (limited && isPending())) {
             return true;

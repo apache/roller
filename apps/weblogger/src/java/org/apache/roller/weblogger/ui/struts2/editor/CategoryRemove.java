@@ -28,9 +28,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogCategoryPathComparator;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -62,8 +62,8 @@ public class CategoryRemove extends UIAction {
     }
     
     
-    public short requiredWeblogPermissions() {
-        return WeblogUserPermission.AUTHOR;
+    public String requiredWeblogPermissions() {
+        return WeblogPermission.POST;
     }
     
     

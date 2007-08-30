@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.RollerPermission;
-import org.apache.roller.weblogger.pojos.WeblogUserPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -197,12 +196,25 @@ public interface UserManager {
     
     
     /**
+     * Update an existing permission's actions.
+     */
+    public WeblogPermission setWeblogPermissionActions(
+            WeblogPermission perm, String newActions) throws WebloggerException;
+    
+    
+    /**
      * Confirm a permission that is currently in pending state.
      * 
      * If user already has a permission record for the specified weblog, then 
      * actions specified in argument perm will be added to that record.
      */
     public void confirmWeblogPermission(WeblogPermission perm) 
+            throws WebloggerException;
+    
+    /**
+     * Decline a permission that is currently in pending state.
+     */
+    public void declineWeblogPermission(WeblogPermission perm) 
             throws WebloggerException;
     
     
@@ -281,36 +293,7 @@ public interface UserManager {
     /**
      * Release any resources held by manager.
      */
-    public void release();
-    
-    
-    
-    // TO BE REWRITTEN
-    
-    public void savePermissions(WeblogUserPermission perms) 
-            throws WebloggerException;
-    
-    public void removePermissions(WeblogUserPermission perms) 
-            throws WebloggerException;
-    
-    public WeblogUserPermission getPermissions(String id) 
-            throws WebloggerException;
-    
-    public List getPendingPermissions(User user) throws WebloggerException;
-    
-    public List getPendingPermissions(Weblog user) throws WebloggerException;
-    
-    public WeblogUserPermission getPermissions(Weblog website, User user)
-        throws WebloggerException;
-    
-    public List getAllPermissions(Weblog website) throws WebloggerException;
-    
-    public List getAllPermissions(User user) throws WebloggerException;
-    
-    public WeblogUserPermission inviteUser(Weblog website, User user, short perms) 
-            throws WebloggerException;
-    
-    public void retireUser(Weblog website, User user) throws WebloggerException;    
+    public void release();   
 }
 
 
