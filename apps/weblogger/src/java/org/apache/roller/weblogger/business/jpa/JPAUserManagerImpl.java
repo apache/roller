@@ -448,7 +448,26 @@ public class JPAUserManagerImpl implements UserManager {
     //-------------------------------------------------------- permissions CRUD
  
     public boolean checkPermission(RollerPermission perm, User user) throws WebloggerException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        // if permission a weblog permission
+        if (perm instanceof WeblogPermission) {
+            // if user has specified permission in weblog return true
+            WeblogPermission permToCheck = (WeblogPermission)perm;
+            RollerPermission existingPerm = null;
+            try {
+                existingPerm = getWeblogPermission(permToCheck.getWeblog(), user);
+                if (existingPerm.hasActions(permToCheck.getActionsAsList())) return true;
+            } catch (WebloggerException ignored) {}        
+        }
+
+        if (perm instanceof GlobalPermission) {
+            // if user has specified global permission return true
+            GlobalPermission permToCheck = (GlobalPermission)perm;
+            GlobalPermission existingPerm = new GlobalPermission(user);
+            if (existingPerm.hasActions(permToCheck.getActionsAsList())) return true;
+        }
+        
+        return false;
     }
 
     

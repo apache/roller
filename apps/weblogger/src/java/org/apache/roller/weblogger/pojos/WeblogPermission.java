@@ -32,7 +32,8 @@ public class WeblogPermission extends ObjectPermission {
 
     
     public WeblogPermission(Weblog weblog, User user, String actions) {
-        super(actions);
+        super("WeblogPermission user: " + user.getUserName());
+        setActions(actions);
         objectType = "Weblog";
         objectId = weblog.getHandle();
         userName = user.getUserName();
@@ -44,5 +45,13 @@ public class WeblogPermission extends ObjectPermission {
 
     public User getUser() throws WebloggerException {
         return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
+    }
+
+    public boolean equals(Object arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int hashCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

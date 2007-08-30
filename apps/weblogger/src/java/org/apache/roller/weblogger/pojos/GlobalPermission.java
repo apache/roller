@@ -18,13 +18,44 @@
 
 package org.apache.roller.weblogger.pojos; 
 
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.util.Utilities;
+
+
 /**
  * 
  */
 public class GlobalPermission extends RollerPermission {
-    
-    public GlobalPermission(String action) {
-        super(action);
+        
+    public GlobalPermission(User user) throws WebloggerException {
+        super("GlobalPermission user: " + user.getUserName());
+        List<String> roles = WebloggerFactory.getWeblogger().getUserManager().getRoles(user);
+        List<String> actionsList = new ArrayList<String>();
+        
+        // loop through user's roles, adding actions implied by each
+        for (String role : roles) {
+            String impliedActions = WebloggerRuntimeConfig.getProperty("role.action." + role);
+            if (impliedActions != null) {
+                List<String> toAdds = Utilities.stringToStringList(impliedActions, ",");
+                for (String toAdd : toAdds) {
+                    if (!actionsList.contains(toAdd)) {
+                        actionsList.add(toAdd);
+                    }
+                }
+            }
+        }
+        setActionsAsList(actionsList);
     }
 
+    public boolean equals(Object arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int hashCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -19,30 +19,91 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.security.Permission;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.Utilities;
+
 
 /**
  * Base permission class for Roller. 
  */
-public class RollerPermission extends java.security.Permission {
+public abstract class RollerPermission extends java.security.Permission {
+    private static Log log = LogFactory.getLog(RollerPermission.class);
+    protected String  actions;
     
-    public RollerPermission(String action) {
-        super(action);
-    }
 
-    public boolean implies(Permission arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RollerPermission(String name) {
+        super(name);
     }
-
-    public boolean equals(Object arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+            
+    public void setActions(String actions) {
+        this.actions = actions;
     }
 
     public String getActions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return actions;
     }
 
+    public List<String> getActionsAsList() {
+        return Utilities.stringToStringList(getActions(), ",");
+    }
+    
+    public void setActionsAsList(List<String> actionsList) {
+        setActions(Utilities.stringListToString(actionsList, ","));
+    }
+
+    public boolean hasAction(String action) {
+        List<String> actionList = getActionsAsList();
+        return actionList.contains(action);
+    }
+    
+    public boolean hasActions(List<String> actionsToCheck) {
+        List<String> actionList = getActionsAsList();
+        for (String actionToCheck : actionsToCheck) {
+            if (!actionList.contains(actionToCheck)) return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Merge actions into this permission.
+     */
+    public void addActions(ObjectPermission perm) {
+        List<String> newActions = perm.getActionsAsList();
+        List<String> updatedActions = getActionsAsList();
+        for (String newAction : newActions) {
+            if (!updatedActions.contains(newAction)) {
+                updatedActions.add(newAction);
+            }
+        }
+        setActionsAsList(updatedActions);
+    }
+    
+    /**
+     * Merge actions into this permission.
+     */
+    public void removeActions(ObjectPermission perm) {
+        List<String> actionsToRemove = perm.getActionsAsList();
+        List<String> updatedActions = getActionsAsList();
+        for (String actionToRemove : actionsToRemove) {
+            updatedActions.remove(actionToRemove);
+        }
+        log.debug("updatedActions2: " + updatedActions);
+        setActionsAsList(updatedActions);
+    }
+    
+    /**
+     * True if permission specifies no actions
+     */
+    public boolean isEmpty() {
+        if (actions == null || actions.trim().length() == 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean implies(Permission perm) {
+        return false;
+    }
 }
