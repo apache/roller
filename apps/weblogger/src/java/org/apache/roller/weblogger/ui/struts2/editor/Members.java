@@ -22,8 +22,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
@@ -75,7 +78,7 @@ public class Members extends UIAction implements ParameterAware {
         
         int removed = 0;
         int changed = 0;
-        List<WeblogPermission>  permsList = new ArrayList<WeblogPermission>();
+        List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
             List<WeblogPermission> permissions = userMgr.getWeblogPermissions(getActionWeblog());
@@ -88,7 +91,7 @@ public class Members extends UIAction implements ParameterAware {
         
             for (WeblogPermission perms : permsList) {
                 
-                String sval = getParameter("perm-" + perms.getWeblog().getId());
+                String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
                     boolean error = false;
                     User user = getAuthenticatedUser();
@@ -161,5 +164,15 @@ public class Members extends UIAction implements ParameterAware {
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
+    }
+    
+    public List<WeblogPermission> getWeblogPermissions() {
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissions(getActionWeblog());
+        } catch (WebloggerException ex) {
+            // serious problem, but not much we can do here
+            log.error("ERROR getting weblog permissions", ex);
+        }
+        return new ArrayList<WeblogPermission>();
     }
 }

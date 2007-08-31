@@ -43,7 +43,7 @@ public class MembersInvite extends UIAction {
     private String userName = null;
     
     // permissions being given to user
-    private String permissionsMask = null;
+    private String permissionString = null;
     
     
     public MembersInvite() {
@@ -126,7 +126,7 @@ public class MembersInvite extends UIAction {
         
         // if no errors then send the invitation
         if(!hasActionErrors()) try {
-            WeblogPermission perm = new WeblogPermission(getActionWeblog(), user, getPermissionsMask());
+            WeblogPermission perm = new WeblogPermission(getActionWeblog(), user, getPermissionString());
             perm.setPending(true);
             umgr.grantWeblogPermission(perm);
             WebloggerFactory.getWeblogger().flush();
@@ -166,12 +166,12 @@ public class MembersInvite extends UIAction {
         this.userName = userId;
     }
 
-    public String getPermissionsMask() {
-        return permissionsMask;
+    public String getPermissionString() {
+        return permissionString;
     }
 
-    public void setPermissionsMask(String permission) {
-        this.permissionsMask = permission;
+    public void setPermissionString(String permission) {
+        this.permissionString = permission;
     }
     
 }

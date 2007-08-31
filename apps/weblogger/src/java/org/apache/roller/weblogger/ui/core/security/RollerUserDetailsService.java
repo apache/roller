@@ -1,6 +1,6 @@
 package org.apache.roller.weblogger.ui.core.security;
 
-import java.util.Iterator;
+import java.util.List;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.userdetails.UserDetails;
@@ -10,7 +10,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.UserRole;
 import org.apache.roller.weblogger.pojos.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -38,11 +37,11 @@ public class RollerUserDetailsService implements UserDetailsService {
                 throw new UsernameNotFoundException("ERROR no user: " + userName);
             }
 
-            GrantedAuthority[] authorities = new GrantedAuthorityImpl[umgr.getRoles(userData).size()];
+            List<String> roles = umgr.getRoles(userData);
+            GrantedAuthority[] authorities = new GrantedAuthorityImpl[roles.size()];
             int i = 0;
-            for (Iterator it = umgr.getRoles(userData).iterator(); it.hasNext();) {
-                UserRole role = (UserRole) it.next();
-                authorities[i++] = new GrantedAuthorityImpl(role.getRole());
+            for (String role : roles) {
+                authorities[i++] = new GrantedAuthorityImpl(role);
             }
 
             return new org.acegisecurity.userdetails.User(userData.getUserName(), userData.getPassword(), true, authorities);
