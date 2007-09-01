@@ -210,13 +210,7 @@ public class WeblogTest extends TestCase {
             List weblogs1 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(2, weblogs1.size());
             weblog = (Weblog) weblogs1.get(0);
-            assertNotNull(weblog);
-            
-            // testing paging
-            List weblogs11 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
-            assertEquals(1, weblogs11.size());
-            List weblogs12 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
-            assertEquals(1, weblogs12.size());
+            assertNotNull(weblog);           
             
             // make sure disabled weblogs are not returned
             weblog.setEnabled(Boolean.FALSE);
@@ -234,9 +228,6 @@ public class WeblogTest extends TestCase {
             List weblogs3 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(0, weblogs3.size());
             
-        } catch(Throwable t) {
-            log.error("Exception running test", t);
-            throw (Exception) t;
         } finally {
             TestUtils.teardownWeblog(testWeblog1.getId());
             TestUtils.teardownWeblog(testWeblog2.getId());

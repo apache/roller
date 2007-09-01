@@ -962,9 +962,12 @@ public class WeblogEntryTest extends TestCase {
     
     public void testWeblogStats() throws Exception {
         
+        
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+        
+        long existingUserCount = umgr.getUserCount() - 1;
         
         User user1 = TestUtils.setupUser("statuser1");
         Weblog blog1 = TestUtils.setupWeblog("statblog1", user1);
@@ -1007,7 +1010,7 @@ public class WeblogEntryTest extends TestCase {
             assertEquals(5L, emgr.getCommentCount());
 
             assertEquals(4L, wmgr.getWeblogCount());
-            assertEquals(2L, umgr.getUserCount());
+            assertEquals(existingUserCount + 2L, umgr.getUserCount());
             
         } finally {
             

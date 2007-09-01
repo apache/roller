@@ -41,7 +41,7 @@ public class WeblogPermission extends ObjectPermission {
     }
     
     public Weblog getWeblog() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle((objectId));
+        return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(objectId, null);
     }
 
     public User getUser() throws WebloggerException {
