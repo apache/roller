@@ -89,7 +89,7 @@ in the "base.path" definition.
     <include name="commons-collections-3.2.jar" />
     <include name="commons-codec-1.3.jar" />
     <include name="commons-digester-1.6.jar" />
-    <include name="commons-httpclient-2.0.2.jar" />
+    <include name="commons-httpclient-3.0.1.jar" />
     <include name="commons-logging-1.0.4.jar" />
     <include name="commons-lang-2.1.jar" />
     <include name="concurrent-1.3.2.jar"/>
