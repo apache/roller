@@ -346,11 +346,13 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         }
         
         // json tags service base
-        url.append("/roller-services/tagdata/weblog/");
+        url.append("/roller-services/tagdata/");
         
         // is this for a specific weblog or site-wide?
         if (weblog != null) {
-            url.append(weblog.getHandle()).append("/");
+            url.append("/weblog/");
+            url.append(weblog.getHandle());
+            url.append("/");
         }
         
         if (pageNum > 0) {
@@ -361,3 +363,5 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     }
     
 }
+
+
