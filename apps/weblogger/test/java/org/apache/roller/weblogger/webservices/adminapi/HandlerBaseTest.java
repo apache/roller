@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.webservices.adminapi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.DeleteMethod;
@@ -26,7 +27,6 @@ import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.util.Base64;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.MemberEntry;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.MemberEntrySet;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.UnexpectedRootElementException;
@@ -391,7 +391,8 @@ public abstract class HandlerBaseTest extends AappTest {
     
     private static void addAuthHeader(HttpMethod method, String user, String password) {
         String credentials = user + ":" + password;
-        method.setRequestHeader("Authorization", "Basic "  + new String(Base64.encode(credentials.getBytes())));
+        Base64 base64 = new Base64();
+        method.setRequestHeader("Authorization", "Basic "  + new String(base64.encode(credentials.getBytes())));
     }
     
 }
