@@ -22,7 +22,7 @@
 <%@ page import="java.util.List" %>
 <%
 User user = RollerSession.getRollerSession(request).getAuthenticatedUser();
-List weblogs = WebloggerFactory.getWeblogger().getUserManager().getUserWeblogs(user, true);
+List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
 
 if (weblogs.size() == 1) {
     Weblog weblog = (Weblog) weblogs.get(0);
