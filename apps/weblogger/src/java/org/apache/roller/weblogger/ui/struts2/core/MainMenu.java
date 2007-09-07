@@ -91,12 +91,14 @@ public class MainMenu extends UIAction {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogPermission perms = userMgr.getPermissions(getInviteId());
             if (perms != null) {
+                String handle = perms.getWebsite().getHandle();
+                        
                 // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
                 // TODO EXCEPTIONS: better exception handling here
                 userMgr.removePermissions(perms);
                 WebloggerFactory.getWeblogger().flush();
 
-                addMessage("yourWebsites.declined", perms.getWebsite().getHandle());
+                addMessage("yourWebsites.declined", handle);
             } else {
                 addError("yourWebsites.permNotFound");
             }
