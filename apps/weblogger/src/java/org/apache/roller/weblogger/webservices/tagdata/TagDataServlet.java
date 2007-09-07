@@ -66,6 +66,8 @@ public class TagDataServlet extends HttpServlet {
         String prefix = null;
         String format = "json";
         int page = 0;
+        
+        // TODO: last modified or ETag support, caching, etc.
 
         if (request.getPathInfo() != null) {
             pathInfo = Utilities.stringToStringArray(request.getPathInfo(),"/");
@@ -136,6 +138,7 @@ public class TagDataServlet extends HttpServlet {
             URLStrategy urlstrat = roller.getUrlStrategy();
             response.setContentType("application/tagdata+xml; charset=utf-8");
             PrintWriter pw = response.getWriter();
+            pw.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>"); 
             pw.println("<categories fixed=\"no\" "); 
             pw.println("   xmlns=\"http://www.w3.org/2007/app\""); 
             pw.println("   xmlns:atom=\"http://www.w3.org/2005/Atom\""); 
