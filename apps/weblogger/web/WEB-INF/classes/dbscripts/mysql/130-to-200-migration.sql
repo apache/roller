@@ -137,6 +137,16 @@ alter table pingtarget modify conditioncode integer not null;
 
 -- -----------------------------------------------------
 
+-- See ROL-1538
+alter table website add column isenabled tinyint(1) default 1;
+update website set isenabled=1;
+alter table website modify isenabled tinyint(1) default 1 not null; 
+
+-- See ROL-1536
+update folder set name='root' where name='top'; 
+
+-- -----------------------------------------------------
+
 -- Removing all indexes, foreign key with long names to support DB2
 
 alter table website drop foreign key website_userid_fk;
@@ -163,12 +173,12 @@ alter table userrole drop index userrole_userid_index;
 alter table userrole drop index userrole_username_index;
 alter table usercookie drop index usercookie_username_index;
 alter table usercookie drop index usercookie_cookieid_index;
-alter table webpage drop index webpage_name_index;
-alter table webpage drop index webpage_link_index;
+-- See ROL-1538 -- alter table webpage drop index webpage_name_index;
+-- See ROL-1538 -- alter table webpage drop index webpage_link_index;
 alter table webpage drop index webpage_id_index;
 alter table website drop index website_id_index;
 alter table website drop index website_userid_index;
-alter table website drop index website_isenabled_index;
+-- See ROL-1538 -- alter table website drop index website_isenabled_index;
 alter table folder drop index folder_websiteid_index;
 alter table folderassoc drop index folderassoc_folderid_index;
 alter table folderassoc drop index folderassoc_ancestorid_index;
