@@ -30,6 +30,7 @@ import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.TreeMap;
 import java.sql.Timestamp;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -334,14 +335,20 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      */
     public void removeWeblogEntry(WeblogEntry entry)
     throws WebloggerException {
+        
+        String entryAnchor = entry.getAnchor();
+        Weblog website = entry.getWebsite();
+        
         Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
         q.setParameter(1, entry);
         List referers = q.getResultList();
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
             WeblogReferrer referer = (WeblogReferrer) iter.next();
-            this.strategy.remove(referer);
+            this.strategy.remove(referer.getClass(), referer.getId());
         }
-        
+        // TODO: can we eliminate this unnecessary flush with OpenJPA 1.0
+        this.strategy.flush(); 
+       
         // remove comments
         List comments = getComments(
                 null,  // website
@@ -359,8 +366,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // remove tags aggregates
-        if(entry.getTags() != null) {
-            for(Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
+        if (entry.getTags() != null) {
+            for (Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
                 WeblogEntryTag tag = (WeblogEntryTag) it.next();
                 updateTagCount(tag.getName(), entry.getWebsite(), -1);
                 it.remove();
@@ -372,13 +379,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(entry);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        if(entry.isPublished()) {
-            roller.getUserManager()
-            .saveWebsite(entry.getWebsite());
+        if (entry.isPublished()) {
+            roller.getUserManager().saveWebsite(website);
         }
         
         // remove entry from cache mapping
-        this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
+        this.entryAnchorToIdMap.remove(website.getHandle() + ":" + entryAnchor);
     }
     
     public List getNextPrevEntries(WeblogEntry current, String catName,
