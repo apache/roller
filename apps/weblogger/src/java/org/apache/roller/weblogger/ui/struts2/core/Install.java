@@ -230,6 +230,10 @@ public class Install extends UIAction {
         return stackTrace;
     }
 
+    public boolean isUpgradeRequired() {
+        return WebloggerStartup.isDatabaseUpgradeRequired();
+    }
+        
     public boolean isError() {
         return error;
     }
