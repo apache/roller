@@ -33,12 +33,8 @@ update weblogentry e set
 insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
 update rag_group set planet_id='zzz_default_planet_zzz';
 
--- remove old id column of group subscription table
-alter table rag_group_subscription drop column id;
-
 -- drop old planet config table
 drop table if exists rag_config;
-
 
 -- upgrade the way hierarchical objects are modeled
 
