@@ -72,7 +72,7 @@ File upload form, but only if it's enabled and weblog is under quota
         
         <br />
         
-        <s:submit type="button" key="uploadFiles.upload" onclick="validate()" />
+        <s:submit type="button" key="uploadFiles.upload" />
         <br />
         <br />
         
