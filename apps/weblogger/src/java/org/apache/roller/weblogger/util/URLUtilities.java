@@ -112,4 +112,22 @@ public final class URLUtilities {
         }
         return tagsString.toString();
     }
+    
+        
+    /**
+     * URL encode a path string using UTF-8. The path seprator '/' will not be encoded
+     */
+    public static final String encodePath(String path) {
+        int i = path.indexOf('/');
+        StringBuffer sb = new StringBuffer();
+        while (i != -1) {
+            sb.append(encode(path.substring(0, i))).append('/');
+            path = path.substring(i + 1);
+            i = path.indexOf('/');
+        }
+        sb.append(encode(path));
+        return sb.toString();
+    }
 }
+
+
