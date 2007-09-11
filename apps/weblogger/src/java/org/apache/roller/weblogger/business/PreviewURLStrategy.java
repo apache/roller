@@ -115,6 +115,68 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     
     
     /**
+     * Get url for a collection of entries on a given weblog.
+     */
+    public String getWeblogCollectionURL(Weblog weblog,
+                                                      String locale,
+                                                      String category,
+                                                      String dateString,
+                                                      List tags,
+                                                      int pageNum,
+                                                      boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer pathinfo = new StringBuffer();
+        Map params = new HashMap();
+        
+        if(absolute) {
+        	pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+        	pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        pathinfo.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        
+        if(locale != null) {
+        	pathinfo.append(locale).append("/");
+        }
+
+        String cat = null;
+        if(category != null && "/".equals(category)) {
+            cat = null;
+        } else if(category != null && category.startsWith("/")) {
+            cat = category.substring(1);
+        }
+        
+        if(cat != null && dateString == null) {
+            pathinfo.append("category/").append(URLUtilities.encodePath(cat));
+            
+        } else if(dateString != null && cat == null) {
+            pathinfo.append("date/").append(dateString);  
+        
+        } else if(tags != null && tags.size() > 0) {
+            pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
+        } else {
+            if(dateString != null) params.put("date", dateString);
+            if(cat != null) params.put("cat", URLUtilities.encode(cat));
+        }
+
+        if(pageNum > 0) {
+            params.put("page", Integer.toString(pageNum));
+        }
+        
+        if(previewTheme != null) {
+            params.put("theme", URLUtilities.encode(previewTheme));
+        }
+
+        return pathinfo.toString() + URLUtilities.getQueryString(params);
+    }
+    
+
+    /**
      * Get url for a custom page on a given weblog.
      */
     @Override
