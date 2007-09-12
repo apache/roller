@@ -5,17 +5,15 @@ import org.jdom.output.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
 
-if (args.length < 6) {
-    println "USAGE: groovy createuser.gy <admin-username> <admin-password> <new-username> <new-password> <email> <rap-endpoint>"; 
+if (args.length < 4) {
+    println "USAGE: groovy deleteuser.gy <admin-username> <admin-password> <username> <rap-endpoint>"; 
     return;
 }
 
 admin_username = args[0];
 admin_password = args[1];
 username = args[2];
-password = args[3];
-email    = args[4];
-rapuri   = args[5];
+rapuri   = args[3];
 
 fullName = username;
 locale   = "en_US";
@@ -46,42 +44,36 @@ for (w in s.entries) {
     }
 }
 
-// create new user
-
-user = new UserEntry(username, baseURI);
-
-user.setScreenName(  username);
-user.setPassword(    password);
-user.setFullName(    fullName);
-user.setEmailAddress(email);
-user.setLocale(      locale);
-user.setTimezone(    timeZone);
-user.setDateCreated( new java.util.Date());
-
-userSet = new UserEntrySet(baseURI);
-userSet.setEntries((Entry[])[user]);
-
-// post new user to user collection URI
 
 // open connection
 url = new URL(userCollectionURI);         
 conn = url.openConnection();
 conn.setRequestProperty("Authorization", authString);
-conn.setDoOutput(true);
-
-// serialize XML to connection's output stream
-doc = userSet.toDocument();
-outputter = new XMLOutputter();
-outputter.output(doc, conn.getOutputStream());
-conn.getOutputStream().flush();
-conn.getOutputStream().close();
-
-println "--- Response from server ---";
-
-s = null; 
-is = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
-while ((s = is.readLine()) != null) {
-    println s
+UserEntrySet users = new UserEntrySet(conn.getInputStream(), rapuri);
+user = null;
+for (u in users) {
+    for (i in 0..(u.getEntries().length - 1)) {
+        if (username == u.getEntries()[i].name) {
+           user = u.getEntries()[i];
+           break;
+        }
+    }
 }
 
+if (user) {
+    url = new URL(user.getHref());         
+    conn = url.openConnection();
+    conn.setRequestProperty("Authorization", authString);
+    conn.setRequestMethod("DELETE");
+  
+    println "--- Response from server ---";
+    s = null; 
+    is = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+    while ((s = is.readLine()) != null) {
+        println s
+    }
+
+} else {
+    println "User not found";
+}
 
