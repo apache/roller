@@ -70,7 +70,21 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
 
     @Override
     public void initialize() throws InitializationException {
+        
+        log.info("Initializing Roller Planet business tier");
+        
         getPropertiesManager().initialize();
+        getPlanetManager().initialize();
+        
+        // we always need to do a flush after initialization because it's
+        // possible that some changes need to be persisted
+        try {
+            flush();
+        } catch(PlanetException ex) {
+            throw new InitializationException("Error flushing after initialization", ex);
+        }
+        
+        log.info("Roller Planet business tier successfully initialized");
     }
     
     
