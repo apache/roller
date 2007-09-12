@@ -325,18 +325,16 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 request.setAttribute(
                         RequestConstants.WEBLOGENTRY_ID, entry.getId());
+
                 
-                // Reindex entry, flush caches, etc.
-                reindexEntry(RollerFactory.getRoller(), entry);
-                mLogger.debug("Removing from cache");
-                RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                //PageCacheFilter.removeFromCache(request, entry.getWebsite());
-                CacheManager.invalidate(entry);
-                
-                // Queue applicable pings for this update.
-                if(entry.isPublished()) {
+                // If entry now published then index, flush and ping
+                Date now = new Date();
+                if (!entry.getPubTime().after(now) && entry.isPublished()) {                    
+                    reindexEntry(RollerFactory.getRoller(), entry);
+                    CacheManager.invalidate(entry);
                     RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
                 }
+                
                 
                 // Clean up session objects we used
                 HttpSession session = request.getSession(true);
