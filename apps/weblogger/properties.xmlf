@@ -33,28 +33,27 @@
 <property name="ro.tests"            value="${basedir}/test/java" />
 
 <!-- build properties -->
-<property name="build.generated"                value="${ro.build}/generated"/>
-<property name="build.generated.business"       value="${build.generated}/business"/>
-<property name="build.generated.web"            value="${build.generated}/web"/>
-<property name="build.compile"                  value="${ro.build}/compile"/>
-<property name="build.compile.business"         value="${build.compile}/business"/>
-<property name="build.compile.web"              value="${build.compile}/web"/>
-<property name="build.compile.contrib"          value="${build.compile}/contrib"/>
-<property name="build.compile.tests"            value="${build.compile}/tests"/>
-<property name="build.lib"           value="${ro.build}/lib"/>
-<property name="build.webapp"        value="${ro.build}/webapp"/>
-<property name="build.dist"          value="${ro.build}/release"/>
-<property name="build.dist.apache"   value="${build.dist}/apache"/>
-<property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
-<property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
-<property name="build.dbscripts"     value="${build.webapp}/WEB-INF/classes/dbscripts"/>
-<property name="build.tests"         value="${ro.build}/tests"/>
-<property name="build.reports"       value="${build.tests}/reports"/>
-<property name="build.docs"          value="${ro.build}/docs"/>
-<property name="build.javadoc"       value="${build.docs}/javadoc"/>
-<property name="build.velocidoc"     value="${build.docs}/velocidoc"/>
-<property name="build.jspc"          value="${ro.build}/jspc"/>
-
+<property name="build.generated"          value="${ro.build}/generated"/>
+<property name="build.generated.business" value="${build.generated}/business"/>
+<property name="build.generated.web"      value="${build.generated}/web"/>
+<property name="build.compile"            value="${ro.build}/compile"/>
+<property name="build.compile.business"   value="${build.compile}/business"/>
+<property name="build.compile.web"        value="${build.compile}/web"/>
+<property name="build.compile.contrib"    value="${build.compile}/contrib"/>
+<property name="build.compile.tests"      value="${build.compile}/tests"/>
+<property name="build.lib"                value="${ro.build}/lib"/>
+<property name="build.webapp"             value="${ro.build}/webapp"/>
+<property name="build.dist"               value="${ro.build}/release"/>
+<property name="build.dist.apache"        value="${build.dist}/apache"/>
+<property name="build.dist.binary"        value="${build.dist}/apache-roller-${ro.version}"/>
+<property name="build.dist.sources"       value="${build.dist}/apache-roller-src-${ro.version}"/>
+<property name="build.dbscripts"          value="${build.webapp}/WEB-INF/classes/dbscripts"/>
+<property name="build.tests"              value="${ro.build}/tests"/>
+<property name="build.reports"            value="${build.tests}/reports"/>
+<property name="build.docs"               value="${ro.build}/docs"/>
+<property name="build.javadoc"            value="${build.docs}/javadoc"/>
+<property name="build.velocidoc"          value="${build.docs}/velocidoc"/>
+<property name="build.jspc"               value="${ro.build}/jspc"/>
 
 <!-- various libraries used by Roller -->
 <property name="tools.struts2"       value="${ro.tools}/struts-2.0.9" />

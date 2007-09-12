@@ -30,7 +30,7 @@ update weblogentry e set
 -- upgrade old planet users to work with the new Roller Planet code
 -- all groups must have a planet now, so provide a default planet and
 -- put all existing groups in the new default planet
-insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
+insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','default');
 update rag_group set planet_id='zzz_default_planet_zzz';
 
 
