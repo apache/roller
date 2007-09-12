@@ -69,7 +69,7 @@ import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.util.URLUtilities;
-import org.apache.roller.util.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager; 
 
 /**
  * Roller's Atom Protocol implementation.
@@ -177,9 +177,9 @@ public class RollerAtomHandler implements AtomHandler {
         } catch (RollerException re) {
             throw new AtomException("ERROR: getting user's weblogs", re);
         }
-        String accept = null;
+        List uploadAccepts = new ArrayList();
         try {
-            accept = getAcceptedContentTypeRange();
+            uploadAccepts = getAcceptedContentTypeRange();
         } catch (RollerException re) {
             throw new AtomException("ERROR: getting site's accept range", re);
         }
@@ -193,7 +193,7 @@ public class RollerAtomHandler implements AtomHandler {
                 
                 Collection entryCol = new Collection("Weblog Entries", "text", 
                     URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/entries");
-                entryCol.setAccept("application/atom+xml;type=entry");
+                entryCol.addAccept("application/atom+xml;type=entry");
                 entryCol.setHref(URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/entries");
                 try {                    
                     // Add fixed categories using scheme that points to 
@@ -224,7 +224,7 @@ public class RollerAtomHandler implements AtomHandler {
                                 
                 Collection uploadCol = new Collection("Media Files", "text", 
                     URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/resources/");
-                uploadCol.setAccept(accept);
+                uploadCol.setAccepts(uploadAccepts);
                 uploadCol.setHref(URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/resources");
                 workspace.addCollection(uploadCol);
             }
@@ -236,20 +236,17 @@ public class RollerAtomHandler implements AtomHandler {
      * Build accept range by taking things that appear to be content-type rules 
      * from site's file-upload allowed extensions.
      */
-    private String getAcceptedContentTypeRange() throws RollerException {
-        StringBuffer sb = new StringBuffer();
+    private List getAcceptedContentTypeRange() throws RollerException {
+        List accepts = new ArrayList();
         Roller roller = RollerFactory.getRoller();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RollerPropertyData)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         for (int i=0; i<rules.length; i++) {
             if (rules[i].indexOf("/") == -1) continue;
-            if (sb.length() != 0) {
-                sb.append(",");
-            }
-            sb.append(rules[i]);
+            accepts.add(rules[i]);
         }
-        return sb.toString();              
+        return accepts;             
     }   
     
     //----------------------------------------------------------------- collections
@@ -553,6 +550,7 @@ public class RollerAtomHandler implements AtomHandler {
                 if (canEdit(rollerEntry)) {
                     WeblogManager mgr = mRoller.getWeblogManager();
                     copyToRollerEntry(entry, rollerEntry);
+                    rollerEntry.setUpdateTime(new Timestamp(new Date().getTime()));
                     mgr.saveWeblogEntry(rollerEntry);
                     mRoller.flush();
 
