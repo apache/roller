@@ -177,9 +177,9 @@ public class RollerAtomHandler implements AtomHandler {
         } catch (WebloggerException re) {
             throw new AtomException("Getting user's weblogs", re);
         }
-        String accept = null;
-        try {
-            accept = getAcceptedContentTypeRange();
+        List uploadAccepts = new ArrayList();
+        try {           
+            uploadAccepts = getAcceptedContentTypeRange();
         } catch (WebloggerException re) {
             throw new AtomException("Getting site's accept range", re);
         }
@@ -196,7 +196,7 @@ public class RollerAtomHandler implements AtomHandler {
                 // Create collection for entries within that workspace
                 Collection entryCol = new Collection("Weblog Entries", "text", 
                     atomURL+"/"+handle+"/entries");
-                entryCol.setAccept("application/atom+xml;type=entry");
+                entryCol.addAccept("application/atom+xml;type=entry");
                 try {  
                     // Add fixed categories using scheme that points to 
                     // weblog because categories are weblog specific
@@ -227,7 +227,7 @@ public class RollerAtomHandler implements AtomHandler {
                 // Add media collection for upload dir
                 Collection uploadCol = new Collection("Media Files", "text", 
                     atomURL+"/"+handle+"/resources/");
-                uploadCol.setAccept(accept);
+                uploadCol.setAccepts(uploadAccepts);
                 workspace.addCollection(uploadCol);
 
                 // And add one media collection for each of weblog's upload sub-directories
@@ -238,7 +238,7 @@ public class RollerAtomHandler implements AtomHandler {
                         Collection uploadSubCol = new Collection(
                             "Media Files: " + dirs[i].getPath(), "text",
                             atomURL+"/"+handle+"/resources/" + dirs[i].getPath());
-                        uploadSubCol.setAccept(accept);
+                        uploadSubCol.setAccepts(uploadAccepts);
                         workspace.addCollection(uploadSubCol);
                     }
                 } catch (FilePathException fpe) {
@@ -257,20 +257,17 @@ public class RollerAtomHandler implements AtomHandler {
      * Build accept range by taking things that appear to be content-type rules 
      * from site's file-upload allowed extensions.
      */
-    private String getAcceptedContentTypeRange() throws WebloggerException {
-        StringBuffer sb = new StringBuffer();
+    private List getAcceptedContentTypeRange() throws WebloggerException {
+        List accepts = new ArrayList();
         Weblogger roller = WebloggerFactory.getWeblogger();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         for (int i=0; i<rules.length; i++) {
             if (rules[i].indexOf("/") == -1) continue;
-            if (sb.length() != 0) {
-                sb.append(",");
-            }
-            sb.append(rules[i]);
+            accepts.add(rules[i]);
         }
-        return sb.toString();              
+        return accepts;             
     }   
     
     //----------------------------------------------------------------- collections
@@ -626,6 +623,7 @@ public class RollerAtomHandler implements AtomHandler {
                     
                     WeblogManager mgr = roller.getWeblogManager();
                     copyToRollerEntry(entry, rollerEntry);
+                    rollerEntry.setUpdateTime(new Timestamp(new Date().getTime()));
                     mgr.saveWeblogEntry(rollerEntry);
                     roller.flush();
                     
@@ -1191,7 +1189,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Copy fields from ROME entry to Weblogger entry.
      */
-    private void copyToRollerEntry(Entry entry,WeblogEntry rollerEntry) throws WebloggerException {
+    private void copyToRollerEntry(Entry entry, WeblogEntry rollerEntry) throws WebloggerException {
         
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;

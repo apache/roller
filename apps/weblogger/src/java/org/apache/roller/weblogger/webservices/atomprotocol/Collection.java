@@ -43,6 +43,7 @@ public class Collection {
     private String listTemplate = null;
     private String href = null;
     private List categories = new ArrayList(); // of Categories objects    
+    private List accepts = new ArrayList(); // of Strings
     
     /**
      * Collection MUST have title and href.
@@ -59,12 +60,16 @@ public class Collection {
     /**
      * Comma separated list of media-ranges accepted by collection.
      */
-    public String getAccept() {
-        return accept;
+    public List getAccepts() {
+        return accepts;
     }
     
-    public void setAccept(String accept) {
-        this.accept = accept;
+    public void addAccept(String accept) {
+        this.accepts.add(accept);
+    }
+    
+    public void setAccepts(List accepts) {
+        this.accepts = accepts;
     }
     
     /** The URI of the collection */
@@ -116,7 +121,7 @@ public class Collection {
         } else if (entry && entryType.equals(accept)) {
             return true;
         } else {
-            String[] rules = accept.split(",");
+            String[] rules = (String[])accepts.toArray(new String[accepts.size()]);
             for (int i=0; i<rules.length; i++) {
                 String rule = rules[i].trim();
                 if (rule.equals(ct)) return true;
@@ -168,9 +173,12 @@ public class Collection {
             element.addContent(catsElem);
         }
         
-        Element memberType = new Element("accept", AtomService.ATOM_PROTOCOL);
-        memberType.setText(collection.getAccept());
-        element.addContent(memberType);
+        for (Iterator it = collection.getAccepts().iterator(); it.hasNext();) {
+            String range = (String)it.next();
+            Element acceptElem = new Element("accept", AtomService.ATOM_PROTOCOL);
+            acceptElem.setText(range);
+            element.addContent(acceptElem);
+        }
         
         return element;
     }
@@ -186,9 +194,12 @@ public class Collection {
         }
         Collection collection = new Collection(newTitle, newType, newHref);
                 
-        Element memberType = element.getChild("accept",  AtomService.ATOM_PROTOCOL);
-        if (memberType != null) {
-            collection.setAccept(memberType.getText());
+        List acceptElems = element.getChildren("accept",  AtomService.ATOM_PROTOCOL);
+        if (acceptElems != null && acceptElems.size() > 0) {
+            for (Iterator it = acceptElems.iterator(); it.hasNext();) {
+                Element acceptElem = (Element)it.next();
+                collection.addAccept(acceptElem.getTextTrim());
+            }
         }
         
         // Loop to parse <app:categories> element to Categories objects
