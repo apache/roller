@@ -54,7 +54,8 @@ public class WeblogHandlerTest extends HandlerBaseTest {
             assertNotNull(wesDelete);
             assertNotNull(wesCreate.getEntries());
             assertEquals(wesCreate.getEntries().length, 1);
-            assertEquals(wesDelete, wesUpdate);
+            assertEquals(0, wesDelete.getEntries().length);
+            
         } catch (IOException ioe) {
             fail(ioe.getMessage());
             ioe.printStackTrace();
