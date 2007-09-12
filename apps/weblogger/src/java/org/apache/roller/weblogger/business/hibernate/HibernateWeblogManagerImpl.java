@@ -297,9 +297,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         this.strategy.remove(entry);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        if(entry.isPublished()) {
-            roller.getUserManager().saveWebsite(entry.getWebsite());
-        }
+        roller.getUserManager().saveWebsite(entry.getWebsite());
         
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());

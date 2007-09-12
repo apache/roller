@@ -378,10 +378,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // remove entry
         this.strategy.remove(entry);
         
-        // update weblog last modified date.  date updated by saveWebsite()
-        if (entry.isPublished()) {
-            roller.getUserManager().saveWebsite(website);
-        }
+        // update weblog last modified date. date updated by saveWebsite()
+        roller.getUserManager().saveWebsite(website);
         
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(website.getHandle() + ":" + entryAnchor);
