@@ -18,11 +18,20 @@ create table rag_planet (
 alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 
 -- ensure that every weblog entry has a valid locale
+
+#if ($db.DBTYPE != "POSTGRESQL")
 update weblogentry e set 
    e.pubtime=pubtime, 
    e.updatetime=updatetime, 
    e.locale=(select locale from website where website.id=e.websiteid) 
    where e.locale is null or length(e.locale)=0;
+#else
+update weblogentry set 
+   pubtime=pubtime, 
+   updatetime=updatetime, 
+   locale=(select locale from website where website.id=websiteid) 
+   where locale is null or length(locale)=0;
+#end
 
 -- add new planet_id column to planet group table
 #addColumnNull("rag_group" "planet_id" "varchar(48)")
@@ -69,10 +78,12 @@ create index fo_path_idx on folder( path );
 create index co_status_idx on roller_comment(status);
 
 -- update existing data to use new status column
-update roller_comment set status = 'APPROVED', posttime=posttime where approved=1;
-update roller_comment set status = 'PENDING', posttime=posttime where pending=1;
-update roller_comment set status = 'SPAM', posttime=posttime where spam=1;
-update roller_comment set status = 'DISAPPROVED', posttime=posttime where approved=0 and spam=0 and pending=0;
+update roller_comment set status = 'APPROVED', posttime=posttime where approved=$db.BOOLEAN_TRUE;
+update roller_comment set status = 'PENDING', posttime=posttime where pending=$db.BOOLEAN_TRUE;
+update roller_comment set status = 'SPAM', posttime=posttime where spam=$db.BOOLEAN_TRUE;
+
+update roller_comment set status = 'DISAPPROVED', posttime=posttime 
+   where approved=$db.BOOLEAN_FALSE and spam=$db.BOOLEAN_FALSE and pending=$db.BOOLEAN_FALSE;
 
 
 -- better support for doing scheduled entries
@@ -107,7 +118,7 @@ update webpage set action = 'weblog' where name = 'Weblog';
 #addColumnNull("website" "customstylesheet" "varchar(128)")
 
 -- fix blogs which have unchecked showalllangs but did not check enablemultilang
-update website set enablemultilang = 1 where showalllangs = 0;
+update website set enablemultilang=$db.BOOLEAN_TRUE where showalllangs=$db.BOOLEAN_FALSE;
 
 
 -- some missing foreign key constraints
