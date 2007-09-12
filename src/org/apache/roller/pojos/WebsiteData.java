@@ -1344,5 +1344,24 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /** No-op method to please XDoclet */
     public void setTodaysHits(int ignored) {}
+    
+    
+    /** 
+     * Get weblog entry specified by anchor or null if no such entry exists.
+     * @param anchor Weblog entry anchor
+     * @return Weblog entry specified by anchor
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public WeblogEntryData getWeblogEntry(String anchor) {
+        WeblogEntryData entry = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            entry = wmgr.getWeblogEntryByAnchor(this, anchor);
+        } catch (RollerException e) {
+            this.log.error("ERROR: getting entry by anchor");
+        }
+        return entry;
+    }
 }
 
