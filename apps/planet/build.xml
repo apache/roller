@@ -84,7 +84,12 @@
         <include name="openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar"/>
         <include name="openjpa-0.9.7/serp-1.11.0.jar"/>
         <include name="openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar"/> 
-        
+<!--
+        <include name="openjpa-1.0/geronimo-jpa_3.0_spec-1.0.jar"/>
+        <include name="openjpa-1.0/geronimo-jta_1.1_spec-1.1.jar"/> 
+        <include name="openjpa-1.0/openjpa-1.0.0.jar"/>
+        <include name="openjpa-1.0/serp-1.13.1.jar"/>
+-->
         <!-- Needed for JPA/Toplink
         <include name="toplink-essentials-9.1/toplink-essentials.jar"/> -->
         
@@ -202,10 +207,10 @@
         <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="planet.business.path" />
         <openjpac>
             <config propertiesFile="src/java/META-INF/persistence.xml" />
+            <fileset dir="src/java/org/apache/roller/planet/pojos" includes="*.java" />
             <classpath>
                 <path refid="planet.business.path"/>
                 <pathelement location="${build.compile.business}" />
-                <pathelement location="${build.compile.business}/org/apache/roller/planet/pojos" />
             </classpath>
         </openjpac>
         

@@ -94,7 +94,7 @@ public class PlanetEntriesPager extends AbstractPager {
             List results = new ArrayList();
             try {
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-                Planet planet = planetManager.getPlanet("zzz_default_planet_zzz");
+                Planet planet = planetManager.getPlanet("default");
                 
                 List rawEntries = null;
                 if (feedURL != null) {
