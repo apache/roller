@@ -28,6 +28,11 @@ public class MemberHandlerTest extends HandlerBaseTest {
             createSampleUser();
             createSampleWeblog();
             
+            // delete user-weblog permission
+            MemberEntrySet mesDelete = deleteSampleMember(true);
+            assertNotNull(mesDelete);
+            assertEquals(0, mesDelete.getEntries().length);            
+            
             //create
             MemberEntrySet mesCreate = createSampleMember();
             assertNotNull(mesCreate);
@@ -50,11 +55,12 @@ public class MemberHandlerTest extends HandlerBaseTest {
             assertEquals(mesUpdate, updateSampleMemberEntrySet(getSampleMemberEntrySet()));
             
             //delete
-            MemberEntrySet mesDelete = deleteSampleMember(true);
+            mesDelete = deleteSampleMember(true);
             assertNotNull(mesDelete);
             assertNotNull(mesCreate.getEntries());
             assertEquals(mesCreate.getEntries().length, 1);
-            assertEquals(mesDelete, mesUpdate);
+            assertEquals(0, mesDelete.getEntries().length);
+            
         } catch (IOException ioe) {
             ioe.printStackTrace();            
             fail(ioe.getMessage());

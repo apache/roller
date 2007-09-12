@@ -56,7 +56,8 @@ public class UserHandlerTest extends HandlerBaseTest {
             assertNotNull(uesDelete);
             assertNotNull(uesCreate.getEntries());
             assertEquals(uesCreate.getEntries().length, 1);
-            assertEquals(uesDelete, uesUpdate);
+            assertEquals(0, uesDelete.getEntries().length);
+            
         } catch (IOException ioe) {
             ioe.printStackTrace();
             fail(ioe.getMessage());
@@ -82,6 +83,7 @@ public class UserHandlerTest extends HandlerBaseTest {
             ues = fetchSampleUser();
             ue = (UserEntry)ues.getEntries()[0];
             assertEquals(Boolean.FALSE, ue.getEnabled());
+            
         } catch (IOException ioe) {
             fail(ioe.getMessage());
             ioe.printStackTrace();

@@ -273,6 +273,7 @@ class RollerMemberHandler extends Handler {
                 permissionsDatas.add(pd);
             }
             return toMemberEntrySet((WeblogPermission[])permissionsDatas.toArray(new WeblogPermission[0]));
+            
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not create members", re);
         }
@@ -354,23 +355,25 @@ class RollerMemberHandler extends Handler {
         
         try {
             WeblogPermission pd = getPermissionsData(handle, username);
-            WeblogPermission[] pds;
+            
             if (pd == null) {
                 throw new NotFoundException("ERROR: Permissions do not exist for weblog handle: " + handle + ", user name: " + username);
-            }
-            pds = new WeblogPermission[] { pd };
-            
+            }           
             UserManager mgr = getRoller().getUserManager();
             mgr.removePermissions(pd);
             getRoller().flush();
             
             User ud = getUserData(username);
             CacheManager.invalidate(ud);
+
             Weblog wd = getWebsiteData(handle);
             CacheManager.invalidate(wd);
             
+            // return empty set, entry was deleted
+            WeblogPermission[] pds = new WeblogPermission[0];
             EntrySet es = toMemberEntrySet(pds);
             return es;
+            
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not delete entry", re);
         }

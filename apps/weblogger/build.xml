@@ -150,24 +150,33 @@ ro.buildUser=${user.name}
         
         <!-- Copy resources -->
         <copy todir="${build.compile.business}">
-            <fileset dir="${ro.src}" 
-                     excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/weblogger/ui/**, org/apache/roller/weblogger/webservices/**, org/apache/roller/weblogger/planet/**" />
+            <fileset dir="${ro.src}">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.html" />
+                <exclude name="**/*.png" />
+                <exclude name="org/apache/roller/weblogger/ui/**" />
+                <exclude name="org/apache/roller/weblogger/webservices/**" />
+                <exclude name="org/apache/roller/weblogger/planet/**" />
+            </fileset>
         </copy>
         
         <mkdir dir="${build.compile.business}/META-INF" />
         <copy todir="${build.compile.business}/META-INF" file="${ro.src}/META-INF/persistence.xml" />
 
         <!-- OpenJPA bytecode enhancement  -->
-        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="business.path" />
-        <openjpac>
+        <path id="openjpac.path">
+            <path refid="business.path"/>
+            <pathelement path="${build.compile.business}" />
+            <pathelement path="${build.compile.business}/org/apache/roller/weblogger/pojos" />
+        </path>
+        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="openjpac.path" />
+        <openjpac enforcePropertyRestrictions="false" >
             <config propertiesFile="${ro.src}/META-INF/persistence.xml" />
-            <classpath>
-                <path refid="business.path"/>
-                <pathelement location="${build.compile.business}" />
-                <pathelement location="${build.compile.business}/org/apache/roller/weblogger/pojos" />
-                &custom-jars;
-            </classpath>
-        </openjpac>
+            <!--<fileset dir="${build.compile.business}">
+                <include name="**/pojos/*.class" />
+            </fileset>-->
+            <classpath refid="openjpac.path" />
+        </openjpac>        
 
         <!-- JPA/Toplink bytecode enhancement
         <taskdef name="weave" classname="oracle.toplink.essentials.weaving.StaticWeaveAntTask" classpathref="business.path"/>
@@ -872,8 +881,8 @@ ro.buildUser=${user.name}
     <target name="test-rap" depends="test-rap-sdk, test-rap-handler"/>
     
     <target name="test-rap-sdk">
-        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/xml"/>
-        <mkdir dir="${build.reports}/webservices/adminprotocol/sdk/html"/>
+        <mkdir dir="${build.reports}/webservices/adminprotocol-sdk/xml"/>
+        <mkdir dir="${build.reports}/webservices/adminprotocol-sdk/html"/>
         
         <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
             <syspropertyset>
@@ -883,23 +892,23 @@ ro.buildUser=${user.name}
                 <path refid="tests.run.path"/>
             </classpath>
             <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/webservices/protocol/sdk/xml">
-                <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/weblogger/webservices/protocol/sdk/*EntryTest.class"/>
+            <batchtest toDir="${build.reports}/webservices/adminprotocol/sdk/xml">
+                <fileset dir="${build.compile.tests}">
+                    <include name="org/apache/roller/weblogger/webservices/adminapi/sdk/*EntryTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.reports}/webservices/protocol/sdk/xml">
-            <fileset dir="${build.reports}/webservices/protocol/sdk/xml">
+        <junitreport todir="${build.reports}/webservices/adminprotocol-sdk/xml">
+            <fileset dir="${build.reports}/webservices/adminprotocol-sdk/xml">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/webservices/protocol/sdk/html"/>
+            <report format="noframes" toDir="${build.reports}/webservices/adminprotocol/sdk/html"/>
         </junitreport>
     </target>
     
     <target name="test-rap-handler">
-        <mkdir dir="${build.reports}/webservices/protocol/xml"/>
-        <mkdir dir="${build.reports}/webservices/protocol/html"/>
+        <mkdir dir="${build.reports}/webservices/adminprotocol/xml"/>
+        <mkdir dir="${build.reports}/webservices/adminprotocol/html"/>
         
         <junit fork="true" dir="${build.tests}" printsummary="on">
             <syspropertyset>
@@ -909,17 +918,17 @@ ro.buildUser=${user.name}
                 <path refid="tests.run.path"/>
             </classpath>
             <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/webservices/protocol/xml">
-                <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/weblogger/webservices/protocol/*HandlerTest.class"/>
+            <batchtest toDir="${build.reports}/webservices/adminprotocol/xml">
+                <fileset dir="${build.compile.tests}">
+                    <include name="org/apache/roller/weblogger/webservices/adminapi/*HandlerTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.reports}/webservices/protocol/xml">
-            <fileset dir="${build.reports}/webservices/protocol/xml">
+        <junitreport todir="${build.reports}/webservices/adminprotocol/xml">
+            <fileset dir="${build.reports}/webservices/adminprotocol/xml">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/webservices/protocol/html"/>
+            <report format="noframes" toDir="${build.reports}/webservices/adminprotocol/html"/>
         </junitreport>
     </target>
     

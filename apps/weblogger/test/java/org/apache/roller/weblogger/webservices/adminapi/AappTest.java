@@ -30,9 +30,9 @@ import org.apache.roller.weblogger.webservices.adminprotocol.sdk.WeblogEntrySet;
 
 public abstract class AappTest extends TestCase {
     private static final Date sampleDate = new Date();
-    private static final String DEFAULT_ENDPOINT_URL = "http://localhost:8080/roller/roller-services/aapp";
-    private static final String DEFAULT_USER = "jtb";
-    private static final String DEFAULT_PASSWORD = "iplanet";
+    private static final String DEFAULT_ENDPOINT_URL = "http://localhost:8080/roller/roller-services/rap";
+    private static final String DEFAULT_USER = "admin";
+    private static final String DEFAULT_PASSWORD = "admin";
         
     protected static String getEndpointUrl() {
         String endpoint = System.getProperty("aapp.endpoint");
@@ -68,6 +68,7 @@ public abstract class AappTest extends TestCase {
         UserEntry ue = new UserEntry("foo", getEndpointUrl());
         ue.setEmailAddress("foo@bar.org");
         ue.setFullName("Foo Bar");
+        ue.setScreenName("foobar");
         ue.setLocale(Locale.getDefault());
         ue.setTimezone(TimeZone.getDefault());
         ue.setPassword("foo");
@@ -86,6 +87,7 @@ public abstract class AappTest extends TestCase {
         UserEntry ueUpdate = new UserEntry(ue.getName(), getEndpointUrl());
         ueUpdate.setEmailAddress("billy@bob.org");
         ueUpdate.setFullName("Billy Bob");
+        ueUpdate.setScreenName("billybob");
         ueUpdate.setLocale(new Locale("ms", "MY"));
         ueUpdate.setTimezone(TimeZone.getTimeZone("Asia/Kuala_Lumpur"));
         ueUpdate.setPassword("billy");

@@ -96,6 +96,12 @@ public class UserEntry extends Entry {
             setFullName(fullNameElement.getText());
         }
         
+        // screenname
+        Element screenNameElement = e.getChild(Tags.SCREEN_NAME, NAMESPACE);
+        if (screenNameElement != null) {
+            setScreenName(screenNameElement.getText());
+        }
+        
         // password
         Element passwordElement = e.getChild(Tags.PASSWORD, NAMESPACE);
         if (passwordElement != null) {
