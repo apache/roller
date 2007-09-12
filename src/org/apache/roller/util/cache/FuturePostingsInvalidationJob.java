@@ -19,6 +19,7 @@
 package org.apache.roller.util.cache;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import org.apache.roller.business.runnable.Job;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 
@@ -61,7 +63,8 @@ public class FuturePostingsInvalidationJob implements Job {
     private Map inputs = null;
     
     // the set of entries we expire at the start of the next run
-    private Set nextExpirations = null;
+    private Collection nextWeblogExpirations = null;
+    private Collection nextEntryExpirations = null;
     
     // how far into the future we will look ahead, in minutes
     int peerTime = 5;
@@ -73,14 +76,15 @@ public class FuturePostingsInvalidationJob implements Job {
         try {
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
             UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            
+            IndexManager searchMgr = RollerFactory.getRoller().getIndexManager();
+
             Date now = new Date();
             
-            if(nextExpirations != null) {
+            if(nextWeblogExpirations != null) {
                 String websiteid = null;
                 WebsiteData weblog = null;
                 
-                Iterator weblogs = nextExpirations.iterator();
+                Iterator weblogs = nextWeblogExpirations.iterator();
                 while(weblogs.hasNext()) {
                     websiteid = (String) weblogs.next();
                     
@@ -96,12 +100,20 @@ public class FuturePostingsInvalidationJob implements Job {
                         uMgr.saveWebsite(weblog);
                         
                     } catch (RollerException ex) {
-                        log.warn("couldn't lookup entry "+websiteid);
+                        log.warn("couldn't lookup website " + websiteid);
                     }
                 }
                 
+                Iterator entries = nextEntryExpirations.iterator();
+                while(entries.hasNext()) {
+                    WeblogEntryData entry = (WeblogEntryData)entries.next();
+                    // trigger search index on entry
+                    searchMgr.addEntryReIndexOperation(entry);
+                }
+
                 // commit the changes
                 RollerFactory.getRoller().flush();
+
             }
             
             // XX mins in the future
@@ -120,13 +132,15 @@ public class FuturePostingsInvalidationJob implements Job {
             Set expiringWeblogs = new HashSet();
             Iterator it = expiringEntries.iterator();
             while(it.hasNext()) {
-                expiringWeblogs.add(((WeblogEntryData) it.next()).getWebsite().getId());
+                WeblogEntryData entry = (WeblogEntryData)it.next();
+                expiringWeblogs.add(entry.getWebsite().getId());
             }
             
-            this.nextExpirations = expiringWeblogs;
+            this.nextWeblogExpirations = expiringWeblogs;
+            this.nextEntryExpirations = expiringEntries;
             
         } catch(Exception e) {
-            log.error(e);
+            log.error("ERROR processing invalidations", e);
         }
         
         log.debug("finished");
