@@ -137,10 +137,7 @@ create index co_combo1_idx on roller_comment(status, posttime);
 
 
 -- remove old indexes that are no longer of value
-#dropIndex('index_we_pubtime_idx' 'weblogentry')
 #dropIndex('we_pubentry_idx' 'weblogentry')
--- #dropIndex('co_pending_idx' 'roller_comment')
--- #dropIndex('co_approved_idx' 'roller_comment')
 
 
 -- fix wacky indexs which ended up with a size constraint
@@ -155,10 +152,6 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 
 
 -- remove no-longer-used needed tables
-#dropTableIfExists('usercookie')
-#dropTableIfExists('rag_config')
-#dropTableIfExists('folderassoc')
-#dropTableIfExists('weblogcategoryassoc')
 
 -- remove old rollerconfig table which has been deprecated since 1.2
 -- NOTE: since this breaks the pre-1.2 -> 4.0+ direct upgrade path then
@@ -173,9 +166,16 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 #dropColumn('roller_comment' 'spam')
 #dropColumn('roller_comment' 'pending')
 
--- remove bastard columns from various tables (optional)
+-- remove bastard columns and indexes (optional)
+-- #dropIndex('index_we_pubtime_idx' 'weblogentry')
+-- #dropIndex('co_pending_idx' 'roller_comment')
+-- #dropIndex('co_approved_idx' 'roller_comment')
 -- #dropColumn('website' 'userid')
 -- #dropColumn('website' 'weblogdayid')
 -- #dropColumn('weblogentry' 'publishentry')
 -- #dropColumn('weblogentry' 'link')
+-- #dropTableIfExists('usercookie')
+-- #dropTableIfExists('rag_config')
+-- #dropTableIfExists('folderassoc')
+-- #dropTableIfExists('weblogcategoryassoc')
 
