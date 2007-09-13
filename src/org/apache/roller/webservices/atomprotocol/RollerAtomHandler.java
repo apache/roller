@@ -957,13 +957,13 @@ public class RollerAtomHandler implements AtomHandler {
         
         String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         atomEntry.setId(        absUrl + entry.getPermaLink());
-        atomEntry.setTitle(     entry.getTitle());
+        atomEntry.setTitle(     entry.getTitle().trim());
         atomEntry.setPublished( entry.getPubTime());
         atomEntry.setUpdated(   entry.getUpdateTime());
         
         Content content = new Content();
         content.setType(Content.HTML);
-        content.setValue(entry.getText());
+        content.setValue(entry.getText().trim());
         List contents = new ArrayList();
         contents.add(content);
         
@@ -972,7 +972,7 @@ public class RollerAtomHandler implements AtomHandler {
         if (StringUtils.isNotEmpty(entry.getSummary())) {
             Content summary = new Content();
             summary.setType(Content.HTML);
-            summary.setValue(entry.getSummary());
+            summary.setValue(entry.getSummary().trim());
             atomEntry.setSummary(summary);
         }
         
