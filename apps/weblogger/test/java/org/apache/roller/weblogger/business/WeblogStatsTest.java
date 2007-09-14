@@ -112,8 +112,8 @@ public class WeblogStatsTest extends TestCase {
         TestUtils.teardownComment(comment21.getId());
         TestUtils.teardownWeblog(website2.getId());  
         
-        TestUtils.teardownUser(user1.getId());        
-        TestUtils.teardownUser(user2.getId());        
+        TestUtils.teardownUser(user1.getUserName());        
+        TestUtils.teardownUser(user2.getUserName());        
         
         TestUtils.endSession(true);
     }

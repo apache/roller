@@ -86,7 +86,7 @@ public class WeblogEntryTest extends TestCase {
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -1030,7 +1030,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.teardownWeblog(blog2.getId());
             TestUtils.teardownWeblog(blog3.getId());
 
-            TestUtils.teardownUser(user1.getId());      
+            TestUtils.teardownUser(user1.getUserName());      
             
             TestUtils.endSession(true);
         }

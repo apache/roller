@@ -77,7 +77,7 @@ public class WeblogTest extends TestCase {
         log.info("BEGIN");
         
         try {
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);

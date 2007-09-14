@@ -84,12 +84,12 @@ public class UserTest extends TestCase {
         
         // add test user
         mgr.addUser(testUser);
-        String id = testUser.getId();
+        String userName = testUser.getUserName();
         TestUtils.endSession(true);
         
         // make sure test user exists
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser, user);
         
@@ -101,7 +101,7 @@ public class UserTest extends TestCase {
         
         // make sure changes were saved
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
         assertEquals("testtesttest", user.getFullName());
@@ -112,7 +112,7 @@ public class UserTest extends TestCase {
         
         // make sure user no longer exists
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNull(user);
     }
     
@@ -135,9 +135,9 @@ public class UserTest extends TestCase {
         assertEquals(testUser.getUserName(), user.getUserName());
         
         // lookup by id
-        String id = user.getId();
+        String userName = user.getUserName();
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
@@ -166,7 +166,7 @@ public class UserTest extends TestCase {
         assertNull(user);
         
         // remove test user
-        TestUtils.teardownUser(testUser.getId());
+        TestUtils.teardownUser(testUser.getUserName());
         TestUtils.endSession(true);
     }
     
@@ -217,7 +217,7 @@ public class UserTest extends TestCase {
         assertTrue(mgr.hasRole("admin", user));
         
         // remove test user
-        TestUtils.teardownUser(testUser.getId());
+        TestUtils.teardownUser(testUser.getUserName());
         TestUtils.endSession(true);
     }
 

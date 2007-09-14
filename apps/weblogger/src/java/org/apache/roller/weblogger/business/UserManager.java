@@ -69,16 +69,6 @@ public interface UserManager {
     
     
     /**
-     * Lookup a user by ID.
-     * 
-     * @param id ID of user to lookup.
-     * @returns UsUserhe user, or null if not found.
-     * @throws WebloggerException If there is a problem.
-     */
-    public User getUser(String id) throws WebloggerException;
-    
-    
-    /**
      * Get count of enabled users
      */    
     public long getUserCount() throws WebloggerException; 

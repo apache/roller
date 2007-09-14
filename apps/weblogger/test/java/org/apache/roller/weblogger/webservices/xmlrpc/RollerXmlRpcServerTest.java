@@ -212,7 +212,7 @@ public class RollerXmlRpcServerTest extends TestCase {
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
             
             mockRequest = null;

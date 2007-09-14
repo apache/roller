@@ -82,7 +82,7 @@ public class CommentTest extends TestCase {
         try {
             TestUtils.teardownWeblogEntry(testEntry.getId());
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);

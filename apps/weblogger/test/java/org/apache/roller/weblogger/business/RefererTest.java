@@ -121,7 +121,7 @@ public class RefererTest extends TestCase {
             
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownWeblog(testWeblog2.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             
             TestUtils.endSession(true);
             

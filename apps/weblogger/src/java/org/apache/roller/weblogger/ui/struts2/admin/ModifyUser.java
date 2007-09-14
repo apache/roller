@@ -80,7 +80,7 @@ public class ModifyUser extends UIAction {
         } else if(getBean().getId() != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                setUser(mgr.getUser(getBean().getId()));
+                setUser(mgr.getUserByUserName(getBean().getUserName()));
             } catch(Exception e) {
                 log.error("Error looking up user - "+getBean().getId(), e);
             }
@@ -93,7 +93,7 @@ public class ModifyUser extends UIAction {
      */
     public String execute() {
         
-        if (getUser() != null && getUser().getId() != null) {
+        if (getUser() != null && getUser().getUserName() != null) {
             // populate form data from user profile data
             getBean().copyFrom(getUser(), getLocale());
         } else {
@@ -175,7 +175,7 @@ public class ModifyUser extends UIAction {
     // TODO: replace with struts2 validation
     private void myValidate() {
         
-        if(getUser().getId() == null) {
+        if(getUser().getUserName() == null) {
             addError("userAdmin.error.userNotFound");
         }
         if (StringUtils.isEmpty(getBean().getEmailAddress())) {

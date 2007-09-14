@@ -147,11 +147,11 @@ public final class TestUtils {
     /**
      * Convenience method for removing a user.
      */
-    public static void teardownUser(String id) throws Exception {
+    public static void teardownUser(String userName) throws Exception {
         
         // lookup the user
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        User user = mgr.getUser(id);
+        User user = mgr.getUserByUserName(userName, null);
         
         // remove the user
         mgr.removeUser(user);
@@ -572,7 +572,7 @@ public final class TestUtils {
      */
     public static User getManagedUser(User user) throws WebloggerException {
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        return mgr.getUser(user.getId());
+        return mgr.getUserByUserName(user.getUserName());
     }
     
     /**

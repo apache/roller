@@ -91,11 +91,11 @@ public class Members extends UIAction implements ParameterAware {
         
             for (WeblogPermission perms : permsList) {
                 
-                String sval = getParameter("perm-" + perms.getUser().getId());
+                String sval = getParameter("perm-" + perms.getUser().getUserName());
                 if (sval != null) {
                     boolean error = false;
                     User user = getAuthenticatedUser();
-                    if (perms.getUser().getId().equals(user.getId())) {
+                    if (perms.getUser().getUserName().equals(user.getUserName())) {
                         // if modifying self
                         if (sval.equals(WeblogPermission.EDIT_DRAFT) 
                             && (perms.hasAction(WeblogPermission.POST) || perms.hasAction(WeblogPermission.ADMIN))) {

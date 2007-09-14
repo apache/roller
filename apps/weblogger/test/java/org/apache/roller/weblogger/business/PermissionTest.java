@@ -80,7 +80,7 @@ public class PermissionTest extends TestCase {
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error("ERROR in tear down", ex);
@@ -231,7 +231,7 @@ public class PermissionTest extends TestCase {
 
         // cleanup
         TestUtils.teardownPermissions(pendings.get(0));
-        TestUtils.teardownUser(user.getId());
+        TestUtils.teardownUser(user.getUserName());
         TestUtils.endSession(true);
         
         log.info("END");
@@ -299,7 +299,7 @@ public class PermissionTest extends TestCase {
         assertEquals(0, weblogs.size());
 
         // cleanup the extra test user
-        TestUtils.teardownUser(user.getId());
+        TestUtils.teardownUser(user.getUserName());
         TestUtils.endSession(true);
         
         log.info("END");

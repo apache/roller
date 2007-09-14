@@ -47,7 +47,7 @@ public class RollerSession
     static final long serialVersionUID = 5890132909166913727L;
     
     // the id of the user represented by this session
-    private String userId = null;
+    private String userName = null;
     
     private static Log log = LogFactory.getLog(RollerSession.class);
     
@@ -137,12 +137,12 @@ public class RollerSession
     public User getAuthenticatedUser() {
         
         User authenticUser = null;
-        if(userId != null) {
+        if(userName != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                authenticUser = mgr.getUser(userId);
+                authenticUser = mgr.getUserByUserName(userName);
             } catch (WebloggerException ex) {
-                log.warn("Error looking up authenticated user "+userId, ex);
+                log.warn("Error looking up authenticated user "+userName, ex);
             }
         }
         
@@ -154,7 +154,7 @@ public class RollerSession
      * Authenticated user associated with this session.
      */
     public void setAuthenticatedUser(User authenticatedUser) {
-        this.userId = authenticatedUser.getId();
+        this.userName = authenticatedUser.getUserName();
     }
     
        
