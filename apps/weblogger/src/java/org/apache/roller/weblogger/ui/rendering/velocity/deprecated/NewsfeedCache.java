@@ -38,15 +38,15 @@ import org.apache.roller.weblogger.util.LRUCache2;
  */
 public class NewsfeedCache {
     
-    private static Log mLogger = LogFactory.getLog(NewsfeedCache.class);
+    private static Log log = LogFactory.getLog(NewsfeedCache.class);
     
     /** Static singleton * */
-    private static NewsfeedCache mInstance = null;
+    private static NewsfeedCache instance = null;
     
     /** Instance vars * */
     private boolean aggregator_enabled = true;
     private boolean aggregator_cache_enabled = true;
-    private int aggregator_cache_timeout = 14400;
+    private int     aggregator_cache_timeout = 14400;
     
     /** LRU cache */
     LRUCache2 mCache = null;
@@ -66,8 +66,12 @@ public class NewsfeedCache {
             this.aggregator_cache_enabled = true;
         
         try {
-            this.aggregator_cache_timeout = Integer.parseInt(cachetime);
-        } catch(Exception e) { mLogger.warn(e); }
+            if (cachetime != null) {
+                this.aggregator_cache_timeout = Integer.parseInt(cachetime);
+            }
+        } catch(NumberFormatException e) { 
+            log.error("ERROR 'aggregator.cache.timeout'not a valid integer: " + cachetime);
+        }
         
         // finally ... create the cache
         this.mCache = new LRUCache2(100, 1000 * this.aggregator_cache_timeout);
@@ -77,14 +81,14 @@ public class NewsfeedCache {
     /** static singleton retriever */
     public static NewsfeedCache getInstance() {
         synchronized (NewsfeedCache.class) {
-            if (mInstance == null) {
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug("Instantiating new NewsfeedCache");
+            if (instance == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Instantiating new NewsfeedCache");
                 }
-                mInstance = new NewsfeedCache();
+                instance = new NewsfeedCache();
             }
         }
-        return mInstance;
+        return instance;
     }
     
     
@@ -104,14 +108,14 @@ public class NewsfeedCache {
             }
             
             if (aggregator_cache_enabled) {
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug("Newsfeed: use Cache for " + feedUrl);
+                if (log.isDebugEnabled()) {
+                    log.debug("Newsfeed: use Cache for " + feedUrl);
                 }
                 
                 // Get pre-parsed feed from the cache
                 feed = (SyndFeed) mCache.get(feedUrl);
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug("Newsfeed: got from Cache");
+                if (log.isDebugEnabled()) {
+                    log.debug("Newsfeed: got from Cache");
                 }
                 
                 if (feed == null) {
@@ -121,16 +125,16 @@ public class NewsfeedCache {
                         feed = feedInput.build(new InputStreamReader(
                                 new URL(feedUrl).openStream()));
                     } catch (Exception e1) {
-                        mLogger.info("Error parsing RSS: " + feedUrl);
+                        log.info("Error parsing RSS: " + feedUrl);
                     }
                 }
                 // Store parsed feed in the cache
                 mCache.put(feedUrl, feed);
-                mLogger.debug("Newsfeed: not in Cache");
+                log.debug("Newsfeed: not in Cache");
                 
             } else {
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug("Newsfeed: not using Cache for " + feedUrl);
+                if (log.isDebugEnabled()) {
+                    log.debug("Newsfeed: not using Cache for " + feedUrl);
                 }
                 try {
                     // charset fix from Jason Rumney (see ROL-766)
@@ -160,13 +164,13 @@ public class NewsfeedCache {
                     feed = feedInput.build(new InputStreamReader(
                             connection.getInputStream(), charset));
                 } catch (Exception e1) {
-                    mLogger.info("Error parsing RSS: " + feedUrl);
+                    log.info("Error parsing RSS: " + feedUrl);
                 }
             }
             
         } catch (Exception ioe) {
-            if (mLogger.isDebugEnabled()) {
-                mLogger.debug("Newsfeed: Unexpected exception", ioe);
+            if (log.isDebugEnabled()) {
+                log.debug("Newsfeed: Unexpected exception", ioe);
             }
         }
         
