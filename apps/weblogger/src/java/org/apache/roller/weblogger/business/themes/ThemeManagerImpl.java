@@ -277,8 +277,9 @@ public class ThemeManagerImpl implements ThemeManager {
                     if(resource.isDirectory()) {
                         fileMgr.createDirectory(website, resource.getPath());
                     } else {
+                        // save file without file-type, quota checks, etc.
                         fileMgr.saveFile(website, resource.getPath(), "text/plain", 
-                                resource.getLength(), resource.getInputStream());
+                                resource.getLength(), resource.getInputStream(), false);
                     }
                 } catch (Exception ex) {
                     log.info(ex);
