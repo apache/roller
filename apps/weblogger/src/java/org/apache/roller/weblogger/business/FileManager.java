@@ -89,7 +89,7 @@ public interface FileManager {
     
     
     /**
-     * Save a file to weblog's uploads area.
+     * Save a file to weblog's uploads area, with can-save check.
      * 
      * @param weblog The weblog we are working on.
      * @param path The relative path to the desired location within 
@@ -106,7 +106,30 @@ public interface FileManager {
                          String path, 
                          String contentType, 
                          long size,
-                         InputStream is) 
+                         InputStream is)
+        throws FileNotFoundException, FilePathException, FileIOException;
+    
+    
+    /**
+     * Save a file to weblog's uploads area, with optional can-save check.
+     * 
+     * @param weblog The weblog we are working on.
+     * @param path The relative path to the desired location within 
+     * the weblog's uploads area where the file should be saved.
+     * @param contentType Content type of the file.
+     * @param size Size of file to be saved.
+     * @param is InputStream to read the file from.
+     *
+     * @throws FileNotFoundException If path to save location does not exist.
+     * @throws FilePathException If path is invalid, is not a directory, or can't be read.
+     * @throws FileIOException If there is an unexpected error during the save.
+     */
+    public void saveFile(Weblog weblog, 
+                         String path, 
+                         String contentType, 
+                         long size,
+                         InputStream is,
+                         boolean checkCanSave)
         throws FileNotFoundException, FilePathException, FileIOException;
     
     

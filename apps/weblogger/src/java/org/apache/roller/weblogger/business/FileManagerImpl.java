@@ -142,7 +142,21 @@ public class FileManagerImpl implements FileManager {
                          String path, 
                          String contentType, 
                          long size, 
-                         InputStream is)
+                         InputStream is) 
+            throws FileNotFoundException, FilePathException, FileIOException {
+        
+        saveFile(weblog, path, contentType, size, is, true);
+    }
+    
+    /**
+     * @see org.apache.roller.weblogger.model.FileManager#saveFile(weblog, java.lang.String, java.lang.String, long, java.io.InputStream)
+     */
+    public void saveFile(Weblog weblog, 
+                         String path, 
+                         String contentType, 
+                         long size, 
+                         InputStream is,
+                         boolean checkCanSave)
             throws FileNotFoundException, FilePathException, FileIOException {
         
         String savePath = path;
@@ -152,7 +166,7 @@ public class FileManagerImpl implements FileManager {
         
         // make sure we are allowed to save this file
         RollerMessages msgs = new RollerMessages();
-        if (!canSave(weblog, savePath, contentType, size, msgs)) {
+        if (checkCanSave && !canSave(weblog, savePath, contentType, size, msgs)) {
             throw new FileIOException(msgs.toString());
         }
         
