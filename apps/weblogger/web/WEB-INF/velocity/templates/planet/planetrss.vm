@@ -26,7 +26,7 @@
   <description>$utils.escapeXML($siteDescription)</description>
   #end
   <link>$utils.escapeXML($absoluteSite)</link>
-  <lastBuildDate>$utils.formatRfc822Date($planet.lastUpdated)</lastBuildDate>
+  <lastBuildDate>$utils.formatRfc822Date($lastModified)</lastBuildDate>
   <generator>Roller</generator>
   #if($group)
      #set($entries = $planet.getEntries($group, 0, $entryCount))
@@ -47,7 +47,14 @@
      	   <category>$utils.escapeXML($cat.name)</category>
      	#end
     #end
-    #if($entry.permalink)<link>$utils.escapeXML($entry.permalink)</link> #end
+    #if($entry.permalink)
+        <link>$utils.escapeXML($entry.permalink)</link>
+    #end
+    #if($entry.guid)
+        <guid>$utils.escapeXML($entry.guid)</guid>
+    #elseif ($entry.permalink)
+        <guid isPermaLink="true">$utils.escapeXML($entry.permalink)</guid>
+    #end
     <pubDate>$utils.formatRfc822Date($entry.pubTime)</pubDate>
     #if(!$utils.isEmpty($entry.author))
        <dc:creator>$utils.escapeXML($entry.author)</dc:creator>
