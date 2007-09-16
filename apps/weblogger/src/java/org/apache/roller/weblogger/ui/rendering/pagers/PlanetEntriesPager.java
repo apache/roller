@@ -96,31 +96,28 @@ public class PlanetEntriesPager extends AbstractPager {
                 PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
                 Planet planet = planetManager.getPlanet("default");
                 
-                List rawEntries = null;
+                List entries = null;
                 if (feedURL != null) {
                     Subscription sub = planetManager.getSubscription(feedURL);
-                    rawEntries = planetManager.getEntries(sub, offset, length+1);
+                    entries = planetManager.getEntries(sub, offset, length+1);
                 } else if (groupHandle != null) {
                     PlanetGroup group = planetManager.getGroup(planet, groupHandle);
-                    rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
+                    entries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 } else {
                     PlanetGroup group = planetManager.getGroup(planet, "all");
-                    rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
-                }
-                
-                results.addAll(rawEntries);
-                
-                // check if there are more results for paging
-                if(results.size() > length) {
-                    more = true;
-                    results.remove(results.size() - 1);
+                    entries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 }
                 
                 // wrap 'em
-                for (Iterator it = results.iterator(); it.hasNext();) {
+                int count = 0;
+                for (Iterator it = entries.iterator(); it.hasNext();) {
                     SubscriptionEntry entry = (SubscriptionEntry) it.next();
                     // TODO needs pojo wrapping from planet
-                    results.add(entry);
+                    if (count++ < length) { 
+                        results.add(entry);
+                    } else {
+                        more = true;
+                    }
                 }
                 
             } catch (Exception e) {
@@ -137,5 +134,6 @@ public class PlanetEntriesPager extends AbstractPager {
     public boolean hasMoreItems() {
         return more;
     }
-    
 }
+
+
