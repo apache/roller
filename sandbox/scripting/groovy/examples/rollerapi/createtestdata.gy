@@ -15,10 +15,10 @@ class RollerDatabaseGenerator {
 
     def roller = null;
 
-    def userCount = 5
+    def userCount = 30 
     def blogCount = 2*userCount
-    def entryCount = 10
-    def commentCount = 3
+    def entryCount = 50 
+    def commentCount = 6
 
     def users = []
 
@@ -107,18 +107,18 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createUser(username, password, fullname, email) {
         println "Creating user: " + username
-        def locale   = "en_US";
-        def timeZone = "America/New_York";
-        def user = new org.apache.roller.weblogger.pojos.User();
-        user.setUserName(username);
-        user.setScreenName(username);
-        user.setPassword(password);
-        user.setFullName(fullname);
-        user.setEmailAddress(email);
-        user.setLocale(locale);
-        user.setTimeZone(timeZone);
-        user.setDateCreated(new java.util.Date());
         try {
+            def locale   = "en_US";
+            def timeZone = "America/New_York";
+            def user = new org.apache.roller.weblogger.pojos.User();
+            user.setUserName(username);
+            user.setScreenName(username);
+            user.setPassword(password);
+            user.setFullName(fullname);
+            user.setEmailAddress(email);
+            user.setLocale(locale);
+            user.setTimeZone(timeZone);
+            user.setDateCreated(new java.util.Date());
             roller.getUserManager().addUser(user);
             roller.flush();
             users.add(user)
@@ -130,19 +130,19 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createBlog(user, handle, name, desc, theme) {
         println "Creating blog: " + handle
-        def website = new org.apache.roller.weblogger.pojos.Weblog(
-            handle, 
-            user,
-            name,
-            desc,
-            user.getEmailAddress(),
-            user.getEmailAddress(),
-            theme,
-            user.getLocale(),
-            user.getTimeZone());
+        try {
+            def website = new org.apache.roller.weblogger.pojos.Weblog(
+                handle, 
+                user,
+                name,
+                desc,
+                user.getEmailAddress(),
+                user.getEmailAddress(),
+                theme,
+                user.getLocale(),
+                user.getTimeZone());
             def cat = new org.apache.roller.weblogger.pojos.WeblogCategory(
                 website, null, "cat1", "cat1", null);
-        try {
             roller.getWeblogManager().saveWeblogCategory(cat);
             website.setDefaultCategory(cat);
             roller.getUserManager().addWebsite(website);
@@ -155,19 +155,19 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createEntry(blog, title, text, pubTime) {
         println "Creating entry title: " + title
-        def entry = new org.apache.roller.weblogger.pojos.WeblogEntry();
-        entry.setWebsite(blog);
-        entry.setCreator(blog.getCreator());
-        def catName = categories.get((int)(Math.random() * categories.size()))
-        def category = roller.getWeblogManager().getWeblogCategoryByPath(blog,catName)
-        entry.setCategory(category);
-        entry.setPubTime(new java.sql.Timestamp(pubTime.getTime()));
-        entry.setUpdateTime(new java.sql.Timestamp(pubTime.getTime()));
-        entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PUBLISHED);
-        entry.setText(text);
-        entry.setTitle(title);
-        entry.setLocale("en_US");
         try {
+            def entry = new org.apache.roller.weblogger.pojos.WeblogEntry();
+            entry.setWebsite(blog);
+            entry.setCreator(blog.getCreator());
+            def catName = categories.get((int)(Math.random() * categories.size()))
+            def category = roller.getWeblogManager().getWeblogCategoryByPath(blog,catName)
+            entry.setCategory(category);
+            entry.setPubTime(new java.sql.Timestamp(pubTime.getTime()));
+            entry.setUpdateTime(new java.sql.Timestamp(pubTime.getTime()));
+            entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PUBLISHED);
+            entry.setText(text);
+            entry.setTitle(title);
+            entry.setLocale("en_US");
             roller.getWeblogManager().saveWeblogEntry(entry);
             roller.flush();
             return entry
@@ -178,14 +178,14 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
 
     def createComment(entry, commentername, content) { 
         println "Creating comment from user: " + commentername
-        def comment = new org.apache.roller.weblogger.pojos.WeblogEntryComment();
-        comment.setWeblogEntry(entry);
-        comment.setName(commentername);
-        comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
-        comment.setContent(content);
-        comment.setNotify(Boolean.FALSE);
-        comment.setStatus(org.apache.roller.weblogger.pojos.WeblogEntryComment.APPROVED);
         try {
+            def comment = new org.apache.roller.weblogger.pojos.WeblogEntryComment();
+            comment.setWeblogEntry(entry);
+            comment.setName(commentername);
+            comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+            comment.setContent(content);
+            comment.setNotify(Boolean.FALSE);
+            comment.setStatus(org.apache.roller.weblogger.pojos.WeblogEntryComment.APPROVED);
             roller.getWeblogManager().saveComment(comment);
             roller.flush();
         } catch (Exception e) {
@@ -279,7 +279,7 @@ nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
                 0.upto(paraCount) {
                     text += "<p>" + blogText[(int)(Math.random() * blogText.size())] + "</p>"
                 }
-                def title = text.substring(4,25)
+                def title = text.substring(3,25)
                 def pubTime = new Date();
                 pubTime = pubTime - (int)(Math.random() * 60)
                 def entry = createEntry(blog, title, text, pubTime)
