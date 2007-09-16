@@ -134,6 +134,7 @@ public class PlanetFeedServlet extends HttpServlet {
             model.put("utils", new UtilitiesModel());
             model.put("siteName", PlanetRuntimeConfig.getProperty("site.name"));
             model.put("siteDescription", PlanetRuntimeConfig.getProperty("site.description"));
+            model.put("lastModified", lastModified);
             if (StringUtils.isNotEmpty(PlanetRuntimeConfig.getProperty("site.absoluteurl"))) {
                 model.put("absoluteSite", PlanetRuntimeConfig.getProperty("site.absoluteurl"));
             } else {
