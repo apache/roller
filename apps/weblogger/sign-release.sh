@@ -1,5 +1,5 @@
 
-export rcstring="-dev"
+export rcstring="-rc2"
 export vstring="4.0"
 
 cp dist/apache-roller-${vstring}.tar.gz dist/apache-roller-${vstring}${rcstring}.tar.gz
