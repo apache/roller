@@ -151,20 +151,16 @@ public class WeblogsPager extends AbstractPager {
                 } else {
                     rawWeblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
-                // Collections returned by backend are not writeable, so create copy
-                List weblogs = new ArrayList();
-                weblogs.addAll(rawWeblogs);
-                
-                // check if there are more results for paging
-                if(weblogs.size() > length) {
-                    more = true;
-                    weblogs.remove(weblogs.size() - 1);
-                }
                 
                 // wrap the results
-                for (Iterator it = weblogs.iterator(); it.hasNext();) {
+                int count = 0;
+                for (Iterator it = rawWeblogs.iterator(); it.hasNext();) {
                     Weblog website = (Weblog) it.next();
-                    results.add(WeblogWrapper.wrap(website, urlStrategy));
+                    if (count++ < length) {
+                        results.add(WeblogWrapper.wrap(website, urlStrategy));                    
+                    } else {
+                        more = true;
+                    }
                 }
                 
             } catch (Exception e) {
