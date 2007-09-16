@@ -26,11 +26,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
@@ -119,7 +121,8 @@ public class PlanetFeedServlet extends HttpServlet {
 
 
         // looks like we need to render content
-        HashMap model = new HashMap();
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> model = new HashMap();
         try {
             // populate the rendering model
             if (request.getParameter("group") != null) {
@@ -129,7 +132,13 @@ public class PlanetFeedServlet extends HttpServlet {
             model.put("planet", planet);
             model.put("date", new Date());
             model.put("utils", new UtilitiesModel());
-            model.put("absoluteSite", WebloggerRuntimeConfig.getAbsoluteContextURL());
+            model.put("siteName", PlanetRuntimeConfig.getProperty("site.name"));
+            model.put("siteDescription", PlanetRuntimeConfig.getProperty("site.description"));
+            if (StringUtils.isNotEmpty(PlanetRuntimeConfig.getProperty("site.absoluteurl"))) {
+                model.put("absoluteSite", PlanetRuntimeConfig.getProperty("site.absoluteurl"));
+            } else {
+                model.put("absoluteSite", WebloggerRuntimeConfig.getAbsoluteContextURL());
+            }
             model.put("feedStyle", new Boolean(WebloggerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds")));
 
             int numEntries = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
