@@ -22,16 +22,17 @@
   <title>$utils.escapeXML($group.title)</title>
   <description>Aggregated feed for group [$utils.escapeXML($group.title)]</description>
   #else
-  <title>$utils.escapeXML($planet.configuration.title)</title>
-  <description>$utils.escapeXML($planet.configuration.title)</description>
+  <title>$utils.escapeXML($siteName)</title>
+  <description>$utils.escapeXML($siteDescription)</description>
   #end
-  <link>$utils.escapeXML($planet.configuration.siteURL)</link>
+  <link>$utils.escapeXML($absoluteSite)</link>
   <lastBuildDate>$utils.formatRfc822Date($planet.lastUpdated)</lastBuildDate>
   <generator>Roller</generator>
   #if($group)
-     #set($entries = $planet.getAggregation($group, 0, $entryCount))
+     #set($entries = $planet.getEntries($group, 0, $entryCount))
   #else
-     #set($entries = $planet.getAggregation(0, $entryCount))
+     #set($all = $planet.getGroup($planet.getPanet("default"), "all"))
+     #set($entries = $planet.getEntries($all, 0, $entryCount))
   #end
   #foreach( $entry in $entries )
   <item>
