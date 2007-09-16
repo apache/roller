@@ -108,14 +108,16 @@ public class PlanetEntriesPager extends AbstractPager {
                     rawEntries = planetManager.getEntries(group, startDate, null, offset, length+1);
                 }
                 
+                results.addAll(rawEntries);
+                
                 // check if there are more results for paging
-                if(rawEntries.size() > length) {
+                if(results.size() > length) {
                     more = true;
-                    rawEntries.remove(rawEntries.size() - 1);
+                    results.remove(results.size() - 1);
                 }
                 
                 // wrap 'em
-                for (Iterator it = rawEntries.iterator(); it.hasNext();) {
+                for (Iterator it = results.iterator(); it.hasNext();) {
                     SubscriptionEntry entry = (SubscriptionEntry) it.next();
                     // TODO needs pojo wrapping from planet
                     results.add(entry);
