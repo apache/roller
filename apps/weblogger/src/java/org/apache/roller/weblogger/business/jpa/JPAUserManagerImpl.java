@@ -266,9 +266,9 @@ public class JPAUserManagerImpl implements UserManager {
     
     public void savePermissions(WeblogPermission perms)
     throws WebloggerException {
-        if (getPermissions(perms.getWebsite(), perms.getUser()) != null) {
-            throw new WebloggerException("ERROR: user already has permission in weblog");
-        }
+        //if (getPermissions(perms.getWebsite(), perms.getUser()) != null) {
+            //throw new WebloggerException("ERROR: user already has permission in weblog");
+        //}
         if (getPermissions(perms.getId()) == null) { 
             // This is a new object make sure that relationship is set on managed
             // copy of other side
