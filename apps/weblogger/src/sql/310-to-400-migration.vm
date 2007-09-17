@@ -18,11 +18,20 @@ create table rag_planet (
 alter table rag_planet add constraint ragp_handle_uq unique ( handle );
 
 -- ensure that every weblog entry has a valid locale
+
+#if ($db.DBTYPE != "POSTGRESQL")
 update weblogentry e set 
    e.pubtime=pubtime, 
    e.updatetime=updatetime, 
    e.locale=(select locale from website where website.id=e.websiteid) 
    where e.locale is null or length(e.locale)=0;
+#else
+update weblogentry set 
+   pubtime=pubtime, 
+   updatetime=updatetime, 
+   locale=(select locale from website where website.id=websiteid) 
+   where locale is null or length(locale)=0;
+#end
 
 -- add new planet_id column to planet group table
 #addColumnNull("rag_group" "planet_id" "varchar(48)")
@@ -30,14 +39,8 @@ update weblogentry e set
 -- upgrade old planet users to work with the new Roller Planet code
 -- all groups must have a planet now, so provide a default planet and
 -- put all existing groups in the new default planet
-insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','zzz_default_planet_zzz');
+insert into rag_planet (id,title,handle) values ('zzz_default_planet_zzz','Default Planet','default');
 update rag_group set planet_id='zzz_default_planet_zzz';
-
--- remove old id column of group subscription table
-alter table rag_group_subscription drop column id;
-
--- drop old planet config table
-drop table if exists rag_config;
 
 
 -- upgrade the way hierarchical objects are modeled
@@ -75,16 +78,18 @@ create index fo_path_idx on folder( path );
 create index co_status_idx on roller_comment(status);
 
 -- update existing data to use new status column
-update roller_comment set status = 'APPROVED', posttime=posttime where approved=1;
-update roller_comment set status = 'PENDING', posttime=posttime where pending=1;
-update roller_comment set status = 'SPAM', posttime=posttime where spam=1;
-update roller_comment set status = 'DISAPPROVED', posttime=posttime where approved=0 and spam=0 and pending=0;
+update roller_comment set status = 'APPROVED', posttime=posttime where approved=$db.BOOLEAN_TRUE;
+update roller_comment set status = 'PENDING', posttime=posttime where pending=$db.BOOLEAN_TRUE;
+update roller_comment set status = 'SPAM', posttime=posttime where spam=$db.BOOLEAN_TRUE;
+
+update roller_comment set status = 'DISAPPROVED', posttime=posttime 
+   where approved=$db.BOOLEAN_FALSE and spam=$db.BOOLEAN_FALSE and pending=$db.BOOLEAN_FALSE;
 
 
 -- better support for doing scheduled entries
 
 -- add new status option 'SCHEDULED' for future published entries
-update weblogentry set status = 'SCHEDULED', pubtime=pubtime, updatetime=updatetime where pubtime > now();
+update weblogentry set status = 'SCHEDULED', pubtime=pubtime, updatetime=updatetime where pubtime > current_timestamp;
 
 -- add new client column to roller_tasklock table
 #addColumnNull("roller_tasklock" "client" "varchar(255)")
@@ -113,7 +118,7 @@ update webpage set action = 'weblog' where name = 'Weblog';
 #addColumnNull("website" "customstylesheet" "varchar(128)")
 
 -- fix blogs which have unchecked showalllangs but did not check enablemultilang
-update website set enablemultilang = 1 where showalllangs = 0;
+update website set enablemultilang=$db.BOOLEAN_TRUE where showalllangs=$db.BOOLEAN_FALSE;
 
 
 -- some missing foreign key constraints
@@ -130,42 +135,47 @@ create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
 create index we_combo2_idx on weblogentry(websiteid, pubtime, status);
 create index co_combo1_idx on roller_comment(status, posttime);
 
+
 -- remove old indexes that are no longer of value
-drop index we_pubtime_idx on weblogentry;
-drop index we_pubentry_idx on weblogentry;
--- drop index co_pending_idx on roller_comment;
--- drop index co_approved_idx on roller_comment;
+#dropIndex('we_pubentry_idx' 'weblogentry')
+
 
 -- fix wacky indexs which ended up with a size constraint
-drop index rage_sid_idx on rag_entry;
+#dropIndex('rage_sid_idx' 'rag_entry')
 create index rage_sid_idx on rag_entry(subscription_id);
-drop index raggs_gid_idx on rag_group_subscription;
+
+#dropIndex('raggs_gid_idx' 'rag_group_subscription')
 create index raggs_gid_idx on rag_group_subscription(group_id);
-drop index raggs_sid_idx on rag_group_subscription;
+
+#dropIndex('raggs_sid_idx' 'rag_group_subscription')
 create index raggs_sid_idx on rag_group_subscription(subscription_id);
 
 
--- remove old usercookie table which has been unused since 0.x?
-drop table if exists usercookie;
-
--- remove old assoc tables which were EOLed in 3.2
-drop table if exists folderassoc;
-drop table if exists weblogcategoryassoc;
+-- remove no-longer-used needed tables
 
 -- remove old rollerconfig table which has been deprecated since 1.2
 -- NOTE: since this breaks the pre-1.2 -> 4.0+ direct upgrade path then
---       maybe we want to attempt to fix that by doing that upgrade via sql?
-drop table if exists rollerconfig;
+-- maybe we want to attempt to fix that by doing that upgrade via sql?
+#dropTableIfExists('rollerconfig')
+
+--- remove old id column of group subscription table
+#dropColumn('rag_group_subscription' 'id')
 
 -- remove old approved, spam, pending columns from comment table
-alter table roller_comment drop column approved;
-alter table roller_comment drop column spam;
-alter table roller_comment drop column pending;
+#dropColumn('roller_comment' 'approved')
+#dropColumn('roller_comment' 'spam')
+#dropColumn('roller_comment' 'pending')
 
--- remove bastard columns from various tables
--- NOTE: these are only here as options, we don't *have* to do them
---alter table website drop column userid;
---alter table website drop column weblogdayid;
---alter table weblogentry drop column publishentry;
---alter table weblogentry drop column link;
+-- remove bastard columns and indexes (optional)
+-- #dropIndex('index_we_pubtime_idx' 'weblogentry')
+-- #dropIndex('co_pending_idx' 'roller_comment')
+-- #dropIndex('co_approved_idx' 'roller_comment')
+-- #dropColumn('website' 'userid')
+-- #dropColumn('website' 'weblogdayid')
+-- #dropColumn('weblogentry' 'publishentry')
+-- #dropColumn('weblogentry' 'link')
+-- #dropTableIfExists('usercookie')
+-- #dropTableIfExists('rag_config')
+-- #dropTableIfExists('folderassoc')
+-- #dropTableIfExists('weblogcategoryassoc')
 

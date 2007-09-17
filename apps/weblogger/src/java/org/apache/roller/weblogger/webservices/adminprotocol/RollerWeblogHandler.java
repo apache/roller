@@ -261,16 +261,17 @@ class RollerWeblogHandler extends Handler {
         String handle = getUri().getEntryId();
         
         try {
-            
             Weblog wd = getWebsiteData(handle);
-            Weblog[] wds = new Weblog[] { wd };
-            EntrySet es = toWeblogEntrySet(wds);
-            
+            CacheManager.invalidate(wd);
+
             WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(wd);
             getRoller().flush();
-            CacheManager.invalidate(wd);
-            
+
+            // return empty set, object deleted
+            Weblog[] wds = new Weblog[0];
+            EntrySet es = toWeblogEntrySet(wds);
             return es;
+
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not delete entry: " + handle, re);
         }

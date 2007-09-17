@@ -270,6 +270,7 @@ class RollerMemberHandler extends Handler {
                 perms.add(pd);
             }
             return toMemberEntrySet(perms);
+            
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not create members", re);
         }
@@ -355,16 +356,16 @@ class RollerMemberHandler extends Handler {
 
             pd.setActions(WeblogPermission.ALL_ACTIONS);
             
+
             UserManager mgr = getRoller().getUserManager();
             mgr.revokeWeblogPermission(pd);
-            getRoller().flush();
-            
+            getRoller().flush();            
+
             CacheManager.invalidate(ud);
             CacheManager.invalidate(wd);
             
-            WeblogPermission deletedPerm = new WeblogPermission(wd, ud, WeblogPermission.ALL_ACTIONS);
+            // return empty set, entry was deleted
             List<WeblogPermission> pds = new ArrayList<WeblogPermission>();
-            pds.add(deletedPerm);
             EntrySet es = toMemberEntrySet(pds);
             return es;
             

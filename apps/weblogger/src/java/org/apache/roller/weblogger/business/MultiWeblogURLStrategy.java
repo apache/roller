@@ -147,7 +147,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         }
         
         if(cat != null && dateString == null) {
-            pathinfo.append("category/").append(URLUtilities.encode(cat));
+            pathinfo.append("category/").append(URLUtilities.encodePath(cat));
             
         } else if(dateString != null && cat == null) {
             pathinfo.append("date/").append(dateString);  
@@ -307,9 +307,9 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         url.append("resource/");
         
         if(filePath.startsWith("/")) {
-            url.append(filePath.substring(1));
+            url.append(URLUtilities.encodePath(filePath.substring(1)));
         } else {
-            url.append(filePath);
+            url.append(URLUtilities.encodePath(filePath));
         }
         
         return url.toString();

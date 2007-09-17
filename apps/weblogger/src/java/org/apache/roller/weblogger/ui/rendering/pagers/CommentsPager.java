@@ -96,16 +96,15 @@ public class CommentsPager extends AbstractPager {
                 List entries = wmgr.getComments(
                         weblog, null, null, startDate, null, WeblogEntryComment.APPROVED, true, offset, length + 1);
                 
-                // check if there are more results for paging
-                if(entries.size() > length) {
-                    more = true;
-                    entries.remove(entries.size() - 1);
-                }
-                
                 // wrap the results
+                int count = 0;
                 for (Iterator it = entries.iterator(); it.hasNext();) {
                     WeblogEntryComment comment = (WeblogEntryComment) it.next();
-                    results.add(WeblogEntryCommentWrapper.wrap(comment, urlStrategy));
+                    if (count++ < length) {
+                        results.add(WeblogEntryCommentWrapper.wrap(comment, urlStrategy));
+                    } else {
+                        more = true;
+                    }
                 }
                 
             } catch (Exception e) {

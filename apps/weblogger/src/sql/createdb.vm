@@ -94,7 +94,7 @@ create table webpage (
     templatelang    varchar(20) not null,
     decorator       varchar(255) default null,
     outputtype      varchar(48) default null,
-    action          varchar(16) not null default 'custom'
+    #columnNotNullWithDefault('action' 'varchar(16)' 'custom')
 );
 create index wp_name_idx on webpage( name$!db.INDEXSIZE );
 create index wp_link_idx on webpage( link$!db.INDEXSIZE );
@@ -136,7 +136,6 @@ create table website (
     customstylesheet  varchar(128),
     about             varchar(255),
     icon              varchar(255)
-
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
@@ -418,7 +417,9 @@ create table roller_tasklock (
     client          varchar(255)
 );
 alter table roller_tasklock add constraint rtl_name_uq unique ( name$!db.INDEXSIZE );
+#if($db.DBTYPE != "ORACLE")
 create index rtl_taskname_idx on roller_tasklock( name );
+#end
 
 create table roller_hitcounts (
     id              varchar(48) not null primary key,

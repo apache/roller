@@ -211,21 +211,29 @@ public class JPAUserManagerImpl implements UserManager {
         StringBuffer whereClause = new StringBuffer();
                             
         if (weblog != null) {
-            queryString.append("SELECT u FROM User u JOIN u.permissions p WHERE ");
+            queryString.append("SELECT u FROM User u JOIN u.permissions p ");
             params.add(size++, weblog);
-            whereClause.append(" p.website = ?" + size);   
+            whereClause.append(" WHERE p.website = ?" + size);   
         } else {
-            queryString.append("SELECT u FROM User u WHERE ");
+            queryString.append("SELECT u FROM User u ");
         }         
 
         if (enabled != null) {
-            if (whereClause.length() > 0) whereClause.append(" AND ");
+            if (whereClause.length() == 0) {
+                whereClause.append(" WHERE ");
+            } else {
+                whereClause.append(" AND ");
+            }
             params.add(size++, enabled);
             whereClause.append("u.enabled = ?" + size);  
         }
 
         if (startDate != null) {
-            if (whereClause.length() > 0) whereClause.append(" AND ");
+            if (whereClause.length() == 0) {
+                whereClause.append(" WHERE ");
+            } else {
+                whereClause.append(" AND ");
+            }
 
             // if we are doing date range then we must have an end date
             if(endDate == null) {

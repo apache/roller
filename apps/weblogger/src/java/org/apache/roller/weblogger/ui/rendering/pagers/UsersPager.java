@@ -143,16 +143,15 @@ public class UsersPager extends AbstractPager {
                     rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length + 1);
                 }
                 
-                // check if there are more results for paging
-                if(rawUsers.size() > length) {
-                    more = true;
-                    rawUsers.remove(rawUsers.size() - 1);
-                }
-                
                 // wrap the results
+                int count = 0;
                 for (Iterator it = rawUsers.iterator(); it.hasNext();) {
                     User user = (User) it.next();
-                    results.add(UserWrapper.wrap(user));
+                    if (count++ < length) {
+                        results.add(UserWrapper.wrap(user));
+                    } else {
+                        more = true;
+                    }
                 }
                 
             } catch (Exception e) {

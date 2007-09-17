@@ -72,7 +72,7 @@ File upload form, but only if it's enabled and weblog is under quota
         
         <br />
         
-        <s:submit type="button" key="uploadFiles.upload" onclick="validate()" />
+        <s:submit type="button" key="uploadFiles.upload" />
         <br />
         <br />
         
@@ -151,8 +151,8 @@ Table of files, each with link, size and checkbox
                 </s:if>
                 <s:else>
                     <img src='<s:url value="/images/image.png"/>' style="padding:0px" />
-                    <a href='<c:out value="${model.resourcesBaseURL}" /><s:property value="getResourceURL(#f.path)" />'>
-                        <s:property value="#f.name" />
+                        <a href='<s:property value="getResourceURL(#f.path)" />'>
+                            <s:property value="#f.name" />
                     </a>
                 </s:else>
             </td>

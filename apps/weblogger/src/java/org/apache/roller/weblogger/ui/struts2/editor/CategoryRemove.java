@@ -124,14 +124,15 @@ public class CategoryRemove extends UIAction {
                 WebloggerFactory.getWeblogger().flush();
             }
             
+            // notify cache
+            String id = getCategory().getId();
+            CacheManager.invalidate(getCategory());
+            
             wmgr.removeWeblogCategory(getCategory());
             WebloggerFactory.getWeblogger().flush();
             
-            // notify cache
-            CacheManager.invalidate(getCategory());
-            
             // set category id to parent for next page
-            setRemoveId(getCategory().getParent().getId());
+            setRemoveId(id);
             
             return SUCCESS;
             

@@ -2,7 +2,7 @@
 import java.io.*;
 import java.net.*;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.roller.webservices.adminprotocol.sdk.*;
+import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
 
 if (args.length < 3) {
     println "USAGE: groovy listcollections.gy <username> <password> <rap-endpoint-uri>";

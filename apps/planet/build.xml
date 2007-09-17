@@ -75,7 +75,12 @@
         <include name="openjpa-0.9.7/geronimo-jta_1.0.1B_spec-1.0.1.jar"/>
         <include name="openjpa-0.9.7/serp-1.11.0.jar"/>
         <include name="openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar"/> 
-        
+<!--
+        <include name="openjpa-1.0/geronimo-jpa_3.0_spec-1.0.jar"/>
+        <include name="openjpa-1.0/geronimo-jta_1.1_spec-1.1.jar"/> 
+        <include name="openjpa-1.0/openjpa-1.0.0.jar"/>
+        <include name="openjpa-1.0/serp-1.13.1.jar"/>
+-->
         <!-- Needed for JPA/Toplink
         <include name="toplink-essentials-9.1/toplink-essentials.jar"/> -->
         
@@ -186,18 +191,23 @@
                 <exclude name="**/*.png"/>
             </fileset>
         </copy>
+        
         <mkdir dir="${build.compile.business}/META-INF" />
         <copy todir="${build.compile.business}/META-INF" file="src/java/META-INF/persistence.xml" />
                 
         <!-- OpenJPA bytecode enhancement   -->
-        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="planet.business.path" />
-        <openjpac>
+        <path id="openjpac.path">
+            <path refid="planet.business.path"/>
+            <pathelement path="${build.compile.business}" />
+            <pathelement path="${build.compile.business}/org/apache/roller/planet/pojos" />
+        </path>
+        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="openjpac.path" />
+        <openjpac enforcePropertyRestrictions="false">
             <config propertiesFile="src/java/META-INF/persistence.xml" />
-            <classpath>
-                <path refid="planet.business.path"/>
-                <pathelement location="${build.compile.business}" />
-                <pathelement location="${build.compile.business}/org/apache/roller/planet/pojos" />
-            </classpath>
+            <!-- <fileset dir="${build.compile.business}">
+                <include name="**/pojos/*.class" />
+            </fileset> -->
+            <classpath refid="openjpac.path" />
         </openjpac>
         
         <!-- JPA/Toplink bytecode enhancement

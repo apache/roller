@@ -188,9 +188,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List referers = refQuery2.getResultList();
         for (Iterator iter = referers.iterator(); iter.hasNext();) {
             WeblogReferrer referer = (WeblogReferrer) iter.next();
-            this.strategy.remove(referer);
+            this.strategy.remove(referer.getClass(), referer.getId());
         }
-        
+        // TODO: can we eliminate this unnecessary flush with OpenJPA 1.0
+        this.strategy.flush(); 
+       
         // remove associated pages
         Query pageQuery = strategy.getNamedQuery("WeblogTemplate.getByWebsite");
         pageQuery.setParameter(1, website);

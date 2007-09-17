@@ -213,7 +213,7 @@ public class SharedThemeFromDir extends SharedTheme {
         // load resource representing preview image
         File previewFile = new File(this.themeDir + File.separator + themeMetadata.getPreviewImage());
         if(!previewFile.exists() || !previewFile.canRead()) {
-            log.warn("Couldn't read preview image file ["+themeMetadata.getPreviewImage()+"]");
+            log.warn("Couldn't read theme [" + this.getName() + "] preview image file ["+themeMetadata.getPreviewImage()+"]");
         } else {
             this.previewImage = new SharedThemeResourceFromDir(themeMetadata.getPreviewImage(), previewFile);
         }
@@ -231,7 +231,7 @@ public class SharedThemeFromDir extends SharedTheme {
             String contents = loadTemplateFile(templateFile);
             if(contents == null) {
                 // if we don't have any contents then skip this one
-                log.error("Couldn't load stylesheet template file ["+templateFile+"]");
+                log.error("Couldn't load stylesheet theme [" + this.getName() + "] template file ["+templateFile+"]");
             } else {
                 
                 // construct ThemeTemplate representing this file
@@ -267,7 +267,7 @@ public class SharedThemeFromDir extends SharedTheme {
             
             // Continue reading theme even if problem encountered with one file
             if(!resourceFile.exists() || !resourceFile.canRead()) {
-                log.warn("Couldn't read theme resource file ["+resourcePath+"]");
+                log.warn("Couldn't read  theme [" + this.getName() + "] resource file ["+resourcePath+"]");
                 continue;
             }
             
@@ -289,7 +289,7 @@ public class SharedThemeFromDir extends SharedTheme {
             String contents = loadTemplateFile(templateFile);
             if(contents == null) {
                 // if we don't have any contents then skip this one
-                throw new ThemeInitializationException("Couldn't load theme template file ["+templateFile+"]");
+                throw new ThemeInitializationException("Couldn't load theme [" + this.getName() + "] template file ["+templateFile+"]");
             }
             
             // construct ThemeTemplate representing this file
@@ -329,7 +329,7 @@ public class SharedThemeFromDir extends SharedTheme {
             InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
             length = reader.read(chars);
         } catch (Exception noprob) {
-            log.error("Exception reading template file ["+templateFile+"]");
+            log.error("Exception reading theme [" + this.getName() + "] template file ["+templateFile+"]");
             if (log.isDebugEnabled())
                 log.debug(noprob);
             return null;

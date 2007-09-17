@@ -221,18 +221,20 @@ class RollerUserHandler extends Handler {
         // don't allow deletion of the currently authenticated user
         if (ud.getUserName().equals(getUserName())) {
             throw new NotAllowedException("ERROR: Can't delete authenticated user: " + getUserName());
-        }
-        
-        User[] uds = new User[] { ud };
+        }  
         
         try {
+            CacheManager.invalidate(ud);
+
             getRoller().getUserManager().removeUser(ud);
             getRoller().flush();
-            CacheManager.invalidate(ud);
+            
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: could not delete user data", re);
         }
         
+        // return empty set, entry was deleted
+        User[] uds = new User[0];
         EntrySet es = toUserEntrySet(uds);
         return es;
     }

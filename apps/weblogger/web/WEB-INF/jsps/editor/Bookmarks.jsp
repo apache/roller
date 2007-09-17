@@ -104,7 +104,8 @@ function onMove()
             <th class="rollertable" width="5%">&nbsp;</th>
             <th class="rollertable" width="5%">&nbsp;</th>
             <th class="rollertable" width="30%"><s:text name="bookmarksForm.name" /></th>
-            <th class="rollertable" width="50%"><s:text name="bookmarksForm.description" /></th>
+            <th class="rollertable" width="45%"><s:text name="bookmarksForm.description" /></th>
+            <th class="rollertable" width="5%"><s:text name="bookmarksForm.priority" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.edit" /></th>
             <th class="rollertable" width="5%"><s:text name="bookmarksForm.visitLink" /></th>
         </tr>
@@ -135,6 +136,8 @@ function onMove()
                 <td class="rollertable">
                     <str:truncateNicely lower="30" upper="35" ><s:property value="#folder.description" /></str:truncateNicely>
                 </td>
+                
+                <td class="rollertable"></td>
                 
                 <td class="rollertable" align="center">
                     <s:url id="editUrl" action="folderEdit">
@@ -170,6 +173,10 @@ function onMove()
                 
                 <td class="rollertable">
                     <str:truncateNicely lower="30" upper="35" ><s:property value="#bookmark.description" /></str:truncateNicely>
+                </td>
+                
+                <td class="rollertable">
+                    &nbsp;<s:property value="#bookmark.priority" />
                 </td>
                 
                 <td class="rollertable" align="center">

@@ -10,16 +10,6 @@
             </properties>
             <folders>
                 <source-folder>
-                    <label>web</label>
-                    <type>doc_root</type>
-                    <location>web</location>
-                </source-folder>
-                <source-folder>
-                    <label>WEB-INF</label>
-                    <type>web_inf</type>
-                    <location>web/WEB-INF</location>
-                </source-folder>
-                <source-folder>
                     <label>src/sql</label>
                     <type>java</type>
                     <location>src/sql</location>
@@ -33,6 +23,16 @@
                     <label>test/java</label>
                     <type>java</type>
                     <location>test/java</location>
+                </source-folder>
+                <source-folder>
+                    <label>web</label>
+                    <type>doc_root</type>
+                    <location>web</location>
+                </source-folder>
+                <source-folder>
+                    <label>WEB-INF</label>
+                    <type>web_inf</type>
+                    <location>web/WEB-INF</location>
                 </source-folder>
             </folders>
             <ide-actions>
