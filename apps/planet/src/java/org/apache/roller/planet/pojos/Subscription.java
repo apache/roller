@@ -47,17 +47,24 @@ public class Subscription implements Serializable, Comparable {
     
     public Subscription() {}
     
-    
+    /**
+     * Compares subscriptions based on concatenation of title and feed URL.
+     * This ensures that feeds are sorted by title, but that identical titles 
+     * don't make feeds equal.
+     */
     public int compareTo(Object o) {
         Subscription other = (Subscription) o;
-        return getTitle().compareTo(other.getTitle());
+        String otherString = other.getTitle() + other.getFeedURL();
+        String thisString = getTitle() + getFeedURL();
+        return thisString.compareTo(otherString);
     }
     
-    public boolean equals(Object other) {
-        
+    /**
+     * Determines if subscriotions are equal by comparing feed URLs.
+     */
+    public boolean equals(Object other) {        
         if(this == other) return true;
-        if(!(other instanceof Subscription)) return false;
-        
+        if(!(other instanceof Subscription)) return false;        
         final Subscription that = (Subscription) other;
         return this.feedUrl.equals(that.getFeedURL());
     }
