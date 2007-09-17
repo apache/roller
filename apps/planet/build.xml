@@ -213,9 +213,9 @@
         <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="openjpac.path" />
         <openjpac enforcePropertyRestrictions="false">
             <config propertiesFile="src/java/META-INF/persistence.xml" />
-            <fileset dir="${build.compile.business}">
+            <!-- <fileset dir="${build.compile.business}">
                 <include name="**/pojos/*.class" />
-            </fileset>
+            </fileset> -->
             <classpath refid="openjpac.path" />
         </openjpac>
         
