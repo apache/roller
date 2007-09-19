@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
@@ -29,12 +31,26 @@ public class WeblogPermission extends ObjectPermission {
     public static final String EDIT_DRAFT = "editdraft";
     public static final String POST = "post";
     public static final String ADMIN = "admin";
-    public static final String ALL_ACTIONS = EDIT_DRAFT + "," + POST + "," + ADMIN;
+    public static final List<String> ALL_ACTIONS = new ArrayList<String>();
+    
+    static {
+        ALL_ACTIONS.add(EDIT_DRAFT);
+        ALL_ACTIONS.add(POST);
+        ALL_ACTIONS.add(ADMIN);
+    }
 
     
     public WeblogPermission(Weblog weblog, User user, String actions) {
         super("WeblogPermission user: " + user.getUserName());
         setActions(actions);
+        objectType = "Weblog";
+        objectId = weblog.getHandle();
+        userName = user.getUserName();
+    }
+    
+    public WeblogPermission(Weblog weblog, User user, List<String> actions) {
+        super("WeblogPermission user: " + user.getUserName());
+        setActionsAsList(actions); 
         objectType = "Weblog";
         objectId = weblog.getHandle();
         userName = user.getUserName();

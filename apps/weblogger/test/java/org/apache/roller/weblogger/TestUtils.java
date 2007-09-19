@@ -218,18 +218,10 @@ public final class TestUtils {
      * Convenience method for removing a permission.
      */
     public static void teardownPermissions(WeblogPermission perm) throws Exception {
-        
-        // lookup the permissions
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-        
-        // add all actions so permission object will be completely removed
-        perm.setActions(
-                  WeblogPermission.ADMIN + "," 
-                + WeblogPermission.POST + ","
-                + WeblogPermission.EDIT_DRAFT);
-        
-        // remove the permissions
-        mgr.revokeWeblogPermission(perm);
+       
+        // remove all permissions
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();        
+        mgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
         
         // flush to db
         WebloggerFactory.getWeblogger().flush();

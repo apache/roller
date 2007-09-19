@@ -83,8 +83,20 @@ public abstract class RollerPermission extends java.security.Permission {
     /**
      * Merge actions into this permission.
      */
-    public void removeActions(ObjectPermission perm) {
-        List<String> actionsToRemove = perm.getActionsAsList();
+    public void addActions(List<String> newActions) {
+        List<String> updatedActions = getActionsAsList();
+        for (String newAction : newActions) {
+            if (!updatedActions.contains(newAction)) {
+                updatedActions.add(newAction);
+            }
+        }
+        setActionsAsList(updatedActions);
+    }
+    
+    /**
+     * Merge actions into this permission.
+     */
+    public void removeActions(List<String> actionsToRemove) {
         List<String> updatedActions = getActionsAsList();
         for (String actionToRemove : actionsToRemove) {
             updatedActions.remove(actionToRemove);

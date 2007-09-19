@@ -65,22 +65,15 @@ public class MainMenu extends UIAction {
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            Weblog weblog = wmgr.getWeblog(getInviteId());
-            WeblogPermission perm = umgr.getWeblogPermission(weblog, getAuthenticatedUser());
-            if (perm != null) {        
-                // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
-                // TODO EXCEPTIONS: better exception handling
-                umgr.confirmWeblogPermission(perm);
-                WebloggerFactory.getWeblogger().flush();
+            Weblog weblog = wmgr.getWeblog(getInviteId());      
+            // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
+            // TODO EXCEPTIONS: better exception handling
+            umgr.confirmWeblogPermission(weblog, getAuthenticatedUser());
+            WebloggerFactory.getWeblogger().flush();
 
-                addMessage("yourWebsites.accepted", perm.getWeblog().getHandle());
-            } else {
-                addError("yourWebsites.permNotFound");
-            }
         } catch (WebloggerException ex) {
             log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
-            // TODO: i18n
-            addError("invite accept failed.");
+            addError("yourWebsites.permNotFound");
         }
         
         return SUCCESS;
@@ -93,23 +86,16 @@ public class MainMenu extends UIAction {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getInviteId());
-            WeblogPermission perm = umgr.getWeblogPermission(weblog, getAuthenticatedUser());
-            if (perm != null) {
-                String handle = weblog.getHandle();
-                        
-                // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
-                // TODO EXCEPTIONS: better exception handling here
-                umgr.declineWeblogPermission(perm);
-                WebloggerFactory.getWeblogger().flush();
+            String handle = weblog.getHandle();                       
+            // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
+            // TODO EXCEPTIONS: better exception handling here
+            umgr.declineWeblogPermission(weblog, getAuthenticatedUser());
+            WebloggerFactory.getWeblogger().flush();
+            addMessage("yourWebsites.declined", handle);
 
-                addMessage("yourWebsites.declined", handle);
-            } else {
-                addError("yourWebsites.permNotFound");
-            }
         } catch (WebloggerException ex) {
             log.error("Error handling invitation decline weblog id - "+getInviteId(), ex);
-            // TODO: i18n
-            addError("invite decline failed.");
+            addError("yourWebsites.permNotFound");
         }
         
         return SUCCESS;
@@ -124,16 +110,13 @@ public class MainMenu extends UIAction {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getWebsiteId());
-            WeblogPermission perm = umgr.getWeblogPermission(weblog, getAuthenticatedUser());
+            String handle = weblog.getHandle();
+            // TODO ROLLER_2.0: notify website members that user has resigned
+            // TODO EXCEPTIONS: better exception handling
+            umgr.revokeWeblogPermission(weblog, getAuthenticatedUser(), WeblogPermission.ALL_ACTIONS);
+            WebloggerFactory.getWeblogger().flush();            
+            addMessage("yourWebsites.resigned", handle);
             
-            if (perm != null) {
-                // TODO ROLLER_2.0: notify website members that user has resigned
-                // TODO EXCEPTIONS: better exception handling
-                umgr.revokeWeblogPermission(perm);
-                WebloggerFactory.getWeblogger().flush();
-            }
-            
-            addMessage("yourWebsites.resigned", perm.getWeblog().getHandle());
         } catch (WebloggerException ex) {
             log.error("Error doing weblog resign - "+getWebsiteId(), ex);
             // TODO: i18n

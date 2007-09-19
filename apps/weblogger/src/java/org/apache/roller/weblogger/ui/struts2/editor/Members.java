@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -110,14 +111,14 @@ public class Members extends UIAction implements ParameterAware {
                     } 
                     if (!error && !perms.hasAction(sval)) {
                         if (sval == null) {
-                            WeblogPermission toRevoke = 
-                                    new WeblogPermission(perms.getWeblog(), 
-                                    perms.getUser(), 
-                                    WeblogPermission.ALL_ACTIONS);
-                            userMgr.revokeWeblogPermission(toRevoke);
+                            userMgr.revokeWeblogPermission(
+                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
                             removed++;
                         } else {
-                            userMgr.setWeblogPermissionActions(perms, sval);
+                            userMgr.revokeWeblogPermission(
+                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
+                            userMgr.grantWeblogPermission(
+                                    perms.getWeblog(), perms.getUser(), Utilities.stringToStringList(sval, ","));
                             changed++;
                         }
                     }

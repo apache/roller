@@ -262,11 +262,14 @@ class RollerMemberHandler extends Handler {
             List<WeblogPermission> perms= new ArrayList<WeblogPermission>();
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
-                WeblogPermission pd = toPermissionsData(entry);
-                mgr.grantWeblogPermission(pd);
+                User ud = getUserData(entry.getName());
+                Weblog wd = getWebsiteData(entry.getHandle());
+                mgr.grantWeblogPermission(wd, ud, toActionList(entry.getPermission()));
                 getRoller().flush();
-                CacheManager.invalidate(pd.getUser());
-                CacheManager.invalidate(pd.getWeblog());
+                CacheManager.invalidate(ud);
+                CacheManager.invalidate(wd);
+                
+                WeblogPermission pd = mgr.getWeblogPermission(wd, ud);
                 perms.add(pd);
             }
             return toMemberEntrySet(perms);
@@ -276,14 +279,12 @@ class RollerMemberHandler extends Handler {
         }
     }
     
-    private WeblogPermission toPermissionsData(MemberEntry entry) throws HandlerException {
-        User ud = getUserData(entry.getName());
-        Weblog wd = getWebsiteData(entry.getHandle());
-        String actions = null;
-        if ("ADMIN".equals(entry.getPermission()))       actions = WeblogPermission.ADMIN;
-        else if ("AUTHOR".equals(entry.getPermission())) actions = WeblogPermission.POST;
-        else                                             actions = WeblogPermission.EDIT_DRAFT;
-        return new WeblogPermission(wd, ud, actions);        
+    private List<String> toActionList(String perm) throws HandlerException {
+        List<String> actions = new ArrayList<String>();
+        if ("ADMIN".equals(perm))       actions.add(WeblogPermission.ADMIN);
+        else if ("AUTHOR".equals(perm)) actions.add(WeblogPermission.POST);
+        else                            actions.add(WeblogPermission.EDIT_DRAFT);
+        return actions;       
     }
     
     private WeblogPermission getPermissionsData(MemberEntry entry) throws HandlerException {
@@ -320,16 +321,14 @@ class RollerMemberHandler extends Handler {
     private void updatePermissionsData(WeblogPermission pd, MemberEntry entry) throws HandlerException {
         // only permission can be updated
         
-        if (entry.getPermission() != null) {
-            pd.setActions(stringToAction(entry.getPermission()));
-        }
-        
         try {
             User ud = getUserData(entry.getName());
             Weblog wd = getWebsiteData(entry.getHandle());
             
-            UserManager mgr = getRoller().getUserManager();           
-            mgr.setWeblogPermissionActions(pd, pd.getActions());
+            UserManager mgr = getRoller().getUserManager();
+            mgr.revokeWeblogPermission(wd, ud, WeblogPermission.ALL_ACTIONS);
+            mgr.grantWeblogPermission(wd, ud, stringToActionList(entry.getPermission()));
+            
             getRoller().flush();
             
             CacheManager.invalidate(ud);
@@ -352,13 +351,10 @@ class RollerMemberHandler extends Handler {
         try {
             Weblog wd = getWebsiteData(handle);
             User ud = getUserData(username);
-            WeblogPermission pd = new WeblogPermission(wd, ud, WeblogPermission.ALL_ACTIONS);
-
-            pd.setActions(WeblogPermission.ALL_ACTIONS);
-            
 
             UserManager mgr = getRoller().getUserManager();
-            mgr.revokeWeblogPermission(pd);
+            mgr.revokeWeblogPermission(wd, ud, WeblogPermission.ALL_ACTIONS);
+            
             getRoller().flush();            
 
             CacheManager.invalidate(ud);
@@ -418,20 +414,21 @@ class RollerMemberHandler extends Handler {
     }
     
     
-    private static String stringToAction(String s) {
+    private static List<String> stringToActionList(String s) {
+        List<String> actionList = new ArrayList<String>();
         if (s == null) {
             throw new NullPointerException("ERROR: Null string not allowed");
         }
         if (s.equalsIgnoreCase(MemberEntry.Permissions.ADMIN)) {
-            return WeblogPermission.ADMIN;
+            actionList.add(WeblogPermission.ADMIN);
         }
         if (s.equalsIgnoreCase(MemberEntry.Permissions.AUTHOR)) {
-            return WeblogPermission.POST;
+            actionList.add(WeblogPermission.POST);
         }
         if (s.equalsIgnoreCase(MemberEntry.Permissions.LIMITED)) {
-            return WeblogPermission.EDIT_DRAFT;
+            actionList.add(WeblogPermission.EDIT_DRAFT);
         }
-        return null;
+        return actionList;
     }
 }
 

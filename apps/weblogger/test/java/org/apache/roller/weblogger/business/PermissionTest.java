@@ -17,6 +17,8 @@
 */
 package org.apache.roller.weblogger.business;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -119,7 +121,7 @@ public class PermissionTest extends TestCase {
         testUser = TestUtils.getManagedUser(testUser);
         perm = mgr.getWeblogPermission(testWeblog, testUser);
         assertNotNull(perm);
-        mgr.revokeWeblogPermission(perm);
+        mgr.revokeWeblogPermission(testWeblog, testUser, WeblogPermission.ALL_ACTIONS);
         TestUtils.endSession(true);
         
         // check that delete was successful
@@ -130,9 +132,10 @@ public class PermissionTest extends TestCase {
         assertNull(perm);
         
         // create permissions
-        perm = new WeblogPermission(testWeblog, testUser,
-            WeblogPermission.ADMIN + "," + WeblogPermission.POST);
-        mgr.grantWeblogPermission(perm);
+        List<String> actions = new ArrayList<String>();
+        actions.add(WeblogPermission.ADMIN);
+        actions.add(WeblogPermission.POST);
+        mgr.grantWeblogPermission(testWeblog, testUser, actions);
         TestUtils.endSession(true);
         
         // check that create was successful
@@ -146,13 +149,12 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
         
         // revoke those same permissions
-        mgr.revokeWeblogPermission(perm);
+        mgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
         TestUtils.endSession(true);
         
         // add only draft permission
-        WeblogPermission draft = new WeblogPermission(testWeblog, testUser, 
-            WeblogPermission.EDIT_DRAFT);
-        mgr.grantWeblogPermission(draft);
+        mgr.grantWeblogPermission(testWeblog, testUser, 
+                Collections.singletonList(WeblogPermission.EDIT_DRAFT));
         TestUtils.endSession(true);
 
         // check that user has draft permisson only
@@ -194,12 +196,9 @@ public class PermissionTest extends TestCase {
         perms = mgr.getWeblogPermissions(TestUtils.getManagedWebsite(testWeblog));
         assertEquals(1, perms.size());
 
-        perm = new WeblogPermission(
-            TestUtils.getManagedWebsite(testWeblog), 
-            TestUtils.getManagedUser(user),
-            WeblogPermission.POST);
-        perm.setPending(true);
-        mgr.grantWeblogPermission(perm);
+        List<String> actions = new ArrayList<String>();
+        actions.add(WeblogPermission.POST);
+        mgr.grantWeblogPermission(testWeblog, user, actions);
         TestUtils.endSession(true);
 
         // get pending permissions for a user
@@ -255,17 +254,13 @@ public class PermissionTest extends TestCase {
         List perms = null;
 
         // invite user to weblog
-        perm = new WeblogPermission(
-                TestUtils.getManagedWebsite(testWeblog), 
-                user, WeblogPermission.EDIT_DRAFT);
-        umgr.grantWeblogPermission(perm);
+        List<String> actions = new ArrayList<String>();
+        actions.add(WeblogPermission.EDIT_DRAFT);
+        umgr.grantWeblogPermissionPending(testWeblog, user, actions);
         TestUtils.endSession(true);
 
         // accept invitation
-        testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        user = TestUtils.getManagedUser(user);
-        perm = umgr.getWeblogPermission(testWeblog, user);
-        umgr.confirmWeblogPermission(perm);
+        umgr.confirmWeblogPermission(testWeblog, user);
         TestUtils.endSession(true);
 
         // re-query now that we have changed things
@@ -289,9 +284,7 @@ public class PermissionTest extends TestCase {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        WeblogPermission revokeAll = new WeblogPermission(
-                testWeblog, user, WeblogPermission.ALL_ACTIONS);
-        umgr.revokeWeblogPermission(revokeAll);
+        umgr.revokeWeblogPermission(testWeblog, user, WeblogPermission.ALL_ACTIONS);
         TestUtils.endSession(true);
 
         //user = umgr.getUser(user.getId());

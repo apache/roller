@@ -68,6 +68,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
  * JPAWeblogManagerImpl.java
  * Created on May 31, 2006, 4:08 PM
  */
+import org.apache.roller.weblogger.util.Utilities;
 @com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
     
@@ -226,10 +227,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // remove permissions
-        // make sure that both sides of the relationship are maintained
         for (Iterator iterator = umgr.getWeblogPermissions(website).iterator(); iterator.hasNext();) {
             WeblogPermission perm = (WeblogPermission) iterator.next();
-            umgr.revokeWeblogPermission(perm);
+            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS); 
         }
         
         // flush the changes before returning. This is required as there is a
@@ -282,10 +282,11 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     throws WebloggerException {
         
         // grant weblog creator ADMIN permissions
-        WeblogPermission weblogPermission = 
-            new WeblogPermission(newWeblog, newWeblog.getCreator(), 
-                WeblogPermission.ADMIN + "," + WeblogPermission.POST);
-        roller.getUserManager().grantWeblogPermission(weblogPermission);
+        List<String> actions = new ArrayList<String>();
+        actions.add(WeblogPermission.ADMIN);
+        actions.add(WeblogPermission.POST);
+        roller.getUserManager().grantWeblogPermission(
+                newWeblog, newWeblog.getCreator(), actions);
         
         // add default category
         WeblogCategory rootCat = new WeblogCategory(

@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -126,9 +127,8 @@ public class MembersInvite extends UIAction {
         
         // if no errors then send the invitation
         if(!hasActionErrors()) try {
-            WeblogPermission perm = new WeblogPermission(getActionWeblog(), user, getPermissionString());
-            perm.setPending(true);
-            umgr.grantWeblogPermission(perm);
+            umgr.grantWeblogPermissionPending(getActionWeblog(), user, 
+                    Collections.singletonList(getPermissionString()));
             WebloggerFactory.getWeblogger().flush();
             
             addMessage("inviteMember.userInvited");

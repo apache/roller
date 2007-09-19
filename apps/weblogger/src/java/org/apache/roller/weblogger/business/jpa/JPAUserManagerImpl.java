@@ -486,28 +486,12 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public WeblogPermission setWeblogPermissionActions(WeblogPermission perm, String newActions) throws WebloggerException {
-        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, perm.getUser().getUserName());
-        q.setParameter(2, perm.getWeblog().getHandle());
-        try {
-            WeblogPermission permToUpdate = (WeblogPermission)q.getSingleResult();
-            permToUpdate.setActions(newActions);
-            strategy.store(permToUpdate);
-            return permToUpdate;
-            
-        } catch (NoResultException ignored) {
-            return null;
-        }
-    }
-
-    
-    public void grantWeblogPermission(WeblogPermission perm) throws WebloggerException {
+    public void grantWeblogPermission(Weblog weblog, User user, List<String> actions) throws WebloggerException {
         
         // first, see if user already has a permission for the specified object
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, perm.getUserName());
-        q.setParameter(2, perm.getObjectId());
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
         try {
             existingPerm = (WeblogPermission)q.getSingleResult();
@@ -515,25 +499,50 @@ public class JPAUserManagerImpl implements UserManager {
         
         // permission already exists, so add any actions specified in perm argument
         if (existingPerm != null) {
-            existingPerm.addActions(perm);
-            this.strategy.store(existingPerm);
-            return;            
+            existingPerm.addActions(actions);
+            this.strategy.store(existingPerm);          
         } else {
             // it's a new permission, so store it
+            WeblogPermission perm = new WeblogPermission(weblog, user, actions);
             this.strategy.store(perm);
         }
     }
     
     
-    public void confirmWeblogPermission(WeblogPermission perm) throws WebloggerException {
+    public void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions) throws WebloggerException {
         
-        // get specified permission
+        // first, see if user already has a permission for the specified object
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, perm.getUserName());
-        q.setParameter(2, perm.getObjectId());
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
         try {
             existingPerm = (WeblogPermission)q.getSingleResult();
+        } catch (NoResultException ignored) {}
+        
+        // permission already exists, so complain 
+        if (existingPerm != null) {
+            throw new WebloggerException("Cannot make existing permission into pending permission");
+            
+        } else {
+            // it's a new permission, so store it
+            WeblogPermission perm = new WeblogPermission(weblog, user, actions);
+            perm.setPending(true);
+            this.strategy.store(perm);
+        }
+    }
+    
+    
+    public void confirmWeblogPermission(Weblog weblog, User user) throws WebloggerException {
+        
+        // get specified permission
+        Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
+        WeblogPermission existingPerm = null;
+        try {
+            existingPerm = (WeblogPermission)q.getSingleResult();
+            
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
         }
@@ -543,12 +552,12 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public void declineWeblogPermission(WeblogPermission perm) throws WebloggerException {
+    public void declineWeblogPermission(Weblog weblog, User user) throws WebloggerException {
         
         // get specified permission
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, perm.getUserName());
-        q.setParameter(2, perm.getObjectId());
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
         WeblogPermission existingPerm = null;
         try {
             existingPerm = (WeblogPermission)q.getSingleResult();           
@@ -560,12 +569,12 @@ public class JPAUserManagerImpl implements UserManager {
     }
 
     
-    public void revokeWeblogPermission(WeblogPermission perm) throws WebloggerException {
+    public void revokeWeblogPermission(Weblog weblog, User user, List<String> actions) throws WebloggerException {
         
         // get specified permission
         Query q = strategy.getNamedQuery("WeblogPermission.getByUserName&WeblogId");
-        q.setParameter(1, perm.getUserName());
-        q.setParameter(2, perm.getObjectId());
+        q.setParameter(1, user.getUserName());
+        q.setParameter(2, weblog.getHandle());
         WeblogPermission oldperm = null;
         try {
             oldperm = (WeblogPermission)q.getSingleResult();
@@ -574,7 +583,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         // remove actions specified in perm agument
-        oldperm.removeActions(perm);
+        oldperm.removeActions(actions);
         
         if (oldperm.isEmpty()) {
             // no actions left in permission so remove it

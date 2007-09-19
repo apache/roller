@@ -172,49 +172,60 @@ public interface UserManager {
      */
     public boolean checkPermission(RollerPermission perm, User user) 
             throws WebloggerException;
+    
+    
+    /**
+     * Grant to user specific actions in a weblog.
+     * (will create new permission record if none already exists)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
+     */
+    public void grantWeblogPermission(Weblog weblog, User user, List<String> actions)
+            throws WebloggerException;
 
     
     /**
-     * Grant permission and actions to user. You may set the pending flag if the
-     * permission requires confirmation before becoming valid.
-     * 
-     * If user already has a permission record for the specified weblog, then 
-     * actions specified in argument perm will be added to that record.
+     * Grant to user specific actions in a weblog, but pending confirmation.
+     * (will create new permission record if none already exists)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
      */
-    public void grantWeblogPermission(WeblogPermission perm) 
+    public void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions)
             throws WebloggerException;
-    
-    
-    /**
-     * Update an existing permission's actions.
-     */
-    public WeblogPermission setWeblogPermissionActions(
-            WeblogPermission perm, String newActions) throws WebloggerException;
-    
+
     
     /**
-     * Confirm a permission that is currently in pending state.
-     * 
-     * If user already has a permission record for the specified weblog, then 
-     * actions specified in argument perm will be added to that record.
+     * Confirm user's permission within specified weblog or throw exception if no pending permission exists.
+     * (changes state of permsission record to pending = true)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
      */
-    public void confirmWeblogPermission(WeblogPermission perm) 
+    public void confirmWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;
+
     
     /**
-     * Decline a permission that is currently in pending state.
+     * Decline permissions within specified weblog or throw exception if no pending permission exists.
+     * (removes permission record)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
      */
-    public void declineWeblogPermission(WeblogPermission perm) 
+    public void declineWeblogPermission(Weblog weblog, User user)
             throws WebloggerException;
-    
+
     
     /**
-     * Revoke permssion from user.
-     * 
-     * Locates permission record for specified user and weblog, then removes
-     * the actions specified in the argument perm.
+     * Revoke from user specific actions in a weblog.
+     * (if resulting permission has empty removes permission record)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
      */
-    public void revokeWeblogPermission(WeblogPermission perm) 
+    public void revokeWeblogPermission(Weblog weblog, User user, List<String> actions)
             throws WebloggerException;
 
     
