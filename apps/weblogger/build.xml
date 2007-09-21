@@ -917,8 +917,6 @@ ro.buildUser=${user.name}
     <target name="init-db" description=
             "Initializes built-in database by running drop table and create table">
         
-        &custom-post-dbtest;
-        
         <sql driver="${test.db.driver}"
              url="${test.db.url}"
              userid="${test.db.username}" 
@@ -935,7 +933,6 @@ ro.buildUser=${user.name}
              onerror="continue"
              classpath="${test.db.cpath}" /> 
         
-        &custom-pre-dbtest;
     </target>
     
     <target name="start-db" description="Starts built-in database">  

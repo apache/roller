@@ -52,7 +52,7 @@ drop table weblogcategory;
 drop table webpage;
 
 -- core platform tables
-drop table roller_user_permissions;
+drop table roller_permission;
 drop table website;
 drop table userrole;
 drop table rolleruser;
