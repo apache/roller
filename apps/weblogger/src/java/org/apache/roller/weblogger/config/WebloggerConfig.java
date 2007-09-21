@@ -138,7 +138,8 @@ public class WebloggerConfig {
      */
     public static String getProperty(String key) {
         log.debug("Fetching property ["+key+"="+config.getProperty(key)+"]");
-        return config.getProperty(key);
+        String value = config.getProperty(key);
+        return value == null ? value : value.trim();
     }
     
     /**
@@ -153,7 +154,7 @@ public class WebloggerConfig {
         if(value == null)
           return defaultValue;
         
-        return value;
+        return value.trim();
     }
 
     /**
