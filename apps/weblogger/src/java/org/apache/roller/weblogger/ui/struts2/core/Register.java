@@ -90,7 +90,8 @@ public class Register extends UIAction implements ServletRequestAware {
             // and retrieve custom user data to pre-populate form.
             boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
             if(usingSSO) {
-                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
+                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+
                 if(fromSSO != null) {
                     getBean().copyFrom(fromSSO);
                     setFromSS0(true);
@@ -245,7 +246,8 @@ public class Register extends UIAction implements ServletRequestAware {
         boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
         if(usingSSO) {
             boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
-            User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
+            User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+
             if(fromSSO != null) {
                 String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
                 if(storePassword) {

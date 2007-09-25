@@ -17,13 +17,26 @@
 -->
 
 <%-- Body of the login page, invoked from login.jsp --%>
-
+<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+
+<%!
+String securityCheckUrl = null;
+boolean cmaEnabled = WebloggerConfig.getBooleanProperty("authentication.cma.enabled");
+%>
+
+<%
+if (cmaEnabled) {
+    securityCheckUrl = "/j_security_check";
+} else {
+    securityCheckUrl = "/roller_j_security_check";
+}
+%>
 
 <p><s:text name="loginPage.prompt" /></p>
 
 <form method="post" id="loginForm" 
-      action="<c:url value="/roller_j_security_check"/>"
+      action="<c:url value="<%= securityCheckUrl %>"/>"
       onsubmit="saveUsername(this)">
       
     <table>
