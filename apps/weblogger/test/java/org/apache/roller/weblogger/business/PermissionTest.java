@@ -198,7 +198,7 @@ public class PermissionTest extends TestCase {
 
         List<String> actions = new ArrayList<String>();
         actions.add(WeblogPermission.POST);
-        mgr.grantWeblogPermission(testWeblog, user, actions);
+        mgr.grantWeblogPermissionPending(testWeblog, user, actions);
         TestUtils.endSession(true);
 
         // get pending permissions for a user
