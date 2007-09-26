@@ -511,12 +511,6 @@ alter table website add constraint ws_userid_fk
 alter table userrole add constraint ur_userid_fk
     foreign key ( userid ) references rolleruser( id ) $!db.ADDL_FK_PARAMS ;
 
-alter table roller_user_permissions add constraint up_userid_fk
-    foreign key ( user_id ) references rolleruser( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_user_permissions add constraint up_websiteid_fk
-    foreign key ( website_id ) references website( id ) $!db.ADDL_FK_PARAMS ;
-
 -- page, entry, category, comment
 
 alter table webpage add constraint wp_websiteid_fk

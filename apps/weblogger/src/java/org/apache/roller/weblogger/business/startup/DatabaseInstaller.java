@@ -168,12 +168,17 @@ public class DatabaseInstaller {
             setDatabaseVersion(con, version);
             
         } catch (SQLException sqle) {
+            log.error("ERROR running SQL in database creation script", sqle);
+            if (create != null) messages.addAll(create.getMessages());
             errorMessage("ERROR running SQL in database creation script");
-            throw new StartupException("Error running sql script", sqle);           
+            throw new StartupException("Error running sql script", sqle); 
+            
         } catch (Exception ioe) {
+            log.error("ERROR running database creation script", ioe);
             if (create != null) messages.addAll(create.getMessages());
             errorMessage("ERROR reading/parsing database creation script");
-            throw new StartupException("Error running sql script", ioe);           
+            throw new StartupException("Error running sql script", ioe);
+         
         } finally {
             try { if (con != null) con.close(); } catch (Exception ignored) {}
         }
