@@ -316,7 +316,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (!canView(website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            List entries = entries = roller.getWeblogManager().getWeblogEntries( 
+            List entries = roller.getWeblogManager().getWeblogEntries( 
                     website,           // website
                     null,              // user
                     null,              // startDate

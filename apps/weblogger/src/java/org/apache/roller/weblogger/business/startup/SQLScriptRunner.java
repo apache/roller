@@ -43,7 +43,6 @@ public class SQLScriptRunner {
     
     private static Log   log = LogFactory.getLog(SQLScriptRunner.class);
     
-    private String       scriptPath = null;
     private List<String> commands = new ArrayList<String>();
     private List<String> messages = new ArrayList<String>();
     private boolean      failed = false;
@@ -55,7 +54,6 @@ public class SQLScriptRunner {
         
         log.debug("instantiated");
         
-        this.scriptPath = scriptPath;
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         String command = ""; 
         String line;
