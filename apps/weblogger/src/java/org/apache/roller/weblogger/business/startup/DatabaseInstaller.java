@@ -168,12 +168,17 @@ public class DatabaseInstaller {
             setDatabaseVersion(con, version);
             
         } catch (SQLException sqle) {
+            log.error("ERROR running SQL in database creation script", sqle);
+            if (create != null) messages.addAll(create.getMessages());
             errorMessage("ERROR running SQL in database creation script");
-            throw new StartupException("Error running sql script", sqle);           
+            throw new StartupException("Error running sql script", sqle); 
+            
         } catch (Exception ioe) {
+            log.error("ERROR running database creation script", ioe);
             if (create != null) messages.addAll(create.getMessages());
             errorMessage("ERROR reading/parsing database creation script");
-            throw new StartupException("Error running sql script", ioe);           
+            throw new StartupException("Error running sql script", ioe);
+            
         } finally {
             try { if (con != null) con.close(); } catch (Exception ignored) {}
         }
@@ -257,12 +262,13 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 1.3.0
      */
     private void upgradeTo130(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/120-to-130-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
@@ -294,6 +300,9 @@ public class DatabaseInstaller {
             successMessage("Upgrade to 130 complete.");
             
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 130", e);  
             throw new StartupException("Problem upgrading database to version 130", e);
         }
@@ -305,12 +314,13 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 2.0.0
      */
     private void upgradeTo200(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/130-to-200-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
@@ -377,6 +387,9 @@ public class DatabaseInstaller {
             successMessage("Upgrade to 200 complete.");
             
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 200", e);
             throw new StartupException("Problem upgrading database to version 200", e);
         }
@@ -389,12 +402,13 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 2.1.0
      */
     private void upgradeTo210(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/200-to-210-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
@@ -492,6 +506,9 @@ public class DatabaseInstaller {
             successMessage("Upgrade to 210 complete.");
             
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             log.error("Problem upgrading database to version 210", e);
             throw new StartupException("Problem upgrading database to version 210", e);
         }
@@ -504,16 +521,20 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 2.3.0
      */
     private void upgradeTo230(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/210-to-230-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 230", e);
             throw new StartupException("Problem upgrading database to version 230", e);
         }
@@ -526,16 +547,20 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 2.4.0
      */
     private void upgradeTo240(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/230-to-240-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 240", e);
             throw new StartupException("Problem upgrading database to version 240", e);
         }
@@ -548,12 +573,13 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 3.0.0
      */
     private void upgradeTo300(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/240-to-300-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
@@ -616,6 +642,9 @@ public class DatabaseInstaller {
             successMessage("Upgrade to 300 complete.");
             
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 300", e);
             throw new StartupException("Problem upgrading database to version 300", e);
         }
@@ -628,16 +657,20 @@ public class DatabaseInstaller {
      * Upgrade database for Roller 3.1.0
      */
     private void upgradeTo310(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/300-to-310-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
         } catch (Exception e) {
+            log.error("ERROR running 310 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 310", e);
             throw new StartupException("Problem upgrading database to version 310", e);
         }
@@ -654,16 +687,20 @@ public class DatabaseInstaller {
         successMessage("Doing upgrade to 400 ...");
         
         // first we need to run upgrade scripts 
+        SQLScriptRunner runner = null;
         try {    
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
                 String scriptPath = handle + "/310-to-400-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
-                SQLScriptRunner runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
         } catch(Exception ex) {
+            log.error("ERROR running 400 database upgrade script", ex);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
             errorMessage("Problem upgrading database to version 400", ex);
             throw new StartupException("Problem upgrading database to version 400", ex);
         }
