@@ -159,7 +159,7 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 #dropTableIfExists('rollerconfig')
 
 --- remove old id column of group subscription table
-#dropColumn('rag_group_subscription' 'id')
+-- #dropColumn('rag_group_subscription' 'id')
 
 -- remove old approved, spam, pending columns from comment table
 #dropColumn('roller_comment' 'approved')
