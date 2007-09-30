@@ -71,7 +71,7 @@
     
     <!-- error pages -->
     <definition name=".denied" extends=".tiles-errorpage" >
-        <put-attribute name="content" value="/errors/denied.jsp" />
+        <put-attribute name="content" value="/roller-ui/errors/denied.jsp" />
     </definition>
     
         
