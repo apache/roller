@@ -73,7 +73,7 @@ Macro to account for lack of comparable long varchar in MySQL
 
 #macro(dropIndex $indexName $tableName)
 #if ($db.DBTYPE == "DERBY" || $db.DBTYPE == 'POSTGRESQL')
-drop index $indexName
+drop index $indexName;
 #else
 drop index $indexName on $tableName;
 #end
