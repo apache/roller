@@ -513,42 +513,33 @@ ro.buildUser=${user.name}
     <!-- Create Source Release -->
     <!-- ********************************************************************* -->
     
-    <target name="stage-sources" depends="version-check">
+    <target name="stage-sources">
         
         <copy todir="${build.dist.sources}">
-            <fileset dir="${basedir}">
-                <include name="src/**" />
-                <include name="tests/**" />
-                <include name="testdata/**" />
-                <include name="metadata/**" />
-                <include name="personal/**" />
-                <include name="custom/**" />
-                <include name="contrib/**" />
-                <include name="web/**" />
-                <include name="docs/**" />
-                <include name="tools/**" />
-                <include name="ant.properties" />
-                <include name="build.bat" />
-                <include name="build.sh" />
-                <include name="build.xml" />
-                <include name="properties.xmlf" />
-                <include name="CHANGES.txt" />
-                <include name="LICENSE.txt" />
-                <include name="NOTICE.txt" />
-                <include name="README.txt" />
+            <fileset dir="${basedir}/../.."> 
                 
-                <exclude name="**/codewright*/**"/>
-                <exclude name="docs/installguide/old/**"/>
-                <exclude name="docs/userguide/old/**"/>
-                <exclude name="**/CVS/**"/>
-                <exclude name="**/*.bak"/>
-                <exclude name="**/*-hide"/>
-                <exclude name="**/*.diff"/>
-                <exclude name="**/*.patch"/>
-                <exclude name="**/*~"/>
-                <exclude name="**/*.#*"/>
-                <exclude name="**/WS_FTP.LOG"/>
-                <exclude name="**/.nbattrs"/>
+                <include name="**/**" />
+                
+                <!-- Don't ship top level build script, it's confusing -->
+                <exclude name="build.xml"/>    
+                
+                <!-- Or marginalia -->
+                <exclude name="doap_roller.rdf"/>    
+                <exclude name="tlp-resolution.txt"/>    
+                
+                <!-- Don't ship sandbox or website -->
+                <exclude name="site/**"/>
+                <exclude name="sandbox/**"/>
+
+                <!-- And don't ship any Hibernate dependent code -->
+                <exclude name="**/hibernate/**"/>
+
+                <!-- Don't ship log files, build results or Subversion dirs -->
+                <exclude name="**/*.log"/>
+                <exclude name="**/dist/**"/>
+                <exclude name="**/build/**"/>
+                <exclude name="**/.svn/**"/>
+               
             </fileset>
         </copy>
         
@@ -602,12 +593,6 @@ ro.buildUser=${user.name}
         </zip>
         
     </target>
-    
-    
-    <target name="version-check" if="java15.present" >
-        <fail message="ERROR: DON'T BUILD RELEASES WITH JAVA 1.5 (yet)" />
-    </target>
-    
     
     <!-- ********************************************************************* -->
     <!-- TEST targets -->
