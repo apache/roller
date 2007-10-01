@@ -1,6 +1,6 @@
 
-export rcstring="-rc9"
-export vstring="3.1"
+export rcstring="-rc5"
+export vstring="3.1.1"
 
 cp dist/apache-roller-${vstring}.tar.gz dist/apache-roller-${vstring}${rcstring}.tar.gz
 cp dist/apache-roller-${vstring}.zip    dist/apache-roller-${vstring}${rcstring}.zip
