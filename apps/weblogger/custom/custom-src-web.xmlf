@@ -2,8 +2,7 @@
     Example: custom classes to include in roller-web.jar
     Your classes must be under the package org/apache/roller/weblogger/ui/
  -->
-<!--
-<src dir="${basedir}/custom/src" />
--->
 
-
+<src path="${basedir}/custom/src/java" />
+<include name="javanet/socialfish/roller/ui/**" />
+<include name="javanet/socialfish/roller/discoapi/**" />

@@ -111,7 +111,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWebsite(testWeblog);
-        testEntry.setCreator(testUser);
+        testEntry.setCreatorUserName(testUser.getUserName());
         
         WeblogCategory cat = mgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
         testEntry.setCategory(cat);
@@ -356,7 +356,7 @@ public class WeblogEntryTest extends TestCase {
             testEntry.setUpdateTime(
                     new java.sql.Timestamp(new java.util.Date().getTime()));
             testEntry.setWebsite(testWeblog);
-            testEntry.setCreator(testUser);
+            testEntry.setCreatorUserName(testUser.getUserName());
             testEntry.setCategory(testWeblog.getDefaultCategory());
 
             // shortcut

@@ -519,7 +519,7 @@ public class RollerAtomHandler implements AtomHandler {
             WeblogEntryManager mgr = roller.getWeblogEntryManager();
             WeblogEntry rollerEntry = new WeblogEntry();
             rollerEntry.setWebsite(website);
-            rollerEntry.setCreator(this.user);
+            rollerEntry.setCreatorUserName(this.user.getUserName());
             copyToRollerEntry(entry, rollerEntry);
             mgr.saveWeblogEntry(rollerEntry);
             roller.flush();

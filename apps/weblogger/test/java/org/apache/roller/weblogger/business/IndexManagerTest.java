@@ -57,7 +57,7 @@ public class IndexManagerTest extends TestCase {
         WeblogEntry wd1 = new WeblogEntry();            
         wd1.setId("dummy1");
         wd1.setAnchor("dummy1");
-        wd1.setCreator(user);
+        wd1.setCreatorUserName(user.getUserName());
         wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd1.setTitle("The Tholian Web");
@@ -72,7 +72,7 @@ public class IndexManagerTest extends TestCase {
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setId("dummy2");
         wd2.setAnchor("dummy2");
-        wd2.setCreator(user);
+        wd2.setCreatorUserName(user.getUserName());
         wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd2.setTitle("A Piece of the Action");

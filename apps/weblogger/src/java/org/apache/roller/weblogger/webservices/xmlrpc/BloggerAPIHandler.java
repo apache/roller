@@ -402,7 +402,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setPubTime(current);
             entry.setUpdateTime(current);
             User user = roller.getUserManager().getUserByUserName(userid);
-            entry.setCreator(user);
+            entry.setCreatorUserName(user.getUserName());
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
             entry.setCommentDays(new Integer(website.getDefaultCommentDays()));

@@ -117,7 +117,7 @@ public final class EntryAdd extends EntryBase {
             WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             WeblogEntry entry = new WeblogEntry();
-            entry.setCreator(getAuthenticatedUser());
+            entry.setCreatorUserName(getAuthenticatedUser().getUserName());
             entry.setWebsite(getActionWeblog());
             
             // set updatetime & pubtime if it was specified

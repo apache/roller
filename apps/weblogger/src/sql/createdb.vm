@@ -27,10 +27,8 @@ alter table rolleruser add constraint ru_username_uq unique ( username$!db.INDEX
 create table userrole (
     id               varchar(48) not null primary key,
     rolename         varchar(255) not null,
-    username         varchar(255) not null,
-    userid           varchar(48)
+    username         varchar(255) not null
 );
-create index ur_userid_idx on userrole( userid );
 create index ur_username_idx on userrole( username$!db.INDEXSIZE );
 
 -- actions: comma separated list of actions permitted by permission
@@ -193,8 +191,8 @@ create index wca_relation_idx on weblogcategoryassoc( relation );
 
 create table weblogentry (
     id              varchar(48)  not null primary key,
-    userid          varchar(48) not null,
     anchor          varchar(255)  not null,
+    creator         varchar(255)  not null,
     title           varchar(255)  not null,
     text            $db.TEXT_SQL_TYPE not null,
     pubtime         $db.TIMESTAMP_SQL_TYPE_NULL,
@@ -217,7 +215,7 @@ create table weblogentry (
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
-create index we_userid_idx on weblogentry(userid);
+create index we_creator_idx on weblogentry(creator);
 create index we_status_idx on weblogentry(status);
 create index we_locale_idx on weblogentry(locale);
 create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
@@ -227,14 +225,14 @@ create table roller_weblogentrytag (
     id              varchar(48)   not null primary key,
     entryid         varchar(48)   not null,
     websiteid       varchar(48)   not null,    
-    userid		    varchar(48)   not null,
+    creator	        varchar(255)   not null,
     name            varchar(255)  not null,
     time            $db.TIMESTAMP_SQL_TYPE 	not null
 );
 
 create index wet_entryid_idx on roller_weblogentrytag( entryid );
 create index wet_websiteid_idx on roller_weblogentrytag( websiteid );
-create index wet_userid_idx on roller_weblogentrytag( userid );
+create index wet_username_idx on roller_weblogentrytag( username );
 create index wet_name_idx on roller_weblogentrytag( name );
 
 create table roller_weblogentrytagagg (

@@ -294,7 +294,7 @@ public final class TestUtils {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setStatus(WeblogEntry.PUBLISHED);
         testEntry.setWebsite(getManagedWebsite(weblog));
-        testEntry.setCreator(getManagedUser(user));
+        testEntry.setCreatorUserName(getManagedUser(user).getUserName());
         testEntry.setCategory(cat);
         
         // store entry

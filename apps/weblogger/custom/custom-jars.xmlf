@@ -4,3 +4,10 @@
 <!-- EXAMPLE: jdobackend libraries
 <fileset dir="${basedir}/sandbox/jdobackend/lib" includes="*.jar" />
 -->
+
+<fileset dir="/Users/dave/src/socialfish_head/swap/components/userapi/dist" includes="*.jar" />
+
+<fileset dir="/Users/dave/src/socialfish_head/swap/components/discoapi/dist" includes="*.jar" />
+<fileset dir="/Users/dave/src/socialfish_head/swap/components/discoapi/lib" includes="http-client-*.jar" />
+<fileset dir="/Users/dave/src/socialfish_head/swap/components/discoapi/lib" includes="rome-*.jar" />
+<fileset dir="/Users/dave/src/socialfish_head/swap/components/discoapi/lib" includes="jersey.jar" />

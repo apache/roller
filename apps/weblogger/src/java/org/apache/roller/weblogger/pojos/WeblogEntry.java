@@ -92,9 +92,9 @@ public class WeblogEntry implements Serializable {
     private Boolean   pinnedToMain  = Boolean.FALSE;
     private String    status        = DRAFT;
     private String    locale        = null;
-    
+    private String    creatorUserName = null;      
+
     // Associated objects
-    private User           creator  = null;
     private Weblog        website  = null;
     private WeblogCategory category = null;
     
@@ -126,7 +126,7 @@ public class WeblogEntry implements Serializable {
         //this.id = id;
         this.category = category;
         this.website = website;
-        this.creator = creator;
+        this.creatorUserName = creator.getUserName();
         this.title = title;
         this.link = link;
         this.text = text;
@@ -147,23 +147,23 @@ public class WeblogEntry implements Serializable {
      */
     public void setData(WeblogEntry other) {
         
-        this.id = other.getId();
-        this.category = other.getCategory();
-        this.website = other.getWebsite();
-        this.creator = other.getCreator();
-        this.title = other.getTitle();
-        this.link = other.getLink();
-        this.text = other.getText();
-        this.anchor = other.getAnchor();
-        this.pubTime = other.getPubTime();
-        this.updateTime = other.getUpdateTime();
-        this.status = other.getStatus();
-        this.plugins = other.getPlugins();
-        this.allowComments = other.getAllowComments();
-        this.commentDays = other.getCommentDays();
-        this.rightToLeft = other.getRightToLeft();
-        this.pinnedToMain = other.getPinnedToMain();
-        this.locale = other.getLocale();
+        this.setId(other.getId());
+        this.setCategory(other.getCategory());
+        this.setWebsite(other.getWebsite());
+        this.setCreatorUserName(other.getCreatorUserName());
+        this.setTitle(other.getTitle());
+        this.setLink(other.getLink());
+        this.setText(other.getText());
+        this.setAnchor(other.getAnchor());
+        this.setPubTime(other.getPubTime());
+        this.setUpdateTime(other.getUpdateTime());
+        this.setStatus(other.getStatus());
+        this.setPlugins(other.getPlugins());
+        this.setAllowComments(other.getAllowComments());
+        this.setCommentDays(other.getCommentDays());
+        this.setRightToLeft(other.getRightToLeft());
+        this.setPinnedToMain(other.getPinnedToMain());
+        this.setLocale(other.getLocale());
     }
     
     //------------------------------------------------------- Good citizenship
@@ -172,9 +172,9 @@ public class WeblogEntry implements Serializable {
         StringBuffer buf = new StringBuffer();
         buf.append("{");
         buf.append(this.id);
-        buf.append(", ").append(this.anchor);
-        buf.append(", ").append(this.title);
-        buf.append(", ").append(this.pubTime);
+        buf.append(", ").append(this.getAnchor());
+        buf.append(", ").append(this.getTitle());
+        buf.append(", ").append(this.getPubTime());
         buf.append("}");
         return buf.toString();
     }
@@ -261,17 +261,23 @@ public class WeblogEntry implements Serializable {
     
     /**
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
     public User getCreator() {
-        return this.creator;
-    }
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
+        } catch (Exception e) {
+            mLogger.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
+        }
+        return null;
+    }   
     
-    /** @ejb:persistent-field */
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public String getCreatorUserName() {
+        return creatorUserName;
     }
+
+    public void setCreatorUserName(String creatorUserName) {
+        this.creatorUserName = creatorUserName;
+    }   
     
     /**
      * @roller.wrapPojoMethod type="simple"
@@ -667,7 +673,7 @@ public class WeblogEntry implements Serializable {
 
         WeblogEntryTag tag = new WeblogEntryTag();
         tag.setName(name);
-        tag.setUser(getCreator());
+        tag.setCreatorUserName(getCreatorUserName());
         tag.setWeblog(getWebsite());
         tag.setWeblogEntry(this);
         tag.setTime(getUpdateTime());
@@ -1233,5 +1239,7 @@ public class WeblogEntry implements Serializable {
     
     /** No-op method to please XDoclet */
     public void setDisplayContent(String ignored) {}
+
+
     
 }
