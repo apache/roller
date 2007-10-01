@@ -28,16 +28,22 @@ import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
- * 
+ * Represents a permssion that applies globally to the entire web application.
  */
 public class GlobalPermission extends RollerPermission {
         
+    /**
+     * Create glbbal permission for one specific user initialized with the 
+     * actions that are implied by the user's roles.
+     * @param user User of permission.
+     * @throws org.apache.roller.weblogger.WebloggerException
+     */
     public GlobalPermission(User user) throws WebloggerException {
         super("GlobalPermission user: " + user.getUserName());
-        List<String> roles = WebloggerFactory.getWeblogger().getUserManager().getRoles(user);
-        List<String> actionsList = new ArrayList<String>();
         
         // loop through user's roles, adding actions implied by each
+        List<String> roles = WebloggerFactory.getWeblogger().getUserManager().getRoles(user);
+        List<String> actionsList = new ArrayList<String>();        
         for (String role : roles) {
             String impliedActions = WebloggerRuntimeConfig.getProperty("role.action." + role);
             if (impliedActions != null) {
@@ -50,6 +56,17 @@ public class GlobalPermission extends RollerPermission {
             }
         }
         setActionsAsList(actionsList);
+    }
+        
+    /** 
+     * C
+     * @param user
+     * @param actions
+     * @throws org.apache.roller.weblogger.WebloggerException
+     */
+    public GlobalPermission(User user, List<String> actions) throws WebloggerException {
+        super("GlobalPermission user: " + user.getUserName());
+        setActionsAsList(actions);
     }
         
     public boolean implies(Permission perm) {
