@@ -173,6 +173,9 @@
 			<basic name="active">
 				<column name="isactive" insertable="true" updatable="true" unique="false"/>
 			</basic>
+			<basic name="creatorUserName">
+				<column name="creator" insertable="true" updatable="true" unique="false"/>
+			</basic>
 			<basic name="lastModified">
 				<column name="lastmodified" insertable="true" updatable="true" unique="false"/>
 				<temporal>TIMESTAMP</temporal>
@@ -189,9 +192,6 @@
 			<basic name="customStylesheetPath">
 				<column name="customstylesheet" insertable="true" updatable="true" unique="false"/>
 			</basic>
-			<many-to-one name="creator" target-entity="org.apache.roller.weblogger.pojos.User">
-				<join-column name="userid" insertable="true" updatable="true" nullable="false"/>
-			</many-to-one>
 			<many-to-one name="bloggerCategory" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
 				<join-column name="bloggercatid" insertable="true" updatable="true"/>
 			</many-to-one>

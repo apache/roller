@@ -90,14 +90,13 @@ public class Weblog implements Serializable {
     private String  pageModels       = new String();
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
-    private String customStylesheetPath = null;
-    private String iconPath = null;
-    private String about = null;
-    
+    private String  customStylesheetPath = null;
+    private String  iconPath = null;
+    private String  about = null;
+    private String  creator = null;     
     
     // Associated objects
-    private User           creator = null; 
-    private List               permissions = new ArrayList();
+    private List           permissions = new ArrayList();
     private WeblogCategory bloggerCategory = null;
     private WeblogCategory defaultCategory = null;
     
@@ -108,7 +107,7 @@ public class Weblog implements Serializable {
     
     public Weblog(
             String handle,
-            User creator,
+            String creator,
             String name,
             String desc,
             String email,
@@ -269,19 +268,28 @@ public class Weblog implements Serializable {
     }
     
     /**
-     * Original creator of website
-     *
+     * Original creator of website.
      * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
     public org.apache.roller.weblogger.pojos.User getCreator() {
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(creator);
+        } catch (Exception e) {
+            log.error("ERROR fetching user object for username: " + creator, e);
+        }
+        return null;
+    }
+    
+    /**
+     * Username of original creator of website.
+     * @roller.wrapPojoMethod type="pojo"
+     */
+    public String getCreatorUserName() {
         return creator;
     }
     
-    /** @ejb:persistent-field */
-    public void setCreator( org.apache.roller.weblogger.pojos.User ud ) {
-        creator = ud;
+    public void setCreatorUserName(String creatorUserName) {
+        creator = creatorUserName;
     }
     
     /**
@@ -581,31 +589,31 @@ public class Weblog implements Serializable {
      */
     public void setData(Weblog other) {
         
-        this.id = other.getId();
-        this.name = other.getName();
-        this.handle = other.getHandle();
-        this.description = other.getDescription();
-        this.creator = other.getCreator();
-        this.defaultPageId = other.getDefaultPageId();
-        this.weblogDayPageId = other.getWeblogDayPageId();
-        this.enableBloggerApi = other.getEnableBloggerApi();
-        this.bloggerCategory = other.getBloggerCategory();
-        this.defaultCategory = other.getDefaultCategory();
-        this.editorPage = other.getEditorPage();
-        this.blacklist = other.getBlacklist();
-        this.allowComments = other.getAllowComments();
-        this.emailComments = other.getEmailComments();
-        this.emailAddress = other.getEmailAddress();
-        this.emailFromAddress = other.getEmailFromAddress();
-        this.editorTheme = other.getEditorTheme();
-        this.locale = other.getLocale();
-        this.timeZone = other.getTimeZone();
-        this.defaultPlugins = other.getDefaultPlugins();
-        this.enabled = other.getEnabled();
-        this.dateCreated = other.getDateCreated();
-        this.entryDisplayCount = other.getEntryDisplayCount();
-        this.active = other.getActive();
-        this.lastModified = other.getLastModified();
+        this.setId(other.getId());
+        this.setName(other.getName());
+        this.setHandle(other.getHandle());
+        this.setDescription(other.getDescription());
+        this.setCreatorUserName(other.getCreatorUserName());
+        this.setDefaultPageId(other.getDefaultPageId());
+        this.setWeblogDayPageId(other.getWeblogDayPageId());
+        this.setEnableBloggerApi(other.getEnableBloggerApi());
+        this.setBloggerCategory(other.getBloggerCategory());
+        this.setDefaultCategory(other.getDefaultCategory());
+        this.setEditorPage(other.getEditorPage());
+        this.setBlacklist(other.getBlacklist());
+        this.setAllowComments(other.getAllowComments());
+        this.setEmailComments(other.getEmailComments());
+        this.setEmailAddress(other.getEmailAddress());
+        this.setEmailFromAddress(other.getEmailFromAddress());
+        this.setEditorTheme(other.getEditorTheme());
+        this.setLocale(other.getLocale());
+        this.setTimeZone(other.getTimeZone());
+        this.setDefaultPlugins(other.getDefaultPlugins());
+        this.setEnabled(other.getEnabled());
+        this.setDateCreated(other.getDateCreated());
+        this.setEntryDisplayCount(other.getEntryDisplayCount());
+        this.setActive(other.getActive());
+        this.setLastModified(other.getLastModified());
     }
     
     

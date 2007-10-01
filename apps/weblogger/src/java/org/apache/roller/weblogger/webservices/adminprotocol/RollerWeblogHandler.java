@@ -171,7 +171,7 @@ class RollerWeblogHandler extends Handler {
                 User user = mgr.getUserByUserName(entry.getCreatingUser());
                 Weblog wd = new Weblog(
                         entry.getHandle(),
-                        user,
+                        user.getUserName(),
                         entry.getName(),
                         entry.getDescription(),
                         entry.getEmailAddress(),

@@ -114,7 +114,7 @@ public class WeblogTest extends TestCase {
             testWeblog.setLocale("en_US");
             testWeblog.setTimeZone("America/Los_Angeles");
             testWeblog.setDateCreated(new java.util.Date());
-            testWeblog.setCreator(testUser);
+            testWeblog.setCreatorUserName(testUser.getUserName());
 
             // make sure test weblog does not exist
             weblog = mgr.getWeblogByHandle(testWeblog.getHandle());

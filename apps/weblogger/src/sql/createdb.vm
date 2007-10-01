@@ -94,7 +94,7 @@ create table website (
     name              varchar(255) not null,
     handle            varchar(255) not null,
     description       varchar(255) not null,
-    userid            varchar(48) not null,
+    creator           varchar(255),
     defaultpageid     varchar(48) default '',
     weblogdayid       varchar(48) not null,
     ignorewords       $db.TEXT_SQL_TYPE,

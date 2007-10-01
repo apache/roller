@@ -178,7 +178,7 @@ public final class TestUtils {
         testWeblog.setLocale("en_US");
         testWeblog.setTimeZone("America/Los_Angeles");
         testWeblog.setDateCreated(new java.util.Date());
-        testWeblog.setCreator(creator);
+        testWeblog.setCreatorUserName(creator.getUserName());
         
         // add weblog
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();

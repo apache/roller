@@ -4,8 +4,9 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
--- actions: comma separated list of actions permitted by permission
--- objectid: for now this will always store weblogid
+-- We are replacing roller_user_permissions with this new table
+-- actions:    comma separated list of actions permitted by permission
+-- objectid:   for now this will always store weblogid
 -- objectType: for now this will always be 'Weblog'
 create table roller_permission (
    id              varchar(48) not null primary key,
@@ -16,8 +17,6 @@ create table roller_permission (
    pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
    datecreated     timestamp not null
 );
-
-#dropNotNullFromColumn("userrole" "userid" "varchar(48)")
 
 insert into roller_permission (id,username,actions,objectid,objecttype,pending,datecreated) 
    select w.id||u.username, u.username, 'edit_draft', w.handle, 'Weblog', 0, current_timestamp
@@ -33,3 +32,9 @@ insert into roller_permission (id,username,actions,objectid,objecttype,pending,d
    select w.id||u.username, u.username, 'admin', w.handle, 'Weblog', 0, current_timestamp
       from rolleruser as u, website as w, roller_user_permissions as p
       where p.user_id = u.id and p.website_id = w.id and permission_mask = 3;
+
+-- User management can now be exernalized, so no more relations with user table
+#dropNotNullFromColumn("userrole" "userid" "varchar(48)")
+#addColumnNull("website" "creator" "varchar(255)")
+update website as w set creator = (select u.username from rolleruser as u where u.id = w.userid);
+
