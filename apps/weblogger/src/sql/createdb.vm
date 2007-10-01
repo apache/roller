@@ -124,7 +124,6 @@ create table website (
     about             varchar(255),
     icon              varchar(255)
 );
-create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
 alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 
@@ -502,12 +501,6 @@ insert into rag_group (id, planet_id, handle, title) values ('zzz_all_group_zzz'
 -- Now add the foreign key relationships
 
 -- user, role, website, and permissions
-
-alter table website add constraint ws_userid_fk
-    foreign key ( userid ) references rolleruser ( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table userrole add constraint ur_userid_fk
-    foreign key ( userid ) references rolleruser( id ) $!db.ADDL_FK_PARAMS ;
 
 -- page, entry, category, comment
 
