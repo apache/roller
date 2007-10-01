@@ -231,7 +231,7 @@ create table roller_weblogentrytag (
 
 create index wet_entryid_idx on roller_weblogentrytag( entryid );
 create index wet_websiteid_idx on roller_weblogentrytag( websiteid );
-create index wet_username_idx on roller_weblogentrytag( username );
+create index wet_creator_idx on roller_weblogentrytag( creator );
 create index wet_name_idx on roller_weblogentrytag( name );
 
 create table roller_weblogentrytagagg (
