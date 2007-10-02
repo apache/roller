@@ -57,7 +57,9 @@
 
 <!-- various libraries used by Roller -->
 <property name="tools.struts2"       value="${ro.tools}/struts-2.0.9" />
+<!--
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
+-->
 <property name="tools.jpa"           value="${ro.tools}/openjpa-0.9.7" />
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
 <property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
@@ -130,6 +132,7 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
+<!--
 <fileset id="hibernate.jar" dir="${tools.hibernate}">
     <include name="hibernate3.jar"/>
 </fileset>
@@ -137,6 +140,7 @@ in the "base.path" definition.
 <fileset id="hibernate.jars" dir="${tools.hibernate}/lib">
     <include name="*.jar"/>
 </fileset>
+-->
 
 <fileset id="jpa.jars" dir="${tools.jpa}">
     <include name="*.jar"/>
@@ -174,8 +178,10 @@ in the "base.path" definition.
     <fileset refid="roller-planet.jars" />
     <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
     <fileset refid="jpa.jars" />
+<!--
     <fileset refid="hibernate.jar" />
     <fileset refid="hibernate.jars" />
+-->
 </path>
 
 <path id="business.path">
