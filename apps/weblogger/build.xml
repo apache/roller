@@ -135,7 +135,7 @@ ro.buildUser=${user.name}
         
         <!-- compile roller business classes -->
         <javac destdir="${build.compile.business}"
-               excludes="org/apache/roller/weblogger/ui/**, org/apache/roller/weblogger/webservices/**, org/apache/roller/weblogger/planet/**"
+               excludes="**/hibernate/**,org/apache/roller/weblogger/ui/**, org/apache/roller/weblogger/webservices/**, org/apache/roller/weblogger/planet/**"
                debug="${build.debug}" 
                source="${build.sourcelevel}"
                deprecation="${build.deprecation}">
@@ -258,8 +258,10 @@ ro.buildUser=${user.name}
             -->
             <fileset refid="base.jars" />
             <fileset refid="presentation.jars" />
-            <fileset refid="hibernate.jar" />
+           <!--
+           <fileset refid="hibernate.jar" />
             <fileset refid="hibernate.jars" />
+            -->
             <fileset refid="jpa.jars" />
             <fileset refid="struts2.jars" />
             <fileset refid="spring.jars" /> 
