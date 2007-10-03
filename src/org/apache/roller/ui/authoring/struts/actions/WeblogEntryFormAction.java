@@ -329,7 +329,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 // If entry now published then index, flush and ping
                 Date now = new Date();
-                if (!entry.getPubTime().after(now) && entry.isPublished()) {                    
+                if (entry.getPubTime() != null && !entry.getPubTime().after(now) && entry.isPublished()) {                    
                     reindexEntry(RollerFactory.getRoller(), entry);
                     CacheManager.invalidate(entry);
                     RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(entry);
