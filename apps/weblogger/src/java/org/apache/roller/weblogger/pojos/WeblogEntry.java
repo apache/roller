@@ -98,7 +98,6 @@ public class WeblogEntry implements Serializable {
     private WeblogCategory category = null;
     
     // Collection of name/value entry attributes
-    private Map attMap = new HashMap();
     private Set attSet = new TreeSet();
     
     private Set tagSet = new HashSet();
@@ -386,22 +385,8 @@ public class WeblogEntry implements Serializable {
         return attSet;
     }
     /** @ejb:persistent-field */
-    public void setEntryAttributes(Set attSet) {
-        this.attSet = attSet;
-        
-        // copy set to map
-        if (attSet != null) {
-            this.attSet = attSet;
-            this.attMap = new HashMap();
-            Iterator iter = this.attSet.iterator();
-            while (iter.hasNext()) {
-                WeblogEntryAttribute att = (WeblogEntryAttribute)iter.next();
-                attMap.put(att.getName(), att);
-            }
-        } else {
-            this.attSet = new TreeSet();
-            this.attMap = new HashMap();
-        }
+    public void setEntryAttributes(Set atts) {
+        this.attSet = atts;
     }
     
     
@@ -411,27 +396,33 @@ public class WeblogEntry implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String findEntryAttribute(String name) {
-        WeblogEntryAttribute att = ((WeblogEntryAttribute)attMap.get(name));
-        return (att != null) ? att.getValue() : null;
+        if (getEntryAttributes() != null) {
+            for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
+                WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
+                if (name.equals(att.getName())) return att.getValue();
+            }
+        }
+        return null;
     }
-    
-    
+        
     public void putEntryAttribute(String name, String value) throws Exception {
-        WeblogEntryAttribute att = (WeblogEntryAttribute)attMap.get(name);
+        WeblogEntryAttribute att = null;
+        for (Iterator it = getEntryAttributes().iterator(); it.hasNext(); ) {
+            WeblogEntryAttribute o = (WeblogEntryAttribute) it.next();
+            if (name.equals(o.getName())) {
+                att = o; 
+                break;
+            }
+        }
         if (att == null) {
             att = new WeblogEntryAttribute();
             att.setEntry(this);
             att.setName(name);
             att.setValue(value);
-            attMap.put(name, att);
-            attSet.add(att);
+            getEntryAttributes().add(att);
         } else {
             att.setValue(value);
         }
-    }
-    
-    public void onRemoveEntryAttribute(WeblogEntryAttribute att) throws WebloggerException {
-        attMap.remove(att.getName());
     }
     
     //-------------------------------------------------------------------------

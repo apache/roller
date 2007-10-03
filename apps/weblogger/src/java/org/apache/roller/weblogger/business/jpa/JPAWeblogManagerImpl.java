@@ -375,6 +375,17 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             }
         }
         
+        // remove attributes
+        if (entry.getEntryAttributes() != null) {
+            for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext(); ) {
+                WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
+                it.remove();
+                this.strategy.remove(att);
+            }
+        }
+        // TODO: can we eliminate this unnecessary flush with OpenJPA 1.0
+        this.strategy.flush(); 
+        
         // remove entry
         this.strategy.remove(entry);
         
@@ -654,8 +665,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
             WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
             if (entryAttribute.getName().equals(name)) {
-                //Call back the entity to adjust its internal state
-                entry.onRemoveEntryAttribute(entryAttribute);
                 //Remove it from database
                 this.strategy.remove(entryAttribute);
                 //Remove it from the collection
