@@ -11,7 +11,7 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 create table roller_permission (
    id              varchar(48) not null primary key,
    username        varchar(255) not null,
-   actions         varchar(255) not null, 
+   actions         varchar(255), 
    objectid        varchar(48),           
    objecttype      varchar(255),          
    pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
