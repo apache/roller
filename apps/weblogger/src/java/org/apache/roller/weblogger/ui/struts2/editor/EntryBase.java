@@ -202,7 +202,7 @@ public abstract class EntryBase extends UIAction {
     
     
     public boolean isUserAnAuthor() {
-        return getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.POST);
+        return getActionWeblog().hasUserPermission(getAuthenticatedUser(),WeblogPermission.POST);
     }
     
     

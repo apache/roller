@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -62,10 +63,12 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                     return "access-denied";
                 }
                 
-                // are we also enforcing a specific role?
-                if (theAction.requiredUserRole() != null) {
-                    if(!umgr.hasRole(theAction.requiredUserRole(), authenticatedUser)) {
-                        log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
+                // are we also enforcing global permissions?
+                if (theAction.requiredGlobalPermissionActions() != null 
+                        && !theAction.requiredGlobalPermissionActions().isEmpty()) {
+                    GlobalPermission perm = new GlobalPermission(theAction.requiredGlobalPermissionActions());
+                    if (!umgr.checkPermission(perm, authenticatedUser)) {
+                        log.debug("DENIED: user does not have permission = " + perm.toString());
                         return "access-denied";
                     }
                 }
@@ -80,16 +83,14 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                     }
                     
                     // are we also enforcing a specific weblog permission?
-                    if (theAction.requiredWeblogPermissions() != null) {
-                        
+                    if (theAction.requiredWeblogPermissionActions() != null 
+                            && !theAction.requiredWeblogPermissionActions().isEmpty()) {                        
                         WeblogPermission required = new WeblogPermission(
-                                actionWeblog, 
-                                authenticatedUser, 
-                                theAction.requiredWeblogPermissions());
+                                actionWeblog,  
+                                theAction.requiredWeblogPermissionActions());
                         
                         if (!umgr.checkPermission(required, authenticatedUser)) {
-                            log.debug("DENIED: user does not have required weblog permissions = "+
-                                    theAction.requiredWeblogPermissions());
+                            log.debug("DENIED: user does not have required weblog permissions = "+required);
                             return "access-denied";
                         }
                     }

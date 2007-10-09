@@ -69,8 +69,8 @@ public class WeblogConfig extends UIAction {
     
     
     // admin perms required
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

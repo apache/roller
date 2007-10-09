@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1121,7 +1122,11 @@ public class WeblogEntry implements Serializable {
     public boolean hasWritePermissions(User user) throws WebloggerException {
         
         // global admins can hack whatever they want
-        if(WebloggerFactory.getWeblogger().getUserManager().hasRole("admin", user)) {
+        GlobalPermission adminPerm = 
+            new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
+        boolean hasAdmin = WebloggerFactory.getWeblogger().getUserManager()
+            .checkPermission(adminPerm, user); 
+        if (hasAdmin) {
             return true;
         }
         

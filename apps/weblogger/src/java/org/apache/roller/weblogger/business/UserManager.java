@@ -280,13 +280,16 @@ public interface UserManager {
 
         
     /**
-     * Returns true if user has role specified.
+     * Returns true if user has role specified, should be used only for testing.
+     * @deprecated User checkPermission() instead.
      */
     public boolean hasRole(String roleName, User user) throws WebloggerException;
     
     
     /**
+     * Get roles associated with user, should be used only for testing.
      * Get all roles associated with user.
+     * @deprecated User checkPermission() instead.
      */
     public List<String> getRoles(User user) throws WebloggerException;
 

@@ -81,8 +81,8 @@ public final class Resources extends UIAction {
     
     
     // requires author role
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.POST;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     

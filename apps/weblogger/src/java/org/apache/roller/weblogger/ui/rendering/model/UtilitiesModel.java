@@ -121,7 +121,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermissions(
+                return weblog.getPojo().hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
@@ -133,7 +133,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermissions(
+                return weblog.getPojo().hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {

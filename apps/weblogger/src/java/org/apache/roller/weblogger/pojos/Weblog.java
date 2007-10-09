@@ -648,9 +648,17 @@ public class Weblog implements Serializable {
     
     
     /**
-     * Returns true if user has all permissions specified by mask.
+     * Returns true if user has all permission action specified.
      */
-    public boolean hasUserPermissions(User user, String actions) {
+    public boolean hasUserPermission(User user, String action) {
+        return hasUserPermissions(user, Collections.singletonList(action));
+    }
+    
+    
+    /**
+     * Returns true if user has all permissions actions specified in the weblog.
+     */
+    public boolean hasUserPermissions(User user, List<String> actions) {
         try {
             // look for user in website's permissions
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();

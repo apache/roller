@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,8 +58,8 @@ public class CategoryAdd extends UIAction {
     
     
     // author perms required
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.POST;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

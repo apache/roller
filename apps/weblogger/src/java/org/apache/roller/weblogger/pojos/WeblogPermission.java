@@ -56,12 +56,25 @@ public class WeblogPermission extends ObjectPermission {
         userName = user.getUserName();
     }
     
+    public WeblogPermission(Weblog weblog, List<String> actions) {
+        super("WeblogPermission user: N/A");
+        setActionsAsList(actions); 
+        objectType = "Weblog";
+        objectId = weblog.getHandle();
+    }
+    
     public Weblog getWeblog() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(objectId, null);
+        if (objectId != null) {
+            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(objectId, null);
+        }
+        return null;
     }
 
     public User getUser() throws WebloggerException {
-        return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
+        if (userName != null) {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
+        }
+        return null;
     }
 
     public boolean equals(Object arg0) {
@@ -74,17 +87,37 @@ public class WeblogPermission extends ObjectPermission {
 
     public boolean implies(Permission perm) {
         if (perm instanceof WeblogPermission) {
-            WeblogPermission weblogPerm = (WeblogPermission)perm;
-            if (getObjectId().equals(weblogPerm.getObjectId())) {
-                if (hasAction(ADMIN)) {
-                    return true;
+            WeblogPermission rperm = (WeblogPermission)perm;
+            
+            if (hasAction(ADMIN)) {
+                // admin implies all other permissions
+                return true;
+                
+            } else if (hasAction(POST)) {
+                // Best we've got is POST, so make sure perm doesn't specify POST
+                for (String action : rperm.getActionsAsList()) {
+                    if (action.equals(ADMIN)) return false;
                 }
-                if (hasAction(POST) && weblogPerm.hasAction(EDIT_DRAFT)) {
-                    return true;
+                
+            } else if (hasAction(EDIT_DRAFT)) {
+                // Best we've got is EDIT_DRAFT, so make sure perm doesn't specify anything else
+                for (String action : rperm.getActionsAsList()) {
+                    if (action.equals(POST)) return false;
+                    if (action.equals(ADMIN)) return false;
                 }
             }
+            return true;
         }
         return false;
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("GlobalPermission: ");
+        for (String action : getActionsAsList()) { 
+            sb.append(" ").append(action).append(" ");
+        }
+        return sb.toString();
     }
 }
 

@@ -104,7 +104,7 @@ public class MailUtil {
             Iterator websiteUserIter = websiteUsers.iterator();
             while (websiteUserIter.hasNext()) {
                 User websiteUser = (User)websiteUserIter.next();
-                if (entry.getWebsite().hasUserPermissions(                        
+                if (entry.getWebsite().hasUserPermission(                        
                         websiteUser, WeblogPermission.POST)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());

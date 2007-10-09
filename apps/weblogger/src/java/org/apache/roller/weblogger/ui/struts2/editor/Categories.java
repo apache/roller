@@ -69,8 +69,8 @@ public class Categories extends UIAction {
     
     
     // author perms required
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.POST;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     

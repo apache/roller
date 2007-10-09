@@ -67,8 +67,8 @@ public class ThemeEdit extends UIAction {
     }
     
     
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

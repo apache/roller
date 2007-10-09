@@ -20,17 +20,19 @@ package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -261,23 +263,19 @@ public class User implements Serializable {
         this.activationCode = activationCode;
     }
     
-    
-    /**
-     * List of weblog permissions for this user.
-     *
-     * @hibernate.bag lazy="true" inverse="true" cascade="none"
-     * @hibernate.collection-key column="user_id"
-     * @hibernate.collection-one-to-many
-     *    class="org.apache.roller.weblogger.pojos.WeblogPermission"
-     */
-    public List getPermissions() {
-        return permissions;
+     
+    public boolean hasGlobalPermission(String action) {
+        return hasGlobalPermissions(Collections.singletonList(action));
     }
     
-    public void setPermissions(List perms) {
-        permissions = perms;
+    public boolean hasGlobalPermissions(List<String> actions) {
+        try {
+            GlobalPermission perm = new GlobalPermission(actions);
+            return WebloggerFactory.getWeblogger().getUserManager().checkPermission(perm, this);
+        } catch (WebloggerException ex) {
+            return false;
+        }
     }
-    
     
     //------------------------------------------------------- Good citizenship
     

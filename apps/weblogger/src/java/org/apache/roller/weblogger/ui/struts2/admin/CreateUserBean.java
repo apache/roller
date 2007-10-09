@@ -18,11 +18,11 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collections;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -160,8 +160,11 @@ public class CreateUserBean {
         this.activationCode = dataHolder.getActivationCode();
 
         try {
-            this.administrator = WebloggerFactory.getWeblogger()
-                    .getUserManager().hasRole("admin", dataHolder);
+            GlobalPermission adminPerm = 
+                new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
+            this.administrator = WebloggerFactory.getWeblogger().getUserManager()
+                    .checkPermission(adminPerm, dataHolder);
+
         } catch (WebloggerException ex) {}
     }
     

@@ -237,7 +237,7 @@
     </tr>
 
     <%-- ***** Global admin only settings ***** --%>
-    <s:if test="authenticatedUser.hasRole('admin')">
+    <s:if test="authenticatedUser.hasGlobalPermission('admin')">
         <tr>
             <td colspan="3"><h2><s:text name="websiteSettings.adminSettings" /></h2></td>
         </tr>

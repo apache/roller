@@ -470,8 +470,11 @@ public class JPAUserManagerImpl implements UserManager {
             existingPerm = new GlobalPermission(user);
         }
         
-        if (existingPerm.hasActions(perm.getActionsAsList())) return true;
         if (existingPerm.implies(perm)) return true;
+        
+        if (log.isDebugEnabled()) {
+            log.debug("PERM CHECK FAILED: user "+user.getUserName()+" does not have " + perm.toString());
+        }
         return false;
     }
 

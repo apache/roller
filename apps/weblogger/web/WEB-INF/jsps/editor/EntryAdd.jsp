@@ -165,7 +165,7 @@
         <s:text name="weblogEdit.rightToLeft" />
         <br />
         
-        <s:if test="authenticatedUser.hasRole('admin')">
+        <s:if test="authenticatedUser.hasGlobalPermission('admin')">
             <s:checkbox name="bean.pinnedToMain" />
             <s:text name="weblogEdit.pinnedToMain" />
             <br />

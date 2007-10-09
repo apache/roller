@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -57,8 +58,8 @@ public class TemplateEdit extends UIAction {
     
     
     @Override
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

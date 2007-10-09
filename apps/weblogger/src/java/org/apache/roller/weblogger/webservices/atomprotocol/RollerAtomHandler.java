@@ -942,7 +942,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private boolean canEdit(Weblog website) {
         try {
-            return website.hasUserPermissions(this.user, WeblogPermission.POST);
+            return website.hasUserPermission(this.user, WeblogPermission.POST);
         } catch (Exception e) {
             log.error("Checking website.hasUserPermissions()");
         }

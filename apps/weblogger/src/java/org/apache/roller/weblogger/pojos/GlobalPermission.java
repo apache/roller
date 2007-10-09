@@ -31,9 +31,18 @@ import org.apache.roller.weblogger.util.Utilities;
  * Represents a permssion that applies globally to the entire web application.
  */
 public class GlobalPermission extends RollerPermission {
-        
+    
+    /** Allowed to login and edit profile */
+    public static final String LOGIN  = "login";
+    
+    /** Allowed to login and do weblogging */
+    public static final String WEBLOG = "weblog";
+
+    /** Allowed to login and do everything, including site-wide admin */
+    public static final String ADMIN  = "admin";
+    
     /**
-     * Create glbbal permission for one specific user initialized with the 
+     * Create global permission for one specific user initialized with the 
      * actions that are implied by the user's roles.
      * @param user User of permission.
      * @throws org.apache.roller.weblogger.WebloggerException
@@ -59,9 +68,19 @@ public class GlobalPermission extends RollerPermission {
     }
         
     /** 
-     * C
-     * @param user
-     * @param actions
+     * Create global permission with the actions specified by array.
+     * @param user User of permission.
+     * @throws org.apache.roller.weblogger.WebloggerException
+     */
+    public GlobalPermission(List<String> actions) throws WebloggerException {
+        super("GlobalPermission user: N/A");
+        setActionsAsList(actions);
+    }
+        
+    /** 
+     * Create global permission for one specific user initialized with the 
+     * actions specified by array.
+     * @param user User of permission.
      * @throws org.apache.roller.weblogger.WebloggerException
      */
     public GlobalPermission(User user, List<String> actions) throws WebloggerException {
@@ -70,9 +89,34 @@ public class GlobalPermission extends RollerPermission {
     }
         
     public boolean implies(Permission perm) {
-        if (perm instanceof WeblogPermission) {
-            if (hasAction("admin")) return true;
+        if (perm instanceof RollerPermission) {
+            RollerPermission rperm = (RollerPermission)perm;
+            
+            if (hasAction(ADMIN)) {
+                // admin implies all other permissions
+                return true;
+                
+            } else if (hasAction(WEBLOG)) {
+                // Best we've got is WEBLOG, so make sure perm doesn't specify ADMIN
+                for (String action : rperm.getActionsAsList()) {
+                    if (action.equals(ADMIN)) return false;
+                }
+                
+            } else if (hasAction(LOGIN)) {
+                // Best we've got is LOGIN, so make sure perm doesn't specify anything else
+                for (String action : rperm.getActionsAsList()) {
+                    if (action.equals(WEBLOG)) return false;
+                    if (action.equals(ADMIN)) return false;
+                }
+            }
+            return true;
         }
+        return false;
+    }
+    
+    private boolean actionImplies(String action1, String action2) {
+        if (action1.equals(ADMIN)) return true;
+        if (action1.equals(WEBLOG) && action2.equals(LOGIN)) return true;
         return false;
     }
     
@@ -82,5 +126,14 @@ public class GlobalPermission extends RollerPermission {
 
     public int hashCode() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("GlobalPermission: ");
+        for (String action : getActionsAsList()) { 
+            sb.append(" ").append(action).append(" ");
+        }
+        return sb.toString();
     }
 }

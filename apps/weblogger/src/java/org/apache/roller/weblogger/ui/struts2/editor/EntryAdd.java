@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -59,8 +60,8 @@ public final class EntryAdd extends EntryBase {
     
     
     @Override
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.EDIT_DRAFT;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
     
     
@@ -135,13 +136,15 @@ public final class EntryAdd extends EntryBase {
                 }
                 
                 // if user does not have author perms then force PENDING status
-                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.POST)) {
+                if(!getActionWeblog().hasUserPermission(getAuthenticatedUser(),WeblogPermission.POST)) {
                     entry.setStatus(WeblogEntry.PENDING);
                 }
             }
             
             // if user is an admin then apply pinned to main value as well
-            if (userMgr.hasRole("admin", getAuthenticatedUser())) {
+            GlobalPermission adminPerm = 
+                new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
+            if (userMgr.checkPermission(adminPerm, getAuthenticatedUser())) {
                 entry.setPinnedToMain(getBean().getPinnedToMain());
             }
             

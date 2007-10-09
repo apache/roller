@@ -68,8 +68,8 @@ public class Entries extends UIAction {
     
     
     @Override
-    public String requiredWeblogPermissions() {
-        return WeblogPermission.POST;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     

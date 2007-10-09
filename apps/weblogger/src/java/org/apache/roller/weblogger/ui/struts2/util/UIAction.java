@@ -22,12 +22,16 @@ import com.opensymphony.xwork2.ActionSupport;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIUtils;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
@@ -80,26 +84,30 @@ public abstract class UIAction extends ActionSupport
         return true;
     }
     
+    
     // default action permissions, weblog is required
     public boolean isWeblogRequired() {
         return true;
     }
     
-    // default action permissions, "editor" role required
-    public String requiredUserRole() {
-        return "editor";
+    
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
-    // default action permissions, no perms required
-    public String requiredWeblogPermissions() {
-        return null;
+    
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.LOGIN);
     }
+    
     
     // convenient way to tell if user being dealt with is an admin
     public boolean isUserIsAdmin() {
         try {
-            return WebloggerFactory.getWeblogger().getUserManager()
-                    .hasRole("admin", getAuthenticatedUser());
+            GlobalPermission adminPerm = new GlobalPermission( 
+                Collections.singletonList(GlobalPermission.ADMIN));
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            return umgr.checkPermission(adminPerm, getAuthenticatedUser());
         } catch (Exception e) {}
         return false;
     }
