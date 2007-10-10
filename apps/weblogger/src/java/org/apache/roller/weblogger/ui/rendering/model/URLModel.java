@@ -229,7 +229,6 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogSearchURL(weblog, locale, null, null, -1, false);
     }
     
-    
     public String search(String query, int pageNum) {
         return urlStrategy.getWeblogSearchURL(weblog, locale, query, null, pageNum, false);
     }
@@ -243,6 +242,14 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogSearchURL(weblog, locale, query, catPath, pageNum, true);
     }        
     
+    public String getOpenSearchSite() {
+        return urlStrategy.getOpenSearchSiteURL();
+    }
+        
+    public String getOpenSearchWeblog() {
+        return urlStrategy.getOpenSearchWeblogURL(weblog.getHandle());
+    }
+        
     public String page(String pageLink) {
         return urlStrategy.getWeblogPageURL(weblog, locale, pageLink, null, null, null, null, -1, true);
     }
