@@ -85,7 +85,7 @@
         <include name="toplink-essentials-9.1/toplink-essentials.jar"/> -->
         
         <!-- needed for ROME -->
-        <include name="lib/rome-0.9.jar"/>
+        <include name="lib/rome-0.9.1-dev.jar"/>
         <include name="lib/rome-fetcher-0.9.jar"/>
         <include name="lib/jdom.jar"/>
         

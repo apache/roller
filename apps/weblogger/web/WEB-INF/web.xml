@@ -298,7 +298,7 @@
     
     <servlet>
         <servlet-name>AtomServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.webservices.atomprotocol.AtomServlet</servlet-class>
+        <servlet-class>com.sun.syndication.propono.atom.server.AtomServlet</servlet-class>
     </servlet>
     
     <servlet>
@@ -539,7 +539,7 @@
 
     <!-- jndi resources -->
     <resource-ref>
-        <res-ref-name>jdbc/rollerdb</res-ref-name>
+        <res-ref-name>jdbc/SocialFish/RollerDB</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>

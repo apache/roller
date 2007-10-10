@@ -10,6 +10,16 @@
             </properties>
             <folders>
                 <source-folder>
+                    <label>web</label>
+                    <type>doc_root</type>
+                    <location>web</location>
+                </source-folder>
+                <source-folder>
+                    <label>WEB-INF</label>
+                    <type>web_inf</type>
+                    <location>web/WEB-INF</location>
+                </source-folder>
+                <source-folder>
                     <label>src/sql</label>
                     <type>java</type>
                     <location>src/sql</location>
@@ -23,16 +33,6 @@
                     <label>test/java</label>
                     <type>java</type>
                     <location>test/java</location>
-                </source-folder>
-                <source-folder>
-                    <label>web</label>
-                    <type>doc_root</type>
-                    <location>web</location>
-                </source-folder>
-                <source-folder>
-                    <label>WEB-INF</label>
-                    <type>web_inf</type>
-                    <location>web/WEB-INF</location>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -122,7 +122,7 @@
                 <package-root>src/java</package-root>
                 <package-root>test/java</package-root>
                 <package-root>src/sql</package-root>
-                <classpath mode="compile">../../tools/lib/commons-betwixt-1.0-beta-1.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/commons-collections-3.2.jar:../../tools/lib/commons-digester-1.6.jar:../../tools/lib/commons-id-0.1-SNAPSHOT.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/concurrent-1.3.2.jar:../../tools/lib/guice-1.0.jar:../../tools/lib/jaxen-full.jar:../../tools/lib/jdom.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/lucene-1.4.3.jar:../../tools/lib/rome-0.9.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/saxpath.jar:../../tools/lib/taglibs-string.jar:../../tools/lib/velocity-1.5.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar:../../tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar:../../tools/openjpa-0.9.7/geronimo-jta_1.0.1B_spec-1.0.1.jar:../../tools/openjpa-0.9.7/openjpa-0.9.7-incubating.jar:../../tools/openjpa-0.9.7/serp-1.11.0.jar:../../tools/xmlrpc-3.0/lib/ws-commons-util-1.0.1.jar:../../tools/xmlrpc-3.0/lib/xmlrpc-client-3.0.jar:../../tools/xmlrpc-3.0/lib/xmlrpc-common-3.0.jar:../../tools/xmlrpc-3.0/lib/xmlrpc-server-3.0.jar:../../tools/spring-1.2/acegi-security-1.0.3.jar:../../tools/spring-1.2/spring.jar:../../tools/roller-core/roller-core.jar:../../tools/roller-planet/roller-planet-business.jar:../../tools/struts-1.2.4/lib/antlr.jar:../../tools/struts-1.2.4/lib/commons-beanutils.jar:../../tools/struts-1.2.4/lib/commons-digester.jar:../../tools/struts-1.2.4/lib/commons-validator.jar:../../tools/struts-1.2.4/lib/jakarta-oro.jar:../../tools/struts-1.2.4/lib/struts-el.jar:../../tools/struts-1.2.4/lib/struts.jar:../../tools/buildtime/tomcat-5.0.28/jsp-api.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/buildtime/activation.jar:../../tools/buildtime/mail.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../tools/buildtime/junit-4.1.jar:../../tools/buildtime/ant-1.7.0/ant.jar:../../tools/buildtime/derbyclient.jar:../../tools/buildtime/derby.jar:../../tools/buildtime/derbyclient.jar:../../tools/buildtime/derbynet.jar:../../tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:../../tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:../../tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:../../tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:../../tools/struts-2.0.9/lib/antlr-2.7.2.jar:../../tools/struts-2.0.9/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.9/lib/commons-chain-1.1.jar:../../tools/struts-2.0.9/lib/commons-fileupload-1.2.jar:../../tools/struts-2.0.9/lib/commons-io-1.3.1.jar:../../tools/struts-2.0.9/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.9/lib/freemarker-2.3.8.jar:../../tools/struts-2.0.9/lib/ognl-2.6.11.jar:../../tools/struts-2.0.9/lib/oro-2.0.8.jar:../../tools/struts-2.0.9/lib/struts2-core-2.0.9.jar:../../tools/struts-2.0.9/lib/struts2-spring-plugin-2.0.9.jar:../../tools/struts-2.0.9/lib/struts2-tiles-plugin-2.0.9.jar:../../tools/struts-2.0.9/lib/tiles-api-2.0.4.jar:../../tools/struts-2.0.9/lib/tiles-core-2.0.4.jar:../../tools/struts-2.0.9/lib/tiles-jsp-2.0.4.jar:../../tools/struts-2.0.9/lib/xwork-2.0.4.jar:../../tools/lib/commons-httpclient-3.0.1.jar</classpath>
+                <classpath mode="compile">../../tools/lib/commons-betwixt-1.0-beta-1.jar:../../tools/lib/commons-codec-1.3.jar:../../tools/lib/commons-collections-3.2.jar:../../tools/lib/commons-digester-1.6.jar:../../tools/lib/commons-id-0.1-SNAPSHOT.jar:../../tools/lib/commons-lang-2.1.jar:../../tools/lib/commons-logging-1.0.4.jar:../../tools/lib/concurrent-1.3.2.jar:../../tools/lib/guice-1.0.jar:../../tools/lib/jaxen-full.jar:../../tools/lib/jdom.jar:../../tools/lib/log4j-1.2.11.jar:../../tools/lib/lucene-1.4.3.jar:../../tools/lib/rome-fetcher-0.9.jar:../../tools/lib/saxpath.jar:../../tools/lib/taglibs-string.jar:../../tools/lib/velocity-1.5.jar:../../tools/hibernate-3.1/hibernate3.jar:../../tools/openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar:../../tools/openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar:../../tools/openjpa-0.9.7/geronimo-jta_1.0.1B_spec-1.0.1.jar:../../tools/openjpa-0.9.7/openjpa-0.9.7-incubating.jar:../../tools/openjpa-0.9.7/serp-1.11.0.jar:../../tools/xmlrpc-3.0/lib/ws-commons-util-1.0.1.jar:../../tools/xmlrpc-3.0/lib/xmlrpc-client-3.0.jar:../../tools/xmlrpc-3.0/lib/xmlrpc-common-3.0.jar:../../tools/xmlrpc-3.0/lib/xmlrpc-server-3.0.jar:../../tools/spring-1.2/acegi-security-1.0.3.jar:../../tools/spring-1.2/spring.jar:../../tools/roller-core/roller-core.jar:../../tools/roller-planet/roller-planet-business.jar:../../tools/struts-1.2.4/lib/antlr.jar:../../tools/struts-1.2.4/lib/commons-beanutils.jar:../../tools/struts-1.2.4/lib/commons-digester.jar:../../tools/struts-1.2.4/lib/commons-validator.jar:../../tools/struts-1.2.4/lib/jakarta-oro.jar:../../tools/struts-1.2.4/lib/struts-el.jar:../../tools/struts-1.2.4/lib/struts.jar:../../tools/buildtime/tomcat-5.0.28/jsp-api.jar:../../tools/buildtime/tomcat-5.0.28/servlet-api.jar:../../tools/buildtime/activation.jar:../../tools/buildtime/mail.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/jstl.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/serializer.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/standard.jar:../../tools/jakarta-taglibs-standard-1.1.2/lib/xalan.jar:../../tools/buildtime/junit-4.1.jar:../../tools/buildtime/ant-1.7.0/ant.jar:../../tools/buildtime/derbyclient.jar:../../tools/buildtime/derby.jar:../../tools/buildtime/derbyclient.jar:../../tools/buildtime/derbynet.jar:../../tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:../../tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:../../tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:../../tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:../../tools/struts-2.0.9/lib/antlr-2.7.2.jar:../../tools/struts-2.0.9/lib/commons-beanutils-1.6.jar:../../tools/struts-2.0.9/lib/commons-chain-1.1.jar:../../tools/struts-2.0.9/lib/commons-fileupload-1.2.jar:../../tools/struts-2.0.9/lib/commons-io-1.3.1.jar:../../tools/struts-2.0.9/lib/commons-validator-1.3.0.jar:../../tools/struts-2.0.9/lib/freemarker-2.3.8.jar:../../tools/struts-2.0.9/lib/ognl-2.6.11.jar:../../tools/struts-2.0.9/lib/oro-2.0.8.jar:../../tools/struts-2.0.9/lib/struts2-core-2.0.9.jar:../../tools/struts-2.0.9/lib/struts2-spring-plugin-2.0.9.jar:../../tools/struts-2.0.9/lib/struts2-tiles-plugin-2.0.9.jar:../../tools/struts-2.0.9/lib/tiles-api-2.0.4.jar:../../tools/struts-2.0.9/lib/tiles-core-2.0.4.jar:../../tools/struts-2.0.9/lib/tiles-jsp-2.0.4.jar:../../tools/struts-2.0.9/lib/xwork-2.0.4.jar:../../tools/lib/commons-httpclient-3.0.1.jar:../../tools/lib/rome-0.9.1-dev.jar:../../tools/lib/rome-propono-0.7.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
