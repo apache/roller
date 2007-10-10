@@ -39,13 +39,20 @@ insert into roller_permission (id,username,actions,objectid,objecttype,pending,d
 
 #dropNotNullFromColumn("website" "creator" "varchar(48)")
 #addColumnNull("website" "creator" "varchar(255)")
-update website as w set creator = (select u.username from rolleruser as u where u.id = w.userid);
+update website as w set 
+    lastmodified = lastmodified,
+    datecreated = datecreated,
+    creator = (select u.username from rolleruser as u where u.id = w.userid);
 
 #dropNotNullFromColumn("weblogentry" "userid" "varchar(48)")
 #addColumnNull("weblogentry" "creator" "varchar(255)")
-update weblogentry as w set creator = (select u.username from rolleruser as u where u.id = w.userid);
+update weblogentry as w set
+    pubtime = pubtime,
+    updatetime = updatetime, 
+    creator = (select u.username from rolleruser as u where u.id = w.userid);
 
 #dropNotNullFromColumn("roller_weblogentrytag" "userid" "varchar(48)")
 #addColumnNull("roller_weblogentrytag" "creator" "varchar(255)")
-update roller_weblogentrytag as w set creator = (select u.username from rolleruser as u where u.id = w.userid);
-
+update roller_weblogentrytag as w set 
+    time = time,
+    creator = (select u.username from rolleruser as u where u.id = w.userid);
