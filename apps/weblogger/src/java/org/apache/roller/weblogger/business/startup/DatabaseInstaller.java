@@ -987,7 +987,7 @@ public class DatabaseInstaller {
                         con.prepareStatement("select id,feed_url,author from rag_subscription");
             
             PreparedStatement updateSubUrl = 
-                    con.prepareStatement("update rag_subscription set feed_url = ? where id = ?");
+                    con.prepareStatement("update rag_subscription set last_updated=last_updated, feed_url = ? where id = ?");
             
             ResultSet rset = selectSubs.executeQuery();
             while (rset.next()) {
@@ -1084,14 +1084,14 @@ public class DatabaseInstaller {
             
             // set content-type for all existing comments
             PreparedStatement updateCommentsContentType = 
-                    con.prepareStatement("update roller_comment set contenttype = ?");
+                    con.prepareStatement("update roller_comment set posttime=posttime, contenttype = ?");
             updateCommentsContentType.clearParameters();
             updateCommentsContentType.setString(1, contentType);
             updateCommentsContentType.executeUpdate();
 
             // set plugins for all existing comments
             PreparedStatement updateCommentsPlugins = 
-                    con.prepareStatement("update roller_comment set plugins = ?");
+                    con.prepareStatement("update roller_comment set posttime=posttime, plugins = ?");
             updateCommentsPlugins.clearParameters();
             updateCommentsPlugins.setString(1, plugins);
             updateCommentsPlugins.executeUpdate();
