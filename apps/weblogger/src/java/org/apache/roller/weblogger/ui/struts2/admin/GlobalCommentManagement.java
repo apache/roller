@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.struts2.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
@@ -242,7 +243,7 @@ public class GlobalCommentManagement extends UIAction {
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
-            List flushList = new ArrayList();
+            List<Weblog> flushList = new ArrayList<Weblog>();
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
@@ -252,8 +253,8 @@ public class GlobalCommentManagement extends UIAction {
                 WeblogEntryComment deleteComment = null;
                 for(String deleteId : deletes) {
                     deleteComment = wmgr.getComment(deleteId);
+                    flushList.add(deleteComment.getWeblogEntry().getWebsite());
                     wmgr.removeComment(deleteComment);
-                    flushList.add(deleteComment);
                 }
             }
             
@@ -280,21 +281,21 @@ public class GlobalCommentManagement extends UIAction {
                     comment.setStatus(WeblogEntryComment.SPAM);
                     wmgr.saveComment(comment);
                     
-                    flushList.add(comment);
+                    flushList.add(comment.getWeblogEntry().getWebsite());
                 } else if(WeblogEntryComment.SPAM.equals(comment.getStatus())) {
                     log.debug("Marking as approved - "+comment.getId());
                     comment.setStatus(WeblogEntryComment.APPROVED);
                     wmgr.saveComment(comment);
                     
-                    flushList.add(comment);
+                    flushList.add(comment.getWeblogEntry().getWebsite());
                 }
             }
             
             WebloggerFactory.getWeblogger().flush();
             
-            // notify caches of changes
-            for (Iterator comments=flushList.iterator(); comments.hasNext();) {
-                CacheManager.invalidate((WeblogEntryComment)comments.next());
+            // notify caches of changes, flush weblogs affected by changes
+            for (Iterator sites = flushList.iterator(); sites.hasNext();) {
+                CacheManager.invalidate((Weblog)sites.next());
             }
             
             addMessage("commentManagement.updateSuccess");
