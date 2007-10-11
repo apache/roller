@@ -350,6 +350,7 @@ public class MediaCollection {
                     fis.close();
                     
                     log.debug("Exiting");
+                    return;
 
                 } catch (FileIOException fie) {
                     throw new AtomException(
@@ -385,17 +386,22 @@ public class MediaCollection {
                     String fileName = path.substring(0, path.length() - ".media-link".length());
                     FileManager fmgr = roller.getFileManager();
                     fmgr.deleteFile(website, fileName);
-                    log.debug("Deleted resource: " + fileName);
+                    log.debug("Deleted media entry: " + fileName);
+                    return;
+                    
                 } catch (Exception e) {
-                    String msg = "ERROR in atom.deleteResource";
+                    String msg = "ERROR deleting media entry";
                     log.error(msg, e);
                     throw new AtomException(msg);
                 }
-                return;
             }
+            log.debug("Not authorized to delete media entry"); 
+            log.debug("Exiting via exception"); 
+
         } catch (WebloggerException ex) {
-            throw new AtomException("ERROR deleting entry",ex);
+            throw new AtomException("ERROR deleting media entry",ex);
         }
+        throw new AtomNotAuthorizedException("Not authorized to delete entry");
     }
     
     

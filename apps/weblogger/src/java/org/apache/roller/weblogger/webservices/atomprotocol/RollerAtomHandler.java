@@ -60,37 +60,45 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  * 
  * 
  *    /roller-services/app/[weblog-handle>/entries
- *    Entry collection for a blog
+ *    Entry collection for a weblog (GET, POST)
  * 
  *    /roller-services/app/[weblog-handle]/entries/[offset]
- *    Entry collection for a blog, with offset
+ *    Entry collection for a blog, with offset (GET)
  * 
  *    /roller-services/app/[weblog-handle]/entry/[id]
- *    Individual entry (i.e. edit URI)
+ *    Individual entry (GET, PUT, DELETE)
  *
  * 
  *    /roller-services/app/[weblog-handle]/resources
- *    Resource (i.e. file-uploads) collection for a blog
+ *    Resource (i.e. file-uploads) collection for a weblog (GET, POST)
  * 
  *    /roller-services/app/[weblog-handle]/resources/[offset]
- *    Resource collection for a blog, with offset
+ *    Resource collection for a blog, with offset (GET)
  * 
  *    /roller-services/app/[weblog-handle]/resource/*.media-link[name]
- *    Individual resource metadata (i.e. edit URI)
+ *    Individual resource metadata (GET, PUT, DELETE)
  * 
  *    /roller-services/app/[weblog-handle]/resource/[name]
- *    Individual resource data (i.e. media-edit URI)
+ *    Individual resource data (GET)
+ * 
  * 
  *  Coming soon...
  *
+ *    /roller-services/app/[weblog-handle]/comments
+ *    Comments collection for weblog (GET, POST)
+ * 
+ *    /roller-services/app/[weblog-handle]/comments/[offset]
+ *    Comments collection for weblog with offset (GET)
+ * 
+ *    /roller-services/app/[weblog-handle]/comment/[id]
+ *    Individual comment within weblog (GET, PUT, DELETE)
+ * 
+ * 
  *    /roller-services/app/[weblog-handle]/entry/[id]/comments
- *    Comments collection for entry with id
+ *    Comments collection for entry with id (GET)
  * 
  *    /roller-services/app/[weblog-handle]/entry/[id]/comments/[offset]
- *    Comments collection for entry with id
- * 
- *    /roller-services/app/[weblog-handle]/entry/[id]/comments/id
- *    Individual comment
+ *    Comments collection for entry with id (GET)
  * 
  * </pre>
  * @author David M Johnson
@@ -281,12 +289,13 @@ public class RollerAtomHandler implements AtomHandler {
             {                    
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 ecol.deleteEntry(areq);
+                return;
 
             } else if (pathInfo[1].equals("resource")) {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 mcol.deleteEntry(areq);
+                return;
             }
-            throw new AtomNotAuthorizedException("ERROR not authorized to delete entry");
         }
         throw new AtomNotFoundException("cannot find specified entry/resource");
     }

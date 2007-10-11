@@ -118,7 +118,7 @@ public class EntryCollection {
                 }
             }
             log.error("ERROR: no edit link found in saved media entry");
-            log.debug("Exiting");
+            log.debug("Exiting via exception");
 
         } catch (WebloggerException re) {
             throw new AtomException("Posting entry", re);
@@ -291,9 +291,13 @@ public class EntryCollection {
                 roller.flush();
                 return;
             }
+            log.debug("Not authorized to delete entry"); 
+            log.debug("Exiting via exception"); 
+            
         } catch (WebloggerException ex) {
             throw new AtomException("ERROR deleting entry",ex);
         }
+        throw new AtomNotAuthorizedException("Not authorized to delete entry");
     }
 
     
