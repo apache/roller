@@ -186,14 +186,17 @@ public class RollerAtomHandler implements AtomHandler {
         if (perms != null) {
             for (Iterator iter=perms.iterator(); iter.hasNext();) {
                 WeblogPermission perm = (WeblogPermission)iter.next();
-                String handle = perm.getWebsite().getHandle();
                 
+                // only include weblog's that have client API support enabled
+                if (!Boolean.TRUE.equals(perm.getWebsite().getEnableBloggerApi())) continue;
+                                
                 // Create workspace to represent weblog
                 Workspace workspace = new Workspace(
                     Utilities.removeHTML(perm.getWebsite().getName()), "text");
                 service.addWorkspace(workspace);
                 
                 // Create collection for entries within that workspace
+                String handle = perm.getWebsite().getHandle();
                 Collection entryCol = new Collection("Weblog Entries", "text", 
                     atomURL+"/"+handle+"/entries");
                 entryCol.addAccept("application/atom+xml;type=entry");
