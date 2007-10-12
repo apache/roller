@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 
 /**
  * Base API handler does user validation, provides exception types, etc.
@@ -142,24 +143,19 @@ public class BaseAPIHandler implements Serializable {
         }
         
         if ( !authenticated ) {
-            throw new XmlRpcException(
-                    AUTHORIZATION_EXCEPTION, AUTHORIZATION_EXCEPTION_MSG);
+            throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
         }
         if ( !userEnabled ) {
-            throw new XmlRpcException(
-                    USER_DISABLED, USER_DISABLED_MSG);
+            throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
         }
         if ( !weblogEnabled ) {
-            throw new XmlRpcException(
-                    WEBLOG_DISABLED, WEBLOG_DISABLED_MSG);
+            throw new XmlRpcNotAuthorizedException(WEBLOG_DISABLED_MSG);
         }
         if ( !weblogFound ) {
-            throw new XmlRpcException(
-                    WEBLOG_NOT_FOUND, WEBLOG_NOT_FOUND_MSG);
+            throw new XmlRpcException(WEBLOG_NOT_FOUND, WEBLOG_NOT_FOUND_MSG);
         }
         if ( !apiEnabled ) {
-            throw new XmlRpcException(
-                    BLOGGERAPI_DISABLED, BLOGGERAPI_DISABLED_MSG);
+            throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
         }
         return website;
     }
@@ -201,13 +197,11 @@ public class BaseAPIHandler implements Serializable {
         }
         
         if ( !enabled ) {
-            throw new XmlRpcException(
-                    BLOGGERAPI_DISABLED, BLOGGERAPI_DISABLED_MSG);
+            throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
         }
         
         if ( !authenticated ) {
-            throw new XmlRpcException(
-                    AUTHORIZATION_EXCEPTION, AUTHORIZATION_EXCEPTION_MSG);
+            throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
         }
         return authenticated;
     }

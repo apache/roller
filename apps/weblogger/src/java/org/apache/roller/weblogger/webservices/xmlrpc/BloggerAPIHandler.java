@@ -279,16 +279,21 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 User user = umgr.getUserByUserName(userid);
+                
                 // get list of user's enabled websites
                 List websites = umgr.getWebsites(user, Boolean.TRUE, null, null, null, 0, -1);
                 Iterator iter = websites.iterator();
                 while (iter.hasNext()) {
                     Weblog website = (Weblog)iter.next();
-                    Hashtable blog = new Hashtable(3);
-                    blog.put("url", website.getURL());
-                    blog.put("blogid", website.getHandle());
-                    blog.put("blogName", website.getName());
-                    result.add(blog);
+                    
+                    // only include weblog's that have client API support enabled
+                    if (Boolean.TRUE.equals(website.getEnableBloggerApi())) {
+                        Hashtable blog = new Hashtable(3);
+                        blog.put("url", website.getURL());
+                        blog.put("blogid", website.getHandle());
+                        blog.put("blogName", website.getName());
+                        result.add(blog);
+                    }
                 }
             } catch (Exception e) {
                 String msg = "ERROR in BlooggerAPIHander.getUsersBlogs";
