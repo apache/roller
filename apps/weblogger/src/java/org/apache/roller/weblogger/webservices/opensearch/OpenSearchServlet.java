@@ -106,7 +106,7 @@ public class OpenSearchServlet extends HttpServlet {
         pw.println("   <Contact>" + contact + "</Contact>");
         pw.println("   <Url type=\"application/atom+xml\" ");
         pw.println("      template=\"" + searchFeed + "\"/>");
-        pw.println("   <Url type=\"application/rss+xml\" ");
+        pw.println("   <Url type=\"text/html\" ");
         pw.println("      template=\"" + searchPage + "\"/>");
         pw.println("</OpenSearchDescription>");
         pw.flush();            
