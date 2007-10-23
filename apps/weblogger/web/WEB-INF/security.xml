@@ -29,6 +29,7 @@
                 PATTERN_TYPE_APACHE_ANT
                 /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
             </value>
+            <!-- Replace "authenticationProcessingFilter,rememberMeProcessingFilter" with "casProcessingFilter" if you want to use Roller with CAS -->
         </property>
     </bean>
 
@@ -61,6 +62,7 @@
             <list>
                 <ref local="daoAuthenticationProvider"/> 
                 <!-- Uncomment this for LDAP/SSO configuration <ref local="ldapAuthProvider"/> -->
+                <!-- Uncomment this for CAS/SSO configuration <ref local="casAuthenticationProvider"/> -->
                 <ref local="anonymousAuthenticationProvider"/>                
                 <!-- rememberMeAuthenticationProvider added programmatically -->
             </list>
@@ -69,39 +71,7 @@
   
     <!-- Log failed authentication attempts to commons-logging -->
     <bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/> 
-    
-    <!-- BEGIN: Sample LDAP/RollerDB hybrid security configuration
-    
-    <bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
-        <constructor-arg value="LDAP_URL"/>
-        <property name="managerDn" value="LDAP_USERNAME"/>
-        <property name="managerPassword" value="LDAP_PASSWORD"/>
-    </bean>
-   
-    <bean id="ldapUserSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
-        <constructor-arg index="0" value=""/>
-        <constructor-arg index="1" value="uid={0}"/>
-        <constructor-arg index="2" ref="initialDirContextFactory"/>         
-        <property name="searchSubtree" value="true"/>           
-    </bean>     
-    
-    <bean id="ldapAuthProvider" class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
-        <constructor-arg>
-            <bean class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
-                <constructor-arg ref="initialDirContextFactory"/>
-                <property name="userSearch" ref="ldapUserSearch"/>
-            </bean>
-        </constructor-arg>
-        <constructor-arg ref="jdbcAuthoritiesPopulator"/>
-        <property name="userCache" ref="userCache"/>
-    </bean>    
-    
-    <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
-        <property name="defaultRole" value="register"/>       
-    </bean>
-    -->
-    <!-- END Sample LDAP/RollerDB hybrid security configuration -->
-         
+
     <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
          <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
          <property name="userCache" ref="userCache"/> 
@@ -155,6 +125,7 @@
     </bean>
     
     <bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
+        <!-- Change the ref on this property to "casProcessingFilterEntryPoint" when using CAS -->
         <property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
     </bean>
     
@@ -199,4 +170,89 @@
             </list>
         </property>
     </bean>
+    
+    <!-- BEGIN: Sample LDAP/RollerDB hybrid security configuration
+    <!-- ===================== LDAP AUTHENTICATION ==================== -->
+    <bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+        <constructor-arg value="LDAP_URL"/>
+        <property name="managerDn" value="LDAP_USERNAME"/>
+        <property name="managerPassword" value="LDAP_PASSWORD"/>
+    </bean>
+   
+    <bean id="ldapUserSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
+        <constructor-arg index="0" value=""/>
+        <constructor-arg index="1" value="uid={0}"/>
+        <constructor-arg index="2" ref="initialDirContextFactory"/>         
+        <property name="searchSubtree" value="true"/>           
+    </bean>     
+    
+    <bean id="ldapAuthProvider" class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+        <constructor-arg>
+            <bean class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+                <constructor-arg ref="initialDirContextFactory"/>
+                <property name="userSearch" ref="ldapUserSearch"/>
+            </bean>
+        </constructor-arg>
+        <constructor-arg ref="jdbcAuthoritiesPopulator"/>
+        <property name="userCache" ref="userCache"/>
+    </bean>    
+    
+    <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
+        <property name="defaultRole" value="register"/>       
+    </bean>
+    -->
+    <!-- END Sample LDAP/RollerDB hybrid security configuration -->
+    
+    <!-- BEGIN: Sample CAS/RollerDB hybrid security configuration
+    <!-- ======================== CENTRAL AUTHENTICATION SERVICE (CAS) ======================= -->
+    <bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationFailureUrl" value="/roller-ui/login.rol?error=true"/>
+        <property name="defaultTargetUrl" value="/"/>
+        <property name="filterProcessesUrl" value="/roller_j_security_check"/>
+    </bean>
+    
+    <bean id="casProcessingFilterEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint">
+        <property name="loginUrl" value="https://localhost:8443/cas/login"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+    </bean>
+    
+    <bean id="casAuthenticationProvider" class="org.acegisecurity.providers.cas.CasAuthenticationProvider">
+        <property name="casAuthoritiesPopulator">
+            <bean class="org.apache.roller.weblogger.ui.core.security.RollerCasPopulator">
+                <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
+            </bean> 
+        </property>
+        <property name="casProxyDecider" ref="casProxyDecider"/>
+        <property name="ticketValidator" ref="casProxyTicketValidator"/>
+        <property name="statelessTicketCache" ref="statelessTicketCache"/>
+        <property name="key" value="rollerlovesacegi"/>
+    </bean>
+    
+    <bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator">
+        <property name="casValidate" value="https://localhost:8443/cas/proxyValidate"/>
+        <property name="proxyCallbackUrl" value="http://localhost:8080/roller/casProxy/receptor"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+        <property name="trustStore" value="/Library/Java/Home/lib/security/cacerts"/>
+    </bean>
+    
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+    
+    <bean id="ticketCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+       <property name="cacheManager" ref="cacheManager"/>
+       <property name="cacheName" value="ticketCache"/>
+    </bean>
+    
+    <bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.EhCacheBasedTicketCache">
+        <property name="cache" ref="ticketCacheBackend"/>
+    </bean>
+    
+    <bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets"/>
+    
+    <bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties">
+        <property name="service" value="http://localhost:8080/roller/roller_j_security_check"/>
+        <property name="sendRenew" value="false"/>
+    </bean>
+    -->
+    <!-- END Sample CAS/RollerDB hybrid security configuration -->
 </beans>
