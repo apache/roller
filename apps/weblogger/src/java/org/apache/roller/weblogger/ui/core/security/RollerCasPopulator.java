@@ -29,6 +29,8 @@ import org.apache.log4j.Logger;
 /**
  * An implementation of CasAuthoritiesPopulator that uses a UserDetailsService to retrieve
  * User object from RollerDB. 
+ * 
+ * @author Phillip Rhodes (<a href="mailto:mindcrime@cpphacker.co.uk">mindcrime@cpphacker.co.uk</a>)
  */
 public class RollerCasPopulator implements CasAuthoritiesPopulator {
     private static final Logger logger = Logger.getLogger(RollerCasPopulator.class);
