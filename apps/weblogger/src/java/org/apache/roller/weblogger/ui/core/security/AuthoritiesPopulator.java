@@ -65,14 +65,14 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         int roleCount = userData.getRoles().size();
         if (defaultRole != null) roleCount++;
         GrantedAuthority[] authorities = new GrantedAuthorityImpl[roleCount];
-        int i = 1;
+        int i = 0;
         for (Iterator it = userData.getRoles().iterator(); it.hasNext();) {
             UserRole role = (UserRole) it.next();
             authorities[i++] = new GrantedAuthorityImpl(role.getRole());
         }
         
         if (defaultRole != null) {
-            authorities[roleCount] = defaultRole;
+            authorities[roleCount-1] = defaultRole;
         }
 
         if (authorities.length == 0) {
