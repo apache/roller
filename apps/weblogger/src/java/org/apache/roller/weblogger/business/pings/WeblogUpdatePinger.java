@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.pings;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.pojos.PingTarget;
@@ -31,10 +32,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.apache.commons.logging.Log;
 
 /**
  * Utility for sending a weblog update ping.
@@ -94,8 +94,8 @@ public class WeblogUpdatePinger {
      * @param pingTarget         the target site to ping
      * @param website            the website that changed (from which the ping originates)
      * @return the result message string sent by the server.
-     * @throws IOException
-     * @throws XmlRpcException
+     * @throws IOException if an IOException occurs during the ping
+     * @throws XmlRpcException if the XML RPC client throws one
      */
     public static PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
         String websiteUrl = website.getAbsoluteURL();
@@ -113,7 +113,7 @@ public class WeblogUpdatePinger {
             logger.debug("Executing ping to '" + pingTargetUrl + "' for website '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
         }
 
-        // Send the ping.        
+        // Send the ping.
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
         config.setServerURL(new URL(pingTargetUrl));
         XmlRpcClient client = new XmlRpcClient();
@@ -128,8 +128,8 @@ public class WeblogUpdatePinger {
         // Deal with the fact that some buggy ping targets may not respond with the proper struct type.
         if (obj == null) return new PingResult(null,null);
         try {
-            // normal case: response is a struct (represented as a HashMap) with Boolean flerror and String fields.
-            HashMap result = (HashMap) obj;
+            // normal case: response is a struct (represented as a Map) with Boolean flerror and String fields.
+            Map result = (Map) obj;
             return new PingResult((Boolean) result.get("flerror"), (String) result.get("message"));
         } catch (Exception ex) {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
