@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.logging.Log;
@@ -128,8 +128,8 @@ public class WeblogUpdatePinger {
         // Deal with the fact that some buggy ping targets may not respond with the proper struct type.
         if (obj == null) return new PingResult(null,null);
         try {
-            // normal case: response is a struct (represented as a Hashtable) with Boolean flerror and String fields.
-            Hashtable result = (Hashtable) obj;
+            // normal case: response is a struct (represented as a HashMap) with Boolean flerror and String fields.
+            HashMap result = (HashMap) obj;
             return new PingResult((Boolean) result.get("flerror"), (String) result.get("message"));
         } catch (Exception ex) {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
