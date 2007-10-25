@@ -21,7 +21,10 @@ if (args.length < 1) {
     return;
 }
 
+org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
 roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
+
 user = roller.getUserManager().getUserByUserName(args[0]);
 
 if (user == null) {

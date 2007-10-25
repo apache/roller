@@ -15,10 +15,10 @@ class RollerDatabaseGenerator {
 
     def roller = null;
 
-    def userCount = 30 
+    def userCount = 10 
     def blogCount = 2*userCount
-    def entryCount = 50 
-    def commentCount = 6
+    def entryCount = 10 
+    def commentCount = 3
 
     def users = []
 

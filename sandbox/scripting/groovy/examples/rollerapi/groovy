@@ -3,13 +3,13 @@
 # -- ENSURE THESE ARE CORRECT ---
 
 # Directory where Groovy release is installed
-export GROOVY_HOME=/usr/local/groovy
+export GROOVY_HOME=/Applications/Java/groovy
 
 # Directory of Roller webapp context
 export WEBAPP_DIR=../../../../../apps/weblogger/build/webapp
 
 # Directory of additional jars
-export JARS_DIR=/usr/local/tomcat/common/lib
+export JARS_DIR=/Applications/Java/tomcat/common/lib
 
 
 # --- SHOULD NOT NEED TO EDIT BELOW THIS LINE ---
