@@ -28,6 +28,8 @@ blogname =    handle;
 description = handle;
 theme =       "basic";
 
+org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
 roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
 
 user = roller.getUserManager().getUserByUserName(username);

@@ -27,7 +27,10 @@ title =    args[2];
 text =     args[3];
 catpath =  args[4];
  
+org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
 roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
+
 user = roller.getUserManager().getUser(username);
 if (user == null) {
    println "ERROR: user ${username} not found";
