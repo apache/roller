@@ -44,6 +44,8 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class PlanetModel implements Model {
     
+    public static final String DEFAULT_PLANET_HANDLE = "default";   
+    
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
     private WeblogRequest  weblogRequest = null;
@@ -176,7 +178,7 @@ public class PlanetModel implements Model {
         List list = new ArrayList();
         try {
             PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
-            Planet defaultPlanet = planetManager.getPlanet("zzz_default_planet_zzz");
+            Planet defaultPlanet = planetManager.getPlanet(DEFAULT_PLANET_HANDLE);
             PlanetGroup planetGroup = planetManager.getGroup(defaultPlanet, groupHandle);
             List subs = planetManager.getTopSubscriptions(planetGroup, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {
