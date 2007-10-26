@@ -31,7 +31,7 @@ public abstract class PlanetUIAction extends UIAction {
     
     private static Log log = LogFactory.getLog(PlanetUIAction.class);
     
-    public static final String PLANET_HANDLE = "zzz_default_planet_zzz";
+    public static final String DEFAULT_PLANET_HANDLE = "default";
     
     // the planet used by all Planet actions
     private Planet planet = null;
@@ -41,9 +41,9 @@ public abstract class PlanetUIAction extends UIAction {
         if(planet == null) {
             try {
                 PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-                planet = pmgr.getPlanetById(PLANET_HANDLE);
+                planet = pmgr.getPlanet(DEFAULT_PLANET_HANDLE);
             } catch(Exception ex) {
-                log.error("Error loading weblogger planet - "+PLANET_HANDLE, ex);
+                log.error("Error loading weblogger planet - "+DEFAULT_PLANET_HANDLE, ex);
             }
         }
         return planet;
