@@ -93,13 +93,13 @@
     
     <br />
     
-    <p class="subtitle"><s:text name="userAdmin.userWeblogs" /></p>
+    <p class="subtitle"><s:text name="userAdmin.userWeblogs" /></p> 
     
-    <s:if test="!user.permissions.isEmpty"> 
+    <s:if test="user.permissions != null && !user.permissions.isEmpty() > 0">  
         
         <p><s:text name="userAdmin.userMemberOf" /></p>  
         <table class="rollertable" style="width: 80%">
-            <s:iterator id="perms" value="user.permissions">
+            <s:iterator id="perms" value="#user.permissions">
                 <tr>
                     <td width="%30">
                         <a href='<s:property value="baseURL" />/<s:property value="#perms.website.handle" />'>
