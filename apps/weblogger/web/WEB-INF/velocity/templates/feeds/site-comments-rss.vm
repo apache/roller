@@ -26,10 +26,10 @@
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.rss($model.categoryPath, $model.excerpts)" />
   <description>$utils.escapeXML($config.siteDescription)</description>
   <language>en-us</language>
-  <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
-  <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
-  <generator>Apache Roller (incubating) $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($comments = $site.getCommentsPager(-1, $config.feedSize).items )
-  #showCommentsRSS20($comments)
+  #set($pager = $site.getCommentsPager(-1, $config.feedSize))
+  <copyright>Copyright $utils.formatDate($pager.lastUpdated, "yyyy")</copyright>
+  <lastBuildDate>$utils.formatRfc822Date($pager.lastUpdated)</lastBuildDate>
+  <generator>Apache Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
+  #showCommentsRSS20($pager.items)
 </channel>
 </rss>

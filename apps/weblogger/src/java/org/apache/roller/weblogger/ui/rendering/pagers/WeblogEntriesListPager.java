@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,6 +58,9 @@ public class WeblogEntriesListPager extends AbstractPager {
     
     // are there more entries?
     private boolean more = false;
+    
+    // most recent update time of current set of entries
+    private Date lastUpdated = null;    
     
     
     public WeblogEntriesListPager(
@@ -147,4 +151,24 @@ public class WeblogEntriesListPager extends AbstractPager {
         return more;
     }
 
+    /** Get last updated time from items in pager */
+    public Date getLastUpdated() {
+        if (lastUpdated == null) {
+            // feeds are sorted by pubtime, so first might not be last updated
+            List<WeblogEntryWrapper> items = (List<WeblogEntryWrapper>)getItems();
+            if (getItems() != null && getItems().size() > 0) {
+                Timestamp newest = ((WeblogEntryWrapper)getItems().get(0)).getUpdateTime();
+                for (WeblogEntryWrapper e : items) {
+                    if (e.getUpdateTime().after(newest)) {
+                        newest = e.getPubTime();
+                    }
+                }
+                lastUpdated = new Date(newest.getTime());
+            } else {
+                // no update so we assume it's brand new
+                lastUpdated = new Date();
+            }
+        }
+        return lastUpdated;
+    }
 }
