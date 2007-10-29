@@ -32,10 +32,10 @@
   #end
   <description>$utils.escapeXML($config.siteDescription)</description>
   <language>en-us</language>
-  <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
-  <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
-  <generator>Apache Roller (incubating) $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($entries = $site.getWeblogEntriesPager(-1, $config.feedSize).items )
-  #showEntriesRSS20($entries)
+  #set($pager = $site.getWeblogEntriesPager(-1, $config.feedSize))
+  <copyright>Copyright $utils.formatDate($pager.lastUpdated, "yyyy")</copyright>
+  <lastBuildDate>$utils.formatRfc822Date($pager.lastUpdated)</lastBuildDate>
+  <generator>Apache Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
+  #showEntriesRSS20($pager.items)
 </channel>
 </rss>
