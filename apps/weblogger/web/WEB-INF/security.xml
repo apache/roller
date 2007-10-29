@@ -171,8 +171,8 @@
         </property>
     </bean>
     
-    <!-- BEGIN: Sample LDAP/RollerDB hybrid security configuration
     <!-- ===================== LDAP AUTHENTICATION ==================== -->
+    <!-- BEGIN: Sample LDAP/RollerDB hybrid security configuration
     <bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
         <constructor-arg value="LDAP_URL"/>
         <property name="managerDn" value="LDAP_USERNAME"/>
@@ -203,8 +203,8 @@
     -->
     <!-- END Sample LDAP/RollerDB hybrid security configuration -->
     
-    <!-- BEGIN: Sample CAS/RollerDB hybrid security configuration
     <!-- ======================== CENTRAL AUTHENTICATION SERVICE (CAS) ======================= -->
+    <!-- BEGIN: Sample CAS/RollerDB hybrid security configuration
     <bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationFailureUrl" value="/roller-ui/login.rol?error=true"/>
