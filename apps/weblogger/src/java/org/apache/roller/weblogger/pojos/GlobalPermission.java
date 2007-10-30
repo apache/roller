@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -54,7 +54,7 @@ public class GlobalPermission extends RollerPermission {
         List<String> roles = WebloggerFactory.getWeblogger().getUserManager().getRoles(user);
         List<String> actionsList = new ArrayList<String>();        
         for (String role : roles) {
-            String impliedActions = WebloggerRuntimeConfig.getProperty("role.action." + role);
+            String impliedActions = WebloggerConfig.getProperty("role.action." + role);
             if (impliedActions != null) {
                 List<String> toAdds = Utilities.stringToStringList(impliedActions, ",");
                 for (String toAdd : toAdds) {
