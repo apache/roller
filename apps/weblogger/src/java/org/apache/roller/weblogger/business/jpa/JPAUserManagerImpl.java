@@ -464,13 +464,11 @@ public class JPAUserManagerImpl implements UserManager {
                 existingPerm = getWeblogPermission(permToCheck.getWeblog(), user);
             } catch (WebloggerException ignored) {}        
         }
-
-        if (existingPerm == null) {
-            // user has no existing perm in a weblog, so try his global perms
-            existingPerm = new GlobalPermission(user);
-        }
+        if (existingPerm != null && existingPerm.implies(perm)) return true;  
         
-        if (existingPerm.implies(perm)) return true;
+        // user has no existing perm in a weblog, so try his global perms
+        GlobalPermission globalPerm = new GlobalPermission(user);
+        if (globalPerm.implies(perm)) return true;
         
         if (log.isDebugEnabled()) {
             log.debug("PERM CHECK FAILED: user "+user.getUserName()+" does not have " + perm.toString());
