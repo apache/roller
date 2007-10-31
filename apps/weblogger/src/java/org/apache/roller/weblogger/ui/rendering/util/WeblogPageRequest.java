@@ -141,6 +141,10 @@ public class WeblogPageRequest extends WeblogRequest {
                     
                 } else if("page".equals(this.context)) {
                     this.weblogPageName = pathElements[1];
+                    String tagsString = request.getParameter("tags");
+                    if (tagsString != null) {
+                        this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));
+                    }
 
                 } else if("tags".equals(this.context)) {
                     String tagsString = pathElements[1].replace('+', ' ');
