@@ -37,7 +37,8 @@ insert into roller_permission (id,username,actions,objectid,objecttype,pending,d
 
 #dropNotNullFromColumn("userrole" "userid" "varchar(48)")
 
-#dropNotNullFromColumn("website" "creator" "varchar(48)")
+#dropNotNullFromColumn("website" "userid" "varchar(48)")
+
 #addColumnNull("website" "creator" "varchar(255)")
 update website as w set 
     lastmodified = lastmodified,
