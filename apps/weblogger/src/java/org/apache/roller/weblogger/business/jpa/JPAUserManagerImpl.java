@@ -465,8 +465,8 @@ public class JPAUserManagerImpl implements UserManager {
             } catch (WebloggerException ignored) {}        
         }
 
-        if (perm instanceof GlobalPermission) {
-            // if user has specified global permission return true
+        if (existingPerm == null) {
+            // user has no existing perm in a weblog, so try his global perms
             existingPerm = new GlobalPermission(user);
         }
         
