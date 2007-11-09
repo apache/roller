@@ -24,6 +24,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * TODO
@@ -51,7 +53,12 @@ abstract class Authenticator {
         try {
             User ud = getUserData(userName);
             String realpassword = ud.getPassword();
-
+        
+        boolean encrypted = Boolean.valueOf(WebloggerConfig.getProperty("passwds.encryption.enabled"));
+        if (encrypted) {
+            password = Utilities.encodePassword(password, WebloggerConfig.getProperty("passwds.encryption.algorithm"));
+        }
+        
             if (!userName.trim().equals(ud.getUserName())) {
                 throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
             }

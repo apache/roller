@@ -362,10 +362,9 @@ public class Comments extends UIAction {
             
             WebloggerFactory.getWeblogger().flush();
             
-            // notify caches of changes
-            for(WeblogEntryComment comm : flushList) {
-                CacheManager.invalidate(comm);
-            }
+            // notify caches of changes by flushing whole site because we can't
+            // invalidate deleted comment objects (JPA nulls the fields out).
+            CacheManager.invalidate(getActionWeblog());
             
             // send notification for all comments changed
             if (MailUtil.isMailConfigured()) {

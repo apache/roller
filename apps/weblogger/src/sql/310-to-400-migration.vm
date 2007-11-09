@@ -118,7 +118,7 @@ update webpage set action = 'weblog' where name = 'Weblog';
 #addColumnNull("website" "customstylesheet" "varchar(128)")
 
 -- fix blogs which have unchecked showalllangs but did not check enablemultilang
-update website set enablemultilang=$db.BOOLEAN_TRUE where showalllangs=$db.BOOLEAN_FALSE;
+update website set enablemultilang=$db.BOOLEAN_TRUE, datecreated=datecreated where showalllangs=$db.BOOLEAN_FALSE;
 
 
 -- some missing foreign key constraints
@@ -159,7 +159,7 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 #dropTableIfExists('rollerconfig')
 
 --- remove old id column of group subscription table
-#dropColumn('rag_group_subscription' 'id')
+-- #dropColumn('rag_group_subscription' 'id')
 
 -- remove old approved, spam, pending columns from comment table
 #dropColumn('roller_comment' 'approved')

@@ -3,12 +3,12 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.1  (Solaris x86)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Solaris x86)">
 	<META NAME="CREATED" CONTENT="20070706;11182000">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20070811;13071400">
+	<META NAME="CHANGED" CONTENT="20071023;23392500">
 	<META NAME="KEYWORDS" CONTENT="OpenDS Directory Server Administration Framework">
-	<STYLE>
+	<STYLE TYPE="text/css">
 	<!--
 		P { margin-bottom: 0.08in; widows: 2; orphans: 2 }
 		P.western { font-family: "Times New Roman", serif }
@@ -148,7 +148,7 @@ Roller Weblogger</B></FONT></FONT></P>
 4.0 </B></FONT></FONT>
 </P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">August 2007</SDFIELD></P>
+<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">October 2007</SDFIELD></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -325,23 +325,23 @@ the settings below into the file and substitute your database and
 mail connection parameters for those in bold.</P>
 <PRE>        <FONT SIZE=2 STYLE="font-size: 11pt">installation.type=auto</FONT>
         <FONT SIZE=2 STYLE="font-size: 11pt">database.configurationType=jdbc</FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.driverClass=<B><I>com.mysql.jdbc.Driver</I></B></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.connectionURL=<B><I>jdbc:mysql://localhost:3306/rollerdb</I></B></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.username=<B><I>scott</I></B></FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.password=<B><I>tiger</I></B></FONT>
+        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.driverClass=<I><B>com.mysql.jdbc.Driver</B></I></FONT>
+        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.connectionURL=<I><B>jdbc:mysql://localhost:3306/rollerdb</B></I></FONT>
+        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.username=<I><B>scott</B></I></FONT>
+        <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.password=<I><B>tiger</B></I></FONT>
         <FONT SIZE=2 STYLE="font-size: 11pt">mail.configurationType=properties</FONT>
-        <FONT SIZE=2 STYLE="font-size: 11pt">mail.hostName=</FONT><TT><B><I><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New">smtp-server.example.com</FONT></FONT></I></B></TT>
-<TT>        <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New"><SPAN STYLE="font-weight: medium"><SPAN STYLE="font-style: normal">mail.username=</SPAN></SPAN><B><I>scott</I></B></FONT></FONT></TT>
-<TT>        <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New"><SPAN STYLE="font-weight: medium"><SPAN STYLE="font-style: normal">mail.password=</SPAN></SPAN><B><I>tiger</I></B></FONT></FONT></TT>
+        <FONT SIZE=2 STYLE="font-size: 11pt">mail.hostname=</FONT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>smtp-server.example.com</B></I></FONT></FONT></TT>
+<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.username=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>scott</B></I></FONT></FONT></TT>
+<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.password=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>tiger</B></I></FONT></FONT></TT>
 </PRE><P CLASS="western">
 <B>STEP 4: Check your Servlet container's JDBC and JavaMail setup.
 </B><SPAN STYLE="font-weight: medium">Make sure you've got the JDBC
 driver for your database in your Servlet container's classpath, e.g.
-on Tomcat place the driver JAR in <FONT FACE="Courier New, monospace">common/lib</FONT>.
+on Tomcat place the driver JAR in </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">common/lib</SPAN></FONT><SPAN STYLE="font-weight: medium">.
 And on Tomcat, if you want to be able to send mail you'll need to add
-the JavaMail and Activation jars (<FONT FACE="Courier New, monospace">mail.jar</FONT>
-and <FONT FACE="Courier New, monospace">activation.jar</FONT>) there
-too.</SPAN></P>
+the JavaMail and Activation jars (</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">mail.jar</SPAN></FONT><SPAN STYLE="font-weight: medium">
+and </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">activation.jar</SPAN></FONT><SPAN STYLE="font-weight: medium">)
+there too.</SPAN></P>
 <P CLASS="western"><B>STEP 5: Deploy Roller to your Servlet container</B>
 using your container's Admin Console deploy Roller as a directory.
 The Roller WAR directory is in the installation directory under
@@ -385,22 +385,22 @@ you're using Tomcat, check the Tomcat Considerations section below,
 otherwise you are ready to move on to Section 4: Download and
 un-package Roller.</I></FONT></FONT></P>
 <H2 CLASS="western">3.1Tomcat: JavaMail and Activation</H2>
-<P CLASS="western" STYLE="font-style: normal"><FONT SIZE=3><FONT FACE="Times New Roman, serif">Tomcat
+<P CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Tomcat
 does not include the Java Mail and Activation jars that Roller needs
 for email notification, So, if you like to use Roller's e-mail
 notification features, you'll need to download those jars and place
 them in Tomcat's classpath. Download them from Sun
-(</FONT></FONT><A HREF="http://java.sun.com/products/javamail"><FONT SIZE=3><FONT FACE="Times New Roman, serif">http://java.sun.com/products/javamail</FONT></FONT></A><FONT SIZE=3><FONT FACE="Times New Roman, serif">)
-and place them in Tomcat's </FONT><FONT FACE="Courier New, monospace">common/lib</FONT><FONT FACE="Times New Roman, serif">
+(</FONT></FONT><A HREF="http://java.sun.com/products/javamail"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>http://java.sun.com/products/javamail</FONT></FONT></A><FONT FACE="Times New Roman, serif"><FONT SIZE=3>)
+and place them in Tomcat's </FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3>common/lib</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3>
 directory.</FONT></FONT></P>
 <H2 CLASS="western">3.2Tomcat: URI encoding needed for I118N</H2>
-<P CLASS="western"><SPAN STYLE="font-style: normal"><FONT SIZE=3><FONT FACE="Times New Roman, serif">Roller
+<P CLASS="western"><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">Roller
 supports internationalization (I18N), but on Tomcat some additional
 configuration is necessary. You must ensure that Tomcat's URI
 encoding is set to UTF-8. You can do this by editing the Tomcat
-configuration file </FONT><FONT FACE="Courier New">conf/server.xml</FONT><FONT FACE="Times New Roman, serif">
-and adding </FONT><FONT FACE="Courier New, monospace">URIEncoding=&rdquo;UTF-8&rdquo;</FONT><FONT FACE="Times New Roman, serif">
-to each connector element, as shown below:</FONT></FONT></SPAN></P>
+configuration file </SPAN></FONT></FONT><FONT FACE="Courier New"><FONT SIZE=3><SPAN STYLE="font-style: normal">conf/server.xml</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+and adding </SPAN></FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3><SPAN STYLE="font-style: normal">URIEncoding=&rdquo;UTF-8&rdquo;</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3><SPAN STYLE="font-style: normal">
+to each connector element, as shown below:</SPAN></FONT></FONT></P>
 <PRE>   &lt;Connector port=&quot;8080&quot;
       maxThreads=&quot;150&quot; minSpareThreads=&quot;25&quot; maxSpareThreads=&quot;75&quot;
       enableLookups=&quot;false&quot; redirectPort=&quot;8443&quot; debug=&quot;0&quot; 
@@ -532,12 +532,12 @@ with the content below, but replacing the bold/italic text the
 settings appropriate for your database and mail server.</P>
 <PRE>   installation.type=auto
    database.configurationType=jdbc
-   database.jdbc.driverClass=<B><I>JDBC driver class name</I></B>]
-   database.jdbc.connectionURL=<B><I>JDBC connection URL</I></B>
-   database.jdbc.username=<B><I>database username</I></B>
-   database.jdbc.password=<B><I>database password</I></B>
+   database.jdbc.driverClass=<I><B>JDBC driver class name</B></I>]
+   database.jdbc.connectionURL=<I><B>JDBC connection URL</B></I>
+   database.jdbc.username=<I><B>database username</B></I>
+   database.jdbc.password=<I><B>database password</B></I>
    mail.configurationType=properties
-   mail.hostName=<B><I>mail server hostname</I></B></PRE><P CLASS="western">
+   mail.hostname=<I><B>mail server hostname</B></I></PRE><P CLASS="western">
 <BR><BR>
 </P>
 <P CLASS="western">The <FONT FACE="Courier New, monospace">installation.type=auto</FONT>
@@ -557,14 +557,14 @@ driver class name, an example MySQL connection URL and
 username/password settings for the mail connection.</P>
 <PRE>   installation.type=auto
    database.configurationType=jdbc
-   database.jdbc.driverClass=<B><I>com.mysql.jdbc.Driver</I></B>
-   database.jdbc.connectionURL=<B><I>jdbc:mysql://localhost:3306/rollerdb</I></B>
-   database.jdbc.username=<B><I>scott</I></B>
-   database.jdbc.password=<B><I>tiger</I></B>
+   database.jdbc.driverClass=<I><B>com.mysql.jdbc.Driver</B></I>
+   database.jdbc.connectionURL=<I><B>jdbc:mysql://localhost:3306/rollerdb</B></I>
+   database.jdbc.username=<I><B>scott</B></I>
+   database.jdbc.password=<I><B>tiger</B></I>
    mail.configurationType=properties
-   mail.hostName=<TT><B><I><FONT FACE="Courier New">smtp-server.example.com</FONT></I></B></TT>
-<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-weight: medium"><SPAN STYLE="font-style: normal">mail.username=</SPAN></SPAN><B><I>scott</I></B></FONT></TT>
-<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-weight: medium"><SPAN STYLE="font-style: normal">mail.password=</SPAN></SPAN><B><I>tiger</I></B></FONT></TT>
+   mail.hostname=<TT><FONT FACE="Courier New"><I><B>smtp-server.example.com</B></I></FONT></TT>
+<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.username=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>scott</B></I></FONT></TT>
+<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.password=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>tiger</B></I></FONT></TT>
 </PRE><P CLASS="western">
 Next, we'll deploy Roller.</P>
 <H1 CLASS="western" STYLE="page-break-before: always">7Deploy Roller</H1>
@@ -617,9 +617,9 @@ applications. There's a <B>/roller</B> link to Roller itself and
 there are options to start, stop, reload and undeploy.</SPAN></P>
 <P CLASS="western"><IMG SRC="roller-install-guide_html_m21a69a6a.png" NAME="graphics4" ALIGN=LEFT WIDTH=596 HEIGHT=77 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
 Roller doesn't start-up, look for the problem in the logs. You can
-find them in Tomcat's <FONT FACE="Courier New, monospace">logs</FONT>
-directory. The Tomcat log file is <FONT FACE="Courier New, monospace">catalina.out</FONT>
-and the Roller log  is <FONT FACE="Courier New, monospace">roller.log</FONT>.</SPAN></P>
+find them in Tomcat's </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">logs</SPAN></FONT><SPAN STYLE="background: transparent">
+directory. The Tomcat log file is </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">catalina.out</SPAN></FONT><SPAN STYLE="background: transparent">
+and the Roller log  is </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">roller.log</SPAN></FONT><SPAN STYLE="background: transparent">.</SPAN></P>
 <H4 CLASS="western" STYLE="page-break-before: always">Deploying to
 Glassfish v2.0</H4>
 <P CLASS="western">You can also deploy to Glassfish as either a
@@ -735,9 +735,9 @@ exists and is writable by Roller.</P>
 <P CLASS="western">Enable Planet by adding the following to your
 <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
 file:</P>
-<PRE>   <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New, monospace">planet.aggregator.enabled=<B>true</B></FONT></FONT>
+<PRE>   <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New, monospace">planet.aggregator.enabled=</FONT><FONT FACE="Courier New, monospace"><B>true</B></FONT></FONT>
 
-   <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New, monospace"># Tasks which are enabled.  Only tasks listed here will be run.<BR>   tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\<BR>   TurnoverReferersTask,PingQueueTask,<B>RefreshPlanetTask,SyncWebsitesTask</B></FONT></FONT>
+   <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier New, monospace"># Tasks which are enabled.  Only tasks listed here will be run.<BR>   tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\<BR>   TurnoverReferersTask,PingQueueTask,</FONT><FONT FACE="Courier New, monospace"><B>RefreshPlanetRollerTask,SyncWebsitesTask</B></FONT></FONT>
    
    <FONT SIZE=2 STYLE="font-size: 11pt"># Set of page models specifically for site-wide rendering</FONT>
    <FONT SIZE=2 STYLE="font-size: 11pt">rendering.siteModels=\</FONT>
@@ -778,10 +778,10 @@ should look like this:<BR></SPAN><BR><BR>
 will be display your Planet entries. You can find your Planet feeds
 at the following URLs:</SPAN></P>
 <UL>
-	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/planetrss"><SPAN STYLE="background: #ffffff"><FONT COLOR="#000000">Main
-	Planet feed<BR><FONT FACE="Courier New, monospace">http://localhost:8080/roller/planetrss</FONT></FONT></SPAN></A></SPAN></P>
-	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/rollerrss"><SPAN STYLE="background: #ffffff"><FONT COLOR="#000000">Per
-	group feed<BR><FONT FACE="Courier New, monospace">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</FONT></FONT></SPAN></A></SPAN></P>
+	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Main
+	Planet feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss</SPAN></FONT></FONT></A></SPAN></P>
+	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Per
+	group feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</SPAN></FONT></FONT></A></SPAN></P>
 </UL>
 <H2 CLASS="western">9.2Changing keys in security.xml</SPAN></H2>
 <P CLASS="western">Starting with version 2.1, Roller uses the Acegi
@@ -838,13 +838,13 @@ like this:</P>
 <PRE>   installation.type=auto
 
    database.configurationType=jdbc
-   database.jdbc.driverClass=<B><I>JDBC driver class name</I></B>]
-   database.jdbc.connectionURL=<B><I>JDBC connection URL</I></B>
-   database.jdbc.username=<B><I>database username</I></B>
-   database.jdbc.password=<B><I>database password</I></B>
+   database.jdbc.driverClass=<I><B>JDBC driver class name</B></I>]
+   database.jdbc.connectionURL=<I><B>JDBC connection URL</B></I>
+   database.jdbc.username=<I><B>database username</B></I>
+   database.jdbc.password=<I><B>database password</B></I>
 
    mail.configurationType=properties
-   mail.hostName=<B><I>mail server hostname</I></B>
+   mail.hostName=<I><B>mail server hostname</B></I>
 </PRE><P CLASS="western">
 You do it like this:</P>
 <PRE>    installation.type=auto
@@ -961,18 +961,19 @@ default, we've turned off the old system. </SPAN>
 are upgrading and you want your weblogs to work, you <I>must</I>
 override this Roller property to enable the old &ldquo;legacy&rdquo;
 template system to work:</SPAN></P>
-<P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	rendering.legacyModels.enabled=true</SPAN></FONT></P>
+<P CLASS="western"><A NAME="DDE_LINK"></A><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	rendering.legacyModels.enabled=true</SPAN></FONT></P>
 <P CLASS="western"><SPAN STYLE="background: transparent">See <B>Section
 11</B> for information on overriding Roller startup properties.</SPAN></P>
 <H4 CLASS="western">New task management system</H4>
 <P CLASS="western" STYLE="margin-bottom: 0in"><SPAN STYLE="background: transparent"><SPAN STYLE="font-weight: medium">In
 Roller 3.1 we changed the scheduled task properties, so if you were
-overriding  the<FONT FACE="Courier New, monospace"> tasks.daily</FONT>
-or <FONT FACE="Courier New, monospace">tasks.hourly</FONT> properties
-you need to change your <FONT FACE="Courier New, monospace">roller-custom.properties</FONT>
+overriding  the</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">
+tasks.daily</SPAN></FONT><SPAN STYLE="font-weight: medium"> or
+</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">tasks.hourly</SPAN></FONT><SPAN STYLE="font-weight: medium">
+properties you need to change your </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">roller-custom.properties</SPAN></FONT><SPAN STYLE="font-weight: medium">
 file. Refer to the notes in </SPAN><B>Section 11</B><SPAN STYLE="font-weight: medium">
-  <FONT FACE="Courier New, monospace">roller.properties</FONT> in the
-Scheduled Tasks Configuration area.</SPAN></SPAN></P>
+  </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">roller.properties</SPAN></FONT><SPAN STYLE="font-weight: medium">
+in the Scheduled Tasks Configuration area.</SPAN></SPAN></P>
 <H4 CLASS="western">New package names</H4>
 <P CLASS="western"><SPAN STYLE="background: transparent">In Roller
 3.0 or package names went from from org.roller to org.apache.roller.
@@ -980,6 +981,15 @@ In Roller 4.0 they've changed again to org.apache.roller.weblogger.
 So check your configuration files for references to the old package
 names. And if you created any plugins, you'll have to recompile them
 against the new code base.</SPAN></P>
+<H4 CLASS="western">Encrypted passwords now the default</H4>
+<P CLASS="western"><SPAN STYLE="background: transparent">Roller now
+defaults to storing passwords in the database in an emcrypted format.
+So, if you are upgrading an older version of Roller and you went with
+the default setting for encrypted passwords, which was off by
+default, then you'll need to set this propery in your
+</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">roller-custom.properties</SPAN></FONT><SPAN STYLE="background: transparent">
+file:</SPAN></P>
+<P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	passwds.encryption.enabled=false</SPAN></FONT></P>
 <H4 CLASS="western">Non-core themes removed</H4>
 <P CLASS="western"><SPAN STYLE="background: transparent">The Roller
 project is establishing a community site for sharing and maintaining

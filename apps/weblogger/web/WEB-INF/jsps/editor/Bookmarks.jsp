@@ -33,16 +33,16 @@ function onDelete()
 {
     if ( confirm("<s:text name='bookmarksForm.delete.confirm' />") ) 
     {
-        document.bookmarksForm.method.value = "deleteSelected";
-        document.bookmarksForm.submit();
+        document.bookmarks.method.value = "deleteSelected";
+        document.bookmarks.submit();
     }
  }
 function onMove() 
 {
     if ( confirm("<s:text name='bookmarksForm.move.confirm' />") ) 
     {
-        document.bookmarksForm.method.value = "moveSelected";
-        document.bookmarksForm.submit();
+        document.bookmarks.method.value = "moveSelected";
+        document.bookmarks.submit();
     }
 }
 //-->

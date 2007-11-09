@@ -956,7 +956,64 @@ public class WeblogEntryTest extends TestCase {
      */
     public void testEntryAttributeCRUD() throws Exception {
         
-        // TODO: implement entry attribute test
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntry entry = null;
+        
+        WeblogEntry testEntry = new WeblogEntry();
+        testEntry.setTitle("entryTestEntry");
+        testEntry.setLink("testEntryLink");
+        testEntry.setText("blah blah entry");
+        testEntry.setAnchor("testEntryAnchor");
+        testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setWebsite(testWeblog);
+        testEntry.setCreatorUserName(testUser.getUserName());
+        
+        testEntry.putEntryAttribute("att_mediacast_url", "http://podcast-schmodcast.com");
+        testEntry.putEntryAttribute("att_mediacast_type", "application/drivel");
+        testEntry.putEntryAttribute("att_mediacast_length", "3141592654");
+                    
+        WeblogCategory cat = emgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+        testEntry.setCategory(cat);
+        
+        // create a weblog entry
+        emgr.saveWeblogEntry(testEntry);
+        String id = testEntry.getId();
+        TestUtils.endSession(true);
+        
+        // make sure entry was created
+        entry = emgr.getWeblogEntry(id);
+        assertNotNull(entry);
+        assertEquals(testEntry, entry);
+        assertNotNull(entry.getEntryAttributes());
+        assertEquals(3, entry.getEntryAttributes().size());
+        assertNotNull(entry.findEntryAttribute("att_mediacast_url"));
+        assertNotNull(entry.findEntryAttribute("att_mediacast_type"));
+        assertNotNull(entry.findEntryAttribute("att_mediacast_length"));
+        assertEquals("http://podcast-schmodcast.com", entry.findEntryAttribute("att_mediacast_url"));
+        assertEquals("application/drivel", entry.findEntryAttribute("att_mediacast_type"));
+        assertEquals("3141592654", entry.findEntryAttribute("att_mediacast_length"));
+        
+        // update a weblog entry
+        entry.setTitle("testtest");
+        emgr.saveWeblogEntry(entry);
+        TestUtils.endSession(true);
+        
+        // make sure entry was updated
+        entry = null;
+        entry = emgr.getWeblogEntry(id);
+        assertNotNull(entry);
+        assertEquals("testtest", entry.getTitle());
+        
+        // delete a weblog entry
+        emgr.removeWeblogEntry(entry);
+        TestUtils.endSession(true);
+        
+        // make sure entry was deleted
+        entry = null;
+        entry = emgr.getWeblogEntry(id);
+        assertNull(entry);
     }
     
     
