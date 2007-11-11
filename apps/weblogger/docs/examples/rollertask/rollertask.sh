@@ -37,6 +37,7 @@ ${JAVA_HOME}/bin/java \
     -Dcatalina.base=. \
     -Droller.custom.config=${CONFIG_OVERRIDE} \
     -cp ${WEBAPP_DIR}/WEB-INF/lib/roller-business.jar \
+    ${WEBAPP_DIR}/WEB-INF/lib/roller-core.jar \
     org.apache.roller.business.runnable.TaskRunner \
     ${WEBAPP_DIR} ${JARS_DIR} \
     $1
