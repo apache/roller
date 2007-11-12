@@ -23,7 +23,7 @@ package org.apache.roller.scripting;
 
 import java.io.File;
 import groovy.lang.*;
-import org.apache.roller.util.*;
+import org.apache.roller.weblogger.util.*;
 
 /**
  * Setup Roller classloader and run a Groovy script

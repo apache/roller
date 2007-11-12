@@ -6,9 +6,15 @@
         
     <path id="scripting.path">
         <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">   
-            <include name="roller-web.jar"/>   
+            <include name="roller-core.jar"/>   
             <include name="roller-business.jar"/>   
-            <include name="commons-logging.jar"/>   
+            <include name="roller-web.jar"/>   
+        </fileset>
+        <fileset dir="${tools.dir}/lib">   
+            <include name="commons-logging-1.0.4.jar"/>   
+        </fileset>
+        <fileset dir="${tools.dir}/openjpa-0.9.7">   
+            <include name="openjpa-0.9.7-incubating.jar"/>   
         </fileset>
         <fileset dir="${groovy.home}/lib">
             <include name="groovy-1.0.jar"/>

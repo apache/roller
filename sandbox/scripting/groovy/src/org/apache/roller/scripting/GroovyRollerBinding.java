@@ -25,7 +25,7 @@ import java.io.Writer;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ui.rendering.model.UtilitiesModel;
+import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 
 /**
  * Binds Roller model objects along with Groovlet and GSP style "out" and "html" variables.
