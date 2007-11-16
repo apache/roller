@@ -374,7 +374,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         
         Map params = new HashMap();
         params.put("q", "{searchTerms}");
-        params.put("page", "{startPage?}");
+        params.put("page", "{startPage}");
         
         return url.toString() + URLUtilities.getQueryString(params);
     }
@@ -392,7 +392,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         
         Map params = new HashMap();
         params.put("q", "{searchTerms}");
-        params.put("page", "{startPage?}");
+        params.put("page", "{startPage}");
         
         return url.toString() + URLUtilities.getQueryString(params);
     }
