@@ -18,7 +18,9 @@
 *#<?xml version="1.0" encoding='utf-8'?>
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/roller-ui/styles/atom.xsl" media="screen"?>#end
 #set($pager = $model.searchResultsPager)
-<feed xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app">
+<feed xmlns="http://www.w3.org/2005/Atom" 
+      xmlns:app="http://www.w3.org/2007/app"
+      xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
 
     <title type="html">$utils.escapeXML($config.siteName)</title>
     <subtitle type="html">$utils.escapeXML($config.siteDescription)</subtitle>
@@ -31,7 +33,7 @@
         href="$utils.escapeXML($url.absoluteSearch($model.term, $model.categoryPath, $model.page))" />
     
     <link rel="search" type="application/opensearchdescription+xml" 
-        href="$utils.escapeXML($url.openSearchSite())" />
+        href="$utils.escapeXML($url.openSearchSite)" />
     <opensearch:Query role="request" searchTerms="$model.term" startPage="1" />
 
     #showFeedHistory($pager)

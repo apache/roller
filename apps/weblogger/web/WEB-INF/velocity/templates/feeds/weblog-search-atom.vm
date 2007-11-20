@@ -33,7 +33,7 @@
         href="$utils.escapeXML($url.absoluteSearch($model.term, $model.categoryPath, $model.page))" />
 
     <link rel="search" type="application/opensearchdescription+xml" 
-        href="$utils.escapeXML($url.openSearchWeblog())" />
+        href="$utils.escapeXML($url.openSearchWeblog)" />
     <opensearch:Query role="request" searchTerms="$model.term" startPage="1" />
 
     #showFeedHistory($pager)
