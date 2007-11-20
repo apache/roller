@@ -237,8 +237,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogManager weblogMgr = roller.getWeblogManager();
             User user = roller.getUserManager().getUserByUserName(userid);
-            Timestamp current =
-                    new Timestamp(System.currentTimeMillis());
+            Timestamp current = new Timestamp(System.currentTimeMillis());
             
             WeblogEntry entry = new WeblogEntry();
             entry.setTitle(title);
@@ -249,6 +248,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setWebsite(website);
             entry.setCreator(user);
             entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
+            entry.setAllowComments(website.getDefaultAllowComments());
+        
+            // apply weblog default plugins
+            if (website.getDefaultPlugins() != null) {
+                entry.setPlugins(website.getDefaultPlugins());
+            }
+            
             if (Boolean.valueOf(publish).booleanValue()) {
                 entry.setStatus(WeblogEntry.PUBLISHED);
             } else {
