@@ -10,15 +10,15 @@
     </parent>
 
     <groupId>org.apache.roller</groupId>
-    <artifactId>roller-weblogger</artifactId>
-    <name>Roller :: Weblogger :: WAR</name>
+    <artifactId>roller-planet</artifactId>
+    <name>Roller :: Planet :: WAR</name>
 
     <version>4.0</version>
 
     <packaging>war</packaging>
 
     <url>http://roller.apache.org/</url>
-    <description>The roller weblogger war built using ant</description>
+    <description>The roller planet war built using ant</description>
     <scm>
         <connection>scm:svn:https://svn.apache.org/repos/asf/roller</connection>
         <url>https://svn.apache.org/viewvc/roller</url>
