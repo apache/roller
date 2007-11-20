@@ -288,6 +288,10 @@ public class SiteWideCache implements CacheHandler {
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
         
+        if (feedRequest.getTerm() != null) {
+            key.append("/search/").append(feedRequest.getTerm());
+        }
+        
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();
             try {

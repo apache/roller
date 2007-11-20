@@ -165,7 +165,10 @@ public class WeblogFeedCache {
         
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
-        key.append("/").append(feedRequest.getTerm());
+        
+        if (feedRequest.getTerm() != null) {
+            key.append("/search/").append(feedRequest.getTerm());
+        }
         
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();
