@@ -20,7 +20,7 @@
 #set($pager = $model.searchResultsPager)
 <feed xmlns="http://www.w3.org/2005/Atom" 
       xmlns:app="http://www.w3.org/2007/app"
-      xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+      xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
 
     <title type="html">$utils.escapeXML($config.siteName)</title>
     <subtitle type="html">$utils.escapeXML($config.siteDescription)</subtitle>
