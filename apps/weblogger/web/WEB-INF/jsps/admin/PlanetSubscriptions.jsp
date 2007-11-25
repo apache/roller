@@ -25,13 +25,7 @@ function confirmSubDelete(subUrl, title) {
 }
 </script>
         
-<s:if test='groupHandle != "all"' >
-<h1>
-<s:text name="planetSubscriptions.title" />&nbsp;[group: <s:property value="groupHandle" />]
-</h1>
-</s:if>        
-
-
+      
 <s:if test="groupHandle == 'all'" >
     <p class="subtitle"><s:text name="planetSubscriptions.subtitle.addMain" /></p>
     <p><s:text name="planetSubscriptions.prompt.addMain" /></p>
