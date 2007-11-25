@@ -20,9 +20,10 @@ package org.apache.roller.scripting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.pojos.Template;
-import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RendererFactory;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.Renderer;
+import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 
 /**
  * RendererFactory that handles Groovlet-style templates w/language name "groovlet"
@@ -35,9 +36,9 @@ public class GroovletRendererFactory implements RendererFactory {
         if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
         }        
-        if("groovlet".equals(template.getTemplateLanguage())) {             
+        if("groovlet".equals(template.getTemplateLanguage()) && template instanceof WeblogTemplate) {             
             try {
-               renderer = new GroovletRenderer(template);
+               renderer = new GroovletRenderer((WeblogTemplate)template);
             } catch(Exception ex) {
                 return null;
             }                        

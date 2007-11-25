@@ -16,10 +16,22 @@
 * directory of this distribution.
 */
 
-username = "scratch";
+if (args.length < 2) {
+    println "USAGE: groovy removeuser.gy <username>"; 
+    return;
+}
 
+username = args[0];
+
+org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
 roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
+
 user = roller.getUserManager().getUserByUserName(username);
+if (user == null) {
+    println "User ${username} not found";
+    return;
+}
 roller.getUserManager().removeUser(user);
 roller.flush();
 

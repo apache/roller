@@ -22,9 +22,10 @@ import groovy.text.SimpleTemplateEngine;
 import groovy.text.TemplateEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.pojos.Template;
-import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RendererFactory;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.Renderer;
+import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 
 /**
  * RendererFactory that handles Groovy Server Page (GSP) style templates 
@@ -39,9 +40,9 @@ public class GSPRendererFactory implements RendererFactory {
         if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
         }
-        if("gsp".equals(template.getTemplateLanguage())) {
+        if("gsp".equals(template.getTemplateLanguage()) && template instanceof WeblogTemplate) {
             try {
-                renderer = new GSPRenderer(templateEngine, template); 
+                renderer = new GSPRenderer(templateEngine, (WeblogTemplate)template); 
             } catch(Exception ex) {
                 return null;
             }

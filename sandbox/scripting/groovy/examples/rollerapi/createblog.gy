@@ -28,6 +28,8 @@ blogname =    handle;
 description = handle;
 theme =       "basic";
 
+org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
 roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
 
 user = roller.getUserManager().getUserByUserName(username);
@@ -35,18 +37,12 @@ if (user == null) {
     println "ERROR: user ${username} not found";
     System.exit(-1);
 } 
-website = new org.apache.roller.weblogger.pojos.Weblog(
-   handle, 
-   user,
-   blogname,
-   description,
-   user.getEmailAddress(),
-   user.getEmailAddress(),
-   theme,
-   user.getLocale(),
-   user.getTimeZone());
+weblog = new org.apache.roller.weblogger.pojos.Weblog(
+   handle, user, blogname, description,
+   user.getEmailAddress(), user.getEmailAddress(), theme,
+   user.getLocale(), user.getTimeZone());
 try {
-   roller.getUserManager().addWebsite(website);
+   roller.getUserManager().addWebsite(weblog);
    roller.flush();
 } catch (Exception e) {
    e.printStackTrace();

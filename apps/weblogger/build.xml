@@ -500,10 +500,7 @@ ro.buildUser=${user.name}
         <copy todir="${build.dist.sources}">
             <fileset dir="${basedir}/../.."> 
                 
-                <include name="**/**" />
-                
-                <!-- Don't ship top level build script, it's confusing -->
-                <exclude name="build.xml"/>    
+                <include name="**/**" />  
                 
                 <!-- Or marginalia -->
                 <exclude name="doap_roller.rdf"/>    

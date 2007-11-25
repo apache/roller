@@ -25,9 +25,9 @@ import java.io.Writer;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.pojos.Template;
-import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RenderingException;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.Renderer;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
 
 /**
  * Renderer that evaluates Roller Template as Groovy script.
@@ -44,9 +44,9 @@ import org.apache.roller.ui.rendering.RenderingException;
  */
 public class GroovletRenderer implements Renderer {
     private static Log log = LogFactory.getLog(GroovletRenderer.class);
-    private Template template = null;
+    private WeblogTemplate template = null;
     
-    public GroovletRenderer(Template template) {
+    public GroovletRenderer(WeblogTemplate template) {
         this.template = template;
     }
     

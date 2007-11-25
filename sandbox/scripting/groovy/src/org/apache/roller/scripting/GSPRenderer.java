@@ -26,9 +26,10 @@ import java.io.Writer;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.pojos.Template;
-import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RenderingException;
+import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.ui.rendering.Renderer;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
 
 /**
  * Renderer that compiles/executes Roller Template as a Groovy Template.
@@ -45,10 +46,10 @@ import org.apache.roller.ui.rendering.RenderingException;
 public class GSPRenderer implements Renderer {
     private static Log log = LogFactory.getLog(GroovletRenderer.class);
     private groovy.text.Template groovyTemplate = null;   
-    private Template template = null;
+    private WeblogTemplate template = null;
     private Exception parseException = null;
     
-    public GSPRenderer(TemplateEngine templateEngine, Template template) {
+    public GSPRenderer(TemplateEngine templateEngine, WeblogTemplate template) {
         this.template = template;
         try {
             // TODO: implement caching for compiled templates
