@@ -35,6 +35,7 @@ import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
@@ -141,11 +142,16 @@ public class UtilitiesModel implements Model {
         }
         return false;
     }
-    
+        
     public boolean isUserAuthenticated() {
         return (parsedRequest.getAuthenticUser() != null);
     }
-        
+       
+    public UserWrapper getAuthenticatedUser() {
+        return parsedRequest.getAuthenticUser() != null 
+                ? UserWrapper.wrap(parsedRequest.getUser()) : null;
+    }
+             
     //-------------------------------------------------------------- Date utils
     /**
      * Return date for current time.
