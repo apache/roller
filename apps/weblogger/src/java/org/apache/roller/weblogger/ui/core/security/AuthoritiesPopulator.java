@@ -18,7 +18,7 @@
 package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.Iterator;
-
+import java.util.List;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.ldap.LdapDataAccessException;
@@ -48,12 +48,14 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
      */
     public GrantedAuthority[] getGrantedAuthorities(LdapUserDetails userDetails) throws LdapDataAccessException {
 
-
         User userData = null;
+        List roles = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             userData = umgr.getUserByUserName(userDetails.getUsername(), Boolean.TRUE);
+            roles = umgr.getRoles(userData);
+            
         } catch (WebloggerException ex) {
             throw new LdapDataAccessException("ERROR in user lookup", ex);
         }
@@ -62,11 +64,12 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             throw new LdapDataAccessException("ERROR no user: " + userDetails.getUsername());
         }
 
-        int roleCount = userData.getRoles().size();
+        
+        int roleCount = roles.size();
         if (defaultRole != null) roleCount++;
         GrantedAuthority[] authorities = new GrantedAuthorityImpl[roleCount];
         int i = 0;
-        for (Iterator it = userData.getRoles().iterator(); it.hasNext();) {
+        for (Iterator it = roles.iterator(); it.hasNext();) {
             UserRole role = (UserRole) it.next();
             authorities[i++] = new GrantedAuthorityImpl(role.getRole());
         }

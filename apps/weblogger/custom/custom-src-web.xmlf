@@ -3,7 +3,6 @@
     Your classes must be under the package org/apache/roller/weblogger/ui/
  -->
 <!--
-<src dir="${basedir}/custom/src" />
+<src dir="${basedir}/mystuff/src" /> 
 -->
-
 

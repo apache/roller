@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -43,8 +42,9 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.I18nUtils;
 
 
@@ -90,14 +90,13 @@ public class Weblog implements Serializable {
     private String  pageModels       = new String();
     private boolean enableMultiLang = false;
     private boolean showAllLangs = true;
-    private String customStylesheetPath = null;
-    private String iconPath = null;
-    private String about = null;
-    
+    private String  customStylesheetPath = null;
+    private String  iconPath = null;
+    private String  about = null;
+    private String  creator = null;     
     
     // Associated objects
-    private User           creator = null; 
-    private List               permissions = new ArrayList();
+    private List           permissions = new ArrayList();
     private WeblogCategory bloggerCategory = null;
     private WeblogCategory defaultCategory = null;
     
@@ -108,7 +107,7 @@ public class Weblog implements Serializable {
     
     public Weblog(
             String handle,
-            User creator,
+            String creator,
             String name,
             String desc,
             String email,
@@ -169,12 +168,6 @@ public class Weblog implements Serializable {
     }
     public void setPermissions(List perms) {
         permissions = perms;
-    }
-    /**
-     * Remove permission from collection.
-     */
-    public void removePermission(WeblogPermission perms) {
-        permissions.remove(perms);
     }
     
     
@@ -275,19 +268,28 @@ public class Weblog implements Serializable {
     }
     
     /**
-     * Original creator of website
-     *
+     * Original creator of website.
      * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field
-     * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
     public org.apache.roller.weblogger.pojos.User getCreator() {
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(creator);
+        } catch (Exception e) {
+            log.error("ERROR fetching user object for username: " + creator, e);
+        }
+        return null;
+    }
+    
+    /**
+     * Username of original creator of website.
+     * @roller.wrapPojoMethod type="pojo"
+     */
+    public String getCreatorUserName() {
         return creator;
     }
     
-    /** @ejb:persistent-field */
-    public void setCreator( org.apache.roller.weblogger.pojos.User ud ) {
-        creator = ud;
+    public void setCreatorUserName(String creatorUserName) {
+        creator = creatorUserName;
     }
     
     /**
@@ -587,31 +589,31 @@ public class Weblog implements Serializable {
      */
     public void setData(Weblog other) {
         
-        this.id = other.getId();
-        this.name = other.getName();
-        this.handle = other.getHandle();
-        this.description = other.getDescription();
-        this.creator = other.getCreator();
-        this.defaultPageId = other.getDefaultPageId();
-        this.weblogDayPageId = other.getWeblogDayPageId();
-        this.enableBloggerApi = other.getEnableBloggerApi();
-        this.bloggerCategory = other.getBloggerCategory();
-        this.defaultCategory = other.getDefaultCategory();
-        this.editorPage = other.getEditorPage();
-        this.blacklist = other.getBlacklist();
-        this.allowComments = other.getAllowComments();
-        this.emailComments = other.getEmailComments();
-        this.emailAddress = other.getEmailAddress();
-        this.emailFromAddress = other.getEmailFromAddress();
-        this.editorTheme = other.getEditorTheme();
-        this.locale = other.getLocale();
-        this.timeZone = other.getTimeZone();
-        this.defaultPlugins = other.getDefaultPlugins();
-        this.enabled = other.getEnabled();
-        this.dateCreated = other.getDateCreated();
-        this.entryDisplayCount = other.getEntryDisplayCount();
-        this.active = other.getActive();
-        this.lastModified = other.getLastModified();
+        this.setId(other.getId());
+        this.setName(other.getName());
+        this.setHandle(other.getHandle());
+        this.setDescription(other.getDescription());
+        this.setCreatorUserName(other.getCreatorUserName());
+        this.setDefaultPageId(other.getDefaultPageId());
+        this.setWeblogDayPageId(other.getWeblogDayPageId());
+        this.setEnableBloggerApi(other.getEnableBloggerApi());
+        this.setBloggerCategory(other.getBloggerCategory());
+        this.setDefaultCategory(other.getDefaultCategory());
+        this.setEditorPage(other.getEditorPage());
+        this.setBlacklist(other.getBlacklist());
+        this.setAllowComments(other.getAllowComments());
+        this.setEmailComments(other.getEmailComments());
+        this.setEmailAddress(other.getEmailAddress());
+        this.setEmailFromAddress(other.getEmailFromAddress());
+        this.setEditorTheme(other.getEditorTheme());
+        this.setLocale(other.getLocale());
+        this.setTimeZone(other.getTimeZone());
+        this.setDefaultPlugins(other.getDefaultPlugins());
+        this.setEnabled(other.getEnabled());
+        this.setDateCreated(other.getDateCreated());
+        this.setEntryDisplayCount(other.getEntryDisplayCount());
+        this.setActive(other.getActive());
+        this.setLastModified(other.getLastModified());
     }
     
     
@@ -646,33 +648,46 @@ public class Weblog implements Serializable {
     
     
     /**
-     * Returns true if user has all permissions specified by mask.
+     * Returns true if user has all permission action specified.
      */
-    public boolean hasUserPermissions(User user, short mask) {
-        // look for user in website's permissions
-        WeblogPermission userPerms = null;
-        Iterator iter = getPermissions().iterator();
-        while (iter.hasNext()) {
-            WeblogPermission perms = (WeblogPermission) iter.next();
-            if (perms.getUser().getId().equals(user.getId())) {
-                userPerms = perms;
-                break;
-            }
+    public boolean hasUserPermission(User user, String action) {
+        return hasUserPermissions(user, Collections.singletonList(action));
+    }
+    
+    
+    /**
+     * Returns true if user has all permissions actions specified in the weblog.
+     */
+    public boolean hasUserPermissions(User user, List<String> actions) {
+        try {
+            // look for user in website's permissions
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogPermission userPerms = new WeblogPermission(this, user, actions);
+            return umgr.checkPermission(userPerms, user);
+            
+        } catch (WebloggerException ex) {
+            // something is going seriously wrong, not much we can do here
+            log.error("ERROR checking user permssion", ex);
         }
-        // if we found one, does it satisfy the mask?
-        if (userPerms != null && !userPerms.isPending()) {
-            if (userPerms != null && (userPerms.getPermissionMask() & mask) == mask) {
-                return true;
-            }
-        }
-        // otherwise, check to see if user is a global admin
-        if (user != null && user.hasRole("admin")) return true;
         return false;
     }
     
     /** Get number of users associated with website */
     public int getUserCount() {
-        return getPermissions().size();
+        int count = 0;
+        try {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            Iterator iter = umgr.getWeblogPermissions(this).iterator();
+            while (iter.hasNext()) {
+                WeblogPermission perm = (WeblogPermission) iter.next();
+                count++;
+            }
+            
+        } catch (WebloggerException ex) {
+            // something is seriously wrong, not me we can do here
+            log.error("ERROR error getting admin user count", ex);
+        }
+        return count;
     }
     
     /** No-op needed to please XDoclet generated code */
@@ -683,13 +698,19 @@ public class Weblog implements Serializable {
     
     public int getAdminUserCount() {
         int count = 0;
-        WeblogPermission userPerms = null;
-        Iterator iter = getPermissions().iterator();
-        while (iter.hasNext()) {
-            WeblogPermission perms = (WeblogPermission) iter.next();
-            if (perms.getPermissionMask() == WeblogPermission.ADMIN) {
-                count++;
+        try {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            Iterator iter = umgr.getWeblogPermissions(this).iterator();
+            while (iter.hasNext()) {
+                WeblogPermission perm = (WeblogPermission) iter.next();
+                if (perm.hasAction(WeblogPermission.ADMIN)) {
+                    count++;
+                }
             }
+            
+        } catch (WebloggerException ex) {
+            // something is seriously wrong, not me we can do here
+            log.error("ERROR error getting admin user count", ex);
         }
         return count;
     }
@@ -935,7 +956,7 @@ public class Weblog implements Serializable {
         WeblogEntry entry = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             entry = wmgr.getWeblogEntryByAnchor(this, anchor);
         } catch (WebloggerException e) {
             this.log.error("ERROR: getting entry by anchor");
@@ -969,7 +990,7 @@ public class Weblog implements Serializable {
         Set ret = new HashSet();
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();            
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();            
             WeblogCategory category = null;
             if (categoryPath != null && !categoryPath.equals("nil")) {
                 category = wmgr.getWeblogCategoryByPath(this, categoryPath);
@@ -993,7 +1014,7 @@ public class Weblog implements Serializable {
         WeblogCategory category = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             if (categoryPath != null && !categoryPath.equals("nil")) {
                 category = wmgr.getWeblogCategoryByPath(this, categoryPath);
             } else {
@@ -1020,7 +1041,7 @@ public class Weblog implements Serializable {
         List recentEntries = new ArrayList();
         if (length < 1) return recentEntries;
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentEntries = wmgr.getWeblogEntries(
                     
                     this, 
@@ -1059,7 +1080,7 @@ public class Weblog implements Serializable {
         }
         if (length < 1) return recentEntries;
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentEntries = wmgr.getWeblogEntries(
                     
                     this, 
@@ -1092,7 +1113,7 @@ public class Weblog implements Serializable {
         List recentComments = new ArrayList();
         if (length < 1) return recentComments;
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             recentComments = wmgr.getComments(
                     
                     this,
@@ -1161,7 +1182,7 @@ public class Weblog implements Serializable {
     public int getTodaysHits() {
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager mgr = roller.getWeblogManager();
+            WeblogEntryManager mgr = roller.getWeblogEntryManager();
             WeblogHitCount hitCount = mgr.getHitCountByWeblog(this);
             
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
@@ -1196,8 +1217,8 @@ public class Weblog implements Serializable {
         }        
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getPopularTags(this, startDate, length);
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            results = wmgr.getPopularTags(this, startDate, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }
@@ -1211,7 +1232,7 @@ public class Weblog implements Serializable {
         long count = 0;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager mgr = roller.getWeblogManager();
+            WeblogEntryManager mgr = roller.getWeblogEntryManager();
             count = mgr.getCommentCount(this);            
         } catch (WebloggerException e) {
             log.error("Error getting comment count for weblog " + this.getName(), e);
@@ -1229,7 +1250,7 @@ public class Weblog implements Serializable {
         long count = 0;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager mgr = roller.getWeblogManager();
+            WeblogEntryManager mgr = roller.getWeblogEntryManager();
             count = mgr.getEntryCount(this);            
         } catch (WebloggerException e) {
             log.error("Error getting entry count for weblog " + this.getName(), e);

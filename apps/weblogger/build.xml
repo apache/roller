@@ -258,10 +258,6 @@ ro.buildUser=${user.name}
             -->
             <fileset refid="base.jars" />
             <fileset refid="presentation.jars" />
-           <!--
-           <fileset refid="hibernate.jar" />
-            <fileset refid="hibernate.jars" />
-            -->
             <fileset refid="jpa.jars" />
             <fileset refid="struts2.jars" />
             <fileset refid="spring.jars" /> 
@@ -481,32 +477,16 @@ ro.buildUser=${user.name}
              longfile="gnu"
              compression="gzip">
             
-            <!-- don't include unshippables in apache release -->
             <tarfileset dir="${build.dist.binary}"
                         prefix="apache-roller-${ro.version}">
-                <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/jta.jar" />
             </tarfileset>
         </tar>
         
         <zip destfile="${ro.dist}/apache-roller-${ro.version}.zip">        
-            <!-- don't include unshippables in apache release -->
             <zipfileset dir="${build.dist.binary}"
                         prefix="apache-roller-${ro.version}">
-                <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/cglib-2.1.3.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/dom4j-1.6.1.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/jdbc2_0-stdext.jar" />
-                <exclude name="webapp/roller/WEB-INF/lib/jta.jar" />
             </zipfileset>
-        </zip>
+        </zip>               
         
     </target>
     
@@ -572,7 +552,6 @@ ro.buildUser=${user.name}
             <!-- don't include unshippables in apache release -->
             <tarfileset dir="${build.dist.sources}"
                         prefix="apache-roller-src-${ro.version}">
-                <exclude name="**/hibernate-3.1/**" />
                 <exclude name="**/activation.jar" />
                 <exclude name="**/mail.jar" />
                 <exclude name="**/ejb-1.1.jar" />
@@ -584,7 +563,6 @@ ro.buildUser=${user.name}
             <!-- don't include unshippables in apache release -->
             <zipfileset dir="${build.dist.sources}"
                         prefix="apache-roller-src-${ro.version}">
-                <exclude name="**/hibernate-3.1/**" />
                 <exclude name="**/activation.jar" />
                 <exclude name="**/mail.jar" />
                 <exclude name="**/ejb-1.1.jar" />
@@ -921,8 +899,6 @@ ro.buildUser=${user.name}
     <target name="init-db" description=
             "Initializes built-in database by running drop table and create table">
         
-        &custom-post-dbtest;
-        
         <sql driver="${test.db.driver}"
              url="${test.db.url}"
              userid="${test.db.username}" 
@@ -939,7 +915,6 @@ ro.buildUser=${user.name}
              onerror="continue"
              classpath="${test.db.cpath}" /> 
         
-        &custom-pre-dbtest;
     </target>
     
     <target name="start-db" description="Starts built-in database">  

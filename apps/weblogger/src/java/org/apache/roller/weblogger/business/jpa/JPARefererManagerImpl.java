@@ -380,15 +380,12 @@ public class JPARefererManagerImpl implements RefererManager {
 
         // lookup the weblog now
         try {
-            UserManager userMgr = roller.getUserManager();
-            weblog = userMgr.getWebsiteByHandle(weblogHandle);
+            weblog = roller.getWeblogManager().getWeblogByHandle(weblogHandle);
             if (weblog == null) return;
 
             // now lookup weblog entry if possible
             if (entryAnchor != null) {
-                WeblogManager weblogMgr = roller.
-                    getWeblogManager();
-                entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                entry = roller.getWeblogEntryManager().getWeblogEntryByAnchor(weblog, entryAnchor);
             }
         } catch (WebloggerException re) {
             // problem looking up website, gotta bail

@@ -3,17 +3,18 @@ Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each
 menu. See also, admin-menu.xml, which defines the Global Admin menu.
 Each menu or menu item is governed by four attrbibutes:
 
-    1) roles: these are the global roles the are allowed to view item
-       - admin:  the Roller site-wide admin role
-       - editor: the normal Roller user role
-       Default is roles="admin,editor"
+    1) globalPerms: these are the global permissions required to view the item
+       Possible values:
+       - admin:    superuser, administers server, etc.
+       - login:    allowed to login and save profile
+       - weblog:   is allowed to create and user weblogs
+       - comment:  allowed to comment on weblogs
        Use "any" to indicate that role is not required to view ite
        
-    2) perms: these are the website specific permissions required to view item
-       - editor:  author and allowed to manage current website
-       - author:  allowed to edit any part of the current website, except users
-       - limited: allowed only to post drafts in current website
-       Default is perms="admin,author"
+    2) webogPerms: these are the weblog specific permissions required to view item
+       - post:        edit and publish entries, bookmarks
+       - edit_draft:  create and edit draft posts only
+       - admin:       edit and publish entries, edit categories, manage users, etc.
        Use "any" to indicate that website perms are not required to view item
        
     3) enable property: if true, show this menu
@@ -26,41 +27,41 @@ Each menu or menu item is governed by four attrbibutes:
         
         <menu-item action="entryAdd" 
                    name="tabbedmenu.weblog.newEntry" 
-                   roles="editor"
-                   perms="limited" 
+                   globalPerms="login"
+                   weblogPerms="edit_draft" 
                    subactions="entryEdit,entryRemove" />
         
         <menu-item action="entries" 
                    name="tabbedmenu.weblog.archives" 
-                   roles="editor"
-                   perms="limited" />
+                   globalPerms="login"
+                   weblogPerms="edit_draft" />
         
         <menu-item action="comments" 
                    name="tabbedmenu.admin.commentManagement" 
-                   roles="editor"
-                   perms="author" />
+                   globalPerms="login"
+                   weblogPerms="author" />
         
         <menu-item action="categories"   
                    name="tabbedmenu.weblog.categories" 
-                   roles="editor"
-                   perms="author"
+                   globalPerms="login"
+                   perms="admin"
                    subactions="categoryAdd,categoryEdit,categoryRemove" />
         
         <menu-item action="bookmarks"    
                    name="tabbedmenu.bookmarks.allFolders" 
-                   roles="editor"
-                   perms="author"
+                   globalPerms="login"
+                   weblogPerms="post"
                    subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
         
         <menu-item action="resources"  
                    name="tabbedmenu.website.files" 
-                   roles="editor"
-                   perms="author"/>
+                   globalPerms="login"
+                   perms="post"/>
         
         <menu-item action="referrers"     
                    name="tabbedmenu.weblog.referers" 
-                   roles="editor"
-                   perms="author" 
+                   globalPerms="login"
+                   weblogPerms="post" 
                    enabledProperty="referrers.processing.enabled" />
     </menu>
     
@@ -69,18 +70,18 @@ Each menu or menu item is governed by four attrbibutes:
         
         <menu-item action="themeEdit"         
                    name="tabbedmenu.website.themes" 
-                   roles="editor"
-                   perms="admin" />
+                   globalPerms="login"
+                   weblogPerms="admin" />
         
         <menu-item action="stylesheetEdit"         
                    name="tabbedmenu.design.stylesheet" 
-                   roles="editor"
-                   perms="admin" />
+                   globalPerms="login"
+                   weblogPerms="admin" />
                    
         <menu-item action="templates"         
                    name="tabbedmenu.website.pages" 
-                   roles="editor"
-                   perms="admin" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
                    subactions="templateAdd,templateEdit,templateRemove" />
                    
     </menu>
@@ -90,34 +91,34 @@ Each menu or menu item is governed by four attrbibutes:
         
         <menu-item action="weblogConfig"       
                    name="tabbedmenu.website.settings" 
-                   roles="editor"
-                   perms="admin" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
                    subactions="weblogRemove" />
         
         <menu-item action="members" 
                    name="tabbedmenu.website.members" 
-                   roles="editor"
+                   globalPerms="login"
                    perms="admin" 
                    subactions="invite" 
                    enabledProperty="groupblogging.enabled"/>
         
         <menu-item action="pings"         
                    name="tabbedmenu.weblog.pingSetup" 
-                   roles="editor"
-                   perms="admin" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
                    disabledProperty="pings.disablePingUsage" />
         
         <menu-item action="customPingTargets" 
                    name="tabbedmenu.weblog.customPingTargets" 
-                   roles="editor"
-                   perms="admin" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
                    subactions="customPingTargetAdd,customPingTargetEdit"
                    disabledProperty="pings.disallowCustomTargets" />        
         
         <menu-item action="maintenance"      
                    name="tabbedmenu.website.maintenance" 
-                   roles="editor"
-                   perms="admin" />
+                   globalPerms="login"
+                   weblogPerms="admin" />
     </menu>
     
 </menu-bar>

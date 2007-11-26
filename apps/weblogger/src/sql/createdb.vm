@@ -27,21 +27,21 @@ alter table rolleruser add constraint ru_username_uq unique ( username$!db.INDEX
 create table userrole (
     id               varchar(48) not null primary key,
     rolename         varchar(255) not null,
-    username         varchar(255) not null,
-    userid           varchar(48) not null
+    username         varchar(255) not null
 );
-create index ur_userid_idx on userrole( userid );
 create index ur_username_idx on userrole( username$!db.INDEXSIZE );
 
--- User permissions within a website
--- permission_mask: bitmask 000 limited, 001 author, 011 admin
--- pending: pending user acceptance of invitation to join website
-create table roller_user_permissions (
-    id              varchar(48) not null primary key,
-    website_id      varchar(48) not null,
-    user_id         varchar(48) not null,
-    permission_mask integer not null, 
-    pending         $db.BOOLEAN_SQL_TYPE_TRUE not null
+-- actions: comma separated list of actions permitted by permission
+-- objectid: for now this will always store weblogid
+-- objectType: for now this will always be 'Weblog'
+create table roller_permission (
+   id              varchar(48) not null primary key,
+   username        varchar(255) not null,
+   actions         varchar(255), 
+   objectid        varchar(48),           
+   objecttype      varchar(255), 
+   pending         $db.BOOLEAN_SQL_TYPE_TRUE,         
+   datecreated     timestamp not null
 );
 
 -- Audit log records time and comment about change
@@ -92,7 +92,7 @@ create table website (
     name              varchar(255) not null,
     handle            varchar(255) not null,
     description       varchar(255) not null,
-    userid            varchar(48) not null,
+    creator           varchar(255),
     defaultpageid     varchar(48) default '',
     weblogdayid       varchar(48) not null,
     ignorewords       $db.TEXT_SQL_TYPE,
@@ -124,7 +124,6 @@ create table website (
     about             varchar(255),
     icon              varchar(255)
 );
-create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
 alter table website add constraint ws_handle_uq unique (handle$!db.INDEXSIZE);
 
@@ -191,8 +190,8 @@ create index wca_relation_idx on weblogcategoryassoc( relation );
 
 create table weblogentry (
     id              varchar(48)  not null primary key,
-    userid          varchar(48) not null,
     anchor          varchar(255)  not null,
+    creator         varchar(255)  not null,
     title           varchar(255)  not null,
     text            $db.TEXT_SQL_TYPE not null,
     pubtime         $db.TIMESTAMP_SQL_TYPE_NULL,
@@ -215,7 +214,7 @@ create table weblogentry (
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
-create index we_userid_idx on weblogentry(userid);
+create index we_creator_idx on weblogentry(creator);
 create index we_status_idx on weblogentry(status);
 create index we_locale_idx on weblogentry(locale);
 create index we_combo1_idx on weblogentry(status, pubtime, websiteid);
@@ -225,14 +224,14 @@ create table roller_weblogentrytag (
     id              varchar(48)   not null primary key,
     entryid         varchar(48)   not null,
     websiteid       varchar(48)   not null,    
-    userid		    varchar(48)   not null,
+    creator	        varchar(255)   not null,
     name            varchar(255)  not null,
     time            $db.TIMESTAMP_SQL_TYPE 	not null
 );
 
 create index wet_entryid_idx on roller_weblogentrytag( entryid );
 create index wet_websiteid_idx on roller_weblogentrytag( websiteid );
-create index wet_userid_idx on roller_weblogentrytag( userid );
+create index wet_creator_idx on roller_weblogentrytag( creator );
 create index wet_name_idx on roller_weblogentrytag( name );
 
 create table roller_weblogentrytagagg (
@@ -502,18 +501,6 @@ insert into rag_group (id, planet_id, handle, title) values ('zzz_all_group_zzz'
 -- Now add the foreign key relationships
 
 -- user, role, website, and permissions
-
-alter table website add constraint ws_userid_fk
-    foreign key ( userid ) references rolleruser ( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table userrole add constraint ur_userid_fk
-    foreign key ( userid ) references rolleruser( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_user_permissions add constraint up_userid_fk
-    foreign key ( user_id ) references rolleruser( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_user_permissions add constraint up_websiteid_fk
-    foreign key ( website_id ) references website( id ) $!db.ADDL_FK_PARAMS ;
 
 -- page, entry, category, comment
 

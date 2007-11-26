@@ -22,11 +22,11 @@
 <%@ page import="java.util.List" %>
 <%
 User user = RollerSession.getRollerSession(request).getAuthenticatedUser();
-List websites = WebloggerFactory.getWeblogger().getUserManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, Integer.MAX_VALUE);
+List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
 
-if (websites.size() == 1) {
-    Weblog website = (Weblog) websites.get(0);
-    response.sendRedirect(request.getContextPath()+"/roller-ui/authoring/entryAdd.rol?weblog="+website.getHandle());
+if (weblogs.size() == 1) {
+    Weblog weblog = (Weblog) weblogs.get(0);
+    response.sendRedirect(request.getContextPath()+"/roller-ui/authoring/entryAdd.rol?weblog="+weblog.getHandle());
 } else {
     response.sendRedirect(request.getContextPath()+"/roller-ui/menu.rol");
 }

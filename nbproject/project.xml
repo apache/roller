@@ -31,6 +31,16 @@
                     <type>java</type>
                     <location>components/core/src/java</location>
                 </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/groovy/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/groovy/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>sandbox/scripting/bsf/src</label>
+                    <type>java</type>
+                    <location>sandbox/scripting/bsf/src</location>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -102,6 +112,14 @@
                         <label>components/core/src/java</label>
                         <location>components/core/src/java</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/groovy/src</label>
+                        <location>sandbox/scripting/groovy/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/scripting/bsf/src</label>
+                        <location>sandbox/scripting/bsf/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -120,6 +138,26 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>components/core/src/java</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>apps/weblogger/src/java</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>apps/weblogger/test/java</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>apps/planet/src/java</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>sandbox/scripting/groovy/src</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>sandbox/scripting/bsf/src</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

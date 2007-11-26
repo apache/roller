@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -81,7 +81,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             Hashtable result = new Hashtable();
-            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             List cats = weblogMgr.getWeblogCategories(website, false);
             for (Iterator wbcItr = cats.iterator(); wbcItr.hasNext();) {
                 WeblogCategory category = (WeblogCategory) wbcItr.next();
@@ -124,7 +124,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("    Publish: " + publish);
         
         Weblogger roller = WebloggerFactory.getWeblogger();
-        WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
         validate(entry.getWebsite().getHandle(), userid,password);
@@ -235,7 +235,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             User user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current = new Timestamp(System.currentTimeMillis());
             
@@ -246,7 +246,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWebsite(website);
-            entry.setCreator(user);
+            entry.setCreatorUserName(user.getUserName());
             entry.setCommentDays(new Integer(website.getDefaultCommentDays()));
             entry.setAllowComments(website.getDefaultAllowComments());
         
@@ -320,7 +320,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         
         Weblogger roller = WebloggerFactory.getWeblogger();
-        WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
         validate(entry.getWebsite().getHandle(), userid,password);
@@ -403,7 +403,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Vector results = new Vector();
             
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager weblogMgr = roller.getWeblogManager();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
                 List entries = weblogMgr.getWeblogEntries(
                         website,           // website

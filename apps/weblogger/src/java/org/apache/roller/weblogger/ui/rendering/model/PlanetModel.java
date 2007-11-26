@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -49,11 +50,13 @@ public class PlanetModel implements Model {
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
     private WeblogRequest  weblogRequest = null;
-    private URLStrategy urlStrategy = null;
-    private String pageLink = null;
+    private String         pageLink = null;
     private int            pageNum = 0;
-    private Weblog    weblog = null;
+    private Weblog         weblog = null;
     
+    private URLStrategy    urlStrategy = null;
+    private org.apache.roller.planet.business.URLStrategy planetUrlStrategy = null;
+
     
     public String getModelName() {
         return "planet";
@@ -78,6 +81,8 @@ public class PlanetModel implements Model {
         if(urlStrategy == null) {
             urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         }
+        
+        planetUrlStrategy = PlanetFactory.getPlanet().getURLStrategy();
         
         // extract weblog object
         weblog = weblogRequest.getWeblog();
@@ -192,4 +197,58 @@ public class PlanetModel implements Model {
         return list;
     }
     
+    
+    /**
+     * Get PlanetGroups defined.
+     * @return List of Planet groups defined.
+     */
+    public List<PlanetGroup> getGroups() {
+        List list = new ArrayList<PlanetGroup>();
+        try {
+            PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
+            Planet defaultPlanet = planetManager.getPlanet(DEFAULT_PLANET_HANDLE);
+            Set<PlanetGroup> groups = (Set<PlanetGroup>)defaultPlanet.getGroups();
+            for (PlanetGroup group : groups) {
+                // TODO needs pojo wrapping from planet
+                list.add(group); 
+            }
+        } catch (Exception e) {
+            log.error("ERROR: getting groups", e);
+        }
+        return list;        
+    }
+    
+    
+    /**
+     * Get PlanetGroup by handle.
+     * @param groupHandle Handle of PlanetGroup to fetch.
+     * @return PlaneGroup specified by handle.
+     */
+    public PlanetGroup getGroup(String groupHandle) {
+        PlanetGroup group = null;
+        try {
+            PlanetManager planetManager = PlanetFactory.getPlanet().getPlanetManager();
+            Planet defaultPlanet = planetManager.getPlanet(DEFAULT_PLANET_HANDLE);            
+            // TODO needs pojo wrapping from planet
+            group = planetManager.getGroup(defaultPlanet, groupHandle);            
+        } catch (Exception e) {
+            log.error("ERROR: getting group", e);
+        }
+        return group;        
+    }
+    
+    
+    public String getPlanetURL() {
+        return planetUrlStrategy.getPlanetURL("ignored");
+    }
+
+    
+    public String getPlanetGroupURL(String group, int pageNum) {
+        return planetUrlStrategy.getPlanetGroupURL("ignored", group, pageNum);
+    }
+    
+    
+    public String getPlanetFeedURL(String group, String format) {
+        return planetUrlStrategy.getPlanetGroupFeedURL("ignored", group, format);
+    }
 }

@@ -63,6 +63,7 @@ public abstract class WebloggerImpl implements Weblogger {
     private final ThreadManager        threadManager;
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
+    private final WeblogEntryManager   weblogEntryManager;
     
     // url strategy
     private final URLStrategy          urlStrategy;
@@ -89,6 +90,7 @@ public abstract class WebloggerImpl implements Weblogger {
         ThreadManager        threadManager,
         UserManager          userManager,
         WeblogManager        weblogManager,
+        WeblogEntryManager   weblogEntryManager,
         URLStrategy          urlStrategy) throws WebloggerException { 
                 
         this.autoPingManager     = autoPingManager;
@@ -105,6 +107,7 @@ public abstract class WebloggerImpl implements Weblogger {
         this.threadManager       = threadManager;
         this.userManager         = userManager;
         this.weblogManager       = weblogManager;
+        this.weblogEntryManager  = weblogEntryManager;
         this.urlStrategy         = urlStrategy;
         
         Properties props = new Properties();
@@ -187,6 +190,16 @@ public abstract class WebloggerImpl implements Weblogger {
      */
     public BookmarkManager getBookmarkManager() {
         return bookmarkManager;
+    }
+    
+    
+    /**
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogEntryManager()
+     */
+    public WeblogEntryManager getWeblogEntryManager() {
+        return weblogEntryManager;
     }
     
     

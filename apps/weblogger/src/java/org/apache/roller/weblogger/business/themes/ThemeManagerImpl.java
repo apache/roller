@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
@@ -182,7 +183,7 @@ public class ThemeManagerImpl implements ThemeManager {
         log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
         
         try {
-            UserManager userMgr = roller.getUserManager();
+            WeblogManager wmgr = roller.getWeblogManager();
             
             Set importedActionTemplates = new HashSet();
             ThemeTemplate themeTemplate = null;
@@ -196,14 +197,14 @@ public class ThemeManagerImpl implements ThemeManager {
                 // if template is an action, lookup by action
                 if(themeTemplate.getAction() != null &&
                         !themeTemplate.getAction().equals(WeblogTemplate.ACTION_CUSTOM)) {
-                    template = userMgr.getPageByAction(website, themeTemplate.getAction());
+                    template = wmgr.getPageByAction(website, themeTemplate.getAction());
                     if(template != null) {
                         importedActionTemplates.add(themeTemplate.getAction());
                     }
                     
                 // otherwise, lookup by name
                 } else {
-                    template = userMgr.getPageByName(website, themeTemplate.getName());
+                    template = wmgr.getPageByName(website, themeTemplate.getName());
                 }
                 
                 // Weblog does not have this template, so create it.
@@ -234,7 +235,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     template.setLastModified(new Date());
                     
                     // save it
-                    userMgr.savePage( template );
+                    wmgr.savePage( template );
                 }
             }
             
@@ -245,10 +246,10 @@ public class ThemeManagerImpl implements ThemeManager {
                 
                 // if we didn't import this action then see if it should be deleted
                 if(!importedActionTemplates.contains(action)) {
-                    WeblogTemplate toDelete = userMgr.getPageByAction(website, action);
+                    WeblogTemplate toDelete = wmgr.getPageByAction(website, action);
                     if(toDelete != null) {
                         log.debug("Removing stale action template "+toDelete.getId());
-                        userMgr.removePage(toDelete);
+                        wmgr.removePage(toDelete);
                     }
                 }
             }
@@ -259,7 +260,7 @@ public class ThemeManagerImpl implements ThemeManager {
             if(theme.getStylesheet() != null) {
                 website.setCustomStylesheetPath(theme.getStylesheet().getLink());
             }
-            userMgr.saveWebsite(website);
+            wmgr.saveWeblog(website);
             
             
             // now lets import all the theme resources

@@ -18,11 +18,14 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetsBase;
 
 
@@ -41,8 +44,8 @@ public class CommonPingTargets extends PingTargetsBase {
     }
     
     
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required

@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 
@@ -144,12 +145,12 @@ public class WeblogsPager extends AbstractPager {
             }
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
-                UserManager umgr = roller.getUserManager();
+                WeblogManager wmgr = roller.getWeblogManager();
                 List rawWeblogs = null;
                 if (letter == null) {
-                    rawWeblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
+                    rawWeblogs = wmgr.getWeblogs(Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
-                    rawWeblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
+                    rawWeblogs = wmgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
                 
                 // wrap the results

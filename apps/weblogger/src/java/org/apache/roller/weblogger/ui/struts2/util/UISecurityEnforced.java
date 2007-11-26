@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import java.util.List;
+
 
 /**
  * Implemented by struts2 actions which want to enforce some level of security
@@ -51,23 +53,13 @@ public interface UISecurityEnforced {
     
     
     /**
-     * What is the required user role, if any?
-     *
-     * This method only takes effect if isUserRequired() is 'true'.
-     *
-     * @return String The required user role, or null if no role required.
+     * List of global permission actions required to access resource.
      */
-    public String requiredUserRole();
+    public List<String> requiredWeblogPermissionActions();
     
     
-    /**
-     * What are the required weblog permissions for this action, if any?
-     *
-     * This method only takes effect if both isUserRequired() and isWeblogRequired()
-     * are 'true'.
-     *
-     * @return short The required weblog permissions, or -1 if no permissions required.
+    /** 
+     * List of weblog permissions required to access action if applicable.
      */
-    public short requiredWeblogPermissions();
-    
+    public List<String> requiredGlobalPermissionActions();
 }

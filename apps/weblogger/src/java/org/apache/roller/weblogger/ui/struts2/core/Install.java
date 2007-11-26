@@ -233,7 +233,7 @@ public class Install extends UIAction {
     public boolean isUpgradeRequired() {
         return WebloggerStartup.isDatabaseUpgradeRequired();
     }
-        
+
     public boolean isError() {
         return error;
     }

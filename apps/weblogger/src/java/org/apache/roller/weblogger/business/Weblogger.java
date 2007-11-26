@@ -57,6 +57,12 @@ public interface Weblogger {
      */
     public WeblogManager getWeblogManager();
     
+    /**
+     * 
+     * Get WeblogManager associated with this Weblogger instance.
+     */
+    public WeblogEntryManager getWeblogEntryManager();
+    
     
     /**
      * 

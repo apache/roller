@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -53,7 +53,7 @@ public class EntryRemove extends UIAction {
     public void myPrepare() {
         if(getRemoveId() != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - "+getRemoveId(), ex);
@@ -90,7 +90,7 @@ public class EntryRemove extends UIAction {
             CacheManager.invalidate(entry);
             
             // remove entry itself
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             wmgr.removeWeblogEntry(entry);
             WebloggerFactory.getWeblogger().flush();
             

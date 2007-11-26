@@ -15,11 +15,14 @@
  */
 package org.apache.roller.weblogger.webservices.adminprotocol;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.Utilities;
@@ -47,26 +50,32 @@ abstract class Authenticator {
      * implementation of authenticate().
      */
     protected void verifyUser(String userName, String password) throws HandlerException {
-        User ud = getUserData(userName);
-        String realpassword = ud.getPassword();
+        try {
+            User ud = getUserData(userName);
+            String realpassword = ud.getPassword();
         
         boolean encrypted = Boolean.valueOf(WebloggerConfig.getProperty("passwds.encryption.enabled"));
         if (encrypted) {
             password = Utilities.encodePassword(password, WebloggerConfig.getProperty("passwds.encryption.algorithm"));
         }
         
-        if (!userName.trim().equals(ud.getUserName())) {
-            throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
-        }
-        if (!password.trim().equals(realpassword)) {
-            throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
-        }
-        
-        if (!ud.hasRole("admin")) {
+            if (!userName.trim().equals(ud.getUserName())) {
+                throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
+            }
+            if (!password.trim().equals(realpassword)) {
+                throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
+            }
+            List<String> adminActions = new ArrayList<String>();
+            adminActions.add("admin");
+            GlobalPermission adminPerm = new GlobalPermission(ud, adminActions);
+            if (!WebloggerFactory.getWeblogger().getUserManager().checkPermission(adminPerm, ud)) {
+                throw new UnauthorizedException("ERROR: User must have the admin role to use the RAP endpoint: " + userName);
+            }
+            if (!ud.getEnabled().booleanValue()) {
+                throw new UnauthorizedException("ERROR: User is disabled: " + userName);
+            }
+        } catch (WebloggerException ex) {
             throw new UnauthorizedException("ERROR: User must have the admin role to use the RAP endpoint: " + userName);
-        }
-        if (!ud.getEnabled().booleanValue()) {
-            throw new UnauthorizedException("ERROR: User is disabled: " + userName);
         }
     }
     

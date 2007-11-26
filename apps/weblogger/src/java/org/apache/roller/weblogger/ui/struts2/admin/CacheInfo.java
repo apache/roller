@@ -19,9 +19,11 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -47,8 +49,8 @@ public class CacheInfo extends UIAction {
     }
     
     
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     public boolean isWeblogRequired() {

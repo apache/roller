@@ -28,10 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -68,8 +68,8 @@ public class Entries extends UIAction {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     
@@ -84,7 +84,7 @@ public class Entries extends UIAction {
         try {
             String status = getBean().getStatus();
             
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(
                     getActionWeblog(),
                     null,
@@ -173,7 +173,7 @@ public class Entries extends UIAction {
         
         List<WeblogCategory> weblogCats = Collections.EMPTY_LIST;
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             weblogCats = wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);

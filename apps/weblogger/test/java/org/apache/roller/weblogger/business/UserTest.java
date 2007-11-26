@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -84,12 +85,12 @@ public class UserTest extends TestCase {
         
         // add test user
         mgr.addUser(testUser);
-        String id = testUser.getId();
+        String userName = testUser.getUserName();
         TestUtils.endSession(true);
         
         // make sure test user exists
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser, user);
         
@@ -101,7 +102,7 @@ public class UserTest extends TestCase {
         
         // make sure changes were saved
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
         assertEquals("testtesttest", user.getFullName());
@@ -112,7 +113,7 @@ public class UserTest extends TestCase {
         
         // make sure user no longer exists
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNull(user);
     }
     
@@ -135,9 +136,9 @@ public class UserTest extends TestCase {
         assertEquals(testUser.getUserName(), user.getUserName());
         
         // lookup by id
-        String id = user.getId();
+        String userName = user.getUserName();
         user = null;
-        user = mgr.getUser(id);
+        user = mgr.getUserByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
@@ -166,7 +167,7 @@ public class UserTest extends TestCase {
         assertNull(user);
         
         // remove test user
-        TestUtils.teardownUser(testUser.getId());
+        TestUtils.teardownUser(testUser.getUserName());
         TestUtils.endSession(true);
     }
     
@@ -183,15 +184,21 @@ public class UserTest extends TestCase {
         User testUser = TestUtils.setupUser("roleTestUser");
         TestUtils.endSession(true);
         
-        // verify user has 2 roles, admin & editor
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertEquals(2, user.getRoles().size());
-        assertTrue(user.hasRole("editor"));
-        assertTrue(user.hasRole("admin"));
+        
+        if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
+            assertEquals(2, mgr.getRoles(user).size());
+            assertTrue(mgr.hasRole("editor", user));
+            assertTrue(mgr.hasRole("admin", user));
+        } else {
+            assertEquals(1, mgr.getRoles(user).size());
+            assertTrue(mgr.hasRole("editor", user));
+            assertFalse(mgr.hasRole("admin", user));
+        }
         
         // remove role
-        mgr.revokeRole("admin",user);
+        mgr.revokeRole("editor",user);
         mgr.saveUser(user);
         TestUtils.endSession(true);
         
@@ -199,12 +206,17 @@ public class UserTest extends TestCase {
         user = null;
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertEquals(1, user.getRoles().size());
-        assertTrue(user.hasRole("editor"));
-        assertFalse(user.hasRole("admin"));
-        
+        if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
+            assertEquals(1, mgr.getRoles(user).size());
+            assertFalse(mgr.hasRole("editor", user));
+            assertTrue(mgr.hasRole("admin", user));
+        } else {
+            assertEquals(0, mgr.getRoles(user).size());
+            assertFalse(mgr.hasRole("editor", user));
+            assertFalse(mgr.hasRole("admin", user));
+        }
         // add role
-        user.grantRole("admin");
+        mgr.grantRole("editor", user);
         mgr.saveUser(user);
         TestUtils.endSession(true);
         
@@ -212,12 +224,17 @@ public class UserTest extends TestCase {
         user = null;
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertEquals(2, user.getRoles().size());
-        assertTrue(user.hasRole("editor"));
-        assertTrue(user.hasRole("admin"));
-        
+        if (WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
+            assertEquals(2, mgr.getRoles(user).size());
+            assertTrue(mgr.hasRole("editor", user));
+            assertTrue(mgr.hasRole("admin", user));
+        } else {
+            assertEquals(1, mgr.getRoles(user).size());
+            assertTrue(mgr.hasRole("editor", user));
+            assertFalse(mgr.hasRole("admin", user));
+        }
         // remove test user
-        TestUtils.teardownUser(testUser.getId());
+        TestUtils.teardownUser(testUser.getUserName());
         TestUtils.endSession(true);
     }
 

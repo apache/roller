@@ -17,6 +17,8 @@
 */
 package org.apache.roller.weblogger.ui.core.security;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -37,8 +39,8 @@ public class BasicUserAutoProvision implements AutoProvision {
    * 
    * @see org.apache.roller.weblogger.ui.core.security.AutoProvision#execute()
    */
-  public boolean execute() {
-    User ud = CustomUserRegistry.getUserDetailsFromAuthentication();
+  public boolean execute(HttpServletRequest request) {
+    User ud = CustomUserRegistry.getUserDetailsFromAuthentication(request);
     
     if(ud != null) {
       UserManager mgr;

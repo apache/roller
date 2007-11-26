@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import org.apache.commons.lang.CharSetUtils;
@@ -28,6 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -52,8 +55,8 @@ public class CreateUser extends UIAction {
     
     
     // admin role required
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required
@@ -98,7 +101,7 @@ public class CreateUser extends UIAction {
             
             // are we granting the user admin rights?
             if(((CreateUserBean)getBean()).isAdministrator()) {
-                newUser.grantRole("admin");
+                mgr.grantRole("admin", newUser);
             }
             
             // save new user

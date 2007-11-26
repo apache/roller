@@ -85,8 +85,8 @@ public class WeblogSharedTheme extends WeblogTheme {
         // first get the pages from the db
         try {
             ThemeTemplate template = null;
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            Iterator dbPages = userMgr.getPages(this.weblog).iterator();
+            Iterator dbPages = WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getPages(this.weblog).iterator();
             while(dbPages.hasNext()) {
                 template = (ThemeTemplate) dbPages.next();
                 pages.put(template.getName(), template);
@@ -130,8 +130,8 @@ public class WeblogSharedTheme extends WeblogTheme {
         ThemeTemplate stylesheet = this.theme.getStylesheet();
         if(stylesheet != null) {
             // now try getting custom version from weblog
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            ThemeTemplate override = umgr.getPageByLink(this.weblog, stylesheet.getLink());
+            ThemeTemplate override = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getPageByLink(this.weblog, stylesheet.getLink());
             if(override != null) {
                 stylesheet = override;
             }
@@ -188,8 +188,7 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            template = userMgr.getPageByName(this.weblog, name);
+            template = WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(this.weblog, name);
         }
         
         return template;
@@ -219,8 +218,8 @@ public class WeblogSharedTheme extends WeblogTheme {
         
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            template = userMgr.getPageByLink(this.weblog, link);
+            template = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getPageByLink(this.weblog, link);
         }
         
         return template;

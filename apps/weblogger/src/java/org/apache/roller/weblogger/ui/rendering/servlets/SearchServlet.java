@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -82,8 +81,8 @@ public class SearchServlet extends HttpServlet {
             searchRequest = new WeblogSearchRequest(request);
             
             // now make sure the specified weblog really exists
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            weblog = userMgr.getWebsiteByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
+            weblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getWeblogByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
             
         } catch(Exception e) {
             // invalid search request format or weblog doesn't exist

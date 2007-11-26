@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -48,8 +50,8 @@ public class CustomPingTargets extends PingTargetsBase {
         return true;
     }
     
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

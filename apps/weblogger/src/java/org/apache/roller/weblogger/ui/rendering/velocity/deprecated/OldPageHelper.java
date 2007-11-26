@@ -142,7 +142,7 @@ public class OldPageHelper {
                     RollerSession.getRollerSession(mRequest);
             if ( rses != null && rses.getAuthenticatedUser() != null
                     && mWebsite != null) {
-                return mWebsite.hasUserPermissions(
+                return mWebsite.hasUserPermission(
                         rses.getAuthenticatedUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {

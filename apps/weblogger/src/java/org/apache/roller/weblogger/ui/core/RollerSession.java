@@ -47,7 +47,7 @@ public class RollerSession
     static final long serialVersionUID = 5890132909166913727L;
     
     // the id of the user represented by this session
-    private String userId = null;
+    private String userName = null;
     
     private static Log log = LogFactory.getLog(RollerSession.class);
     
@@ -64,25 +64,34 @@ public class RollerSession
         HttpSession session = request.getSession(false);
         if (session != null) {
             rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+            
             if (rollerSession == null) {
                 // HttpSession with no RollerSession?
                 // Must be a session that was de-serialized from a previous run.
                 rollerSession = new RollerSession();
                 session.setAttribute(ROLLER_SESSION, rollerSession);
             }
+            
             Principal principal = request.getUserPrincipal();
-            if (rollerSession.getAuthenticatedUser() == null && principal != null) {
+
+            // If we've got a principal but no user object, then attempt to get
+            // user object from user manager but *only* do this if we have been 
+            // bootstrapped because under an SSO scenario we may have a 
+            // principal even before we have been bootstrapped.
+            if (rollerSession.getAuthenticatedUser() == null && principal != null && WebloggerFactory.isBootstrapped()) { 
                 try {
+                    
                     UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                     User user = umgr.getUserByUserName(principal.getName());
                     
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has SSO-enabled in security.xml
-                    if(user == null && WebloggerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {
+                    if (user == null && WebloggerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {
+                        
                         // provisioning enabled, get provisioner and execute
                         AutoProvision provisioner = RollerContext.getAutoProvision();
                         if(provisioner != null) {
-                            boolean userProvisioned = provisioner.execute();
+                            boolean userProvisioned = provisioner.execute(request);
                             if(userProvisioned) {
                                 // try lookup again real quick
                                 user = umgr.getUserByUserName(principal.getName());
@@ -90,9 +99,10 @@ public class RollerSession
                         }
                     }
                     // only set authenticated user if user is enabled
-                    if(user != null && user.getEnabled().booleanValue()) {
+                    if (user != null && user.getEnabled().booleanValue()) {
                         rollerSession.setAuthenticatedUser(user);
                     }
+                    
                 } catch (WebloggerException e) {
                     log.error("ERROR: getting user object",e);
                 }
@@ -137,12 +147,12 @@ public class RollerSession
     public User getAuthenticatedUser() {
         
         User authenticUser = null;
-        if(userId != null) {
+        if(userName != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                authenticUser = mgr.getUser(userId);
+                authenticUser = mgr.getUserByUserName(userName);
             } catch (WebloggerException ex) {
-                log.warn("Error looking up authenticated user "+userId, ex);
+                log.warn("Error looking up authenticated user "+userName, ex);
             }
         }
         
@@ -154,7 +164,7 @@ public class RollerSession
      * Authenticated user associated with this session.
      */
     public void setAuthenticatedUser(User authenticatedUser) {
-        this.userId = authenticatedUser.getId();
+        this.userName = authenticatedUser.getUserName();
     }
     
        

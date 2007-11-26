@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,8 +55,8 @@ public class FolderEdit extends UIAction {
     
     
     // author perms required
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     

@@ -54,6 +54,24 @@ Special macro to drop NOT NULL requirement from an 'id' column.
 
 
 #**
+Special macro to drop NOT NULL requirement from a column.
+**#
+#macro(dropNotNullFromColumn $table $colname $coltype)
+#if($db.DBTYPE == "MYSQL")
+    alter table $table modify $colname $coltype null;
+#elseif ($db.DBTYPE == "POSTGRESQL")
+    alter table $table  alter column $colname drop not null;
+#elseif ($db.DBTYPE == "HSQLDB")
+    alter table $table alter column $colname $coltype null;
+#elseif ($db.DBTYPE == "DERBY" || $db.DBTYPE == "DB2")
+    alter table $table alter column $colname null;
+#elseif ($db.DBTYPE == "ORACLE")
+    alter table $table alter column $colname null; 
+#end
+#end
+
+
+#**
 Define non-null column with default value
 **#
 #macro(columnNotNullWithDefault $columnName $columnType $defaultValue)

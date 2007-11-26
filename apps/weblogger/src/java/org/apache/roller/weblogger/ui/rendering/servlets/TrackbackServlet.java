@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -118,8 +118,8 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
                 // lookup weblog specified by comment request
-                UserManager uMgr = WebloggerFactory.getWeblogger().getUserManager();
-                weblog = uMgr.getWebsiteByHandle(trackbackRequest.getWeblogHandle());
+                weblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getWeblogByHandle(trackbackRequest.getWeblogHandle());
                 
                 if (weblog == null) {
                     throw new WebloggerException("unable to lookup weblog: "+
@@ -127,7 +127,7 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
                 // lookup entry specified by comment request
-                WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
                 
                 if (entry == null) {
@@ -181,7 +181,7 @@ public class TrackbackServlet extends HttpServlet {
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !WebloggerRuntimeConfig.getBooleanProperty("trackbacks.ignoreSpam.enabled")) {
                     
-                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                    WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                     mgr.saveComment(comment);
                     WebloggerFactory.getWeblogger().flush();
                     

@@ -25,14 +25,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -68,8 +67,8 @@ public class ThemeEdit extends UIAction {
     }
     
     
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     
@@ -127,8 +126,7 @@ public class ThemeEdit extends UIAction {
                     log.debug("Saving custom theme for weblog "+weblog.getHandle());
                     
                     // save updated weblog and flush
-                    UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-                    userMgr.saveWebsite(weblog);
+                    WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
                     WebloggerFactory.getWeblogger().flush();
                     
                     // make sure to flush the page cache so ppl can see the change
@@ -184,8 +182,7 @@ public class ThemeEdit extends UIAction {
                 log.debug("Saving theme "+getThemeId()+" for weblog "+weblog.getHandle());
                 
                 // save updated weblog and flush
-                UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-                userMgr.saveWebsite(weblog);
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
                 WebloggerFactory.getWeblogger().flush();
                 
                 // make sure to flush the page cache so ppl can see the change
@@ -217,8 +214,7 @@ public class ThemeEdit extends UIAction {
     // has this weblog had a custom theme before?
     public boolean isFirstCustomization() {
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            return (umgr.getPageByAction(getActionWeblog(), WeblogTemplate.ACTION_WEBLOG) == null);
+            return (WebloggerFactory.getWeblogger().getWeblogManager().getPageByAction(getActionWeblog(), WeblogTemplate.ACTION_WEBLOG) == null);
         } catch (WebloggerException ex) {
             log.error("Error looking up weblog template", ex);
         }

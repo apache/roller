@@ -22,504 +22,176 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
 /**
- * Interface to weblog entry, category and comment management.
+ * Interface to weblog and page template management.
  */
 public interface WeblogManager {
-
-    public static final String DESCENDING = "DESCENDING";
-    public static final String ASCENDING = "ASCENDING";
-       
-    /**
-     * Save weblog entry.
-     */
-    public void saveWeblogEntry(WeblogEntry entry) throws WebloggerException;
-       
-    /**
-     * Remove weblog entry.
-     */
-    public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException;    
     
     /**
-     * Get weblog entry by id.
+     * Add new website, give creator admin permission, creates blogroll,
+     * creates categories and other objects required for new website.
+     * @param newWebsite New website to be created, must have creator.
      */
-    public WeblogEntry getWeblogEntry(String id) throws WebloggerException;
-    
-    /** 
-     * Get weblog entry by anchor. 
-     */
-    public WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor) 
-            throws WebloggerException;
-        
-    /**
-     * Get WeblogEntries by offset/length as list in reverse chronological order.
-     * The range offset and list arguments enable paging through query results.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param user       User or null to get for all users.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param text       Text appearing in the text or summary, or null for all
-     * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
-     * @param sortOrder  Sort order of ASCENDING or DESCENDING (null for DESCENDING)
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return List of WeblogEntryData objects in reverse chrono order.
-     * @throws WebloggerException
-     */
-    public List getWeblogEntries(
-            Weblog website,
-            User    user,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,
-            String      status,
-            String      text,
-            String      sortBy, 
-            String      sortOrder,
-            String      locale,             
-            int         offset,
-            int         range)
-            throws WebloggerException;
-       
-    /**
-     * Get Weblog Entries grouped by day. This method returns a Map that
-     * contains Lists, each List contains WeblogEntryData objects, and the
-     * Lists are keyed by Date objects.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
-     * @throws WebloggerException
-     */
-    public Map getWeblogEntryObjectMap(
-            Weblog website,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,            
-            String      status,
-            String      locale,
-            int         offset,
-            int         range)
-            throws WebloggerException;
-        
-    /**
-     * Get Weblog Entry date strings grouped by day. This method returns a Map
-     * that contains Lists, each List contains YYYYMMDD date strings objects,
-     * and the Lists are keyed by Date objects.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @return Map of Lists, keyed by Date, and containing date strings.
-     * @throws WebloggerException
-     */
-    public Map getWeblogEntryStringMap(
-            Weblog website,
-            Date        startDate,
-            Date        endDate,
-            String      catName,
-            List        tags,            
-            String      status,
-            String      locale,
-            int         offset,
-            int         range)
-            throws WebloggerException;    
-    
-    /**
-     * Get weblog entries with given category or, optionally, any sub-category
-     * of that category.
-     * @param cat     Category
-     * @param subcats True if sub-categories are to be fetched
-     * @return        List of weblog entries in category
-     */
-    public List getWeblogEntries(WeblogCategory cat, boolean subcats) 
-            throws WebloggerException; 
-    
-    /** 
-     * Get weblog enties ordered by descending number of comments.
-     * @param website    Weblog or null to get for all weblogs.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     * @returns List of WeblogEntryData objects.
-     */
-    public List getMostCommentedWeblogEntries(
-            Weblog website,             
-            Date        startDate,
-            Date        endDate,
-            int         offset, 
-            int         length)
-            throws WebloggerException;
-    
-    /**
-     * Get the WeblogEntry following, chronologically, the current entry.
-     * Restrict by the Category, if named.
-     * @param current The "current" WeblogEntryData
-     * @param catName The value of the requested Category Name
-     */
-    public WeblogEntry getNextEntry(WeblogEntry current, 
-            String catName, String locale) throws WebloggerException;    
-    
-    /**
-     * Get the WeblogEntry prior to, chronologically, the current entry.
-     * Restrict by the Category, if named.
-     * @param current The "current" WeblogEntryData.
-     * @param catName The value of the requested Category Name.
-     */
-    public WeblogEntry getPreviousEntry(WeblogEntry current, 
-            String catName, String locale) throws WebloggerException;
-      
-    
-    /**
-     * Get specified number of most recent pinned and published Weblog Entries.
-     * @param max Maximum number to return.
-     * @return Collection of WeblogEntryData objects.
-     */
-    public List getWeblogEntriesPinnedToMain(Integer max) throws WebloggerException;
-
-    /**
-     * Remove attribute with given name from given WeblogEntryData
-     * @param name Name of attribute to be removed
-     */
-    public void removeWeblogEntryAttribute(String name,WeblogEntry entry)
-            throws WebloggerException;
-
-    /**
-     * Remove tag with given name from given WeblogEntryData
-     * @param name Name of tag to be removed
-     */
-    public void removeWeblogEntryTag(String name,WeblogEntry entry)
-            throws WebloggerException;
-
-    /**
-     * Save weblog category.
-     */
-    public void saveWeblogCategory(WeblogCategory cat) throws WebloggerException;
-    
-    /**
-     * Remove weblog category.
-     */
-    public void removeWeblogCategory(WeblogCategory cat) throws WebloggerException;
-        
-    /**
-     * Get category by id.
-     */
-    public WeblogCategory getWeblogCategory(String id) throws WebloggerException;
+    public void addWeblog(Weblog newWebsite) throws WebloggerException;
     
     
     /**
-     * Move a category under another category.
-     *
-     * This moves the src category itself and all children and associated entries.
+     * Store a single weblog.
      */
-    public void moveWeblogCategory(WeblogCategory src, WeblogCategory dest)
+    public void saveWeblog(Weblog data) throws WebloggerException;
+    
+    
+    /**
+     * Remove website object.
+     */
+    public void removeWeblog(Weblog website) throws WebloggerException;
+    
+    
+    /**
+     * Get website object by name.
+     */
+    public Weblog getWeblog(String id) throws WebloggerException;
+    
+    
+    /**
+     * Get website specified by handle (or null if enabled website not found).
+     * @param handle  Handle of website
+     */
+    public Weblog getWeblogByHandle(String handle) throws WebloggerException;
+    
+    
+    /**
+     * Get website specified by handle with option to return only enabled websites.
+     * @param handle  Handle of website
+     */
+    public Weblog getWeblogByHandle(String handle, Boolean enabled)
+        throws WebloggerException;
+    
+    
+    /**
+     * Get websites optionally restricted by user, enabled and active status.
+     * @param enabled   Get all with this enabled state (or null or all)
+     * @param active    Get all with this active state (or null or all)
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate   Restrict to those created before (or null for all)
+     * @param offset    Offset into results (for paging)
+     * @param length    Maximum number of results to return (for paging)
+     * @returns List of WebsiteData objects.
+     */
+    public List getWeblogs(
+            Boolean  enabled,
+            Boolean  active,
+            Date     startDate,
+            Date     endDate,
+            int      offset,
+            int      length)
             throws WebloggerException;
     
     
     /**
-     * Recategorize all entries with one category to another.
+     * Get websites of a user.
+     * @param user        Get all weblogs for this user
+     * @param enabledOnly Include only enabled weblogs?
+     * @returns List of WebsiteData objects.
      */
-    public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat) 
+    public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
+    
+    
+    /**
+     * Get users of a weblog.
+     * @param user        Get all users for this weblog
+     * @param enabledOnly Include only enabled users?
+     * @returns List of WebsiteData objects.
+     */
+    public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
+    
+    
+    /**
+     * Get websites ordered by descending number of comments.
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
+     * @returns List of WebsiteData objects.
+     */
+    public List getMostCommentedWeblogs(
+            Date startDate,
+            Date endDate,
+            int  offset,
+            int  length)
             throws WebloggerException;
     
-    /**
-     * Get top level categories for a website.
-     * @param website Website.
-     */
-    public WeblogCategory getRootWeblogCategory(Weblog website) throws WebloggerException;
-    
     
     /**
-     * Get category specified by website and categoryPath.
-     * @param website      Website of WeblogCategory.
-     * @param categoryPath Path of WeblogCategory, relative to category root.
+     * Get map with 26 entries, one for each letter A-Z and
+     * containing integers reflecting the number of weblogs whose
+     * names start with each letter.
      */
-    public WeblogCategory getWeblogCategoryByPath(Weblog website, 
-            String categoryPath) throws WebloggerException;
+    public Map getWeblogHandleLetterMap() throws WebloggerException;
     
     
     /** 
-     * Get WebLogCategory objects for a website. 
+     * Get collection of weblogs whose handles begin with specified letter 
      */
-    public List getWeblogCategories(Weblog website, boolean includeRoot)
-            throws WebloggerException;
+    public List getWeblogsByLetter(char letter, int offset, int length) 
+        throws WebloggerException;
     
-               
-    /**
-     * Save comment.
+        /**
+     * Store page.
      */
-    public void saveComment(WeblogEntryComment comment) throws WebloggerException;
+    public void savePage(WeblogTemplate data) throws WebloggerException;
+    
     
     /**
-     * Remove comment.
+     * Remove page.
      */
-    public void removeComment(WeblogEntryComment comment) throws WebloggerException;
+    public void removePage(WeblogTemplate page) throws WebloggerException;
+    
+    
+    /**
+     * Get page by id.
+     */
+    public WeblogTemplate getPage(String id) throws WebloggerException;
+    
+    
+    /**
+     * Get user's page by action.
+     */
+    public WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
+    
+    
+    /**
+     * Get user's page by name.
+     */
+    public WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
+    
+    
+    /**
+     * Get website's page by link.
+     */
+    public WeblogTemplate getPageByLink(Weblog w, String p)
+        throws WebloggerException;
+    
+    
+    /**
+     * Get website's pages
+     */
+    public List getPages(Weblog w) throws WebloggerException;
    
-    /**
-     * Get comment by id.
-     */
-    public WeblogEntryComment getComment(String id) throws WebloggerException;
-       
-    /**
-     * Generic comments query method.
-     * @param website    Website or null for all comments on site
-     * @param entry      Entry or null to include all comments
-     * @param startDate  Start date or null for no restriction
-     * @param endDate    End date or null for no restriction
-     * @param status     The status of the comment, or null for any
-     * @param reverseChrono True for results in reverse chrono order
-     * @param offset     Offset into results for paging
-     * @param length     Max comments to return (or -1 for no limit)
-     */
-    public List getComments(
-            
-            Weblog          website,
-            WeblogEntry     entry,
-            String          searchString,
-            Date            startDate,
-            Date            endDate,
-            String          status,
-            boolean         reverseChrono,
-            int             offset,
-            int             length
-            
-            ) throws WebloggerException;
-
-    /**
-     * Deletes comments that match paramters.
-     * @param website    Website or null for all comments on site
-     * @param entry      Entry or null to include all comments
-     * @param startDate  Start date or null for no restriction
-     * @param endDate    End date or null for no restriction
-     * @param status     Status of comment
-     * @return Number of comments deleted
-     */
-    public int removeMatchingComments(
-            
-            Weblog          website,
-            WeblogEntry     entry,
-            String          searchString,
-            Date            startDate,
-            Date            endDate,
-            String          status
-            
-            ) throws WebloggerException;
-        
-    /**
-     * Create unique anchor for weblog entry.
-     */
-    public String createAnchor(WeblogEntry data) throws WebloggerException;    
     
     /**
-     * Check for duplicate category name.
-     */
-    public boolean isDuplicateWeblogCategoryName(WeblogCategory data)
-            throws WebloggerException;  
-    
-    /**
-     * Check if weblog category is in use.
-     */
-    public boolean isWeblogCategoryInUse(WeblogCategory data)
-            throws WebloggerException;    
-    
-    
-    /**
-     * Apply comment default settings from website to all of website's entries.
-     */
-    public void applyCommentDefaultsToEntries(Weblog website) 
-        throws WebloggerException;
-    
-    /**
-     * Release all resources held by manager.
-     */
-    public void release();    
-    
-    /**
-     * Get list of TagStat. There's no offset/length params just a limit.
-     * @param website       Weblog or null to get for all weblogs.
-     * @param startDate     Date or null of the most recent time a tag was used.
-     * @param limit         Max TagStats to return (or -1 for no limit)
-     * @return
-     * @throws WebloggerException
-     */
-    public List getPopularTags(Weblog website, Date startDate, int limit)
-            throws WebloggerException;
-    
-    /**
-     * Get list of TagStat. There's no offset/length params just a limit.
-     * @param website       Weblog or null to get for all weblogs.
-     * @param sortBy        Sort by either 'name' or 'count' (null for name) 
-     * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
-     * @param limit         Max TagStats to return (or -1 for no limit)
-     * @return
-     * @throws WebloggerException
-     */
-    public List getTags(Weblog website, String sortBy, String startsWith, int limit)
-            throws WebloggerException;    
-    
-    /**
-     * Does the specified tag combination exist?  Optionally confined to a specific weblog.
-     *
-     * This tests if the intersection of the tags listed will yield any results
-     * and returns a true/false value if so.  This means that if the tags list
-     * is "foo", "bar" and only the tag "foo" has been used then this method
-     * should return false.
-     *
-     * @param tags The List of tags to check for.
-     * @param weblog The weblog to confine the check to.
-     * @return True if tags exist, false otherwise.
-     * @throws WebloggerException If there is any problem doing the operation.
-     */
-    public boolean getTagComboExists(List tags, Weblog weblog) 
-        throws WebloggerException;
-    
-    /**
-     * This method maintains the tag aggregate table up-to-date with total counts. More
-     * specifically every time this method is called it will act upon exactly two rows
-     * in the database (tag,website,count), one with website matching the argument passed
-     * and one where website is null. If the count ever reaches zero, the row must be deleted.
-     * 
-     * @param name      The tag name
-     * @param website   The website to used when updating the stats.
-     * @param amount    The amount to increment the tag count (it can be positive or negative).
-     * @throws WebloggerException
-     */
-    public void updateTagCount(String name, Weblog website, int amount)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get a HitCountData by id.
-     *
-     * @param id The HitCountData id.
-     * @return The HitCountData object, or null if it wasn't found.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public WeblogHitCount getHitCount(String id) throws WebloggerException;
-    
-    
-    /**
-     * Get a HitCountData by weblog.
-     *
-     * @param weblog The WebsiteData that you want the hit count for.
-     * @return The HitCountData object, or null if it wasn't found.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public WeblogHitCount getHitCountByWeblog(Weblog weblog)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get HitCountData objects for the hotest weblogs.
-     *
-     * The results may be constrained to a certain number of days back from the
-     * current time, as well as pagable via the offset and length params.
-     *
-     * The results are ordered by highest counts in descending order, and any
-     * weblogs which are not active or enabled are not included.
-     *
-     * @param sinceDays Number of days in the past to consider.
-     * @param offset What index in the results to begin from.
-     * @param length The number of results to return.
-     * @return The list of HitCountData objects ranked by hit count, descending.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public List getHotWeblogs(int sinceDays, int offset, int length)
-        throws WebloggerException;
-    
-    
-    /**
-     * Save a HitCountData object.
-     *
-     * @param hitCount The HitCountData object to save.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public void saveHitCount(WeblogHitCount hitCount) throws WebloggerException;
-    
-    
-    /**
-     * Remove a HitCountData object.
-     *
-     * @param hitCount The HitCountData object to remove.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public void removeHitCount(WeblogHitCount hitCount) throws WebloggerException;
-    
-    
-    /**
-     * Increment the hit count for a weblog by a certain amount.
-     *
-     * This is basically a convenience method for doing a lookup, modify, save
-     * of a HitCountData object.
-     *
-     * @param weblog The WebsiteData object to increment the count for.
-     * @param amount How much to increment by.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public void incrementHitCount(Weblog weblog, int amount)
-        throws WebloggerException;
-    
-    
-    /**
-     * Reset the hit counts for all weblogs.  This sets the counts back to 0.
-     *
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public void resetAllHitCounts() throws WebloggerException;
-    
-    
-    /**
-     * Reset the hit counts for a single weblog.  This sets the count to 0.
-     *
-     * @param weblog The WebsiteData object to reset the count for.
-     * @throws WebloggerException If there was a problem with the backend.
-     */
-    public void resetHitCount(Weblog weblog) throws WebloggerException;
-
-    
-    /**
-     * Get site-wide comment count 
-     */
-    public long getCommentCount() throws WebloggerException;
-
-    
-    /**
-     * Get weblog comment count 
+     * Get count of active weblogs
      */    
-    public long getCommentCount(Weblog websiteData) throws WebloggerException;
-
+    public long getWeblogCount() throws WebloggerException;
+    
     
     /**
-     * Get site-wide entry count 
-     */    
-    public long getEntryCount() throws WebloggerException;
-
-    
-    /**
-     * Get weblog entry count 
-     */    
-    public long getEntryCount(Weblog websiteData) throws WebloggerException;
-    
+     * Release any resources held by manager.
+     */
+    public void release();
 }
-

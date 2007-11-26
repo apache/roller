@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.URLUtilities;
 
@@ -334,25 +333,80 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
      * Get url to JSON tags service url, optionally for a given weblog.
      */
     public String getWeblogTagsJsonURL(Weblog weblog,
-                                                    boolean absolute) {
+                                                    boolean absolute,
+                                                    int pageNum) {
         
         StringBuffer url = new StringBuffer();
         
-        if(absolute) {
+        if (absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
         // json tags service base
-        url.append("/roller-services/json/tags/");
+        url.append("/roller-services/tagdata/");
         
         // is this for a specific weblog or site-wide?
-        if(weblog != null) {
-            url.append(weblog.getHandle()).append("/");
+        if (weblog != null) {
+            url.append("/weblog/");
+            url.append(weblog.getHandle());
+            url.append("/");
+        }
+        
+        if (pageNum > 0) {
+            url.append("?page=" + pageNum);
         }
         
         return url.toString();
     }
+
+    
+    public String getWeblogSearchFeedURLTemplate(Weblog weblog) {
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        url.append(getWeblogURL(weblog, null, true));
+        url.append("feed/entries/atom");
+        
+        Map params = new HashMap();
+        params.put("q", "{searchTerms}");
+        params.put("page", "{startPage}");
+        
+        return url.toString() + URLUtilities.getQueryString(params);
+    }
+
+    
+    public String getWeblogSearchPageURLTemplate(Weblog weblog) {
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        url.append(getWeblogURL(weblog, null, true));
+        url.append("search");
+        
+        Map params = new HashMap();
+        params.put("q", "{searchTerms}");
+        params.put("page", "{startPage}");
+        
+        return url.toString() + URLUtilities.getQueryString(params);
+    }
+
+
+    public String getOpenSearchSiteURL() {
+        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/";
+    }
+
+
+    public String getOpenSearchWeblogURL(String weblogHandle) {
+        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/" + weblogHandle;
+    }
     
 }
+
+

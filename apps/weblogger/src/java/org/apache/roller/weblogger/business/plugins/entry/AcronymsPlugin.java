@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
@@ -128,8 +129,8 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     private Properties loadAcronyms(Weblog website) {
         Properties acronyms = new Properties();
         try {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogTemplate acronymsPage = userMgr.getPageByName(
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogTemplate acronymsPage = wmgr.getPageByName(
                     website, "_acronyms");
             if (acronymsPage != null) {
                 acronyms = parseAcronymPage(acronymsPage, acronyms);

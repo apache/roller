@@ -23,10 +23,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -51,8 +51,8 @@ public class PlanetGroups extends PlanetUIAction {
     
     
     @Override
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     @Override

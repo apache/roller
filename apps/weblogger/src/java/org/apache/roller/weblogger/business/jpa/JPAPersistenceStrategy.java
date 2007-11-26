@@ -235,7 +235,7 @@ public class JPAPersistenceStrategy {
      * already active
      * @return the EntityManager
      */
-    private EntityManager getEntityManager(boolean isTransactionRequired) {
+    public EntityManager getEntityManager(boolean isTransactionRequired) {
         EntityManager em = getThreadLocalEntityManager();
         if (isTransactionRequired && !em.getTransaction().isActive()) {
             em.getTransaction().begin();

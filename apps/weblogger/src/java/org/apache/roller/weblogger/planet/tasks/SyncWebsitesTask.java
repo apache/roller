@@ -139,7 +139,6 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         
         try {
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-            UserManager userManager = WebloggerFactory.getWeblogger().getUserManager();
             
             // first, make sure there is an "all" pmgr group
             Planet planetObject = pmgr.getPlanetById("zzz_default_planet_zzz");
@@ -154,7 +153,8 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             
             // walk through all enable weblogs and add/update subs as needed
             List liveUserFeeds = new ArrayList();
-            List<Weblog> websites = userManager.getWebsites(null, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
+            List<Weblog> websites = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getWeblogs(Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             for ( Weblog weblog : websites ) {
                 
                 log.debug("processing weblog - "+weblog.getHandle());
@@ -171,7 +171,8 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                     sub = new Subscription();
                     sub.setTitle(weblog.getName());
                     sub.setFeedURL(feedUrl);
-                    sub.setSiteURL(WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(weblog, null, true));
+                    sub.setSiteURL(WebloggerFactory.getWeblogger()
+                            .getUrlStrategy().getWeblogURL(weblog, null, true));
                     sub.setAuthor(weblog.getName());
                     sub.setLastUpdated(new Date(0));
                     

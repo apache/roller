@@ -22,7 +22,6 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
 import java.util.Date;
@@ -33,9 +32,10 @@ import org.jdom.Document;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry;
@@ -100,7 +100,7 @@ class RollerWeblogHandler extends Handler {
     
     private EntrySet getCollection() throws HandlerException {
         try {
-            List users = getRoller().getUserManager().getUsers(null, null, null, null, 0, -1);
+            List users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
             if (users == null) {
                 users = Collections.EMPTY_LIST;
             }
@@ -171,7 +171,7 @@ class RollerWeblogHandler extends Handler {
                 User user = mgr.getUserByUserName(entry.getCreatingUser());
                 Weblog wd = new Weblog(
                         entry.getHandle(),
-                        user,
+                        user.getUserName(),
                         entry.getName(),
                         entry.getDescription(),
                         entry.getEmailAddress(),
@@ -199,7 +199,7 @@ class RollerWeblogHandler extends Handler {
                     log.error("ERROR setting default editor page for weblog", ex);
                 }
                 
-                mgr.addWebsite(wd);
+                WebloggerFactory.getWeblogger().getWeblogManager().addWeblog(wd);
                 getRoller().flush();
                 CacheManager.invalidate(wd);
                 websiteDatas.add(wd);
@@ -249,8 +249,7 @@ class RollerWeblogHandler extends Handler {
         }
         
         try {
-            UserManager mgr = getRoller().getUserManager();
-            mgr.saveWebsite(wd);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(wd);
             getRoller().flush();
             CacheManager.invalidate(wd);
         } catch (WebloggerException re) {
@@ -262,13 +261,10 @@ class RollerWeblogHandler extends Handler {
         String handle = getUri().getEntryId();
         
         try {
-            UserManager mgr = getRoller().getUserManager();
-            
             Weblog wd = getWebsiteData(handle);
-            
             CacheManager.invalidate(wd);
 
-            mgr.removeWebsite(wd);
+            WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(wd);
             getRoller().flush();
 
             // return empty set, object deleted
@@ -310,22 +306,25 @@ class RollerWeblogHandler extends Handler {
         if (uds == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
-        
-        WeblogEntrySet wes = new WeblogEntrySet(getUrlPrefix());
-        List entries = new ArrayList();
-        for (int i = 0; i < uds.length; i++) {
-            User ud = uds[i];
-            List permissions = ud.getPermissions();
-            for (Iterator j = permissions.iterator(); j.hasNext(); ) {
-                WeblogPermission pd = (WeblogPermission)j.next();
-                Weblog wd = pd.getWebsite();
-                WeblogEntry we = toWeblogEntry(wd);
-                entries.add(we);
+        try {
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogEntrySet wes = new WeblogEntrySet(getUrlPrefix());
+            List entries = new ArrayList();
+            for (int i = 0; i < uds.length; i++) {
+                User ud = uds[i];
+                List<WeblogPermission> perms = umgr.getWeblogPermissions(ud);
+                for (WeblogPermission perm : perms) {
+                    Weblog wd = perm.getWeblog();
+                    WeblogEntry we = toWeblogEntry(wd);
+                    entries.add(we);
+                }
             }
+            wes.setEntries((Entry[])entries.toArray(new Entry[0]));
+            return wes;
+            
+        } catch (WebloggerException ex) {
+            throw new InternalException("ERROR retrieving users weblogs", ex);
         }
-        wes.setEntries((Entry[])entries.toArray(new Entry[0]));
-        
-        return wes;
     }
     
     private WeblogEntrySet toWeblogEntrySet(Weblog[] wds) throws HandlerException {

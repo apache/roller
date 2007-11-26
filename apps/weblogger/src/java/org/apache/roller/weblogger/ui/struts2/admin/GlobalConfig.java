@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPl
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
@@ -75,8 +76,8 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     }
     
     @Override
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     

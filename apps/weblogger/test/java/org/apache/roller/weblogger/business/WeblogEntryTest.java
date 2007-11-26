@@ -86,7 +86,7 @@ public class WeblogEntryTest extends TestCase {
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -100,7 +100,7 @@ public class WeblogEntryTest extends TestCase {
      */
     public void testWeblogEntryCRUD() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry = null;
         
         WeblogEntry testEntry = new WeblogEntry();
@@ -111,7 +111,7 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWebsite(testWeblog);
-        testEntry.setCreator(testUser);
+        testEntry.setCreatorUserName(testUser.getUserName());
         
         WeblogCategory cat = mgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
         testEntry.setCategory(cat);
@@ -153,7 +153,7 @@ public class WeblogEntryTest extends TestCase {
      */
     public void testWeblogEntryLookups() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry = null;
         List entries = null;
         Map entryMap = null;
@@ -310,7 +310,7 @@ public class WeblogEntryTest extends TestCase {
      */
     public void testCreateAnchor() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry = null;
         List entries = null;
         
@@ -341,7 +341,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testCreateAnEntryWithTagsShortcut() throws Exception {
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             WeblogEntry entry = null;
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
             testUser = TestUtils.getManagedUser(testUser);
@@ -356,7 +356,7 @@ public class WeblogEntryTest extends TestCase {
             testEntry.setUpdateTime(
                     new java.sql.Timestamp(new java.util.Date().getTime()));
             testEntry.setWebsite(testWeblog);
-            testEntry.setCreator(testUser);
+            testEntry.setCreatorUserName(testUser.getUserName());
             testEntry.setCategory(testWeblog.getDefaultCategory());
 
             // shortcut
@@ -391,7 +391,7 @@ public class WeblogEntryTest extends TestCase {
         
     public void testAddMultipleTags() throws Exception {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -419,7 +419,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testAddMultipleIdenticalTags() throws Exception {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -446,7 +446,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testRemoveTagsViaShortcut() throws Exception {
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
             // setup some test entries to use
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -487,7 +487,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testTagsExist() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
@@ -539,7 +539,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testGetEntriesByTag() throws Exception {
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
             // setup some test entries to use
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -574,7 +574,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testRemoveEntryTagCascading() throws Exception {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -608,7 +608,7 @@ public class WeblogEntryTest extends TestCase {
     
     public void testUpdateTags() throws Exception {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -658,7 +658,7 @@ public class WeblogEntryTest extends TestCase {
      */
     public void testUpdateTagTime() throws Exception {
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -714,7 +714,7 @@ public class WeblogEntryTest extends TestCase {
     public void testTagAggregates() throws Exception {
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
@@ -724,15 +724,15 @@ public class WeblogEntryTest extends TestCase {
             // let's make sure we are starting from scratch
 
             // site-wide
-            List tags = mgr.getTags(null, null, null, -1);
+            List tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // first weblog
-            tags = mgr.getTags(testWeblog, null, null, -1);
+            tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // second weblog
-            tags = mgr.getTags(testWeblog2, null, null, -1);
+            tags = mgr.getTags(testWeblog2, null, null, 0, -1);
             assertEquals(0, tags.size());
 
             // setup some test entries to use
@@ -752,7 +752,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            tags = mgr.getTags(testWeblog, null, null, -1);
+            tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
             HashMap expectedWeblogTags = new HashMap();
@@ -782,7 +782,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             // let's fetch "site" tags now
-            tags = mgr.getTags(null, null, null, -1);
+            tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(4, tags.size());
 
             HashMap expectedSiteTags = new HashMap();
@@ -814,7 +814,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.endSession(true);
 
             testWeblog = TestUtils.getManagedWebsite(testWeblog);
-            tags = mgr.getTags(testWeblog, null, null, -1);
+            tags = mgr.getTags(testWeblog, null, null, 0, -1);
             assertEquals(4, tags.size());
 
             expectedWeblogTags = new HashMap();
@@ -834,7 +834,7 @@ public class WeblogEntryTest extends TestCase {
                         expectedCount.intValue(), stat.getCount());
             }
 
-            tags = mgr.getTags(null, null, null, -1);
+            tags = mgr.getTags(null, null, null, 0, -1);
             assertEquals(5, tags.size());
 
             expectedSiteTags = new HashMap();
@@ -873,20 +873,20 @@ public class WeblogEntryTest extends TestCase {
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         testUser = TestUtils.getManagedUser(testUser);
 
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         // let's make sure we are starting from scratch
 
         // site-wide
-        List tags = mgr.getTags(null, null, null, -1);
+        List tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // first weblog
-        tags = mgr.getTags(testWeblog, null, null, -1);
+        tags = mgr.getTags(testWeblog, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // second weblog
-        tags = mgr.getTags(testWeblog2, null, null, -1);
+        tags = mgr.getTags(testWeblog2, null, null, 0, -1);
         assertEquals(0, tags.size());
 
         // setup some test entries to use
@@ -899,7 +899,7 @@ public class WeblogEntryTest extends TestCase {
 
         TestUtils.endSession(true);
 
-        tags = mgr.getTags(testWeblog, null, null, -1);
+        tags = mgr.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
         HashMap expectedWeblogTags = new HashMap();
@@ -925,7 +925,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         // let's fetch "site" tags now
-        tags = mgr.getTags(null, null, null, -1);
+        tags = mgr.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
 
         HashMap expectedSiteTags = new HashMap();
@@ -957,6 +957,7 @@ public class WeblogEntryTest extends TestCase {
     public void testEntryAttributeCRUD() throws Exception {
         
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry = null;
         
         WeblogEntry testEntry = new WeblogEntry();
@@ -967,22 +968,22 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWebsite(testWeblog);
-        testEntry.setCreator(testUser);
+        testEntry.setCreatorUserName(testUser.getUserName());
         
         testEntry.putEntryAttribute("att_mediacast_url", "http://podcast-schmodcast.com");
         testEntry.putEntryAttribute("att_mediacast_type", "application/drivel");
         testEntry.putEntryAttribute("att_mediacast_length", "3141592654");
                     
-        WeblogCategory cat = mgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
+        WeblogCategory cat = emgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
         testEntry.setCategory(cat);
         
         // create a weblog entry
-        mgr.saveWeblogEntry(testEntry);
+        emgr.saveWeblogEntry(testEntry);
         String id = testEntry.getId();
         TestUtils.endSession(true);
         
         // make sure entry was created
-        entry = mgr.getWeblogEntry(id);
+        entry = emgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
         assertNotNull(entry.getEntryAttributes());
@@ -996,30 +997,34 @@ public class WeblogEntryTest extends TestCase {
         
         // update a weblog entry
         entry.setTitle("testtest");
-        mgr.saveWeblogEntry(entry);
+        emgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
         
         // make sure entry was updated
         entry = null;
-        entry = mgr.getWeblogEntry(id);
+        entry = emgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
         
         // delete a weblog entry
-        mgr.removeWeblogEntry(entry);
+        emgr.removeWeblogEntry(entry);
         TestUtils.endSession(true);
         
         // make sure entry was deleted
         entry = null;
-        entry = mgr.getWeblogEntry(id);
+        entry = emgr.getWeblogEntry(id);
         assertNull(entry);
     }
     
     
     public void testWeblogStats() throws Exception {
         
+        
+        WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+        
+        long existingUserCount = umgr.getUserCount() - 1;
         
         User user1 = TestUtils.setupUser("statuser1");
         Weblog blog1 = TestUtils.setupWeblog("statblog1", user1);
@@ -1027,7 +1032,7 @@ public class WeblogEntryTest extends TestCase {
 
         Weblog blog3 = TestUtils.setupWeblog("statblog3", user1);
         blog3.setEnabled(Boolean. FALSE);
-        umgr.saveWebsite(blog3);
+        wmgr.saveWeblog(blog3);
 
         WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", 
                 testWeblog.getDefaultCategory(), blog1, user1);
@@ -1050,19 +1055,19 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         try {
-            blog1 = umgr.getWebsite(blog1.getId());
-            blog2 = umgr.getWebsite(blog2.getId());
+            blog1 = wmgr.getWeblog(blog1.getId());
+            blog2 = wmgr.getWeblog(blog2.getId());
             
             assertEquals(2L, blog1.getEntryCount());
             assertEquals(3L, blog2.getEntryCount());
-            assertEquals(5L, wmgr.getEntryCount());
+            assertEquals(5L, emgr.getEntryCount());
 
             assertEquals(2L, blog1.getCommentCount());
             assertEquals(3L, blog2.getCommentCount());
-            assertEquals(5L, wmgr.getCommentCount());
+            assertEquals(5L, emgr.getCommentCount());
 
-            assertEquals(4L, umgr.getWeblogCount());
-            assertEquals(2L, umgr.getUserCount());
+            assertEquals(4L, wmgr.getWeblogCount());
+            assertEquals(existingUserCount + 2L, umgr.getUserCount());
             
         } finally {
             
@@ -1082,7 +1087,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.teardownWeblog(blog2.getId());
             TestUtils.teardownWeblog(blog3.getId());
 
-            TestUtils.teardownUser(user1.getId());      
+            TestUtils.teardownUser(user1.getUserName());      
             
             TestUtils.endSession(true);
         }

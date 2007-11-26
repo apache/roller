@@ -60,7 +60,7 @@ public class CommentValidatorTest extends TestCase {
     protected void tearDown() throws Exception {
         TestUtils.teardownWeblogEntry(entry.getId());
         TestUtils.teardownWeblog(weblog.getId());
-        TestUtils.teardownUser(user.getId());
+        TestUtils.teardownUser(user.getUserName());
     }
     
     public void testExcessSizeCommentValidator() {

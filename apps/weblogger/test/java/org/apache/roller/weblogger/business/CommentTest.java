@@ -82,7 +82,7 @@ public class CommentTest extends TestCase {
         try {
             TestUtils.teardownWeblogEntry(testEntry.getId());
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -96,7 +96,7 @@ public class CommentTest extends TestCase {
      */
     public void testCommentCRUD() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName("test");
@@ -146,7 +146,7 @@ public class CommentTest extends TestCase {
      */
     public void testCommentLookups() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         List comments = null;
         
         // we need some comments to play with
@@ -213,6 +213,7 @@ public class CommentTest extends TestCase {
         
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();        
+            WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();        
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
 
             // first make sure we can delete an entry with comments
@@ -231,7 +232,7 @@ public class CommentTest extends TestCase {
             // now deleting the entry should succeed and delete all comments
             Exception ex = null;
             try {
-                wmgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(entry));
+                emgr.removeWeblogEntry(TestUtils.getManagedWeblogEntry(entry));
                 TestUtils.endSession(true);
             } catch (WebloggerException e) {
                 ex = e;
@@ -255,7 +256,7 @@ public class CommentTest extends TestCase {
             ex = null;
             try {
                 weblog = TestUtils.getManagedWebsite(weblog);
-                umgr.removeWebsite(weblog);
+                wmgr.removeWeblog(weblog);
                 TestUtils.endSession(true);
             } catch (WebloggerException e) {
                 StringWriter sw = new StringWriter();

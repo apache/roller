@@ -121,7 +121,7 @@ public class RefererTest extends TestCase {
             
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownWeblog(testWeblog2.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             
             TestUtils.endSession(true);
             
@@ -252,11 +252,10 @@ public class RefererTest extends TestCase {
         assertEquals(count, refs.size());
         String origWords = null;
         
-        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         origWords = testWeblog.getBlacklist();
         testWeblog.setBlacklist("test");
-        umgr.saveWebsite(testWeblog);
+        WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(testWeblog);
         TestUtils.endSession(true);
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);

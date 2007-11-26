@@ -6,7 +6,7 @@ Object.extend(Object.extend(RollerTagsAutoCompleter.prototype, Ajax.Autocomplete
 	    this.options.asynchronous  = true;
 	    this.options.onComplete    = this.onComplete.bind(this)
 	    this.options.method   = 'get';
-	    this.options.defaultParams = this.options.parameters || null;
+	    this.options.defaultParams = 'page=0';
 	    this.url    = url;
 	    this.cache = {};
 	    this.options.mine = options.mine || [];
@@ -24,10 +24,12 @@ Object.extend(Object.extend(RollerTagsAutoCompleter.prototype, Ajax.Autocomplete
 	this.options.parameters = this.options.callback ?
 	  this.options.callback(this.element, entry) : "";
 
-	if(this.options.defaultParams) 
+	//if(this.options.defaultParams) 
 	  this.options.parameters += '&' + this.options.defaultParams;
+	  this.options.parameters += "&format=json";
+	  this.options.parameters += "&prefix=" + encodeURIComponent(t);
 
-	new Ajax.Request(this.url + "/" + encodeURIComponent(t), this.options);
+	new Ajax.Request(this.url, this.options);
   },
 
 	onComplete: function(request) {

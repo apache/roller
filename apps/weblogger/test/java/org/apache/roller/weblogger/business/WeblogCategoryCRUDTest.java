@@ -67,7 +67,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -84,7 +84,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogCategory root = mgr.getRootWeblogCategory(testWeblog);
@@ -106,7 +106,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogCategory cat = null;
         List cats = null;
         
@@ -169,7 +169,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("BEGIN");
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         // root category is always available
         testWeblog = TestUtils.getManagedWebsite(testWeblog);

@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.planet.business.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.roller.planet.business.MultiPlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PropertiesManager;
@@ -31,6 +30,7 @@ import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 import org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl;
 import org.apache.roller.planet.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
+import org.apache.roller.weblogger.planet.ui.PlanetURLStrategy;
 
 
 /**
@@ -47,7 +47,7 @@ public class RollerPlanetModule implements Module {
         
         binder.bind(PlanetManager.class).to(     JPAPlanetManagerImpl.class);   
         binder.bind(PropertiesManager.class).to( JPAPropertiesManagerImpl.class);    
-        binder.bind(URLStrategy.class).to(       MultiPlanetURLStrategy.class);
+        binder.bind(URLStrategy.class).to(       PlanetURLStrategy.class);
         binder.bind(FeedFetcher.class).to(       WebloggerRomeFeedFetcher.class);
     }
     

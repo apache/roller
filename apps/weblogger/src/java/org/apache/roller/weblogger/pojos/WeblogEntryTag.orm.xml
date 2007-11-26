@@ -25,14 +25,14 @@
             <basic name="time">
                 <column name="time" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <basic name="creatorUserName">
+                <column name="creator" insertable="true" updatable="true" unique="false"/>
+            </basic>
             <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
                 <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <many-to-one name="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntry">
                 <join-column name="entryid" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="user" target-entity="org.apache.roller.weblogger.pojos.User">
-                <join-column name="userid" insertable="true" updatable="true"/>
             </many-to-one>
         </attributes>
     </entity>

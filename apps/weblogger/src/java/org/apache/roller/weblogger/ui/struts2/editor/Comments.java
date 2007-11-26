@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -84,8 +84,8 @@ public class Comments extends UIAction {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     
@@ -94,7 +94,7 @@ public class Comments extends UIAction {
         List comments = Collections.EMPTY_LIST;
         boolean hasMore = false;
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             // lookup weblog entry if necessary
             if(!StringUtils.isEmpty(getBean().getEntryId())) {
@@ -187,7 +187,7 @@ public class Comments extends UIAction {
         getBean().loadCheckboxes(getPager().getItems());
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List allMatchingComments = wmgr.getComments(
                     getActionWeblog(),
                     null,
@@ -219,7 +219,7 @@ public class Comments extends UIAction {
     public String delete() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             // if search is enabled, we will need to re-index all entries with
             // comments that have been deleted, so build a list of those entries
@@ -278,7 +278,7 @@ public class Comments extends UIAction {
     public String update() {
         
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             List<WeblogEntryComment> flushList = new ArrayList();
 

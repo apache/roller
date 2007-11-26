@@ -18,12 +18,13 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
@@ -56,8 +57,8 @@ public class StylesheetEdit extends UIAction {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     
@@ -74,8 +75,8 @@ public class StylesheetEdit extends UIAction {
         if(stylesheet != null) {
             log.debug("custom stylesheet path is - "+stylesheet.getLink());
             try {
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                setTemplate(mgr.getPageByLink(getActionWeblog(), stylesheet.getLink()));
+                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getPageByLink(getActionWeblog(), stylesheet.getLink()));
                 
                 if(getTemplate() == null) {
                     log.debug("custom stylesheet not found, creating it");
@@ -93,7 +94,7 @@ public class StylesheetEdit extends UIAction {
                     stylesheetTmpl.setLastModified(new Date());
                     stylesheetTmpl.setTemplateLanguage(stylesheet.getTemplateLanguage());
                     
-                    mgr.savePage(stylesheetTmpl);
+                    WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheetTmpl);
                     WebloggerFactory.getWeblogger().flush();
                     
                     setTemplate(stylesheetTmpl);
@@ -139,8 +140,7 @@ public class StylesheetEdit extends UIAction {
             stylesheet.setContents(getContents());
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            mgr.savePage(stylesheet);
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches
@@ -189,8 +189,7 @@ public class StylesheetEdit extends UIAction {
             stylesheet.setContents(theme.getStylesheet().getContents());
             
             // save template and flush
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            mgr.savePage(stylesheet);
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage(stylesheet);
             WebloggerFactory.getWeblogger().flush();
             
             // notify caches

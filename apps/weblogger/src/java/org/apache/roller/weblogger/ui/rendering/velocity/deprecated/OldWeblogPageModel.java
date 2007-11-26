@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
@@ -57,6 +57,7 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -72,6 +73,7 @@ public class OldWeblogPageModel {
             LogFactory.getFactory().getInstance(OldWeblogPageModel.class);
     
     private BookmarkManager      mBookmarkMgr = null;
+    private WeblogEntryManager   mWeblogEntryMgr = null;
     private WeblogManager        mWeblogMgr = null;
     private UserManager          mUserMgr = null;
     private RefererManager       mRefererMgr = null;
@@ -131,6 +133,7 @@ public class OldWeblogPageModel {
         mRefererMgr  = WebloggerFactory.getWeblogger().getRefererManager();
         mUserMgr     = WebloggerFactory.getWeblogger().getUserManager();
         mWeblogMgr   = WebloggerFactory.getWeblogger().getWeblogManager();
+        mWeblogEntryMgr   = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         // Preload what we can for encapsulation.  What we cannot preload we
         // will use the Managers later to fetch.
@@ -179,7 +182,7 @@ public class OldWeblogPageModel {
         List tops = null;
         try {
             Collection mTops = mBookmarkMgr.getRootFolder(
-                    mUserMgr.getWebsiteByHandle(mWebsite.getHandle())).getFolders();
+                    mWeblogMgr.getWeblogByHandle(mWebsite.getHandle())).getFolders();
             
             // wrap pojos
             tops = new ArrayList(mTops.size());
@@ -205,7 +208,7 @@ public class OldWeblogPageModel {
     /** Get number of approved non-spam comments for entry */
     public int getCommentCount(String entryId, boolean noSpam, boolean approvedOnly) {
         try {
-            WeblogEntry entry = mWeblogMgr.getWeblogEntry(entryId);
+            WeblogEntry entry = mWeblogEntryMgr.getWeblogEntry(entryId);
             return entry.getComments(noSpam, approvedOnly).size();
         } catch (WebloggerException alreadyLogged) {}
         return 0;
@@ -236,7 +239,7 @@ public class OldWeblogPageModel {
     /** Encapsulates RefererManager */
     public int getDayHits() {
         try {
-            WeblogHitCount hitCount = mWeblogMgr.getHitCountByWeblog(mWebsite);
+            WeblogHitCount hitCount = mWeblogEntryMgr.getHitCountByWeblog(mWebsite);
             
             return (hitCount != null) ? hitCount.getDailyHits() : 0;
             
@@ -253,7 +256,7 @@ public class OldWeblogPageModel {
         try {
             return WeblogBookmarkFolderWrapper.wrap(
                     mBookmarkMgr.getFolder(
-                    mUserMgr.getWebsiteByHandle(mWebsite.getHandle()), folderPath));
+                    mWeblogMgr.getWeblogByHandle(mWebsite.getHandle()), folderPath));
         } catch (WebloggerException e) {
             mLogger.error("PageModel getFolder()", e);
         }
@@ -386,7 +389,7 @@ public class OldWeblogPageModel {
             } else if (mIsMonthSpecified) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
-            Map mRet = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntryObjectMap(
+            Map mRet = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntryObjectMap(
                     
                     mWebsite,
                     startDate,                    // startDate
@@ -482,7 +485,7 @@ public class OldWeblogPageModel {
                     catParam = null;
                 }
             }
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             //ret = mgr.getRecentWeblogEntriesArray(
             //name, day, catParam, maxEntries, true );
@@ -533,7 +536,7 @@ public class OldWeblogPageModel {
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (referer.getVisible().booleanValue() 
-                     || referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) { 
+                     || referer.getWebsite().hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) { 
                         referers.add(WeblogReferrerWrapper.wrap(referer, urlStrategy));
                     }
                 }
@@ -561,7 +564,7 @@ public class OldWeblogPageModel {
                 if (   StringUtils.isNotEmpty(title)
                 && StringUtils.isNotEmpty(excerpt) ) {
                     if (referer.getVisible().booleanValue()
-                    ||  referer.getWebsite().hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) {
+                    ||  referer.getWebsite().hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.ADMIN) ) {
                         referers.add(WeblogReferrerWrapper.wrap(referer, urlStrategy));
                     }
                 }
@@ -629,7 +632,7 @@ public class OldWeblogPageModel {
             try {
                 WeblogCategory category = null;
                 if (categoryName != null) {
-                    category = mWeblogMgr.getWeblogCategoryByPath(
+                    category = mWeblogEntryMgr.getWeblogCategoryByPath(
                             mWebsite, categoryName);
                 } else {
                     category = mWebsite.getDefaultCategory();
@@ -683,7 +686,7 @@ public class OldWeblogPageModel {
             }
             try {
                 WeblogEntry nextEntry =
-                        mWeblogMgr.getNextEntry(currentEntry.getPojo(), catName, mLocale);
+                        mWeblogEntryMgr.getNextEntry(currentEntry.getPojo(), catName, mLocale);
                 
                 if(nextEntry != null)
                     mNextEntry = WeblogEntryWrapper.wrap(nextEntry, urlStrategy);
@@ -715,7 +718,7 @@ public class OldWeblogPageModel {
             }
             try {
                 WeblogEntry prevEntry =
-                        mWeblogMgr.getPreviousEntry(currentEntry.getPojo(), catName, mLocale);
+                        mWeblogEntryMgr.getPreviousEntry(currentEntry.getPojo(), catName, mLocale);
                 
                 if(prevEntry != null)
                     mPreviousEntry = WeblogEntryWrapper.wrap(prevEntry, urlStrategy);
@@ -733,7 +736,7 @@ public class OldWeblogPageModel {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
             if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
-                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.AUTHOR);
+                return mWebsite.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToEdit()", e);
@@ -748,7 +751,7 @@ public class OldWeblogPageModel {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
             if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
-                return mWebsite.hasUserPermissions(rses.getAuthenticatedUser(), WeblogPermission.ADMIN);
+                return mWebsite.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToAdmin()", e);
@@ -796,7 +799,7 @@ public class OldWeblogPageModel {
     public List getRecentComments(int maxCount) {
         List recentComments = new ArrayList();
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List recent = wmgr.getComments(
                     
                     mWebsite,

@@ -72,7 +72,7 @@ public class Pings extends UIAction {
     
     
     // admin perms required
-    public short requireWeblogPermissions() {
+    public String requireWeblogPermissions() {
         return WeblogPermission.ADMIN;
     }
     

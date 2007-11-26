@@ -42,14 +42,15 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MailProvider;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 
 
@@ -85,6 +86,7 @@ public class MailUtil {
         
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             
             String userName = entry.getCreator().getUserName();
             String from = entry.getCreator().getEmailAddress();
@@ -96,16 +98,14 @@ public class MailUtil {
             
             // list of enabled website authors and admins
             ArrayList reviewers = new ArrayList();
-            List websiteUsers = umgr.getUsers(
-                    entry.getWebsite(), Boolean.TRUE, null, null, 0, -1);
+            List websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
             
             // build list of reviewers (website users with author permission)
             Iterator websiteUserIter = websiteUsers.iterator();
             while (websiteUserIter.hasNext()) {
                 User websiteUser = (User)websiteUserIter.next();
-                if (entry.getWebsite().hasUserPermissions(
-                        
-                        websiteUser,WeblogPermission.AUTHOR)
+                if (entry.getWebsite().hasUserPermission(                        
+                        websiteUser, WeblogPermission.POST)
                         && websiteUser.getEmailAddress() != null) {
                     reviewers.add(websiteUser.getEmailAddress());
                 }

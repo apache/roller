@@ -147,7 +147,7 @@ public class WeblogFeedCache {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/[/category][/language][/excerpts]
+     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts]
      *
      * examples ...
      *
@@ -165,6 +165,10 @@ public class WeblogFeedCache {
         
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
+        
+        if (feedRequest.getTerm() != null) {
+            key.append("/search/").append(feedRequest.getTerm());
+        }
         
         if(feedRequest.getWeblogCategoryName() != null) {
             String cat = feedRequest.getWeblogCategoryName();

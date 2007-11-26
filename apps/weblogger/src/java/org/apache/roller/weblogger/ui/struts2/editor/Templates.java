@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -59,8 +58,8 @@ public class Templates extends UIAction {
     }
     
     
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     
@@ -68,14 +67,13 @@ public class Templates extends UIAction {
         
         // query for templates list
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             
             // get current list of templates, minus custom stylesheet
-            List<WeblogTemplate> raw = mgr.getPages(getActionWeblog()); 
+            List<WeblogTemplate> raw = WebloggerFactory.getWeblogger().getWeblogManager().getPages(getActionWeblog()); 
             List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
             pages.addAll(raw);
             if(getActionWeblog().getTheme().getStylesheet() != null) {
-                pages.remove(mgr.getPageByLink(getActionWeblog(), 
+                pages.remove(WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(getActionWeblog(), 
                         getActionWeblog().getTheme().getStylesheet().getLink()));
             }
             setTemplates(pages);
@@ -139,14 +137,13 @@ public class Templates extends UIAction {
             }
             
             // save the new Template
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            mgr.savePage( newTemplate );
+            WebloggerFactory.getWeblogger().getWeblogManager().savePage( newTemplate );
             
             // if this person happened to create a Weblog template from
             // scratch then make sure and set the defaultPageId
             if(WeblogTemplate.DEFAULT_PAGE.equals(newTemplate.getName())) {
                 getActionWeblog().setDefaultPageId(newTemplate.getId());
-                mgr.saveWebsite(getActionWeblog());
+                WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(getActionWeblog());
             }
             
             // flush results to db
@@ -183,8 +180,7 @@ public class Templates extends UIAction {
         
         // check if template by that name already exists
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogTemplate existingPage = umgr.getPageByName(getActionWeblog(), getNewTmplName());
+            WeblogTemplate existingPage = WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(getActionWeblog(), getNewTmplName());
             if(existingPage != null) {
                 addError("pagesForm.error.alreadyExists", getNewTmplName());
             }

@@ -186,8 +186,8 @@ public class WeblogRequest extends ParsedRequest {
         
         if(weblog == null && weblogHandle != null) {
             try {
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                weblog = umgr.getWebsiteByHandle(weblogHandle, Boolean.TRUE);
+                weblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getWeblogByHandle(weblogHandle, Boolean.TRUE);
             } catch (WebloggerException ex) {
                 log.error("Error looking up weblog "+weblogHandle, ex);
             }

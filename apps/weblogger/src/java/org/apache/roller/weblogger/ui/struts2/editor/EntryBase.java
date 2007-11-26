@@ -29,8 +29,8 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
@@ -71,7 +71,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentPublishedEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
                     
                     getActionWeblog(), // userName
                     null,
@@ -100,7 +100,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentScheduledEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
                     
                     getActionWeblog(), // userName
                     null,
@@ -128,7 +128,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentDraftEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
                     
                     getActionWeblog(),
                     null,
@@ -156,7 +156,7 @@ public abstract class EntryBase extends UIAction {
     public List<WeblogEntry> getRecentPendingEntries() {
         List<WeblogEntry> entries = Collections.EMPTY_LIST;
         try {
-            entries = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogEntries(
+            entries = WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntries(
                     
                     getActionWeblog(),
                     null,
@@ -202,12 +202,12 @@ public abstract class EntryBase extends UIAction {
     
     
     public boolean isUserAnAuthor() {
-        return getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR);
+        return getActionWeblog().hasUserPermission(getAuthenticatedUser(),WeblogPermission.POST);
     }
     
     
     public String getJsonAutocompleteUrl() {
-        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogTagsJsonURL(getActionWeblog(), false, 0);
     }
     
 }

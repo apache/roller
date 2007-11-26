@@ -383,8 +383,8 @@ public class WeblogRequestMapper implements RequestMapper {
         boolean isWeblog = false;
         
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            Weblog weblog = mgr.getWebsiteByHandle(potentialHandle);
+            Weblog weblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getWeblogByHandle(potentialHandle);
             
             if(weblog != null) {
                 isWeblog = true;

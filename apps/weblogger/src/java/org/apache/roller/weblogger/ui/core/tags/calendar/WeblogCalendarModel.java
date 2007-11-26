@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -105,7 +105,7 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries before startDate, using category restriction limit 1
         // Use entry's date as previous month
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List prevEntries = mgr.getWeblogEntries(
                     
                     weblog,                    // website
@@ -117,7 +117,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     null,WeblogEntry.PUBLISHED, // status
                     null,                      // text
                     null,                      // sortby (null means pubTime)
-                    WeblogManager.DESCENDING,  // sortorder, null means DESCENDING
+                    WeblogEntryManager.DESCENDING,  // sortorder, null means DESCENDING
                     locale,                    // locale
                     0, 1);                     // offset, range
             if (prevEntries.size() > 0) {
@@ -132,7 +132,7 @@ public class WeblogCalendarModel implements CalendarModel {
         // Get entries after endDate, using category restriction limit 1
         // Use entry's date as next month
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List nextEntries = mgr.getWeblogEntries(
                     
                     weblog,                    // website
@@ -144,7 +144,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     null,WeblogEntry.PUBLISHED, // status
                     null,                      // text
                     null,                      // sortby (null means pubTime)
-                    WeblogManager.ASCENDING,   // sortorder
+                    WeblogEntryManager.ASCENDING,   // sortorder
                     locale,                    // locale
                     0, 1);                     // offset, range
             if (nextEntries.size() > 0) {
@@ -167,7 +167,7 @@ public class WeblogCalendarModel implements CalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             monthMap = mgr.getWeblogEntryStringMap(
                     
                     weblog,                  // website
