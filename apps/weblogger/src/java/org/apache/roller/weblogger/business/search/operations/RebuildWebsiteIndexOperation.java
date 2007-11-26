@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -78,8 +79,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         // lazy initialization problems, so requery for the object now
         if(this.website != null) {
             try {
-                UserManager uMgr = roller.getUserManager();
-                this.website = uMgr.getWebsite(this.website.getId());
+                this.website = roller.getWeblogManager().getWeblog(this.website.getId());
             } catch (WebloggerException ex) {
                 mLogger.error("Error getting website object", ex);
                 return;
@@ -114,7 +114,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         
         try {
             if (writer != null) {
-                WeblogManager weblogManager = roller.getWeblogManager();
+                WeblogEntryManager weblogManager = roller.getWeblogEntryManager();
                 
                 
                 List entries = weblogManager .getWeblogEntries(

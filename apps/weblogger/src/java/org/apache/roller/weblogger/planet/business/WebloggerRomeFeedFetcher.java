@@ -32,7 +32,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -83,8 +83,8 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
         
         Weblog localWeblog;
         try {
-            UserManager usermgr = WebloggerFactory.getWeblogger().getUserManager();
-            localWeblog = usermgr.getWebsiteByHandle(weblogHandle);
+            localWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getWeblogByHandle(weblogHandle);
             if (localWeblog == null) {
                 throw new FetcherException("Local feed - "+feedURL+" no longer exists in weblogger");
             }
@@ -117,7 +117,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             int entryCount = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
             
             // grab recent entries for this weblog
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogEntry> entries = wmgr.getWeblogEntries(
                     localWeblog,
                     null,

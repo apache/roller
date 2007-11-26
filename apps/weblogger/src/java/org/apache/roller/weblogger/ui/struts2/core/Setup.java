@@ -57,9 +57,8 @@ public class Setup extends UIAction {
     public String execute() {
         
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            setUserCount(umgr.getUserCount());
-            setBlogCount(umgr.getWeblogCount());
+            setUserCount(WebloggerFactory.getWeblogger().getUserManager().getUserCount());
+            setBlogCount(WebloggerFactory.getWeblogger().getWeblogManager().getWeblogCount());
         } catch (WebloggerException ex) {
             log.error("Error getting user/weblog counts", ex);
         }

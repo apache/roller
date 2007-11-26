@@ -31,6 +31,7 @@ import org.apache.roller.planet.config.PlanetRuntimeConfig;
 import org.apache.roller.planet.config.runtime.ConfigDef;
 import org.apache.roller.planet.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.planet.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -60,10 +61,10 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     }
     
     
-    @Override
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
+
     
     @Override
     public boolean isWeblogRequired() {

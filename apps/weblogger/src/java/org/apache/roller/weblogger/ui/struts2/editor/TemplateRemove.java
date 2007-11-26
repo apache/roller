@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -51,15 +53,14 @@ public class TemplateRemove extends UIAction {
     
     
     // must be a weblog admin to use this action
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     
     public void myPrepare() {
         if(getRemoveId() != null) try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            setTemplate(umgr.getPage(getRemoveId()));
+            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getPage(getRemoveId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template by id - "+getRemoveId(), ex);
             // TODO: i18n
@@ -88,7 +89,7 @@ public class TemplateRemove extends UIAction {
                 // notify cache
                 CacheManager.invalidate(getTemplate());
 
-                umgr.removePage(getTemplate());
+                WebloggerFactory.getWeblogger().getWeblogManager().removePage(getTemplate());
                 WebloggerFactory.getWeblogger().flush();
                                 
                 return SUCCESS;

@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
@@ -54,8 +54,8 @@ public class WeblogStatsTest extends TestCase {
         TestUtils.endSession(true);
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();      
-        List list = mgr.getMostCommentedWebsites(null, null, 0, -1);  
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();     
+        List list = mgr.getMostCommentedWeblogs(null, null, 0, -1);  
         
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -72,7 +72,7 @@ public class WeblogStatsTest extends TestCase {
     }
     public void testGetMostCommentedWeblogEntries() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();      
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();      
         List list = mgr.getMostCommentedWeblogEntries(null, null, null, 0, -1);
         
         assertNotNull(list);
@@ -95,7 +95,7 @@ public class WeblogStatsTest extends TestCase {
         assertNull(map.get("c"));
     }
     public void testGetWeblogLetterMap() throws Exception {        
-        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();      
+        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
         Map map = mgr.getWeblogHandleLetterMap();    
         assertNotNull(map.get("a"));
         assertNotNull(map.get("b"));
@@ -112,8 +112,8 @@ public class WeblogStatsTest extends TestCase {
         TestUtils.teardownComment(comment21.getId());
         TestUtils.teardownWeblog(website2.getId());  
         
-        TestUtils.teardownUser(user1.getId());        
-        TestUtils.teardownUser(user2.getId());        
+        TestUtils.teardownUser(user1.getUserName());        
+        TestUtils.teardownUser(user2.getUserName());        
         
         TestUtils.endSession(true);
     }

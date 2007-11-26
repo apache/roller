@@ -18,14 +18,15 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
@@ -47,8 +48,8 @@ public class Maintenance extends UIAction {
     
     
     // admin perms required
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     
@@ -88,8 +89,7 @@ public class Maintenance extends UIAction {
             // some caches are based on weblog last-modified, so update it
             weblog.setLastModified(new Date());
             
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            umgr.saveWebsite(weblog);
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(weblog);
             WebloggerFactory.getWeblogger().flush();
             
             // also notify cache manager

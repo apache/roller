@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
@@ -53,7 +53,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             monthMap = mgr.getWeblogEntryObjectMap(
                     
                     weblog,                  // website

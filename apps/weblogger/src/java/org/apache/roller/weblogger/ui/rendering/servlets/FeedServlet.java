@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
@@ -192,7 +192,7 @@ public class FeedServlet extends HttpServlet {
             
             try {
                 // tags specified.  make sure they exist.
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 invalid = !wmgr.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;
@@ -216,8 +216,16 @@ public class FeedServlet extends HttpServlet {
         String pageId = null;
         try {
             // determine what template to render with
-            if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle());
+            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+                pageId = "templates/feeds/site-search-atom.vm";                
+
+            } else if (siteWide && "entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+                pageId = "templates/feeds/weblog-search-atom.vm";                
+                
+            } else if (siteWide) {
                 pageId = "templates/feeds/site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+                
             } else {
                 pageId = "templates/feeds/weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
             }
@@ -235,7 +243,7 @@ public class FeedServlet extends HttpServlet {
 
             // Load special models for site-wide blog
 
-            if(WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if (siteWide) {
                 String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
@@ -243,8 +251,8 @@ public class FeedServlet extends HttpServlet {
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
-            if("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
-                pageId = "templates/feeds/weblog-search-atom.vm";                
+            // Load search models if search feed
+            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {               
                 ModelLoader.loadModels(SearchResultsFeedModel.class.getName(), model, initData, true);
             }                        
 

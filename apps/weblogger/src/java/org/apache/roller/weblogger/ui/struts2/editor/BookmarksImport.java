@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.BookmarkManager;
@@ -58,8 +60,8 @@ public final class BookmarksImport extends UIAction {
     
     
     // author perms required
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.AUTHOR;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
     }
     
     

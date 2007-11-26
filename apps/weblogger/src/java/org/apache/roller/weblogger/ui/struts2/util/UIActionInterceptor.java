@@ -68,8 +68,7 @@ public class UIActionInterceptor extends AbstractInterceptor
             if(!StringUtils.isEmpty(weblogHandle)) {
                 Weblog weblog = null;
                 try {
-                    UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                    weblog = mgr.getWebsiteByHandle(weblogHandle);
+                    weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(weblogHandle);
                     if(weblog != null) {
                         theAction.setActionWeblog(weblog);
                     }

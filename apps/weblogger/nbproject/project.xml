@@ -20,6 +20,11 @@
                     <location>web/WEB-INF</location>
                 </source-folder>
                 <source-folder>
+                    <label>src/sql</label>
+                    <type>java</type>
+                    <location>src/sql</location>
+                </source-folder>
+                <source-folder>
                     <label>src</label>
                     <type>java</type>
                     <location>src/java</location>
@@ -89,6 +94,10 @@
                     <source-folder style="tree">
                         <label>WEB-INF Content</label>
                         <location>web/WEB-INF</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src/sql</label>
+                        <location>src/sql</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>src</label>

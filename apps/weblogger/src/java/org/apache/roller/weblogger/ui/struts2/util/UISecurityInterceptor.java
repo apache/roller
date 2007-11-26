@@ -22,8 +22,12 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
@@ -49,7 +53,9 @@ public class UISecurityInterceptor extends AbstractInterceptor {
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
             
             // are we requiring an authenticated user?
-            if(theAction.isUserRequired()) {
+            if (theAction.isUserRequired()) {
+                
+                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                 
                 User authenticatedUser = ((UIAction)theAction).getAuthenticatedUser();
                 if(authenticatedUser == null) {
@@ -57,16 +63,18 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                     return "access-denied";
                 }
                 
-                // are we also enforcing a specific role?
-                if(theAction.requiredUserRole() != null) {
-                    if(!authenticatedUser.hasRole(theAction.requiredUserRole())) {
-                        log.debug("DENIED: user does not have role = "+theAction.requiredUserRole());
+                // are we also enforcing global permissions?
+                if (theAction.requiredGlobalPermissionActions() != null 
+                        && !theAction.requiredGlobalPermissionActions().isEmpty()) {
+                    GlobalPermission perm = new GlobalPermission(theAction.requiredGlobalPermissionActions());
+                    if (!umgr.checkPermission(perm, authenticatedUser)) {
+                        log.debug("DENIED: user does not have permission = " + perm.toString());
                         return "access-denied";
                     }
                 }
                 
                 // are we requiring a valid action weblog?
-                if(theAction.isWeblogRequired()) {
+                if (theAction.isWeblogRequired()) {
                     
                     Weblog actionWeblog = ((UIAction)theAction).getActionWeblog();
                     if(actionWeblog == null) {
@@ -75,12 +83,14 @@ public class UISecurityInterceptor extends AbstractInterceptor {
                     }
                     
                     // are we also enforcing a specific weblog permission?
-                    if(theAction.requiredWeblogPermissions() > -1) {
+                    if (theAction.requiredWeblogPermissionActions() != null 
+                            && !theAction.requiredWeblogPermissionActions().isEmpty()) {                        
+                        WeblogPermission required = new WeblogPermission(
+                                actionWeblog,  
+                                theAction.requiredWeblogPermissionActions());
                         
-                        if(!actionWeblog.hasUserPermissions(authenticatedUser,
-                                theAction.requiredWeblogPermissions())) {
-                            log.debug("DENIED: user does not have required weblog permissions = "+
-                                    theAction.requiredWeblogPermissions());
+                        if (!umgr.checkPermission(required, authenticatedUser)) {
+                            log.debug("DENIED: user does not have required weblog permissions = "+required);
                             return "access-denied";
                         }
                     }

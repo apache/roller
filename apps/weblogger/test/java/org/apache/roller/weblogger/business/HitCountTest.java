@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -76,7 +76,7 @@ public class HitCountTest extends TestCase {
         
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -90,7 +90,7 @@ public class HitCountTest extends TestCase {
      */
     public void testHitCountCRUD() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         WeblogHitCount testCount = new WeblogHitCount();
         testCount.setWeblog(testWeblog);
@@ -133,7 +133,7 @@ public class HitCountTest extends TestCase {
     
     public void testHitCountLookups() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         WeblogHitCount testCount = new WeblogHitCount();
@@ -173,7 +173,7 @@ public class HitCountTest extends TestCase {
     
     public void testIncrementHitCount() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         WeblogHitCount testCount = new WeblogHitCount();
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -215,7 +215,7 @@ public class HitCountTest extends TestCase {
     
     
     public void testResetHitCounts() throws Exception {
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         testUser = TestUtils.getManagedUser(testUser);
         Weblog blog1 = TestUtils.setupWeblog("hitCntTest1", testUser);
@@ -277,7 +277,7 @@ public class HitCountTest extends TestCase {
     
     public void testHotWeblogs() throws Exception {
         
-        WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
         testUser = TestUtils.getManagedUser(testUser);
         Weblog blog1 = TestUtils.setupWeblog("hitCntHotTest1", testUser);

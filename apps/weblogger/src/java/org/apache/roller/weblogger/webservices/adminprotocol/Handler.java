@@ -199,9 +199,9 @@ abstract class Handler {
     
     protected Weblog getWebsiteData(String handle) throws NotFoundException, InternalException {
         try {
-            Weblog wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.TRUE);
+            Weblog wd = getRoller().getWeblogManager().getWeblogByHandle(handle, Boolean.TRUE);
             if (wd == null) {
-                wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.FALSE);
+                wd = getRoller().getWeblogManager().getWeblogByHandle(handle, Boolean.FALSE);
             }
             if (wd == null) {
                 throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);

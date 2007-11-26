@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.util.URLUtilities;
 
@@ -135,7 +135,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         
         if(weblogCategory == null && weblogCategoryName != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog category "+weblogCategoryName, ex);

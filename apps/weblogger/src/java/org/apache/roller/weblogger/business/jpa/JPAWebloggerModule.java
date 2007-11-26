@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
@@ -65,6 +66,7 @@ public class JPAWebloggerModule implements Module {
         binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);  
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
+        binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);   
                 
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
         binder.bind(FileManager.class).to(         FileManagerImpl.class);   

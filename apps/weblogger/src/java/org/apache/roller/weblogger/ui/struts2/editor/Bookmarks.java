@@ -74,8 +74,8 @@ public class Bookmarks extends UIAction {
     
     
     // admin perms required
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

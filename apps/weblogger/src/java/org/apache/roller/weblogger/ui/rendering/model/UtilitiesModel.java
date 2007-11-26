@@ -29,13 +29,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
-import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.ParsedRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.Utilities;
@@ -122,8 +122,8 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermissions(
-                        parsedRequest.getUser(), WeblogPermission.AUTHOR);
+                return weblog.getPojo().hasUserPermission(
+                        parsedRequest.getUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
             log.warn("ERROR: checking user authorization", e);
@@ -134,7 +134,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermissions(
+                return weblog.getPojo().hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
@@ -142,11 +142,16 @@ public class UtilitiesModel implements Model {
         }
         return false;
     }
-    
+        
     public boolean isUserAuthenticated() {
         return (parsedRequest.getAuthenticUser() != null);
     }
-        
+       
+    public UserWrapper getAuthenticatedUser() {
+        return parsedRequest.getAuthenticUser() != null 
+                ? UserWrapper.wrap(parsedRequest.getUser()) : null;
+    }
+             
     //-------------------------------------------------------------- Date utils
     /**
      * Return date for current time.

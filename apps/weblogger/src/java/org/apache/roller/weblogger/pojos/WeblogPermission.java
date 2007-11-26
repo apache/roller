@@ -1,8 +1,8 @@
 /*
- * Copyright 2005 Sun Microsystems, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -11,18 +11,21 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.weblogger.pojos; 
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.roller.util.UUIDGenerator;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Represents a user's permissions within a website.
- *
+ * Permission for one specific weblog
  * @ejb:bean name="WeblogPermission"
  * @struts.form include-all="true"
  * @hibernate.class lazy="true" table="roller_user_permissions"
@@ -30,124 +33,100 @@ import org.apache.roller.util.UUIDGenerator;
  *
  * @author Dave Johnson
  */
-public class WeblogPermission
-{
-    private String      id = UUIDGenerator.generateUUID();
-    private Weblog website = null;
-    private User    user = null;
-    private boolean     pending = true;
-    public static short LIMITED = 0x00; // 0000 
-    public static short AUTHOR  = 0x01; // 0001
-    public static short ADMIN   = 0x03; // 0011 
-    private short       permissionMask = LIMITED;
+public class WeblogPermission extends ObjectPermission { 
+    public static final String EDIT_DRAFT = "editdraft";
+    public static final String POST = "post";
+    public static final String ADMIN = "admin";
+    public static final List<String> ALL_ACTIONS = new ArrayList<String>();
     
-    /** Creates a new instance of PermissionsData */
-    public WeblogPermission() 
-    {
+    static {
+        ALL_ACTIONS.add(EDIT_DRAFT);
+        ALL_ACTIONS.add(POST);
+        ALL_ACTIONS.add(ADMIN);
     }
 
-    /**
-     * Check for specific permission.
-     */
-    public boolean has(short priv)
-    {
-        return (getPermissionMask() & priv) == priv;
-    }
-    /**
-     * @ejb:persistent-field
-     * @hibernate.id column="id"
-     *     generator-class="assigned"  
-     */
-    public String getId() 
-    {
-        return id;
-    }
-    /** @ejb:persistent-field */
-    public void setId(String id) 
-    {
-        // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) return; 
-        this.id = id;
-    }
-    /** 
-     * @hibernate.many-to-one column="website_id" cascade="none" not-null="false"
-     */
-    public Weblog getWebsite() 
-    {
-        return website;
-    }
-    public void setWebsite(Weblog website) 
-    {
-        this.website = website;
-    }
-    /** 
-     * @hibernate.many-to-one column="user_id" cascade="none" not-null="false"
-     */
-    public User getUser() 
-    {
-        return user;
-    }
-    public void setUser(User user) 
-    {
-        this.user = user;
-    }
-    /**
-     * Bit mask that encodes user's permissions in website.
-     * @ejb:persistent-field
-     * @hibernate.property column="permission_mask" non-null="true" unique="false"
-     */
-    public short getPermissionMask() 
-    {
-        return permissionMask;
-    }
-    /** @ejb:persistent-field */
-    public void setPermissionMask(short permissionMask) 
-    {
-        this.permissionMask = permissionMask;
-    }
-    /**
-     * True if user has been invited to join site but has not yet accepted.
-     * And false if user is member of website.
-     * @ejb:persistent-field
-     * @hibernate.property column="pending" non-null="true" unique="false"
-     */
-    public boolean isPending() 
-    {
-        return pending;
-    }
-    /** @ejb:persistent-field */
-    public void setPending(boolean pending) 
-    {
-        this.pending = pending;
+    
+    public WeblogPermission(Weblog weblog, User user, String actions) {
+        super("WeblogPermission user: " + user.getUserName());
+        setActions(actions);
+        objectType = "Weblog";
+        objectId = weblog.getHandle();
+        userName = user.getUserName();
     }
     
-    //------------------------------------------------------- Good citizenship
+    public WeblogPermission(Weblog weblog, User user, List<String> actions) {
+        super("WeblogPermission user: " + user.getUserName());
+        setActionsAsList(actions); 
+        objectType = "Weblog";
+        objectId = weblog.getHandle();
+        userName = user.getUserName();
+    }
+    
+    public WeblogPermission(Weblog weblog, List<String> actions) {
+        super("WeblogPermission user: N/A");
+        setActionsAsList(actions); 
+        objectType = "Weblog";
+        objectId = weblog.getHandle();
+    }
+    
+    public Weblog getWeblog() throws WebloggerException {
+        if (objectId != null) {
+            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(objectId, null);
+        }
+        return null;
+    }
 
+    public User getUser() throws WebloggerException {
+        if (userName != null) {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(userName);
+        }
+        return null;
+    }
+
+    public boolean equals(Object arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int hashCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean implies(Permission perm) {
+        if (perm instanceof WeblogPermission) {
+            WeblogPermission rperm = (WeblogPermission)perm;
+            
+            if (hasAction(ADMIN)) {
+                // admin implies all other permissions
+                return true;
+                
+            } else if (hasAction(POST)) {
+                // Best we've got is POST, so make sure perm doesn't specify POST
+                for (String action : rperm.getActionsAsList()) {
+                    if (action.equals(ADMIN)) return false;
+                }
+                
+            } else if (hasAction(EDIT_DRAFT)) {
+                // Best we've got is EDIT_DRAFT, so make sure perm doesn't specify anything else
+                for (String action : rperm.getActionsAsList()) {
+                    if (action.equals(POST)) return false;
+                    if (action.equals(ADMIN)) return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("{");
-        buf.append(this.id);
-        buf.append(", ").append(this.permissionMask);
-        buf.append(", ").append(this.pending);
-        buf.append("}");
-        return buf.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("GlobalPermission: ");
+        for (String action : getActionsAsList()) { 
+            sb.append(" ").append(action).append(" ");
+        }
+        return sb.toString();
     }
-    
-    public boolean equals(Object other) {
-        if (other == this) return true;
-        if (other instanceof WeblogPermission != true) return false;
-        WeblogPermission o = (WeblogPermission)other;
-        return new EqualsBuilder()
-            .append(user, o.user) 
-            .append(website, o.website) 
-            .isEquals();
-    }
-    
-    public int hashCode() { 
-        return new HashCodeBuilder()
-            .append(user)
-            .append(website)
-            .toHashCode();
-    }
-
 }
+
+
+
+

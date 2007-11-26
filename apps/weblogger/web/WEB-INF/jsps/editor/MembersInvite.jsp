@@ -48,11 +48,11 @@
     <div style="clear:left">
        <label for="userName" class="formrow" />
            <s:text name="inviteMember.permissions" /></label>
-       <input type="radio" name="permissionsMask" value="3"  />
+       <input type="radio" name="permissionString" value="admin"  />
        <s:text name="inviteMember.administrator" />
-       <input type="radio" name="permissionsMask" value="1" checked />
+       <input type="radio" name="permissionString" value="post" checked />
        <s:text name="inviteMember.author" />
-       <input type="radio" name="permissionsMask" value="0" />
+       <input type="radio" name="permissionString" value="edit_draft" />
        <s:text name="inviteMember.limited" />
     </div>  
          

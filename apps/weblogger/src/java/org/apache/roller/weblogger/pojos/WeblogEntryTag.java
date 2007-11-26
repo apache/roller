@@ -22,22 +22,25 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
 /**
  * Tag bean.
- *
  * @author Elias Torres
  */
 public class WeblogEntryTag implements Serializable {
+    private static Log log = LogFactory.getLog(WeblogEntryTag.class);    
     
     private static final long serialVersionUID = -2602052289337573384L;
     
     private String id = UUIDGenerator.generateUUID();
     private Weblog website = null;
     private WeblogEntry weblogEntry = null;
-    private User user = null;
+    private String userName = null;
     private String name = null;
     private Timestamp time = null;
     
@@ -45,14 +48,17 @@ public class WeblogEntryTag implements Serializable {
     public WeblogEntryTag() {
     }
     
-    public WeblogEntryTag(String id,
-            Weblog website,WeblogEntry weblogEntry,
-            User user, String name,
+    public WeblogEntryTag(
+            String id,
+            Weblog website,
+            WeblogEntry weblogEntry,
+            User user, 
+            String name,
             Timestamp time) {
         //this.id = id;
         this.website = website;
         this.weblogEntry = weblogEntry;
-        this.user = user;
+        this.userName = user.getUserName();
         this.name = name;
         this.time = time;
     }
@@ -93,11 +99,20 @@ public class WeblogEntryTag implements Serializable {
     
     
     public User getUser() {
-        return this.user;
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
+        } catch (Exception e) {
+            log.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
+        }
+        return null;
     }
     
-    public void setUser( User user ) {
-        this.user = user;
+    public String getCreatorUserName() {
+        return userName;
+    }
+
+    public void setCreatorUserName(String userName) {
+        this.userName = userName;
     }
     
     /**
@@ -148,5 +163,5 @@ public class WeblogEntryTag implements Serializable {
         .append(getWeblogEntry())
         .toHashCode();
     }
-    
+
 }

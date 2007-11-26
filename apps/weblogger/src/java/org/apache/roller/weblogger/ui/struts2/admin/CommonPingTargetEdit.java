@@ -18,8 +18,11 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.common.PingTargetEditBase;
 
 
@@ -38,8 +41,8 @@ public class CommonPingTargetEdit extends PingTargetEditBase {
     }
     
     
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required

@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
@@ -71,7 +71,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     public Map getEntries() {
         if (entries == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null && currEntry.getStatus().equals(WeblogEntry.PUBLISHED)) {
                 entries = new TreeMap();
@@ -134,7 +134,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     private WeblogEntry getNextEntry() {
         if (nextEntry == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             nextEntry = wmgr.getNextEntry(currEntry, null, locale);
             // make sure that entry is published and not to future
             if (nextEntry != null && nextEntry.getPubTime().after(new Date())
@@ -152,7 +152,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     private WeblogEntry getPrevEntry() {
         if (prevEntry == null) try {
             Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogManager wmgr = roller.getWeblogManager();
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             prevEntry = wmgr.getPreviousEntry(currEntry, null, locale);
             // make sure that entry is published and not to future
             if (prevEntry != null && prevEntry.getPubTime().after(new Date())

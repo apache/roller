@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -203,7 +203,7 @@ public class WeblogCommentRequest extends WeblogRequest {
         
         if(weblogEntry == null && weblogAnchor != null) {
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry "+weblogAnchor, ex);

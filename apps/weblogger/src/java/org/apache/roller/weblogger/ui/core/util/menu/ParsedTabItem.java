@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.core.util.menu;
 
+import java.util.List;
+
 
 /**
  * A parsed "tab-item" from an xml defined menu config.
@@ -27,8 +29,8 @@ public class ParsedTabItem {
     private String name = null;
     private String action = null;
     private String[] subActions = null;
-    private String perm = null;
-    private String role = null;
+    private List<String> weblogPermissionActions = null;
+    private List<String> globalPermissionActions = null;
     private String enabledProperty = null;
     private String disabledProperty = null;
     
@@ -57,20 +59,20 @@ public class ParsedTabItem {
         this.subActions = subActions;
     }
 
-    public String getPerm() {
-        return perm;
+    public List<String> getWeblogPermissionActions() {
+        return weblogPermissionActions;
     }
 
-    public void setPerm(String perm) {
-        this.perm = perm;
+    public void setWeblogPermissionActions(List<String> perms) {
+        this.weblogPermissionActions = perms;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getGlobalPermissionActions() {
+        return globalPermissionActions;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setGlobalPermissionActions(List<String> perms) {
+        this.globalPermissionActions = perms;
     }
 
     public String getEnabledProperty() {
@@ -87,6 +89,6 @@ public class ParsedTabItem {
 
     public void setDisabledProperty(String disabledProperty) {
         this.disabledProperty = disabledProperty;
-    }
-    
+    }    
 }
+

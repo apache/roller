@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -192,8 +192,8 @@ public class CommentServlet extends HttpServlet {
             commentRequest = new WeblogCommentRequest(request);
             
             // lookup weblog specified by comment request
-            UserManager uMgr = WebloggerFactory.getWeblogger().getUserManager();
-            weblog = uMgr.getWebsiteByHandle(commentRequest.getWeblogHandle());
+            weblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getWeblogByHandle(commentRequest.getWeblogHandle());
             
             if(weblog == null) {
                 throw new WebloggerException("unable to lookup weblog: "+
@@ -323,7 +323,7 @@ public class CommentServlet extends HttpServlet {
                 if(!WeblogEntryComment.SPAM.equals(comment.getStatus()) ||
                         !WebloggerRuntimeConfig.getBooleanProperty("comments.ignoreSpam.enabled")) {
                     
-                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                    WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                     mgr.saveComment(comment);
                     WebloggerFactory.getWeblogger().flush();
                     

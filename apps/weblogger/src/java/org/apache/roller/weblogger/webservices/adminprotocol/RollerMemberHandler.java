@@ -17,7 +17,6 @@
  */
 package org.apache.roller.weblogger.webservices.adminprotocol;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
-import org.jdom.JDOMException;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.Entry;
 import org.apache.roller.weblogger.webservices.adminprotocol.sdk.EntrySet;
@@ -139,17 +137,16 @@ class RollerMemberHandler extends Handler {
     private EntrySet getCollection() throws HandlerException {
         // get all permissions: for all users, for all websites
         try {
-            List users = getRoller().getUserManager().getUsers(null, null, null, null, 0, -1);
-            List perms = new ArrayList();
+            List users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
+            List<WeblogPermission> perms = new ArrayList<WeblogPermission>();
             for (Iterator i = users.iterator(); i.hasNext(); ) {
                 User user = (User)i.next();
-                List permissions = getRoller().getUserManager().getAllPermissions(user);
-                for (Iterator j = permissions.iterator(); j.hasNext(); ) {
-                    WeblogPermission pd = (WeblogPermission)j.next();
-                    perms.add(pd);
+                List<WeblogPermission> permissions = getRoller().getUserManager().getWeblogPermissions(user);
+                for (WeblogPermission perm : permissions) {
+                    perms.add(perm);
                 }
             }
-            EntrySet es = toMemberEntrySet((WeblogPermission[])perms.toArray(new WeblogPermission[0]));
+            EntrySet es = toMemberEntrySet(perms);
             return es;
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get member collection", re);
@@ -162,14 +159,14 @@ class RollerMemberHandler extends Handler {
         String username = muri.getUsername();
         
         try {
-            List perms;
+            List<WeblogPermission> perms;
             if (username == null) {
                 //get all entries for the given website handle
                 Weblog wd = getWebsiteData(handle);
                 if (wd == null) {
                     throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
                 }
-                perms = getRoller().getUserManager().getAllPermissions(wd);
+                perms = getRoller().getUserManager().getWeblogPermissions(wd);
             } else {
                 //get all entries for the given website handle & username
                 Weblog wd = getWebsiteData(handle);
@@ -180,14 +177,14 @@ class RollerMemberHandler extends Handler {
                 if (ud == null) {
                     throw new NotFoundException("ERROR: Unknown user name: " + username);
                 }
-                WeblogPermission pd = getRoller().getUserManager().getPermissions(wd, ud);
+                WeblogPermission pd = getRoller().getUserManager().getWeblogPermission(wd, ud);
                 if (pd == null) {
                     throw new NotFoundException("ERROR: Could not get permissions for user name: " + username + ", handle: " + handle);
                 }
                 perms = Collections.singletonList(pd);
             }
             
-            EntrySet es = toMemberEntrySet((WeblogPermission[])perms.toArray(new WeblogPermission[0]));
+            EntrySet es = toMemberEntrySet(perms);
             return es;
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get entry for handle: " + handle + ", username: " + username, re);
@@ -262,33 +259,32 @@ class RollerMemberHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            List permissionsDatas= new ArrayList();
+            List<WeblogPermission> perms= new ArrayList<WeblogPermission>();
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
-                WeblogPermission pd = toPermissionsData(entry);
-                mgr.savePermissions(pd);
+                User ud = getUserData(entry.getName());
+                Weblog wd = getWebsiteData(entry.getHandle());
+                mgr.grantWeblogPermission(wd, ud, toActionList(entry.getPermission()));
                 getRoller().flush();
-                CacheManager.invalidate(pd.getUser());
-                CacheManager.invalidate(pd.getWebsite());
-                permissionsDatas.add(pd);
+                CacheManager.invalidate(ud);
+                CacheManager.invalidate(wd);
+                
+                WeblogPermission pd = mgr.getWeblogPermission(wd, ud);
+                perms.add(pd);
             }
-            return toMemberEntrySet((WeblogPermission[])permissionsDatas.toArray(new WeblogPermission[0]));
+            return toMemberEntrySet(perms);
             
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not create members", re);
         }
     }
     
-    private WeblogPermission toPermissionsData(MemberEntry entry) throws HandlerException {
-        User ud = getUserData(entry.getName());
-        Weblog wd = getWebsiteData(entry.getHandle());
-        WeblogPermission pd = new WeblogPermission();
-        pd.setUser(ud);
-        pd.setWebsite(wd);
-        pd.setPermissionMask(stringToMask(entry.getPermission()));
-        pd.setPending(false);
-        
-        return pd;
+    private List<String> toActionList(String perm) throws HandlerException {
+        List<String> actions = new ArrayList<String>();
+        if ("ADMIN".equals(perm))       actions.add(WeblogPermission.ADMIN);
+        else if ("AUTHOR".equals(perm)) actions.add(WeblogPermission.POST);
+        else                            actions.add(WeblogPermission.EDIT_DRAFT);
+        return actions;       
     }
     
     private WeblogPermission getPermissionsData(MemberEntry entry) throws HandlerException {
@@ -299,16 +295,16 @@ class RollerMemberHandler extends Handler {
         try {
             User ud = getUserData(username);
             Weblog wd = getWebsiteData(handle);
-            WeblogPermission pd = getRoller().getUserManager().getPermissions(wd, ud);
-            
+            WeblogPermission pd = getRoller().getUserManager().getWeblogPermission(wd, ud);            
             return pd;
+            
         } catch (WebloggerException re) {
             throw new InternalException("ERROR: Could not get permissions data for weblog handle: " + handle + ", user name: " + username, re);
         }
     }
     
     private MemberEntrySet updateMembers(MemberEntrySet c) throws HandlerException {
-        List permissionsDatas= new ArrayList();
+        List<WeblogPermission> permissionsDatas= new ArrayList<WeblogPermission>();
         for (int i = 0; i < c.getEntries().length; i++) {
             MemberEntry entry = (MemberEntry)c.getEntries()[i];
             WeblogPermission pd = getPermissionsData(entry);
@@ -318,24 +314,23 @@ class RollerMemberHandler extends Handler {
             updatePermissionsData(pd, entry);
             permissionsDatas.add(pd);
         }
-        return toMemberEntrySet((WeblogPermission[])permissionsDatas.toArray(new WeblogPermission[0]));
+        return toMemberEntrySet(permissionsDatas);
     }
     
     
     private void updatePermissionsData(WeblogPermission pd, MemberEntry entry) throws HandlerException {
         // only permission can be updated
         
-        if (entry.getPermission() != null) {
-            pd.setPermissionMask(stringToMask(entry.getPermission()));
-        }
-        
         try {
             User ud = getUserData(entry.getName());
             Weblog wd = getWebsiteData(entry.getHandle());
             
             UserManager mgr = getRoller().getUserManager();
-            mgr.savePermissions(pd);
+            mgr.revokeWeblogPermission(wd, ud, WeblogPermission.ALL_ACTIONS);
+            mgr.grantWeblogPermission(wd, ud, stringToActionList(entry.getPermission()));
+            
             getRoller().flush();
+            
             CacheManager.invalidate(ud);
             CacheManager.invalidate(wd);
         } catch (WebloggerException re) {
@@ -354,23 +349,19 @@ class RollerMemberHandler extends Handler {
         }
         
         try {
-            WeblogPermission pd = getPermissionsData(handle, username);
-            
-            if (pd == null) {
-                throw new NotFoundException("ERROR: Permissions do not exist for weblog handle: " + handle + ", user name: " + username);
-            }           
-            UserManager mgr = getRoller().getUserManager();
-            mgr.removePermissions(pd);
-            getRoller().flush();
-            
-            User ud = getUserData(username);
-            CacheManager.invalidate(ud);
-
             Weblog wd = getWebsiteData(handle);
+            User ud = getUserData(username);
+
+            UserManager mgr = getRoller().getUserManager();
+            mgr.revokeWeblogPermission(wd, ud, WeblogPermission.ALL_ACTIONS);
+            
+            getRoller().flush();            
+
+            CacheManager.invalidate(ud);
             CacheManager.invalidate(wd);
             
             // return empty set, entry was deleted
-            WeblogPermission[] pds = new WeblogPermission[0];
+            List<WeblogPermission> pds = new ArrayList<WeblogPermission>();
             EntrySet es = toMemberEntrySet(pds);
             return es;
             
@@ -379,24 +370,28 @@ class RollerMemberHandler extends Handler {
         }
     }
     
-    private MemberEntry toMemberEntry(WeblogPermission pd) {
-        if (pd == null) {
-            throw new NullPointerException("ERROR: Null permission data not allowed");
+    private MemberEntry toMemberEntry(WeblogPermission pd) throws HandlerException  {
+        try {
+            if (pd == null) {
+                throw new NullPointerException("ERROR: Null permission data not allowed");
+            }
+            MemberEntry me = new MemberEntry(pd.getWeblog().getHandle(), pd.getUser().getUserName(), getUrlPrefix());
+            me.setPermission(actionsToString(pd));
+            return me;
+            
+        } catch (WebloggerException ex) {
+            throw new InternalException("ERROR: getting user or weblog", ex);
         }
-        MemberEntry me = new MemberEntry(pd.getWebsite().getHandle(), pd.getUser().getUserName(), getUrlPrefix());
-        me.setPermission(maskToString(pd.getPermissionMask()));
-        
-        return me;
     }
-    private MemberEntrySet toMemberEntrySet(WeblogPermission[] pds) {
+    
+    private MemberEntrySet toMemberEntrySet(List<WeblogPermission> pds) throws HandlerException {
         if (pds == null) {
             throw new NullPointerException("ERROR: Null permission data not allowed");
         }
         
         List entries = new ArrayList();
-        for (int i = 0; i < pds.length; i++) {
-            WeblogPermission pd = pds[i];
-            Entry entry = toMemberEntry(pd);
+        for (WeblogPermission perm : pds) {
+            Entry entry = toMemberEntry(perm);
             entries.add(entry);
         }
         MemberEntrySet mes = new MemberEntrySet(getUrlPrefix());
@@ -405,34 +400,35 @@ class RollerMemberHandler extends Handler {
         return mes;
     }
     
-    private static String maskToString(short mask) {
-        if (mask == WeblogPermission.ADMIN) {
+    private static String actionsToString(WeblogPermission perm) {
+        if (perm.hasAction(WeblogPermission.ADMIN)) {
             return MemberEntry.Permissions.ADMIN;
         }
-        if (mask == WeblogPermission.AUTHOR) {
+        if (perm.hasAction(WeblogPermission.POST)) {
             return MemberEntry.Permissions.AUTHOR;
         }
-        if (mask == WeblogPermission.LIMITED) {
+        if (perm.hasAction(WeblogPermission.EDIT_DRAFT)) {
             return MemberEntry.Permissions.LIMITED;
         }
         return null;
     }
     
     
-    private static short stringToMask(String s) {
+    private static List<String> stringToActionList(String s) {
+        List<String> actionList = new ArrayList<String>();
         if (s == null) {
             throw new NullPointerException("ERROR: Null string not allowed");
         }
         if (s.equalsIgnoreCase(MemberEntry.Permissions.ADMIN)) {
-            return WeblogPermission.ADMIN;
+            actionList.add(WeblogPermission.ADMIN);
         }
         if (s.equalsIgnoreCase(MemberEntry.Permissions.AUTHOR)) {
-            return WeblogPermission.AUTHOR;
+            actionList.add(WeblogPermission.POST);
         }
         if (s.equalsIgnoreCase(MemberEntry.Permissions.LIMITED)) {
-            return WeblogPermission.LIMITED;
+            actionList.add(WeblogPermission.EDIT_DRAFT);
         }
-        return 0;
+        return actionList;
     }
 }
 

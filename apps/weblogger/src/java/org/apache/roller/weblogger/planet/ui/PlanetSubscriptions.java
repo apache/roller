@@ -29,7 +29,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 
 
 /**
@@ -57,8 +57,8 @@ public class PlanetSubscriptions extends PlanetUIAction {
     
     
     @Override
-    public String requiredUserRole() {
-        return "admin";
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     @Override
@@ -226,6 +226,5 @@ public class PlanetSubscriptions extends PlanetUIAction {
 
     public void setSubUrl(String subUrl) {
         this.subUrl = subUrl;
-    }
-    
+    }    
 }

@@ -18,10 +18,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
@@ -71,8 +74,16 @@ public class MenuModel implements Model {
      * currently logged in and is an admin.
      */
     public Menu getAdminMenu() {
-        if(pageRequest.isLoggedIn() && pageRequest.getUser().hasRole("admin")) {
-            return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+        try {
+            GlobalPermission adminPerm = 
+                new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
+            boolean hasAdmin = WebloggerFactory.getWeblogger().getUserManager()
+                    .checkPermission(adminPerm, pageRequest.getUser());            
+            if (pageRequest.isLoggedIn() && hasAdmin) {
+                return MenuHelper.getMenu("admin", "noAction", pageRequest.getUser(), pageRequest.getWeblog());
+            }
+        } catch (WebloggerException ex) {
+            logger.debug("ERROR: fetching user roles");
         }
         return null;
     }

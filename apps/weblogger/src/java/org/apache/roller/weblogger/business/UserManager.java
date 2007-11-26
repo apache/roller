@@ -22,23 +22,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.RollerPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 
 /**
- * Manages users, weblogs, permissions, and weblog pages.
+ * Interface to user, role and permissions management.
  */
 public interface UserManager {
+        
+    
+    //--------------------------------------------------------------- user CRUD
+    
     
     /**
      * Add a new user.
      * 
      * This method is used to provide supplemental data to new user accounts,
-     * such as adding the proper roles for the user.  This method should see
-     * if the new user is the first user and give that user the admin role if so.
+     * such as adding the proper roles for the user.  This method should see if
+     * the new user is the first user and give that user the admin role if so.
      *
      * @param newUser User object to be added.
      * @throws WebloggerException If there is a problem.
@@ -65,13 +69,22 @@ public interface UserManager {
     
     
     /**
-     * Lookup a user by ID.
-     * 
-     * @param id ID of user to lookup.
-     * @returns UsUserhe user, or null if not found.
-     * @throws WebloggerException If there is a problem.
+     * Get count of enabled users
+     */    
+    public long getUserCount() throws WebloggerException; 
+    
+    
+    /**
+     * get a user by activation code
+     * @param activationCode
+     * @return
+     * @throws WebloggerException
      */
-    public User getUser(String id) throws WebloggerException;
+    public User getUserByActivationCode(String activationCode) 
+            throws WebloggerException;
+    
+          
+    //------------------------------------------------------------ user queries
     
     
     /**
@@ -116,7 +129,6 @@ public interface UserManager {
      * @throws WebloggerException If there is a problem.
      */
     public List getUsers(
-            Weblog weblog,
             Boolean enabled,
             Date    startDate,
             Date    endDate,
@@ -151,265 +163,142 @@ public interface UserManager {
     public List getUsersByLetter(char letter, int offset, int length) 
         throws WebloggerException;
     
+        
+    //-------------------------------------------------------- permissions CRUD
+
     
     /**
-     * Add new website, give creator admin permission, creates blogroll,
-     * creates categories and other objects required for new website.
-     * @param newWebsite New website to be created, must have creator.
+     * Return true if user has permission specified.
      */
-    public void addWebsite(Weblog newWebsite) throws WebloggerException;
-    
-    
-    /**
-     * Store a single weblog.
-     */
-    public void saveWebsite(Weblog data) throws WebloggerException;
-    
-    
-    /**
-     * Remove website object.
-     */
-    public void removeWebsite(Weblog website) throws WebloggerException;
-    
-    
-    /**
-     * Get website object by name.
-     */
-    public Weblog getWebsite(String id) throws WebloggerException;
-    
-    
-    /**
-     * Get website specified by handle (or null if enabled website not found).
-     * @param handle  Handle of website
-     */
-    public Weblog getWebsiteByHandle(String handle) throws WebloggerException;
-    
-    
-    /**
-     * Get website specified by handle with option to return only enabled websites.
-     * @param handle  Handle of website
-     */
-    public Weblog getWebsiteByHandle(String handle, Boolean enabled)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get websites optionally restricted by user, enabled and active status.
-     * @param user    Get all websites for this user (or null for all)
-     * @param offset  Offset into results (for paging)
-     * @param len     Maximum number of results to return (for paging)
-     * @param enabled Get all with this enabled state (or null or all)
-     * @param active  Get all with this active state (or null or all)
-     * @param startDate Restrict to those created after (or null for all)
-     * @param endDate Restrict to those created before (or null for all)
-     * @returns List of WebsiteData objects.
-     */
-    public List getWebsites(
-            User user,
-            Boolean  enabled,
-            Boolean  active,
-            Date     startDate,
-            Date     endDate,
-            int      offset,
-            int      length)
+    public boolean checkPermission(RollerPermission perm, User user) 
             throws WebloggerException;
     
     
     /**
-     * Get websites ordered by descending number of comments.
-     * @param startDate Restrict to those created after (or null for all)
-     * @param endDate Restrict to those created before (or null for all)
-     * @param offset    Offset into results (for paging)
-     * @param len       Maximum number of results to return (for paging)
-     * @returns List of WebsiteData objects.
+     * Grant to user specific actions in a weblog.
+     * (will create new permission record if none already exists)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
      */
-    public List getMostCommentedWebsites(
-            Date startDate,
-            Date endDate,
-            int  offset,
-            int  length)
+    public void grantWeblogPermission(Weblog weblog, User user, List<String> actions)
+            throws WebloggerException;
+
+    
+    /**
+     * Grant to user specific actions in a weblog, but pending confirmation.
+     * (will create new permission record if none already exists)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
+     */
+    public void grantWeblogPermissionPending(Weblog weblog, User user, List<String> actions)
+            throws WebloggerException;
+
+    
+    /**
+     * Confirm user's permission within specified weblog or throw exception if no pending permission exists.
+     * (changes state of permsission record to pending = true)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
+     */
+    public void confirmWeblogPermission(Weblog weblog, User user)
+            throws WebloggerException;
+
+    
+    /**
+     * Decline permissions within specified weblog or throw exception if no pending permission exists.
+     * (removes permission record)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
+     */
+    public void declineWeblogPermission(Weblog weblog, User user)
+            throws WebloggerException;
+
+    
+    /**
+     * Revoke from user specific actions in a weblog.
+     * (if resulting permission has empty removes permission record)
+     * @param weblog  Weblog to grant permissions in
+     * @param user    User to grant permissions to
+     * @param actions Actions to be granted
+     */
+    public void revokeWeblogPermission(Weblog weblog, User user, List<String> actions)
+            throws WebloggerException;
+
+    
+    /**
+     * Get all of user's weblog permissions.
+     */
+    public List<WeblogPermission> getWeblogPermissions(User user) 
             throws WebloggerException;
     
     
     /**
-     * Get map with 26 entries, one for each letter A-Z and
-     * containing integers reflecting the number of weblogs whose
-     * names start with each letter.
+     * Get all of user's pending weblog permissions.
      */
-    public Map getWeblogHandleLetterMap() throws WebloggerException;
-    
-    
-    /** 
-     * Get collection of weblogs whose handles begin with specified letter 
-     */
-    public List getWeblogsByLetter(char letter, int offset, int length) 
-        throws WebloggerException;
+    public List<WeblogPermission> getWeblogPermissionsPending(User user) 
+            throws WebloggerException;
     
     
     /**
-     * Save permissions object.
+     * Get all permissions associated with a weblog.
      */
-    public void savePermissions(WeblogPermission perms) throws WebloggerException;
+    public List<WeblogPermission> getWeblogPermissions(Weblog weblog) 
+            throws WebloggerException;
     
     
     /**
-     * Remove permissions object.
+     * Get all pending permissions associated with a weblog.
      */
-    public void removePermissions(WeblogPermission perms) throws WebloggerException;
+    public List<WeblogPermission> getWeblogPermissionsPending(Weblog weblog) 
+            throws WebloggerException;
     
     
     /**
-     * Get permissions object by id.
+     * Get user's permission within a weblog or null if none.
      */
-    public WeblogPermission getPermissions(String id) throws WebloggerException;
+    public WeblogPermission getWeblogPermission(Weblog weblog, User user) 
+            throws WebloggerException;        
     
     
-    /**
-     * Get pending permissions for user.
-     * @param user User (not null)
-     * @returns List of PermissionsData objects.
-     */
-    public List getPendingPermissions(User user) throws WebloggerException;
-    
-    
-    /**
-     * Get pending permissions for website.
-     * @param website Website (not null)
-     * @returns List of PermissionsData objects.
-     */
-    public List getPendingPermissions(Weblog user) throws WebloggerException;
-    
-    
-    /**
-     * Get permissions of user in website.
-     * @param website Website (not null)
-     * @param user    User (not null)
-     * @return        PermissionsData object
-     */
-    public WeblogPermission getPermissions(Weblog website, User user)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get all permissions in website
-     * @param website Website (not null)
-     * @return        PermissionsData object
-     */
-    public List getAllPermissions(Weblog website) throws WebloggerException;
-    
-    
-    /**
-     * Get all permissions of user
-     * @param user User (not null)
-     * @return     PermissionsData object
-     */
-    public List getAllPermissions(User user) throws WebloggerException;
-    
-    
-    /**
-     * Invite user to join a website with specific permissions
-     * @param website Website to be joined (persistent instance)
-     * @param user    User to be invited (persistent instance)
-     * @param perms   Permissions mask (see statics in PermissionsData)
-     * @return        New PermissionsData object, with pending=true
-     */
-    public WeblogPermission inviteUser(Weblog website, User user, short perms)
-        throws WebloggerException;
-    
-    
-    /**
-     * Retire user from a website
-     * @param website Website to be retired from (persistent instance)
-     * @param user    User to be retired (persistent instance)
-     */
-    public void retireUser(Weblog website, User user)
-        throws WebloggerException;
-    
-    
-    /**
-     * Revoke role of user
-     * @param roleName Name of the role to be revoked
-     * @param user    User for whom the role is to be revoked
-     */
-    public void revokeRole(String roleName, User user)
-        throws WebloggerException;
-
-    /**
-     * Store page.
-     */
-    public void savePage(WeblogTemplate data) throws WebloggerException;
-    
-    
-    /**
-     * Remove page.
-     */
-    public void removePage(WeblogTemplate page) throws WebloggerException;
-    
-    
-    /**
-     * Get page by id.
-     */
-    public WeblogTemplate getPage(String id) throws WebloggerException;
-    
-    
-    /**
-     * Get user's page by action.
-     */
-    public WeblogTemplate getPageByAction(Weblog w, String a) throws WebloggerException;
-    
-    
-    /**
-     * Get user's page by name.
-     */
-    public WeblogTemplate getPageByName(Weblog w, String p) throws WebloggerException;
-    
-    
-    /**
-     * Get website's page by link.
-     */
-    public WeblogTemplate getPageByLink(Weblog w, String p)
-        throws WebloggerException;
-    
-    
-    /**
-     * Get website's pages
-     */
-    public List getPages(Weblog w) throws WebloggerException;
-   
-    
-    /**
-     * Get count of active weblogs
-     */    
-    public long getWeblogCount() throws WebloggerException;
+    //--------------------------------------------------------------- role CRUD
 
     
     /**
-     * Get count of enabled users
-     */    
-    public long getUserCount() throws WebloggerException; 
+     * Grant role to user.
+     */
+    public void grantRole(String roleName, User user) throws WebloggerException;
     
+    
+    /**
+     * Revoke role from user.
+     */
+    public void revokeRole(String roleName, User user) throws WebloggerException;
+
+        
+    /**
+     * Returns true if user has role specified, should be used only for testing.
+     * @deprecated User checkPermission() instead.
+     */
+    public boolean hasRole(String roleName, User user) throws WebloggerException;
+    
+    
+    /**
+     * Get roles associated with user, should be used only for testing.
+     * Get all roles associated with user.
+     * @deprecated User checkPermission() instead.
+     */
+    public List<String> getRoles(User user) throws WebloggerException;
+
     
     /**
      * Release any resources held by manager.
      */
-    public void release();
-    
-    
-    /**
-     * get a user by activation code
-     * @param activationCode
-     * @return
-     * @throws WebloggerException
-     */
-    public User getUserByActivationCode(String activationCode) throws WebloggerException;
-    
-    /**
-     * get a user by password request code
-     * @param passwordRequestCode
-     * @return
-     * @throws WebloggerException
-     */
-    //public User getUserByPasswordRequestCode(String passwordRequestCode) throws WebloggerException;
-
-
+    public void release();   
 }
+
+
+

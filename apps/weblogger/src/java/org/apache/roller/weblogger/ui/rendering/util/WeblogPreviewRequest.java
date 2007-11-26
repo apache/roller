@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -133,7 +133,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
             }
             
             try {
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), anchor);
             } catch (WebloggerException ex) {
                 log.error("Error getting weblog entry "+anchor, ex);

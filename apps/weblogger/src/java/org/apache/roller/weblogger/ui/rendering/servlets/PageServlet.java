@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.StaticThemeTemplate;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -326,7 +326,7 @@ public class PageServlet extends HttpServlet {
 
             try {
                 // tags specified.  make sure they exist.
-                WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
                 invalid = !wmgr.getTagComboExists(pageRequest.getTags(), (isSiteWide) ? null : weblog);
             } catch (WebloggerException ex) {
                 invalid = true;

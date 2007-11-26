@@ -18,6 +18,9 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collections;
+import java.util.List;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -34,9 +37,9 @@ public class UserAdmin extends UIAction {
     }
     
     
-    // admin role required
-    public String requiredUserRole() {
-        return "admin";
+    // admin role required    
+    public List<String> requiredGlobalPermissionActions() {
+        return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required

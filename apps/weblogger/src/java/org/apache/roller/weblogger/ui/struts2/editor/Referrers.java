@@ -55,8 +55,8 @@ public class Referrers extends UIAction {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

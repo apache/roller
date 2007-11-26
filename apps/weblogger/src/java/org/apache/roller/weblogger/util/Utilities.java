@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -277,11 +278,7 @@ public class Utilities {
     }
     
     //------------------------------------------------------------------------
-    /**
-     * @param stringArray
-     * @param delim
-     * @return
-     */
+    /** Convert string array to string with delimeters. */
     public static String stringArrayToString(String[] stringArray, String delim) {
         String ret = "";
         for (int i = 0; i < stringArray.length; i++) {
@@ -293,8 +290,21 @@ public class Utilities {
         return ret;
     }
     
+    //------------------------------------------------------------------------
+    /** Convert string array to string with delimeters. */
+    public static String stringListToString(List<String> stringList, String delim) {
+        String ret = "";
+        for (String s : stringList) {
+            if (ret.length() > 0)
+                ret = ret + delim + s;
+            else
+                ret = s;
+        }
+        return ret;
+    }
+    
     //--------------------------------------------------------------------------
-    /** Convert string to string array. */
+    /** Convert string with delimeters to string array. */
     public static String[] stringToStringArray(String instr, String delim)
     throws NoSuchElementException, NumberFormatException {
         StringTokenizer toker = new StringTokenizer(instr, delim);
@@ -305,6 +315,18 @@ public class Utilities {
             stringArray[i++] = toker.nextToken();
         }
         return stringArray;
+    }
+    
+    //--------------------------------------------------------------------------
+    /** Convert string with delimeters to string list. */
+    public static List<String> stringToStringList(String instr, String delim)
+    throws NoSuchElementException, NumberFormatException {
+        StringTokenizer toker = new StringTokenizer(instr, delim);
+        List<String> stringList = new ArrayList<String>();
+        while (toker.hasMoreTokens()) {
+            stringList.add(toker.nextToken());
+        }
+        return stringList;
     }
     
     //--------------------------------------------------------------------------

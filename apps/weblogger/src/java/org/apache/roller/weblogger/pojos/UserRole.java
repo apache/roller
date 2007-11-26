@@ -33,17 +33,14 @@ public class UserRole implements Serializable {
     
     private String id = UUIDGenerator.generateUUID();
     private String userName;
-    private User user;
     private String role;
     
     
     public UserRole() {
     }
     
-    public UserRole(String id, User user, String role) {
-        //this.id = id;
-        this.userName = user.getUserName();
-        this.user = user;
+    public UserRole(String username, String role) {
+        this.userName = username;
         this.role = role;
     }
     
@@ -63,16 +60,7 @@ public class UserRole implements Serializable {
     
     public void setUserName( String userName ) {
         this.userName = userName;
-    }
-    
-    
-    public User getUser() {
-        return this.user;
-    }
-    
-    public void setUser( User user ) {
-        this.user = user;
-    }
+    }        
     
     
     public String getRole() {

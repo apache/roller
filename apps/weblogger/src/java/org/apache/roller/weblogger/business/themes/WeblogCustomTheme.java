@@ -72,8 +72,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Get the collection of all templates associated with this Theme.
      */
     public List getTemplates() throws WebloggerException {
-        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-        return userMgr.getPages(this.weblog);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getPages(this.weblog);
     }
     
     
@@ -91,8 +90,8 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
-        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-        return userMgr.getPageByAction(this.weblog, ThemeTemplate.ACTION_WEBLOG);
+        return WebloggerFactory.getWeblogger().getWeblogManager()
+                .getPageByAction(this.weblog, ThemeTemplate.ACTION_WEBLOG);
     }
     
     
@@ -104,8 +103,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if(action == null)
             return null;
         
-        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-        return userMgr.getPageByAction(this.weblog, action);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getPageByAction(this.weblog, action);
     }
     
     
@@ -117,8 +115,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if(name == null)
             return null;
         
-        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-        return userMgr.getPageByName(this.weblog, name);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getPageByName(this.weblog, name);
     }
     
     
@@ -130,8 +127,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         if(link == null)
             return null;
         
-        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-        return userMgr.getPageByLink(this.weblog, link);
+        return WebloggerFactory.getWeblogger().getWeblogManager().getPageByLink(this.weblog, link);
     }
     
     

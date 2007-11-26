@@ -68,7 +68,7 @@ public class FolderParentDeletesTest extends TestCase {
         log.info("BEGIN");
         
         try {
-            TestUtils.teardownUser(testUser.getId());
+            TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
@@ -103,8 +103,7 @@ public class FolderParentDeletesTest extends TestCase {
         // now delete the weblog owning these categories
         Exception ex = null;
         try {
-            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-            umgr.removeWebsite(TestUtils.getManagedWebsite(testWeblog));
+            WebloggerFactory.getWeblogger().getWeblogManager().removeWeblog(TestUtils.getManagedWebsite(testWeblog));
             TestUtils.endSession(true);
         } catch (WebloggerException e) {
             ex = e;

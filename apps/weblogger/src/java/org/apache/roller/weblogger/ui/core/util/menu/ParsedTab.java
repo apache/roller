@@ -28,8 +28,8 @@ import java.util.List;
 public class ParsedTab {
     
     private String name = null;
-    private String perm = null;
-    private String role = null;
+    private List<String> weblogPermissionActions = null;
+    private List<String> globalPermissionActions = null;
     private String enabledProperty = null;
     private String disabledProperty = null;
     
@@ -49,20 +49,20 @@ public class ParsedTab {
         this.name = name;
     }
 
-    public String getPerm() {
-        return perm;
+    public List<String> getWeblogPermissionActions() {
+        return weblogPermissionActions;
     }
 
-    public void setPerm(String perm) {
-        this.perm = perm;
+    public void setWeblogPermissionActions(List<String> actions) {
+        this.weblogPermissionActions = actions;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getGlobalPermissionActions() {
+        return globalPermissionActions;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setGlobalPermissionActions(List<String> actions) {
+        this.globalPermissionActions = actions;
     }
 
     public String getEnabledProperty() {

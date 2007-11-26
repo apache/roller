@@ -25,10 +25,15 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.util.Utilities;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -49,10 +54,14 @@ public class MenuHelper {
         try {
             // parse menus and cache so we can efficiently reuse them
             // TODO: there is probably a better way than putting the whole path
-            ParsedMenu editorMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/editor/editor-menu.xml"));
+            ParsedMenu editorMenu = unmarshall(
+                MenuHelper.class.getResourceAsStream(
+                "/org/apache/roller/weblogger/ui/struts2/editor/editor-menu.xml"));
             menus.put("editor", editorMenu);
             
-            ParsedMenu adminMenu = unmarshall(MenuHelper.class.getResourceAsStream("/org/apache/roller/weblogger/ui/struts2/admin/admin-menu.xml"));
+            ParsedMenu adminMenu = unmarshall(
+                MenuHelper.class.getResourceAsStream(
+                "/org/apache/roller/weblogger/ui/struts2/admin/admin-menu.xml"));
             menus.put("admin", adminMenu);
             
         } catch (Exception ex) {
@@ -73,7 +82,11 @@ public class MenuHelper {
         // do we know the specified menu config?
         ParsedMenu menuConfig = (ParsedMenu) menus.get(menuId);
         if(menuConfig != null) {
-            menu = buildMenu(menuConfig, currentAction, user, weblog);
+            try {
+                menu = buildMenu(menuConfig, currentAction, user, weblog);
+            } catch (WebloggerException ex) {
+                log.debug("ERROR: fethcing user roles", ex);
+            }
         }
         
         return menu;
@@ -81,16 +94,17 @@ public class MenuHelper {
     
     
     private static Menu buildMenu(ParsedMenu menuConfig, String currentAction, 
-                                  User user, Weblog weblog) {
+                                  User user, Weblog weblog) throws WebloggerException {
         
         log.debug("creating menu for action - "+currentAction);
         
         Menu tabMenu = new Menu();
+        UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
         
         // iterate over tabs from parsed config
         ParsedTab configTab = null;
         Iterator tabsIter = menuConfig.getTabs().iterator();
-        while(tabsIter.hasNext()) {
+        while (tabsIter.hasNext()) {
             configTab = (ParsedTab) tabsIter.next();
             
             log.debug("config tab = "+configTab.getName());
@@ -103,21 +117,34 @@ public class MenuHelper {
                 includeTab = ! WebloggerConfig.getBooleanProperty(configTab.getDisabledProperty());
             }
             
-            if(includeTab) {
+            if (includeTab) {
                 // user roles check
-                if(configTab.getRole() != null) {
-                    if(!user.hasRole(configTab.getRole())) {
+                if (configTab.getGlobalPermissionActions() != null
+                        && !configTab.getGlobalPermissionActions().isEmpty()) {
+                    try {
+                        GlobalPermission perm = 
+                            new GlobalPermission(configTab.getGlobalPermissionActions());
+                        if (!umgr.checkPermission(perm, user)) {
+                            includeTab = false;
+                        }
+                    } catch (WebloggerException ex) {
+                        log.debug("ERROR: fetching user roles", ex);
                         includeTab = false;
                     }
                 }
             }
             
-            if(includeTab) {
+            if (includeTab) {
                 // weblog permissions check
-                includeTab = isPermitted(configTab.getPerm(), user, weblog);
+                if (configTab.getWeblogPermissionActions() != null 
+                        && !configTab.getWeblogPermissionActions().isEmpty()) {
+                    WeblogPermission perm = 
+                        new WeblogPermission(weblog, configTab.getWeblogPermissionActions());
+                    includeTab = umgr.checkPermission(perm, user);
+                }
             }
             
-            if(includeTab) {
+            if (includeTab) {
                 log.debug("tab allowed - "+configTab.getName());
                 
                 // all checks passed, tab should be included
@@ -128,33 +155,40 @@ public class MenuHelper {
                 boolean firstItem = true;
                 ParsedTabItem configTabItem = null;
                 Iterator itemsIter = configTab.getTabItems().iterator();
-                while(itemsIter.hasNext()) {
+                while (itemsIter.hasNext()) {
                     configTabItem = (ParsedTabItem) itemsIter.next();
                     
                     log.debug("config tab item = "+configTabItem.getName());
                     
                     boolean includeItem = true;
-                    if(configTabItem.getEnabledProperty() != null) {
+                    if (configTabItem.getEnabledProperty() != null) {
                         includeItem = WebloggerConfig.getBooleanProperty(configTabItem.getEnabledProperty());
-                    } else if(configTabItem.getDisabledProperty() != null) {
+                    } else if (configTabItem.getDisabledProperty() != null) {
                         includeItem = ! WebloggerConfig.getBooleanProperty(configTabItem.getDisabledProperty());
                     }
                     
-                    if(includeItem) {
+                    if (includeItem) {
                         // user roles check
-                        if(configTabItem.getRole() != null) {
-                            if(!user.hasRole(configTabItem.getRole())) {
+                        if (configTabItem.getGlobalPermissionActions() != null
+                                && !configTabItem.getGlobalPermissionActions().isEmpty()) {
+                            GlobalPermission perm = 
+                                new GlobalPermission(configTabItem.getGlobalPermissionActions());
+                            if (!umgr.checkPermission(perm, user)) {
                                 includeItem = false;
                             }
                         }
                     }
                     
-                    if(includeItem) {
+                    if (includeItem) {
                         // weblog permissions check
-                        includeItem = isPermitted(configTabItem.getPerm(), user, weblog);
+                        if (configTab.getWeblogPermissionActions() != null 
+                                && !configTab.getWeblogPermissionActions().isEmpty()) {                        
+                            WeblogPermission perm = new WeblogPermission(weblog, configTab.getWeblogPermissionActions());
+                            includeTab = umgr.checkPermission(perm, user);
+                        }
                     }
                     
-                    if(includeItem) {
+                    if (includeItem) {
                         log.debug("tab item allowed - "+configTabItem.getName());
                         
                         // all checks passed, item should be included
@@ -163,13 +197,13 @@ public class MenuHelper {
                         tabItem.setAction(configTabItem.getAction());
                         
                         // is this the selected item?
-                        if(isSelected(currentAction, configTabItem)) {
+                        if (isSelected(currentAction, configTabItem)) {
                             tabItem.setSelected(true);
                             tab.setSelected(true);
                         }
                         
                         // the url for the tab is the url of the first item of the tab
-                        if(firstItem) {
+                        if (firstItem) {
                             tab.setAction(tabItem.getAction());
                             firstItem = false;
                         }
@@ -185,41 +219,20 @@ public class MenuHelper {
         }
         
         return tabMenu;
-    }
-    
-    
-    private static boolean isPermitted(String perm, User user, Weblog weblog) {
-        
-        // convert permissions string to short
-        short permMask = -1;
-        if(perm == null) {
-            return true;
-        } else if("limited".equals(perm)) {
-            permMask = WeblogPermission.LIMITED;
-        } else if("author".equals(perm)) {
-            permMask = WeblogPermission.AUTHOR;
-        } else if("admin".equals(perm)) {
-            permMask = WeblogPermission.ADMIN;
-        } else {
-            // unknown perm
-            return false;
-        }
-        
-        return weblog.hasUserPermissions(user, permMask);
-    }
+    }    
     
     
     private static boolean isSelected(String currentAction, ParsedTabItem tabItem) {
         
-        if(currentAction.equals(tabItem.getAction())) {
+        if (currentAction.equals(tabItem.getAction())) {
             return true;
         }
         
         // an item is also considered selected if it's subforwards are the current action
         String[] subActions = tabItem.getSubActions();
-        if(subActions != null && subActions.length > 0) {
+        if (subActions != null && subActions.length > 0) {
             for(int i=0; i < subActions.length; i++) {
-                if(currentAction.equals(subActions[i])) {
+                if (currentAction.equals(subActions[i])) {
                     return true;
                 }
             }
@@ -236,7 +249,7 @@ public class MenuHelper {
     private static ParsedMenu unmarshall(InputStream instream) 
         throws IOException, JDOMException {
         
-        if(instream == null)
+        if (instream == null)
             throw new IOException("InputStream is null!");
         
         ParsedMenu config = new ParsedMenu();
@@ -261,8 +274,12 @@ public class MenuHelper {
         ParsedTab tab = new ParsedTab();
         
         tab.setName(element.getAttributeValue("name"));
-        tab.setPerm(element.getAttributeValue("perms"));
-        tab.setRole(element.getAttributeValue("roles"));
+        if (element.getAttributeValue("weblogPerms") != null) {
+            tab.setWeblogPermissionActions(Utilities.stringToStringList(element.getAttributeValue("weblogPerms"),","));
+        }
+        if (element.getAttributeValue("globalPerms") != null) {
+            tab.setGlobalPermissionActions(Utilities.stringToStringList(element.getAttributeValue("globalPerms"),","));
+        }
         tab.setEnabledProperty(element.getAttributeValue("enabledProperty"));
         tab.setDisabledProperty(element.getAttributeValue("disabledProperty"));
         
@@ -285,12 +302,16 @@ public class MenuHelper {
         tabItem.setAction(element.getAttributeValue("action"));
         
         String subActions = element.getAttributeValue("subactions");
-        if(subActions != null) {
+        if (subActions != null) {
             tabItem.setSubActions(subActions.split(","));
         }
         
-        tabItem.setPerm(element.getAttributeValue("perms"));
-        tabItem.setRole(element.getAttributeValue("roles"));
+        if (element.getAttributeValue("weblogPerms") != null) {
+            tabItem.setWeblogPermissionActions(Utilities.stringToStringList(element.getAttributeValue("weblogPerms"), ","));
+        }
+        if (element.getAttributeValue("globalPerms") != null) {
+            tabItem.setGlobalPermissionActions(Utilities.stringToStringList(element.getAttributeValue("globalPerms"), ","));
+        }
         tabItem.setEnabledProperty(element.getAttributeValue("enabledProperty"));
         tabItem.setDisabledProperty(element.getAttributeValue("disabledProperty"));
         
@@ -298,3 +319,4 @@ public class MenuHelper {
     }
     
 }
+

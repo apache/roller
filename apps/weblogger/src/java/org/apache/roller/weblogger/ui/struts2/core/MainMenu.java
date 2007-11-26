@@ -25,9 +25,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -62,23 +63,17 @@ public class MainMenu extends UIAction {
     public String accept() {
         
         try {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission perms = userMgr.getPermissions(getInviteId());
-            if (perms != null) {        
-                // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
-                // TODO EXCEPTIONS: better exception handling
-                perms.setPending(false);
-                userMgr.savePermissions(perms);
-                WebloggerFactory.getWeblogger().flush();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            Weblog weblog = wmgr.getWeblog(getInviteId());      
+            // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
+            // TODO EXCEPTIONS: better exception handling
+            umgr.confirmWeblogPermission(weblog, getAuthenticatedUser());
+            WebloggerFactory.getWeblogger().flush();
 
-                addMessage("yourWebsites.accepted", perms.getWebsite().getHandle());
-            } else {
-                addError("yourWebsites.permNotFound");
-            }
         } catch (WebloggerException ex) {
-            log.error("Error handling invitation accept - "+getInviteId(), ex);
-            // TODO: i18n
-            addError("invite accept failed.");
+            log.error("Error handling invitation accept weblog id - "+getInviteId(), ex);
+            addError("yourWebsites.permNotFound");
         }
         
         return SUCCESS;
@@ -88,24 +83,19 @@ public class MainMenu extends UIAction {
     public String decline() {
         
         try {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission perms = userMgr.getPermissions(getInviteId());
-            if (perms != null) {
-                String handle = perms.getWebsite().getHandle();
-                        
-                // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
-                // TODO EXCEPTIONS: better exception handling here
-                userMgr.removePermissions(perms);
-                WebloggerFactory.getWeblogger().flush();
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            Weblog weblog = wmgr.getWeblog(getInviteId());
+            String handle = weblog.getHandle();                       
+            // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
+            // TODO EXCEPTIONS: better exception handling here
+            umgr.declineWeblogPermission(weblog, getAuthenticatedUser());
+            WebloggerFactory.getWeblogger().flush();
+            addMessage("yourWebsites.declined", handle);
 
-                addMessage("yourWebsites.declined", handle);
-            } else {
-                addError("yourWebsites.permNotFound");
-            }
         } catch (WebloggerException ex) {
-            log.error("Error handling invitation decline - "+getInviteId(), ex);
-            // TODO: i18n
-            addError("invite decline failed.");
+            log.error("Error handling invitation decline weblog id - "+getInviteId(), ex);
+            addError("yourWebsites.permNotFound");
         }
         
         return SUCCESS;
@@ -117,20 +107,16 @@ public class MainMenu extends UIAction {
         User user = getAuthenticatedUser();
         
         try {
-            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            Weblog website = mgr.getWebsite(getWebsiteId());
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            Weblog weblog = wmgr.getWeblog(getWebsiteId());
+            String handle = weblog.getHandle();
+            // TODO ROLLER_2.0: notify website members that user has resigned
+            // TODO EXCEPTIONS: better exception handling
+            umgr.revokeWeblogPermission(weblog, getAuthenticatedUser(), WeblogPermission.ALL_ACTIONS);
+            WebloggerFactory.getWeblogger().flush();            
+            addMessage("yourWebsites.resigned", handle);
             
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogPermission perms = userMgr.getPermissions(website, user);
-            
-            if (perms != null) {
-                // TODO ROLLER_2.0: notify website members that user has resigned
-                // TODO EXCEPTIONS: better exception handling
-                userMgr.removePermissions(perms);
-                WebloggerFactory.getWeblogger().flush();
-            }
-            
-            addMessage("yourWebsites.resigned", perms.getWebsite().getHandle());
         } catch (WebloggerException ex) {
             log.error("Error doing weblog resign - "+getWebsiteId(), ex);
             // TODO: i18n
@@ -144,7 +130,7 @@ public class MainMenu extends UIAction {
     public List getExistingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getAllPermissions(getAuthenticatedUser());
+            return mgr.getWeblogPermissions(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.EMPTY_LIST;
         }
@@ -153,7 +139,7 @@ public class MainMenu extends UIAction {
     public List getPendingPermissions() {
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            return mgr.getPendingPermissions(getAuthenticatedUser());
+            return mgr.getWeblogPermissionsPending(getAuthenticatedUser());
         } catch(Exception e) {
             return Collections.EMPTY_LIST;
         }

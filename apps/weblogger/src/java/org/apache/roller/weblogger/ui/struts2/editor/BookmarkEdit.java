@@ -20,6 +20,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,8 +56,8 @@ public class BookmarkEdit extends UIAction {
     }
     
     
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     

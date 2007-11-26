@@ -24,11 +24,13 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.ParameterAware;
 
 
@@ -56,8 +58,8 @@ public class Members extends UIAction implements ParameterAware {
     
     
     // admin perms required
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.ADMIN;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.ADMIN);
     }
     
     
@@ -73,36 +75,48 @@ public class Members extends UIAction implements ParameterAware {
         
         log.debug("Attempting to processing weblog permissions updates");
         
-        UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-        
-        List<WeblogPermission> permissions = getActionWeblog().getPermissions();
-        
-        // we have to copy the permissions list so that when we remove permissions
-        // below we don't get ConcurrentModificationExceptions
-        List<WeblogPermission> permsList = new ArrayList();
-        for( WeblogPermission perm : permissions ) {
-            permsList.add(perm);
-        }
-        
         int removed = 0;
         int changed = 0;
+        List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
         try {
-            for( WeblogPermission perms : permsList ) {
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
+            List<WeblogPermission> permissions = userMgr.getWeblogPermissions(getActionWeblog());
+
+            // we have to copy the permissions list so that when we remove permissions
+            // below we don't get ConcurrentModificationExceptions
+            for( WeblogPermission perm : permissions ) {
+                permsList.add(perm);
+            }
+        
+            for (WeblogPermission perms : permsList) {
                 
-                String sval = getParameter("perm-" + perms.getId());
+                String sval = getParameter("perm-" + perms.getUser().getUserName());
                 if (sval != null) {
-                    short val = Short.parseShort(sval);
+                    boolean error = false;
                     User user = getAuthenticatedUser();
-                    if (perms.getUser().getId().equals(user.getId()) && 
-                            val < perms.getPermissionMask()) {
-                        addError("memberPermissions.noSelfDemotions");
-                    } else if (val != perms.getPermissionMask()) {
-                        if (val == -1) {
-                            userMgr.removePermissions(perms);
+                    if (perms.getUser().getUserName().equals(user.getUserName())) {
+                        // if modifying self
+                        if (sval.equals(WeblogPermission.EDIT_DRAFT) 
+                            && (perms.hasAction(WeblogPermission.POST) || perms.hasAction(WeblogPermission.ADMIN))) {
+                            error = true;
+                            addError("memberPermissions.noSelfDemotions");
+                        }
+                        if (sval.equals(WeblogPermission.POST) && perms.hasAction(WeblogPermission.ADMIN)) {
+                            error = true;
+                            addError("memberPermissions.noSelfDemotions");
+                        }
+                        
+                    } 
+                    if (!error && !perms.hasAction(sval)) {
+                        if (sval == null) {
+                            userMgr.revokeWeblogPermission(
+                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
                             removed++;
                         } else {
-                            perms.setPermissionMask(val);
-                            userMgr.savePermissions(perms);
+                            userMgr.revokeWeblogPermission(
+                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
+                            userMgr.grantWeblogPermission(
+                                    perms.getWeblog(), perms.getUser(), Utilities.stringToStringList(sval, ","));
                             changed++;
                         }
                     }
@@ -110,10 +124,10 @@ public class Members extends UIAction implements ParameterAware {
             }
             
             if (removed > 0 || changed > 0) {
-                log.debug("Weblog permissions updated, flushing changes");
-                
+                log.debug("Weblog permissions updated, flushing changes");                
                 WebloggerFactory.getWeblogger().flush();
             }
+            
         } catch (Exception ex) {
             log.error("Error saving permissions on weblog - "+getActionWeblog().getHandle(), ex);
             // TODO: i18n
@@ -149,5 +163,15 @@ public class Members extends UIAction implements ParameterAware {
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
+    }
+    
+    public List<WeblogPermission> getWeblogPermissions() {
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getWeblogPermissions(getActionWeblog());
+        } catch (WebloggerException ex) {
+            // serious problem, but not much we can do here
+            log.error("ERROR getting weblog permissions", ex);
+        }
+        return new ArrayList<WeblogPermission>();
     }
 }

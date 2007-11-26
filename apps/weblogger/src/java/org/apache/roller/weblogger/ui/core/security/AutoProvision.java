@@ -17,8 +17,10 @@
 */
 package org.apache.roller.weblogger.ui.core.security;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface AutoProvision {
 
-  public boolean execute();
+  public boolean execute(HttpServletRequest request);
   
 }

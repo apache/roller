@@ -24,18 +24,20 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.util.MediacastException;
-import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.util.MediacastException;
 import org.apache.roller.weblogger.util.MediacastResource;
 import org.apache.roller.weblogger.util.MediacastUtil;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -58,8 +60,8 @@ public final class EntryAdd extends EntryBase {
     
     
     @Override
-    public short requiredWeblogPermissions() {
-        return WeblogPermission.LIMITED;
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
     
     
@@ -71,25 +73,35 @@ public final class EntryAdd extends EntryBase {
     @SkipValidation
     public String execute() {
         
-        // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
-        if(getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
+        WeblogPermission perm = null;
+        try {
+            // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
+            UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            perm = umgr.getWeblogPermission(getActionWeblog(), getAuthenticatedUser());
+            
+        } catch (WebloggerException ex) {
+            // security interceptor should ensure this never happens
+            log.error("ERROR retrieving user's permission", ex);
+        }
+        
+        if (perm != null && perm.hasAction(WeblogPermission.ADMIN) && perm.hasAction(WeblogPermission.POST)) {
             getBean().setStatus(WeblogEntry.PUBLISHED);
         } else {
             getBean().setStatus(WeblogEntry.PENDING);
         }
-        
+
         // set entry locale based on weblog locale
         getBean().setLocale(getActionWeblog().getLocale());
-        
+
         // set comment defaults
         getBean().setAllowComments(getActionWeblog().getDefaultAllowComments());
         getBean().setCommentDays(new Integer(getActionWeblog().getDefaultCommentDays()));
-        
+
         // apply weblog default plugins
-        if(getActionWeblog().getDefaultPlugins() != null) {
+        if (getActionWeblog().getDefaultPlugins() != null) {
             getBean().setPlugins(StringUtils.split(getActionWeblog().getDefaultPlugins(), ","));
         }
-        
+
         return INPUT;
     }
     
@@ -102,10 +114,11 @@ public final class EntryAdd extends EntryBase {
     public String save() {
         
         if(!hasActionErrors()) try {
-            WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
+            WeblogEntryManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
             WeblogEntry entry = new WeblogEntry();
-            entry.setCreator(getAuthenticatedUser());
+            entry.setCreatorUserName(getAuthenticatedUser().getUserName());
             entry.setWebsite(getActionWeblog());
             
             // set updatetime & pubtime if it was specified
@@ -123,13 +136,15 @@ public final class EntryAdd extends EntryBase {
                 }
                 
                 // if user does not have author perms then force PENDING status
-                if(!getActionWeblog().hasUserPermissions(getAuthenticatedUser(),WeblogPermission.AUTHOR)) {
+                if(!getActionWeblog().hasUserPermission(getAuthenticatedUser(),WeblogPermission.POST)) {
                     entry.setStatus(WeblogEntry.PENDING);
                 }
             }
             
             // if user is an admin then apply pinned to main value as well
-            if(getAuthenticatedUser().hasRole("admin")) {
+            GlobalPermission adminPerm = 
+                new GlobalPermission(Collections.singletonList(GlobalPermission.ADMIN));
+            if (userMgr.checkPermission(adminPerm, getAuthenticatedUser())) {
                 entry.setPinnedToMain(getBean().getPinnedToMain());
             }
             
@@ -200,7 +215,7 @@ public final class EntryAdd extends EntryBase {
      */
     public List<WeblogCategory> getCategories() {
         try {
-            WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             return wmgr.getWeblogCategories(getActionWeblog(), false);
         } catch (WebloggerException ex) {
             log.error("Error getting category list for weblog - "+getWeblog(), ex);
