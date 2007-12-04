@@ -148,7 +148,11 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             }
 
         } catch (WebloggerException ex) {
-            log.warn("Error getting TaskLock", ex);
+            if (log.isDebugEnabled()) {
+                log.debug("Error getting TaskLock", ex);
+            } else {
+                log.warn("Error getting TaskLock, enable debug for more info");
+            }
             return false;
         }
 
@@ -166,7 +170,11 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             }
 
         } catch (Exception e) {
-            log.warn("Error releasing lease.", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Error releasing lease", e);
+            } else {
+                log.warn("Error releasing lease, enable debug for more info");
+            }
             return false;
         }
 
