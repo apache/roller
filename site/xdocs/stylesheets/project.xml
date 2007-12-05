@@ -16,6 +16,7 @@ limitations under the License.
 <project href="http://www.apache.org/">
 
 <title>Apache Roller</title>
+<logo href="images/roller-logo.jpg" />
 <body>
     
 <projects><title>Project information</title>
@@ -30,8 +31,7 @@ limitations under the License.
 </projects>
 
 <projects><title>Downloads</title>
-    <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Downloads">Downloads</a></li>
-    <li><a href="https://roller.dev.java.net/">Downloads (additional)</a></li>
+    <li><a href="downloads.html">Downloads</a></li>
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">Roller User Guide</a></li>
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">Roller Install Guide</a> </li>
 </projects>

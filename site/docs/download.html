@@ -19,7 +19,7 @@ limitations under the License.
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="http://incubator.apache.org/style/style.css" type="text/css" />
        <meta name="author" content="The Apache Software Foundation" /><meta name="email" content="apache.AT.apache.DOT.org" />
-    <title>Apache Roller - open source Java blog server - Apache Roller</title>
+    <title>Apache Roller - Downloads - Apache Roller</title>
  </head>
  <body>        
   <table border="0" width="100%" cellspacing="0">
@@ -58,58 +58,152 @@ limitations under the License.
     <!-- CONTENT -->
     <td align="left" valign="top" class="content">
                 <h2><img src="images/redarrow.gif" alt=" "/>
-   Welcome!
+   Download a Release of Apache Roller
 </h2>
 <div class="section-content">
 <p>
-        Apache Roller is a full-featured, multi-user and group-blog 
-        server suitable for blog sites large and small. This is the project's 
-        homepage, which provides a brief overview of the software and project as 
-        well as links to 
-        <a href="http://rollerweblogger.org/project">project news</a>, 
-        <a href="downloads.html">downloads</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">mailing-lists</a>,
-        <a href="http://opensource.atlassian.com/projects/roller">bug tracker</a>,
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">FAQ</a>. 
+        Use the links below to download a release of Apache Roller from one of 
+        our mirrors. You can <a href="#verify">verify the integrity</a> of the 
+        downloaded files using signatures downloaded from our main distribution 
+    directory.
     </p>
+<br />
 </div>
            <h2><img src="images/redarrow.gif" alt=" "/>
-   Overview
+   Preferred Mirror
 </h2>
 <div class="section-content">
 <p>
-        Roller is a Java web application that should be able to run on any Java EE
-        server and any relational database. Currently, Roller is best supported on 
-        Tomcat and MySQL -- but users have reported success running Roller on 
-        Glassfish, Websphere, JBoss, Resin, Gernonimo, Derby, PostgresSQL, 
-        Oracle, etc.)
+        [if-any logo]
+        <a href="[link]">
+            <img align="right" src="[logo]" border="0" alt="logo" />
+        </a>
+        [end]
+        The currently selected mirror is <b>[preferred]</b>.  If you 
+        encounter a problem with this mirror, please select another mirror.  
+        If all mirrors are failing, there are <i>backup</i> mirrors (at 
+        the end of the mirrors list) that should be available.
     </p>
-<p>Here are some of Roller's key features:</p>
+<form action="[location]" method="get" id="SelectMirror">
+        Other mirrors:
+        <select name="Preferred">
+            [if-any http]
+               [for http]
+                  <option value="[http]">[http]</option>
+               [end]
+            [end]
+            [if-any ftp]
+               [for ftp]
+                  <option value="[ftp]">[ftp]</option>
+               [end]
+            [end]
+        </select>
+        <input type="submit" value="Change" />
+    </form>
+<p>
+        You may also consult the <a href="http://www.apache.org/mirrors/">complete list of mirrors.</a>
+    </p>
+<br />
+</div>
+           <h2><img src="images/redarrow.gif" alt=" "/>
+   Roller 4.0
+</h2>
+<div class="section-content">
+<a name="roller40" />
+<p>Roller 4.0 is the "best available" version of Roller.</p>
 <ul>
-        <li>Multi-user blogging: can support tens of thousands of users and blogs</li>
-        <li>Group blogging with three permisson levels (editor, author and limited)</li>
-        <li>Support for comment moderation and comment spam prevention measures</li>
-        <li>Bloggers have complete control over blog layout/style via templates</li>
-        <li>Built-in search engine indexes weblog entry content</li>
-        <li>Pluggable cache and rendering system</li>
-        <li>Support for blog clients that support MetaWeblog API</li>
-        <li>All blogs have entry and comment feeds in both RSS 2.0 and Atom 1.0 formats</li>
+        <li>Roller Web Application (what you need to run Roller)
+            <ul>
+                <li>
+                    <a href="[preferred]/roller/roller-4/v4.0.0/bin/apache-roller-4.0.zip">apache-roller-4.0.zip</a> (27mb)
+                    [<a href="[preferred]/roller/roller-4/v4.0.0/bin/apache-roller-4.0.zip">ASC</a>]
+                </li>
+            </ul>
+        </li>
+        <li>Roller Documentation
+            <ul>
+                <li>
+                    <a href="[preferred]/roller/roller-4/v4.0.0/docs/roller-installguide.pdf">Install Guide</a> (1.5M PDF)
+                </li>
+                <li>
+                    <a href="[preferred]/roller/roller-4/v4.0.0/docs/roller-userguide.pdf">User Guide</a> (595K PDF)
+                </li>
+                <li>
+                    <a href="[preferred]/roller/roller-4/v4.0.0/docs/roller-templateguide.pdf">Template Guide</a> (447K PDF)
+                </li>
+            </ul>
+        </li>
+        <li>Roller Source (what you need to build Roller from source)
+            <ul>
+                <li>
+                    <a href="[preferred]/roller/roller-4/v4.0.0/bin/apache-roller-src-4.0.zip">apache-roller-4.0.zip</a> (32mb)
+                    [<a href="[preferred]/roller/roller-4/v4.0.0/bin/apache-roller-src-4.0.zip">ASC</a>]
+                </li>
+            </ul>
+        </li>
     </ul>
+<br />
 </div>
            <h2><img src="images/redarrow.gif" alt=" "/>
-   Project Status
+   Verify the integrity of the files
 </h2>
 <div class="section-content">
+<a name="verify" />
 <p>
-    Roller is a stable and production-ready blog 
-    server in it's third major revision. It powers internal and external 
-    employee blogs and Sun, IBM and other companies as well as the JRoller.com 
-    Java blogging community. Roller graduated from the Apache Incubator in March
-    2007 and is now an official Apache project.
-</p>
+        The PGP signatures can be verified using PGP or GPG.
+        First download the
+        <a href="http://www.apache.org/dist/roller/KEYS">KEYS</a>
+        as well as the
+        <code>asc</code>
+        signature file for the particular
+        distribution.
+        Make sure you get these files from the
+        <a href="http://www.apache.org/dist/roller/">main distribution
+            directory,</a>
+        rather than from a mirror.
+        Then verify the signatures using
+    </p>
+<p>
+        <code>
+            % pgpk -a KEYS
+            <br />
+            % pgpv ${filename}.tar.gz.asc
+            <br />
+        </code>
+        <em>or</em>
+        <br />
+        <code>
+            % pgp -ka KEYS
+            <br />
+            % pgp ${filename}.tar.gz.asc
+            <br />
+        </code>
+        <em>or</em>
+        <br />
+        <code>
+            % gpg --import KEYS
+            <br />
+            % gpg --verify ${filename}.tar.gz.asc
+        </code>
+    </p>
+<p>
+        Alternatively, you can verify the MD5 signature on the files.
+        A Unix program called
+        <code>md5</code>
+        or
+        <code>md5sum</code>
+        is
+        included in many Unix distributions.
+        It is also available as part of
+        <a href="http://www.gnu.org/software/textutils/textutils.html">
+            GNU Textutils.</a>
+        Windows users can get binary md5 programs from
+        <a href="http://www.fourmilab.ch/md5/">here,</a>
+        <a href="http://www.pc-tools.net/win32/freeware/console/">
+            here,</a>
+        or
+        <a href="http://www.slavasoft.com/fsum/">here.</a>
+    </p>
 </div>
          </td>
     <!-- RIGHT SIDE NAVIGATION -->
