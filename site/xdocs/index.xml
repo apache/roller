@@ -20,10 +20,6 @@ limitations under the License.
   </properties>
 <body>
 
-<section>
-<img src="images/roller-logo.gif"></img>   
-</section>
-
 <section><title>Welcome!</title>
     <p>
         Apache Roller is a full-featured, multi-user and group-blog 
@@ -31,7 +27,7 @@ limitations under the License.
         homepage, which provides a brief overview of the software and project as 
         well as links to 
         <a href="http://rollerweblogger.org/project">project news</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Downloads">downloads</a>, 
+        <a href="downloads.html">downloads</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">mailing-lists</a>,

@@ -140,7 +140,7 @@ $note
 #set ($heading = "")
 #end
 #if ($level == 1)
-<h2><img src="/images/redarrow.gif" alt=" "/>
+<h2><img src="images/redarrow.gif" alt=" "/>
 #if ($section.getAttributeValue("id"))
    <a name="$section.getAttributeValue("id")">$heading</a>
 #else
