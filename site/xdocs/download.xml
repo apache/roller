@@ -73,7 +73,10 @@ limitations under the License.
 <section><title>Roller 4.0</title>
     <a name="roller40"></a>
 
-    <p>Roller 4.0 is the &quot;best available&quot; version of Roller.</p>
+    <p>Roller 4.0 is the &quot;best available&quot; version of Roller. Check the 
+    <a href="http://cwiki.apache.org/confluence/display/ROLLER/What%27s+new+in+Roller+4.0">
+    What's New in Roller 4.0 </a> page to learn more about the features and 
+    changes in this release.</p>
     
     <ul>
         <li>Roller Web Application (what you need to run Roller)
