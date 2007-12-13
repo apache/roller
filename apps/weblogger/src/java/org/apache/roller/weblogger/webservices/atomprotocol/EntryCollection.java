@@ -100,6 +100,7 @@ public class EntryCollection {
             WeblogEntry rollerEntry = new WeblogEntry();
             rollerEntry.setWebsite(website);
             rollerEntry.setCreatorUserName(this.user.getUserName());
+            rollerEntry.setLocale(website.getLocale());
             copyToRollerEntry(entry, rollerEntry);
             mgr.saveWeblogEntry(rollerEntry);
             roller.flush();
