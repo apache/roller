@@ -104,8 +104,8 @@ limitations under the License.
         <li>Roller Source (what you need to build Roller from source)
             <ul>
                 <li>
-                    <a href="[preferred]/roller/roller-4/v4.0.0/bin/apache-roller-src-4.0.zip">apache-roller-4.0.zip</a> (32mb)
-                    [<a href="[preferred]/roller/roller-4/v4.0.0/bin/apache-roller-src-4.0.zip">ASC</a>]
+                    <a href="[preferred]/roller/roller-4/v4.0.0/src/apache-roller-src-4.0.zip">apache-roller-4.0.zip</a> (32mb)
+                    [<a href="[preferred]/roller/roller-4/v4.0.0/src/apache-roller-src-4.0.zip">ASC</a>]
                 </li>
             </ul>
         </li>
