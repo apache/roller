@@ -219,6 +219,11 @@ public class PlanetCache {
             }
         }
         
+        // add group
+        if (planetRequest.getGroup() != null) {
+            key.append("/group=").append(planetRequest.getGroup());
+        }
+
         return key.toString();
     }
     

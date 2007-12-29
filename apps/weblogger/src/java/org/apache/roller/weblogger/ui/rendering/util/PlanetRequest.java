@@ -37,6 +37,7 @@ public class PlanetRequest extends ParsedRequest {
     private String flavor = null;
     private boolean excerpts = false;
     private String language = null;
+    private String group = null;
     
     
     /**
@@ -78,10 +79,14 @@ public class PlanetRequest extends ParsedRequest {
          *
          * the only params we currently care about are:
          *   excerpts - specifies the feed should only include excerpts
-         *
+         *   group - specifies the aggregation group to include
          */
-        if(request.getParameter("excerpts") != null) {
+        if (request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
+        }
+        
+        if (request.getParameter("group") != null) {
+            this.group = request.getParameter("group");
         }
         
         
@@ -114,4 +119,7 @@ public class PlanetRequest extends ParsedRequest {
         this.language = language;
     }
     
+    public String getGroup() {
+        return group;
+    }    
 }
