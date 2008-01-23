@@ -26,7 +26,7 @@
     <link rel="alternate" type="text/html" href="$utils.escapeXML($url.absoluteSearch($model.term, $model.categoryPath, $model.page))" />
     #showFeedHistory($pager)
     <updated>$utils.formatIso8601Date($model.weblog.lastModified)</updated>
-    <generator uri="http://rollerweblogger.org" version="$config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)">Apache Roller (incubating)</generator>
+    <generator uri="http://roller.apache.org" version="$config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)">Apache Roller (incubating)</generator>
     #showEntriesAtom10($pager.items)
 </feed>
 

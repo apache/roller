@@ -39,7 +39,7 @@
 
         <div class="sidebarBox">
             <a title="This is a Roller site."
-                href="http://rollerweblogger.org"><img class="noBorder"
+                href="http://roller.apache.org"><img class="noBorder"
                 width="80" height="15" alt="[This is a Roller site]"
                 src="$url.resource("images/roller-logo.gif")" /></a>
         </div>
