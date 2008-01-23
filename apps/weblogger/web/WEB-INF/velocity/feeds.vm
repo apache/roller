@@ -36,7 +36,7 @@
         <updated>$utils.formatIso8601Date($entry.updateTime)</updated> 
         <category term="$utils.escapeXML($entry.category.path)" label="$utils.escapeXML($entry.category.name)" />
 #foreach($tag in $entry.tags)
-        <category term="$utils.escapeXML($tag.name)" scheme="http://rollerweblogger.org/ns/tags/" />
+        <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
 #end        
 #if( $utils.isNotEmpty($entry.summary))
         <summary type="html">$utils.escapeXML($entry.transformedSummary)</summary>
