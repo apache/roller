@@ -2,7 +2,7 @@
 <rsd version="1.0">
   <service>
     <engineName>Roller Weblogger</engineName>
-    <engineLink>http://www.rollerweblogger.org/</engineLink>
+    <engineLink>http://roller.apache.org/</engineLink>
     <homePageLink>${absBaseURL}/${website.handle}</homePageLink>
     <apis>
       <api name="blogger" preferred="false"
