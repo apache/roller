@@ -48,7 +48,7 @@
 #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
 #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
 #if( $mc_url && $mc_length && $mc_type )
-        <link rel="enclosure" type="$mc_type" length="$mc_length" href="$mc_url"/>
+        <link rel="enclosure" type="$mc_type" length="$mc_length" href="$utils.escapeXML($mc_url)"/>
 #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)#end
     </entry>
 #end
@@ -76,7 +76,7 @@
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
     #if( $mc_url && $mc_length && $mc_type )
-       <enclosure url="$mc_url" type="$mc_type" length="$mc_length" />
+       <enclosure url="$utils.escapeXML($mc_url)" type="$mc_type" length="$mc_length" />
        #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)
     #end
     #if( $website.allowComments )
