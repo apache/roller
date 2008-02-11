@@ -1,6 +1,33 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 4.1 - NOT YET RELEASED!!!
+
+New fetures
+
+   * [ROL-1534] - Externalize User & Permissions Management		
+   * [ROL-1544] - OpenSearch support		
+   * [ROL-1545] - Tag Data API		
+   * [ROL-1535] - Use Propono directly for Atompub		
+
+Improvements
+
+   * [ROL-1661] - Danish translation for Roller 4.0		
+   * [ROL-1648] - Slovenian translation of Roller 4.0 properties file		
+
+Bug Fixes
+
+   * [ROL-1675] - Cannot delete custom planet groups		
+   * [ROL-1666] - Cannot dis-allow custom themes		
+   * [ROL-1644] - Planet Group feeds do not work properly		
+   * [ROL-1654] - line 161 of dbmigration scripts for mysql + postgresql typo		
+   * [ROL-1655] - Enclosure URLs should be escaped		
+   * [ROL-1665] - Site Model methods should accept WeblogWrapper args		
+   * [ROL-1658] - Some templates still reference rollerweblogger.org	
+
+
+-------------------------------------------------------------------------------
+
 Roller 4.0: Major new feature and infrasructure improvement release
 
 In Roller 4.0 we moved to Java 1.5, rewrote the editor/admin UI using Struts 2, 
