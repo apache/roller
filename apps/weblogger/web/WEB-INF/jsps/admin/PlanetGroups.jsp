@@ -60,7 +60,7 @@
             </s:url>
             <input type="button" 
                    value='<s:text name="planetGroups.button.delete" />' 
-                   onclick="window.location='<s:url value="%{deleteUrl}"/>'" />
+                   onclick="window.location='<s:property value="%{deleteUrl}"/>'" />
         </s:if>
     </div>
     
