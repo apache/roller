@@ -144,7 +144,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, null, null, sinceDays, length);
     }
 
@@ -156,7 +156,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
     }
 
@@ -169,7 +169,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(Weblog queryWeblog, User user, String cat, int sinceDays, int length) {
+    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, String cat, int sinceDays, int length) {
         
         String pagerUrl = null;
         if (feedRequest != null) {
@@ -185,7 +185,7 @@ public class SiteModel implements Model {
        
         return new WeblogEntriesListPager(
             urlStrategy,
-            pagerUrl, queryWeblog, user, cat,
+            pagerUrl, queryWeblog.getPojo(), user, cat,
             tags,
             weblogRequest.getLocale(),
             sinceDays,
