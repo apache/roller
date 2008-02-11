@@ -158,7 +158,7 @@ create index raggs_sid_idx on rag_group_subscription(subscription_id);
 -- maybe we want to attempt to fix that by doing that upgrade via sql?
 #dropTableIfExists('rollerconfig')
 
---- remove old id column of group subscription table
+-- remove old id column of group subscription table
 -- #dropColumn('rag_group_subscription' 'id')
 
 -- remove old approved, spam, pending columns from comment table
