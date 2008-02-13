@@ -10,8 +10,8 @@
     </session-config>
 
     <resource-ref>
-        <res-ref-name>jdbc/SocialFish/RollerDB</res-ref-name>
-        <jndi-name>jdbc/SocialFish/RollerDB</jndi-name>
+        <res-ref-name>jdbc/rollerdb</res-ref-name>
+        <jndi-name>jdbc/rollerdb</jndi-name>
     </resource-ref>
     
     <resource-ref>
