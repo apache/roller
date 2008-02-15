@@ -18,9 +18,6 @@
 
 package org.apache.roller.weblogger.ui.core.plugins;
 
-import java.util.Locale;
-import org.apache.roller.weblogger.util.I18nMessages;
-
 
 /**
  * A rich text wysiwyg editor using Xinha.
@@ -32,7 +29,7 @@ public class XinhaEditor implements WeblogEntryEditor {
     
     
     public String getId() {
-        return "editor-rte.jsp";
+        return "editor-xinha.jsp";
     }
     
     public String getName() {
