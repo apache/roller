@@ -20,7 +20,8 @@ package org.apache.roller.weblogger.ui.core.plugins;
 
 
 /**
- * A rich text wysiwyg editor using Xinha.
+ * A rich text WYSIWYG editor using Xinha.
+ * Uses ID of 'editor-rte.jsp' for historical reasons.
  */
 public class XinhaEditor implements WeblogEntryEditor {
     
@@ -29,7 +30,9 @@ public class XinhaEditor implements WeblogEntryEditor {
     
     
     public String getId() {
-        return "editor-xinha.jsp";
+        // return RTE becuase at one point we replaced RTE with Xinha
+        // the real RTE editor will have to use a differernt ID.
+        return "editor-rte.jsp";
     }
     
     public String getName() {
