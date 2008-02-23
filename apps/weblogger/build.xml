@@ -379,15 +379,15 @@ ro.buildUser=${user.name}
             <sourcepath>
                 <pathelement path="./src"/>
             </sourcepath>
-            <packageset dir="src" defaultexcludes="yes">
+            <packageset dir="src/java" defaultexcludes="yes">
                 <include name="org/apache/roller/weblogger/**" />
             </packageset>
             <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
             <link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
         </javadoc>
         <copy todir="${build.javadoc}">
-            <fileset dir="${basedir}/src">
-                <include name="**/roller*.png"/>
+            <fileset dir="${basedir}/src/java">
+                <include name="**/*.png"/>
             </fileset>
         </copy>
     </target>
