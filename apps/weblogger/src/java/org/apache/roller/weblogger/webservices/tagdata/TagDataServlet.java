@@ -41,6 +41,14 @@ import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Return tag statistics in JSON or Atom Category format.
+ * These URLs are supported:
+ * <ul>
+ * <li>/roller-services/tagdata - get tag data for entire site</li>
+ * <li>/roller-services/tagdata/weblogs/[handle] - get tag data for specific weblog</li>
+ * </ul>
+ * See the <a href="http://cwiki.apache.org/confluence/display/ROLLER/Proposal+Tag+Data+API">
+ * Tag Data API</a> proposal for details.
+ * 
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
  * @author Dave Johnson (<a href="mailto:davidm.johnson@sun.com">davidm.johnson@sun.com</a>)
  */
