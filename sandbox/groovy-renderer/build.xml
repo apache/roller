@@ -16,33 +16,33 @@
         <fileset dir="${tools.dir}/openjpa-0.9.7">   
             <include name="openjpa-0.9.7-incubating.jar"/>   
         </fileset>
-        <fileset dir="${groovy.home}/lib">
+        <fileset dir="./lib">
             <include name="groovy-1.5.4.jar"/>
         </fileset>                      
     </path>
     
-    <target name="dist">        
+    <target name="build">
         <mkdir dir="./build/classes" />
+        <mkdir dir="./build/${distfilebase}" />
         <javac debug="on" destdir="./build/classes">
             <src path="./src" />
             <classpath>
                 <path refid="scripting.path"/>
             </classpath>
         </javac>
-        <mkdir dir="./dist" />
-        <jar basedir="build/classes" jarfile="./dist/${distfilebase}.jar" />
-    </target>
-    
-    <target name="copy-to-roller" >
-        <copy todir="../../../build/webapp/WEB-INF/lib">
-            <fileset dir="./dist">
-               <include name="${distfilebase}.jar" />
-            </fileset>
-            <fileset dir="${groovy.home}/embeddable">
-               <include name="groovy-all-1.0.jar" />
-            </fileset>
+        <jar basedir="build/classes" jarfile="./build/${distfilebase}/${distfilebase}.jar" />
+        <copy todir="./build/${distfilebase}">
+            <fileset dir="./lib" includes="**" />
         </copy>
     </target>
+    
+    <target name="dist" depends="build" description="Build tar distro file">
+        <mkdir dir="./dist" />
+        <tar destfile="./dist/${distfilebase}.tar.gz"
+             longfile="gnu" compression="gzip">
+            <tarfileset dir="./build/${distfilebase}" />
+        </tar>    
+    </target>  
     
     <target name="clean" description="Delete build and dist dirs">
         <delete dir="./build" />
