@@ -1,0 +1,87 @@
+
+import java.io.*;
+import java.net.*;
+import org.jdom.output.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
+
+if (args.length < 6) {
+    println "USAGE: groovy createuser.gy <admin-username> <admin-password> <new-username> <new-password> <email> <rap-endpoint>"; 
+    return;
+}
+
+admin_username = args[0];
+admin_password = args[1];
+username = args[2];
+password = args[3];
+email    = args[4];
+rapuri   = args[5];
+
+fullName = username;
+locale   = "en_US";
+timeZone = "America/New_York";
+
+
+credentials = admin_username + ":" + admin_password; 
+authString = "Basic " + new String(Base64.encodeBase64(credentials.getBytes()));
+
+// get service doc
+
+url = new URL(rapuri);         
+conn = url.openConnection();
+conn.setRequestProperty("Authorization", authString);
+s = new Service(conn.getInputStream());
+
+// find user collection in service
+
+userCollectionURI = null;
+baseURI = null;
+for (w in s.entries) {
+    for (c in w.entries) {
+        if (c.memberType == "user") {
+            userCollectionURI = c.href;
+            baseURI = c.href.substring(0, c.href.length() - "users".length());
+            break;
+        }
+    }
+}
+
+// create new user
+
+user = new UserEntry(username, baseURI);
+
+user.setScreenName(  username);
+user.setPassword(    password);
+user.setFullName(    fullName);
+user.setEmailAddress(email);
+user.setLocale(      locale);
+user.setTimezone(    timeZone);
+user.setDateCreated( new java.util.Date());
+
+userSet = new UserEntrySet(baseURI);
+userSet.setEntries((Entry[])[user]);
+
+// post new user to user collection URI
+
+// open connection
+url = new URL(userCollectionURI);         
+conn = url.openConnection();
+conn.setRequestProperty("Authorization", authString);
+conn.setDoOutput(true);
+
+// serialize XML to connection's output stream
+doc = userSet.toDocument();
+outputter = new XMLOutputter();
+outputter.output(doc, conn.getOutputStream());
+conn.getOutputStream().flush();
+conn.getOutputStream().close();
+
+println "--- Response from server ---";
+
+s = null; 
+is = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+while ((s = is.readLine()) != null) {
+    println s
+}
+
+

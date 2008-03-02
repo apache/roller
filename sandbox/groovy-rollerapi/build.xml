@@ -1,0 +1,29 @@
+
+<project name="roller-groovy-adminapi" default="dist" basedir=".">
+    <description>Bundle up Groovy Roller API examples</description>   
+    
+    <property file="./ant.properties" />
+        
+    <target name="build" >
+        <mkdir dir="${builddir}/${distfilebase}" />
+        <copy todir="${builddir}/${distfilebase}">
+            <fileset dir="./scripts">
+               <include name="**/**" />
+            </fileset>
+        </copy>
+    </target>    
+    
+    <target name="dist" depends="build" description="Build tar distro file">
+        <mkdir dir="${distdir}" />
+        <tar destfile="${distdir}/${distfilebase}.tar.gz"
+             longfile="gnu" compression="gzip">
+            <tarfileset dir="${builddir}" />
+        </tar>    
+    </target>    
+    
+    <target name="clean" description="Delete build and dist dirs">
+        <delete dir="./build" />
+        <delete dir="./dist" />
+    </target>
+    
+</project>

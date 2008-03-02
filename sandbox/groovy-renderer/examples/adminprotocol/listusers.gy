@@ -1,0 +1,46 @@
+
+import java.io.*;
+import java.net.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
+
+if (args.length < 3) {
+    println "USAGE: groovy listusers.gy <username> <password> <rap-endpoint-uri>";
+    return;
+}
+username = args[0];
+password = args[1];
+rapuri = args[2];
+
+credentials = username + ":" + password; 
+authString = "Basic " + new String(Base64.encodeBase64(credentials.getBytes()));
+
+url = new URL(rapuri);         
+conn = url.openConnection();
+conn.setRequestProperty("Authorization", authString);
+
+s = new Service(conn.getInputStream());
+
+// find user collection
+
+for (w in s.entries) {
+    for (c in w.entries) {
+        if (c.memberType == "user") {
+
+            url = new URL(c.href);         
+            baseurl = c.href.substring(0, c.href.length() - "users".length());
+
+            conn = url.openConnection();
+            conn.setRequestProperty("Authorization", authString);
+
+            userEntrySet = new UserEntrySet(conn.getInputStream(), baseurl);
+
+            for (u in userEntrySet.entries) {
+                println u.fullName;
+            }
+
+            break;
+
+        }
+    }
+}
