@@ -1,5 +1,5 @@
 
-<project name="roller-groovy-renderers" default="build" basedir=".">
+<project name="roller-groovy-renderers" default="dist" basedir=".">
     <description>Build and bundle Groovy Renderers for Roller</description>   
 
     <property file="./ant.properties" />
@@ -21,7 +21,7 @@
         </fileset>                      
     </path>
     
-    <target name="build">        
+    <target name="dist">        
         <mkdir dir="./build/classes" />
         <javac debug="on" destdir="./build/classes">
             <src path="./src" />
@@ -30,21 +30,23 @@
             </classpath>
         </javac>
         <mkdir dir="./dist" />
-        <jar basedir="build/classes" jarfile="./dist/roller-groovy.jar" />
+        <jar basedir="build/classes" jarfile="./dist/${distfilebase}.jar" />
     </target>
     
     <target name="copy-to-roller" >
         <copy todir="../../../build/webapp/WEB-INF/lib">
             <fileset dir="./dist">
-               <include name="roller-groovy.jar" />
+               <include name="${distfilebase}.jar" />
             </fileset>
             <fileset dir="${groovy.home}/embeddable">
                <include name="groovy-all-1.0.jar" />
             </fileset>
         </copy>
-    </target>    
-    <target name="clean">
+    </target>
+    
+    <target name="clean" description="Delete build and dist dirs">
         <delete dir="./build" />
+        <delete dir="./dist" />
     </target>
     
 </project>
