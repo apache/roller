@@ -1,0 +1,30 @@
+
+import java.io.*;
+import java.net.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
+
+if (args.length < 3) {
+    println "USAGE: groovy listcollections.gy <username> <password> <rap-endpoint-uri>";
+    return;
+}
+username = args[0];
+password = args[1];
+rapuri = args[2];
+
+String credentials = username + ":" + password; 
+url = new URL(rapuri);         
+conn = url.openConnection();
+conn.setRequestProperty("Authorization", 
+   "Basic " + new String(Base64.encodeBase64(credentials.getBytes())));
+
+
+s = new Service(conn.getInputStream());
+for (w in s.entries) {
+    println "Workspace [${w.title}]";
+    for (c in w.entries) {
+        println "   Collection [${c.title}]";
+        println "      URI: ${c.href}";
+        println "      Member-type: ${c.memberType}";
+    }
+}

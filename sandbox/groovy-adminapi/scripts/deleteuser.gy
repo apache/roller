@@ -1,0 +1,79 @@
+
+import java.io.*;
+import java.net.*;
+import org.jdom.output.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.roller.weblogger.webservices.adminprotocol.sdk.*;
+
+if (args.length < 4) {
+    println "USAGE: groovy deleteuser.gy <admin-username> <admin-password> <username> <rap-endpoint>"; 
+    return;
+}
+
+admin_username = args[0];
+admin_password = args[1];
+username = args[2];
+rapuri   = args[3];
+
+fullName = username;
+locale   = "en_US";
+timeZone = "America/New_York";
+
+
+credentials = admin_username + ":" + admin_password; 
+authString = "Basic " + new String(Base64.encodeBase64(credentials.getBytes()));
+
+// get service doc
+
+url = new URL(rapuri);         
+conn = url.openConnection();
+conn.setRequestProperty("Authorization", authString);
+s = new Service(conn.getInputStream());
+
+// find user collection in service
+
+userCollectionURI = null;
+baseURI = null;
+for (w in s.entries) {
+    for (c in w.entries) {
+        if (c.memberType == "user") {
+            userCollectionURI = c.href;
+            baseURI = c.href.substring(0, c.href.length() - "users".length());
+            break;
+        }
+    }
+}
+
+
+// open connection
+url = new URL(userCollectionURI);         
+conn = url.openConnection();
+conn.setRequestProperty("Authorization", authString);
+UserEntrySet users = new UserEntrySet(conn.getInputStream(), rapuri);
+user = null;
+for (u in users) {
+    for (i in 0..(u.getEntries().length - 1)) {
+        if (username == u.getEntries()[i].name) {
+           user = u.getEntries()[i];
+           break;
+        }
+    }
+}
+
+if (user) {
+    url = new URL(user.getHref());         
+    conn = url.openConnection();
+    conn.setRequestProperty("Authorization", authString);
+    conn.setRequestMethod("DELETE");
+  
+    println "--- Response from server ---";
+    s = null; 
+    is = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+    while ((s = is.readLine()) != null) {
+        println s
+    }
+
+} else {
+    println "User not found";
+}
+
