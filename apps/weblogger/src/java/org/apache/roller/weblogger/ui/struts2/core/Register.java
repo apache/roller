@@ -198,6 +198,7 @@ public class Register extends UIAction implements ServletRequestAware {
     }
     
     
+    @SkipValidation
     public String activate() {
         
         try {
