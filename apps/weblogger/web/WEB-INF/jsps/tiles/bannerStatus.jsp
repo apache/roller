@@ -54,7 +54,7 @@
                     <s:if test="getBooleanProp('users.registration.enabled')">
                         | <a href="<s:url action="register" namespace="/roller-ui" />"><s:text name="navigationBar.register"/></a>
                     </s:if>
-                    <s:elseif test="getProp('users.registration.url') != null">
+                    <s:elseif test="getProp('users.registration.url') != null && getProp('users.registration.url') > 0">
                         | <a href="<s:property value="getProp('users.registration.url')"/>"><s:text name="navigationBar.register"/></a>
                     </s:elseif>
                 </s:else>
