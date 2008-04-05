@@ -18,10 +18,6 @@ package org.apache.roller.weblogger.webservices.adminprotocol;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.pojos.User;
 
 /**
  * This class implements HTTP basic authentication for roller.
@@ -59,5 +55,11 @@ class BasicAuthenticator extends Authenticator {
                 }
             }
         }
+
+        // FIX from Nick Lothian, see 
+        if (getUserName() == null) {
+               throw new UnauthorizedException("ERROR: Could not authorize user");
+        }
+
     }
 }
