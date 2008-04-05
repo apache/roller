@@ -18,8 +18,8 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script type="text/javascript">
-function confirmSubDelete(subUrl, title) {
-  if (window.confirm('Are you sure you want to remove subscription: ' + title)) {
+function confirmSubDelete(subUrl) {
+  if (window.confirm('Are you sure you want to remove this subscription?')) {
     document.location.href='<s:url action="planetSubscriptions!delete" />?groupHandle=<s:property value="groupHandle"/>&subUrl='+subUrl;
   }
 }
@@ -98,7 +98,9 @@ function confirmSubDelete(subUrl, title) {
         
         <td class="rollertable">
             <img src='<s:url value="/images/delete.png"/>' />
-            <a href="javascript: void(0);" onclick="confirmSubDelete('<s:property value="feedURL"/>', '<s:property value="title"/>');"><s:text name="planetSubscriptions.button.delete"/></a>
+            <a href="javascript: void(0);" onclick="confirmSubDelete('<s:property value="feedURL"/>')">
+                <s:text name="planetSubscriptions.button.delete"/>
+            </a>
         </td>       
         
         </tr>
