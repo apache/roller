@@ -1,4 +1,4 @@
-
+﻿
 
 
 
@@ -33,8 +33,8 @@ Installation Guide
 
 
 Apache Roller Weblogger
-Version 4.0 
-August 2007
+Version 4.1
+April 2008
 
 Table of Contents
 1   Overview	3
@@ -131,7 +131,7 @@ If you're using Tomcat, check the Tomcat Considerations section below, otherwise
 3.1Tomcat: JavaMail and Activation
 Tomcat does not include the Java Mail and Activation jars that Roller needs for email notification, So, if you like to use Roller's e-mail notification features, you'll need to download those jars and place them in Tomcat's classpath. Download them from Sun (http://java.sun.com/products/javamail) and place them in Tomcat's common/lib directory.
 3.2Tomcat: URI encoding needed for I118N
-Roller supports internationalization (I18N), but on Tomcat some additional configuration is necessary. You must ensure that Tomcat's URI encoding is set to UTF-8. You can do this by editing the Tomcat configuration file conf/server.xml and adding URIEncoding="UTF-8" to each connector element, as shown below:
+Roller supports internationalization (I18N), but on Tomcat some additional configuration is necessary. You must ensure that Tomcat's URI encoding is set to UTF-8. You can do this by editing the Tomcat configuration file conf/server.xml and adding URIEncoding=”UTF-8” to each connector element, as shown below:
    <Connector port="8080"
       maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
       enableLookups="false" redirectPort="8443" debug="0" 
@@ -190,9 +190,9 @@ Create a text file named roller-custom.properties with the content below, but re
    database.jdbc.username=database username
    database.jdbc.password=database password
    mail.configurationType=properties
-   mail.hostName=mail server hostname
+   mail.hostname=mail server hostname
 
-The installation.type=auto property tells Roller to operate in automatic installation mode. In this mode Roller will provide very detailed error output to help you debug database connection problems. If Roller finds that the database exists but its tables are not, it will offer to run the database creation scripts. If find finds that the tables are there, but they are not up-to-date Roller will offer to upgrade them for you. Once your Roller installation is complete and you are ready to go "live" then you should set installation.type=manual.
+The installation.type=auto property tells Roller to operate in automatic installation mode. In this mode Roller will provide very detailed error output to help you debug database connection problems. If Roller finds that the database exists but its tables are not, it will offer to run the database creation scripts. If find finds that the tables are there, but they are not up-to-date Roller will offer to upgrade them for you. Once your Roller installation is complete and you are ready to go “live” then you should set installation.type=manual.
 6.1MySQL example
 Here is an example roller-custom.properties file that shows how to setup a MySQL connection. It shows the MySQL JDBC driver class name, an example MySQL connection URL and username/password settings for the mail connection.
    installation.type=auto
@@ -202,7 +202,7 @@ Here is an example roller-custom.properties file that shows how to setup a MySQL
    database.jdbc.username=scott
    database.jdbc.password=tiger
    mail.configurationType=properties
-   mail.hostName=smtp-server.example.com
+   mail.hostname=smtp-server.example.com
    mail.username=scott
    mail.password=tiger
 
@@ -242,7 +242,7 @@ If your database configuration is good but Roller cannot find its database table
 If Roller starts up fine but doesn't find a front-page weblog then it will display the Completing Your Installation below that explains how to register your first user, create your first weblog and setup your site's front page.
 
 You have to decide what you want as the front-page of your Roller site. If you are using Roller to run your personal weblog, then you probably want your weblog to be the front-page of the site. In this case, create a weblog for yourself, don't choose the front-page theme but do set your weblog as the front-page weblog for the site. 
-If you are using Roller to run a community of multiple weblogs, then you'll probably want to display an aggregated front-page combining all weblogs on the site. In that case, create a weblog to serve as the front-page, set it as the front-page weblog and make sure you set the "aggregated front-page" setting on the Server Admin page.   
+If you are using Roller to run a community of multiple weblogs, then you'll probably want to display an aggregated front-page combining all weblogs on the site. In that case, create a weblog to serve as the front-page, set it as the front-page weblog and make sure you set the “aggregated front-page” setting on the Server Admin page.   
 Don't forget: Reset the installation.type flag
 Now that you're done with the installation you should turn off Roller's auto-installation system. Edit your roller-custom.properties file and set installation.type=manual. Then restart your server or Roller so that it accepts the new setting.
 What's next?
@@ -257,24 +257,31 @@ Roller Planet needs a cache directory in which to store the feeds it fetches. By
     planet.aggregator.cache.dir=c:\\roller_data\planetcache
 
 Whether you override that property or not, you must create the cache directory. Planet will not work unless the cache directory exists and is writable by Roller.
-STEP 2: Enable Planet Roller properties
+STEP 2: Enable Planet via Roller custom properties
 Enable Planet by adding the following to your roller-custom.properties file:
    planet.aggregator.enabled=true
 
    # Tasks which are enabled.  Only tasks listed here will be run.
    tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\
-   TurnoverReferersTask,PingQueueTask,RefreshPlanetTask,SyncWebsitesTask
+   TurnoverReferersTask,PingQueueTask,RefreshRollerPlanetTask,SyncWebsitesTask
    
    # Set of page models specifically for site-wide rendering
    rendering.siteModels=\
    org.apache.roller.weblogger.ui.rendering.model.SiteModel,\
    org.apache.roller.weblogger.ui.rendering.model.PlanetModel
 
-Those property settings enable Planet and enable the Planet tasks, both the RefreshPlanetTask, which runs every hour and fetches all RSS/Atom feed subsciptions, and the SyncWebsitesTask, which runs every midnight and ensures that each weblog in the Roller system is represented by a subscription in the Planet aggregator. To enable usage of the PlanetModel in the front-page weblog, we also override the rendering.siteModels property.
+Those property settings enable Planet and enable the Planet tasks, both the RefreshRollerPlanetTask, which runs every hour and fetches all RSS/Atom feed subsciptions, and the SyncWebsitesTask, which runs every midnight and ensures that each weblog in the Roller system is represented by a subscription in the Planet aggregator. To enable usage of the PlanetModel in the front-page weblog, we also override the rendering.siteModels property.
+
+
+STEP 3: Configure Planet via Planet custom properties
+Create a new file called planet-custom.properties and place it in the same directory as your existing roller-custom.properties file. Here's what you need to put in this configuration file:
+1.The exact same database properties that you put in your Roller custom properties file.
+2.Add a property called cache.dir that points to the directory that you'd like Planet to use for caching it's RSS and Atom newsfeeds. The default setting is:
+     cache.dir=${user.home}/roller_data/planetcache
 Once you've made those property settings restart Roller and proceed to the next step.
-Display your Planet aggregations
+STEP 4: Display your Planet aggregations
 You can use Roller's UI to add external RSS/Atom feeds to the Planet setup. To display these feeds you'll need to do a little template customization. The easier way to get started is to Roller's existing Front-Page theme. Here's how.
-Create a weblog to server as the front-page of your Roller site. Start with the Front-Page theme and customize it. Edit the weblog template and look for the part that mentions PLANET-entries. Comment-out the SITE-WIDE part and un-comment the PLANET-entries part. The double hash "##" marks indicate a commented-out line. The code should look like this:
+Create a weblog to server as the front-page of your Roller site. Start with the Front-Page theme and customize it. Edit the weblog template and look for the part that mentions PLANET-entries. Comment-out the SITE-WIDE part and un-comment the PLANET-entries part. The double hash “##” marks indicate a commented-out line. The code should look like this:
 
    ## 1) SITE-WIDE entries (the default)
    ##set($pager = $site.getWeblogEntriesPager($since, $maxResults))
@@ -349,20 +356,23 @@ This section describes how to upgrade an existing Roller installation to the lat
 10.1For those upgrading from Roller 2.x to Roller 4.0
 Roller 3.0 and Roller 4.0 were major releases and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of them and especially the new URL structure and the new template system.
 New URL structure
-The most significant change is the new URL structure - we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
+The most significant change is the new URL structure – we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
 	http://<hostname>/roller/page/<weblog-handle>
 To use the new format, which is:
 	http://<hostname>/roller/<weblog-handle>
 Unfortunately, some custom templates that use relative URLs will have problem with this new URL structure. So, before you go live you should set-up a test server and allow your users to take a look at their weblogs.
 New template system
 We've developed a completely new and greatly improved template system for Roller, which includes new models and new macros. We want to encourage people to start using this new system for all new template and theme development, so we have made it the default. And, by default, we've turned off the old system. 
-So, if you are upgrading and you want your weblogs to work, you must override this Roller property to enable the old "legacy" template system to work:
+So, if you are upgrading and you want your weblogs to work, you must override this Roller property to enable the old “legacy” template system to work:
 	rendering.legacyModels.enabled=true
 See Section 11 for information on overriding Roller startup properties.
 New task management system
 In Roller 3.1 we changed the scheduled task properties, so if you were overriding  the tasks.daily or tasks.hourly properties you need to change your roller-custom.properties file. Refer to the notes in Section 11   roller.properties in the Scheduled Tasks Configuration area.
 New package names
 In Roller 3.0 or package names went from from org.roller to org.apache.roller. In Roller 4.0 they've changed again to org.apache.roller.weblogger. So check your configuration files for references to the old package names. And if you created any plugins, you'll have to recompile them against the new code base.
+Encrypted passwords now the default
+Roller now defaults to storing passwords in the database in an emcrypted format. So, if you are upgrading an older version of Roller and you went with the default setting for encrypted passwords, which was off by default, then you'll need to set this propery in your roller-custom.properties file:
+	passwds.encryption.enabled=false
 Non-core themes removed
 The Roller project is establishing a community site for sharing and maintaining of themes and plugins. 
 From now only, Roller will ship with only a core set of four themes (Basic, BrushedMetal, Sotto and a new Frontpage themes, which is just for site-wide front-page weblogs) . All other themes have been removed from Roller and moved to the Roller Support project at Java.net (http://roller.dev.java.net). If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
