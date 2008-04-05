@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -98,9 +99,9 @@ public class MenuHelper {
             // does this tab have an enabledProperty?
             boolean includeTab = true;
             if(configTab.getEnabledProperty() != null) {
-                includeTab = WebloggerConfig.getBooleanProperty(configTab.getEnabledProperty());
+                includeTab = getBooleanProperty(configTab.getEnabledProperty());
             } else if(configTab.getDisabledProperty() != null) {
-                includeTab = ! WebloggerConfig.getBooleanProperty(configTab.getDisabledProperty());
+                includeTab = ! getBooleanProperty(configTab.getDisabledProperty());
             }
             
             if(includeTab) {
@@ -135,9 +136,9 @@ public class MenuHelper {
                     
                     boolean includeItem = true;
                     if(configTabItem.getEnabledProperty() != null) {
-                        includeItem = WebloggerConfig.getBooleanProperty(configTabItem.getEnabledProperty());
+                        includeItem = getBooleanProperty(configTabItem.getEnabledProperty());
                     } else if(configTabItem.getDisabledProperty() != null) {
-                        includeItem = ! WebloggerConfig.getBooleanProperty(configTabItem.getDisabledProperty());
+                        includeItem = !getBooleanProperty(configTabItem.getDisabledProperty());
                     }
                     
                     if(includeItem) {
@@ -208,6 +209,13 @@ public class MenuHelper {
         return weblog.hasUserPermissions(user, permMask);
     }
     
+    /** Check enabled property, prefers runtime properties */
+    private static boolean getBooleanProperty(String propertyName) {
+        if (WebloggerRuntimeConfig.getProperty(propertyName) != null) {
+            return WebloggerRuntimeConfig.getBooleanProperty(propertyName);
+        }
+        return WebloggerConfig.getBooleanProperty(propertyName);
+    }
     
     private static boolean isSelected(String currentAction, ParsedTabItem tabItem) {
         
