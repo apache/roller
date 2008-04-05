@@ -15,16 +15,17 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ page isErrorPage="true" %>
 
-<h2><s:text name="error.permissionDenied.title" /></h2>
+<h2><fmt:message key="error.permissionDenied.title" /></h2>
 
-<s:text name="error.permissionDenied.prompt" />
+<fmt:message key="error.permissionDenied.prompt" />
 
 <ul>
-    <li><s:text name="error.permissionDenied.reason0" /></li>
-    <li><s:text name="error.permissionDenied.reason1" /></li>
-    <li><s:text name="error.permissionDenied.reason2" /></li>
-    <li><s:text name="error.permissionDenied.reason3" /></li>
+    <li><fmt:message key="error.permissionDenied.reason0" /></li>
+    <li><fmt:message key="error.permissionDenied.reason1" /></li>
+    <li><fmt:message key="error.permissionDenied.reason2" /></li>
+    <li><fmt:message key="error.permissionDenied.reason3" /></li>
 </ul>
