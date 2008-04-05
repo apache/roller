@@ -309,7 +309,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
             if (entryAttribute.getName().equals(name)) {
                 //Call back the entity to adjust its internal state
-                entry.onRemoveEntryAttribute(entryAttribute);
+                //entry.onRemoveEntryAttribute(entryAttribute);
                 //Remove it from the collection
                 it.remove();
                 //Remove it from database
