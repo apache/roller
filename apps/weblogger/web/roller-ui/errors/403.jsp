@@ -15,16 +15,17 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title><s:text name="error.title.403" /></title>
+        <title><fmt:message key="error.title.403" /></title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     </head>
     <body>
         
-        <h2 class="error"><s:text name="error.title.403" /></h2>
+        <h2 class="error"><fmt:message key="error.title.403" /></h2>
         
         <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
         <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
@@ -45,7 +46,7 @@
             </tr>
             <tr>
                 <td width="20%">Exception</td>
-                <td><s:text name="error.text.403" /></td>
+                <td><fmt:message key="error.text.403" /></td>
             </tr>
         </table>
         
