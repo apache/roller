@@ -1123,8 +1123,24 @@ public class DatabaseInstaller {
      */
     private void upgradeTo410(Connection con, boolean runScripts) throws StartupException {
         
-        // nothing to do here yet...
-        
+        // first we need to run upgrade scripts 
+        SQLScriptRunner runner = null;
+        try {    
+            if (runScripts) {
+                String handle = getDatabaseHandle(con);
+                String scriptPath = handle + "/400-to-410-migration.sql";
+                successMessage("Running database upgrade script: "+scriptPath);                
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner.runScript(con, true);
+                messages.addAll(runner.getMessages());
+            }
+        } catch(Exception ex) {
+            log.error("ERROR running 410 database upgrade script", ex);
+            if (runner != null) messages.addAll(runner.getMessages());
+            
+            errorMessage("Problem upgrading database to version 410", ex);
+            throw new StartupException("Problem upgrading database to version 410", ex);
+        }        
     }
 
 
