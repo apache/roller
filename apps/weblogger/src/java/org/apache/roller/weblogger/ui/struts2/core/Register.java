@@ -77,7 +77,7 @@ public class Register extends UIAction implements ServletRequestAware {
     @SkipValidation
     public String execute() {
         
-        if(!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
+        if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
             return "disabled";
         }
         
@@ -86,15 +86,22 @@ public class Register extends UIAction implements ServletRequestAware {
         getBean().setTimeZone(TimeZone.getDefault().getID());
             
         try {
-            // Let's see if there's any user-authentication available from Acegi
-            // and retrieve custom user data to pre-populate form.
-            boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
-            if(usingSSO) {
-                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
 
-                if(fromSSO != null) {
+            boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
+            if (usingSSO) {
+                // See if user is already logged in via Acegi
+                User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+                if (fromSSO != null) {
+                    // Copy user details from Acegi, including LDAP attributes
                     getBean().copyFrom(fromSSO);
-                    setFromSS0(true);
+                    setFromSso(true);
+                }
+                // See if user is already logged in via CMA
+                else if (getServletRequest().getUserPrincipal() != null) {
+                    // Only detail we get is username, sadly no LDAP attributes
+                    getBean().setUserName(getServletRequest().getUserPrincipal().getName());
+                    getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
+                    setFromSso(true);
                 }
             }
             
@@ -243,26 +250,35 @@ public class Register extends UIAction implements ServletRequestAware {
     public void myValidate() {
         
         // if usingSSO, we don't want to error on empty password/username from HTML form.
-        setFromSS0(false);
+        setFromSso(false);
         boolean usingSSO = WebloggerConfig.getBooleanProperty("users.sso.enabled");
-        if(usingSSO) {
+        if (usingSSO) {
             boolean storePassword = WebloggerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
+            String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
+            
+            // Preserve username and password, Acegi case             
             User fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
-
-            if(fromSSO != null) {
-                String password = WebloggerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
-                if(storePassword) {
+            if (fromSSO != null) {
+                if (storePassword) {
                     password = fromSSO.getPassword();
                 }
                 getBean().setPasswordText(password);
                 getBean().setPasswordConfirm(password);
                 getBean().setUserName(fromSSO.getUserName());
-                setFromSS0(true);
+                setFromSso(true);
+            }
+
+            // Preserve username and password, CMA case             
+            else if (getServletRequest().getUserPrincipal() != null) {
+                getBean().setUserName(getServletRequest().getUserPrincipal().getName());
+                getBean().setPasswordText(password);
+                getBean().setPasswordConfirm(password);
+                setFromSso(true);
             }
         }
         
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
-        if(allowed == null || allowed.trim().length() == 0) {
+        if (allowed == null || allowed.trim().length() == 0) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }
         
@@ -273,12 +289,12 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // check that passwords match
-        if(!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+        if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
             addError("Register.error.passowordMismatch");
         }
         
         // check that username is not taken
-        if(!StringUtils.isEmpty(getBean().getUserName())) try {
+        if (!StringUtils.isEmpty(getBean().getUserName())) try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             if(mgr.getUserByUserName(getBean().getUserName(), null) != null) {
                 addError("error.add.user.userNameInUse");
@@ -309,11 +325,11 @@ public class Register extends UIAction implements ServletRequestAware {
         this.bean = bean;
     }
 
-    public boolean isFromSS0() {
+    public boolean getFromSso() {
         return fromSS0;
     }
 
-    public void setFromSS0(boolean fromSS0) {
+    public void setFromSso(boolean fromSS0) {
         this.fromSS0 = fromSS0;
     }
 

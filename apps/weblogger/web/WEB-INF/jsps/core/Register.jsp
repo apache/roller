@@ -25,34 +25,34 @@
 
 <table class="formtable">
 
-    <s:if test="fromSSO">
-<tr>
-    <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-    <td class="field"><strong><s:property value="bean.userName" /></strong></td>
-    <td class="description"><s:text name="userRegister.tip.userName" /></td>
-</tr>
+<s:if test="fromSso">
+    <tr>
+        <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
+        <td class="field"><strong><s:property value="bean.userName" /></strong></td>
+        <td class="description"><s:text name="userRegister.tip.userName" /></td>
+    </tr>
 </s:if>
 <s:else>
-<tr>
-    <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-    <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="userRegister.tip.userName" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
+        <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" /></td>
+        <td class="description"><s:text name="userRegister.tip.userName" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-    <td class="field">
-       <s:password name="bean.passwordText" size="20" maxlength="20" />
-       <s:hidden name="bean.password" />
-   </td>
-    <td class="description"><s:text name="userRegister.tip.password" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
+        <td class="field">
+           <s:password name="bean.passwordText" size="20" maxlength="20" />
+           <s:hidden name="bean.password" />
+       </td>
+        <td class="description"><s:text name="userRegister.tip.password" /></td>
+    </tr>
 
-<tr>
-    <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-    <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
-    <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
-</tr>
+    <tr>
+        <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
+        <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
+        <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
+    </tr>
 </s:else>
 
 <tr>
