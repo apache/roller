@@ -996,7 +996,7 @@ log4j.category.org.apache.struts2=INFO
 # the struts2 file upload stuff has some overly verbose messaging
 log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=WARN
 log4j.category.org.springframework=WARN
-log4j.category.org.acegisecurity=ERROR
+log4j.category.org.springframework.security=ERROR
 # Velocity talks a lot, so by default it is set to STFU mode
 log4j.category.org.apache.velocity=FATAL
 

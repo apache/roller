@@ -18,14 +18,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
 <%@ page import="javax.servlet.http.Cookie" %>
-<%@ page import="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices" %>
+<%@ page import="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices" %>
 
 <%
 request.getSession().removeAttribute(RollerSession.ROLLER_SESSION);
 request.getSession().invalidate(); 
 
 // Mimic exactly TokenBasedRememberMeServices.makeCancelCookie()
-Cookie terminate = new Cookie(TokenBasedRememberMeServices.ACEGI_SECURITY_HASHED_REMEMBER_ME_COOKIE_KEY, null);
+Cookie terminate = new Cookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
 String contextPath = request.getContextPath();
 terminate.setPath(contextPath != null && contextPath.length() > 0 ? contextPath : "/");
 terminate.setMaxAge(0);

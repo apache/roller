@@ -21,16 +21,19 @@ package org.apache.roller.weblogger.ui.core;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Iterator;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.acegisecurity.providers.ProviderManager;
-import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
-import org.acegisecurity.providers.dao.UserCache;
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
-import org.acegisecurity.providers.encoding.PasswordEncoder;
-import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
-import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import org.springframework.security.providers.AuthenticationProvider;
+import org.springframework.security.providers.ProviderManager;
+import org.springframework.security.providers.dao.DaoAuthenticationProvider;
+import org.springframework.security.providers.dao.UserCache;
+import org.springframework.security.providers.encoding.Md5PasswordEncoder;
+import org.springframework.security.providers.encoding.PasswordEncoder;
+import org.springframework.security.providers.encoding.ShaPasswordEncoder;
+import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
+import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
@@ -253,14 +256,17 @@ public class RollerContext extends ContextLoaderListener
     }
          
     /**
-     * Setup Acegi security features.
+     * Setup Spring Security security features.
      */
     protected void initializeSecurityFeatures(ServletContext context) { 
 
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
-        
 
+        /*String[] beanNames = ctx.getBeanDefinitionNames();
+        for (String name : beanNames)
+            System.out.println(name);*/
+        
         String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe).booleanValue();
         
@@ -268,18 +274,21 @@ public class RollerContext extends ContextLoaderListener
         
         context.setAttribute("rememberMeEnabled", rememberMe);
         
-        if (rememberMeEnabled) {
-            ProviderManager provider = (ProviderManager) ctx.getBean("authenticationManager");
-            provider.getProviders().add(ctx.getBean("rememberMeAuthenticationProvider"));
+        if (!rememberMeEnabled) {
+            ProviderManager provider = (ProviderManager) ctx.getBean("_authenticationManager");
+            for (Iterator it = provider.getProviders().iterator(); it.hasNext();) {
+                AuthenticationProvider authProvider = (AuthenticationProvider) it.next();
+                if (authProvider instanceof RememberMeAuthenticationProvider) {
+                    provider.getProviders().remove(authProvider);
+                }
+            }
         }
         
-
         String encryptPasswords = WebloggerConfig.getProperty("passwds.encryption.enabled");
         boolean doEncrypt = Boolean.valueOf(encryptPasswords).booleanValue();
         
         if (doEncrypt) {
-            DaoAuthenticationProvider provider =
-                    (DaoAuthenticationProvider) ctx.getBean("daoAuthenticationProvider");
+            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean("org.springframework.security.providers.dao.DaoAuthenticationProvider#0");
             String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
             PasswordEncoder encoder = null;
             if (algorithm.equalsIgnoreCase("SHA")) {
@@ -287,23 +296,20 @@ public class RollerContext extends ContextLoaderListener
             } else if (algorithm.equalsIgnoreCase("MD5")) {
                 encoder = new Md5PasswordEncoder();
             } else {
-                log.error("Encryption algorithm '" + algorithm +
-                        "' not supported, disabling encryption.");
+                log.error("Encryption algorithm '" + algorithm + "' not supported, disabling encryption.");
             }
             if (encoder != null) {
                 provider.setPasswordEncoder(encoder);
                 log.info("Password Encryption Algorithm set to '" + algorithm + "'");
             }
         }
-        
 
         if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
             AuthenticationProcessingFilterEntryPoint entryPoint =
-                (AuthenticationProcessingFilterEntryPoint)
-                    ctx.getBean("authenticationProcessingFilterEntryPoint");
+                (AuthenticationProcessingFilterEntryPoint) ctx.getBean("_formLoginEntryPoint");
             entryPoint.setForceHttps(true);
         }
-                
+   
         /*
         if (WebloggerConfig.getBooleanProperty("schemeenforcement.enabled")) {
             

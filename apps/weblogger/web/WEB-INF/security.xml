@@ -16,179 +16,71 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
-    "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
 
-<beans>
+    <http auto-config="true" lowercase-comparisons="true" access-decision-manager-ref="accessDecisionManager">
+        <intercept-url pattern="/images/**" filters="none"/>
+        <intercept-url pattern="/scripts/**" filters="none"/>
+        <intercept-url pattern="/styles/**" filters="none"/>
+        <intercept-url pattern="/roller-ui/login-redirect**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/profile**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/createWeblog**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/menu**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/authoring/**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/admin/**" access="admin"/>
+        <intercept-url pattern="/rewrite-status*" access="admin"/>
+        
+        <!-- Uncomment the following for LDAP/SSO configuration -->
+        <!--intercept-url pattern="/roller-ui/user.do*" access="register"/-->
+        
+        <form-login login-page="/roller-ui/login.rol" authentication-failure-url="/roller-ui/login.rol?error=true" 
+        	login-processing-url="/roller_j_security_check"/>
+        <remember-me user-service-ref="rollerUserService" key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
+    </http>
 
-    <!-- ======================== FILTER CHAIN ======================= -->
-    <bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
-        <property name="filterInvocationDefinitionSource">
-            <value>
-                CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-                PATTERN_TYPE_APACHE_ANT
-                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
-            </value>
-            <!-- Replace "authenticationProcessingFilter,rememberMeProcessingFilter" with "casProcessingFilter" if you want to use Roller with CAS -->
-        </property>
-    </bean>
-
-    <!-- ======================== AUTHENTICATION ======================= -->
-    
-    <!-- Note the order that entries are placed against the objectDefinitionSource is critical.
-         The FilterSecurityInterceptor will work from the top of the list down to the FIRST pattern that matches the request URL.
-         Accordingly, you should place MOST SPECIFIC (ie a/b/c/d.*) expressions first, with LEAST SPECIFIC (ie a/.*) expressions last -->
-    <bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="accessDecisionManager" ref="accessDecisionManager"/>
-         <property name="objectDefinitionSource">
-            <value>
-                PATTERN_TYPE_APACHE_ANT
-                /roller-ui/login-redirect**=admin,editor
-                /roller-ui/profile**=admin,editor
-                /roller-ui/createWeblog**=admin,editor
-                /roller-ui/menu**=admin,editor
-                /roller-ui/authoring/**=admin,editor
-                /roller-ui/admin/**=admin
-                /rewrite-status*=admin
-            </value>
-                <!-- Add this to above list for LDAP/SSO configuration -->
-                <!-- /roller-ui/user.do*=register -->
-        </property>
-    </bean>
-
-    <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
-        <property name="providers">
-            <list>
-                <ref local="daoAuthenticationProvider"/> 
-                <!-- Uncomment this for LDAP/SSO configuration <ref local="ldapAuthProvider"/> -->
-                <!-- Uncomment this for CAS/SSO configuration <ref local="casAuthenticationProvider"/> -->
-                <ref local="anonymousAuthenticationProvider"/>                
-                <!-- rememberMeAuthenticationProvider added programmatically -->
-            </list>
-        </property>
-    </bean>
-  
-    <!-- Log failed authentication attempts to commons-logging -->
-    <bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/> 
-
-    <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
-         <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
-         <property name="userCache" ref="userCache"/> 
-    </bean>
+    <authentication-provider user-service-ref="rollerUserService"/>
     
     <!-- Read users from Roller API -->
-    <bean id="jdbcAuthenticationDao" class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
+    <beans:bean id="rollerUserService" class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
 
-    <bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
-        <property name="cache">
-            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-                <property name="cacheManager">
-                    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
-                </property>
-                <property name="cacheName" value="userCache"/>
-            </bean>
-        </property>
-    </bean>
-   
-    <bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
-        <property name="key" value="anonymous"/>
-    </bean>
+	<!-- It may be possible to get rid of the following two beans in a future version of Spring Security. -->
+	<!-- See http://jira.springframework.org/browse/SEC-840 for more information. -->
+    <beans:bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+        <beans:property name="allowIfAllAbstainDecisions" value="false"/>
+        <beans:property name="decisionVoters">
+            <beans:list>
+                <beans:ref local="roleVoter"/>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
     
-    <bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter">
-        <property name="rolePrefix" value=""/>
-    </bean>
-
-    <bean id="accessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
-        <property name="allowIfAllAbstainDecisions" value="false"/>
-        <property name="decisionVoters">
-            <list>
-                <ref local="roleVoter"/>
-            </list>
-        </property>
-    </bean>
+    <beans:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
+        <beans:property name="rolePrefix" value=""/>
+    </beans:bean>
     
-    <!-- ===================== HTTP REQUEST SECURITY ==================== -->
-    <bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter"/>
-    
-    <bean id="authenticationProcessingFilter" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="authenticationFailureUrl" value="/roller-ui/login.rol?error=true"/>
-        <property name="defaultTargetUrl" value="/"/>
-        <property name="filterProcessesUrl" value="/roller_j_security_check"/>
-        <property name="rememberMeServices" ref="rememberMeServices"/>
-    </bean>
-    
-    <bean id="anonymousProcessingFilter" class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
-        <property name="key" value="anonymous"/>
-        <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS"/>
-    </bean>
-    
-    <bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
-        <!-- Change the ref on this property to "casProcessingFilterEntryPoint" when using CAS -->
-        <property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
-    </bean>
-    
-    <bean id="remoteUserFilter" class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
-
-    <bean id="authenticationProcessingFilterEntryPoint" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-        <property name="loginFormUrl" value="/roller-ui/login.rol"/>
-        <property name="forceHttps" value="false"/>
-    </bean>
-
-    <!-- ===================== REMEMBER ME ==================== -->
-    <bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter">
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="rememberMeServices" ref="rememberMeServices"/>
-    </bean>
- 
-    <bean id="rememberMeServices" class="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices"> 
-        <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
-        <property name="key" value="rollerlovesacegi"/> 
-        <property name="parameter" value="rememberMe"/>
-    </bean> 
-  
-    <bean id="rememberMeAuthenticationProvider" class="org.acegisecurity.providers.rememberme.RememberMeAuthenticationProvider"> 
-        <property name="key" value="rollerlovesacegi"/>
-    </bean>
-    
-    <!-- ===================== SSL SWITCHING ==================== -->
-    <bean id="channelProcessingFilter" class="org.acegisecurity.securechannel.ChannelProcessingFilter">
-        <property name="channelDecisionManager" ref="channelDecisionManager"/>
-        <property name="filterInvocationDefinitionSource">
-            <value>
-                PATTERN_TYPE_APACHE_ANT
-            </value>
-        </property>
-    </bean>
-                
-    <bean id="channelDecisionManager" class="org.acegisecurity.securechannel.ChannelDecisionManagerImpl">
-        <property name="channelProcessors">
-            <list>
-                <bean class="org.acegisecurity.securechannel.SecureChannelProcessor"/>
-                <bean class="org.acegisecurity.securechannel.InsecureChannelProcessor"/>
-            </list>
-        </property>
-    </bean>
+    <!-- TODO MR: Modify LDAP and CAS Configuration for Spring Security 2.0.x -->
     
     <!-- ===================== LDAP AUTHENTICATION ==================== -->
     <!-- BEGIN: Sample LDAP/RollerDB hybrid security configuration
-    <bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+    <bean id="initialDirContextFactory" class="org.springframework.security.ldap.DefaultInitialDirContextFactory">
         <constructor-arg value="LDAP_URL"/>
         <property name="managerDn" value="LDAP_USERNAME"/>
         <property name="managerPassword" value="LDAP_PASSWORD"/>
     </bean>
    
-    <bean id="ldapUserSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
+    <bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
         <constructor-arg index="0" value=""/>
         <constructor-arg index="1" value="uid={0}"/>
         <constructor-arg index="2" ref="initialDirContextFactory"/>         
         <property name="searchSubtree" value="true"/>           
     </bean>     
     
-    <bean id="ldapAuthProvider" class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+    <bean id="ldapAuthProvider" class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
         <constructor-arg>
-            <bean class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+            <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
                 <constructor-arg ref="initialDirContextFactory"/>
                 <property name="userSearch" ref="ldapUserSearch"/>
             </bean>
@@ -205,19 +97,19 @@
     
     <!-- ======================== CENTRAL AUTHENTICATION SERVICE (CAS) ======================= -->
     <!-- BEGIN: Sample CAS/RollerDB hybrid security configuration
-    <bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter">
+    <bean id="casProcessingFilter" class="org.springframework.security.ui.cas.CasProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationFailureUrl" value="/roller-ui/login.rol?error=true"/>
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/roller_j_security_check"/>
     </bean>
     
-    <bean id="casProcessingFilterEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint">
+    <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint">
         <property name="loginUrl" value="https://localhost:8443/cas/login"/>
         <property name="serviceProperties" ref="serviceProperties"/>
     </bean>
     
-    <bean id="casAuthenticationProvider" class="org.acegisecurity.providers.cas.CasAuthenticationProvider">
+    <bean id="casAuthenticationProvider" class="org.springframework.security.providers.cas.CasAuthenticationProvider">
         <property name="casAuthoritiesPopulator">
             <bean class="org.apache.roller.weblogger.ui.core.security.RollerCasPopulator">
                 <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
@@ -229,7 +121,7 @@
         <property name="key" value="rollerlovesacegi"/>
     </bean>
     
-    <bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator">
+    <bean id="casProxyTicketValidator" class="org.springframework.security.providers.cas.ticketvalidator.CasProxyTicketValidator">
         <property name="casValidate" value="https://localhost:8443/cas/proxyValidate"/>
         <property name="proxyCallbackUrl" value="http://localhost:8080/roller/casProxy/receptor"/>
         <property name="serviceProperties" ref="serviceProperties"/>
@@ -243,16 +135,16 @@
        <property name="cacheName" value="ticketCache"/>
     </bean>
     
-    <bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.EhCacheBasedTicketCache">
+    <bean id="statelessTicketCache" class="org.springframework.security.providers.cas.cache.EhCacheBasedTicketCache">
         <property name="cache" ref="ticketCacheBackend"/>
     </bean>
     
-    <bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets"/>
+    <bean id="casProxyDecider" class="org.springframework.security.providers.cas.proxy.RejectProxyTickets"/>
     
-    <bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties">
+    <bean id="serviceProperties" class="org.springframework.security.ui.cas.ServiceProperties">
         <property name="service" value="http://localhost:8080/roller/roller_j_security_check"/>
         <property name="sendRenew" value="false"/>
     </bean>
     -->
     <!-- END Sample CAS/RollerDB hybrid security configuration -->
-</beans>
+</beans:beans>
