@@ -19,12 +19,13 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.Iterator;
 import java.util.List;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.ldap.LdapDataAccessException;
-import org.acegisecurity.providers.ldap.LdapAuthoritiesPopulator;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
-import org.acegisecurity.userdetails.ldap.LdapUserDetails;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.security.ldap.LdapDataAccessException;
+import org.springframework.security.ldap.LdapAuthoritiesPopulator;
+import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.userdetails.ldap.LdapUserDetails;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -44,24 +45,24 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
 
     
     /* (non-Javadoc)
-     * @see org.acegisecurity.providers.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.acegisecurity.userdetails.ldap.LdapUserDetails)
+     * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
-    public GrantedAuthority[] getGrantedAuthorities(LdapUserDetails userDetails) throws LdapDataAccessException {
+    public GrantedAuthority[] getGrantedAuthorities(DirContextOperations userData, String username) throws LdapDataAccessException {
 
-        User userData = null;
+        User user = null;
         List roles = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
-            userData = umgr.getUserByUserName(userDetails.getUsername(), Boolean.TRUE);
-            roles = umgr.getRoles(userData);
+            user = umgr.getUserByUserName(username, Boolean.TRUE);
+            roles = umgr.getRoles(user);
             
         } catch (WebloggerException ex) {
             throw new LdapDataAccessException("ERROR in user lookup", ex);
         }
 
         if (userData == null) {
-            throw new LdapDataAccessException("ERROR no user: " + userDetails.getUsername());
+            throw new LdapDataAccessException("ERROR no user: " + username);
         }
 
         

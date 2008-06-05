@@ -17,7 +17,7 @@
 */
 package org.apache.roller.weblogger.ui.core.security;
 
-import org.acegisecurity.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetails;
 
 /**
  * An interface to extract additional properties from a UserDetails instance. These extra
