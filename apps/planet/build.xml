@@ -104,7 +104,7 @@
         <include name="struts-2.0.9/lib/*.jar"/>
         
         <!-- Struts 2 depends on Spring -->
-        <include name="spring-1.2/spring.jar"/>
+        <include name="spring-2.5/spring-2.5.4.jar"/>
     </fileset>
     
     <path id="planet.business.path">
