@@ -20,7 +20,7 @@
 <script type="text/javascript">
 function confirmSubDelete(subUrl) {
   if (window.confirm('Are you sure you want to remove this subscription?')) {
-    document.location.href='<s:url action="planetSubscriptions!delete" />?groupHandle=<s:property value="groupHandle"/>&subUrl='+subUrl;
+    document.location.href='<s:url action="planetSubscriptions!delete" />?groupHandle=<s:property value="groupHandle"/>&subUrl='+encodeURIComponent(subUrl);
   }
 }
 </script>
