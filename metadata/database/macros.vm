@@ -115,3 +115,5 @@ drop table if exists $tableName;
 #end
 #end
 
+
+#macro(concat $s1 $s2) #if ($db.DBTYPE != "MYSQL") $s1 || $s2 #else concat($s1, $s2) #end #end
