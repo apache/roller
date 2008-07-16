@@ -571,8 +571,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }*/
 
         if (user != null) {
-            params.add(size++, user.getId());
-            queryString.append(" AND e.creator.id = ?").append(size);
+            params.add(size++, user.getUserName());
+            queryString.append(" AND e.creatorUserName = ?").append(size);
         }
         
         if (startDate != null) {
