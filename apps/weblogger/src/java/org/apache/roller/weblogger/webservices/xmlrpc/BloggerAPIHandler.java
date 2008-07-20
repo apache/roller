@@ -94,12 +94,14 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         validate(entry.getWebsite().getHandle(), userid, password);
         
         try {
+            // notify cache
+            flushPageCache(entry.getWebsite());
+
             // delete the entry
             weblogMgr.removeWeblogEntry(entry);
             roller.flush();
             
-            // notify cache
-            flushPageCache(entry.getWebsite());
+            
         } catch (Exception e) {
             String msg = "ERROR in blogger.deletePost: "+e.getClass().getName();
             mLogger.error(msg,e);
