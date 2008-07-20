@@ -323,13 +323,16 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
         WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
         
-        validate(entry.getWebsite().getHandle(), userid,password);
+        if (entry == null) {
+            throw new XmlRpcException(INVALID_POSTID, INVALID_POSTID_MSG);
+        }
+        validate(entry.getWebsite().getHandle(), userid, password);
         
         try {
             return createPostStruct(entry, userid);
         } catch (Exception e) {
             String msg = "ERROR in MetaWeblogAPIHandler.getPost";
-            mLogger.error(msg,e);
+            mLogger.error(msg, e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
     }
