@@ -15,7 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,36 +23,40 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
 /**
  * Allows user to edit his/her profile.
- *
  * TODO: check on the impact of deleting that cookieLogin stuff
  */
 public class Profile extends UIAction {
-    
     private static Log log = LogFactory.getLog(Profile.class);
     
     private ProfileBean bean = new ProfileBean();
-    
+    private String openIdConfiguration = 
+        WebloggerConfig.getProperty("authentication.openid");
+    private boolean usingSso = 
+        WebloggerConfig.getBooleanProperty("users.sso.enabled");
+            
     
     public Profile() {
         this.pageTitle = "yourProfile.title";
     }
     
+    
     // override default security, we do not require an action weblog
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     @SkipValidation
     public String execute() {
-        
         User ud = getAuthenticatedUser();
         
         // load up the form from the users existing profile data
@@ -62,28 +65,55 @@ public class Profile extends UIAction {
         getBean().setPasswordConfirm(null);
         getBean().setLocale(ud.getLocale());
         getBean().setTimeZone(ud.getTimeZone());
-
+        
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        try {
+            UserAttribute openIdUrl = mgr.getUserAttribute(
+                ud.getUserName(), UserAttribute.Attributes.OPENID_URL.toString());
+            if (openIdUrl != null) {
+                getBean().setOpenIdUrl(openIdUrl.getValue());
+            }
+        } catch (Exception ex) {
+            log.error("Unexpected error loading user OpenID url", ex);
+            addError("error in action", ex.toString());
+        }
         return INPUT;
     }
-    
+
     
     public String save() {
-        
+
         myValidate();
-        
+
         if (!hasActionErrors()) {
+            
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
-            
+
             // We want to be VERY selective about what data gets updated
             existingUser.setScreenName(getBean().getScreenName());
             existingUser.setFullName(getBean().getFullName());
             existingUser.setEmailAddress(getBean().getEmailAddress());
             existingUser.setLocale(getBean().getLocale());
             existingUser.setTimeZone(getBean().getTimeZone());
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
             
+            if (StringUtils.isNotEmpty(getBean().getOpenIdUrl())) { 
+                try {
+                    String openidurl = getBean().getOpenIdUrl();
+                    if (openidurl != null && openidurl.endsWith("/")) {
+                        openidurl = openidurl.substring(0, openidurl.length() - 1);
+                    }
+                    mgr.setUserAttribute(existingUser.getUserName(), 
+                        UserAttribute.Attributes.OPENID_URL.toString(), openidurl);
+                } catch (Exception ex) {
+                    log.error("Unexpected error saving user OpenID URL", ex);
+                    addError("Error in action", ex.toString());
+                }
+            }
+
             // If user set both password and passwordConfirm then reset password
-            if (!StringUtils.isEmpty(getBean().getPasswordText()) && 
+            if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
                 try {
                     existingUser.resetPassword(getBean().getPasswordText());
@@ -91,40 +121,42 @@ public class Profile extends UIAction {
                     addMessage("yourProfile.passwordResetError");
                 }
             }
-            
+
             try {
                 // save the updated profile
-                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 // TODO: i18n
                 addMessage("profile updated.");
-                
+
                 return SUCCESS;
-                
+
             } catch (WebloggerException ex) {
                 log.error("ERROR in action", ex);
                 // TODO: i18n
                 addError("unexpected error doing profile save");
             }
-            
+
         }
-        
+
         return INPUT;
     }
-    
+
     
     public void myValidate() {
-        
+
         // check that passwords match if they were specified
-        if(!StringUtils.isEmpty(getBean().getPasswordText())) {
-            if(!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+        if (!StringUtils.isEmpty(getBean().getPasswordText())) {
+            if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
                 addError("Register.error.passowordMismatch");
             }
         }
     }
-    
+
+    public String getOpenIdConfiguration() {
+        return openIdConfiguration;
+    }
     
     public ProfileBean getBean() {
         return bean;
@@ -134,4 +166,7 @@ public class Profile extends UIAction {
         this.bean = bean;
     }
     
+    public boolean getUsingSso() {
+        return this.usingSso;
+    }
 }

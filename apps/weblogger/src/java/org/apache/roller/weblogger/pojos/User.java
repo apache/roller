@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.roller.weblogger.WebloggerException;
@@ -60,7 +58,7 @@ public class User implements Serializable {
     
     private Set roles = new HashSet();
     private List permissions = new ArrayList();
-    
+                 
     
     public User() {
     }

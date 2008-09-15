@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -27,7 +28,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 public class Login extends UIAction {
     
     private String error = null;
-    
+    private boolean openidEnabled = WebloggerConfig.getBooleanProperty("authentication.openid.enabled");
     
     public Login() {
         this.pageTitle = "loginPage.title";
@@ -43,7 +44,10 @@ public class Login extends UIAction {
     public boolean isWeblogRequired() {
         return false;
     }
-    
+
+    public String getOpenIdConfiguration() {
+        return WebloggerConfig.getProperty("authentication.openid");
+    }
     
     public String execute() {
         

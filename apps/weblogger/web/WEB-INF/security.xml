@@ -19,9 +19,14 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1-openidfix.xsd">
 
-    <http auto-config="true" lowercase-comparisons="true" access-decision-manager-ref="accessDecisionManager">
+<!--
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+-->
+                 
+    <http auto-config="false" lowercase-comparisons="true" access-decision-manager-ref="accessDecisionManager">
         <intercept-url pattern="/images/**" filters="none"/>
         <intercept-url pattern="/scripts/**" filters="none"/>
         <intercept-url pattern="/styles/**" filters="none"/>
@@ -35,16 +40,43 @@
         
         <!-- Uncomment the following for LDAP/SSO configuration -->
         <!--intercept-url pattern="/roller-ui/user.do*" access="register"/-->
-        
         <form-login login-page="/roller-ui/login.rol" authentication-failure-url="/roller-ui/login.rol?error=true" 
-        	login-processing-url="/roller_j_security_check"/>
+        	login-processing-url="/roller_j_security_check"/>  
         <remember-me user-service-ref="rollerUserService" key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
-    </http>
+    </http>    
+
+
+    <authentication-manager alias='authenticationManagerAlias'/>
+    <beans:bean id = "openIDAuthProvider" class="org.springframework.security.providers.openid.OpenIDAuthenticationProvider">
+        <custom-authentication-provider/>
+        <beans:property name="userDetailsService" ref="rollerUserService"/>
+    </beans:bean>
+
+    <beans:bean id="openidAuthenticationProcessingFilter" class="org.apache.roller.weblogger.ui.core.filters.CustomOpenIDAuthenticationProcessingFilter">
+        <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
+        <beans:property name="filterProcessesUrl" value="/roller_j_openid_security_check"/>
+        <beans:property name="exceptionMappings">
+            <beans:props>
+                <beans:prop key="org.springframework.security.userdetails.UsernameNotFoundException">/roller-ui/register.rol
+                </beans:prop>
+                <beans:prop key="org.springframework.security.BadCredentialsException">/roller-ui/login.rol?error=true
+                </beans:prop>  
+                <beans:prop key="org.springframework.security.AuthenticationException">/roller-ui/login.rol?error=true
+                </beans:prop>
+            </beans:props>
+        </beans:property>   
+        <beans:property name="authenticationFailureUrl" value="/roller-ui/login.rol?error=true"/>   
+        <beans:property name="authenticationManager" ref="authenticationManagerAlias"/>
+        <custom-filter position="OPENID_PROCESSING_FILTER"/>
+    </beans:bean>
+  
 
     <authentication-provider user-service-ref="rollerUserService"/>
+   
     
     <!-- Read users from Roller API -->
     <beans:bean id="rollerUserService" class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
+
 
 	<!-- It may be possible to get rid of the following two beans in a future version of Spring Security. -->
 	<!-- See http://jira.springframework.org/browse/SEC-840 for more information. -->
@@ -56,11 +88,10 @@
             </beans:list>
         </beans:property>
     </beans:bean>
-    
     <beans:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
         <beans:property name="rolePrefix" value=""/>
     </beans:bean>
-    
+       
     <!-- TODO MR: Modify LDAP and CAS Configuration for Spring Security 2.0.x -->
     
     <!-- ===================== LDAP AUTHENTICATION ==================== -->
@@ -70,14 +101,14 @@
         <property name="managerDn" value="LDAP_USERNAME"/>
         <property name="managerPassword" value="LDAP_PASSWORD"/>
     </bean>
-   
+                
     <bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
         <constructor-arg index="0" value=""/>
         <constructor-arg index="1" value="uid={0}"/>
         <constructor-arg index="2" ref="initialDirContextFactory"/>         
         <property name="searchSubtree" value="true"/>           
     </bean>     
-    
+
     <bean id="ldapAuthProvider" class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
         <constructor-arg>
             <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
@@ -88,13 +119,13 @@
         <constructor-arg ref="jdbcAuthoritiesPopulator"/>
         <property name="userCache" ref="userCache"/>
     </bean>    
-    
+      
     <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.weblogger.ui.core.security.AuthoritiesPopulator">
         <property name="defaultRole" value="register"/>       
     </bean>
-    -->
+     -->
     <!-- END Sample LDAP/RollerDB hybrid security configuration -->
-    
+
     <!-- ======================== CENTRAL AUTHENTICATION SERVICE (CAS) ======================= -->
     <!-- BEGIN: Sample CAS/RollerDB hybrid security configuration
     <bean id="casProcessingFilter" class="org.springframework.security.ui.cas.CasProcessingFilter">
@@ -103,7 +134,7 @@
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/roller_j_security_check"/>
     </bean>
-    
+   
     <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint">
         <property name="loginUrl" value="https://localhost:8443/cas/login"/>
         <property name="serviceProperties" ref="serviceProperties"/>
@@ -120,7 +151,7 @@
         <property name="statelessTicketCache" ref="statelessTicketCache"/>
         <property name="key" value="rollerlovesacegi"/>
     </bean>
-    
+   
     <bean id="casProxyTicketValidator" class="org.springframework.security.providers.cas.ticketvalidator.CasProxyTicketValidator">
         <property name="casValidate" value="https://localhost:8443/cas/proxyValidate"/>
         <property name="proxyCallbackUrl" value="http://localhost:8080/roller/casProxy/receptor"/>

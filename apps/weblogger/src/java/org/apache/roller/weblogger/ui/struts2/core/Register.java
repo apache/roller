@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
@@ -32,11 +31,14 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+//import org.springframework.security.userdetails.openid.OpenIDUserAttribute;
+
 
 
 /**
@@ -46,7 +48,7 @@ public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);
     
-    public static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
+    public static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";    
     
     // this is a no-no, we should not need this
     private HttpServletRequest servletRequest = null;
@@ -73,6 +75,9 @@ public class Register extends UIAction implements ServletRequestAware {
         return false;
     }
     
+    public String getOpenIdConfiguration() {
+        return WebloggerConfig.getProperty("authentication.openid");
+    }
     
     @SkipValidation
     public String execute() {
@@ -80,10 +85,44 @@ public class Register extends UIAction implements ServletRequestAware {
         if (!WebloggerRuntimeConfig.getBooleanProperty("users.registration.enabled")) {
             return "disabled";
         }
+                
+        // For new user default to locale set in browser
+        bean.setLocale(getServletRequest().getLocale().toString());
         
-        // set some defaults
-        getBean().setLocale(Locale.getDefault().toString());
-        getBean().setTimeZone(TimeZone.getDefault().getID());
+        // For new user default to timezone of server
+        bean.setTimeZone(TimeZone.getDefault().getID());
+        
+        /* TODO: when Spring Security 2.1 is release comment out this stuff, 
+         * which pre-populates the user bean with info from OpenID provider.
+         * 
+        Collection attrsCollect = (Collection)WebloggerFactory.getWeblogger()
+                .getUserManager().userAttributes.get(UserAttribute.Attributes.openidUrl.toString());
+        
+        if (attrsCollect != null) {
+            ArrayList attrs = new ArrayList(attrsCollect);
+            for (Iterator it = attrs.iterator(); it.hasNext();) {                
+                OpenIDUserAttribute attr = (OpenIDUserAttribute) it.next();    
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.country.toString())) {                                        
+                    getBean().setLocale(UIUtils.getLocale(attr.getValue()));
+                }                
+               if (attr.getName().equals(OpenIDUserAttribute.Attributes.email.toString())) {
+                    getBean().setEmailAddress(attr.getValue());
+                }
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.fullname.toString())) {
+                    getBean().setFullName(attr.getValue());
+                }
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.nickname.toString())) {
+                    getBean().setUserName(attr.getValue());
+                }
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.timezone.toString())) {
+                    getBean().setTimeZone(UIUtils.getTimeZone(attr.getValue()));
+                }
+                if (attr.getName().equals(OpenIDUserAttribute.Attributes.openidname.toString())) {
+                    getBean().setOpenidUrl(attr.getValue());
+                }
+                
+            }
+        }*/
             
         try {
 
@@ -172,6 +211,17 @@ public class Register extends UIAction implements ServletRequestAware {
             
             // save new user
             mgr.addUser(ud);
+            
+            String openidurl = getBean().getOpenIdUrl();
+            if (openidurl != null) {
+                if (openidurl.endsWith("/")) {
+                    openidurl = openidurl.substring(0, openidurl.length() - 1);
+                }
+                mgr.setUserAttribute(
+                    ud.getUserName(), UserAttribute.Attributes.OPENID_URL.toString(),
+                    openidurl);
+            }
+            
             WebloggerFactory.getWeblogger().flush();
             
             // now send activation email if necessary
@@ -288,7 +338,15 @@ public class Register extends UIAction implements ServletRequestAware {
             addError("error.add.user.badUserName");
         }
         
-        // check that passwords match
+        // check password, it is required if OpenID and SSO are disabled
+        if (getOpenIdConfiguration().equals("disabled") && !getFromSso()) {
+            if (StringUtils.isEmpty(getBean().getPasswordText())) {            
+                addError("error.add.user.passwordEmpty");
+                return;
+            }
+        }
+        
+        // check that passwords match 
         if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
             addError("Register.error.passowordMismatch");
         }
@@ -296,7 +354,7 @@ public class Register extends UIAction implements ServletRequestAware {
         // check that username is not taken
         if (!StringUtils.isEmpty(getBean().getUserName())) try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-            if(mgr.getUserByUserName(getBean().getUserName(), null) != null) {
+            if (mgr.getUserByUserName(getBean().getUserName(), null) != null) {
                 addError("error.add.user.userNameInUse");
                 // reset user name
                 getBean().setUserName(null);

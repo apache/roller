@@ -18,8 +18,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -27,8 +25,6 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 
