@@ -302,12 +302,26 @@ ro.buildUser=${user.name}
         
         <!-- distributable WAR file -->
         <mkdir dir="${ro.dist}/webapp" />
+        <!--
         <jar destfile="${ro.dist}/webapp/roller-weblogger.war"
              basedir="${build.webapp}" />
-             
+        -->     
     </target>
     
     
+    <!-- Development only target: copy JSPs and other web files -->
+    <target name="dev-copy-web">
+        <copy todir="${build.webapp}">
+            <fileset dir="./web">
+                <include name="**/*"/>
+                <exclude name="**/codewright*/**"/>
+                <exclude name="**/*.bak"/>
+                <exclude name="**/*~"/>
+            </fileset>
+        </copy>
+    </target>
+        
+        
     <!-- ********************************************************************* -->
     <!-- Create different versions of database setup script                    -->
     <!-- With this approach we won't have to expand the script all the time.   -->

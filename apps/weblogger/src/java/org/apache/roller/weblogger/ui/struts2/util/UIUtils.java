@@ -47,10 +47,18 @@ public final class UIUtils {
     }
     
     
+    public static String getLocale(String localeName) {
+        Locale locale = new Locale(localeName,localeName);        
+        return locale.toString();        
+    }
+    
     public static List getLocales() {
         return locales;
     }
     
+    public static String getTimeZone(String timeZoneName) {
+        return TimeZone.getTimeZone(timeZoneName).getID();                
+    }
     
     public static List getTimeZones() {
         return timeZones;

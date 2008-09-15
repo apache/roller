@@ -15,8 +15,12 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
+<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%!
+boolean openidEnabled = WebloggerConfig.getBooleanProperty("authentication.openid.enabled");
+%>
 <p class="subtitle"><s:text name="yourProfile.description" /></p>
 
 <s:form action="profile!save">
@@ -27,20 +31,6 @@
             <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
             <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" /></td>
             <td class="description"><s:text name="yourProfile.tip.userName" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-            <td class="field">
-                <s:password name="bean.passwordText" size="20" maxlength="20" />
-            </td>
-            <td class="description"><s:text name="userRegister.tip.password" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-            <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
-            <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
         </tr>
         
         <tr>
@@ -60,6 +50,34 @@
             <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
             <td class="description"><s:text name="userRegister.tip.email" /></td>
         </tr>
+        
+        <s:if test="openIdConfiguration != 'only'">
+        <tr>
+            <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
+            <td class="field">
+                <s:password name="bean.passwordText" size="20" maxlength="20" />
+            </td>
+            <td class="description"><s:text name="userRegister.tip.password" /></td>
+        </tr>
+        
+        <tr>
+            <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
+            <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
+            <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
+        </tr>
+        </s:if>
+        <s:else>
+            <s:hidden name="bean.password" />
+            <s:hidden name="bean.passwordConfirm" />
+        </s:else>
+        
+        <s:if test="openIdConfiguration != 'disabled'">
+            <tr>
+                <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
+                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" id="f_openid_identifier" /></td>
+                <td class="description"><s:text name="userRegister.tip.openIdUrl" /></td>
+            </tr>     
+        </s:if>
         
         <tr>
             <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>

@@ -70,7 +70,7 @@
             DISTINCT is not required for this query as no duplicate User would be retrieved
             -->
             <query>SELECT COUNT(u) FROM User u WHERE u.enabled = ?1</query>
-        </named-query>
+        </named-query>  
         <attributes>
             <id name="id">
                 <column name="id"/>

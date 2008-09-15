@@ -38,6 +38,7 @@ public class CoreWeblogPlatformTestSuite {
 	
         // test users
         suite.addTestSuite(UserTest.class);
+        suite.addTestSuite(UserAttributeTest.class);
 
         // test weblogs
         suite.addTestSuite(WeblogTest.class);

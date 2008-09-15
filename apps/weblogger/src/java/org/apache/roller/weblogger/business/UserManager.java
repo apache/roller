@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.RollerPermission;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.UserAttribute;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
@@ -32,10 +33,8 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  * Interface to user, role and permissions management.
  */
 public interface UserManager {
-        
     
-    //--------------------------------------------------------------- user CRUD
-    
+    //--------------------------------------------------------------- user CRUD    
     
     /**
      * Add a new user.
@@ -99,19 +98,17 @@ public interface UserManager {
      */
     public User getUserByUserName(String userName) throws WebloggerException;
     
-    
     /**
      * Lookup a user by UserName with the given enabled status.
      * 
      * @param userName User Name of user to lookup.
-     * @returns UsUserhe user, or null if not found or doesn't match 
-     *   the proper enabled status.
+     * @returns The user, or null if not found or doesn't match the proper enabled status.
      * @throws WebloggerException If there is a problem.
      */
     public User getUserByUserName(String userName, Boolean enabled)
         throws WebloggerException;
     
-    
+
     /**
      * Lookup a group of users.
      * 
@@ -164,6 +161,59 @@ public interface UserManager {
         throws WebloggerException;
     
         
+    //----------------------------------------------------- user attribute CRUD
+
+    
+    /**
+     * Lookup a user by User attribute
+     * 
+     * @param name attribute name
+     * @param value sttribute value
+     * @return UsUserhe user, or null if not found or is disabled.
+     * @throws WebloggerException If there is a problem
+     */
+    public User getUserByAttribute(String name, String value) throws WebloggerException;
+    
+    /**
+     * Lookup a user by User attribute
+     * 
+     * @param name     Attribute name
+     * @param value    Attribute value
+     * @param enabled  True if only enable user should be returned
+     * @return The user, or null if not found or is disabled.
+     * @throws WebloggerException If there is a problem
+     */
+    public User getUserByAttribute(String name, String value, Boolean enabled) throws WebloggerException;
+    
+    
+    /**
+     * Get user atribute value
+     * @param user User
+     * @param attribute Atribute name
+     * @return List of user attributes
+     */
+    public UserAttribute getUserAttribute(String userName, String attribute) throws WebloggerException;
+    
+    
+    /**
+     * Set user atribute value
+     * @param user User
+     * @param attribute Atribute name     
+     * @param value Atribute value
+     * @throws org.apache.roller.weblogger.WebloggerException
+     */
+    public void setUserAttribute(String userName, String attribute, String value) throws WebloggerException;
+    
+    
+    /**
+     * Get attribributes for a user. 
+     * @param userName Username that uniquely idenifies user.
+     * @return List of attributes.
+     * @throws org.apache.roller.weblogger.WebloggerException
+     */
+    public List<UserAttribute> getUserAttributes(String userName) throws WebloggerException;
+    
+    
     //-------------------------------------------------------- permissions CRUD
 
     

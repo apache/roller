@@ -34,9 +34,12 @@ public class ProfileBean {
     private String emailAddress = null;
     private String locale = null;
     private String timeZone = null;
+    private String openidUrl = null;
     
     private String passwordText = null;
     private String passwordConfirm = null;
+    
+    
     
     
     public String getId() {
@@ -101,6 +104,14 @@ public class ProfileBean {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public String getOpenIdUrl() {
+        return openidUrl;
+    }
+
+    public void setOpenIdUrl(String openidUrl) {
+        this.openidUrl = openidUrl;
     }
     
     public String getPasswordText() {
