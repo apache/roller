@@ -76,9 +76,11 @@ public class EntryRemove extends UIAction {
             try {
                 // remove the entry from the search index
                 // TODO: can we do this in a better way?
+                String originalStatus = entry.getStatus();
                 entry.setStatus(WeblogEntry.DRAFT);
                 IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
                 manager.addEntryReIndexOperation(entry);
+                entry.setStatus(originalStatus);
             } catch (WebloggerException ex) {
                 log.warn("Trouble triggering entry indexing", ex);
             }

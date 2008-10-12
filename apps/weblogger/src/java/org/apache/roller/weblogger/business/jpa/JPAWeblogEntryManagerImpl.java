@@ -330,8 +330,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    public void removeWeblogEntry(WeblogEntry entry)
-    throws WebloggerException {
+    public void removeWeblogEntry(WeblogEntry entry) throws WebloggerException {
+        Weblog weblog = entry.getWebsite();
+        
         Query q = strategy.getNamedQuery("WeblogReferrer.getByWeblogEntry");
         q.setParameter(1, entry);
         List referers = q.getResultList();
@@ -357,7 +358,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         // remove tags aggregates
-        if(entry.getTags() != null) {
+        if (entry.getTags() != null) {
             for(Iterator it = entry.getTags().iterator(); it.hasNext(); ) {
                 WeblogEntryTag tag = (WeblogEntryTag) it.next();
                 updateTagCount(tag.getName(), entry.getWebsite(), -1);
@@ -381,8 +382,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.strategy.remove(entry);
         
         // update weblog last modified date.  date updated by saveWebsite()
-        if(entry.isPublished()) {
-            roller.getWeblogManager().saveWeblog(entry.getWebsite());
+        if (entry.isPublished()) {
+            roller.getWeblogManager().saveWeblog(weblog);
         }
         
         // remove entry from cache mapping
