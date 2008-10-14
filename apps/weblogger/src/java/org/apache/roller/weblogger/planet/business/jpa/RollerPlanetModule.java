@@ -30,7 +30,7 @@ import org.apache.roller.planet.business.jpa.JPAPlanetImpl;
 import org.apache.roller.planet.business.jpa.JPAPlanetManagerImpl;
 import org.apache.roller.planet.business.jpa.JPAPropertiesManagerImpl;
 import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
-import org.apache.roller.weblogger.planet.ui.PlanetURLStrategy;
+import org.apache.roller.weblogger.planet.business.PlanetURLStrategy;
 
 
 /**
