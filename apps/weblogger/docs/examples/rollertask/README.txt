@@ -1,4 +1,13 @@
+
 README for rollertask
+
+###############################################################################
+
+                        NOTE: broken in Roller 4.0
+
+            See https://issues.apache.org/roller/browse/ROL-1758
+
+###############################################################################
 
 rollertask.sh is a script that can be used to run the Roller tasks. Because 
 rollertask.sh runs outside of the Roller application, you have to put some
