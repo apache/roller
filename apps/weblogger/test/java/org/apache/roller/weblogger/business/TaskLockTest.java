@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Date;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -26,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.runnable.RollerTask;
-import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 
 
@@ -59,6 +57,7 @@ public class TaskLockTest extends TestCase {
     
     /**
      * Test basic persistence operations ... Create, Update, Delete.
+     * @throws Exception if one is raised
      */
     public void testTaskLockCRUD() throws Exception {
         
@@ -68,16 +67,23 @@ public class TaskLockTest extends TestCase {
         RollerTask task = new TestTask();
         
         // try to acquire a lock
-        assertTrue(mgr.registerLease(task));
-        TestUtils.endSession(true);
+        assertTrue("Failed to acquire lease.",mgr.registerLease(task));
+        // We don't flush here because registerLease should flush on its own
+        TestUtils.endSession(false);
         
         // make sure task is locked
-        assertFalse(mgr.registerLease(task));
-        TestUtils.endSession(true);
+        assertFalse("Acquired lease a second time when we shouldn't have been able to.",mgr.registerLease(task));
+        TestUtils.endSession(false);
         
         // try to release a lock
-        assertTrue(mgr.unregisterLease(task));
-        TestUtils.endSession(true);
+        assertTrue("Release of lease failed.",mgr.unregisterLease(task));
+        // We don't flush here because unregisterLease should flush on its own
+        TestUtils.endSession(false);
+
+        // Current unregisterLease semantics are idempotent.  Double release should
+        // actually succeed.
+        assertTrue("Second release failed.", mgr.unregisterLease(task));
+        TestUtils.endSession(false);
     }
     
 }

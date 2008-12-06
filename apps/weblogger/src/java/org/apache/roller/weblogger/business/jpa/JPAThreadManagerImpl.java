@@ -120,6 +120,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             int result = q.executeUpdate();
             
             if(result == 1) {
+                strategy.flush();
                 return true;
             }
 
@@ -166,6 +167,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
             int result = q.executeUpdate();
             
             if(result == 1) {
+                strategy.flush();
                 return true;
             }
 
