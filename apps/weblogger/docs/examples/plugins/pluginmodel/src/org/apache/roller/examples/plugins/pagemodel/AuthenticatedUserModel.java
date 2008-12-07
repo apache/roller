@@ -3,6 +3,8 @@ package org.apache.roller.examples.plugins.pagemodel;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -20,7 +22,8 @@ public class AuthenticatedUserModel implements Model {
     }
 
     public void init(Map params) throws WebloggerException {
-        this.request = (HttpServletRequest)params.get("request");
+    	PageContext context = (PageContext)params.get("pageContext");
+    	this.request = (HttpServletRequest) context.getRequest();
     }
     
     public UserWrapper getUser() {

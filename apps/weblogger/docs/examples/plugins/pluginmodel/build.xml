@@ -14,6 +14,7 @@
                 <pathelement path="${tools}/roller-core/roller-core.jar" />
                 <pathelement path="${tools}/lib/commons-logging-1.0.4.jar" />
                 <pathelement path="${tools}/buildtime/tomcat-5.0.28/servlet-api.jar" />
+                <pathelement path="${tools}/buildtime/tomcat-5.0.28/jsp-api.jar" />
             </classpath>
         </javac>
         <jar basedir="build" destfile="dist/authusermodel.jar" />
