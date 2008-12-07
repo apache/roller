@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business;
 import java.io.InputStream;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.RollerMessages;
 
 
 /**
@@ -87,6 +88,21 @@ public interface FileManager {
     public ThemeResource[] getDirectories(Weblog weblog)
             throws FileNotFoundException, FilePathException;
     
+    
+    /**
+     * Determine if file can be saved given current WebloggerConfig settings.
+     * @param weblog      Weblog destination of upload
+     * @param path        Proposed file path
+     * @param contentType Content type
+     * @param size        Size in bytes
+     * @param errors    For returned error messages
+     * @return True if file can be saved
+     */
+    public boolean canSave(Weblog weblog,
+                           String path,
+                           String contentType,
+                           long size,
+                           RollerMessages errors);
     
     /**
      * Save a file to weblog's uploads area, with can-save check.

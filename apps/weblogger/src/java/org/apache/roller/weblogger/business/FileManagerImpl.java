@@ -348,15 +348,15 @@ public class FileManagerImpl implements FileManager {
     /**
      * Determine if file can be saved given current WebloggerConfig settings.
      */
-    private boolean canSave(Weblog weblog, 
+    public boolean canSave(Weblog weblog,
                            String path, 
                            String contentType,
                            long size, 
-                           RollerMessages messages) {
+                           RollerMessages errors) {
         
         // first check, is uploading enabled?
         if(!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
-            messages.addError("error.upload.disabled");
+            errors.addError("error.upload.disabled");
             return false;
         }
         
@@ -367,7 +367,7 @@ public class FileManagerImpl implements FileManager {
         log.debug("max allowed file size = "+maxFileBytes);
         log.debug("attempted save file size = "+size);
         if (size > maxFileBytes) {
-            messages.addError("error.upload.filemax", maxFileMB.toString());
+            errors.addError("error.upload.filemax", maxFileMB.toString());
             return false;
         }
         
@@ -379,7 +379,7 @@ public class FileManagerImpl implements FileManager {
             File uploadsDir = this.getRealFile(weblog, null);
             long userDirSize = getDirSize(uploadsDir, true);
             if (userDirSize + size > maxDirBytes) {
-                messages.addError("error.upload.dirmax", maxDirMB.toString());
+                errors.addError("error.upload.dirmax", maxDirMB.toString());
                 return false;
             }
         } catch (Exception ex) {
@@ -394,7 +394,7 @@ public class FileManagerImpl implements FileManager {
         String[] allowFiles = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         String[] forbidFiles = StringUtils.split(StringUtils.deleteWhitespace(forbids), ",");
         if (!checkFileType(allowFiles, forbidFiles, path, contentType)) {
-            messages.addError("error.upload.forbiddenFile", allows);
+            errors.addError("error.upload.forbiddenFile", allows);
             return false;
         }
         
@@ -403,7 +403,7 @@ public class FileManagerImpl implements FileManager {
             // just make sure there is only 1 directory, we don't allow multi
             // level directory hierarchies right now
             if(path.lastIndexOf("/") != path.indexOf("/")) {
-                messages.addError("error.upload.badPath");
+                errors.addError("error.upload.badPath");
                 return false;
             }
         }
@@ -462,7 +462,7 @@ public class FileManagerImpl implements FileManager {
         
         // if this person hasn't listed any allows, then assume they want
         // to allow *all* filetypes, except those listed under forbid
-        if(allowFiles == null || allowFiles.length < 1) {
+        if (allowFiles == null || allowFiles.length < 1) {
             allowFile = true;
         }
         
