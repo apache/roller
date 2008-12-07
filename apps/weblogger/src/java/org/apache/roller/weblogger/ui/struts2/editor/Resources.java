@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +37,8 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 
 
 /**
@@ -183,7 +186,8 @@ public final class Resources extends UIAction {
         }
             
         FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
-        
+
+        RollerMessages errors = new RollerMessages();
         List<String> uploaded = new ArrayList();
         File[] uploads = getUploadedFiles();
         if (uploads != null && uploads.length > 0) {
@@ -215,14 +219,17 @@ public final class Resources extends UIAction {
                 if(getPath() != null && getPath().trim().length() > 0) {
                     fileName = getPath() + "/" + fileName;
                 }
-                
+
+                if (!fmgr.canSave(getActionWeblog(), fileName, getUploadedFilesContentType()[i], uploads[i].length(), errors)) {
+                    continue;
+                }
                 
                 try {
                     fmgr.saveFile(getActionWeblog(), 
                             fileName,
                             getUploadedFilesContentType()[i],
                             uploads[i].length(),
-                            new FileInputStream(uploads[i]));
+                            new FileInputStream(uploads[i]), true);
                     
                     uploaded.add(fileName);
                     
@@ -243,10 +250,15 @@ public final class Resources extends UIAction {
             }
         }
         
+        for (Iterator it = errors.getErrors(); it.hasNext();) {
+            RollerMessage msg = (RollerMessage)it.next();
+            addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+        }
+
         if(uploaded.size() > 0) {
             addMessage("uploadFiles.uploadedFiles");
-            
-            for(String upload : uploaded) {
+
+            for (String upload : uploaded) {
                 addMessage("uploadFiles.uploadedFile",
                         WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(getActionWeblog(), upload, true));
             }
