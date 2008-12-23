@@ -1,22 +1,39 @@
 ROLLER CHANGE LOG
 -----------------
 
-Roller 4.0.1 - NOT YET RELEASED!!!
+Roller 4.0.1: Minor bug-fix release.
 
-Improvements
+No major code changes and no schema or dependency changes.
 
-   ROL-1661 - Danish translation for Roller 4.0		
-   ROL-1648 - Slovenian translation of Roller 4.0 properties file		
+Bug
+    * [ROL-1627] - Roller 4.0 doesn't work with Postgres
+    * [ROL-1644] - Planet Group feeds do not work properly
+    * [ROL-1654] - line 161 of dbmigration scripts for mysql + postgresql typo
+    * [ROL-1655] - Enclosure URLs should be escaped
+    * [ROL-1656] - Problem with special characters in category names
+    * [ROL-1658] - Some templates still reference rollerweblogger.org
+    * [ROL-1664] - Problems with Planet configuation and associated Install docs
+    * [ROL-1665] - Site Model methods should accept WeblogWrapper args
+    * [ROL-1666] - Cannot dis-allow custom themes
+    * [ROL-1675] - Cannot delete custom planet groups
+    * [ROL-1679] - Bug in Xinha editor
+    * [ROL-1686] - Email activation broken
+    * [ROL-1688] - Error pages throw errors
+    * [ROL-1693] - Banner still shows Register links when user registration is turned off
+    * [ROL-1700] - Error deleting planet subscriptions with apostrophes in title
+    * [ROL-1701] - Security problem in Roller Admin Protocol (RAP)
+    * [ROL-1722] - frontpage theme has the name 'Roller Homepage'
+    * [ROL-1726] - NPE when deleting a subscription with a URL that contains mulitiple param in query string
+    * [ROL-1753] - Defect in Roller logo image in front-page theme
+    * [ROL-1767] - Update User Guide info on how Roller uses email addresses
 
-Bug Fixes
+Improvement
+    * [ROL-1648] - Slovenian translation of Roller 4.0 properties file
+    * [ROL-1661] - Danish translation for Roller 4.0
+    * [ROL-1695] - Use dashes rather than underscore to form multi-word tags
+    * [ROL-1710] - Slovenian resource
+    * [ROL-1711] - $weblog.icon and $weblog.about not in the Template Guide
 
-   ROL-1675 - Cannot delete custom planet groups		
-   ROL-1666 - Cannot dis-allow custom themes		
-   ROL-1644 - Planet Group feeds do not work properly		
-   ROL-1654 - line 161 of dbmigration scripts for mysql + postgresql typo		
-   ROL-1655 - Enclosure URLs should be escaped		
-   ROL-1665 - Site Model methods should accept WeblogWrapper args		
-   ROL-1658 - Some templates still reference rollerweblogger.org		
 
 -------------------------------------------------------------------------------
 
