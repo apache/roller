@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
 import org.apache.roller.weblogger.WebloggerException;
@@ -47,6 +48,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -232,6 +234,11 @@ public class SearchResultsModel extends PageModel {
     
     
     public String getTerm() {
+        String query = searchRequest.getQuery();
+        return (query == null) ? "" : StringEscapeUtils.escapeXml(Utilities.escapeHTML(query));
+    }
+
+    public String getRawTerm() {
         return (searchRequest.getQuery() == null) ? "" : searchRequest.getQuery();
     }
 
