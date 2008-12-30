@@ -95,7 +95,7 @@
         <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
-        <content type="html">$comment.content</content>
+        <content type="html">$utils.escapeXML($comment.content)</content>
     </entry>
     #end
 #end
@@ -107,7 +107,7 @@
         <title>Re: $utils.escapeXML($comment.weblogEntry.title)</title>
         <dc:creator>$utils.escapeXML($utils.removeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
-        <description>$comment.content</description>
+        <description>$utils.escapeXML($comment.content)</description>
     </item>
     #end
 #end
