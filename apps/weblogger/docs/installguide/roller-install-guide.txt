@@ -29,7 +29,7 @@ Installation Guide
 
 Apache Roller Weblogger
 Version 4.0.1
-December 2008
+January 2009 
  
 Table of Contents
 1   Overview	3
@@ -348,7 +348,7 @@ Now you've got to run the database creation script. You can find the database cr
 And if you are upgrading Roller, you'll have to run the migration scripts. You'll find those under the dbscripts directory too.
 10Upgrading Roller
 This section describes how to upgrade an existing Roller installation to the latest release of Roller by shutting down, backing up and then following the installation instructions with a couple of key exceptions. But first, there is some required reading for those upgrading from ancient versions of Roller.
-10.1For those upgrading from Roller 2.x to Roller 4.0
+10.1For those upgrading from Roller 2.x to Roller 4.0.1
 Roller 3.0 and Roller 4.0 were major releases and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of them and especially the new URL structure and the new template system.
 New URL structure
 The most significant change is the new URL structure – we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
@@ -386,7 +386,7 @@ If you do, you'll have to move them around on every Roller upgrade. Put your upl
 If you're upgrading from an older version of Roller you may have been storing uploaded files inside the Roller web application, in a /resources subdirectory. In Roller 4.0 the default is to store those files your home directory under roller_data/uploads, so you'll have to copy your uploads there. If you want to change the location of the uploads directory, overload the property upoads.dir.
 10.3Install and startup the new Roller 
 Follow the normal installation instructions for the new version of Roller, but...
-When creating your roller-custom.properites, copy of your old one. Carefully review each property and compare it to the property settings in the Roller 4.0 property file in Section 11. 
+When creating your roller-custom.properties, copy of your old one. Carefully review each property and compare it to the property settings in the Roller 4.0 property file in Section 11. 
 Don't create a new database for Roller. Instead point Roller to your existing Roller database. This is completely safe because you created a backup of your database (right?).
 When you deploy and startup, Roller will detect that your database needs to be upgraded and it will offer to run each of the migrations scripts necessary to upgrade you from your old version to the new version of Roller.
 NOTE: if you would rather run the database migration scripts yourself, you can. See Section 9.4.
