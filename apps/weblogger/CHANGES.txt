@@ -6,6 +6,7 @@ Roller 4.0.1: Minor bug-fix release.
 No major code changes and no schema or dependency changes.
 
 Bug
+    * [ROL-1642] - Comments do not show in feeds with some readers.
     * [ROL-1627] - Roller 4.0 doesn't work with Postgres
     * [ROL-1644] - Planet Group feeds do not work properly
     * [ROL-1654] - line 161 of dbmigration scripts for mysql + postgresql typo
