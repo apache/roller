@@ -245,6 +245,10 @@ public class DatabaseInstaller {
                 upgradeTo400(con, runScripts);
                 dbversion = 400;
             }
+            if(dbversion < 401) {
+                upgradeTo401(con, runScripts);
+                dbversion = 401;
+            }
 
             // make sure the database version is the exact version
             // we are upgrading too.
@@ -1189,6 +1193,32 @@ public class DatabaseInstaller {
     }
     
     
+    /**
+     * Upgrade database for Roller 4.0.1
+     */
+    private void upgradeTo401(Connection con, boolean runScripts) throws StartupException {
+        SQLScriptRunner runner = null;
+        try {
+            if (runScripts) {
+                String handle = getDatabaseHandle(con);
+                String scriptPath = handle + "/400-to-401-migration.sql";
+                successMessage("Running database upgrade script: "+scriptPath);
+                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
+                runner.runScript(con, true);
+                messages.addAll(runner.getMessages());
+            }
+        } catch (Exception e) {
+            log.error("ERROR running 401 database upgrade script", e);
+            if (runner != null) messages.addAll(runner.getMessages());
+
+            errorMessage("Problem upgrading database to version 401", e);
+            throw new StartupException("Problem upgrading database to version 401", e);
+        }
+
+        updateDatabaseVersion(con, 310);
+    }
+
+
     private int parseVersionString(String vstring) {        
         int myversion = 0;
         

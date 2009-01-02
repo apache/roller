@@ -1,0 +1,7 @@
+#** 
+400-to-401-migration.vm: Velocity template that generates vendor-specific database scripts
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- No database changes in version 401, but we did record the new version number

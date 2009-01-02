@@ -77,7 +77,9 @@ public class SQLScriptRunner {
                 } else {
                     command += " "; // still more command coming so add space
                 }
-            } 
+            } else {
+                successMessage(line);
+            }
         }
         in.close();    
     }
