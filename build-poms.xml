@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="toplevel" default="build" basedir="." xmlns:artifact="urn:maven-artifact-ant">
-    
-    <!-- 
-    Build/test script intended to be run by build/test server.
-    For ordinary development use the separate build scripts.
-    -->    
-    
+<project name="poms" default="build" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+
+    <!--
+    Experimental support for building Maven POMs for Roller.
+    -->
+
     <target name="clean">
         <ant dir="components/core" target="clean" />
         <ant dir="apps/planet"     target="clean" />
         <ant dir="apps/weblogger"  target="clean" />
     </target>
-    
-    <target name="build-integrated" 
-        description="Build Core, Planet and Roller together (i.e. Rebuilds Core and Planet jars, uses them to build Roller)">        
-        
-        <ant  dir="components/core" target="dist" />        
-        <copy file="components/core/dist/lib/roller-core.jar" todir="tools/roller-core" /> 
-        
+
+    <target name="build-integrated"
+        description="Build Core, Planet and Roller together (i.e. Rebuilds Core and Planet jars, uses them to build Roller)">
+
+        <ant  dir="components/core" target="dist" />
+        <copy file="components/core/dist/lib/roller-core.jar" todir="tools/roller-core" />
+
         <ant  dir="apps/planet" target="dist" />
-        <copy file="apps/planet/dist/lib/roller-planet-business.jar" todir="tools/roller-planet" /> 
-        
+        <copy file="apps/planet/dist/lib/roller-planet-business.jar" todir="tools/roller-planet" />
+
         <ant dir="apps/weblogger"  target="dist" />
         <ant dir="apps/weblogger"  target="apache-release" />
-        
+
     </target>
 
-    <target name="build" 
+    <target name="build"
         description="Build Core, Planet and Roller separately (i.e. uses Core and Planet jars from Subversion)" >
         <ant dir="components/core" target="dist" />
         <ant dir="apps/planet"     target="dist" />
