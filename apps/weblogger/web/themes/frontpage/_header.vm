@@ -5,6 +5,8 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>$model.weblog.name</title>
+  <link href="$url.absoluteSite/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+  #showAutodiscoveryLinks($model.weblog)
   <style type="text/css">
   #includeTemplate($model.weblog "_css")
   </style>
