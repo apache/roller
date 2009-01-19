@@ -22,8 +22,8 @@
       xmlns:app="http://www.w3.org/2007/app"
       xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
 
-    <title type="html">$utils.escapeXML($config.siteName)</title>
-    <subtitle type="html">$utils.escapeXML($config.siteDescription)</subtitle>
+    <title type="html">Search for [$model.term] in site $utils.escapeXML($config.siteName)</title>
+    <subtitle type="html">Search results for [$model.term] within site $utils.escapeXML($config.siteName)</subtitle>
     <id>$utils.escapeXML($url.feed.entries.search($model.term, $model.categoryPath))</id>
 
     <link rel="self" type="application/atom+xml" 
