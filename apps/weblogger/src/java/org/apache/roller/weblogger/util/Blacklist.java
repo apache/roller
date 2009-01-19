@@ -435,7 +435,7 @@ public class Blacklist {
         String weblogWords = blacklist;
         weblogWords = (weblogWords == null) ? "" : weblogWords;
         String siteWords = (addendum != null) ? addendum : "";
-        StringTokenizer toker = new StringTokenizer(siteWords + weblogWords,"\n");
+        StringTokenizer toker = new StringTokenizer(siteWords + "\n" + weblogWords, "\n");
         while (toker.hasMoreTokens()) {
             String token = toker.nextToken().trim();
             if (token.startsWith("#")) continue;
