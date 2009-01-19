@@ -35,7 +35,7 @@ public class BlacklistCommentValidator implements CommentValidator {
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        if (checker.checkComment(comment)) {
+        if (BlacklistChecker.checkComment(comment)) {
             messages.addError("comment.validator.blacklistMessage");
             return 0;
         }
