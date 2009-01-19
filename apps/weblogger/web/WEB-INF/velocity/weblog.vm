@@ -90,6 +90,17 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     #else
     <link rel="alternate" type="application/rss+xml"  title="Search results for '$utils.escapeHTML($model.term)'"  href="$utils.escapeHTML($url.feed.entries.search($model.term,$model.weblogCategory.path))" />
     #end
+    #if ($site)
+        <link rel="search"
+            title="OpenSearch Descriptor for $config.siteName"
+            type="application/opensearchdescription+xml"
+            href="$url.absoluteSite/roller-services/opensearch" />
+    #else
+        <link rel="search"
+            title="OpenSearch Descriptor for weblog $model.weblog.name"
+            type="application/opensearchdescription+xml"
+            href="$url.absoluteSite/roller-services/opensearch/$model.weblog.handle" />
+    #end
 #end
 
 
