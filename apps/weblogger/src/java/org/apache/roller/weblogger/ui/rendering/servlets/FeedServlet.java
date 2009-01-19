@@ -217,15 +217,15 @@ public class FeedServlet extends HttpServlet {
         try {
             // determine what template to render with
             boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle());
-            if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
-                pageId = "templates/feeds/site-search-atom.vm";                
+           if (siteWide && "entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+                pageId = "templates/feeds/site-search-atom.vm";
 
-            } else if (siteWide && "entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
-                pageId = "templates/feeds/weblog-search-atom.vm";                
-                
+           } else if ("entries".equals(feedRequest.getType()) && feedRequest.getTerm() != null) {
+                pageId = "templates/feeds/weblog-search-atom.vm";
+
             } else if (siteWide) {
                 pageId = "templates/feeds/site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
-                
+
             } else {
                 pageId = "templates/feeds/weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
             }
