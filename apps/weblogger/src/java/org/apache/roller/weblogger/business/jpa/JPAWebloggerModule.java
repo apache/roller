@@ -21,8 +21,12 @@ package org.apache.roller.weblogger.business.jpa;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.FileContentManager;
+import org.apache.roller.weblogger.business.FileContentManagerImpl;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
+import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.MediaFileManagerImpl;
 import org.apache.roller.weblogger.business.MultiWeblogURLStrategy;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -70,6 +74,8 @@ public class JPAWebloggerModule implements Module {
                 
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
         binder.bind(FileManager.class).to(         FileManagerImpl.class);   
+        binder.bind(MediaFileManager.class).to(    MediaFileManagerImpl.class);
+        binder.bind(FileContentManager.class).to(  FileContentManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
         binder.bind(PluginManager.class).to(       PluginManagerImpl.class);    
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);

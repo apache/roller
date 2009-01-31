@@ -225,6 +225,12 @@
     </servlet>
     
     <servlet>
+        <servlet-name>MediaResourceServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.MediaResourceServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>SearchServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.SearchServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
@@ -349,6 +355,11 @@
     <servlet-mapping>
         <servlet-name>ResourceServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/resources/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>MediaResourceServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/media-resources/*</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>

@@ -132,12 +132,20 @@ public interface Weblogger {
      */
     public PluginManager getPluginManager();
     
+    /**
+     * Get MediaFileManager associated with this Weblogger instance.
+     */
+    public MediaFileManager getMediaFileManager();
     
+    /**
+     * Get FileContentManager associated with this Weblogger instance.
+     */
+    public FileContentManager getFileContentManager();
+
     /**
      * Get the URLStrategy used to build all urls in the system.
      */
     public URLStrategy getUrlStrategy();
-    
     
     /**
      * Flush object states.

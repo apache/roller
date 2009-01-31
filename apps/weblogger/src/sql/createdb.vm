@@ -506,6 +506,33 @@ create index rage_sid_idx on rag_entry(subscription_id);
 insert into rag_planet (id, handle, title) values ('zzz_default_planet_zzz', 'default', 'Default Planet');
 insert into rag_group (id, planet_id, handle, title) values ('zzz_all_group_zzz', 'zzz_default_planet_zzz', 'all', 'Default Group');
 
+create table media_file (
+    id              varchar(48) not null primary key,
+    name            varchar(255) not null,
+    description     varchar(255),
+    content_type    varchar(50)  not null,
+    copyright_text  varchar(1023),
+    directory_id    varchar(48), 
+    size_in_bytes   integer,
+    date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
+    last_updated    $db.TIMESTAMP_SQL_TYPE,
+    is_public       $db.BOOLEAN_SQL_TYPE_FALSE not null
+);
+
+create table media_file_tag (
+    id              varchar(48) not null primary key,
+    media_file_id   varchar(48) not null,
+    name            varchar(30) not null
+);
+
+create table media_file_directory (
+    id               varchar(48) not null primary key,
+    name             varchar(255) not null,
+    description      varchar(255),
+    websiteid        varchar(48) not null,
+    parentid         varchar(48),
+    path             varchar(255) 
+);
 
 -- *****************************************************
 -- Now add the foreign key relationships
@@ -550,6 +577,19 @@ alter table folder add constraint fo_websiteid_fk
 
 alter table bookmark add constraint bm_folderid_fk
     foreign key ( folderid ) references folder( id ) $!db.ADDL_FK_PARAMS ;
+
+-- media files
+alter table media_file add constraint media_file_directory_id_fk
+    foreign key (directory_id) references media_file_directory(id) $!db.ADDL_FK_PARAMS ;
+
+alter table media_file_tag add constraint media_file_id_tag_fk
+    foreign key (media_file_id) references media_file(id) $!db.ADDL_FK_PARAMS ;
+
+alter table media_file_directory add constraint mf_websiteid_fk
+    foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
+
+alter table media_file_directory add constraint mf_parentid_fk
+    foreign key ( parentid ) references media_file_directory( id )  $!db.ADDL_FK_PARAMS ;
 
 -- newsfeed
 
