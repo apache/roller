@@ -19,6 +19,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ page isErrorPage="true" %>
 
+<fmt:setBundle basename="ApplicationResources" />
+
 <h2><fmt:message key="error.permissionDenied.title" /></h2>
 
 <fmt:message key="error.permissionDenied.prompt" />
