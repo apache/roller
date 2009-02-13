@@ -89,9 +89,13 @@ public class GlobalPermission extends RollerPermission {
     }
         
     public boolean implies(Permission perm) {
-        if (perm instanceof RollerPermission) {
-            RollerPermission rperm = (RollerPermission)perm;
-            
+        if (perm instanceof WeblogPermission) {
+            if (hasAction(ADMIN)) {
+                // admin implies all other permissions
+                return true;                
+            } 
+        } else if (perm instanceof RollerPermission) {
+            RollerPermission rperm = (RollerPermission)perm;            
             if (hasAction(ADMIN)) {
                 // admin implies all other permissions
                 return true;
