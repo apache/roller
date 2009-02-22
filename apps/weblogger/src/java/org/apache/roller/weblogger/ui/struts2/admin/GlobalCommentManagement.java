@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,12 +39,13 @@ import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.interceptor.ServletRequestAware;
 
 
 /**
  * Action for managing global set of comments.
  */
-public class GlobalCommentManagement extends UIAction {
+public class GlobalCommentManagement extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(GlobalCommentManagement.class);
     
@@ -65,6 +67,10 @@ public class GlobalCommentManagement extends UIAction {
     // indicates number of comments that would be deleted by bulk removal
     // a non-zero value here indicates bulk removal is a valid option
     private int bulkDeleteCount = 0;
+
+    // work around checkbox issue in cases where user inadvertently does a
+    // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
+    private String httpMethod = "GET";
     
     
     public GlobalCommentManagement() {
@@ -239,6 +245,7 @@ public class GlobalCommentManagement extends UIAction {
      * Update a list of comments.
      */
     public String update() {
+        if (!"POST".equals(httpMethod)) return ERROR;
         
         try {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
@@ -376,6 +383,10 @@ public class GlobalCommentManagement extends UIAction {
 
     public void setPager(CommentsPager pager) {
         this.pager = pager;
+    }
+
+    public void setServletRequest(HttpServletRequest req) {
+        httpMethod = req.getMethod();
     }
     
 }
