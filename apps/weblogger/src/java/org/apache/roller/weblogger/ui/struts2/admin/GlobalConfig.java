@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,12 +39,13 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
+import org.apache.struts2.interceptor.ServletRequestAware;
 
 
 /**
  * Action which handles editing of global configuration.
  */
-public class GlobalConfig extends UIAction implements ParameterAware {
+public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
     
     private static Log log = LogFactory.getLog(GlobalConfig.class);
     
@@ -61,8 +63,12 @@ public class GlobalConfig extends UIAction implements ParameterAware {
     
     // comment plugins that are enabled.  this is what the html form submits to
     private String[] commentPlugins = new String[0];
-    
-    
+
+    // work around checkbox issue in cases where user inadvertently does a
+    // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
+    private String httpMethod = "GET";
+
+
     public GlobalConfig() {
         this.actionName = "globalConfig";
         this.desiredMenu = "admin";
@@ -130,6 +136,7 @@ public class GlobalConfig extends UIAction implements ParameterAware {
      * Save global properties.
      */
     public String save() {
+        if (!"POST".equals(httpMethod)) return ERROR;
         
         // only set values for properties that are already defined
         String propName = null;
@@ -247,6 +254,10 @@ public class GlobalConfig extends UIAction implements ParameterAware {
 
     public void setCommentPlugins(String[] commentPlugins) {
         this.commentPlugins = commentPlugins;
+    }
+
+    public void setServletRequest(HttpServletRequest req) {
+        httpMethod = req.getMethod();
     }
     
 }
