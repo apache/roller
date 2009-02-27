@@ -36,7 +36,6 @@ import com.sun.syndication.propono.atom.common.AtomService;
 import com.sun.syndication.propono.atom.server.AtomException;
 import com.sun.syndication.propono.atom.server.AtomHandler;
 import com.sun.syndication.propono.atom.server.AtomMediaResource;
-import com.sun.syndication.propono.atom.server.AtomNotAuthorizedException;
 import com.sun.syndication.propono.atom.server.AtomNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
@@ -81,38 +80,18 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  *    /roller-services/app/[weblog-handle]/resource/[name]
  *    Individual resource data (GET)
  * 
- * 
- *  Coming soon...
- *
- *    /roller-services/app/[weblog-handle]/comments
- *    Comments collection for weblog (GET, POST)
- * 
- *    /roller-services/app/[weblog-handle]/comments/[offset]
- *    Comments collection for weblog with offset (GET)
- * 
- *    /roller-services/app/[weblog-handle]/comment/[id]
- *    Individual comment within weblog (GET, PUT, DELETE)
- * 
- * 
- *    /roller-services/app/[weblog-handle]/entry/[id]/comments
- *    Comments collection for entry with id (GET)
- * 
- *    /roller-services/app/[weblog-handle]/entry/[id]/comments/[offset]
- *    Comments collection for entry with id (GET)
- * 
  * </pre>
  * @author David M Johnson
  */
 public class RollerAtomHandler implements AtomHandler {
-    private Weblogger roller;
-    private User      user;
-    private int       maxEntries = 20;
+    protected Weblogger roller = null;
+    protected User user = null;
+    protected int  maxEntries = 20;
+    protected      String atomURL = null;
     
-    private final String atomURL;
+    protected static boolean throttle = true;
     
-    private static boolean throttle = true;
-    
-    private static Log log =
+    protected static Log log =
             LogFactory.getFactory().getInstance(RollerAtomHandler.class);
     
     static {
@@ -121,7 +100,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     //------------------------------------------------------------ construction
-    
+
     /**
      * Create Atom handler for a request and attempt to authenticate user.
      * If user is authenticated, then getAuthenticatedUsername() will return
@@ -144,6 +123,9 @@ public class RollerAtomHandler implements AtomHandler {
         atomURL = WebloggerFactory.getWeblogger().getUrlStrategy().getAtomProtocolURL(true);
     }
     
+    /** For testing and for those who wish to extend */
+    public RollerAtomHandler() {}
+
     /**
      * Return weblogHandle of authenticated user or null if there is none.
      */
