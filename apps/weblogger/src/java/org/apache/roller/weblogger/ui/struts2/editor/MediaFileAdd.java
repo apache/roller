@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,21 +34,21 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * Adds a new media file.
  */
 @SuppressWarnings("serial")
-public class MediaFileAdd extends UIAction {
+public class MediaFileAdd extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileAdd.class);
     
     private MediaFileBean bean =  new MediaFileBean();
+    
+    // TODO: Ganesh - Move this to MediaFileBean
     private String directoryId;
     private MediaFileDirectory directory;
-    private List<MediaFileDirectory> allDirectories;
-
     // file uploaded by the user
     private File uploadedFile = null;
     
@@ -64,9 +65,10 @@ public class MediaFileAdd extends UIAction {
     }
     
     public void myPrepare() {
-        try {
+        System.out.println("Into myprepare");
+    	refreshAllDirectories();
+    	try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            setAllDirectories(mgr.getMediaFileDirectories(getActionWeblog()));
             if(!StringUtils.isEmpty(getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(getDirectoryId()));
             }
@@ -133,18 +135,28 @@ public class MediaFileAdd extends UIAction {
         if (StringUtils.isEmpty(this.uploadedFileFileName)) {
         	addError("error.upload.file");
         }
-    }
+        
+        if (getBean().getCopyrightText().length() > 1023) {
+        	addError("errors.maxlength", Arrays.asList("Copyright text", "1023"));
+        }
+
+        if (getBean().getDescription().length() > 255) {
+        	addError("errors.maxlength", Arrays.asList("File description", "255"));
+        }
+}
     
     /**
      * Get the list of all categories for the action weblog, not including root.
      */
     public List<MediaFileDirectory> getDirectories() {
-        try {
-        	MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        
+    	try {
+        	// TODO: Ganesh - do this in prepare method?
+    		MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             return mgr.getMediaFileDirectories(getActionWeblog());
         } catch (WebloggerException ex) {
             log.error("Error getting media file directory list for weblog - "+getWeblog(), ex);
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -172,14 +184,6 @@ public class MediaFileAdd extends UIAction {
 		this.directory = directory;
 	}
 	
-	public List<MediaFileDirectory> getAllDirectories() {
-		return allDirectories;
-	}
-    
-	public void setAllDirectories(List<MediaFileDirectory> dirs) {
-		this.allDirectories = dirs;
-	}
-
     public File getUploadedFile() {
         return uploadedFile;
     }
@@ -205,13 +209,12 @@ public class MediaFileAdd extends UIAction {
     }
     
     public boolean isContentTypeImage() {
-    	// TODO: To be expanded
-    	if ("image/jpeg".equals(this.uploadedFileContentType)
-    	|| 	"image/gif".equals(this.uploadedFileContentType)	
-    	) {
-    		return true;
+    	String[] allowedImageContentTypes = MediaFileType.IMAGE.getContentTypes(); 
+    	for (String imageContentType: allowedImageContentTypes) {
+    		if (imageContentType.equals(this.uploadedFileContentType)) {
+    			return true;
+    		}
     	}
-    	
     	return false;
     }
 }

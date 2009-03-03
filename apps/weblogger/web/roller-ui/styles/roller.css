@@ -672,6 +672,12 @@ td.mm_subtable_label {
     font-weight: bold;
 }
 
+/* media file pages */
+.mediaFileSearchResult {
+   float: left;
+   margin: 10px 10px 10px 10px;
+}
+
 /* weblog entry form page */
 
 span.entryEditSidebarLink {

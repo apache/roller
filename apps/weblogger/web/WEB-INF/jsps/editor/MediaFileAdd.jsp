@@ -18,32 +18,33 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle">
-   Add Media Files
+    <s:text name="mediaFile.add.title"  />
+
 </p>
 
 <s:form id="entry" action="mediaFileAdd!save" onsubmit="editorCleanup()" method="POST" enctype="multipart/form-data">
     <s:hidden name="weblog" />
-    
+
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
-    
-    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">   
-        
+
+    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="title">File Location</label>
             </td>
             <td>
-                 <s:file name="uploadedFile" size="30" /><br />
+                 <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=this.value" /><br />
             </td>
         </tr>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Name</label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="50" maxlength="255" tabindex="1" />
+                <s:textfield name="bean.name" size="50" maxlength="255" />
             </td>
        </tr>
 
@@ -52,7 +53,7 @@
                 <label for="status">A short Description of file</label>
             </td>
             <td>
-                <s:textarea name="bean.description" cols="50" rows="5" tabindex="3"/>
+                <s:textarea name="bean.description" cols="50" rows="5" />
             </td>
        </tr>
 
@@ -61,7 +62,7 @@
                 <label for="status">Copyright Statement (optional)</label>
             </td>
             <td>
-                <s:textarea name="bean.copyrightText" cols="50" rows="3" tabindex="4"/>
+                <s:textarea name="bean.copyrightText" cols="50" rows="3" />
             </td>
        </tr>
 
@@ -70,7 +71,7 @@
                 <label for="status">Tags (separated by spaces)</label>
             </td>
             <td>
-                <s:textfield name="bean.tags" size="50" maxlength="255" tabindex="5" />
+                <s:textfield name="bean.tags" size="50" maxlength="255" />
             </td>
        </tr>
 
@@ -88,42 +89,42 @@
                 <label for="status">Include in Gallery?</label>
             </td>
 			<td>
-                <input type="checkbox" name="checkbox" checked />
+                <s:checkbox name="bean.sharedForGallery" />
             </td>
        </tr>
-        
-       
-        
-        
-       
-        
+
+
+
+
+
+
     </table>
-    
-    
+
+
     <%-- ================================================================== --%>
     <%-- Weblog edit or preview --%>
-    
-   
-    
-   
-    
-    
+
+
+
+
+
+
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>
-    
- 
 
-    
+
+
+
     <%-- ================================================================== --%>
     <%-- advanced settings  --%>
-  
-    
+
+
     <%-- ================================================================== --%>
     <%-- the button box --%>
-    
+
     <br>
     <div class="control">
        <input type="submit" value="Upload" name="upload" />
     </div>
-    
+
 </s:form>

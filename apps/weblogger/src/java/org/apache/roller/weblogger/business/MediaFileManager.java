@@ -24,25 +24,31 @@ import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 public interface MediaFileManager {
 
-	// TODO: Ganesh - Remove old FileManager implementation
 	public void createMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException ;
 	public void updateMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException ;
 	public MediaFile getMediaFile(String id) throws WebloggerException;
 	public MediaFile getMediaFile(String id, boolean includeContent) throws WebloggerException;
-	public void removeMediaFile(MediaFile mediaFile) throws WebloggerException;
-	
+	public void removeMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException;
+
+	public List<MediaFile> searchMediaFiles(Weblog weblog, MediaFileFilter filter) throws WebloggerException;
+
 	public MediaFileDirectory createRootMediaFileDirectory(Weblog weblog) throws WebloggerException;
+	public MediaFileDirectory createMediaFileDirectory(MediaFileDirectory parentDirectory, String newDirName) throws WebloggerException;
 	public void createMediaFileDirectory(MediaFileDirectory directory) throws WebloggerException;
+	public MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog, String path) throws WebloggerException; 
 
 	public MediaFileDirectory getMediaFileDirectory(String id) throws WebloggerException;
+	public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog, String path) throws WebloggerException; 
 	public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog) throws WebloggerException;
     public MediaFileDirectory getMediaFileRootDirectory(Weblog weblog) throws WebloggerException;
     
     public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaFileDirectory directory) throws WebloggerException;
+    public void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory) throws WebloggerException;
 
 	public void release();
 }

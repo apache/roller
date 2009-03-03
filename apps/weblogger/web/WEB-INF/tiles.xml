@@ -209,14 +209,42 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
-	<definition name=".MediaFileAddSuccess" extends=".tiles-tabbedpage" >
+    <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileHierarchicalView" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileHierarchicalView.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAddSuccess" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
-	<definition name=".TabularView" extends=".tiles-tabbedpage" >
+    <definition name=".MediaFileSearch" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".TabularView" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TabularView.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />

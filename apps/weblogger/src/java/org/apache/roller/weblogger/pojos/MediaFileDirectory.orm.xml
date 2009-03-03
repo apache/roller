@@ -18,6 +18,9 @@
         <named-query name="MediaFileDirectory.getByWeblogAndNoParent">
             <query>SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.parent IS NULL</query>
         </named-query>
+        <named-query name="MediaFileDirectory.getByWeblogAndPath">
+            <query>SELECT d FROM MediaFileDirectory d WHERE d.weblog = ?1 AND d.path = ?2</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
@@ -40,6 +43,7 @@
             <one-to-many name="childDirectories" mapped-by="parent" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory" fetch="LAZY">
                 <order-by>name</order-by>
                 <cascade>
+                    <cascade-persist/>
                     <cascade-remove/>
                 </cascade>
             </one-to-many>

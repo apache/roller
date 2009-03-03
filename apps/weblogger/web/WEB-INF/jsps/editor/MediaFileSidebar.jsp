@@ -20,32 +20,27 @@
 <div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
-
             <div class="sidebarInner">
-
                 <b>Actions:</b>
-                <hr size="1" noshade="noshade" />
-                <s:url id="mediaFileAddURL" action="mediaFileAdd">
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
-                </s:url>
-                <s:a href="%{mediaFileAddURL}">Add Media file</s:a>
-
-                <hr size="1" noshade="noshade" />
-
-                <s:url id="viewUploads" action="tabular">
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
-                </s:url>
-                <s:a href="${viewUploads}">View Uploaded files</s:a>
-
-                <hr size="1" noshade="noshade" />
-                <a href="#">Search uploaded files</a>
-
-                <hr size="1" noshade="noshade" />
-
+                    <s:url id="mediaFileAddURL" action="mediaFileAdd">
+                        <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    </s:url>
+                    <s:url id="mediaFileSearchURL" action="mediaFileSearch">
+                        <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    </s:url>
+                    <s:url id="mediaFileViewURL" action="mediaFileView">
+                        <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    </s:url>
+                    <hr size="1" noshade="noshade" />
+                    <s:a href="%{mediaFileAddURL}">Add Media file</s:a>
+                    <hr size="1" noshade="noshade" />
+                    <s:a href="%{mediaFileViewURL}">View Uploaded files</s:a>
+                    <hr size="1" noshade="noshade" />
+                    <s:a href="%{mediaFileSearchURL}">Search uploaded files</s:a>
+                    <hr size="1" noshade="noshade" />
                 <br />
                 <br />
             </div>
-
         </div>
     </div>
 </div>

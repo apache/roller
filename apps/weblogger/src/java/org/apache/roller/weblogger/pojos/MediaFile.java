@@ -237,4 +237,15 @@ public class MediaFile implements ThemeResource {
 	public void setContent(FileContent content) {
 		this.content = content;
 	}
+	
+	public boolean isImageFile() {
+		if (this.contentType == null) return false;
+    	String[] allowedImageContentTypes = MediaFileType.IMAGE.getContentTypes(); 
+    	for (String imageContentType: allowedImageContentTypes) {
+    		if (imageContentType.equals(this.contentType)) {
+    			return true;
+    		}
+    	}
+    	return false;
+	}
 }

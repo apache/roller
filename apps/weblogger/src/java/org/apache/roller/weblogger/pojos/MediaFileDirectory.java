@@ -200,12 +200,42 @@ public class MediaFileDirectory {
     
     public boolean hasMediaFile(String name) {
     	Set<MediaFile> fileSet = this.getMediaFiles();
+    	if (fileSet == null) 
+    		return false;
     	for (MediaFile mediaFile: fileSet) {
     		if (mediaFile.getName().equals(name)) {
     			return true;
     		}
     	}
     	return false;
+    }
+    
+    public MediaFile getMediaFile(String name) {
+    	Set<MediaFile> fileSet = this.getMediaFiles();
+    	if (fileSet == null) 
+    		return null;
+    	for (MediaFile mediaFile: fileSet) {
+    		if (mediaFile.getName().equals(name)) {
+    			return mediaFile;
+    		}
+    	}
+    	return null;
+    }
+    
+    public boolean hasDirectory(String name) {
+    	Set<MediaFileDirectory> dirSet = this.getChildDirectories();
+    	for (MediaFileDirectory directory: dirSet) {
+    		if (directory.getName().equals(name)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public MediaFileDirectory createNewDirectory(String name) {
+    	MediaFileDirectory newDirectory = new MediaFileDirectory(this, name, "", this.getWeblog());
+    	this.getChildDirectories().add(newDirectory);
+    	return newDirectory;
     }
     
     

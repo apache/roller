@@ -222,6 +222,31 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
             <result name="input" type="tiles">.MediaFileAdd</result>
             <result name="success" type="tiles">.MediaFileAddSuccess</result>
+            <result name="error" type="tiles">.MediaFileAdd</result>
+        </action>
+
+	<action name="mediaFileEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <result name="input" type="tiles">.MediaFileEdit</result>
+            <result name="success" type="tiles">.MediaFileEdit</result>
+        </action>
+
+	<action name="mediaFileView!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+            <result name="success" type="tiles">.MediaFileView</result>
+            <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
+        </action>
+
+	<action name="mediaFileHierarchicalView!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+            <result name="success" type="tiles">.MediaFileHierarchicalView</result>
+        </action>
+
+	<action name="mediaFileSearch!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
+            <result name="input" type="tiles">.MediaFileSearch</result>
+            <result name="error" type="tiles">.MediaFileSearch</result>
+            <result name="success" type="tiles">.MediaFileSearch</result>
         </action>
 
 	<action name="tabular!*" method="{1}"

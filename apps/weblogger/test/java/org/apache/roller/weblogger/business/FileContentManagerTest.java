@@ -60,13 +60,6 @@ public class FileContentManagerTest extends TestCase {
         // setup weblogger
         TestUtils.setupWeblogger();
         
-        try {
-            testUser = TestUtils.setupUser("FCMTest_userName");
-            testWeblog = TestUtils.setupWeblog("FCMTest_handle", testUser);
-            TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-        }
     }
     
     public void tearDown() throws Exception {
@@ -80,6 +73,14 @@ public class FileContentManagerTest extends TestCase {
             log.error(ex);
         }
         */
+        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        Map config = config = pmgr.getProperties();
+        ((RuntimeConfigProperty)config.get("uploads.dir.maxsize")).setValue("30000");
+        ((RuntimeConfigProperty)config.get("uploads.types.forbid")).setValue("");
+        ((RuntimeConfigProperty)config.get("uploads.types.allowed")).setValue("");
+        ((RuntimeConfigProperty)config.get("uploads.enabled")).setValue("true");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
     }
     
     
@@ -88,6 +89,14 @@ public class FileContentManagerTest extends TestCase {
      */
     public void testFileCRUD() throws Exception {
         
+        try {
+            testUser = TestUtils.setupUser("FCMTest_userName1");
+            testWeblog = TestUtils.setupWeblog("FCMTest_handle1", testUser);
+            TestUtils.endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+        }
+
         // update roller properties to prepare for test
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         Map config = pmgr.getProperties();
@@ -138,6 +147,14 @@ public class FileContentManagerTest extends TestCase {
      */
     public void testCanSave() throws Exception {
         
+        try {
+            testUser = TestUtils.setupUser("FCMTest_userName2");
+            testWeblog = TestUtils.setupWeblog("FCMTest_handle2", testUser);
+            TestUtils.endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+        }
+
         FileContentManager fmgr = WebloggerFactory.getWeblogger().getFileContentManager();
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         Map config = config = pmgr.getProperties();

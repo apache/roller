@@ -33,13 +33,12 @@
 <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}">
 </s:url>
 
-<s:a href="%{mediaFileURL}">
 <s:if test="contentTypeImage">
 <div style="margin-bottom:10px;"><img border="0" src='<s:property value="%{mediaFileURL}" />' width="150px" alt="image"/></div>
 </s:if>
-<s:else>
+
+<s:a href="%{mediaFileURL}">
 <s:property value="%{mediaFileURL}" />
-</s:else>
 </s:a>
 
 <div style="margin-top:20px;text-decoration:underline">
@@ -56,31 +55,31 @@
 
 
 
-       
-        
-   
-    
-    
+
+
+
+
+
     <%-- ================================================================== --%>
     <%-- Weblog edit or preview --%>
-    
-   
-    
-   
-    
-    
+
+
+
+
+
+
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>
-    
- 
 
-    
+
+
+
     <%-- ================================================================== --%>
     <%-- advanced settings  --%>
-  
-    
+
+
     <%-- ================================================================== --%>
     <%-- the button box --%>
-   
+
 
    </s:form>

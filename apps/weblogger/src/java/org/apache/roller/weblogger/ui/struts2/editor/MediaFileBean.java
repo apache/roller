@@ -44,6 +44,7 @@ public class MediaFileBean {
     boolean isSharedForGallery;
 
     public void copyTo(MediaFile dataHolder) throws WebloggerException {
+    	
     	dataHolder.setName(this.name);
     	dataHolder.setDescription(this.description);
     	dataHolder.setCopyrightText(this.copyrightText);
@@ -58,6 +59,24 @@ public class MediaFileBean {
     
     
     public void copyFrom(MediaFile dataHolder) {
+    	this.setId(dataHolder.getId());
+    	this.setName(dataHolder.getName());
+    	this.setDescription(dataHolder.getDescription());
+    	this.setCopyrightText(dataHolder.getCopyrightText());
+    	
+    	Set<MediaFileTag> tags = dataHolder.getTags();
+    	if (tags != null && !tags.isEmpty()) {
+        	StringBuffer tagDisplayBuffer = new StringBuffer();
+        	for (MediaFileTag tag: dataHolder.getTags()) {
+        		tagDisplayBuffer.append(tag.getName());
+        		tagDisplayBuffer.append(" ");
+        	}
+        	tagDisplayBuffer.deleteCharAt(tagDisplayBuffer.length() - 1);
+        	this.setTags(tagDisplayBuffer.toString());
+    	}
+    	
+    	this.setSharedForGallery(dataHolder.isSharedForGallery());
+    	this.setDirectoryId(dataHolder.getDirectory().getId());
     }
 
 
