@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.util.Date;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -50,7 +51,10 @@ public class UserWrapper {
      * username to be displayed publicly, so screen name is returned instead.
      */
     public String getUserName() {
-        return this.pojo.getScreenName();
+        if (WebloggerConfig.getBooleanProperty("user.privateUserNames")) {
+            return this.pojo.getScreenName();
+        }
+        return this.pojo.getUserName();
     }
     
     
