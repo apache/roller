@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business;
 
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.jpa.JPAOAuthManagerImpl;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
@@ -35,8 +36,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
  * The main entry point interface of the Weblogger business tier.
  */
 public interface Weblogger {
-    
-    
+
     /**
      * 
      * Get UserManager associated with this Weblogger instance.
@@ -51,6 +51,13 @@ public interface Weblogger {
     public BookmarkManager getBookmarkManager();
     
     
+    /**
+     *
+     * Get OAuthManager associated with this Weblogger instance.
+     */
+    public OAuthManager getOAuthManager();
+
+
     /**
      * 
      * Get WeblogManager associated with this Weblogger instance.

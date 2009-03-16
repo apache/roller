@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -89,7 +90,13 @@ public class URLModel implements Model {
     
     /** Absolute URL of Roller, e.g. http://localhost:8080/roller */
     public String getAbsoluteSite() {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL();
+        String weblogAbsoluteURL =
+            WebloggerConfig.getProperty("weblog.absoluteurl." + weblog.getHandle());
+        if (weblogAbsoluteURL != null) {
+            return weblogAbsoluteURL;
+        } else {
+            return WebloggerRuntimeConfig.getAbsoluteContextURL();
+        }
     }
     
     

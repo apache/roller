@@ -20,10 +20,13 @@ package org.apache.roller.weblogger.business.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import net.oauth.OAuthValidator;
+import net.oauth.SimpleOAuthValidator;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.FileManagerImpl;
 import org.apache.roller.weblogger.business.MultiWeblogURLStrategy;
+import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -67,6 +70,9 @@ public class JPAWebloggerModule implements Module {
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
         binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);   
+        binder.bind(OAuthManager.class).to(        JPAOAuthManagerImpl.class);
+
+        binder.bind(OAuthValidator.class).to(      SimpleOAuthValidator.class);
                 
         binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
         binder.bind(FileManager.class).to(         FileManagerImpl.class);   

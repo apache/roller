@@ -435,7 +435,27 @@ create table entryattribute (
 create index ea_entryid_idx on entryattribute( entryid );
 alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!db.INDEXSIZE );
 
+-- each record is an OAuth consumer key and secret, can be tied to just one user
+create table rol_oauthconsumer (
+    consumerkey varchar(48) not null primary key,
+    consumersecret varchar(48) not null,
+    username varchar(48)
+);
+create index oc_username_idx  on rol_oauthconsumer( username$!db.INDEXSIZE );
+create index oc_consumerkey_idx  on rol_oauthconsumer( consumerkey$!db.INDEXSIZE );
 
+-- each record is an OAuth accessor, always tied to just one user
+create table rol_oauthaccessor (
+    consumerkey varchar(48) not null primary key,
+    requesttoken varchar(48),
+    accesstoken varchar(48),
+    tokensecret varchar(48),
+    created $db.TIMESTAMP_SQL_TYPE not null,
+    updated $db.TIMESTAMP_SQL_TYPE not null,
+    username varchar(48) not null,
+    authorized $db.BOOLEAN_SQL_TYPE_FALSE
+);
+create index oa_consumerkey_idx  on rol_oauthaccessor( consumerkey$!db.INDEXSIZE );
 
 create table rag_properties (
     name     varchar(255) not null primary key,

@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import com.sun.syndication.propono.atom.server.AtomHandlerFactory;
 import com.sun.syndication.propono.atom.server.AtomHandler;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Extends {@link com.sun.syndication.propono.atom.server.AtomHandlerFactory} to create and return 
@@ -31,8 +32,9 @@ public class RollerAtomHandlerFactory extends AtomHandlerFactory {
     /**
      * Create new AtomHandler.
      */
-    public AtomHandler newAtomHandler( HttpServletRequest req ) {
-        return new RollerAtomHandler(req);
+    public AtomHandler newAtomHandler(
+            HttpServletRequest req, HttpServletResponse res) {
+        return new RollerAtomHandler(req, res);
     }    
 }
       

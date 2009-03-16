@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.business;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.roller.weblogger.business.jpa.JPAOAuthManagerTest;
 
 
 /**
@@ -53,6 +54,8 @@ public class SupplementalWeblogServicesTestSuite {
         
         // referrers
         suite.addTestSuite(RefererTest.class);
+
+        suite.addTestSuite(JPAOAuthManagerTest.class);
 
         return suite;
     }

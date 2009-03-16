@@ -218,5 +218,14 @@ public interface URLStrategy {
      * Get url to JSON tags service url, optionally for a given weblog.
      */
     public String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum);
-    
+
+
+    /* Get URL for obtaining OAuth Request Token */
+    public String getOAuthRequestTokenURL();
+
+    /* Get URL authorizing an OAuth Request Token */
+    public String getOAuthAuthorizationURL();
+
+    /* Get URL for obtaining OAuth Access Token */
+    public String getOAuthAccessTokenURL();
 }

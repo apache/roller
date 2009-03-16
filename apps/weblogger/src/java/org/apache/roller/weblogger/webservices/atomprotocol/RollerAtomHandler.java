@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -37,10 +37,17 @@ import com.sun.syndication.propono.atom.server.AtomException;
 import com.sun.syndication.propono.atom.server.AtomHandler;
 import com.sun.syndication.propono.atom.server.AtomMediaResource;
 import com.sun.syndication.propono.atom.server.AtomNotFoundException;
+import javax.servlet.http.HttpServletResponse;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthMessage;
+import net.oauth.server.OAuthServlet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+
 
 /**
  * Weblogger's ROME Propono-based Atom Protocol implementation.
@@ -53,7 +60,6 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  * Here are the APP URIs suppored by Weblogger:
  * 
  * <pre>
- * 
  *    /roller-services/app
  *    Introspection doc
  * 
@@ -79,8 +85,8 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
  * 
  *    /roller-services/app/[weblog-handle]/resource/[name]
  *    Individual resource data (GET)
- * 
  * </pre>
+ *
  * @author David M Johnson
  */
 public class RollerAtomHandler implements AtomHandler {
@@ -106,12 +112,20 @@ public class RollerAtomHandler implements AtomHandler {
      * If user is authenticated, then getAuthenticatedUsername() will return
      * then user's name, otherwise it will return null.
      */
-    public RollerAtomHandler(HttpServletRequest request) {
+    public RollerAtomHandler(HttpServletRequest request, HttpServletResponse response) {
         roller = WebloggerFactory.getWeblogger();
-        
-        // TODO: decide what to do about authentication, is WSSE going to fly?
-        //String userName = authenticateWSSE(request);
-        String userName = authenticateBASIC(request);
+
+        String userName = null;
+        if ("oauth".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
+            userName = authenticationOAUTH(request, response);
+
+        } else if ("wsse".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
+            userName = authenticateWSSE(request);
+
+        } else { // default to basic
+            userName = authenticateBASIC(request);
+        }
+
         if (userName != null) {
             try {
                 this.user = roller.getUserManager().getUserByUserName(userName);
@@ -122,9 +136,6 @@ public class RollerAtomHandler implements AtomHandler {
         
         atomURL = WebloggerFactory.getWeblogger().getUrlStrategy().getAtomProtocolURL(true);
     }
-    
-    /** For testing and for those who wish to extend */
-    public RollerAtomHandler() {}
 
     /**
      * Return weblogHandle of authenticated user or null if there is none.
@@ -462,6 +473,29 @@ public class RollerAtomHandler implements AtomHandler {
     }
 
     
+    private String authenticationOAUTH(
+            HttpServletRequest request, HttpServletResponse response) {
+        try {
+            OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
+            OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
+            OAuthAccessor accessor = omgr.getAccessor(requestMessage);
+            omgr.getValidator().validateMessage(requestMessage, accessor);
+            return (String)accessor.consumer.getProperty("userId");
+
+        } catch (Exception ex) {
+            log.debug("ERROR authenticating user", ex);
+            String realm = (request.isSecure())?"https://":"http://";
+            realm += request.getLocalName();
+            try {
+                OAuthServlet.handleException(response, ex, realm, true);
+            } catch (Exception ioe) {
+                log.debug("ERROR writing error response", ioe);
+            }
+        }
+        return null;
+    }
+
+
     public static void oneSecondThrottle() {
         // Throttle one entry per second per weblog because time-
         // stamp in MySQL and other DBs has only 1 sec resolution
@@ -471,4 +505,5 @@ public class RollerAtomHandler implements AtomHandler {
             }  
         } catch (Exception ignored) {} 
     }
+
 }

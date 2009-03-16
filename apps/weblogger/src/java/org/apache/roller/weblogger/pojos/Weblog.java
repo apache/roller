@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.I18nUtils;
 
 
@@ -84,16 +85,16 @@ public class Weblog implements Serializable {
     private Date    dateCreated      = new java.util.Date();
     private Boolean defaultAllowComments = Boolean.TRUE;
     private int     defaultCommentDays = 0;
-    private Boolean moderateComments  = Boolean.FALSE;
+    private Boolean moderateComments = Boolean.FALSE;
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
     private String  pageModels       = new String();
-    private boolean enableMultiLang = false;
-    private boolean showAllLangs = true;
+    private boolean enableMultiLang  = false;
+    private boolean showAllLangs     = true;
     private String  customStylesheetPath = null;
-    private String  iconPath = null;
-    private String  about = null;
-    private String  creator = null;     
+    private String  iconPath         = null;
+    private String  about            = null;
+    private String  creator          = null;
     
     // Associated objects
     private List           permissions = new ArrayList();
@@ -855,17 +856,18 @@ public class Weblog implements Serializable {
     }
     
     
-    /** 
+    /**
      * @roller.wrapPojoMethod type="simple"
      */
     public String getAbsoluteURL() {
-        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
-        String relPath = WebloggerRuntimeConfig.getAbsoluteContextURL();
-        return relPath + "/" + getHandle();
-        //return URLUtilities.getWeblogURL(this, null, true);
-    }
-    public void setAbsoluteURL(String url) {
-        // noop
+        String weblogAbsoluteURL =
+            WebloggerConfig.getProperty("weblog.absoluteurl." + getHandle());
+        if (weblogAbsoluteURL != null) {
+            return weblogAbsoluteURL + "/" + getHandle();
+        } else {
+            String relPath = WebloggerRuntimeConfig.getAbsoluteContextURL();
+            return relPath + "/" + getHandle();
+        }
     }
     
     
@@ -1260,5 +1262,4 @@ public class Weblog implements Serializable {
 
     /** No-op method to please XDoclet */
     public void setEntryCount(int ignored) {}
-    
 }

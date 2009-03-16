@@ -97,9 +97,9 @@ in the "base.path" definition.
     <include name="jdom.jar"/>
     <include name="lucene-1.4.3.jar"/>
     <include name="log4j-1.2.11.jar"/>
-    <include name="rome-0.9.1-dev.jar"/>
-    <include name="rome-propono-0.7.jar"/>
-    <include name="rome-fetcher-0.9.jar"/>
+    <include name="rome-1.0.jar"/>
+    <include name="rome-propono-1.0.jar"/>
+    <include name="rome-fetcher-1.0.jar"/>
     <include name="velocity-1.5.jar"/>
     <include name="guice-1.0.jar"/>
 </fileset>
@@ -145,6 +145,10 @@ in the "base.path" definition.
     <include name="xmlrpc-server-3.0.jar"/>
 </fileset>
 
+<fileset id="oauth.jars" dir="${ro.tools}/oauth">
+    <include name="*.jar"/>
+</fileset>
+
 <fileset id="roller-core.jars" dir="${ro.tools}/roller-core">
     <include name="*.jar"/>
 </fileset>
@@ -163,6 +167,7 @@ in the "base.path" definition.
     <fileset refid="mail.jars"/>
     <fileset refid="roller-core.jars" />
     <fileset refid="xmlrpc.jars"/>
+    <fileset refid="oauth.jars"/>
     <fileset refid="roller-planet.jars" />
     <!-- JPA bytecode enhancement apparently wants JPA classes everywhere -->
     <fileset refid="jpa.jars" />
