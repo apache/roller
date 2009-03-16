@@ -135,6 +135,16 @@ public class WeblogRequestMapper implements RequestMapper {
             log.debug("SKIPPED "+weblogHandle);
             return false;
         }
+
+        String weblogAbsoluteURL =
+            WebloggerConfig.getProperty("weblog.absoluteurl." + weblogHandle);
+        if (weblogAbsoluteURL != null) {
+            // An absolute URL is specified for this weblog, make sure request URL matches
+            if (!request.getRequestURL().toString().startsWith(weblogAbsoluteURL)) {
+                log.debug("SKIPPED "+weblogHandle);
+                return false;
+            }
+        }
         
         log.debug("WEBLOG_URL "+request.getServletPath());
         

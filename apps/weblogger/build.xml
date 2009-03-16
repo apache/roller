@@ -263,6 +263,7 @@ ro.buildUser=${user.name}
             <fileset refid="spring.jars" /> 
             <fileset refid="jstl.jars" />
             <fileset refid="xmlrpc.jars" />
+            <fileset refid="oauth.jars" />
             
             <fileset refid="roller-core.jars" />
             <fileset refid="roller-planet.jars" />

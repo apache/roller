@@ -1,0 +1,886 @@
+2009-03-03 15:37:50,977 - Created '20' parsers.
+2009-03-03 15:37:50,991 - Velocimacro : initialization starting.
+2009-03-03 15:37:50,991 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-03 15:37:50,992 - Velocimacro : Default library not found.
+2009-03-03 15:37:50,992 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-03 15:37:50,992 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-03 15:37:50,992 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-03 15:37:50,992 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-03 15:37:50,992 - Velocimacro : Velocimacro : initialization complete.
+2009-03-03 15:37:50,992 - RuntimeInstance successfully initialized.
+2009-03-03 15:37:51,057 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,096 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-03 15:37:51,103 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-03 15:37:51,105 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-03 15:37:51,110 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-03 15:37:51,111 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-03 15:37:51,112 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-03 15:37:51,112 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-03 15:37:51,115 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-03 15:37:51,127 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-03 15:37:51,129 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-03 15:37:51,131 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,258 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,304 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,338 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,342 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,358 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,363 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,398 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,455 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,496 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,513 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,525 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,532 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,541 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,545 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,570 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,588 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,596 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,607 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,612 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,621 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,628 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,631 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,705 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,717 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,724 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,734 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,740 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,743 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,750 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,752 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,782 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,794 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,801 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,811 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,817 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,820 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,827 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,830 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,851 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,868 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,875 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,955 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,961 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,964 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,970 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,972 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:51,997 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,068 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,093 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,104 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,109 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,111 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,117 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,119 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,135 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-03 15:37:52,144 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:50,771 - Log4JLogChute initialized using file 'velocity.log'
+2009-03-16 11:55:50,794 - The version of log4j being used does not support the "trace" level.
+2009-03-16 11:55:50,794 - *******************************************************************
+2009-03-16 11:55:50,794 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2009-03-16 11:55:50,795 - RuntimeInstance initializing.
+2009-03-16 11:55:50,795 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2009-03-16 11:55:50,795 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2009-03-16 11:55:50,801 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.GeneratedMethodAccessor16.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:38)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:416)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:105)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1298)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.Main.runBuild(Main.java:698)
+	at org.apache.tools.ant.Main.startAnt(Main.java:199)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+2009-03-16 11:55:50,803 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 11:55:50,803 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 11:55:50,808 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2009-03-16 11:55:50,817 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:50,820 - ClasspathResourceLoader : initialization complete.
+2009-03-16 11:55:50,834 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2009-03-16 11:55:50,834 - Default ResourceManager initialization complete.
+2009-03-16 11:55:50,836 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2009-03-16 11:55:50,837 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2009-03-16 11:55:50,839 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2009-03-16 11:55:50,841 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2009-03-16 11:55:50,842 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2009-03-16 11:55:50,882 - Created '20' parsers.
+2009-03-16 11:55:50,894 - Velocimacro : initialization starting.
+2009-03-16 11:55:50,894 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-16 11:55:50,894 - Velocimacro : Default library not found.
+2009-03-16 11:55:50,894 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-16 11:55:50,895 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-16 11:55:50,895 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-16 11:55:50,895 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-16 11:55:50,895 - Velocimacro : Velocimacro : initialization complete.
+2009-03-16 11:55:50,895 - RuntimeInstance successfully initialized.
+2009-03-16 11:55:50,962 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:50,981 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-16 11:55:50,986 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-16 11:55:50,987 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-16 11:55:50,993 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-16 11:55:50,994 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-16 11:55:50,994 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-16 11:55:50,995 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-16 11:55:50,997 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-16 11:55:51,008 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-16 11:55:51,010 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-16 11:55:51,012 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,065 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,106 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,115 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,119 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,149 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,155 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,182 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,202 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,219 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,233 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,246 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,253 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,259 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,262 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,289 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,302 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,308 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,322 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,326 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,335 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,344 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,347 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,368 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,382 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,388 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,396 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,403 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,405 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,410 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,413 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,446 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,455 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,461 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,471 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,477 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,480 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,487 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,489 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,510 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,530 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,537 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,545 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,550 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,553 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,558 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,561 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,583 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,593 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,599 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,609 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,613 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,615 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,622 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,624 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,640 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 11:55:51,649 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,006 - Log4JLogChute initialized using file 'velocity.log'
+2009-03-16 12:00:12,025 - The version of log4j being used does not support the "trace" level.
+2009-03-16 12:00:12,025 - *******************************************************************
+2009-03-16 12:00:12,025 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2009-03-16 12:00:12,025 - RuntimeInstance initializing.
+2009-03-16 12:00:12,026 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2009-03-16 12:00:12,026 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2009-03-16 12:00:12,027 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.GeneratedMethodAccessor16.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:38)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:416)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:105)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1298)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.Main.runBuild(Main.java:698)
+	at org.apache.tools.ant.Main.startAnt(Main.java:199)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+2009-03-16 12:00:12,034 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 12:00:12,034 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 12:00:12,038 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2009-03-16 12:00:12,042 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,046 - ClasspathResourceLoader : initialization complete.
+2009-03-16 12:00:12,081 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2009-03-16 12:00:12,081 - Default ResourceManager initialization complete.
+2009-03-16 12:00:12,083 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2009-03-16 12:00:12,087 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2009-03-16 12:00:12,090 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2009-03-16 12:00:12,092 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2009-03-16 12:00:12,094 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2009-03-16 12:00:12,145 - Created '20' parsers.
+2009-03-16 12:00:12,224 - Velocimacro : initialization starting.
+2009-03-16 12:00:12,224 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-16 12:00:12,227 - Velocimacro : Default library not found.
+2009-03-16 12:00:12,227 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-16 12:00:12,227 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-16 12:00:12,227 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-16 12:00:12,227 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-16 12:00:12,227 - Velocimacro : Velocimacro : initialization complete.
+2009-03-16 12:00:12,227 - RuntimeInstance successfully initialized.
+2009-03-16 12:00:12,381 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,402 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-16 12:00:12,410 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-16 12:00:12,413 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-16 12:00:12,420 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-16 12:00:12,421 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-16 12:00:12,421 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-16 12:00:12,422 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-16 12:00:12,427 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-16 12:00:12,440 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-16 12:00:12,445 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-16 12:00:12,446 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,507 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,552 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,565 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,571 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,587 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,599 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,638 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,669 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,686 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,704 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,716 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,724 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,732 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,735 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,762 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,781 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,790 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,807 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,813 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,830 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,918 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,921 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,947 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,963 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,984 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:12,995 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,003 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,011 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,018 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,024 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,079 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,095 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,103 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,115 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,124 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,140 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,147 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,151 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,188 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,212 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,220 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,234 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,241 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,243 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,254 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,256 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,358 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,368 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,388 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,402 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,410 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,413 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,422 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,426 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,451 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 12:00:13,464 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,536 - Log4JLogChute initialized using file 'velocity.log'
+2009-03-16 13:17:13,556 - The version of log4j being used does not support the "trace" level.
+2009-03-16 13:17:13,556 - *******************************************************************
+2009-03-16 13:17:13,557 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2009-03-16 13:17:13,557 - RuntimeInstance initializing.
+2009-03-16 13:17:13,557 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2009-03-16 13:17:13,557 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2009-03-16 13:17:13,559 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.GeneratedMethodAccessor16.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:38)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:416)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:105)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1298)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.Main.runBuild(Main.java:698)
+	at org.apache.tools.ant.Main.startAnt(Main.java:199)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+2009-03-16 13:17:13,564 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 13:17:13,564 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 13:17:13,567 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2009-03-16 13:17:13,571 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,573 - ClasspathResourceLoader : initialization complete.
+2009-03-16 13:17:13,593 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2009-03-16 13:17:13,593 - Default ResourceManager initialization complete.
+2009-03-16 13:17:13,595 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2009-03-16 13:17:13,597 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2009-03-16 13:17:13,598 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2009-03-16 13:17:13,600 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2009-03-16 13:17:13,602 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2009-03-16 13:17:13,646 - Created '20' parsers.
+2009-03-16 13:17:13,709 - Velocimacro : initialization starting.
+2009-03-16 13:17:13,709 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-16 13:17:13,710 - Velocimacro : Default library not found.
+2009-03-16 13:17:13,710 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-16 13:17:13,710 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-16 13:17:13,710 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-16 13:17:13,710 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-16 13:17:13,710 - Velocimacro : Velocimacro : initialization complete.
+2009-03-16 13:17:13,710 - RuntimeInstance successfully initialized.
+2009-03-16 13:17:13,772 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,801 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-16 13:17:13,808 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-16 13:17:13,810 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-16 13:17:13,817 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-16 13:17:13,818 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-16 13:17:13,818 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-16 13:17:13,819 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-16 13:17:13,821 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-16 13:17:13,833 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-16 13:17:13,838 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-16 13:17:13,839 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,889 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,931 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,952 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,956 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,969 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:13,975 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,004 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,024 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,049 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,069 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,081 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,088 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,096 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,099 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,124 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,141 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,149 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,160 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,165 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,174 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,236 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,238 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,264 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,279 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,288 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,298 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,304 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,308 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,315 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,318 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,346 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,357 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,365 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,374 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,381 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,384 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,390 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,392 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,412 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,430 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,436 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,445 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,450 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,452 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,459 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,461 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,545 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,555 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,561 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,570 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,574 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,576 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,582 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,585 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,601 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 13:17:14,609 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,339 - Log4JLogChute initialized using file 'velocity.log'
+2009-03-16 16:07:16,364 - The version of log4j being used does not support the "trace" level.
+2009-03-16 16:07:16,364 - *******************************************************************
+2009-03-16 16:07:16,364 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2009-03-16 16:07:16,364 - RuntimeInstance initializing.
+2009-03-16 16:07:16,364 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2009-03-16 16:07:16,364 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2009-03-16 16:07:16,366 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.GeneratedMethodAccessor16.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:38)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:416)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:105)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1298)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.Main.runBuild(Main.java:698)
+	at org.apache.tools.ant.Main.startAnt(Main.java:199)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+2009-03-16 16:07:16,370 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 16:07:16,370 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 16:07:16,374 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2009-03-16 16:07:16,378 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,380 - ClasspathResourceLoader : initialization complete.
+2009-03-16 16:07:16,406 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2009-03-16 16:07:16,406 - Default ResourceManager initialization complete.
+2009-03-16 16:07:16,408 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2009-03-16 16:07:16,410 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2009-03-16 16:07:16,412 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2009-03-16 16:07:16,414 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2009-03-16 16:07:16,416 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2009-03-16 16:07:16,467 - Created '20' parsers.
+2009-03-16 16:07:16,555 - Velocimacro : initialization starting.
+2009-03-16 16:07:16,555 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-16 16:07:16,556 - Velocimacro : Default library not found.
+2009-03-16 16:07:16,556 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-16 16:07:16,556 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-16 16:07:16,556 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-16 16:07:16,556 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-16 16:07:16,556 - Velocimacro : Velocimacro : initialization complete.
+2009-03-16 16:07:16,556 - RuntimeInstance successfully initialized.
+2009-03-16 16:07:16,628 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,653 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-16 16:07:16,660 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-16 16:07:16,662 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-16 16:07:16,667 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-16 16:07:16,668 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-16 16:07:16,669 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-16 16:07:16,670 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-16 16:07:16,673 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-16 16:07:16,686 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-16 16:07:16,691 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-16 16:07:16,693 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,779 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,830 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,872 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,877 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,894 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,900 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,937 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:16,988 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,003 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,022 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,036 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,045 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,055 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,059 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,091 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,111 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,128 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,146 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,152 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,162 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,241 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,244 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,270 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,292 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,300 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,310 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,316 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,321 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,328 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,332 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,377 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,389 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,396 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,407 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,417 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,421 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,428 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,431 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,453 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,476 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,484 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,494 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,500 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,503 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,511 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,514 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,622 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,635 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,642 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,652 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,657 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,660 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,667 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,670 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,689 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:07:17,699 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:33,832 - Log4JLogChute initialized using file 'velocity.log'
+2009-03-16 16:11:33,832 - The version of log4j being used does not support the "trace" level.
+2009-03-16 16:11:33,833 - *******************************************************************
+2009-03-16 16:11:33,833 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2009-03-16 16:11:33,833 - RuntimeInstance initializing.
+2009-03-16 16:11:33,833 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2009-03-16 16:11:33,833 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2009-03-16 16:11:33,836 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.GeneratedMethodAccessor16.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:38)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:416)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:105)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1298)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.Main.runBuild(Main.java:698)
+	at org.apache.tools.ant.Main.startAnt(Main.java:199)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+2009-03-16 16:11:33,838 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 16:11:33,838 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 16:11:33,841 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2009-03-16 16:11:33,848 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:33,849 - ClasspathResourceLoader : initialization complete.
+2009-03-16 16:11:33,862 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2009-03-16 16:11:33,862 - Default ResourceManager initialization complete.
+2009-03-16 16:11:33,864 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2009-03-16 16:11:33,866 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2009-03-16 16:11:33,867 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2009-03-16 16:11:33,869 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2009-03-16 16:11:33,870 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2009-03-16 16:11:33,909 - Created '20' parsers.
+2009-03-16 16:11:33,921 - Velocimacro : initialization starting.
+2009-03-16 16:11:33,921 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-16 16:11:33,921 - Velocimacro : Default library not found.
+2009-03-16 16:11:33,921 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-16 16:11:33,921 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-16 16:11:33,921 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-16 16:11:33,922 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-16 16:11:33,922 - Velocimacro : Velocimacro : initialization complete.
+2009-03-16 16:11:33,922 - RuntimeInstance successfully initialized.
+2009-03-16 16:11:33,955 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:33,965 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-16 16:11:33,970 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-16 16:11:33,972 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-16 16:11:33,977 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-16 16:11:33,978 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-16 16:11:33,979 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-16 16:11:33,979 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-16 16:11:33,982 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-16 16:11:33,993 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-16 16:11:33,995 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-16 16:11:33,996 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,026 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,067 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,076 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,080 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,094 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,099 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,126 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,148 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,156 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,169 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,182 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,189 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,195 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,198 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,226 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,238 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,244 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,257 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,261 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,270 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,279 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,281 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,303 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,316 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,322 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,330 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,336 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,339 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,344 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,346 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,379 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,388 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,394 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,403 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,410 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,412 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,419 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,421 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,439 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,456 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,461 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,468 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,472 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,475 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,480 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,482 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,503 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,514 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,519 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,528 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,532 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,534 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,540 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,542 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,556 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:11:34,564 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,064 - Log4JLogChute initialized using file 'velocity.log'
+2009-03-16 16:30:20,064 - The version of log4j being used does not support the "trace" level.
+2009-03-16 16:30:20,064 - *******************************************************************
+2009-03-16 16:30:20,064 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2009-03-16 16:30:20,064 - RuntimeInstance initializing.
+2009-03-16 16:30:20,064 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2009-03-16 16:30:20,064 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2009-03-16 16:30:20,068 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:164)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:76)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at org.apache.velocity.texen.ant.TexenTask.execute(TexenTask.java:483)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.GeneratedMethodAccessor16.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleCheckExecutor.java:38)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:416)
+	at org.apache.tools.ant.taskdefs.CallTarget.execute(CallTarget.java:105)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:105)
+	at org.apache.tools.ant.Task.perform(Task.java:348)
+	at org.apache.tools.ant.Target.execute(Target.java:357)
+	at org.apache.tools.ant.Target.performTasks(Target.java:385)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1329)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1298)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1181)
+	at org.apache.tools.ant.Main.runBuild(Main.java:698)
+	at org.apache.tools.ant.Main.startAnt(Main.java:199)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+2009-03-16 16:30:20,070 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 16:30:20,070 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2009-03-16 16:30:20,073 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2009-03-16 16:30:20,076 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,077 - ClasspathResourceLoader : initialization complete.
+2009-03-16 16:30:20,090 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2009-03-16 16:30:20,090 - Default ResourceManager initialization complete.
+2009-03-16 16:30:20,091 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2009-03-16 16:30:20,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2009-03-16 16:30:20,095 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2009-03-16 16:30:20,097 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2009-03-16 16:30:20,098 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2009-03-16 16:30:20,137 - Created '20' parsers.
+2009-03-16 16:30:20,148 - Velocimacro : initialization starting.
+2009-03-16 16:30:20,148 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2009-03-16 16:30:20,149 - Velocimacro : Default library not found.
+2009-03-16 16:30:20,149 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2009-03-16 16:30:20,149 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2009-03-16 16:30:20,149 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2009-03-16 16:30:20,149 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2009-03-16 16:30:20,149 - Velocimacro : Velocimacro : initialization complete.
+2009-03-16 16:30:20,149 - RuntimeInstance successfully initialized.
+2009-03-16 16:30:20,183 - ResourceManager : found control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,191 - Velocimacro : added #addColumnNull(  table column type ) : source = macros.vm
+2009-03-16 16:30:20,197 - Velocimacro : added #addColumnNotNull(  table column type default ) : source = macros.vm
+2009-03-16 16:30:20,199 - Velocimacro : added #dropNotNullFromTableId(  table ) : source = macros.vm
+2009-03-16 16:30:20,206 - Velocimacro : added #dropNotNullFromColumn(  table colname coltype ) : source = macros.vm
+2009-03-16 16:30:20,207 - Velocimacro : added #columnNotNullWithDefault(  columnName columnType defaultValue ) : source = macros.vm
+2009-03-16 16:30:20,207 - Velocimacro : added #longtext(  size ) : source = macros.vm
+2009-03-16 16:30:20,208 - Velocimacro : added #dropIndex(  indexName tableName ) : source = macros.vm
+2009-03-16 16:30:20,210 - Velocimacro : added #dropColumn(  tableName columnName ) : source = macros.vm
+2009-03-16 16:30:20,223 - Velocimacro : added #dropTableIfExists(  tableName ) : source = macros.vm
+2009-03-16 16:30:20,225 - Velocimacro : added #concat(  s1 s2 ) : source = macros.vm
+2009-03-16 16:30:20,226 - ResourceManager : found macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,261 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,298 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,307 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,311 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,324 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,329 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,356 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,377 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,385 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,399 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,413 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,419 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,426 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,428 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,457 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,469 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,474 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,487 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,492 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,501 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,510 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,512 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,534 - ResourceManager : found 310-to-400-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,545 - ResourceManager : found 400-to-500-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,553 - ResourceManager : found createdb.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,561 - ResourceManager : found 200-to-210-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,565 - ResourceManager : found 210-to-230-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,571 - ResourceManager : found 230-to-240-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,576 - ResourceManager : found 240-to-300-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2009-03-16 16:30:20,578 - ResourceManager : found 300-to-310-migration.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader

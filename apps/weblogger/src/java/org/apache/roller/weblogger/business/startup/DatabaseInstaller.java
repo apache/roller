@@ -245,9 +245,9 @@ public class DatabaseInstaller {
                 upgradeTo400(con, runScripts);
                 dbversion = 400;
             }
-            if(dbversion < 410) {
-                upgradeTo410(con, runScripts);
-                dbversion = 410;
+            if(dbversion < 500) {
+                upgradeTo500(con, runScripts);
+                dbversion = 500;
             }
             
             // make sure the database version is the exact version
@@ -1121,25 +1121,25 @@ public class DatabaseInstaller {
     /**
      * Upgrade database for Roller 4.1.0
      */
-    private void upgradeTo410(Connection con, boolean runScripts) throws StartupException {
+    private void upgradeTo500(Connection con, boolean runScripts) throws StartupException {
         
         // first we need to run upgrade scripts 
         SQLScriptRunner runner = null;
         try {    
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/400-to-410-migration.sql";
+                String scriptPath = handle + "/400-to-500-migration.sql";
                 successMessage("Running database upgrade script: "+scriptPath);                
                 runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
         } catch(Exception ex) {
-            log.error("ERROR running 410 database upgrade script", ex);
+            log.error("ERROR running 500 database upgrade script", ex);
             if (runner != null) messages.addAll(runner.getMessages());
             
-            errorMessage("Problem upgrading database to version 410", ex);
-            throw new StartupException("Problem upgrading database to version 410", ex);
+            errorMessage("Problem upgrading database to version 500", ex);
+            throw new StartupException("Problem upgrading database to version 500", ex);
         }        
     }
 

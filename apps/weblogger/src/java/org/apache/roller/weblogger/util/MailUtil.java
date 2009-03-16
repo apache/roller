@@ -79,8 +79,10 @@ public class MailUtil {
     public static void sendPendingEntryNotice(WeblogEntry entry) 
             throws WebloggerException {
         
-        Session mailSession = WebloggerStartup.getMailProvider().getSession();
-        if(mailSession == null) {
+        Session mailSession = WebloggerStartup.getMailProvider() != null
+                ? WebloggerStartup.getMailProvider().getSession() : null;
+
+        if (mailSession == null) {
             throw new WebloggerException("Couldn't get mail Session");
         }
         
@@ -148,7 +150,9 @@ public class MailUtil {
                                             User user)
             throws WebloggerException {
         
-        Session mailSession = WebloggerStartup.getMailProvider().getSession();
+        Session mailSession = WebloggerStartup.getMailProvider() != null
+                ? WebloggerStartup.getMailProvider().getSession() : null;
+
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
@@ -205,7 +209,9 @@ public class MailUtil {
     public static void sendUserActivationEmail(User user)
             throws WebloggerException {
         
-        Session mailSession = WebloggerStartup.getMailProvider().getSession();
+        Session mailSession = WebloggerStartup.getMailProvider() != null
+                ? WebloggerStartup.getMailProvider().getSession() : null;
+
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
@@ -585,7 +591,7 @@ public class MailUtil {
             throws MessagingException {
         
         MailProvider mailProvider = WebloggerStartup.getMailProvider();
-        if(mailProvider == null) {
+        if (mailProvider == null) {
             return;
         }
         

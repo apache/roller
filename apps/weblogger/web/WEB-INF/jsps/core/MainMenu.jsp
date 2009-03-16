@@ -71,7 +71,7 @@
                        
                        <tr>
                            <td class="mm_subtable_label"><s:text name='yourWebsites.weblog' /></td>
-                           <td><a href='<s:property value="#perms.weblog.URL" />'>
+                           <td><a href='<s:property value="#perms.weblog.absoluteURL" />'>
                                <s:property value="#perms.weblog.absoluteURL" />
                            </a></td>                          
                        </tr>

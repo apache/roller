@@ -244,7 +244,7 @@ public class PageServlet extends HttpServlet {
             }
 
             // If request specified tags section index, then look for custom template
-        } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTags() == null) {
+        } else if ("tags".equals(pageRequest.getContext()) && pageRequest.getTags() != null) {
             try {
                 page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ACTION_TAGSINDEX);
             } catch (Exception e) {

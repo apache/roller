@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -49,25 +50,26 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     public String getWeblogURL(Weblog weblog,
                                             String locale,
                                             boolean absolute) {
-        
-        if(weblog == null) {
-            return null;
-        }
-        
+
         StringBuffer url = new StringBuffer();
-        
-        if(absolute) {
-            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
+        if (absolute) {
+            String weblogAbsoluteURL =
+                WebloggerConfig.getProperty("weblog.absoluteurl." + weblog.getHandle());
+            if (weblogAbsoluteURL != null) {
+                url.append(weblogAbsoluteURL);
+            } else {
+                url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
+            }
         } else {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
-        
+
         url.append("/").append(weblog.getHandle()).append("/");
-        
+
         if(locale != null) {
             url.append(locale).append("/");
         }
-        
+
         return url.toString();
     }
     
@@ -405,6 +407,18 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
 
     public String getOpenSearchWeblogURL(String weblogHandle) {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/" + weblogHandle;
+    }
+
+    public String getOAuthRequestTokenURL() {
+        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/requestToken";
+    }
+
+    public String getOAuthAuthorizationURL() {
+        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/authorize";
+    }
+
+    public String getOAuthAccessTokenURL() {
+        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/accessToken";
     }
     
 }

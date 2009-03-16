@@ -34,6 +34,11 @@
                 <h3><a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h3>
                 <p><s:text name="yourWebsites.editProfile.desc" /></p>
                 
+                <s:if test="getBooleanProp('webservices.enableAtomPub') && getProp('webservices.atomPubAuth') == 'oauth'">
+                    <h3><a href="<s:url action="oauthKeys" />"><s:text name="yourWebsites.oauthKeys" /></a></h3>
+                    <p><s:text name="yourWebsites.oauthKeys.desc" /></p>
+                </s:if>
+
                 <s:if test="userIsAdmin">               
                     <h3><a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h3>          
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>

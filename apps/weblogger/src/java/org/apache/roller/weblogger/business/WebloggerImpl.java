@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import java.io.IOException;
 import java.util.Properties;
@@ -30,7 +29,6 @@ import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.referrers.RefererManager;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
-import org.apache.roller.weblogger.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -64,6 +62,7 @@ public abstract class WebloggerImpl implements Weblogger {
     private final UserManager          userManager;
     private final WeblogManager        weblogManager;
     private final WeblogEntryManager   weblogEntryManager;
+    private final OAuthManager         oauthManager;
     
     // url strategy
     private final URLStrategy          urlStrategy;
@@ -91,6 +90,7 @@ public abstract class WebloggerImpl implements Weblogger {
         UserManager          userManager,
         WeblogManager        weblogManager,
         WeblogEntryManager   weblogEntryManager,
+        OAuthManager         oauthManager,
         URLStrategy          urlStrategy) throws WebloggerException { 
                 
         this.autoPingManager     = autoPingManager;
@@ -108,6 +108,7 @@ public abstract class WebloggerImpl implements Weblogger {
         this.userManager         = userManager;
         this.weblogManager       = weblogManager;
         this.weblogEntryManager  = weblogEntryManager;
+        this.oauthManager        = oauthManager;
         this.urlStrategy         = urlStrategy;
         
         Properties props = new Properties();
@@ -264,15 +265,25 @@ public abstract class WebloggerImpl implements Weblogger {
     
     
     /**
-     * 
-     * 
+     *
+     *
      * @see org.apache.roller.weblogger.modelWebloggerr#getPluginManager()
      */
     public PluginManager getPluginManager() {
         return pluginManager;
     }
-    
-    
+
+
+    /**
+     *
+     *
+     * @see org.apache.roller.weblogger.modelWebloggerr#getOauthManager()
+     */
+    public OAuthManager getOAuthManager() {
+        return oauthManager;
+    }
+
+
     /**
      * @inheritDoc
      */
