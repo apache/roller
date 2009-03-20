@@ -32,11 +32,11 @@
 
 <p><s:text name="oauthKeys.userKeysTip" /></p>
 
-<p><b><s:text name="oauthKeys.consumerKey" /></b>:
-    <s:property value="userConsumer.consumerKey" /></p>
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.consumerKey" /></b>:
+        <s:property value="userConsumer.consumerKey" /></p>
 
-<p><b><s:text name="oauthKeys.consumerSecret" /></b>:
-    <s:property value="userConsumer.consumerSecret" /></p>
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.consumerSecret" /></b>:
+        <s:property value="userConsumer.consumerSecret" /></p>
 
 
 <s:if test="siteWideConsumer">
@@ -45,10 +45,28 @@
 
 <p><s:text name="oauthKeys.siteWideKeysTip" /></p>
 
-<p><b><s:text name="oauthKeys.consumerKey" /></b>:
-    <s:property value="siteWideConsumer.consumerKey" /></p>
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.consumerKey" /></b>:
+        <s:property value="siteWideConsumer.consumerKey" /></p>
 
-<p><b><s:text name="oauthKeys.consumerSecret" /></b>:
-    <s:property value="siteWideConsumer.consumerSecret" /></p>
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.consumerSecret" /></b>:
+        <s:property value="siteWideConsumer.consumerSecret" /></p>
 
 </s:if>
+
+
+<h2><s:text name="oauthKeys.urls" /></h2>
+
+<p><s:text name="oauthKeys.urlsTip" /></p>
+
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.requestTokenURL" /></b>:
+        <s:property value="requestTokenURL" /></p>
+
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.authorizationURL" /></b>:
+        <s:property value="authorizationURL" /></p>
+
+    <p style="margin-left:2em"><b><s:text name="oauthKeys.accessTokenURL" /></b>:
+        <s:property value="accessTokenURL" /></p>
+
+
+
+
