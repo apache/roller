@@ -171,32 +171,18 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     public void generateAccessToken(OAuthAccessor accessor)
             throws OAuthException {
 
-        // generate oauth_token and oauth_secret
-        // generate token and secret based on consumer_key
-        String consumer_key = (String) accessor.consumer.consumerKey;
-
-        // unless we already have one
         try {
-            // in that case, just return it
+            // generate oauth_token and oauth_secret
+            // generate token and secret based on consumer_key
+            String consumer_key = (String) accessor.consumer.consumerKey;
+
             OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
                 OAuthAccessorRecord.class, accessor.consumer.consumerKey);
-            if (record != null) {
-                accessor.accessToken = record.getAccessToken();
-                accessor.tokenSecret = record.getTokenSecret();
-                return;
-            }
             
-        } catch (WebloggerException ex) {
-            throw new OAuthException("ERROR: getting access token", ex);
-        }
+            // for now use md5 of name + current time as token
+            String token_data = consumer_key + System.nanoTime();
+            String token = DigestUtils.md5Hex(token_data);
 
-        // for now use md5 of name + current time as token
-        String token_data = consumer_key + System.nanoTime();
-        String token = DigestUtils.md5Hex(token_data);
-
-        try {
-            OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
-                OAuthAccessorRecord.class, accessor.consumer.consumerKey);
             record.setRequestToken(null);
             record.setAccessToken(token);
             strategy.store(record);

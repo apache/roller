@@ -78,9 +78,11 @@ public class AccessTokenServlet extends HttpServlet {
                 throw problem;
             }
             // generate access token and secret
-            omgr.generateAccessToken(accessor);
-            WebloggerFactory.getWeblogger().flush();
-            
+            if (accessor.accessToken == null) {
+                omgr.generateAccessToken(accessor);
+                WebloggerFactory.getWeblogger().flush();
+            }
+
             response.setContentType("text/plain");
             OutputStream out = response.getOutputStream();
             OAuth.formEncode(OAuth.newList(

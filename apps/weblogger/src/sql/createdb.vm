@@ -452,7 +452,7 @@ create table rol_oauthaccessor (
     tokensecret varchar(48),
     created $db.TIMESTAMP_SQL_TYPE not null,
     updated $db.TIMESTAMP_SQL_TYPE not null,
-    username varchar(48) not null,
+    username varchar(48),
     authorized $db.BOOLEAN_SQL_TYPE_FALSE
 );
 create index oa_consumerkey_idx  on rol_oauthaccessor( consumerkey$!db.INDEXSIZE );
