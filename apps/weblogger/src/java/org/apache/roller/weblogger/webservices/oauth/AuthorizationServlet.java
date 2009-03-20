@@ -83,19 +83,24 @@ public class AuthorizationServlet extends HttpServlet {
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
 
-            String requestUserId = request.getParameter("xoauth_requestor_id");
-            String consumerUserId = (String)accessor.consumer.getProperty("userId");
+            String userId = request.getParameter("userId");
+            if (userId == null) {
+                userId = request.getParameter("xoauth_requestor_id");
+            }
             
-            if (consumerUserId == null) {
+            if (userId == null) {
                 // no user associted with the key, must be site-wide key,
                 // so get user to login and do the authorization process
                 sendToAuthorizePage(request, response, accessor);
             
-            } else if (!consumerUserId.equals(requestUserId)) {
-                // user is associated with key, but request has wrong or no username
-                throw new ServletException("ERROR: invalid or unspecified userId");
-
             } else {
+
+                // if consumer key is for specific user, check username match
+                String consumerUserId = (String)accessor.consumer.getProperty("userId");
+                if (consumerUserId != null && !userId.equals(consumerUserId)) {
+                    throw new ServletException("ERROR: invalid or unspecified userId");
+                }
+
                 // set userId in accessor and mark it as authorized
                 omgr.markAsAuthorized(accessor, consumerUserId);
                 WebloggerFactory.getWeblogger().flush();

@@ -96,4 +96,18 @@ public class OAuthKeys extends UIAction {
     public OAuthConsumer getSiteWideConsumer() {
         return siteWideConsumer;
     }
+
+    public String getRequestTokenURL() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getOAuthRequestTokenURL();
+    }
+
+    public String getAuthorizationURL() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getOAuthAuthorizationURL();
+    }
+
+    public String getAccessTokenURL() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getOAuthAccessTokenURL();
+    }
+
+
 }
