@@ -102,7 +102,7 @@ public class AuthorizationServlet extends HttpServlet {
                 }
 
                 // set userId in accessor and mark it as authorized
-                omgr.markAsAuthorized(accessor, consumerUserId);
+                omgr.markAsAuthorized(accessor, userId);
                 WebloggerFactory.getWeblogger().flush();
             }
             
