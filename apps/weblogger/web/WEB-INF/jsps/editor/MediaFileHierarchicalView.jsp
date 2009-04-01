@@ -88,7 +88,7 @@ hierarchicalViewImpl = function() {
             var nodeKey = node.data.key;
 
             //prepare URL for XHR request:
-            var sUrl = 'mediaFileView!fetchDirectoryContentLight.rol?selectedDirectoryId=media-directory-id&weblog=<s:property value="actionWeblog.handle" />'.replace("media-directory-id", nodeKey);
+            var sUrl = 'mediaFileView!fetchDirectoryContentLight.rol?directoryId=media-directory-id&weblog=<s:property value="actionWeblog.handle" />'.replace("media-directory-id", nodeKey);
 
 
 
