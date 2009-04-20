@@ -755,3 +755,73 @@ div.autocomplete ul li {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* ----------------------------------------------------------------------
+Media File styles 
+---------------------------------------------------------------------- */
+/*** for overlay ***/
+.yui-overlay span, #close {
+		float: left;
+	}
+	
+	#close { float: right; }
+	
+	#overlay {
+		position: fixed;
+		z-index:100;
+		top: 0px;
+		left: 0px;
+		height:100%;
+		width:100%;
+		display: none;
+		background-color:#000;
+		filter:alpha(opacity=25);
+		-moz-opacity: 0.25;
+		opacity: 0.25;	
+	}
+	
+	.container-close {
+		position:absolute;
+		top:2px;
+		right:4px;
+		z-index:6;
+		height:12px;
+		width:12px;
+		margin:0px;
+		padding:0px;
+		background:url(http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif) no-repeat;
+		cursor:pointer;	
+	}
+
+	.align-images {
+		display:inline;
+		float:left;
+		margin:5px;
+		list-style-type:none;
+	}
+
+	.dir-image {
+    	cursor:pointer;
+		width:120px;
+		height:100px;
+	}
+
+	/*** For context menu ***/
+
+	#menu h1 {
+		line-height:120%;
+		margin:15px 0px;
+	}
+	#ewecontextmenu {
+		background-color:#CECECE;
+		border:1px solid #808080;
+		line-height:1.5;
+	}
+
+	#ewecontextmenu li a {
+		text-decoration:none;
+		color: #000000;
+	}
+
+	#ewecontextmenu .yuimenuitem-selected{background-color:#36404C;}
+	#ewecontextmenu .yuimenuitem-selected a {color:#ffffff;}

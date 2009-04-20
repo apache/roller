@@ -68,6 +68,17 @@
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
     
+	<definition name=".tiles-popuppage" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">
+       
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+       
+    </definition>
+	<definition name=".tiles-popuppage-only-content" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">
+       
+        <put-attribute name="content"      value="${content}" />
+       
+    </definition>
     
     <!-- error pages -->
     <definition name=".denied" extends=".tiles-errorpage" >
@@ -209,12 +220,31 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
 
-    <definition name=".MediaFileEdit" extends=".tiles-tabbedpage" >
+    <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
     </definition>
+
+	<definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddExternalInclude.jsp" />
+    </definition>
+
+	<definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAddInclude" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
+    </definition>
+
+	<definition name=".MediaFileAddSuccessInclude" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
+    </definition>
+
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />

@@ -218,17 +218,31 @@
             <result name="success" type="chain">entryEdit</result>
         </action>
 
-	<action name="mediaFileAdd!*" method="{1}"
+        <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
             <result name="input" type="tiles">.MediaFileAdd</result>
             <result name="success" type="tiles">.MediaFileAddSuccess</result>
             <result name="error" type="tiles">.MediaFileAdd</result>
         </action>
 
-	<action name="mediaFileEdit!*" method="{1}"
+        <action name="mediaFileAddInclude!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
+            <result name="input" type="tiles">.MediaFileAddInclude</result>
+            <result name="success" type="tiles">.MediaFileAddSuccessInclude</result>
+			 <result name="error" type="tiles">.MediaFileAddInclude</result>
+        </action>
+
+        <action name="mediaFileEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
             <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="tiles">.MediaFileEdit</result>
+        </action>
+
+        <action name="mediaFileAddExternalInclude!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <result name="input" type="tiles">.MediaFileAddExternalInclude</result>
+            <result name="success" type="tiles">.MediaFileAddExternalInclude</result>
+            <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
         </action>
 
 	<action name="mediaFileView!*" method="{1}"
@@ -247,6 +261,13 @@
             <result name="input" type="tiles">.MediaFileSearch</result>
             <result name="error" type="tiles">.MediaFileSearch</result>
             <result name="success" type="tiles">.MediaFileSearch</result>
+        </action>
+		
+	<action name="mediaFileSearchInclude!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
+            <result name="input" type="tiles">.MediaFileSearchInclude</result>
+            <result name="error" type="tiles">.MediaFileSearchInclude</result>
+            <result name="success" type="tiles">.MediaFileSearchInclude</result>
         </action>
 
 	<action name="tabular!*" method="{1}"
