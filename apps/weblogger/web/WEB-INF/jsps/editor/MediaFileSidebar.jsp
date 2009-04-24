@@ -32,11 +32,11 @@
                         <s:param name="weblog" value="%{actionWeblog.handle}" />
                     </s:url>
                     <hr size="1" noshade="noshade" />
-                    <s:a href="%{mediaFileAddURL}">Add Media file</s:a>
+                    <a href="<s:property value="%{mediaFileAddURL}" />" <s:if test="actionName.equals('mediaFileAdd')">style="font-weight:bold;"</s:if>>Add Media file<a>
                     <hr size="1" noshade="noshade" />
-                    <s:a href="%{mediaFileViewURL}">View Uploaded files</s:a>
+                    <a href="<s:property value="%{mediaFileViewURL}" />" <s:if test="actionName.equals('mediaFileView')">style="font-weight:bold;"</s:if>>View Uploaded files<a>
                     <hr size="1" noshade="noshade" />
-                    <s:a href="%{mediaFileSearchURL}">Search uploaded files</s:a>
+                    <a href="<s:property value="%{mediaFileSearchURL}" />" <s:if test="actionName.equals('mediaFileSearch')">style="font-weight:bold;"</s:if>>Search uploaded files<a>
                     <hr size="1" noshade="noshade" />
                 <br />
                 <br />

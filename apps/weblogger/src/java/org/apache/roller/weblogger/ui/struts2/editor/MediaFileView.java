@@ -69,7 +69,7 @@ public class MediaFileView extends MediaFileBase {
     private String newDirectoryName;
 
     public MediaFileView() {
-        this.actionName = "mediaViewAdd";
+        this.actionName = "mediaFileView";
         this.desiredMenu = "editor";
         this.pageTitle = "mediaFile.view.title";
     }

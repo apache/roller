@@ -59,10 +59,10 @@ Each menu or menu item is governed by four attrbibutes:
                    perms="post"/>
 
         <menu-item action="mediaFileAdd"
-                   name="tabbedmenu.weblog.mediaFileAdd"
+                   name="tabbedmenu.weblog.mediaFiles"
                    globalPerms="login"
                    perms="post"
-                   subactions="tabular" />
+                   subactions="mediaFileView,mediaFileHierarchicalView,mediaFileSearch" />
 
         <menu-item action="referrers"     
                    name="tabbedmenu.weblog.referers" 
