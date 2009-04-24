@@ -21,8 +21,15 @@
     <s:text name="mediaFile.add.title"  />
 </p>
 
+<script type="text/javascript">
+function submitPage(frm) {
+    var filePointer = "<a href='" + frm.url.value + "'>" + frm.title.value + "</a>";
+    parent.onClose(filePointer);
+}
+</script>
+
 <s:form id="entry" action=" " onsubmit="editorCleanup()" method="POST">
-    
+
 
     <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
 
@@ -31,7 +38,7 @@
                 <label for="status">URL:</label>
             </td>
             <td>
-                <s:textfield name=" " size="50" maxlength="255" tabindex="1" />
+                <s:textfield name="url" size="50" maxlength="255" tabindex="1" />
             </td>
        </tr>
 
@@ -40,7 +47,7 @@
                 <label for="status">Title</label>
             </td>
             <td>
-                <s:textfield name=" " size="50" maxlength="255" />
+                <s:textfield name="title" size="50" maxlength="255" />
             </td>
        </tr>
 
@@ -50,7 +57,7 @@
 
     <br>
     <div class="control">
-       <input type="submit" value="Insert" name="submit" />
+       <input type="button" value="Insert" name="submit" onclick="submitPage(this.form)" />
     </div>
 
 </s:form>

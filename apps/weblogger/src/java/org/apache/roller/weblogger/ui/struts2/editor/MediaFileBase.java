@@ -25,6 +25,8 @@ public class MediaFileBase extends UIAction {
 
     private List<MediaFileDirectory> allDirectories;
     
+    private boolean overlayMode;
+    
     protected void doDeleteMediaFile() {
         
     	try {
@@ -158,5 +160,13 @@ public class MediaFileBase extends UIAction {
 	public void setMediaFileId(String mediaFileId) {
 		this.mediaFileId = mediaFileId;
 	}
+	
+	public boolean isOverlayMode() {
+		return overlayMode;
+		
+	}
 
+	public void setOverlayMode(boolean mode) {
+	    this.overlayMode = mode; 
+	}
 }
