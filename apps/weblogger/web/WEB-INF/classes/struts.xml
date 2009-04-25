@@ -217,6 +217,12 @@
             <result name="input" type="tiles">.EntryAdd</result>
             <result name="success" type="chain">entryEdit</result>
         </action>
+        
+        <action name="entryAddWithMediaFile!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
+            <result name="success" type="chain">entryAdd</result>
+        </action>
+        
 
         <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">

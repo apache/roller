@@ -42,7 +42,14 @@
 </s:a>
 
 <div style="margin-top:20px;text-decoration:underline">
-<a href="#">Create a blog post out of <s:property value="bean.name" /></a><br/>
+
+<s:url id="createBlogPostURL" action="entryAddWithMediaFile">
+    <s:param name="weblog" value="actionWeblog.handle" />
+    <s:param name="mediaFileId" value="%{bean.id}" />
+</s:url>
+
+<s:a href="%{createBlogPostURL}">Create a blog post out of <s:property value="bean.name" /></s:a>
+<br/>
 
 <s:url id="mediaFileAddURL" action="mediaFileAdd">
     <s:param name="weblog" value="%{actionWeblog.handle}" />

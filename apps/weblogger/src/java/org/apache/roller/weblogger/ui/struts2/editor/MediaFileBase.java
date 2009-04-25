@@ -126,6 +126,15 @@ public class MediaFileBase extends UIAction {
             log.error("Error looking up media file directories", ex);
         }
     }
+    
+    /**
+     * Constructs the external URL for a given media file
+     * @param mediaFile
+     * @return
+     */
+    protected String getMediaFileURL(MediaFile mediaFile) {
+    	return getSiteURL() + "/roller-ui/rendering/media-resources/" + mediaFile.getId();
+    }
 
 	public String[] getSelectedMediaFiles() {
 		return selectedMediaFiles;
