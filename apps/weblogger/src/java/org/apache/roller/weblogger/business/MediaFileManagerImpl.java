@@ -263,8 +263,13 @@ public class MediaFileManagerImpl implements MediaFileManager {
         whereClause.append("m.directory.weblog = ?" + size);
         
         if (!StringUtils.isEmpty(filter.getName())) {
-        	params.add(size ++, filter.getName());
-        	whereClause.append(" AND m.name = ?" + size);
+        	String nameFilter = filter.getName();
+        	nameFilter = nameFilter.trim();
+        	if (!nameFilter.endsWith("%")) {
+        		nameFilter = nameFilter + "%";
+        	}
+        	params.add(size ++, nameFilter);
+        	whereClause.append(" AND m.name like ?" + size);
         }
 
         if (filter.getSize() > 0) {
