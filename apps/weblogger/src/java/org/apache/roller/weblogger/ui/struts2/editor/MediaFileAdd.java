@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -46,8 +44,6 @@ public class MediaFileAdd extends MediaFileBase {
     
     private MediaFileBean bean =  new MediaFileBean();
     
-    // TODO: Ganesh - Move this to MediaFileBean
-    private String directoryId;
     private MediaFileDirectory directory;
     // file uploaded by the user
     private File uploadedFile = null;
@@ -69,15 +65,14 @@ public class MediaFileAdd extends MediaFileBase {
     	refreshAllDirectories();
     	try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            if(!StringUtils.isEmpty(getDirectoryId())) {
-                setDirectory(mgr.getMediaFileDirectory(getDirectoryId()));
+            if(!StringUtils.isEmpty(bean.getDirectoryId())) {
+                setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
             }
             else {
                 setDirectory(mgr.createRootMediaFileDirectory(getActionWeblog()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
-            // TODO: Ganesh - Handle exception
         }
     }
 
@@ -135,31 +130,8 @@ public class MediaFileAdd extends MediaFileBase {
         if (StringUtils.isEmpty(this.uploadedFileFileName)) {
         	addError("error.upload.file");
         }
-        
-        if (getBean().getCopyrightText().length() > 1023) {
-        	addError("errors.maxlength", Arrays.asList("Copyright text", "1023"));
-        }
-
-        if (getBean().getDescription().length() > 255) {
-        	addError("errors.maxlength", Arrays.asList("File description", "255"));
-        }
-}
-    
-    /**
-     * Get the list of all categories for the action weblog, not including root.
-     */
-    public List<MediaFileDirectory> getDirectories() {
-        
-    	try {
-        	// TODO: Ganesh - do this in prepare method?
-    		MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            return mgr.getMediaFileDirectories(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error getting media file directory list for weblog - "+getWeblog(), ex);
-            return Collections.emptyList();
-        }
     }
-
+    
     public MediaFileBean getBean() {
     	return bean;
     }
@@ -168,14 +140,6 @@ public class MediaFileAdd extends MediaFileBase {
     	this.bean = b;
     }
     
-	public String getDirectoryId() {
-		return directoryId;
-	}
-
-	public void setDirectoryId(String id) {
-		this.directoryId = id;
-	}
-
 	public MediaFileDirectory getDirectory() {
 		return directory;
 	}

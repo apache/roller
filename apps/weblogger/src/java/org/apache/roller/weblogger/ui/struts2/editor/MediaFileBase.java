@@ -124,7 +124,6 @@ public class MediaFileBase extends UIAction {
             setAllDirectories(sortedDirList);
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directories", ex);
-            // TODO: Ganesh - Handle exception
         }
     }
 

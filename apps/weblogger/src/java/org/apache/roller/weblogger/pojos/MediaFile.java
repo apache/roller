@@ -30,12 +30,8 @@ import org.apache.roller.util.UUIDGenerator;
  * @hibernate.cache usage="read-write"
  * @hibernate.class lazy="true" table="media_file"
  */
-public class MediaFile implements ThemeResource {
+public class MediaFile {
 
-    // TODO: Ganesh - change class name to WeblogMediaFile?
-    // TODO Ganesh - review all class attributes
-    // TODO Ganesh - database constraints (not null etc) - revisit.
-	
 	final String id;
     String name;
     String description;
@@ -205,19 +201,6 @@ public class MediaFile implements ThemeResource {
 
 	public String getPath() {
 		return directory.getPath();
-	}
-
-	public ThemeResource[] getChildren() {
-		// TODO - Ganesh - To be implemented
-		return null;
-	}
-
-	public boolean isDirectory() {
-		return false;
-	}
-
-	public boolean isFile() {
-		return true;
 	}
 
 	public InputStream getInputStream() {

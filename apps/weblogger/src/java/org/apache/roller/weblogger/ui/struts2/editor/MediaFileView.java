@@ -112,8 +112,9 @@ public class MediaFileView extends MediaFileBase {
     	
     }
     
-    // TODO: Ganesh - use a different name
-    // Returns directory content in JSON format. 
+    /**
+     * Returns directory content in JSON format.
+     */
     public String fetchDirectoryContentLight() {
     	execute();
     	return "success.json";

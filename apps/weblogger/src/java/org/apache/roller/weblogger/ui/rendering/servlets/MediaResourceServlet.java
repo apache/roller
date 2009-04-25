@@ -33,11 +33,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 
 
-// TODO: Ganesh - update documentation
 /**
  * Serves media files uploaded by users.
  *
@@ -45,8 +43,8 @@ import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
  * context we need a way to serve them up.  This servlet assumes that
  * resources are stored on a filesystem in the "uploads.dir" directory.
  *
- * @web.servlet name="ResourcesServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/resources/*"
+ * @web.servlet name="MediaResourceServlet" load-on-startup="5"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/media-resources/*"
  */
 public class MediaResourceServlet extends HttpServlet {
 
@@ -61,7 +59,7 @@ public class MediaResourceServlet extends HttpServlet {
 
 
     /**
-     * Handles requests for user uploaded resources.
+     * Handles requests for user uploaded media file resources.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -376,7 +376,13 @@ function onClickEdit(mediaFileId)
 
     <s:iterator id="mediaFile" value="pager.items">
     <li class="align-images">
-	<img style="border:1px solid #000000;margin:5px;" border="0" src='<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />' width="120px" height="100px" alt="mediaFolder.png"/><br/>
+	<s:if test="#mediaFile.imageFile">
+        <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{#mediaFile.id}"></s:url>
+	</s:if>
+	<s:else>
+        <s:url id="mediaFileURL" value="/images/page.png"></s:url>
+	</s:else>
+	<img style="border:1px solid #000000;margin:5px;" border="0" src='<s:property value="%{mediaFileURL}" />' width="120px" height="100px" alt="mediaFolder.png"/><br/>
 	 <div style="clear:left;width:130px;margin-left:5px;"><label><s:property
 value="#mediaFile.name" /></label>
 <div style="padding-top:5px;">   <!--  one -->

@@ -17,6 +17,25 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<script type="text/javascript">
+<!--
+function getFileName(fullName) {
+   var backslashIndex = fullName.lastIndexOf('/');
+   var fwdslashIndex = fullName.lastIndexOf('\\');
+   var fileName;
+   if (backslashIndex >= 0) {
+       fileName = fullName.substring(backslashIndex + 1);
+   } else if (fwdslashIndex >= 0) {
+       fileName = fullName.substring(fwdslashIndex + 1);
+   }
+   else {
+       fileName = fullName;
+   }
+   return fileName;
+}
+-->
+</script>
+
 <p class="subtitle">
     <s:text name="mediaFile.add.title"  />
 
@@ -35,7 +54,7 @@
                 <label for="title">File Location</label>
             </td>
             <td>
-                 <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=this.value" /><br />
+                 <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=getFileName(this.value)" /><br />
             </td>
         </tr>
 
@@ -80,7 +99,7 @@
                 <label for="status">Place file under</label>
             </td>
             <td>
-                <s:select name="directoryId" list="allDirectories" listKey="id" listValue="path" />
+                <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="path" />
             </td>
        </tr>
 

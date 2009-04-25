@@ -65,7 +65,6 @@ public class MediaFileEdit extends UIAction {
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
-            // TODO: Ganesh - Handle exception
         }
     }
 
@@ -127,21 +126,6 @@ public class MediaFileEdit extends UIAction {
         }
     }
     
-    /**
-     * Get the list of all categories for the action weblog, not including root.
-     */
-    public List<MediaFileDirectory> getDirectories() {
-        
-    	try {
-        	// TODO: Ganesh - do this in prepare method?
-    		MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            return mgr.getMediaFileDirectories(getActionWeblog());
-        } catch (WebloggerException ex) {
-            log.error("Error getting media file directory list for weblog - "+getWeblog(), ex);
-            return Collections.EMPTY_LIST;
-        }
-    }
-
     public MediaFileBean getBean() {
     	return bean;
     }
