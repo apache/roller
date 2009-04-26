@@ -54,40 +54,39 @@ YAHOO.util.Event.onContentReady("myMenu", function () {
                 var oClones = this;
 
 
+                function findMediaFileIdForLineItem(lineItemNode) {
+                    var findMediaFileIdNode = function(node) {
+                        return (node.id == 'mediafileidentity');
+                    }
+                    var temp_elements = YAHOO.util.Dom.getElementsBy(findMediaFileIdNode,"input",lineItemNode);
+                    return temp_elements[0].value;
+                }
+
+
                 function deleteMedia(p_oLI) {
 
-				 var oUL =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+                    //var lineItemParentNode = lineItemNode.parentNode;
+                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+                    //lineItemParentNode.removeChild(lineItemNode);
 
-
-				 var myparent = oUL.parentNode;
-
-
-		var hidden_mediaFileId = document.getElementById("mediafileidentity");
-		var hidden_mediaFileId_value = hidden_mediaFileId.value;
-        myparent.removeChild(oUL);
-		document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
-		document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!delete" />';
-		document.mediaFileSearchForm.submit();
-
-
-  }
-
+                    document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
+                    document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!delete" />';
+                    document.mediaFileSearchForm.submit();
+                }
 
                 function createPost() {
 
 
                 }
 
-
-                function includeMedia() {
-		 var hidden_mediaFileId = document.getElementById("mediafileidentity");
-		 var hidden_mediaFileId_value = hidden_mediaFileId.value;
-		 document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
-         document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!includeInGallery" />';
-         document.mediaFileSearchForm.submit();
-
+                function includeMedia(p_oLI) {
+                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+                    document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
+                    document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!includeInGallery" />';
+                    document.mediaFileSearchForm.submit();
                 }
-
 
 
                 function onEweContextMenuClick(p_sType, p_aArgs) {
@@ -121,14 +120,14 @@ YAHOO.util.Event.onContentReady("myMenu", function () {
 
                             case 1:     // create post
 
-                                createPost();
+                                createPost(oLI);
 
                             break;
 
 
                             case 2:     // include in gallery
 
-                                includeMedia();
+                                includeMedia(oLI);
 
                             break;
 
@@ -376,14 +375,10 @@ function onClickEdit(mediaFileId)
 
     <s:iterator id="mediaFile" value="pager.items">
     <li class="align-images">
-	<s:if test="#mediaFile.imageFile">
-        <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{#mediaFile.id}"></s:url>
-	</s:if>
-	<s:else>
-        <s:url id="mediaFileURL" value="/images/page.png"></s:url>
-	</s:else>
-	<img style="border:1px solid #000000;margin:5px;" border="0" src='<s:property value="%{mediaFileURL}" />' width="120px" height="100px" alt="mediaFolder.png"/><br/>
-	 <div style="clear:left;width:130px;margin-left:5px;"><label><s:property
+	<div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
+	<img border="0" <s:if test="#mediaFile.imageFile">src='<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />' width="120px" height="100px" </s:if> <s:else>src="/images/page.png" style="padding:40px 50px;"</s:else>/>
+	</div><br/>
+	 <div style="clear:left;width:130px;margin-left:5px;font-size:11px;"><label><s:property
 value="#mediaFile.name" /></label>
 <div style="padding-top:5px;">   <!--  one -->
     <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property
@@ -391,7 +386,7 @@ value="#mediaFile.id"/>"/>
 	<INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
 
 <s:if test="overlayMode">
-    <div style="float:right;">
+<div style="float:right;">
        <a  href="#" onclick="onClickInsert('<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />', '<s:property value="#mediaFile.name" />', <s:property value="#mediaFile.imageFile" />)">Insert</a>
     </div>
 </s:if>

@@ -245,7 +245,12 @@ public class MediaFileManagerImpl implements MediaFileManager {
         // update weblog last modified date.  date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(weblog);
 
-        cmgr.deleteFile(weblog, mediaFile.getId());
+        try {
+            cmgr.deleteFile(weblog, mediaFile.getId());
+        }
+        catch (FileNotFoundException e) {
+            log.debug("File to be deleted already unavailable in the file store");
+        }
 	}
 	
 	public List<MediaFile> searchMediaFiles(Weblog weblog, MediaFileFilter filter) 

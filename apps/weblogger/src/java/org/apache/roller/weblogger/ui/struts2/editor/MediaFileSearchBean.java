@@ -31,7 +31,7 @@ import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
  * Bean for holding media file search criteria.
  */
 public class MediaFileSearchBean {
-	public static int PAGE_SIZE = 5;
+	public static int PAGE_SIZE = 10;
 
 	String name;
 	String type;
