@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -173,12 +172,8 @@ public class MediaFileAdd extends MediaFileBase {
     }
     
     public boolean isContentTypeImage() {
-    	String[] allowedImageContentTypes = MediaFileType.IMAGE.getContentTypes(); 
-    	for (String imageContentType: allowedImageContentTypes) {
-    		if (imageContentType.equals(this.uploadedFileContentType)) {
-    			return true;
-    		}
-    	}
-    	return false;
+		if (this.uploadedFileContentType == null) return false;
+		return (this.uploadedFileContentType.toLowerCase().startsWith(
+				MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
     }
 }

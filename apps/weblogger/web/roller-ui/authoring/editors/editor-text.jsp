@@ -76,10 +76,9 @@ function onClose(textForInsertion)
 {
 	document.getElementById('overlay').style.display = 'none';
 	document.getElementById('overlay_img').style.visibility = 'hidden';
-
-	insertAtCursor(document.getElementById('EntryText'), textForInsertion);
-
-
+	if (textForInsertion && textForInsertion.length > 0) {
+	    insertAtCursor(document.getElementById('EntryText'), textForInsertion);
+	}
 }
 
 function insertAtCursor(textAreaElement, valueForInsertion) {

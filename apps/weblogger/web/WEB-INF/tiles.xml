@@ -240,11 +240,15 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
     </definition>
 
-	<definition name=".MediaFileAddSuccessInclude" extends=".tiles-popuppage" >
+    <definition name=".MediaFileAddSuccessInclude" extends=".tiles-popuppage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
     </definition>
-
+    
+    <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEditSuccess.jsp" />
+    </definition>
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />

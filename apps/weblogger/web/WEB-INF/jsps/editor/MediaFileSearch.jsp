@@ -75,9 +75,12 @@ YAHOO.util.Event.onContentReady("myMenu", function () {
                     document.mediaFileSearchForm.submit();
                 }
 
-                function createPost() {
-
-
+                function createPost(p_oLI) {
+                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+                    document.mediaFileSearchForm.mediaFileId.value = hidden_mediaFileId_value;
+                    document.mediaFileSearchForm.action = '<s:url action="entryAddWithMediaFile"></s:url>';
+                    document.mediaFileSearchForm.submit();
                 }
 
                 function includeMedia(p_oLI) {
@@ -379,12 +382,12 @@ function onClickEdit(mediaFileId)
 	<img border="0" <s:if test="#mediaFile.imageFile">src='<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />' width="120px" height="100px" </s:if> <s:else>src="/images/page.png" style="padding:40px 50px;"</s:else>/>
 	</div><br/>
 	 <div style="clear:left;width:130px;margin-left:5px;font-size:11px;"><label><s:property
-value="#mediaFile.name" /></label>
+value="#mediaFile.name" /></label><br />
+<label style="color:blue"><s:property value="#mediaFile.directory.path" /></label>
 <div style="padding-top:5px;">   <!--  one -->
     <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property
 value="#mediaFile.id"/>"/>
 	<INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
-
 <s:if test="overlayMode">
 <div style="float:right;">
        <a  href="#" onclick="onClickInsert('<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />', '<s:property value="#mediaFile.name" />', <s:property value="#mediaFile.imageFile" />)">Insert</a>

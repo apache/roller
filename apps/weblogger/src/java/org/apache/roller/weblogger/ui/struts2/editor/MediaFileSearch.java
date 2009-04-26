@@ -51,7 +51,7 @@ public class MediaFileSearch extends MediaFileBase {
     private String newDirectoryPath;
     
     static {
-        fileTypes = Arrays.asList("", "Audio", "Video", "Image");
+        fileTypes = Arrays.asList("", "Audio", "Video", "Image", "Others");
         
         sizeFilterTypes = Arrays.asList(
         		new KeyValueObject(0, "greater than"),

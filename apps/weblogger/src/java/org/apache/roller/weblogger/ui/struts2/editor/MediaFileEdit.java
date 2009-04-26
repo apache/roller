@@ -79,7 +79,6 @@ public class MediaFileEdit extends UIAction {
 		try {
 			MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
 			this.bean.copyFrom(mediaFile);
-    		return SUCCESS;
         } catch (FileIOException ex) {
             addError("uploadFiles.error.upload", bean.getName());
 		} catch (Exception e) {

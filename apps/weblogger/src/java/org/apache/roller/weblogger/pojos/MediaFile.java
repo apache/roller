@@ -223,12 +223,7 @@ public class MediaFile {
 	
 	public boolean isImageFile() {
 		if (this.contentType == null) return false;
-    	String[] allowedImageContentTypes = MediaFileType.IMAGE.getContentTypes(); 
-    	for (String imageContentType: allowedImageContentTypes) {
-    		if (imageContentType.equals(this.contentType)) {
-    			return true;
-    		}
-    	}
-    	return false;
+		return (this.contentType.toLowerCase().startsWith(
+				MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
 	}
 }

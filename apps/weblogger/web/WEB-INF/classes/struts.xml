@@ -234,7 +234,7 @@
         <action name="mediaFileEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
             <result name="input" type="tiles">.MediaFileEdit</result>
-            <result name="success" type="tiles">.MediaFileEdit</result>
+            <result name="success" type="tiles">.MediaFileEditSuccess</result>
         </action>
 
         <action name="mediaFileAddExternalInclude!*" method="{1}"

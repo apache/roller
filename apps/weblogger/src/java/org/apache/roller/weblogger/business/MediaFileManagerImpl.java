@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.NoResultException;
-import javax.persistence.OneToMany;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,8 +36,8 @@ import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
+import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 @com.google.inject.Singleton
@@ -302,13 +301,18 @@ public class MediaFileManagerImpl implements MediaFileManager {
         }
         
         if (filter.getType() != null) {
-        	whereClause.append(" AND m.contentType IN (");
-    		for (String contentType: filter.getType().getContentTypes()) {
-        	    params.add(size ++, contentType);
-        	    whereClause.append("?").append(size).append(",");
-    		}
-        	whereClause.deleteCharAt(whereClause.lastIndexOf(","));
-        	whereClause.append(")");
+        	if (filter.getType() == MediaFileType.OTHERS) {
+        		for (MediaFileType type: MediaFileType.values()) {
+        			if (type != MediaFileType.OTHERS) {
+                    	params.add(size ++, type.getContentTypePrefix() + "%");
+                    	whereClause.append(" AND m.contentType not like ?" + size);
+        			}
+        		}
+        	}
+        	else {
+            	params.add(size ++, filter.getType().getContentTypePrefix() + "%");
+            	whereClause.append(" AND m.contentType like ?" + size);
+        	}
         }
         
         switch(filter.getOrder()) {

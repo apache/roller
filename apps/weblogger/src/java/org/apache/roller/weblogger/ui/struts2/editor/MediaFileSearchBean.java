@@ -107,6 +107,9 @@ public class MediaFileSearchBean {
     		else if ("Image".equals(this.type)) {
     			filterType = MediaFileType.IMAGE;
     		}
+    		else if ("Others".equals(this.type)) {
+    			filterType = MediaFileType.OTHERS;
+    		}
     		
     		dataHolder.setType(filterType);
     	}

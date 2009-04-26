@@ -74,20 +74,19 @@ YAHOO.util.Event.onContentReady("myMenu", function () {
                 function deleteMedia(p_oLI) {
 
                     var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-                    //var lineItemParentNode = lineItemNode.parentNode;
                     var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-                    //lineItemParentNode.removeChild(lineItemNode);
                     document.mediaFileViewForm.mediaFileId.value=hidden_mediaFileId_value;
                     document.mediaFileViewForm.action='<s:url action="mediaFileView!delete" />';
                     document.mediaFileViewForm.submit();
                 }
 
-
-                function createPost() {
-
-
+                function createPost(p_oLI) {
+                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+                    document.mediaFileViewForm.mediaFileId.value = hidden_mediaFileId_value;
+                    document.mediaFileViewForm.action = '<s:url action="entryAddWithMediaFile"></s:url>';
+                    document.mediaFileViewForm.submit();
                 }
-
 
                 function includeMedia(p_oLI) {
                     var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
@@ -96,6 +95,7 @@ YAHOO.util.Event.onContentReady("myMenu", function () {
                     document.mediaFileViewForm.action = '<s:url action="mediaFileView!includeInGallery" />';
                     document.mediaFileViewForm.submit();
                 }
+
 
 
 
