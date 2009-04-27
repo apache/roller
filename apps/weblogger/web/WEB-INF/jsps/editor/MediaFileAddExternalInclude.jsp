@@ -58,6 +58,7 @@ function submitPage(frm) {
     <br>
     <div class="control">
        <input type="button" value="Insert" name="submit" onclick="submitPage(this.form)" />
+	    <input type="button" value="Cancel" onClick="javascript:window.parent.onClose();" />
     </div>
 
 </s:form>

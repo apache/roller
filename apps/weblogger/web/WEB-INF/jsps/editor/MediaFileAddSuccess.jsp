@@ -37,9 +37,10 @@
 <div style="margin-bottom:10px;"><img border="0" src='<s:property value="%{mediaFileURL}" />' width="150px" alt="image"/></div>
 </s:if>
 
-<s:a href="%{mediaFileURL}">
-<s:property value="%{mediaFileURL}" />
-</s:a>
+
+<a style="font-size:11px;color:#000000;text-decoration:underline;" href="<s:property value='%{mediaFileURL}'/>"><s:property value="%{mediaFileURL}" />
+<a>
+
 
 <div style="margin-top:20px;text-decoration:underline">
 

@@ -191,14 +191,18 @@ YAHOO.util.Event.onContentReady("myMenu", function () {
             });
 
 			YAHOO.example = function() {
+				
+
 			var $D = YAHOO.util.Dom;
 			var $E = YAHOO.util.Event;
 			return {
 				init : function() {
 					var overlay_img = new YAHOO.widget.Overlay("overlay_img", { fixedcenter:true,
 																			visible:false,
-																			width:"569px",height:"465px"
+																			width:"569px",height:"550px"
 																		   });
+				 
+				 
 					overlay_img.render();
 					var overlay = document.createElement('div');
 					overlay.id = 'overlay';
@@ -256,7 +260,7 @@ function onClose()
 }
 function onClickEdit(mediaFileId)
 {
-
+    var browser=navigator.appName;
 	document.getElementById("overlay_img").style.visibility = "visible";
 	document.getElementById('overlay').style.display = 'block';
 
@@ -268,9 +272,12 @@ function onClickEdit(mediaFileId)
 				    frame.setAttribute('src','<s:url action="mediaFileEdit"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>&mediaFileId='+mediaFileId );
 				    frame.style.width="100%";
 			    	frame.style.height="100%";
-					var mystring="<s:url action='mediaFileEdit'><s:param name='weblog' value='%{actionWeblog.handle}' /></s:url>&mediaFileId="+mediaFileId;
-
-					var innerstring = "<iframe id='myframe' frameborder='no' scrolling='auto' src="+mystring+" width='100%' height='100%'></iframe>";
+					if (browser=="Microsoft Internet Explorer")
+					{
+					document.getElementById("overlay_img").style.top= "40px"; 
+	                document.getElementById("overlay_img").style.left= "170px"; 
+					}
+					
 
 
 	document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';

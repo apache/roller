@@ -789,8 +789,8 @@ Media File styles
 		width:12px;
 		margin:0px;
 		padding:0px;
-		background:url(http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif) no-repeat;
-		cursor:pointer;	
+		background:url('http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif') no-repeat;
+		cursor:pointer	
 	}
 
 	.align-images {
@@ -802,8 +802,9 @@ Media File styles
 
 	.dir-image {
     	cursor:pointer;
-		width:120px;
-		height:100px;
+		width:25px;
+		height:25px;
+		padding:40px 45px;
 	}
 
 	/*** For context menu ***/

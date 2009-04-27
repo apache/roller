@@ -116,6 +116,7 @@
     <br>
     <div class="control">
        <input type="submit" value="Submit" name="submit" />
+	   <input type="button" value="Cancel" onClick="javascript:window.parent.onClose();" />
     </div>
 
 </s:form>

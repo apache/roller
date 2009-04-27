@@ -111,8 +111,13 @@ function insertAtCursor(textAreaElement, valueForInsertion) {
 
 
 function onClickAdd(){
+	var browser=navigator.appName;
 	document.getElementById("overlay_img").style.visibility = "visible";
 	document.getElementById('overlay').style.display = 'block';
+	document.getElementById("overlay_img").style.width = "650px";
+	document.getElementById("overlay_img").style.height = "550px";
+	document.getElementById("overlay_img").style.top = "40px";
+
 
 		var frame = document.createElement('iframe');
 		frame.setAttribute("id","myframe");
@@ -121,7 +126,13 @@ function onClickAdd(){
 
 		frame.setAttribute('src','<s:url action="mediaFileAdd" namespace="overlay"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>' );
 		frame.style.width="100%";
-		frame.style.height="100%";
+	    frame.style.height="100%";
+		if (browser=="Microsoft Internet Explorer")
+	    {
+		document.getElementById("overlay_img").style.top= "40px"; 
+	    document.getElementById("overlay_img").style.left= "170px"; 
+        } 
+					
 
 
 	document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
@@ -129,40 +140,59 @@ function onClickAdd(){
     document.getElementById("overlay_img").appendChild(frame);
 
 }
+
 function onClickAddFromUpload(){
-document.getElementById("overlay_img").style.visibility = "visible";
+	var browser=navigator.appName;
+    document.getElementById("overlay_img").style.visibility = "visible";
 	document.getElementById('overlay').style.display = 'block';
+	document.getElementById("overlay_img").style.width = "650px";
+	document.getElementById("overlay_img").style.height = "500px";
+	document.getElementById("overlay_img").style.top = "40px";
+
 
 
 		var frame = document.createElement('iframe');
-				    frame.setAttribute("id","myframe");
-				    frame.setAttribute("frameborder","no");
-				    frame.setAttribute("scrolling","auto");
+	    frame.setAttribute("id","myframe");
+	    frame.setAttribute("frameborder","no");
+	    frame.setAttribute("scrolling","auto");
 
-				    frame.setAttribute('src','<s:url action="mediaFileSearch" namespace="overlay"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>' );
-				    frame.style.width="100%";
-			    	frame.style.height="100%";
+	    frame.setAttribute('src','<s:url action="mediaFileSearch" namespace="overlay"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>' );
+	    frame.style.width="100%";
+		frame.style.height="100%";
+		if (browser=="Microsoft Internet Explorer")
+		{
+		document.getElementById("overlay_img").style.top= "40px"; 
+	    document.getElementById("overlay_img").style.left= "170px"; 
+        }
+		
 
 
 	document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
 
     document.getElementById("overlay_img").appendChild(frame);
 }
+
 function onClickAddExternal(){
-document.getElementById("overlay_img").style.visibility = "visible";
+	var browser=navigator.appName;
+    document.getElementById("overlay_img").style.visibility = "visible";
 	document.getElementById('overlay').style.display = 'block';
 	document.getElementById("overlay_img").style.width = "515px";
-	document.getElementById("overlay_img").style.height = "300px";
-	document.getElementById("overlay_img").style.top = "130px";
+	document.getElementById("overlay_img").style.height = "400px";
+	document.getElementById("overlay_img").style.top = "100px";
 
 		var frame = document.createElement('iframe');
-				    frame.setAttribute("id","myframe");
-				    frame.setAttribute("frameborder","no");
-				    frame.setAttribute("scrolling","auto");
+		frame.setAttribute("id","myframe");
+	    frame.setAttribute("frameborder","no");
+	    frame.setAttribute("scrolling","auto");
 
-				    frame.setAttribute('src','<s:url action="mediaFileAddExternalInclude"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>' );
-				    frame.style.width="100%";
-			    	frame.style.height="100%";
+	    frame.setAttribute('src','<s:url action="mediaFileAddExternalInclude"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>' );
+	    frame.style.width="100%";
+		frame.style.height="100%";
+		if (browser=="Microsoft Internet Explorer")
+		{
+		document.getElementById("overlay_img").style.top= "40px"; 
+	    document.getElementById("overlay_img").style.left= "170px"; 
+        }
 
 
 	document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
@@ -170,6 +200,7 @@ document.getElementById("overlay_img").style.visibility = "visible";
     document.getElementById("overlay_img").appendChild(frame);
 
 }
+
 
 </script>
 
