@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -28,12 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 
 
 /**
@@ -79,26 +75,13 @@ public class MediaFilesPager extends AbstractPager {
         
         if (this.mediaFiles == null) {
             // calculate offset
-            int offset = getPage() * length;
+            //int offset = getPage() * length;
             
             List<MediaFile> results = new ArrayList<MediaFile>();
             
-            Date startDate = null;
-            if(sinceDays > 0) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1 * sinceDays);
-                startDate = cal.getTime();
-            }
-            
             try {
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                MediaFileManager mgr = roller.getMediaFileManager();
-                MediaFileFilter fileFilter = new MediaFileFilter();
-                fileFilter.setStartIndex(offset);
-                fileFilter.setLength(length + 1);
-                fileFilter.setOrder(MediaFileOrder.DATE_UPLOADED);
-                results = mgr.searchMediaFiles(weblog, fileFilter);
+                MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+                results = mgr.fetchRecentPublicMediaFiles(length);
             } catch (Exception e) {
                 log.error("ERROR: fetching comment list", e);
             }

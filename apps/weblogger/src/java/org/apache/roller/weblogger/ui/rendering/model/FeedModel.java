@@ -223,7 +223,7 @@ public class FeedModel implements Model {
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
-                    null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+                    null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), 10);
             this.feedRequest = feedRequest;
         }
         

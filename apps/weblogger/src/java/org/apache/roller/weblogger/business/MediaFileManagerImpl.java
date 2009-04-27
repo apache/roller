@@ -252,6 +252,21 @@ public class MediaFileManagerImpl implements MediaFileManager {
         }
 	}
 	
+ 	public List<MediaFile> fetchRecentPublicMediaFiles(int length) 
+ 	    throws WebloggerException {
+
+ 		List<Object> params = new ArrayList<Object>();
+        int size = 0;
+        StringBuffer queryString = new StringBuffer();
+        
+        queryString.append("SELECT m FROM MediaFile m WHERE m.sharedForGallery = true");
+        queryString.append(" order by m.dateUploaded");
+        Query query = persistenceStrategy.getDynamicQuery(queryString.toString());
+        query.setFirstResult(0);
+        query.setMaxResults(length);
+        return query.getResultList();
+ 	}
+ 	
 	public List<MediaFile> searchMediaFiles(Weblog weblog, MediaFileFilter filter) 
 	     throws WebloggerException {
         

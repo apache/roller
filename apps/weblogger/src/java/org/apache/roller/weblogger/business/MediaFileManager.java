@@ -50,5 +50,7 @@ public interface MediaFileManager {
     public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaFileDirectory directory) throws WebloggerException;
     public void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory) throws WebloggerException;
 
-	public void release();
+ 	public List<MediaFile> fetchRecentPublicMediaFiles(int length) throws WebloggerException;
+
+ 	public void release();
 }
