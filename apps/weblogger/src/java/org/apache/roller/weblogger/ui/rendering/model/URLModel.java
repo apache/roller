@@ -314,6 +314,10 @@ public class URLModel implements Model {
         public CommentFeedURLS getComments() {
             return new CommentFeedURLS();
         }
+
+        public MediaFileFeedURLS getMediaFiles() {
+            return new MediaFileFeedURLS();
+        }
     }
     
     public class EntryFeedURLS {
@@ -367,4 +371,23 @@ public class URLModel implements Model {
         
     }
     
+    public class MediaFileFeedURLS {
+        
+        public String getRss() {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "rss", null, null, null, false, true);
+        }
+        
+        public String rss(String catPath, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "rss", catPath, null, null, excerpts, true);
+        }
+        
+        public String getAtom() {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "atom", null, null, null, false, true);
+        }
+        
+        public String atom(String catPath, boolean excerpts) {
+            return urlStrategy.getWeblogFeedURL(weblog, locale, "files", "atom", catPath, null, null, excerpts, true);
+        }
+        
+    }
 }

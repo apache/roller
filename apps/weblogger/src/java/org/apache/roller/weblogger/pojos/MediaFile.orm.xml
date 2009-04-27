@@ -40,6 +40,9 @@
             <basic name="sharedForGallery">
                 <column name="is_public" insertable="true" updatable="true" unique="false"/>
             </basic>
+            <basic name="creatorUserName">
+                <column name="creator" insertable="true" updatable="true" unique="false" />
+            </basic>
             <many-to-one name="directory" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory">
                 <join-column name="directory_id" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>

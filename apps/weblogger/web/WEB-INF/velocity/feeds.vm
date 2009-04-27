@@ -23,6 +23,7 @@
       #showEntriesRSS20()
       #showCommentsAtom10()
       #showCommentsRSS20()
+      #showFilesAtom10()
 *#
 
 #macro(showEntriesAtom10 $entries)
@@ -110,6 +111,26 @@
         <description>$comment.content</description>
     </item>
     #end
+#end
+
+#macro(showFilesAtom10 $mediaFiles)
+#foreach($file in $mediaFiles)
+    <entry>
+        <id>$file.permalink</id>
+        <title type="html">$utils.escapeXML($file.name)</title>
+        <author><name>$file.creator.screenName</name></author>
+        <link rel="alternate" type="text/html" href="$file.permalink"/>
+        <published>$utils.formatIso8601Date($file.dateUploaded)</published>
+        <updated>$utils.formatIso8601Date($file.lastUpdated)</updated> 
+#foreach($tag in $file.tags)
+        <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
+#end        
+#if( $utils.isNotEmpty($file.description))
+        <summary type="html">$utils.escapeXML($file.description)</summary>
+#end
+        <link rel="enclosure" type="$file.contentType" href="$utils.escapeXML($file.permalink)"/>
+    </entry>
+#end
 #end
 
 #macro(showFeedHistory $pager)

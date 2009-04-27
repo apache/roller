@@ -74,10 +74,12 @@ create table media_file (
     description     varchar(255),
     content_type    varchar(50)  not null,
     copyright_text  varchar(1023),
-    directory_id    varchar(48),
+    directory_id    varchar(48), 
     size_in_bytes   integer,
     date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
     last_updated    $db.TIMESTAMP_SQL_TYPE,
+    anchor          varchar(255),
+    creator         varchar(255),
     is_public       $db.BOOLEAN_SQL_TYPE_FALSE not null
 );
 

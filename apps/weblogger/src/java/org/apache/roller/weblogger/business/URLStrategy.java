@@ -150,6 +150,12 @@ public interface URLStrategy {
     
     
     /**
+     * Get url for a single mediafile on a given weblog.
+     */
+    public String getMediaFileURL(String entryAnchor,
+                                                 boolean absolute);
+
+    /**
      * Get url for a collection of entries on a given weblog.
      */
     public String getWeblogCollectionURL(Weblog weblog,

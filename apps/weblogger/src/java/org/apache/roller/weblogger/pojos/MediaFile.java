@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
  * Media file
@@ -31,8 +34,12 @@ import org.apache.roller.util.UUIDGenerator;
  * @hibernate.class lazy="true" table="media_file"
  */
 public class MediaFile {
+    private static Log log =
+        LogFactory.getFactory().getInstance(MediaFile.class);
 
 	final String id;
+	// TODO: anchor to be populated
+	String anchor;
     String name;
     String description;
     String copyrightText;
@@ -45,6 +52,7 @@ public class MediaFile {
     String contentType;
     InputStream is;
     FileContent content;
+    String creatorUserName;
     
     public MediaFile() {
     	this.id = UUIDGenerator.generateUUID();
@@ -226,4 +234,28 @@ public class MediaFile {
 		return (this.contentType.toLowerCase().startsWith(
 				MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
 	}
+
+	public String getPermalink() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(
+        		this.id, true);
+	}
+
+	public String getCreatorUserName() {
+		return creatorUserName;
+	}
+
+	public void setCreatorUserName(String creatorUserName) {
+		this.creatorUserName = creatorUserName;
+	}
+	
+    public User getCreator() {
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
+        } catch (Exception e) {
+            log.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
+        }
+        return null;
+    }   
+    
+
 }
