@@ -246,16 +246,18 @@ function onMoveSelected()
     }
 }
 
-function onClickInsert(url, text, isImage)
+function onClickInsert(id, url, text, isImage)
 {
     var filePointer;
     if (isImage) {
-        filePointer = "<img src='" + url + "' alt='" + text + "' width='400' height='300' />";
+        document.mediaFileSearchForm.mediaFileId.value=id;
+        document.mediaFileSearchForm.action='<s:url action="mediaFileImageDim" />';
+        document.mediaFileSearchForm.submit();
     }
     else {
-        filePointer = "<a href='" + url + "'>" + text + "</a>";
+        var filePointer = "<a href='" + url + "'>" + text + "</a>";
+        parent.onClose(filePointer);
     }
-    parent.onClose(filePointer);
 }
 
 function onCreateDirectory()
@@ -294,11 +296,11 @@ function onClickEdit(mediaFileId)
 			    	frame.style.height="100%";
 					if (browser=="Microsoft Internet Explorer")
 					{
-					document.getElementById("overlay_img").style.top= "40px"; 
-	                document.getElementById("overlay_img").style.left= "170px"; 
-                    document.getElementById("overlay_img").style.height= "500px"; 
+					document.getElementById("overlay_img").style.top= "40px";
+	                document.getElementById("overlay_img").style.left= "170px";
+                    document.getElementById("overlay_img").style.height= "500px";
 					}
-					
+
 
 	document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
 
@@ -393,7 +395,7 @@ value="#mediaFile.id"/>"/>
 	<INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
 <s:if test="overlayMode">
 <div style="float:right;">
-       <a  href="#" onclick="onClickInsert('<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />', '<s:property value="#mediaFile.name" />', <s:property value="#mediaFile.imageFile" />)">Insert</a>
+       <a  href="#" onclick="onClickInsert('<s:property value="#mediaFile.id" />', '<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />', '<s:property value="#mediaFile.name" />', <s:property value="#mediaFile.imageFile" />)">Insert</a>
     </div>
 </s:if>
 <s:else>

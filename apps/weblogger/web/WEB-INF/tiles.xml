@@ -226,10 +226,16 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
     </definition>
 
-	<definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
+    <definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddExternalInclude.jsp" />
     </definition>
+    
+    <definition name=".MediaFileImageDimension" extends=".tiles-popuppage-only-content" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileImageDimension.jsp" />
+    </definition>
+    
 
 	<definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
@@ -243,7 +249,7 @@
 
     <definition name=".MediaFileAddSuccessInclude" extends=".tiles-popuppage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccessInclude.jsp" />
     </definition>
     
     <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >

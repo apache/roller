@@ -262,12 +262,11 @@
             <result name="success" type="tiles">.MediaFileSearch</result>
         </action>
 		
-	<action name="tabular!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.Resources">
-            <result name="list" type="tiles">.TabularView</result>
+	<action name="mediaFileImageDim!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
+            <result name="success" type="tiles">.MediaFileImageDimension</result>
         </action>
-        
-        
+
         <action name="entryEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
             <result name="input" type="tiles">.EntryEdit</result>
