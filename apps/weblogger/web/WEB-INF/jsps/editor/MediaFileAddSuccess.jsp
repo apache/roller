@@ -22,7 +22,7 @@
 </p>
 
 <s:form id="entry" action="addMedia!submit" onsubmit="editorCleanup()">
-    <s:hidden name="weblog" />
+<s:hidden name="weblog" />
 
 <div style="border:1px solid; width=80px;background-color: #cfc;margin-bottom:5px;">
 <ul>
@@ -60,26 +60,12 @@
 </div>
 
 
-
-
-
-
-
-
-
-
     <%-- ================================================================== --%>
     <%-- Weblog edit or preview --%>
 
 
-
-
-
-
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>
-
-
 
 
     <%-- ================================================================== --%>

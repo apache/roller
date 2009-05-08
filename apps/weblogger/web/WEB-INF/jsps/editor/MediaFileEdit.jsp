@@ -39,7 +39,7 @@
             </td>
        </tr>
 
-	    <tr>
+        <tr>
             <td class="entryEditFormLabel">
                 <label for="status">A short Description of file</label>
             </td>
@@ -48,7 +48,7 @@
             </td>
        </tr>
 
-	    <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Copyright Statement (optional)</label>
             </td>
@@ -57,7 +57,7 @@
             </td>
        </tr>
 
-	   <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Tags (separated by spaces)</label>
             </td>
@@ -66,7 +66,7 @@
             </td>
        </tr>
 
-	    <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Place file under</label>
             </td>
@@ -75,11 +75,11 @@
             </td>
        </tr>
 
-	   <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Include in Gallery?</label>
             </td>
-			<td>
+            <td>
                 <s:checkbox name="bean.sharedForGallery" />
             </td>
        </tr>
@@ -116,7 +116,7 @@
     <br>
     <div class="control">
        <input type="submit" value="Submit" name="submit" />
-	   <input type="button" value="Cancel" onClick="javascript:window.parent.onClose();" />
+       <input type="button" value="Cancel" onClick="javascript:window.parent.onClose();" />
     </div>
 
 </s:form>

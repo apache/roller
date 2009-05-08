@@ -16,200 +16,157 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/reset-fonts-grids/reset-fonts-grids.css&2.6.0/build/menu/assets/skins/sam/menu.css">
-<!-- Combo-handled YUI JS files: -->
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo-dom-event/yahoo-dom-event.js&2.6.0/build/animation/animation-min.js&2.6.0/build/container/container_core-min.js&2.6.0/build/menu/menu-min.js"></script>
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/fonts/fonts-min.css" />
-<link rel="stylesheet" type="text/css"
-href="http://yui.yahooapis.com/2.6.0/build/container/assets/skins/sam/container.css" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/reset-fonts-grids.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/menu.css'/>" />
 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript"
-src="http://yui.yahooapis.com/2.6.0/build/container/container-min.js"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/container_core-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/menu-min.js'/>"></script>
+
 <style type="text/css">
 body {
-		margin:0;
-		padding:0;
-		text-align:left;
-	}
-	h1 {
-		font-size:20px;
-		font-weight:bold;
-	}
+                margin:0;
+                padding:0;
+                text-align:left;
+     }
+h1   {
+                font-size:20px;
+                font-weight:bold;
+      }
 .yui-overlay {
-		position:fixed;
-	  	background: #ffffff;
-	  	z-index: 112;
-	  	color:#000000;
-	  	border: 4px solid #525252;
-	  	text-align:left;
-	  	top: 50%;
-	  	left: 50%;
-	}
+                position:fixed;
+                background: #ffffff;
+                z-index: 112;
+                color:#000000;
+                border: 4px solid #525252;
+                text-align:left;
+                top: 50%;
+                left: 50%;
+            }
 </style>
 <script type="text/javascript">
 YAHOO.util.Event.onContentReady("myMenu", function () {
+    var oClones = this;
 
+        function findMediaFileIdForLineItem(lineItemNode) {
+           var findMediaFileIdNode = function(node) {
+           return (node.id == 'mediafileidentity');
+           }
+           var temp_elements = YAHOO.util.Dom.getElementsBy(findMediaFileIdNode,"input",lineItemNode);
+           return temp_elements[0].value;
+        }
 
-                var oClones = this;
+        function deleteMedia(p_oLI) {
+           var lineItemNode = YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+           var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+           document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
+           document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!delete" />';
+           document.mediaFileSearchForm.submit();
+        }
 
+        function createPost(p_oLI) {
+           var lineItemNode = YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+           var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+           document.mediaFileSearchForm.mediaFileId.value = hidden_mediaFileId_value;
+           document.mediaFileSearchForm.action = '<s:url action="entryAddWithMediaFile"></s:url>';
+           document.mediaFileSearchForm.submit();
+        }
 
-                function findMediaFileIdForLineItem(lineItemNode) {
-                    var findMediaFileIdNode = function(node) {
-                        return (node.id == 'mediafileidentity');
-                    }
-                    var temp_elements = YAHOO.util.Dom.getElementsBy(findMediaFileIdNode,"input",lineItemNode);
-                    return temp_elements[0].value;
-                }
+        function includeMedia(p_oLI) {
+           var lineItemNode = YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
+           var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
+           document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
+           document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!includeInGallery" />';
+           document.mediaFileSearchForm.submit();
+        }
 
+        function onEweContextMenuClick(p_sType, p_aArgs) {
 
-                function deleteMedia(p_oLI) {
+             var oItem = p_aArgs[1],
+             oTarget = this.contextEventTarget,
+             oLI;
 
-                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-                    //var lineItemParentNode = lineItemNode.parentNode;
-                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-                    //lineItemParentNode.removeChild(lineItemNode);
+             if (oItem) {
+                oLI = oTarget.className == "contextMenu" ?
+                oTarget : YAHOO.util.Dom.getAncestorByClassName(oTarget, "contextMenu");
+                   switch (oItem.index) {
 
-                    document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
-                    document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!delete" />';
-                    document.mediaFileSearchForm.submit();
-                }
+                   case 0:// delete
+                          deleteMedia(oLI);
+                          break;
+                   case 1:// create post
+                          createPost(oLI);
+                          break;
+                   case 2:// include in gallery
+                          includeMedia(oLI);
+                          break;
+                   }
+             }
+       }
 
-                function createPost(p_oLI) {
-                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-                    document.mediaFileSearchForm.mediaFileId.value = hidden_mediaFileId_value;
-                    document.mediaFileSearchForm.action = '<s:url action="entryAddWithMediaFile"></s:url>';
-                    document.mediaFileSearchForm.submit();
-                }
+            /*
+              Array of text labels for the MenuItem instances to be
+              added to the ContextMenu instanc.
+            */
 
-                function includeMedia(p_oLI) {
-                    var lineItemNode =	YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-                    var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-                    document.mediaFileSearchForm.mediaFileId.value=hidden_mediaFileId_value;
-                    document.mediaFileSearchForm.action='<s:url action="mediaFileSearch!includeInGallery" />';
-                    document.mediaFileSearchForm.submit();
-                }
+              var aMenuItems = ["Delete", "Create Post", "Include in Gallery" ];
 
+            /*
+              Instantiate a ContextMenu:  The first argument passed to the constructor
+              is the id for the Menu element to be created, the second is an
+              object literal of configuration properties.
+             */
 
-                function onEweContextMenuClick(p_sType, p_aArgs) {
-
-                    /*
-                         The second item in the arguments array (p_aArgs)
-                         passed back to the "click" event handler is the
-                         MenuItem instance that was the target of the
-                         "click" event.
-                    */
-
-                    var oItem = p_aArgs[1], // The MenuItem that was clicked
-                    	oTarget = this.contextEventTarget,
-                        oLI;
-
-
-                    if (oItem) {
-
-					oLI = oTarget.className == "contextMenu" ?
-								oTarget : YAHOO.util.Dom.getAncestorByClassName(oTarget, "contextMenu");
-
-
-                        switch (oItem.index) {
-
-                            case 0:     // delete
-
-                                deleteMedia(oLI);
-
-                            break;
-
-
-                            case 1:     // create post
-
-                                createPost(oLI);
-
-                            break;
-
-
-                            case 2:     // include in gallery
-
-                                includeMedia(oLI);
-
-                            break;
-
+              var oEweContextMenu = new YAHOO.widget.ContextMenu(
+                                               "ewecontextmenu",
+                       {
+                         trigger: oClones.getElementsByClassName("contextMenu"),
+                         itemdata: aMenuItems,
+                         lazyload: true
                         }
+              );
 
-                    }
+              // "render" event handler for the ewe context menu
 
-                }
+              function onContextMenuRender(p_sType, p_aArgs) {
 
+              //  Add a "click" event handler to the ewe context menu
 
-                /*
-                     Array of text labels for the MenuItem instances to be
-                     added to the ContextMenu instanc.
-                */
+              this.subscribe("click", onEweContextMenuClick);
 
-                var aMenuItems = ["Delete", "Create Post", "Include in Gallery" ];
+              }
 
+              // Add a "render" event handler to the ewe context menu
 
-                /*
-					Instantiate a ContextMenu:  The first argument passed to the constructor
-					is the id for the Menu element to be created, the second is an
-					object literal of configuration properties.
-                */
-
-                var oEweContextMenu = new YAHOO.widget.ContextMenu(
-                                            "ewecontextmenu",
-                                            {
-                                                trigger: oClones.getElementsByClassName("contextMenu"),
-                                                itemdata: aMenuItems,
-                                                lazyload: true
-                                            }
-                                        );
+              oEweContextMenu.subscribe("render", onContextMenuRender);
 
 
-                // "render" event handler for the ewe context menu
+});
 
-                function onContextMenuRender(p_sType, p_aArgs) {
-
-                 //  Add a "click" event handler to the ewe context menu
-
-                    this.subscribe("click", onEweContextMenuClick);
-
-                }
-
-
-                // Add a "render" event handler to the ewe context menu
-
-                oEweContextMenu.subscribe("render", onContextMenuRender);
-
-
-            });
 YAHOO.example = function() {
-			var $D = YAHOO.util.Dom;
-			var $E = YAHOO.util.Event;
-			return {
-				init : function() {
-					var overlay_img = new YAHOO.widget.Overlay("overlay_img", { fixedcenter:true,
-																			visible:false,
-																			width:"577px",height:"550px"
-																		   });
-					overlay_img.render();
-					var overlay = document.createElement('div');
-					overlay.id = 'overlay';
+    var $D = YAHOO.util.Dom;
+    var $E = YAHOO.util.Event;
+        return {
+          init : function() {
+             var overlay_img = new YAHOO.widget.Overlay("overlay_img", { fixedcenter:true,
+                                                                         visible:false,
+                                                                         width:"577px",height:"550px"
+                                                                       });
+             overlay_img.render();
+             var overlay = document.createElement('div');
+             overlay.id = 'overlay';
+             // Assign 100% height and width
+             overlay.style.width = '100%';
+             overlay.style.height = '100%';
+             document.getElementsByTagName('body')[0].appendChild(overlay);
+             overlay.style.display = 'none';
+          }
+        };
+}();
 
-					// Assign 100% height and width
-					overlay.style.width = '100%';
-					overlay.style.height = '100%';
-
-                    document.getElementsByTagName('body')[0].appendChild(overlay);
-					overlay.style.display = 'none';
-			}
-			};
-
-		}();
-
-		YAHOO.util.Event.addListener(window, "load", YAHOO.example.init);
-
+YAHOO.util.Event.addListener(window, "load", YAHOO.example.init);
 </script>
-
 
 <%-- JavaScript for media file search page--%>
 <script type="text/javascript">
@@ -277,38 +234,30 @@ function onPrevious()
 }
 function onClose()
 {
-	document.getElementById('overlay').style.display = 'none';
-	document.getElementById('overlay_img').style.visibility = 'hidden';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('overlay_img').style.visibility = 'hidden';
 }
 function onClickEdit(mediaFileId)
 {
     var browser=navigator.appName;
-	document.getElementById("overlay_img").style.visibility = "visible";
-	document.getElementById('overlay').style.display = 'block';
+    document.getElementById("overlay_img").style.visibility = "visible";
+    document.getElementById('overlay').style.display = 'block';
 
-		var frame = document.createElement('iframe');
-				    frame.setAttribute("id","myframe");
-				    frame.setAttribute("frameborder","no");
-				    frame.setAttribute("scrolling","auto");
-
-				    frame.setAttribute('src','<s:url action="mediaFileEdit"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>&mediaFileId='+mediaFileId );
-				    frame.style.width="100%";
-			    	frame.style.height="100%";
-					if (browser=="Microsoft Internet Explorer")
-					{
-					document.getElementById("overlay_img").style.top= "40px";
-	                document.getElementById("overlay_img").style.left= "170px";
-                    document.getElementById("overlay_img").style.height= "500px";
-					}
-
-
-	document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
-
-    document.getElementById("overlay_img").appendChild(frame);
-
-
+        var frame = document.createElement('iframe');
+        frame.setAttribute("id","myframe");
+        frame.setAttribute("frameborder","no");
+        frame.setAttribute("scrolling","auto");
+        frame.setAttribute('src','<s:url action="mediaFileEdit"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>&mediaFileId='+mediaFileId );
+        frame.style.width="100%";
+        frame.style.height="100%";
+        if (browser=="Microsoft Internet Explorer") {
+            document.getElementById("overlay_img").style.top= "40px";
+            document.getElementById("overlay_img").style.left= "170px";
+            document.getElementById("overlay_img").style.height= "500px";
+        }
+        document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
+        document.getElementById("overlay_img").appendChild(frame);
 }
-
 -->
 </script>
 
@@ -316,7 +265,7 @@ function onClickEdit(mediaFileId)
    Search uploaded files
 </p>
 
-	<s:form id="mediaFileSearchForm" name="mediaFileSearchForm" action="mediaFileSearch!search" onsubmit="editorCleanup()">
+<s:form id="mediaFileSearchForm" name="mediaFileSearchForm" action="mediaFileSearch!search" onsubmit="editorCleanup()">
     <s:hidden name="weblog" />
     <input type="hidden" name="mediaFileId" value="" />
     <table class="mediaFileSearchTable" cellpadding="0" cellspacing="3" width="100%">
@@ -347,7 +296,7 @@ function onClickEdit(mediaFileId)
                 <label for="tags">Tags</label>
             </td>
             <td>
-                <s:textfield name="bean.tags" size="20	" maxlength="50" />
+                <s:textfield name="bean.tags" size="20" maxlength="50" />
             </td>
         </tr>
         <tr>
@@ -358,21 +307,20 @@ function onClickEdit(mediaFileId)
             <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
-     </table>
-	 <div id="overlay_img" style="visibility:hidden">
+    </table>
+  <div id="overlay_img" style="visibility:hidden">
+  </div>
 
-</div>
-
- <div class="control">
+  <div class="control">
     <span style="padding-left:20px">Sort by:</span>
     <s:select name="bean.sortOption" list="sortOptions" listKey="key" listValue="value" />
-	<s:if test="!pager.justOnePage">
-	<span style="padding-left:300px">
-	<s:if test="pager.hasPrevious()"><a href="#" onclick="onPrevious()">&lt;Previous</a></s:if>
-	<s:if test="pager.hasNext()"><a href="#" onclick="onNext()">Next&gt;</a></s:if>
-	<span>
-	</s:if>
-    </div>
+        <s:if test="!pager.justOnePage">
+        <span style="padding-left:300px">
+        <s:if test="pager.hasPrevious()"><a href="#" onclick="onPrevious()">&lt;Previous</a></s:if>
+        <s:if test="pager.hasNext()"><a href="#" onclick="onNext()">Next&gt;</a></s:if>
+        <span>
+        </s:if>
+   </div>
 
     <s:hidden name="bean.pageNum" />
 
@@ -383,31 +331,36 @@ function onClickEdit(mediaFileId)
 
     <s:iterator id="mediaFile" value="pager.items">
     <li class="align-images">
-	<div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
-	<img border="0" <s:if test="#mediaFile.imageFile">src='<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />' width="120px" height="100px" </s:if> <s:else>src="/images/page.png" style="padding:40px 50px;"</s:else>/>
-	</div><br/>
-	 <div style="clear:left;width:130px;margin-left:5px;font-size:11px;"><label><s:property
-value="#mediaFile.name" /></label><br />
-<label style="color:blue"><s:property value="#mediaFile.directory.path" /></label>
-<div style="padding-top:5px;">   <!--  one -->
-    <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property
-value="#mediaFile.id"/>"/>
-	<INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
-<s:if test="overlayMode">
-<div style="float:right;">
+        <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
+        <s:if test="#mediaFile.imageFile">
+        <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{#mediaFile.id}"></s:url>
+        </s:if>
+        <s:else>
+        <s:url id="mediaFileURL" value="/images/page.png"></s:url>
+        </s:else>
+        <img border="0" src='<s:property value="%{mediaFileURL}" />' <s:if test="#mediaFile.imageFile">width="120px" height="100px" </s:if> <s:else>style="padding:40px 50px;"</s:else>/>
+        </div><br/>
+
+      <div style="clear:left;width:130px;margin-left:5px;font-size:11px;"><label><s:property value="#mediaFile.name" /></label><br />
+        <label style="color:blue"><s:property value="#mediaFile.directory.path" /></label>
+        <div style="padding-top:5px;">   <!--  one -->
+        <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property value="#mediaFile.id"/>"/>
+        <INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
+    <s:if test="overlayMode">
+    <div style="float:right;">
        <a  href="#" onclick="onClickInsert('<s:property value="#mediaFile.id" />', '<s:url value="/roller-ui/rendering/media-resources/%{#mediaFile.id}" />', '<s:property value="#mediaFile.name" />', <s:property value="#mediaFile.imageFile" />)">Insert</a>
     </div>
-</s:if>
-<s:else>
-<div style="float:right;">
-   <a  href="#" id="<s:property value='#mediaFile.id'/>" onclick="onClickEdit(this.id)">Edit</a>
+    </s:if>
+    <s:else>
+    <div style="float:right;">
+    <a  href="#" id="<s:property value='#mediaFile.id'/>" onclick="onClickEdit(this.id)">Edit</a>
 
-<a  class="contextMenu" href="#">More...</a>
-</div>
-</s:else>
-</div>  <!-- one -->
-	</div>
-	</li>
+    <a  class="contextMenu" href="#">More...</a>
+     </div>
+    </s:else>
+       </div>  <!-- one -->
+      </div>
+    </li>
     </s:iterator>
     </ul>
 
@@ -449,16 +402,16 @@ value="#mediaFile.id"/>"/>
     <%-- ================================================================== --%>
     <%-- the button box --%>
 
-	<br/>
-	<div class="control">
+<br/>
+    <div class="control">
      <s:if test="!overlayMode">
      <input type="button" style="padding-left:20px" value="Delete Selected" onclick="onDeleteSelected()" />
      <input type="button" style="padding-left:20px" value="Move Selected" onclick="onMoveSelected()" />
-	 <span style="padding-left:20px">
-         <s:select name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
-	 </span>
-	 </s:if>
+     <span style="padding-left:20px">
+     <s:select name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
+     </span>
+     </s:if>
     </div>
-	</s:form>
+</s:form>
 
 

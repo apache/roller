@@ -67,7 +67,7 @@ function getFileName(fullName) {
             </td>
        </tr>
 
-	    <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">A short Description of file</label>
             </td>
@@ -76,7 +76,7 @@ function getFileName(fullName) {
             </td>
        </tr>
 
-	    <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Copyright Statement (optional)</label>
             </td>
@@ -85,7 +85,7 @@ function getFileName(fullName) {
             </td>
        </tr>
 
-	   <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Tags (separated by spaces)</label>
             </td>
@@ -94,7 +94,7 @@ function getFileName(fullName) {
             </td>
        </tr>
 
-	    <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Place file under</label>
             </td>
@@ -103,11 +103,11 @@ function getFileName(fullName) {
             </td>
        </tr>
 
-	   <tr>
+       <tr>
             <td class="entryEditFormLabel">
                 <label for="status">Include in Gallery?</label>
             </td>
-			<td>
+            <td>
                 <s:checkbox name="bean.sharedForGallery" />
             </td>
        </tr>
