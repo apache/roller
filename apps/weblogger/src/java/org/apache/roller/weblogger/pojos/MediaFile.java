@@ -28,10 +28,8 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Media file
+ * Representa a media file
  *
- * @hibernate.cache usage="read-write"
- * @hibernate.class lazy="true" table="media_file"
  */
 public class MediaFile {
     private static Log log =
@@ -61,8 +59,6 @@ public class MediaFile {
 	/**
 	 * Name for the media file
 	 * 
-     * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true" unique="false"
 	 */
 	public String getName() {
 		return name;
@@ -75,8 +71,6 @@ public class MediaFile {
 	/**
 	 * Description for media file
 	 * 
-     * @ejb:persistent-field
-     * @hibernate.property column="description" unique="false"
 	 */
 	public String getDescription() {
 		return description;
@@ -89,8 +83,6 @@ public class MediaFile {
 	/**
 	 * Copyright text for media file
 	 * 
-     * @ejb:persistent-field
-     * @hibernate.property column="copyright_text" unique="false"
 	 */
 	public String getCopyrightText() {
 		return copyrightText;
@@ -103,7 +95,6 @@ public class MediaFile {
 	/**
 	 * Is media file shared for gallery
 	 * 
-     * @hibernate.property column="is_public" non-null="true" unique="false"
 	 */
 	public Boolean isSharedForGallery() {
 		return isSharedForGallery;
@@ -116,8 +107,6 @@ public class MediaFile {
 	/**
 	 * Size of the media file
 	 * 
-     * @ejb:persistent-field
-     * @hibernate.property column="size_in_bytes" non-null="true" unique="false"
 	 */
 	public long getLength() {
 		return length;
@@ -128,9 +117,8 @@ public class MediaFile {
 	}
 
     /**
-     * @ejb:persistent-field
-     * @hibernate.property column="date_uploaded" non-null="true" unique="false"
-     * @roller.wrapPojoMethod type="simple"
+     * Date uploaded
+     * 
      */
 	public Timestamp getDateUploaded() {
 		return dateUploaded;
@@ -145,9 +133,8 @@ public class MediaFile {
 	}
 
 	/**
-     * @ejb:persistent-field
-     * @hibernate.property column="last_updated" unique="false"
-     * @roller.wrapPojoMethod type="simple"
+	 * Last updated timestamp
+	 * 
      */
 	public Timestamp getLastUpdated() {
 		return lastUpdated;
@@ -165,12 +152,9 @@ public class MediaFile {
 		this.directory = dir;
 	}
 
-	/*
+	/**
 	 * Set of tags for this media file
 	 * 
-     * @hibernate.collection-key column="media_file_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.MediaFileTag"
-     * @hibernate.set lazy="true" inverse="true" cascade="delete" 
 	 */
 	public Set<MediaFileTag> getTags() {
 		return tags;
@@ -183,8 +167,6 @@ public class MediaFile {
 	/**
 	 * Content type of the media file
 	 * 
-     * @ejb:persistent-field
-     * @hibernate.property column="content_type" non-null="true" unique="false"
 	 */
 	public String getContentType() {
 		return contentType;
@@ -198,10 +180,6 @@ public class MediaFile {
      * Database surrogate key.
      *
      * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     * @hibernate.id column="id"
-     *  generator-class="assigned"  
      */
 	public String getId() {
 		return id;
@@ -211,6 +189,10 @@ public class MediaFile {
 		return directory.getPath();
 	}
 
+	/**
+	 * Returns input stream for the underlying file in the file system.
+	 * @return
+	 */
 	public InputStream getInputStream() {
 		if (is != null) {
 			return is;
@@ -229,12 +211,20 @@ public class MediaFile {
 		this.content = content;
 	}
 	
+	/**
+	 * Indicates whether this is an image file.
+	 * 
+	 */
 	public boolean isImageFile() {
 		if (this.contentType == null) return false;
 		return (this.contentType.toLowerCase().startsWith(
 				MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
 	}
 
+	/**
+	 * Returns permalink URL for this media file resource.
+	 * 
+	 */
 	public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(
         		this.id, true);

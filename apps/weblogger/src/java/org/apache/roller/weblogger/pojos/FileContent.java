@@ -24,8 +24,7 @@ import java.io.InputStream;
 
 
 /**
- * A FileContentManagerImpl specific implementation that represents the content
- * of a file from file system.
+ * Represents the content of a file from file system.
  *
  */
 public class FileContent {
@@ -43,7 +42,7 @@ public class FileContent {
     public FileContent(Weblog weblog, String fileId, File file) {
         this.weblog = weblog;
         this.fileId = fileId;
-        resourceFile = file;
+        this.resourceFile = file;
     }
     
     public Weblog getWeblog() {
@@ -66,6 +65,9 @@ public class FileContent {
         return resourceFile.length();
     }
     
+    /**
+     * Returns the input stream for the underlying file.
+     */
     public InputStream getInputStream() {
         try {
             return new FileInputStream(resourceFile);

@@ -41,19 +41,33 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class MediaFileSearch extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileSearch.class);
 
-    private static final List<String> fileTypes;
-    private static final List<KeyValueObject> sizeFilterTypes;
-    private static final List<KeyValueObject> sizeUnits;
-    private static final List<KeyValueObject> sortOptions;
+    // Search criteria - drop-down for file type 
+    private static final List<String> FILE_TYPES;
+
+    // Search criteria - drop-down for size filter
+    private static final List<KeyValueObject> SIZE_FILTER_TYPES;
+
+    // Search criteria - drop-down for size unit
+    private static final List<KeyValueObject> SIZE_UNITS;
+
+    // Sort options for search results.
+    private static final List<KeyValueObject> SORT_OPTIONS;
     
+    // Pager for displaying search results.
     private MediaFilePager pager;
 
+    // Path of new directory to be created.
     private String newDirectoryPath;
     
     static {
-        fileTypes = Arrays.asList("", "Audio", "Video", "Image", "Others");
+    	/**
+    	 * Initialize drop-down values.
+    	 * 
+    	 */
+    	
+    	FILE_TYPES = Arrays.asList("", "Audio", "Video", "Image", "Others");
         
-        sizeFilterTypes = Arrays.asList(
+    	SIZE_FILTER_TYPES = Arrays.asList(
         		new KeyValueObject(0, "greater than"),
         		new KeyValueObject(1, "greater than or equal to"),
         		new KeyValueObject(2, "equal to"),
@@ -61,13 +75,13 @@ public class MediaFileSearch extends MediaFileBase {
         		new KeyValueObject(4, "less than")
         		);
 
-        sizeUnits = Arrays.asList(
+    	SIZE_UNITS = Arrays.asList(
         		new KeyValueObject(0, "bytes"),
         		new KeyValueObject(1, "kilobytes"),
         		new KeyValueObject(2, "megabytes")
         		);
         
-        sortOptions = Arrays.asList(
+    	SORT_OPTIONS = Arrays.asList(
         		new KeyValueObject(0, "Name"),
         		new KeyValueObject(1, "Date Uploaded"),
         		new KeyValueObject(2, "Type")
@@ -82,6 +96,9 @@ public class MediaFileSearch extends MediaFileBase {
         this.pageTitle = "mediaFile.search.title";
     }
     
+    /**
+     * Prepares search action
+     */
     public void myPrepare() {
     	refreshAllDirectories();
     }
@@ -133,26 +150,46 @@ public class MediaFileSearch extends MediaFileBase {
 		return INPUT;
     }
     
+    /**
+     * Delete the selected media file.
+     * 
+     */
     public String delete() {
     	doDeleteMediaFile();
     	return search();
     }
     
+    /**
+     * Include selected media file in public gallery.
+     * 
+     */
     public String includeInGallery() {
     	doIncludeMediaFileInGallery();
     	return search();
     }
 
+    /**
+     * Delete selected media files.
+     * 
+     */
     public String deleteSelected() {
     	doDeleteSelected();
     	return search();
     }
     
+    /**
+     * Move selected media files to a directory.
+     * 
+     */
     public String moveSelected() {
         doMoveSelected();
     	return search();
     }
     
+    /**
+     * Creates a directory by its path
+     * 
+     */
     public String createDirByPath() {
     	boolean dirCreated = false;
 		if (StringUtils.isEmpty(this.newDirectoryPath)) {
@@ -184,6 +221,9 @@ public class MediaFileSearch extends MediaFileBase {
     	return search();
     }
     
+    /**
+     * Validates search input
+     */
     public boolean myValidate() {
         if (StringUtils.isEmpty(bean.getName())
         	&& StringUtils.isEmpty(bean.getTags())
@@ -204,19 +244,19 @@ public class MediaFileSearch extends MediaFileBase {
     }
     
     public List<String> getFileTypes() {
-    	return fileTypes;
+    	return FILE_TYPES;
     }
     
     public List<KeyValueObject> getSizeFilterTypes() {
-    	return sizeFilterTypes;
+    	return SIZE_FILTER_TYPES;
     }
     
     public List<KeyValueObject> getSizeUnits() {
-    	return sizeUnits;
+    	return SIZE_UNITS;
     }
 
     public List<KeyValueObject> getSortOptions() {
-    	return sortOptions;
+    	return SORT_OPTIONS;
     }
 
     public MediaFilePager getPager() {

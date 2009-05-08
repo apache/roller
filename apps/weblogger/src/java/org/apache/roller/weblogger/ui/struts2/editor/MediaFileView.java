@@ -40,16 +40,17 @@ import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * Adds a new media file.
+ * View media files.
  */
 @SuppressWarnings("serial")
 public class MediaFileView extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileView.class);
     
-    private static final List<KeyValueObject> sortOptions;
+    // Drop-down values for sorting media files.
+    private static final List<KeyValueObject> SORT_OPTIONS;
 
     static {
-        sortOptions = Arrays.asList(
+    	SORT_OPTIONS = Arrays.asList(
         		new KeyValueObject("", ""),
         		new KeyValueObject("name", "Name"),
         		new KeyValueObject("date_uploaded", "Date Uploaded"),
@@ -74,10 +75,16 @@ public class MediaFileView extends MediaFileBase {
         this.pageTitle = "mediaFile.view.title";
     }
     
+    /**
+     * Prepares view action
+     */
     public void myPrepare() {
     	refreshAllDirectories();
     }
 
+    /**
+     * Create a new directory by name under current directory
+     */
     public String createNewDirectory() {
     	boolean dirCreated = false;
 		if (StringUtils.isEmpty(this.newDirectoryName)) {
@@ -121,7 +128,8 @@ public class MediaFileView extends MediaFileBase {
     }
     
     /**
-     * Show form for adding a new media file.
+     * Fetches and displays list of media file for the given directory.
+     * The directory could be chosen by ID or path.
      * 
      * @return String The result of the action.
      */
@@ -174,6 +182,10 @@ public class MediaFileView extends MediaFileBase {
 		return SUCCESS;
     }
     
+    /**
+     * Returns the hierarchy of the current directory. This is useful in
+     * displaying path information as breadcrumb.
+     */
     public List<KeyValueObject> getCurrentDirectoryHierarchy() {
     	List<KeyValueObject> directoryHierarchy = new ArrayList<KeyValueObject>();
 
@@ -190,21 +202,37 @@ public class MediaFileView extends MediaFileBase {
     	return directoryHierarchy;
     }
     
+    /**
+     * Delete selected media files.
+     * 
+     */
     public String deleteSelected() {
     	doDeleteSelected();
     	return execute();
     }
     
+    /**
+     * Delete selected media file
+     * 
+     */
     public String delete() {
     	doDeleteMediaFile();
     	return execute();
     }
     
+    /**
+     * Include selected media file in gallery
+     * 
+     */
     public String includeInGallery() {
     	doIncludeMediaFileInGallery();
     	return execute();
     }
 
+    /**
+     * Move selected media files to a different directory
+     * 
+     */
     public String moveSelected() {
         doMoveSelected();
     	return execute();
@@ -270,7 +298,7 @@ public class MediaFileView extends MediaFileBase {
 	}
 
     public List<KeyValueObject> getSortOptions() {
-    	return sortOptions;
+    	return SORT_OPTIONS;
     }
 
 }

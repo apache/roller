@@ -18,25 +18,15 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
 import org.apache.roller.util.UUIDGenerator;
 
-@Entity
-@Table (name="media_file_tag")
-@NamedQuery (
-		name="MediaFileTag.getByMediaFile",
-		query="SELECT w FROM MediaFileTag w WHERE w.mediaFile = ?1")
+/**
+ * Represents the tag for media files.
+ *
+ */
 public class MediaFileTag {
 	
-	@Id
 	String id = UUIDGenerator.generateUUID();
-	
-	//@Column "name"
 	String name;
 	MediaFile mediaFile;
 	

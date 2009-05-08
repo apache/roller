@@ -18,11 +18,6 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,44 +25,52 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * Adds a new media file.
+ * Edits metadata for a media file.
  */
 @SuppressWarnings("serial")
-public class MediaFileEdit extends UIAction {
+public class MediaFileEdit extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
     
-    private String mediaFileId; 
-
     private MediaFileBean bean =  new MediaFileBean();
     private MediaFileDirectory directory;
     
-    private List<MediaFileDirectory> allDirectories;
-
     public MediaFileEdit() {
         this.actionName = "mediaFileEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "mediaFile.edit.title";
     }
     
+    /**
+     * Prepares edit action.
+     */
     public void myPrepare() {
-        try {
+    	refreshAllDirectories();
+    	try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            setAllDirectories(mgr.getMediaFileDirectories(getActionWeblog()));
             if(!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
         }
+    	
     }
 
+    /**
+     * Validates media file metadata to be updated.
+     */
+    public void myValidate() {
+    	MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
+        if (fileWithSameName != null && !fileWithSameName.getId().equals(getMediaFileId())) {
+            addError("MediaFile.error.duplicateName", getBean().getName());
+        }
+    }
+    
     /**
      * Show form for adding a new media file.
      * 
@@ -77,7 +80,7 @@ public class MediaFileEdit extends UIAction {
     public String execute() {
 		MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 		try {
-			MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+			MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
 			this.bean.copyFrom(mediaFile);
         } catch (FileIOException ex) {
             addError("uploadFiles.error.upload", bean.getName());
@@ -100,7 +103,7 @@ public class MediaFileEdit extends UIAction {
     	if (!hasActionErrors()) {
     		MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
     		try {
-    			MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+    			MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
     			bean.copyTo(mediaFile);
 				manager.updateMediaFile(getActionWeblog(), mediaFile);
 	            WebloggerFactory.getWeblogger().flush();
@@ -118,13 +121,6 @@ public class MediaFileEdit extends UIAction {
 		return INPUT;
     }
     
-    public void myValidate() {
-    	MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
-        if (fileWithSameName != null && !fileWithSameName.getId().equals(this.mediaFileId)) {
-            addError("MediaFile.error.duplicateName", getBean().getName());
-        }
-    }
-    
     public MediaFileBean getBean() {
     	return bean;
     }
@@ -133,22 +129,6 @@ public class MediaFileEdit extends UIAction {
     	this.bean = b;
     }
     
-	public List<MediaFileDirectory> getAllDirectories() {
-		return allDirectories;
-	}
-    
-	public void setAllDirectories(List<MediaFileDirectory> dirs) {
-		this.allDirectories = dirs;
-	}
-
-	public String getMediaFileId() {
-		return mediaFileId;
-	}
-
-	public void setMediaFileId(String mediaFileId) {
-		this.mediaFileId = mediaFileId;
-	}
-
 	public MediaFileDirectory getDirectory() {
 		return directory;
 	}

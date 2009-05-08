@@ -33,13 +33,28 @@ import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
 public class MediaFileSearchBean {
 	public static int PAGE_SIZE = 10;
 
+	// Media file name as search criteria
 	String name;
+
+	// Media file type as search criteria
 	String type;
+
+	// Type of size filter as search criteria
 	int sizeFilterType;
+
+	// Size of file as search criteria
 	long size;
+
+	// Size unit
 	int sizeUnit;
+
+	// Tags as search criteria
 	String tags;
+
+	// Page number of results
 	int pageNum = 0;
+
+	// Sort option for search results
 	int sortOption;
 
 	public String getName() {
@@ -93,6 +108,10 @@ public class MediaFileSearchBean {
 		this.sortOption = sortOption;
 	}
 
+	/**
+	 * Copies data from this bean to media file filter object.
+	 * 
+	 */
 	public void copyTo(MediaFileFilter dataHolder) {
     	dataHolder.setName(this.name);
     	

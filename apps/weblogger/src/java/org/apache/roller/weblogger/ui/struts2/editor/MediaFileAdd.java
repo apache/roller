@@ -59,6 +59,9 @@ public class MediaFileAdd extends MediaFileBase {
         this.pageTitle = "mediaFile.add.title";
     }
     
+    /**
+     * Prepares action class
+     */
     public void myPrepare() {
         System.out.println("Into myprepare");
     	refreshAllDirectories();
@@ -117,6 +120,9 @@ public class MediaFileAdd extends MediaFileBase {
 		return INPUT;
     }
     
+    /**
+     * Validates media file to be added.
+     */
     public void myValidate() {
         if (getDirectory().hasMediaFile(getBean().getName())) {
             addError("MediaFile.error.duplicateName", getBean().getName());

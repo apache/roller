@@ -65,6 +65,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
 		
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaFileDirectory targetDirectory) 
         throws WebloggerException {
     	for (MediaFile mediaFile: mediaFiles) {
@@ -75,11 +78,17 @@ public class MediaFileManagerImpl implements MediaFileManager {
         roller.getWeblogManager().saveWeblog(targetDirectory.getWeblog());
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void moveMediaFile(MediaFile mediaFile, MediaFileDirectory targetDirectory) 
         throws WebloggerException {
 		moveMediaFiles(Arrays.asList(mediaFile), targetDirectory);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFileDirectory createMediaFileDirectory(MediaFileDirectory parentDirectory, String newDirName) 
 	  throws WebloggerException {
 		
@@ -95,6 +104,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         return newDirectory;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void createMediaFileDirectory(MediaFileDirectory directory) 
 	  throws WebloggerException {
 		this.persistenceStrategy.store(directory);
@@ -103,6 +115,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         roller.getWeblogManager().saveWeblog(directory.getWeblog());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog, String path) 
 	    throws WebloggerException {
 		if (path.startsWith("/")) {
@@ -151,6 +166,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         return newDirectory;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFileDirectory createRootMediaFileDirectory(Weblog weblog) 
 	    throws WebloggerException {
         MediaFileDirectory rootDirectory = new MediaFileDirectory(null, "root", "root directory", weblog);
@@ -158,8 +176,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
 		return rootDirectory;
 	}
 
-	
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public void createMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException {
 		
         FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
@@ -177,6 +196,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         cmgr.saveFileContent(weblog, mediaFile.getId(), mediaFile.getInputStream());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void updateMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException {
 		mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 		persistenceStrategy.store(mediaFile);
@@ -184,10 +206,16 @@ public class MediaFileManagerImpl implements MediaFileManager {
         roller.getWeblogManager().saveWeblog(weblog);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFile getMediaFile(String id) throws WebloggerException {
         return getMediaFile(id, false);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFile getMediaFile(String id, boolean includeContent) throws WebloggerException {
 		MediaFile mediaFile = (MediaFile) this.persistenceStrategy.load(MediaFile.class, id);
 		if (includeContent) {
@@ -198,8 +226,11 @@ public class MediaFileManagerImpl implements MediaFileManager {
         return mediaFile;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog, String path) 
-    throws WebloggerException {
+      throws WebloggerException {
         Query q = this.persistenceStrategy.getNamedQuery("MediaFileDirectory.getByWeblogAndPath");
         q.setParameter(1, weblog);
         q.setParameter(2, path);
@@ -210,15 +241,19 @@ public class MediaFileManagerImpl implements MediaFileManager {
         }
     }
 
-
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFileDirectory getMediaFileDirectory(String id) 
 	    throws WebloggerException {
 		return (MediaFileDirectory) this.persistenceStrategy.load(MediaFileDirectory.class, id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public MediaFileDirectory getMediaFileRootDirectory(Weblog weblog) 
-    throws WebloggerException {
+      throws WebloggerException {
         Query q = this.persistenceStrategy.getNamedQuery("MediaFileDirectory.getByWeblogAndNoParent");
         q.setParameter(1, weblog);
         try {
@@ -228,6 +263,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         }
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog) 
 	    throws WebloggerException {
         
@@ -236,6 +274,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         return q.getResultList();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void removeMediaFile(Weblog weblog, MediaFile mediaFile) 
 	    throws WebloggerException {
         FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
@@ -252,6 +293,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         }
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
  	public List<MediaFile> fetchRecentPublicMediaFiles(int length) 
  	    throws WebloggerException {
 
@@ -267,6 +311,9 @@ public class MediaFileManagerImpl implements MediaFileManager {
         return query.getResultList();
  	}
  	
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<MediaFile> searchMediaFiles(Weblog weblog, MediaFileFilter filter) 
 	     throws WebloggerException {
         
@@ -350,35 +397,4 @@ public class MediaFileManagerImpl implements MediaFileManager {
         return query.getResultList();
 	}
 	
-	public static void main(String[] args) {
-		/**
-		MediaFileManagerImpl impl = new MediaFileManagerImpl(null, null);
-		
-		MediaFileFilter filter = new MediaFileFilter();
-		filter.setName("testname");
-
-		filter.setSize(3);
-		filter.setSizeFilterType(MediaFileFilter.SizeFilterType.EQ);
-		
-		List<String> tags = new ArrayList<String>();
-		tags.add("test1");
-		tags.add("test2");
-		filter.setTags(tags);
-		
-		filter.setType(MediaFileType.IMAGE);
-
-		System.out.println(impl.searchMediaFiles(null, filter));
-		*/
-	}
-	
-	
-	
-	
-	
-	/*
-	public void searchMediaFiles(MediaFileSearchCriteria searchCriteria) {
-		
-	}
-	*/
-
 }

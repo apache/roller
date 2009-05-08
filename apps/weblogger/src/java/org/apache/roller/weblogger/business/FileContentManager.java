@@ -37,8 +37,7 @@ public interface FileContentManager {
      * if the specificed path doesn't exist, or can't be read.
      * 
      * @param weblog The weblog we are working on.
-     * @param path The relative path to the desired resource within 
-     * the weblog's uploads area.
+     * @param fileId file identifier from database.
      *
      * @throws FileNotFoundException If path does not exist.
      * @throws FilePathException If path is invalid, or can't be read.
@@ -100,6 +99,13 @@ public interface FileContentManager {
     
     /**
      * Determine if file can be saved given current WebloggerConfig settings.
+     * 
+     * @param weblog The weblog we are working on.
+     * @param fileName name of the file to be saved
+     * @param contentType content type of the file
+     * @param size size of the file in bytes.
+     * @param messages output parameter for adding messages.
+     * @return true if the file can be saved, false otherwise. 
      */
     public boolean canSave(Weblog weblog,
     		               String fileName,

@@ -18,14 +18,13 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.roller.util.UUIDGenerator;
 
 /**
- * Media file directory.
+ * Represents a Media file directory.
  * 
  */
 public class MediaFileDirectory {
@@ -69,12 +68,6 @@ public class MediaFileDirectory {
     /**
      * Database surrogate key.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.id column="id"
-     *     generator-class="assigned"  
      */
 	public String getId() {
 		return id;
@@ -83,19 +76,11 @@ public class MediaFileDirectory {
     /**
      * A short name for this folder.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="name" non-null="true" unique="false"
      */
 	public String getName() {
 		return name;
 	}
 
-	/**
-     * @ejb:persistent-field
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -103,19 +88,11 @@ public class MediaFileDirectory {
     /**
      * A full description for this folder.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="description" unique="false"
      */
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-     * @ejb:persistent-field
-	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -123,19 +100,11 @@ public class MediaFileDirectory {
     /**
      * Return parent folder, or null if folder is root of hierarchy.
      *
-     * @roller.wrapPojoMethod type="pojo"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
 	public MediaFileDirectory getParent() {
 		return parent;
 	}
 
-	/**
-     * @ejb:persistent-field
-	 */
 	public void setParent(MediaFileDirectory parent) {
 		this.parent = parent;
 	}
@@ -143,19 +112,11 @@ public class MediaFileDirectory {
     /**
      * Get the weblog which owns this folder.
      *
-     * @roller.wrapPojoMethod type="pojo"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
 	public Weblog getWeblog() {
 		return weblog;
 	}
 
-	/**
-     * @ejb:persistent-field
-	 */
 	public void setWeblog(Weblog weblog) {
 		this.weblog = weblog;
 	}
@@ -163,32 +124,31 @@ public class MediaFileDirectory {
     /**
      * The full path to this folder in the hierarchy.
      *
-     * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
-     *
-     * @hibernate.property column="path" non-null="true" unique="false"
      */
 	public String getPath() {
 		return path;
 	}
 
-	/**
-     * @ejb:persistent-field
-	 */
 	public void setPath(String path) {
 		this.path = path;
 	}
 	
+    /**
+     * The collection of files in this directory
+     * 
+     */
+	public Set<MediaFile> getMediaFiles() {
+		return mediaFiles;
+	}
+
+	public void setMediaFiles(Set<MediaFile> mediaFiles) {
+		this.mediaFiles = mediaFiles;
+	}
+
 	
     /**
      * Get child folders of this folder.
      *
-     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
-     *
-     * @hibernate.set lazy="true" inverse="true" cascade="delete" 
-     * @hibernate.collection-key column="parentid"
-     * @hibernate.collection-one-to-many class="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"
      */
     public Set<MediaFileDirectory> getChildDirectories() {
         return this.childDirectories;
@@ -198,6 +158,12 @@ public class MediaFileDirectory {
         this.childDirectories = folders;
     }
     
+    /**
+     * Indicates whether this directory contains the specified file.
+     * 
+     * @param name file name
+     * @return true if the file is present in the directory, false otherwise.
+     */
     public boolean hasMediaFile(String name) {
     	Set<MediaFile> fileSet = this.getMediaFiles();
     	if (fileSet == null) 
@@ -210,6 +176,12 @@ public class MediaFileDirectory {
     	return false;
     }
     
+    /**
+     * Returns file with the given name, if present in this directory
+     * 
+     * @param name file name
+     * @return media file object
+     */
     public MediaFile getMediaFile(String name) {
     	Set<MediaFile> fileSet = this.getMediaFiles();
     	if (fileSet == null) 
@@ -222,6 +194,12 @@ public class MediaFileDirectory {
     	return null;
     }
     
+    /**
+     * Indicates whether this directory contains the specified sub-directory.
+     * 
+     * @param name directory name
+     * @return true if the sub-directory is present, false otherwise.
+     */
     public boolean hasDirectory(String name) {
     	Set<MediaFileDirectory> dirSet = this.getChildDirectories();
     	for (MediaFileDirectory directory: dirSet) {
@@ -232,21 +210,18 @@ public class MediaFileDirectory {
     	return false;
     }
     
+    /**
+     * Creates a new sub-directory
+     * 
+     * @param name new directory name
+     * @return reference to the newly created directory.
+     */
     public MediaFileDirectory createNewDirectory(String name) {
     	MediaFileDirectory newDirectory = new MediaFileDirectory(this, name, "", this.getWeblog());
     	this.getChildDirectories().add(newDirectory);
     	return newDirectory;
     }
     
-    
-    public Set<MediaFile> getMediaFiles() {
-		return mediaFiles;
-	}
-
-	public void setMediaFiles(Set<MediaFile> mediaFiles) {
-		this.mediaFiles = mediaFiles;
-	}
-
 	@Override
 	public boolean equals(Object other) {
         if (other == this) return true;

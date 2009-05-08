@@ -57,7 +57,6 @@ public class MediaResourceServlet extends HttpServlet {
         
     }
 
-
     /**
      * Handles requests for user uploaded media file resources.
      */

@@ -18,24 +18,16 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * Adds a new media file.
+ * Action class for choosing image dimensions.
  */
 @SuppressWarnings("serial")
 public class MediaFileImageDim extends MediaFileBase {
@@ -48,7 +40,7 @@ public class MediaFileImageDim extends MediaFileBase {
     }
     
     /**
-     * Show form for adding a new media file.
+     * Show form for choosing image dimension.
      * 
      * @return String The result of the action.
      */

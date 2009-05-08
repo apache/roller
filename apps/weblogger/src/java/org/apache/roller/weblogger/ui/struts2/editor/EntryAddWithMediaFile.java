@@ -26,14 +26,12 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * Prepares creating a new weblog entry with a pointer to a media file.
+ * Prepares creation of a new weblog entry with an embedded pointer to a media file.
  */
 @SuppressWarnings("serial")
 public class EntryAddWithMediaFile extends MediaFileBase {
     private static Log log = LogFactory.getLog(EntryAddWithMediaFile.class);
     
-    private String mediaFileId; 
-
     // bean for managing form data
     private EntryBean bean = new EntryBean();
 
@@ -49,7 +47,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     public String execute() {
     	MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 		try {
-			MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+			MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
 			String link;
 			if (mediaFile.isImageFile()) {
 				link = "<img src='<url>' alt='<name>' width='<width>' height='<height>' />";
@@ -71,14 +69,6 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 		}
 		return SUCCESS;
     }
-
-	public String getMediaFileId() {
-		return mediaFileId;
-	}
-
-	public void setMediaFileId(String mediaFileId) {
-		this.mediaFileId = mediaFileId;
-	}
 
 	public EntryBean getBean() {
 		return bean;

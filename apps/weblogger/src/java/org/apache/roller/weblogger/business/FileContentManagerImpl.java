@@ -174,7 +174,8 @@ public class FileContentManagerImpl implements FileContentManager {
     
     
     /**
-     * Determine if file can be saved given current WebloggerConfig settings.
+     * @see org.apache.roller.weblogger.model.FileContentManager#canSave(
+     * weblog, java.lang.String, java.lang.String, long, messages)
      */
     public boolean canSave(Weblog weblog,
     		               String fileName,

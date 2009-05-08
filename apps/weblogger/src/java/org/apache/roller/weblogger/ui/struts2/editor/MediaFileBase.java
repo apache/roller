@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
@@ -15,6 +33,10 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
+/**
+ * Base class for all actions related to media files.
+ *
+ */
 @SuppressWarnings("serial")
 public class MediaFileBase extends UIAction {
     private static Log log = LogFactory.getLog(MediaFileBase.class);
@@ -27,6 +49,9 @@ public class MediaFileBase extends UIAction {
     
     private boolean overlayMode;
     
+    /**
+     * Deletes media file
+     */
     protected void doDeleteMediaFile() {
         
     	try {
@@ -44,6 +69,9 @@ public class MediaFileBase extends UIAction {
 		}
     }
     
+    /**
+     * Shares media file for public gallery
+     */
     protected void doIncludeMediaFileInGallery() {
         
     	try {
@@ -63,6 +91,9 @@ public class MediaFileBase extends UIAction {
     }
     
 
+    /**
+     * Delete selected media files.
+     */
     protected void doDeleteSelected() {
         String[] fileIds = getSelectedMediaFiles();
         if (fileIds != null && fileIds.length > 0) {
@@ -88,6 +119,9 @@ public class MediaFileBase extends UIAction {
         }
     }
     
+    /**
+     * Move selected media files to a directory.
+     */
     protected void doMoveSelected() {
         String[] fileIds = getSelectedMediaFiles();
         if (fileIds != null && fileIds.length > 0) {
@@ -114,6 +148,9 @@ public class MediaFileBase extends UIAction {
         }
     }
 
+    /**
+     * Refresh the list of directories.
+     */
     protected void refreshAllDirectories() {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
@@ -129,8 +166,6 @@ public class MediaFileBase extends UIAction {
     
     /**
      * Constructs the external URL for a given media file
-     * @param mediaFile
-     * @return
      */
     protected String getMediaFileURL(MediaFile mediaFile) {
     	return getSiteURL() + "/roller-ui/rendering/media-resources/" + mediaFile.getId();

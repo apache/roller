@@ -21,12 +21,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileTag;
 
 
@@ -42,43 +38,6 @@ public class MediaFileBean {
     String tags;
     String directoryId;
     boolean isSharedForGallery;
-
-    public void copyTo(MediaFile dataHolder) throws WebloggerException {
-    	
-    	dataHolder.setName(this.name);
-    	dataHolder.setDescription(this.description);
-    	dataHolder.setCopyrightText(this.copyrightText);
-
-    	Set<MediaFileTag> tagsSet = new HashSet<MediaFileTag>();  
-    	for (String tag: this.tags.split(" ")) {
-    		tagsSet.add(new MediaFileTag(tag, dataHolder));
-    	}
-    	dataHolder.setTags(tagsSet);
-    	dataHolder.setSharedForGallery(this.isSharedForGallery);
-    }
-    
-    
-    public void copyFrom(MediaFile dataHolder) {
-    	this.setId(dataHolder.getId());
-    	this.setName(dataHolder.getName());
-    	this.setDescription(dataHolder.getDescription());
-    	this.setCopyrightText(dataHolder.getCopyrightText());
-    	
-    	Set<MediaFileTag> tags = dataHolder.getTags();
-    	if (tags != null && !tags.isEmpty()) {
-        	StringBuffer tagDisplayBuffer = new StringBuffer();
-        	for (MediaFileTag tag: dataHolder.getTags()) {
-        		tagDisplayBuffer.append(tag.getName());
-        		tagDisplayBuffer.append(" ");
-        	}
-        	tagDisplayBuffer.deleteCharAt(tagDisplayBuffer.length() - 1);
-        	this.setTags(tagDisplayBuffer.toString());
-    	}
-    	
-    	this.setSharedForGallery(dataHolder.isSharedForGallery());
-    	this.setDirectoryId(dataHolder.getDirectory().getId());
-    }
-
 
 	public String getName() {
 		return name;
@@ -150,4 +109,49 @@ public class MediaFileBean {
 	}
 	
     
+    /**
+     * Copies the contents of this bean to a media file object
+     * 
+     */
+	public void copyTo(MediaFile dataHolder) throws WebloggerException {
+    	
+    	dataHolder.setName(this.name);
+    	dataHolder.setDescription(this.description);
+    	dataHolder.setCopyrightText(this.copyrightText);
+
+    	Set<MediaFileTag> tagsSet = new HashSet<MediaFileTag>();  
+    	for (String tag: this.tags.split(" ")) {
+    		tagsSet.add(new MediaFileTag(tag, dataHolder));
+    	}
+    	dataHolder.setTags(tagsSet);
+    	dataHolder.setSharedForGallery(this.isSharedForGallery);
+    }
+    
+    
+    /**
+     * Populates this bean from a media file object. 
+     * 
+     */
+    public void copyFrom(MediaFile dataHolder) {
+    	this.setId(dataHolder.getId());
+    	this.setName(dataHolder.getName());
+    	this.setDescription(dataHolder.getDescription());
+    	this.setCopyrightText(dataHolder.getCopyrightText());
+    	
+    	Set<MediaFileTag> tags = dataHolder.getTags();
+    	if (tags != null && !tags.isEmpty()) {
+        	StringBuffer tagDisplayBuffer = new StringBuffer();
+        	for (MediaFileTag tag: dataHolder.getTags()) {
+        		tagDisplayBuffer.append(tag.getName());
+        		tagDisplayBuffer.append(" ");
+        	}
+        	tagDisplayBuffer.deleteCharAt(tagDisplayBuffer.length() - 1);
+        	this.setTags(tagDisplayBuffer.toString());
+    	}
+    	
+    	this.setSharedForGallery(dataHolder.isSharedForGallery());
+    	this.setDirectoryId(dataHolder.getDirectory().getId());
+    }
+
+
 }

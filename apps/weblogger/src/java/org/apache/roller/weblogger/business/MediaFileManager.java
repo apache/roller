@@ -27,30 +27,98 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.Weblog;
 
+/**
+ * Interface to media file management.
+ */
 public interface MediaFileManager {
 
+    /**
+     * Create a media file
+     */
 	public void createMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException ;
+
+    /**
+     * Update metadata for a media file
+     */
 	public void updateMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException ;
+
+    /**
+     * Get media file metadata by file id
+     */
 	public MediaFile getMediaFile(String id) throws WebloggerException;
+
+    /**
+     * Get media file metadata optionally including the actual content
+     */
 	public MediaFile getMediaFile(String id, boolean includeContent) throws WebloggerException;
+
+    /**
+     * Delete a media file
+     */
 	public void removeMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException;
 
+    /**
+     * Search for media files based on the filter criteria
+     */
 	public List<MediaFile> searchMediaFiles(Weblog weblog, MediaFileFilter filter) throws WebloggerException;
 
+    /**
+     * Create root directory for media files in a weblog.
+     */
 	public MediaFileDirectory createRootMediaFileDirectory(Weblog weblog) throws WebloggerException;
+
+    /**
+     * Create a media file directory with the given name
+     */
 	public MediaFileDirectory createMediaFileDirectory(MediaFileDirectory parentDirectory, String newDirName) throws WebloggerException;
+
+    /**
+     * Create a media file directory
+     */
 	public void createMediaFileDirectory(MediaFileDirectory directory) throws WebloggerException;
+
+    /**
+     * Create a media file directory given its path
+     */
 	public MediaFileDirectory createMediaFileDirectoryByPath(Weblog weblog, String path) throws WebloggerException; 
 
+    /**
+     * Get media file directory by id
+     */
 	public MediaFileDirectory getMediaFileDirectory(String id) throws WebloggerException;
+
+    /**
+     * Get media file directory by its path
+     */
 	public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog, String path) throws WebloggerException; 
+
+    /**
+     * Get the list of media file directories for the given weblog.
+     */
 	public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog) throws WebloggerException;
-    public MediaFileDirectory getMediaFileRootDirectory(Weblog weblog) throws WebloggerException;
+
+    /**
+     * Get the root directory for media files for the given weblog.
+     */
+	public MediaFileDirectory getMediaFileRootDirectory(Weblog weblog) throws WebloggerException;
     
+    /**
+     * Move a set of media files to a new directory.
+     */
     public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaFileDirectory directory) throws WebloggerException;
+
+    /**
+     * Move one media file to a new directory.
+     */
     public void moveMediaFile(MediaFile mediaFile, MediaFileDirectory directory) throws WebloggerException;
 
+    /**
+     * Return recently added media files that are public.
+     */
  	public List<MediaFile> fetchRecentPublicMediaFiles(int length) throws WebloggerException;
 
+    /**
+     * Release all resources.
+     */
  	public void release();
 }
