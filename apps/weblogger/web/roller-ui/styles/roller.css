@@ -798,6 +798,7 @@ Media File styles
 		float:left;
 		margin:5px;
 		list-style-type:none;
+		width:140px;
 	}
 
 	.dir-image {
