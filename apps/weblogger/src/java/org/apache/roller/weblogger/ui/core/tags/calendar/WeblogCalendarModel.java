@@ -75,8 +75,6 @@ public class WeblogCalendarModel implements CalendarModel {
                   weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             locale = pageRequest.getLocale();
             
-            initDay(day);  
-            
             // Category method argument overrides category from URL
             if (catArgument != null) {
                 cat = catArgument;
@@ -84,6 +82,8 @@ public class WeblogCalendarModel implements CalendarModel {
                 cat = pageRequest.getWeblogCategoryName();
             }
             
+            initDay(day);
+
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("ERROR: initializing calendar", e);
