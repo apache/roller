@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.pojos; 
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  *
  * @author Dave Johnson
  */
-public class WeblogPermission extends ObjectPermission { 
+public class WeblogPermission extends ObjectPermission implements Serializable {
     public static final String EDIT_DRAFT = "editdraft";
     public static final String POST = "post";
     public static final String ADMIN = "admin";
