@@ -71,7 +71,7 @@ public interface BookmarkManager {
      * Lookup a folder by ID.
      *
      * @param id The id of the folder to lookup.
-     * @returns FolderData The folder, or null if not found.
+     * @return FolderData The folder, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
     public WeblogBookmarkFolder getFolder(String id) throws WebloggerException;
@@ -81,7 +81,7 @@ public interface BookmarkManager {
      * Get all folders for a weblog.
      *
      * @param weblog The weblog we want the folders from.
-     * @returns List The list of FolderData objects from the weblog.
+     * @return List The list of FolderData objects from the weblog.
      * @throws WebloggerException If there is a problem.
      */
     public List getAllFolders(Weblog weblog) throws WebloggerException;
@@ -92,7 +92,7 @@ public interface BookmarkManager {
      * All weblogs should have only 1 root folder.
      *
      * @param weblog The weblog we want the root folder from.
-     * @returns FolderData The root folder, or null if not found.
+     * @return FolderData The root folder, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
     public WeblogBookmarkFolder getRootFolder(Weblog weblog) throws WebloggerException;
@@ -103,7 +103,7 @@ public interface BookmarkManager {
      *
      * @param weblog The weblog we want the folder from.
      * @param path The full path of the folder.
-     * @returns FolderData The folder from the given path, or null if not found.
+     * @return FolderData The folder from the given path, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
     public WeblogBookmarkFolder getFolder(Weblog weblog, String path)
@@ -132,7 +132,7 @@ public interface BookmarkManager {
      * Lookup a Bookmark by ID.
      *
      * @param id The id of the bookmark to lookup.
-     * @returns BookmarkData The bookmark, or null if not found.
+     * @return BookmarkData The bookmark, or null if not found.
      * @throws WebloggerException If there is a problem.
      */
     public WeblogBookmark getBookmark(String id) throws WebloggerException;
@@ -143,7 +143,7 @@ public interface BookmarkManager {
      *
      * @param folder The folder to get the bookmarks from.
      * @param recurse True if bookmarks should be included.
-     * @returns List The list of bookmarks found.
+     * @return List The list of bookmarks found.
      * @throws WebloggerException If there is a problem.
      */
     public List getBookmarks(WeblogBookmarkFolder folder, boolean recurse)

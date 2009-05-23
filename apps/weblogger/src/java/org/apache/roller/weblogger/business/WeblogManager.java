@@ -81,7 +81,7 @@ public interface WeblogManager {
      * @param endDate   Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
      * @param length    Maximum number of results to return (for paging)
-     * @returns List of WebsiteData objects.
+     * @return List of WebsiteData objects.
      */
     public List getWeblogs(
             Boolean  enabled,
@@ -97,7 +97,7 @@ public interface WeblogManager {
      * Get websites of a user.
      * @param user        Get all weblogs for this user
      * @param enabledOnly Include only enabled weblogs?
-     * @returns List of WebsiteData objects.
+     * @return List of WebsiteData objects.
      */
     public List getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException;
     
@@ -106,7 +106,7 @@ public interface WeblogManager {
      * Get users of a weblog.
      * @param user        Get all users for this weblog
      * @param enabledOnly Include only enabled users?
-     * @returns List of WebsiteData objects.
+     * @return List of WebsiteData objects.
      */
     public List getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException;
     
@@ -117,7 +117,7 @@ public interface WeblogManager {
      * @param endDate Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
      * @param len       Maximum number of results to return (for paging)
-     * @returns List of WebsiteData objects.
+     * @return List of WebsiteData objects.
      */
     public List getMostCommentedWeblogs(
             Date startDate,

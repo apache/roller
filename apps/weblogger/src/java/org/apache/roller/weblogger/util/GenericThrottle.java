@@ -136,7 +136,7 @@ public class GenericThrottle {
      * A client is considered abusive if the number of hits from the client
      * within the configured interval is greater than the set threshold.
      *
-     * @returns true if client is abusive, false otherwise.
+     * @return true if client is abusive, false otherwise.
      */
     public boolean isAbusive(String clientId) {
         

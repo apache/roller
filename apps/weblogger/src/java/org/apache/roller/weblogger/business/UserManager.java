@@ -93,7 +93,7 @@ public interface UserManager {
      * should return null if the user is found but is not enabled.
      * 
      * @param userName User Name of user to lookup.
-     * @returns UsUserhe user, or null if not found or is disabled.
+     * @return UsUserhe user, or null if not found or is disabled.
      * @throws WebloggerException If there is a problem.
      */
     public User getUserByUserName(String userName) throws WebloggerException;
@@ -102,7 +102,7 @@ public interface UserManager {
      * Lookup a user by UserName with the given enabled status.
      * 
      * @param userName User Name of user to lookup.
-     * @returns The user, or null if not found or doesn't match the proper enabled status.
+     * @return The user, or null if not found or doesn't match the proper enabled status.
      * @throws WebloggerException If there is a problem.
      */
     public User getUserByUserName(String userName, Boolean enabled)
@@ -122,7 +122,7 @@ public interface UserManager {
      * @param endDate Restrict to those created before startDate (or null for all)
      * @param offset The index of the first result to return.
      * @param length The number of results to return.
-     * @returns List A list of UserDatUsers which match the criteria.
+     * @return List A list of UserDatUsers which match the criteria.
      * @throws WebloggerException If there is a problem.
      */
     public List getUsers(

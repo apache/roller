@@ -510,7 +510,7 @@ public class PageServlet extends HttpServlet {
      * Process the incoming request to extract referrer info and pass it on
      * to the referrer processing queue for tracking.
      *
-     * @returns true if referrer was spam, false otherwise
+     * @return true if referrer was spam, false otherwise
      */
     private boolean processReferrer(HttpServletRequest request) {
 

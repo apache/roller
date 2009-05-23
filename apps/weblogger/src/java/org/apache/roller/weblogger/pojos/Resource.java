@@ -31,7 +31,7 @@ public interface Resource {
      * The short name of this resource.
      * i.e. "some.jpg"
      *
-     * @returns The short name for the resource.
+     * @return The short name for the resource.
      */
     public String getName();
     
@@ -40,7 +40,7 @@ public interface Resource {
      * The path to this resource, relative to its container.
      * i.e. "images/some.jpg"
      *
-     * @returns The path to the resource, relative to its container.
+     * @return The path to the resource, relative to its container.
      */
     public String getPath();
     
@@ -48,7 +48,7 @@ public interface Resource {
     /**
      * The last-modified time for this resource.
      *
-     * @returns The last time the resource changed, as a long value.
+     * @return The last time the resource changed, as a long value.
      */
     public long getLastModified();
     
@@ -56,7 +56,7 @@ public interface Resource {
     /**
      * The length of this resource, in bytes.
      *
-     * @returns The length of the resource in bytes.
+     * @return The length of the resource in bytes.
      */
     public long getLength();
     
@@ -64,7 +64,7 @@ public interface Resource {
     /**
      * An InputStream that the resource can be read from.
      *
-     * @returns an InputStream for the resource.
+     * @return an InputStream for the resource.
      */
     public InputStream getInputStream();
     

@@ -162,7 +162,7 @@ public interface WeblogEntryManager {
      * @param endDate    End date or null for no end date.
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
-     * @returns List of WeblogEntryData objects.
+     * @return List of WeblogEntryData objects.
      */
     public List getMostCommentedWeblogEntries(
             Weblog website,             

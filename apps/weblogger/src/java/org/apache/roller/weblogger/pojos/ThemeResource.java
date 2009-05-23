@@ -27,7 +27,7 @@ public interface ThemeResource extends Resource {
     /**
      * Does this resource represent a directory?  True if yes, False otherwise.
      *
-     * @returns True if the resource is a directory, False otherwise.
+     * @return True if the resource is a directory, False otherwise.
      */
     public boolean isDirectory();
     
@@ -35,7 +35,7 @@ public interface ThemeResource extends Resource {
     /**
      * Does this resource represent a file?  True if yes, False otherwise.
      *
-     * @returns True if the resource is a file, False otherwise.
+     * @return True if the resource is a file, False otherwise.
      */
     public boolean isFile();
     
@@ -46,7 +46,7 @@ public interface ThemeResource extends Resource {
      * The children returned by this method should only be actual files.  No
      * directories should be returned by this method.
      *
-     * @returns null if resource is not a directory, otherwise a WeblogResource[].
+     * @return null if resource is not a directory, otherwise a WeblogResource[].
      */
     public ThemeResource[] getChildren();
     
