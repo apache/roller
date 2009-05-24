@@ -399,11 +399,11 @@ public class FileManagerImpl implements FileManager {
         }
         
         // fifth check, is save path viable?
-        if(path.indexOf("/") != -1) {
+        if (path.indexOf("/") != -1) {
             // just make sure there is only 1 directory, we don't allow multi
             // level directory hierarchies right now
-            if(path.lastIndexOf("/") != path.indexOf("/")) {
-                errors.addError("error.upload.badPath");
+            if (path.lastIndexOf("/") != path.indexOf("/")) {
+                errors.addError("error.upload.badPath", path);
                 return false;
             }
         }

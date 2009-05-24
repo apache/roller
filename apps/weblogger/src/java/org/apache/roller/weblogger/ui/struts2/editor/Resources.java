@@ -252,7 +252,11 @@ public final class Resources extends UIAction {
         
         for (Iterator it = errors.getErrors(); it.hasNext();) {
             RollerMessage msg = (RollerMessage)it.next();
-            addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+            if (msg.getArgs() != null) {
+               addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+            } else {
+               addError(msg.getKey());
+            }
         }
 
         if(uploaded.size() > 0) {
