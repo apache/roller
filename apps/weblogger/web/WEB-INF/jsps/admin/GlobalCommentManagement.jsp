@@ -303,7 +303,7 @@ function handleCommentResponse() {
     <br />
     <span class="details">
         
-    <s:if test="#comment.content.length > 1000">
+    <s:if test="#comment.content.length() > 1000">
         <pre><div id="comment-<s:property value="#comment.id"/>"><str:wordWrap width="72"><str:truncateNicely upper="1000" appendToEnd="..."><s:property value="#comment.content" escape="true" /></str:truncateNicely></str:wordWrap></div></pre>                                    
         <div id="link-<s:property value="#comment.id"/>">
             <a onclick='readMoreComment("<s:property value="#comment.id"/>")'>
