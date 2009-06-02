@@ -377,14 +377,16 @@ public class MediaFileManagerImpl implements MediaFileManager {
         	}
         }
         
-        switch(filter.getOrder()) {
+        if (filter.getOrder() != null) {
+            switch(filter.getOrder()) {
             case NAME: orderBy.append(" order by m.name");break;
             case DATE_UPLOADED: orderBy.append(" order by m.dateUploaded");break;
             case TYPE: orderBy.append(" order by m.contentType");break;
             default:
+            }
         }
 
-        Query query = persistenceStrategy.getDynamicQuery(queryString.toString() + whereClause.toString());
+        Query query = persistenceStrategy.getDynamicQuery(queryString.toString() + whereClause.toString() + orderBy.toString());
         for (int i=0; i<params.size(); i++) {
             query.setParameter(i+1, params.get(i));
         }
