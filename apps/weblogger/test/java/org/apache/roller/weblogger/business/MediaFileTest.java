@@ -19,15 +19,10 @@
 package org.apache.roller.weblogger.business;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -36,8 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.ant.StartDerbyTask;
-import org.apache.roller.weblogger.ant.StopDerbyTask;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
@@ -47,8 +40,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.SQLExec;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -56,7 +47,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test User related business operations.
+ * Test media file related business operations.
  */
 public class MediaFileTest extends TestCase {
     
@@ -83,86 +74,10 @@ public class MediaFileTest extends TestCase {
     
     @BeforeClass
     public static void classInit() throws Exception {
-    	if ("eclipse".equals(runtimeEnv)) {
-        	startDatabase();
-        	initDatabase();
-    	}
-    	else {
-    		if ("true".equalsIgnoreCase(System.getProperty("debug-enabled"))) {
-        		System.out.println("Sleeping for 5 seconds, you might want to start your debugger");
-        		Thread.sleep(5000);
-    		}
-    	}
     }
     
     @AfterClass
     public static void classTearDown() {
-    	if ("eclipse".equals(runtimeEnv)) {
-        	stopDatabase();
-    	}
-    }
-
-    public static void startDatabase() throws Exception {
-    	StartDerbyTask startTask = new StartDerbyTask();
-    	startTask.setDatabase("C:/Ganesh/edu/Project/sources/media-blogging-branch/apps/weblogger/build/tests/derby-system/roller");
-    	startTask.setPort("3219");
-    	startTask.execute();
-    }
-
-    public static void initDatabaseShort() throws Exception {
-    	Properties props = new Properties();
-    	props.load(new FileInputStream("C:/Ganesh/edu/Project/sources/media-blogging-branch/apps/weblogger/build.properties"));
-
-    	SQLExec sqlTask1 = new SQLExec();
-    	sqlTask1.setDriver(props.getProperty("test.db.driver"));
-    	sqlTask1.setUrl(props.getProperty("test.db.url"));
-    	sqlTask1.setUserid(props.getProperty("test.db.username"));
-    	sqlTask1.setPassword(props.getProperty("test.db.password"));
-    	sqlTask1.setSrc(new File("C:/Ganesh/edu/Project/sources/media-blogging-branch/apps/weblogger/src/sql/media_file_delete_data.sql"));
-    	SQLExec.OnError onError1 = new SQLExec.OnError();
-    	onError1.setValue("continue");
-    	sqlTask1.setOnerror(onError1);
-    	//sqlTask1.setClasspath(new Path());
-    	sqlTask1.setProject(new Project());
-    	sqlTask1.execute();
-    }
-
-    public static void initDatabase() throws Exception {
-    	
-    	Properties props = new Properties();
-    	props.load(new FileInputStream("C:/Ganesh/edu/Project/sources/media-blogging-branch/apps/weblogger/build.properties"));
-
-    	SQLExec sqlTask1 = new SQLExec();
-    	sqlTask1.setDriver(props.getProperty("test.db.driver"));
-    	sqlTask1.setUrl(props.getProperty("test.db.url"));
-    	sqlTask1.setUserid(props.getProperty("test.db.username"));
-    	sqlTask1.setPassword(props.getProperty("test.db.password"));
-    	sqlTask1.setSrc(new File("C:/Ganesh/edu/Project/sources/media-blogging-branch/apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/droptables.sql"));
-    	SQLExec.OnError onError1 = new SQLExec.OnError();
-    	onError1.setValue("continue");
-    	sqlTask1.setOnerror(onError1);
-    	//sqlTask1.setClasspath(new Path());
-    	sqlTask1.setProject(new Project());
-    	sqlTask1.execute();
-    	
-    	SQLExec sqlTask2 = new SQLExec();
-    	sqlTask2.setDriver(props.getProperty("test.db.driver"));
-    	sqlTask2.setUrl(props.getProperty("test.db.url"));
-    	sqlTask2.setUserid(props.getProperty("test.db.username"));
-    	sqlTask2.setPassword(props.getProperty("test.db.password"));
-    	sqlTask2.setSrc(new File("C:/Ganesh/edu/Project/sources/media-blogging-branch/apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/derby/createdb.sql"));
-    	SQLExec.OnError onError2 = new SQLExec.OnError();
-    	onError2.setValue("continue");
-    	sqlTask2.setOnerror(onError2);
-    	//sqlTask2.setClasspath(new Path());
-    	sqlTask2.setProject(new Project());
-    	sqlTask2.execute();
-    }
-    
-    public static void stopDatabase() {
-    	StopDerbyTask stopTask = new StopDerbyTask();
-    	stopTask.setPort("3219");
-    	stopTask.execute();
     }
 
     @Before
@@ -185,7 +100,7 @@ public class MediaFileTest extends TestCase {
     }
     
     /**
-     * Test directory creation
+     * Test creation of directory by path
      */
     @Test
     public void testCreateMediaFileDirectoryByPath() throws Exception {
@@ -314,7 +229,6 @@ public class MediaFileTest extends TestCase {
         mfMgr.createMediaFileDirectory(directory);
         assertEquals("/", directory.getPath());
         assertNotNull(directory.getId() != null);
-        System.out.println("The directory id is " + directory.getId());
         TestUtils.endSession(true);
         
         MediaFileDirectory directoryById = mfMgr.getMediaFileDirectory(directory.getId());
@@ -361,6 +275,11 @@ public class MediaFileTest extends TestCase {
         
     }
     
+    /**
+     * Test utility to determine whether the given list of directories 
+     * contains a directory of given path.
+     * 
+     */
     private boolean containsPath(Collection<MediaFileDirectory> directories, String path) {
     	for (MediaFileDirectory directory: directories) {
     		if (path.equals(directory.getPath())) return true;
@@ -369,6 +288,10 @@ public class MediaFileTest extends TestCase {
     	
     }
     
+    /**
+     * Test utility to determine whether the list of files contains a file with given name.
+     * 
+     */
     private boolean containsFileWithName(Collection<MediaFile> files, String name) {
     	for (MediaFile file: files) {
     		if (name.equals(file.getName())) return true;
@@ -786,8 +709,8 @@ public class MediaFileTest extends TestCase {
         assertFalse(searchResults2.isEmpty());
         assertEquals(3, searchResults2.size());
         assertEquals("test_file2.jpg", searchResults2.get(0).getName());
-        assertEquals("test_file1.jpg", searchResults2.get(1).getName());
-        assertEquals("test_file0.jpg", searchResults2.get(2).getName());
+        assertEquals("test_file0.jpg", searchResults2.get(1).getName());
+        assertEquals("test_file1.jpg", searchResults2.get(2).getName());
 
         MediaFileFilter filter3 = new MediaFileFilter();
         filter3.setSize(1000);
@@ -865,7 +788,7 @@ public class MediaFileTest extends TestCase {
     }
 
     /**
-     * Test media file update
+     * Test media file and directory gets
      */
     public void testGetDirectoryContents() throws Exception {
         User testUser = null;
@@ -935,13 +858,13 @@ public class MediaFileTest extends TestCase {
     }
 
     /**
-     * Test media file update
+     * Test moving files across directories.
      */
     public void testMoveDirectoryContents() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
-        testUser = TestUtils.setupUser("mediaFileTestUser7");
-        testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog7", testUser);
+        testUser = TestUtils.setupUser("mediaFileTestUser11");
+        testWeblog = TestUtils.setupWeblog("mediaFileTestUser11", testUser);
         
         MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
 
