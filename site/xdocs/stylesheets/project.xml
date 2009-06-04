@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<project href="http://www.apache.org/">
+<project href="http://roller.apache.org/">
 
 <title>Apache Roller</title>
 <logo href="images/roller-logo.jpg" />
@@ -39,7 +39,7 @@ limitations under the License.
 
 <menu><title>Related Sites</title>
   <li><a href="http://rollerweblogger.org/project">Roller project announcements blog</a></li>
-  <li><a href="http://roller.dev.java.net"></a>Java.Net Roller Support projet</li>
+  <li><a href="http://roller.dev.java.net">Java.Net Roller Support project</a></li>
 </menu>
 
 <menu><title href="http://projects.apache.org/">Related Projects</title>
