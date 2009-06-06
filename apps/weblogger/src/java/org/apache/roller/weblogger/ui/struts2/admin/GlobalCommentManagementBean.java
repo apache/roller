@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -99,10 +100,13 @@ public class GlobalCommentManagementBean {
     }
 
     public Date getEndDate() {
-        if(!StringUtils.isEmpty(getEndDateString())) try {
-            DateFormat df = new SimpleDateFormat("MM/dd/yy");
-            return df.parse(getEndDateString());
-        } catch(Exception e) { }
+        if (!StringUtils.isEmpty(getEndDateString())) {
+            try {
+                DateFormat df = new SimpleDateFormat("MM/dd/yy");
+                Date day = df.parse(getEndDateString());
+                return DateUtil.getEndOfDay(day);
+            } catch (Exception e) {}
+        }
         return null;
     }
     
