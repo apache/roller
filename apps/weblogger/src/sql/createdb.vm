@@ -435,33 +435,35 @@ create table entryattribute (
 create index ea_entryid_idx on entryattribute( entryid );
 alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!db.INDEXSIZE );
 
+
+-- OAUTH SUPPORT
+
 -- each record is an OAuth consumer key and secret, can be tied to just one user
-create table rol_oauthconsumer (
-    consumerkey varchar(48) not null primary key,
+create table roller_oauthconsumer (
+    consumerkey    varchar(48) not null primary key,
     consumersecret varchar(48) not null,
-    username varchar(48)
+    username       varchar(48)
 );
-create index oc_username_idx  on rol_oauthconsumer( username$!db.INDEXSIZE );
-create index oc_consumerkey_idx  on rol_oauthconsumer( consumerkey$!db.INDEXSIZE );
 
 -- each record is an OAuth accessor, always tied to just one user
-create table rol_oauthaccessor (
-    consumerkey varchar(48) not null primary key,
+create table roller_oauthaccessor (
+    consumerkey  varchar(48) not null primary key,
     requesttoken varchar(48),
-    accesstoken varchar(48),
-    tokensecret varchar(48),
-    created $db.TIMESTAMP_SQL_TYPE not null,
-    updated $db.TIMESTAMP_SQL_TYPE not null,
-    username varchar(48),
-    authorized $db.BOOLEAN_SQL_TYPE_FALSE
+    accesstoken  varchar(48),
+    tokensecret  varchar(48),
+    created      $db.TIMESTAMP_SQL_TYPE not null,
+    updated      $db.TIMESTAMP_SQL_TYPE not null,
+    username     varchar(48),
+    authorized   $db.BOOLEAN_SQL_TYPE_FALSE
 );
-create index oa_consumerkey_idx  on rol_oauthaccessor( consumerkey$!db.INDEXSIZE );
 
 create table rag_properties (
     name     varchar(255) not null primary key,
     value    $db.TEXT_SQL_TYPE
 );
 
+
+-- PLANET FEED AGGREGATOR
 
 create table rag_planet (
     id              varchar(48) not null primary key,
@@ -527,6 +529,39 @@ insert into rag_planet (id, handle, title) values ('zzz_default_planet_zzz', 'de
 insert into rag_group (id, planet_id, handle, title) values ('zzz_all_group_zzz', 'zzz_default_planet_zzz', 'all', 'Default Group');
 
 
+-- MEDIA BLOGGING
+
+create table roller_mediafile (
+    id              varchar(48) not null primary key,
+    name            varchar(255) not null,
+    description     varchar(255),
+    content_type    varchar(50)  not null,
+    copyright_text  varchar(1023),
+    directory_id    varchar(48),
+    size_in_bytes   integer,
+    date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
+    last_updated    $db.TIMESTAMP_SQL_TYPE,
+    anchor          varchar(255),
+    creator         varchar(255),
+    is_public       $db.BOOLEAN_SQL_TYPE_FALSE not null
+);
+
+create table roller_mediafiletag (
+    id              varchar(48) not null primary key,
+    mediafile_id    varchar(48) not null,
+    name            varchar(30) not null
+);
+
+create table roller_mediafiledir (
+    id               varchar(48) not null primary key,
+    name             varchar(255) not null,
+    description      varchar(255),
+    websiteid        varchar(48) not null,
+    parentid         varchar(48),
+    path             varchar(255)
+);
+
+
 -- *****************************************************
 -- Now add the foreign key relationships
 
@@ -571,6 +606,19 @@ alter table folder add constraint fo_websiteid_fk
 alter table bookmark add constraint bm_folderid_fk
     foreign key ( folderid ) references folder( id ) $!db.ADDL_FK_PARAMS ;
 
+-- media files
+alter table media_file add constraint media_file_directory_id_fk
+    foreign key (directory_id) references media_file_directory(id) $!db.ADDL_FK_PARAMS ;
+
+alter table media_file_tag add constraint media_file_id_tag_fk
+    foreign key (media_file_id) references media_file(id) $!db.ADDL_FK_PARAMS ;
+
+alter table media_file_directory add constraint mf_websiteid_fk
+    foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
+
+alter table media_file_directory add constraint mf_parentid_fk
+    foreign key ( parentid ) references media_file_directory( id )  $!db.ADDL_FK_PARAMS ;
+
 -- newsfeed
 
 alter table newsfeed add constraint nf_websiteid_fk
@@ -600,15 +648,23 @@ alter table pingcategory add constraint pc_categoryid_fk
 -- alter table webpage add constraint webpage_websiteid_fk foreign key ( websiteid ) references website( id );
 
 
+-- media blogging indexes
+
+alter table roller_mediafile add constraint roller_mediafiledir_id_fk
+    foreign key (directory_id) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
+
+alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
+    foreign key (mediafile_id) references roller_mediafile(id) $!db.ADDL_FK_PARAMS ;
+
+alter table roller_mediafiledir add constraint mf_websiteid_fk
+    foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
+
+alter table roller_mediafiledir add constraint mf_parentid_fk
+    foreign key ( parentid ) references roller_mediafiledir( id )  $!db.ADDL_FK_PARAMS ;
 
 
+-- oauth indexes
 
-
-
-
-
-
-
-
-
+create index oc_username_idx  on roller_oauthconsumer( username$!db.INDEXSIZE );
+create index oc_consumerkey_idx  on roller_oauthconsumer( consumerkey$!db.INDEXSIZE );
 

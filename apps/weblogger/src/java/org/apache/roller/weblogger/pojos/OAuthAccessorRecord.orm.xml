@@ -11,7 +11,7 @@
     <package>org.apache.roller.weblogger.pojos</package>
     <entity metadata-complete="true" name="OAuthAccessorRecord"
             class="org.apache.roller.weblogger.pojos.OAuthAccessorRecord">
-        <table name="rol_oauthaccessor"/>
+        <table name="roller_oauthaccessor"/>
         <named-query name="OAuthAccessorRecord.getByKey">
             <query>SELECT p FROM OAuthAccessorRecord p WHERE p.consumerKey = ?1</query>
         </named-query>

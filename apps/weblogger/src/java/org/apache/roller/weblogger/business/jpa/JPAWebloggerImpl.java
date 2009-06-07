@@ -21,8 +21,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.OAuthManager;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerImpl;
@@ -64,6 +66,8 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         BookmarkManager      bookmarkManager,
         FileManager          fileManager,
         IndexManager         indexManager,
+        MediaFileManager     mediaFileManager,
+        FileContentManager   fileContentManager,
         PingQueueManager     pingQueueManager,
         PingTargetManager    pingTargetManager,
         PluginManager        pluginManager,
@@ -83,6 +87,8 @@ public class JPAWebloggerImpl extends WebloggerImpl {
             bookmarkManager,
             fileManager,
             indexManager,
+            mediaFileManager,
+            fileContentManager,
             pingQueueManager,
             pingTargetManager,
             pluginManager,

@@ -51,6 +51,8 @@ public abstract class WebloggerImpl implements Weblogger {
     private final BookmarkManager      bookmarkManager;
     private final FileManager          fileManager;
     private final IndexManager         indexManager;
+    private final MediaFileManager     mediaFileManager;
+    private final FileContentManager   fileContentManager;
     private final PingQueueManager     pingQueueManager;
     private final PingTargetManager    pingTargetManager;
     private final PluginManager        pluginManager;
@@ -79,6 +81,8 @@ public abstract class WebloggerImpl implements Weblogger {
         BookmarkManager      bookmarkManager,
         FileManager          fileManager,
         IndexManager         indexManager,
+        MediaFileManager     mediaFileManager,
+        FileContentManager   fileContentManager,
         PingQueueManager     pingQueueManager,
         PingTargetManager    pingTargetManager,
         PluginManager        pluginManager,
@@ -97,6 +101,8 @@ public abstract class WebloggerImpl implements Weblogger {
         this.bookmarkManager     = bookmarkManager;
         this.fileManager         = fileManager;
         this.indexManager        = indexManager;
+        this.mediaFileManager    = mediaFileManager;
+        this.fileContentManager  = fileContentManager;
         this.pingQueueManager    = pingQueueManager;
         this.pingTargetManager   = pingTargetManager;
         this.pluginManager       = pluginManager;
@@ -191,6 +197,25 @@ public abstract class WebloggerImpl implements Weblogger {
      */
     public BookmarkManager getBookmarkManager() {
         return bookmarkManager;
+    }
+    
+    
+    /**
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getMediaFileManager()
+     */
+    public MediaFileManager getMediaFileManager() {
+        return mediaFileManager;
+    }
+    
+    /**
+     * 
+     * 
+     * @see org.apache.roller.weblogger.modelWebloggerr#getFileContentManager()
+     */
+    public FileContentManager getFileContentManager() {
+        return fileContentManager;
     }
     
     
@@ -300,6 +325,8 @@ public abstract class WebloggerImpl implements Weblogger {
             autoPingManager.release();
             bookmarkManager.release();
             fileManager.release();
+            mediaFileManager.release();
+            fileContentManager.release();
             pingTargetManager.release();
             pingQueueManager.release();
             pluginManager.release();

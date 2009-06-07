@@ -96,6 +96,32 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     
     
     /**
+     * Get url for a single weblog media file on a given weblog.
+     */
+    public String getMediaFileURL(
+            String fileAnchor,
+            boolean absolute) {
+        
+        if(fileAnchor == null) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/rendering/media-resources/").append(URLUtilities.encode(fileAnchor));
+        
+        return url.toString();
+    }
+
+    
+    
+    /**
      * Get url for a single weblog entry comments on a given weblog.
      */
     public String getWeblogCommentsURL(Weblog weblog,

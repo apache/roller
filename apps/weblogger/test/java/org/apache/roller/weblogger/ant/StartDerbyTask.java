@@ -32,7 +32,7 @@ public class StartDerbyTask extends Task {
     
     public void execute() throws BuildException {
         try {
-            System.out.println("Stopping Derby");
+            System.out.println("Starting Derby");
             System.setProperty("derby.system.home", database);
             System.setProperty("derby.drda.portNumber", port);
             System.setProperty("derby.drda.host", "localhost");

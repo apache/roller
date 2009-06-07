@@ -30,6 +30,9 @@
         <mapping-file>org/apache/roller/weblogger/pojos/UserAttribute.orm.xml           </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml     </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml     </mapping-file>
+        <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml                      </mapping-file>	
+        <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml                   </mapping-file>	
+        <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml             </mapping-file>	
     </persistence-unit> 
     
 </persistence>

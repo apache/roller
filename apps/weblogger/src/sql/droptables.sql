@@ -39,6 +39,11 @@ drop table referer;
 drop table bookmark;
 drop table folder;
 drop table folderassoc;
+drop table roller_userattribute;
+drop table media_file_tag;
+drop table media_file;
+drop table media_file_directory;
+
 
 -- core services tables
 drop table roller_hitcounts;

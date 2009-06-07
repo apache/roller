@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
+import org.apache.roller.weblogger.ui.rendering.pagers.MediaFilesPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesListPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
@@ -134,6 +135,14 @@ public class FeedModel implements Model {
     }    
         
     /**
+     * Gets most recently uploaded media files limited by: weblog specified 
+     * in request and the weblog.entryDisplayCount.
+     */
+    public Pager getMediaFilesPager() {
+        return new FeedFilesPager(feedRequest);
+    }    
+        
+    /**
      * Returns the list of tags specified in the request /?tags=foo+bar
      * @return
      */
@@ -183,6 +192,38 @@ public class FeedModel implements Model {
                     feedRequest.getLocale(), feedRequest.getType(),
                     feedRequest.getFormat(), null, null,
                     null, false, true), feedRequest.getWeblog(), feedRequest.getLocale(), -1, feedRequest.getPage(), DEFAULT_ENTRIES);
+            this.feedRequest = feedRequest;
+        }
+        
+        protected String createURL(String url, Map params) {
+            List tags = feedRequest.getTags();
+            if(tags != null && tags.size() > 0) {
+                params.put("tags", URLUtilities.getEncodedTagsString(tags));
+            }
+            String category = feedRequest.getWeblogCategoryName();
+            if(category != null && category.trim().length() > 0) {
+                params.put("cat", URLUtilities.encode(category));
+            }  
+            if(feedRequest.isExcerpts()) {
+                params.put("excerpts", "true");
+            }   
+            return super.createURL(url, params);
+        }
+        
+        public String getUrl() {
+            return createURL(super.getUrl(), new HashMap());
+        }
+    }      
+
+    public class FeedFilesPager extends MediaFilesPager {
+        
+        private WeblogFeedRequest feedRequest;
+        
+        public FeedFilesPager(WeblogFeedRequest feedRequest) {            
+            super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
+                    feedRequest.getLocale(), feedRequest.getType(),
+                    feedRequest.getFormat(), null, null,
+                    null, false, true), feedRequest.getWeblog(), -1, feedRequest.getPage(), 10);
             this.feedRequest = feedRequest;
         }
         

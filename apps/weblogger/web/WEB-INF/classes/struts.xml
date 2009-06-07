@@ -228,6 +228,55 @@
             <result name="success" type="chain">entryEdit</result>
         </action>
         
+        <action name="entryAddWithMediaFile!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
+            <result name="success" type="chain">entryAdd</result>
+        </action>
+        
+
+        <action name="mediaFileAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
+            <result name="input" type="tiles">.MediaFileAdd</result>
+            <result name="success" type="tiles">.MediaFileAddSuccess</result>
+            <result name="error" type="tiles">.MediaFileAdd</result>
+        </action>
+
+        <action name="mediaFileEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <result name="input" type="tiles">.MediaFileEdit</result>
+            <result name="success" type="tiles">.MediaFileEditSuccess</result>
+        </action>
+
+        <action name="mediaFileAddExternalInclude!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <result name="input" type="tiles">.MediaFileAddExternalInclude</result>
+            <result name="success" type="tiles">.MediaFileAddExternalInclude</result>
+            <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
+        </action>
+
+	<action name="mediaFileView!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+            <result name="success" type="tiles">.MediaFileView</result>
+            <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
+        </action>
+
+	<action name="mediaFileHierarchicalView!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+            <result name="success" type="tiles">.MediaFileHierarchicalView</result>
+        </action>
+
+	<action name="mediaFileSearch!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
+            <result name="input" type="tiles">.MediaFileSearch</result>
+            <result name="error" type="tiles">.MediaFileSearch</result>
+            <result name="success" type="tiles">.MediaFileSearch</result>
+        </action>
+		
+	<action name="mediaFileImageDim!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
+            <result name="success" type="tiles">.MediaFileImageDimension</result>
+        </action>
+
         <action name="entryEdit!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
             <result name="input" type="tiles">.EntryEdit</result>
@@ -413,7 +462,30 @@
         </action>
         -->
     </package>
+
+
+    <!-- Weblogger Authoring UI - overlay pages-->
     
+    <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring">
+
+        <action name="mediaFileAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
+            <param name="overlayMode">true</param>
+            <result name="input" type="tiles">.MediaFileAddInclude</result>
+            <result name="success" type="tiles">.MediaFileAddSuccessInclude</result>
+            <result name="error" type="tiles">.MediaFileAddInclude</result>
+        </action>
+
+	<action name="mediaFileSearch!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
+            <param name="overlayMode">true</param>
+            <result name="input" type="tiles">.MediaFileSearchInclude</result>
+            <result name="error" type="tiles">.MediaFileSearchInclude</result>
+            <result name="success" type="tiles">.MediaFileSearchInclude</result>
+        </action>
+
+    </package>
+
     <!-- MOBILE BEGIN
 
     <package name="mobile-authoring" namespace="/roller-ui/mobile" extends="weblogger">
