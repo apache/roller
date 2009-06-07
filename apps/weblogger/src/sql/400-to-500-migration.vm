@@ -1,5 +1,5 @@
 #** 
-400-to-410-migration.vm: Velocity template that generates vendor-specific database scripts 
+400-to-500-migration.vm: Velocity template that generates vendor-specific database scripts
 
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
