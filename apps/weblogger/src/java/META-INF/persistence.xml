@@ -6,7 +6,6 @@
         <jta-data-source>java:comp/env/jdbc/rollerdb</jta-data-source>
         <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
         -->
-        <mapping-file>org/apache/roller/weblogger/pojos/AutoPing.orm.xml                </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogBookmark.orm.xml          </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryComment.orm.xml      </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/WeblogEntryAttribute.orm.xml    </mapping-file>
@@ -32,7 +31,10 @@
         <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml     </mapping-file>
         <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml                      </mapping-file>	
         <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml                   </mapping-file>	
-        <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml             </mapping-file>	
+        <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml             </mapping-file>
+
+        <class>org.apache.roller.weblogger.pojos.AutoPing</class>
+        
     </persistence-unit> 
     
 </persistence>
