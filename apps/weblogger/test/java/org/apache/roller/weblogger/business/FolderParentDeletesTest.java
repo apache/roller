@@ -92,10 +92,13 @@ public class FolderParentDeletesTest extends TestCase {
         WeblogBookmarkFolder root = bmgr.getRootFolder(testWeblog);
         
         // add a small tree /parentDelete-fold1/parentDelete-fold2
-        WeblogBookmarkFolder fold1 = new WeblogBookmarkFolder(root, "parentDelete-fold1", null, TestUtils.getManagedWebsite(testWeblog));
+        WeblogBookmarkFolder fold1 = new WeblogBookmarkFolder(
+                root, "parentDelete-fold1", null, TestUtils.getManagedWebsite(testWeblog));
         root.addFolder(fold1);
         bmgr.saveFolder(fold1);
-        WeblogBookmarkFolder fold2 = new WeblogBookmarkFolder(fold1, "parentDelete-fold2", null, TestUtils.getManagedWebsite(testWeblog));
+        
+        WeblogBookmarkFolder fold2 = new WeblogBookmarkFolder(
+                fold1, "parentDelete-fold2", null, TestUtils.getManagedWebsite(testWeblog));
         fold1.addFolder(fold2);
         bmgr.saveFolder(fold2);
         TestUtils.endSession(true);

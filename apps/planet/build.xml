@@ -70,19 +70,10 @@
         <include name="buildtime/mail.jar"/>
 
         <!-- needed for JPA/OpenJPA -->
-        <include name="openjpa-0.9.7/openjpa-0.9.7-incubating.jar"/>
-        <include name="openjpa-0.9.7/geronimo-jpa_3.0_spec-1.0.jar"/>
-        <include name="openjpa-0.9.7/geronimo-jta_1.0.1B_spec-1.0.1.jar"/>
-        <include name="openjpa-0.9.7/serp-1.11.0.jar"/>
-        <include name="openjpa-0.9.7/geronimo-j2ee-connector_1.5_spec-1.0.1.jar"/> 
-<!--
-        <include name="openjpa-1.0/geronimo-jpa_3.0_spec-1.0.jar"/>
-        <include name="openjpa-1.0/geronimo-jta_1.1_spec-1.1.jar"/> 
-        <include name="openjpa-1.0/openjpa-1.0.0.jar"/>
-        <include name="openjpa-1.0/serp-1.13.1.jar"/>
--->
-        <!-- Needed for JPA/Toplink
-        <include name="toplink-essentials-9.1/toplink-essentials.jar"/> -->
+		<include name="openjpa-1.2.1/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<include name="openjpa-1.2.1/geronimo-jta_1.1_spec-1.1.jar"/>
+		<include name="openjpa-1.2.1/openjpa-1.2.1.jar"/>
+		<include name="openjpa-1.2.1/serp-1.13.1.jar"/>
         
         <!-- needed for ROME -->
         <include name="lib/rome-0.9.1-dev.jar"/>

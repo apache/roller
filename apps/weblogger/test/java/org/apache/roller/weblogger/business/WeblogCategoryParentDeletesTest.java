@@ -88,10 +88,13 @@ public class WeblogCategoryParentDeletesTest extends TestCase {
         WeblogCategory root = mgr.getRootWeblogCategory(TestUtils.getManagedWebsite(testWeblog));
         
         // add a small category tree /subcat/subcat2
-        WeblogCategory subcat = new WeblogCategory(TestUtils.getManagedWebsite(testWeblog), root, "categoryParentDeletes1", null, null);
+        WeblogCategory subcat = new WeblogCategory(
+            TestUtils.getManagedWebsite(testWeblog), root, "categoryParentDeletes1", null, null);
         root.addCategory(subcat);
         mgr.saveWeblogCategory(subcat);
-        WeblogCategory subcat2 = new WeblogCategory(TestUtils.getManagedWebsite(testWeblog), subcat, "categoryParentDeletes2", null, null);
+        
+        WeblogCategory subcat2 = new WeblogCategory(
+            TestUtils.getManagedWebsite(testWeblog), subcat, "categoryParentDeletes2", null, null);
         subcat.addCategory(subcat2);
         mgr.saveWeblogCategory(subcat2);
         TestUtils.endSession(true);

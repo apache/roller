@@ -77,7 +77,7 @@ public class WeblogEntryTest extends TestCase {
             testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
             TestUtils.endSession(true);
         } catch (Exception ex) {
-            log.error(ex);
+            log.error("ERROR in test setup", ex);
             throw new Exception("Test setup failed", ex);
         }
     }
@@ -89,7 +89,7 @@ public class WeblogEntryTest extends TestCase {
             TestUtils.teardownUser(testUser.getUserName());
             TestUtils.endSession(true);
         } catch (Exception ex) {
-            log.error(ex);
+            log.error("ERROR in test teardown", ex);
             throw new Exception("Test teardown failed", ex);
         }
     }
@@ -969,17 +969,20 @@ public class WeblogEntryTest extends TestCase {
         testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         testEntry.setWebsite(testWeblog);
         testEntry.setCreatorUserName(testUser.getUserName());
-        
-        testEntry.putEntryAttribute("att_mediacast_url", "http://podcast-schmodcast.com");
-        testEntry.putEntryAttribute("att_mediacast_type", "application/drivel");
-        testEntry.putEntryAttribute("att_mediacast_length", "3141592654");
-                    
+
         WeblogCategory cat = emgr.getWeblogCategory(testWeblog.getDefaultCategory().getId());
         testEntry.setCategory(cat);
         
         // create a weblog entry
         emgr.saveWeblogEntry(testEntry);
         String id = testEntry.getId();
+        TestUtils.endSession(true);
+
+        testEntry = TestUtils.getManagedWeblogEntry(testEntry);
+        testEntry.putEntryAttribute("att_mediacast_url", "http://podcast-schmodcast.com");
+        testEntry.putEntryAttribute("att_mediacast_type", "application/drivel");
+        testEntry.putEntryAttribute("att_mediacast_length", "3141592654");
+                    
         TestUtils.endSession(true);
         
         // make sure entry was created

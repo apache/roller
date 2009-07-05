@@ -29,20 +29,15 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public abstract class RollerPermission extends java.security.Permission {
     private static Log log = LogFactory.getLog(RollerPermission.class);
-    protected String  actions;
     
 
     public RollerPermission(String name) {
         super(name);
     }
             
-    public void setActions(String actions) {
-        this.actions = actions;
-    }
+    public abstract void setActions(String actions); 
 
-    public String getActions() {
-        return actions;
-    }
+    public abstract String getActions();
 
     public List<String> getActionsAsList() {
         return Utilities.stringToStringList(getActions(), ",");
@@ -108,7 +103,7 @@ public abstract class RollerPermission extends java.security.Permission {
      * True if permission specifies no actions
      */
     public boolean isEmpty() {
-        if (actions == null || actions.trim().length() == 0) {
+        if (getActions() == null || getActions().trim().length() == 0) {
             return true;
         }
         return false;

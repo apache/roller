@@ -77,8 +77,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         this.strategy.store(bookmark);
 
         // update weblog last modified date (date is updated by saveWebsite())
-        roller.getWeblogManager().
-            saveWeblog(bookmark.getWebsite());
+        roller.getWeblogManager().saveWeblog(bookmark.getWebsite());
     }
 
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
@@ -86,18 +85,19 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
-        //Now remove it from database
-        this.strategy.remove(bookmark);
         //Remove the bookmark from its parent folder
         bookmark.getFolder().getBookmarks().remove(bookmark);
+        
+        // Now remove it from database
+        this.strategy.remove(bookmark);
+        
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager()
-                .saveWeblog(bookmark.getWebsite());
+        roller.getWeblogManager().saveWeblog(bookmark.getWebsite());
     }
 
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
         
-        if(folder.getId() == null || this.getFolder(folder.getId()) == null) {
+        if (folder.getId() == null || this.getFolder(folder.getId()) == null) {
             // New folder, so make sure name is unique
             if (isDuplicateFolderName(folder)) {
                 throw new WebloggerException("Duplicate folder name");
@@ -117,15 +117,16 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-        this.strategy.remove(folder);
         WeblogBookmarkFolder parent = folder.getParent();
         if (parent != null) {
             parent.getFolders().remove(folder);
         }
+        String websiteid = folder.getWebsite().getId();
+        this.strategy.remove(folder);
 
         // update weblog last modified date.  date updated by saveWebsite()
-        roller.getWeblogManager().
-            saveWeblog(folder.getWebsite());
+        Weblog weblog = roller.getWeblogManager().getWeblog(websiteid);
+        roller.getWeblogManager().saveWeblog(weblog);
     }
     
     public void moveFolder(WeblogBookmarkFolder srcFolder, WeblogBookmarkFolder destFolder)

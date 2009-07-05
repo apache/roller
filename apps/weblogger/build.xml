@@ -676,6 +676,8 @@ ro.buildUser=${user.name}
                 <!-- plus the classpath for jars needed to talk to the test db -->
                 <pathelement path="${test.db.cpath}" />
             </classpath>
+        	
+        	<!-- TODO: add debug properties here -->
             
             <!-- needed to satisfy ref in log4j.properties -->
             <jvmarg value="-Dcatalina.base=${build.tests}"/> 

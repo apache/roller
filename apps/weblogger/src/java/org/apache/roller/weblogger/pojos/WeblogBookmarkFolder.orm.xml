@@ -38,16 +38,23 @@
             </many-to-one>
             <many-to-one name="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
                 <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                    <cascade-refresh />
+                </cascade>
             </many-to-one>
             <one-to-many name="folders" mapped-by="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder"  fetch="LAZY">
                 <cascade>
+                    <cascade-persist />
                     <cascade-remove/>
                 </cascade>
             </one-to-many>
             <one-to-many name="bookmarks" mapped-by="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmark" fetch="LAZY">
                 <order-by>name</order-by>
                 <cascade>
-                    <cascade-all/>
+                    <cascade-persist />
+                    <cascade-remove />
                 </cascade>
             </one-to-many>
         </attributes>

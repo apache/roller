@@ -45,8 +45,12 @@
             </basic>
             <many-to-one name="folder" target-entity="org.apache.roller.weblogger.pojos.WeblogBookmarkFolder">
                 <join-column name="folderid" insertable="true" updatable="true" nullable="false"/>
-            </many-to-one>
-            
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                    <cascade-refresh />
+                </cascade>
+            </many-to-one>            
             <transient name="website"/>
         </attributes>
     </entity>

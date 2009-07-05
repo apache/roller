@@ -36,6 +36,7 @@ public abstract class ObjectPermission extends RollerPermission {
     protected String  objectId;
     protected boolean pending = false;
     protected Date    dateCreated = new Date();
+    protected String  actions;
     
     
     public ObjectPermission() {

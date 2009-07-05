@@ -31,7 +31,8 @@ import org.apache.roller.weblogger.util.Utilities;
  * Represents a permssion that applies globally to the entire web application.
  */
 public class GlobalPermission extends RollerPermission {
-    
+    protected String  actions;
+
     /** Allowed to login and edit profile */
     public static final String LOGIN  = "login";
     
@@ -139,5 +140,15 @@ public class GlobalPermission extends RollerPermission {
             sb.append(" ").append(action).append(" ");
         }
         return sb.toString();
+    }
+
+    @Override
+    public void setActions(String actions) {
+        this.actions = actions;
+    }
+
+    @Override
+    public String getActions() {
+        return actions;
     }
 }

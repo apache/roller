@@ -207,7 +207,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (null != rootFolder) {
             this.strategy.remove(rootFolder);
         }
-        
         this.strategy.flush();
 
         // remove entries
@@ -218,6 +217,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
             WeblogEntry entry = (WeblogEntry) iter.next();
             emgr.removeWeblogEntry(entry);
         }
+        this.strategy.flush();
         
         // remove categories
         WeblogCategory rootCat = emgr.getRootWeblogCategory(website);

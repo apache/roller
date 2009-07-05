@@ -13,8 +13,8 @@
         <fileset dir="${tools.dir}/lib">   
             <include name="commons-logging-1.0.4.jar"/>   
         </fileset>
-        <fileset dir="${tools.dir}/openjpa-0.9.7">   
-            <include name="openjpa-0.9.7-incubating.jar"/>   
+        <fileset dir="${tools.dir}/openjpa-1.1.0">   
+            <include name="openjpa-1.1.0.jar"/>   
         </fileset>
         <fileset dir="${groovy.home}/lib">
             <include name="groovy-1.0.jar"/>
