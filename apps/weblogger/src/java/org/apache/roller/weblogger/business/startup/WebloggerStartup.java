@@ -40,8 +40,6 @@ public final class WebloggerStartup {
     
     private static MailProvider mailProvider = null;
     
-    private static DatabaseInstaller dbInstaller = null;
-    
     
     // non-instantiable
     private WebloggerStartup() {}
