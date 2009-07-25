@@ -22,6 +22,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -1005,6 +1007,20 @@ public class Utilities {
     private static String replace(String string, Pattern pattern, String replacement) {
         Matcher m = pattern.matcher(string);
         return m.replaceAll(replacement);
+    }
+
+    public static String getContentTypeFromFileName(String fileName) {
+
+        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
+        
+        // TODO: figure out why PNG is missing from Java MIME types
+        if (map instanceof MimetypesFileTypeMap) {
+            try {
+                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
+            } catch (Exception ignored) {}
+        }
+
+        return map.getContentType(fileName);
     }
     
 }

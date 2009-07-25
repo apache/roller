@@ -433,14 +433,7 @@ public class MediaCollection {
         URLStrategy urlStrategy = WebloggerFactory.getWeblogger().getUrlStrategy();
         String viewURI = urlStrategy.getWeblogResourceURL(website, filePath, true);
         
-        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
-        // TODO: figure out why PNG is missing from Java MIME types
-        if (map instanceof MimetypesFileTypeMap) {
-            try {
-                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
-            } catch (Exception ignored) {}
-        }
-        String contentType = map.getContentType(file.getName());
+        String contentType = Utilities.getContentTypeFromFileName(file.getName());
         
         Entry entry = new Entry();
         entry.setId(editMediaURI);

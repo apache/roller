@@ -44,27 +44,33 @@ public class FileContentManagerImpl implements FileContentManager {
 	
     private static Log log = LogFactory.getLog(FileContentManagerImpl.class);
     
-    private String upload_dir = null;
-    
-    
+    private String storage_dir = null;
+
     /**
      * Create file content manager.
      */
     public FileContentManagerImpl() {
-        String uploaddir = WebloggerConfig.getProperty("uploads.dir");
+        
+        String storagedir = WebloggerConfig.getProperty("mediafiles.storage.dir");
         
         // Note: System property expansion is now handled by WebloggerConfig.
         
-        if(uploaddir == null || uploaddir.trim().length() < 1)
-            uploaddir = System.getProperty("user.home") + File.separator+"roller_data"+File.separator+"uploads";
+        if (storagedir == null || storagedir.trim().length() < 1)
+            storagedir = System.getProperty("user.home")
+                + File.separator+"roller_data"+File.separator+"mediafiles";
         
-        if( ! uploaddir.endsWith(File.separator))
-            uploaddir += File.separator;
+        if (! storagedir.endsWith(File.separator))
+            storagedir += File.separator;
         
-        this.upload_dir = uploaddir.replace('/',File.separatorChar);
+        this.storage_dir = storagedir.replace('/',File.separatorChar);
     }
     
-    
+    public void initialize() {
+
+    }
+
+
+
     /**
      * @see org.apache.roller.weblogger.model.FileContentManager#getFileContent(weblog, java.lang.String)
      */
@@ -106,8 +112,7 @@ public class FileContentManagerImpl implements FileContentManager {
             bos = new FileOutputStream(saveFile);
             while ((bytesRead = is.read(buffer, 0, 8192)) != -1) {
                 bos.write(buffer, 0, bytesRead);
-            }
-            
+            }            
             log.debug("The file has been written to ["+saveFile.getAbsolutePath()+"]");
         } catch (Exception e) {
             throw new FileIOException("ERROR uploading file", e);
@@ -157,8 +162,8 @@ public class FileContentManagerImpl implements FileContentManager {
         long maxDirBytes = (long)(1024000 * maxDirSize.doubleValue());
         
         try {
-            File uploadsDir = this.getRealFile(weblog, null);
-            long weblogDirSize = this.getDirSize(uploadsDir, true);
+            File storageDir = this.getRealFile(weblog, null);
+            long weblogDirSize = this.getDirSize(storageDir, true);
             
             return weblogDirSize > maxDirBytes;
         } catch (Exception ex) {
@@ -205,8 +210,8 @@ public class FileContentManagerImpl implements FileContentManager {
                 WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize"));
         long maxDirBytes = (long)(1024000 * maxDirMB.doubleValue());
         try {
-            File uploadsDir = this.getRealFile(weblog, null);
-            long userDirSize = getDirSize(uploadsDir, true);
+            File storageDir = this.getRealFile(weblog, null);
+            long userDirSize = getDirSize(storageDir, true);
             if (userDirSize + size > maxDirBytes) {
                 messages.addError("error.upload.dirmax", maxDirMB.toString());
                 return false;
@@ -366,7 +371,7 @@ public class FileContentManagerImpl implements FileContentManager {
             throws FileNotFoundException, FilePathException {
         
         // make sure uploads area exists for this weblog
-        File weblogDir = new File(this.upload_dir + weblog.getHandle());
+        File weblogDir = new File(this.storage_dir + weblog.getHandle());
         if(!weblogDir.exists()) {
             weblogDir.mkdirs();
         }
@@ -400,5 +405,5 @@ public class FileContentManagerImpl implements FileContentManager {
         
         return file;
     }
-    
+
 }

@@ -31,12 +31,14 @@ import java.util.Hashtable;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileManager;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -46,6 +48,7 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.AutoPing;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;
@@ -128,6 +131,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         WeblogManager      wmgr = roller.getWeblogManager();
         WeblogEntryManager emgr = roller.getWeblogEntryManager();
         BookmarkManager    bmgr = roller.getBookmarkManager();
+        MediaFileManager   mmgr = roller.getMediaFileManager();
         
         // remove tags
         Query tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog");
@@ -206,6 +210,13 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         WeblogBookmarkFolder rootFolder = bmgr.getRootFolder(website);
         if (null != rootFolder) {
             this.strategy.remove(rootFolder);
+        }
+        this.strategy.flush();
+
+        // remove mediafile metadata
+        List<MediaFileDirectory> dirs = mmgr.getMediaFileDirectories(website);
+        for (MediaFileDirectory dir : dirs) {
+            this.strategy.remove(dir);
         }
         this.strategy.flush();
 

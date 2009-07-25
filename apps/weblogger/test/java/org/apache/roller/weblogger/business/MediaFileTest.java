@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business;
 
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +32,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
@@ -40,10 +43,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.junit.Test;
 
 /**
@@ -52,51 +52,18 @@ import org.junit.Test;
 public class MediaFileTest extends TestCase {
     
     public static Log log = LogFactory.getLog(MediaFileTest.class);
-    static final String runtimeEnv;
+    //static final String runtimeEnv;
+
+    public final static String TEST_IMAGE = "/hawk.jpg";
 
     public MediaFileTest() {
-    	// TODO: create setup and teardown classes and move test user/weblgo to them after resolving the issue with teardown.
     }
     
-    public MediaFileTest(String name) {
-    	super(name);
+    public void setUp() throws Exception {
+        TestUtils.setupWeblogger();
     }
     
-    static {
-    	runtimeEnv = System.getProperty("runtime-environment");
-    	try {
-			classInit();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    
-    @BeforeClass
-    public static void classInit() throws Exception {
-    }
-    
-    @AfterClass
-    public static void classTearDown() {
-    }
-
-    @Before
-    public void setUpApp() throws Exception {
-    }
-    
-    @After
     public void tearDown() throws Exception {
-    	/*
-    	try {
-            TestUtils.teardownWeblog(testWeblog.getId());
-            TestUtils.teardownUser(this.testUser.getUserName());
-            TestUtils.endSession(true);
-        } catch (Exception ex) {
-            log.error(ex);
-            throw new Exception("Test teardown failed", ex);
-        }
-        */
-        
     }
     
     /**
@@ -197,6 +164,10 @@ public class MediaFileTest extends TestCase {
         catch (WebloggerException e) {
         	assertTrue(true);
         }
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
     
     /**
@@ -238,6 +209,9 @@ public class MediaFileTest extends TestCase {
         MediaFileDirectory rootDirectory = mfMgr.getMediaFileRootDirectory(testWeblog);
         assertEquals(directory, rootDirectory);
 
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
     
     
@@ -273,6 +247,10 @@ public class MediaFileTest extends TestCase {
         assertTrue(containsPath(directories, "/dir2"));
         assertTrue(containsPath(directories, "/dir3"));
         
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
     
     /**
@@ -327,7 +305,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setContentType("image/jpeg");
-        mediaFile.setInputStream(getClass().getResourceAsStream("/test4.jpg"));
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         
         MediaFileTag tag1 = new MediaFileTag("tst4work", mediaFile);
         MediaFileTag tag2 = new MediaFileTag("tst4home", mediaFile);
@@ -355,6 +333,10 @@ public class MediaFileTest extends TestCase {
         MediaFile mediaFile2 = mfMgr.getMediaFile(id);
         assertNull(mediaFile2);
     	
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
@@ -384,7 +366,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setSharedForGallery(true);
         mediaFile.setLength(2000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setInputStream(getClass().getResourceAsStream("/test.jpg"));
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         
         MediaFileTag tag1 = new MediaFileTag("work", mediaFile);
@@ -406,6 +388,10 @@ public class MediaFileTest extends TestCase {
         assertEquals("test copyright text", mediaFile1.getCopyrightText());
         assertTrue(mediaFile1.isSharedForGallery());
         assertEquals(2000, mediaFile1.getLength());
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
@@ -435,7 +421,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setSharedForGallery(true);
         mediaFile.setLength(2000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setInputStream(getClass().getResourceAsStream("/test.jpg"));
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         
         MediaFileTag tag1 = new MediaFileTag("work", mediaFile);
@@ -457,7 +443,7 @@ public class MediaFileTest extends TestCase {
         mediaFile1.setSharedForGallery(true);
         mediaFile1.setLength(3000);
         mediaFile1.setDirectory(rootDirectory);
-        mediaFile1.setInputStream(getClass().getResourceAsStream("/test.jpg"));
+        mediaFile1.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile1.setContentType("image/jpeg");
         
         MediaFileTag tag2 = new MediaFileTag("home", mediaFile1);
@@ -479,7 +465,7 @@ public class MediaFileTest extends TestCase {
         mediaFile2.setSharedForGallery(true);
         mediaFile2.setLength(4000);
         mediaFile2.setDirectory(rootDirectory);
-        mediaFile2.setInputStream(getClass().getResourceAsStream("/test.jpg"));
+        mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
         
         MediaFileTag tag3 = new MediaFileTag("home", mediaFile2);
@@ -578,6 +564,10 @@ public class MediaFileTest extends TestCase {
         searchResults = mfMgr.searchMediaFiles(testWeblog, filter12);
         assertFalse(searchResults.isEmpty());
         assertEquals(2, searchResults.size());
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
@@ -607,7 +597,7 @@ public class MediaFileTest extends TestCase {
             mediaFile.setSharedForGallery(true);
             mediaFile.setLength(2000);
             mediaFile.setDirectory(rootDirectory);
-            mediaFile.setInputStream(getClass().getResourceAsStream("/test.jpg"));
+            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType("image/jpeg");
             mfMgr.createMediaFile(testWeblog, mediaFile);
             assertNotNull(mediaFile.getId());
@@ -652,6 +642,10 @@ public class MediaFileTest extends TestCase {
         assertFalse(searchResults4.isEmpty());
         assertEquals(1, searchResults4.size());
         assertEquals("test_file14.jpg", searchResults4.get(0).getName());
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
     
     /**
@@ -681,7 +675,7 @@ public class MediaFileTest extends TestCase {
             mediaFile.setSharedForGallery(true);
             mediaFile.setLength(2000);
             mediaFile.setDirectory(rootDirectory);
-            mediaFile.setInputStream(getClass().getResourceAsStream("/test.jpg"));
+            mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
             mediaFile.setContentType(contentTypes[i]);
             mfMgr.createMediaFile(testWeblog, mediaFile);
             assertNotNull(mediaFile.getId());
@@ -722,6 +716,10 @@ public class MediaFileTest extends TestCase {
         assertEquals("test_file0.jpg", searchResults3.get(0).getName());
         assertEquals("test_file1.jpg", searchResults3.get(1).getName());
         assertEquals("test_file2.jpg", searchResults3.get(2).getName());
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
     
     /**
@@ -750,7 +748,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setSharedForGallery(false);
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
-        mediaFile.setInputStream(getClass().getResourceAsStream("/test5.jpg"));
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         
         
@@ -785,6 +783,10 @@ public class MediaFileTest extends TestCase {
         assertTrue(mediaFile2.isSharedForGallery());
         assertNotNull(mediaFile2.getTags());
         assertEquals(2, mediaFile2.getTags().size());
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
@@ -818,7 +820,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setCopyrightText("test 6.1 copyright text");
         mediaFile.setSharedForGallery(false);
         mediaFile.setLength(4000);
-        mediaFile.setInputStream(getClass().getResourceAsStream("/test6.jpg"));
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         mfMgr.createMediaFile(testWeblog, mediaFile);
 
@@ -829,7 +831,7 @@ public class MediaFileTest extends TestCase {
         mediaFile2.setCopyrightText("test 6.2 copyright text");
         mediaFile2.setSharedForGallery(true);
         mediaFile2.setLength(4000);
-        mediaFile2.setInputStream(getClass().getResourceAsStream("/test6.jpg"));
+        mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
         mfMgr.createMediaFile(testWeblog, mediaFile2);
         
@@ -855,6 +857,10 @@ public class MediaFileTest extends TestCase {
         assertTrue(rootDirectory.hasMediaFile("test6_1.jpg"));
         assertTrue(rootDirectory.hasMediaFile("test6_2.jpg"));
         
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
     }
 
     /**
@@ -889,7 +895,7 @@ public class MediaFileTest extends TestCase {
         mediaFile.setCopyrightText("test 7.1 copyright text");
         mediaFile.setSharedForGallery(false);
         mediaFile.setLength(4000);
-        mediaFile.setInputStream(getClass().getResourceAsStream("/test7.jpg"));
+        mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile.setContentType("image/jpeg");
         mfMgr.createMediaFile(testWeblog, mediaFile);
 
@@ -900,7 +906,7 @@ public class MediaFileTest extends TestCase {
         mediaFile2.setCopyrightText("test 7.2 copyright text");
         mediaFile2.setSharedForGallery(true);
         mediaFile2.setLength(4000);
-        mediaFile2.setInputStream(getClass().getResourceAsStream("/test7.jpg"));
+        mediaFile2.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
         mediaFile2.setContentType("image/jpeg");
         mfMgr.createMediaFile(testWeblog, mediaFile2);
         
@@ -929,5 +935,70 @@ public class MediaFileTest extends TestCase {
         mediaFiles = rootDirectory.getMediaFiles();
         assertEquals(0, mediaFiles.size());
         
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
+    }
+
+    public void testStorageUpgrade() throws Exception {
+        User testUser = null;
+        Weblog testWeblog1 = null;
+        Weblog testWeblog2 = null;
+        String oldmax = "4";
+        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        try {
+            // set dir max limit high so we won't bump into it
+            RuntimeConfigProperty prop = pmgr.getProperty("uploads.dir.maxsize");
+            oldmax = prop.getValue();
+            prop.setValue("20");
+            pmgr.saveProperty(prop);
+            TestUtils.endSession(true);
+
+            testUser = TestUtils.setupUser("mediaFileTestUser");
+            testWeblog1 = TestUtils.setupWeblog("testblog1", testUser);
+            testWeblog2 = TestUtils.setupWeblog("testblog2", testUser);
+
+            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+            JPAMediaFileManagerImpl mmgr = (JPAMediaFileManagerImpl)mgr;
+
+            assertTrue("Upgrade required",mmgr.isFileStorageUpgradeRequired());
+
+            mmgr.upgradeFileStorage();
+            TestUtils.endSession(true);
+
+            assertFalse("Upgrade required",mmgr.isFileStorageUpgradeRequired());
+
+            // now, let's check to see if migration was sucessful
+
+            MediaFileDirectory root1 = mgr.getMediaFileRootDirectory(testWeblog1);
+            assertNotNull("testblog1's mediafile dir exists", root1);
+            assertNotNull(root1.getMediaFile("hawk.jpg"));
+            assertNotNull(root1.getMediaFile("nasa.jpg"));
+            assertNotNull(root1.getMediaFile("roller50-prop.png"));
+
+            MediaFileDirectory root2 = mgr.getMediaFileRootDirectory(testWeblog2);
+            assertNotNull("testblog2's mediafile dir exists", root2);
+            assertNotNull(root2.getMediaFile("amsterdam.jpg"));
+            assertNotNull(root2.getMediaFile("p47-thunderbolt.jpg"));
+            assertNotNull(root2.getMediaFile("rollerwiki.png"));
+
+        } finally {
+
+            File statusFile = new File(WebloggerConfig.getProperty("uploads.dir")
+                + File.separator + JPAMediaFileManagerImpl.MIGRATIION_STATUS_FILENAME);
+            statusFile.delete();
+
+            // reset dir max to old value
+            RuntimeConfigProperty prop = pmgr.getProperty("uploads.dir.maxsize");
+            prop.setValue(oldmax);
+            pmgr.saveProperty(prop);
+
+            TestUtils.endSession(true);
+            TestUtils.teardownWeblog(testWeblog1.getId());
+            TestUtils.teardownWeblog(testWeblog2.getId());
+            TestUtils.teardownUser(testUser.getUserName());
+            TestUtils.endSession(true);
+        }
     }
 }

@@ -353,6 +353,7 @@ public abstract class WebloggerImpl implements Weblogger {
         getThemeManager().initialize();
         getThreadManager().initialize();
         getIndexManager().initialize();
+        getMediaFileManager().initialize();
         
         try {
             // Initialize ping systems

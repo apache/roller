@@ -625,7 +625,7 @@ ro.buildUser=${user.name}
         
         <!-- Copy test resources -->
         <copy todir="${build.compile.tests}">
-            <fileset dir="${ro.tests}" excludes="**/*.java, **/*.html, **/*.png" />
+            <fileset dir="${ro.tests}" excludes="**/*.java, **/*.html" />
         </copy>
         
         <!-- 
@@ -701,7 +701,10 @@ ro.buildUser=${user.name}
                     
                     <!-- plugins test suite -->
                     <include name="org/apache/roller/weblogger/business/plugins/PluginsTestSuite.class" />
-                    
+
+                    <!-- mediafile test suite -->
+                    <include name="org/apache/roller/weblogger/business/CoreMediaFileServicesTestSuite.class" />
+
                 </fileset>
             </batchtest>
         </junit>
@@ -854,7 +857,6 @@ ro.buildUser=${user.name}
     </target>
     
     <!-- You can specify testClass using -DtestClass=foo -->
-    <property name="testClass" value="org.apache.roller.business.TaskLockTest"/>
     <target name="test-one" depends="build-tests">
         <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
             <arg value="${testClass}"/>
@@ -863,7 +865,29 @@ ro.buildUser=${user.name}
             </classpath>
         </java>
     </target>
-    
+
+    <!-- You can specify testClass using -DtestClass=foo -->
+    <target name="test-one-with-db" depends="build-tests">
+
+        <!-- allow for startup and initialization of test db -->
+        <antcall target="${test.db.startTask}" />
+        <antcall target="${test.db.initTask}" />
+
+        <java classname="junit.textui.TestRunner" dir="${build.tests}" fork="yes" failonerror="false">
+            <arg value="${testClass}"/>
+            <classpath>
+                <path refid="tests.run.path"/>
+            </classpath>
+            <jvmarg value="-Dcatalina.base=${build.tests}"/>
+            <jvmarg value="-Dro.build=${ro.build}"/>
+            <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+        </java>
+        
+        <!-- allow for shutdown of test db -->
+        <antcall target="${test.db.stopTask}" />
+
+    </target>
+
     <!-- ********************************************************************* -->
     <!-- EXPERIMENTAL targets -->
     <!-- ********************************************************************* -->
@@ -944,6 +968,7 @@ ro.buildUser=${user.name}
         <taskdef name="stopdb" classname="org.apache.roller.weblogger.ant.StopDerbyTask" 
                  classpath="${ro.tools}/buildtime/derby.jar;${ro.tools}/buildtime/derbynet.jar;${build.compile.tests}" />
         <stopdb port="3219"/>
+        <delete dir="${build.tests}/derby-system/roller" />
     </target>
     
     <!-- ********************************************************************* -->
