@@ -16,6 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
 
 <script type="text/javascript">
 <!--
@@ -24,8 +25,8 @@ function previewImage(element, theme) {
 }
 
 function fullPreview() {
-    selected=$('themeEdit_themeId').selectedIndex;
-    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+$('themeEdit_themeId').options[selected].value, '_preview', '');
+    selected=document.getElementById('themeEdit_themeId').selectedIndex;
+    window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+document.getElementById('themeEdit_themeId').options[selected].value, '_preview', '');
 }
 -->
 </script>
@@ -44,13 +45,13 @@ function fullPreview() {
     
     <div>
         <p>
-            <s:select name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('previewImg'), this[selectedIndex].value)"/>
+            <s:select name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('previewImg'), this[selectedIndex].value)"/>
         </p>
         <p>
             <img id="previewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
-            previewImage($('previewImg'), '<s:property value="themeId"/>');
+            previewImage(document.getElementById('previewImg'), '<s:property value="themeId"/>');
             </script>
         </p>
         <p>

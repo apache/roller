@@ -16,6 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
 
 <p class="subtitle">
    <s:text name="pageForm.subtitle" >
@@ -59,9 +60,9 @@
         
         // Update page URL when user changes link
         function updatePageURLDisplay() {
-            var previewSpan = $('linkPreview');
+            var previewSpan = document.getElementById('linkPreview');
             var n1 = previewSpan.firstChild;
-            var n2 = document.createTextNode($('template_bean_link').value);
+            var n2 = document.createTextNode(document.getElementById('template_bean_link').value);
             if (n1 == null) {
                 previewSpan.appendChild(n2);
             } else {
@@ -70,7 +71,7 @@
         }
         // Don't launch page if user has changed link, it'll be a 404
         function launchPage() {
-            if (originalLink != $('template_bean_link').value) {
+            if (originalLink != document.getElementById('template_bean_link').value) {
                 window.alert("Link changed, not launching page");
             } else {
                 window.open(weblogURL + '/page/' + originalLink, '_blank');
@@ -115,7 +116,7 @@
     
     <script type="text/javascript"><!--
         if (getCookie("editorSize1") != null) {
-            $('template_bean_contents').rows = getCookie("editorSize1");
+            document.getElementById('template_bean_contents').rows = getCookie("editorSize1");
         }
         function changeSize(e, num) {
             a = e.rows + num;
@@ -141,9 +142,9 @@
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
                 <input type="button" name="taller" value=" &darr; " 
-                       onclick="changeSize1($('template_bean_contents'), 5)" />
+                       onclick="changeSize1(document.getElementById('template_bean_contents'), 5)" />
                 <input type="button" name="shorter" value=" &uarr; " 
-                       onclick="changeSize1($('template_bean_contents'), -5)" />
+                       onclick="changeSize1(document.getElementById('template_bean_contents'), -5)" />
             </td>
         </tr>
     </table>
@@ -168,12 +169,12 @@
                     <td class="field">
                         <script type="text/javascript"><!--
                         function showContentTypeField() {
-                            if ($('template_bean_autoContentType1').checked) {
-                                $('template_bean_manualContentType').readOnly = true;
-                                $('template_bean_manualContentType').style.background = '#e5e5e5';
+                            if (document.getElementById('template_bean_autoContentType1').checked) {
+                                document.getElementById('template_bean_manualContentType').readOnly = true;
+                                document.getElementById('template_bean_manualContentType').style.background = '#e5e5e5';
                             } else {
-                                $('template_bean_manualContentType').readOnly = false;
-                                $('template_bean_manualContentType').style.background = '#ffffff';
+                                document.getElementById('template_bean_manualContentType').readOnly = false;
+                                document.getElementById('template_bean_manualContentType').style.background = '#ffffff';
                             }
                         }
                         // --></script>

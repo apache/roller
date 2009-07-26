@@ -16,6 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
 
@@ -35,7 +36,7 @@
     
     <script type="text/javascript"><!--
         if (getCookie("editorSize1") != null) {
-            $('stylesheetEdit_contents').rows = getCookie("editorSize1");
+            document.getElementById('stylesheetEdit_contents').rows = getCookie("editorSize1");
         }
         function changeSize(e, num) {
             a = e.rows + num;
@@ -63,9 +64,9 @@
             <td align="right">
                 <!-- Add buttons to make this textarea taller or shorter -->
                 <input type="button" name="taller" value=" &darr; " 
-                       onclick="changeSize1($('stylesheetEdit_contents'), 5)" />
+                       onclick="changeSize1(document.getElementById('stylesheetEdit_contents'), 5)" />
                 <input type="button" name="shorter" value=" &uarr; " 
-                       onclick="changeSize1($('stylesheetEdit_contents'), -5)" />
+                       onclick="changeSize1(document.getElementById('stylesheetEdit_contents'), -5)" />
             </td>
         </tr>
     </table>

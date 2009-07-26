@@ -16,6 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
 
 <script type="text/javascript">
 <!--
@@ -30,26 +31,26 @@ function fullPreview(selector) {
 
 function updateThemeChooser(selected) {
     if(selected.value == 'shared') {
-        $('sharedChooser').style.backgroundColor="#CCFFCC";
-        $('sharedChooser').style.border="1px solid #008000";
-        $('sharedOptioner').show();
+        document.getElementById('sharedChooser').style.backgroundColor="#CCFFCC";
+        document.getElementById('sharedChooser').style.border="1px solid #008000";
+        document.getElementById('sharedOptioner').show();
         
-        $('customChooser').style.backgroundColor="#eee";
-        $('customChooser').style.border="1px solid gray";
-        $('customOptioner').hide();
+        document.getElementById('customChooser').style.backgroundColor="#eee";
+        document.getElementById('customChooser').style.border="1px solid gray";
+        document.getElementById('customOptioner').hide();
     } else {
-        $('customChooser').style.backgroundColor="#CCFFCC";
-        $('customChooser').style.border="1px solid #008000";
-        $('customOptioner').show();
+        document.getElementById('customChooser').style.backgroundColor="#CCFFCC";
+        document.getElementById('customChooser').style.border="1px solid #008000";
+        document.getElementById('customOptioner').show();
         
-        $('sharedChooser').style.backgroundColor="#eee";
-        $('sharedChooser').style.border="1px solid gray";
-        $('sharedOptioner').hide();
+        document.getElementById('sharedChooser').style.backgroundColor="#eee";
+        document.getElementById('sharedChooser').style.border="1px solid gray";
+        document.getElementById('sharedOptioner').hide();
     }
 }
 
 function toggleImportThemeDisplay() {
-    $('themeImport').toggle();
+    document.getElementById('themeImport').toggle();
 }
 -->
 </script>
@@ -91,22 +92,22 @@ function toggleImportThemeDisplay() {
         </p>
         
         <p>
-            <s:select id="sharedSelector" name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('sharedPreviewImg'), this[selectedIndex].value)"/>
+            <s:select id="sharedSelector" name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('sharedPreviewImg'), this[selectedIndex].value)"/>
         </p>
         <p>
             <img id="sharedPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
                 <s:if test="customTheme">
-                    previewImage($('sharedPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage(document.getElementById('sharedPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage($('sharedPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage(document.getElementById('sharedPreviewImg'), '<s:property value="themeId"/>');
                 </s:else>
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview($('sharedSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+            &raquo; <a href="#" onclick="fullPreview(document.getElementById('sharedSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
             <s:text name="themeEditor.previewDescription" />
         </p>
         
@@ -142,7 +143,7 @@ function toggleImportThemeDisplay() {
             </s:if>
             
             <p>
-                <s:checkbox name="importTheme" onclick="$('themeImport').toggle();" /><s:text name="themeEditor.import" />
+                <s:checkbox name="importTheme" onclick="document.getElementById('themeImport').toggle();" /><s:text name="themeEditor.import" />
             </p>
         </s:else>
         
@@ -154,22 +155,22 @@ function toggleImportThemeDisplay() {
             </s:if>
             
             <p>
-                <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage($('customPreviewImg'), this[selectedIndex].value)"/>
+                <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('customPreviewImg'), this[selectedIndex].value)"/>
             </p>
             <p>
                 <img id="customPreviewImg" src="" />
                 <!-- initialize preview image at page load -->
                 <script type="text/javascript">
                 <s:if test="customTheme">
-                    previewImage($('customPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage(document.getElementById('customPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage($('customPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage(document.getElementById('customPreviewImg'), '<s:property value="themeId"/>');
                 </s:else>
                 </script>
             </p>
             <p>
-                &raquo; <a href="#" onclick="fullPreview($('customSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+                &raquo; <a href="#" onclick="fullPreview(document.getElementById('customSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
                 <s:text name="themeEditor.previewDescription" />
             </p>
         </div>
@@ -182,13 +183,13 @@ function toggleImportThemeDisplay() {
 <%-- initializes the chooser/optioner/themeImport display at page load time --%>
 <script type="text/javascript">
     <s:if test="customTheme">
-        updateThemeChooser($('customRadio'));
+        updateThemeChooser(document.getElementById('customRadio'));
     </s:if>
     <s:else>
-        updateThemeChooser($('sharedRadio'));
+        updateThemeChooser(document.getElementById('sharedRadio'));
     </s:else>
     
     <s:if test="firstCustomization">
-        $('themeImport').show();
+        document.getElementById('themeImport').show();
     </s:if>
 </script>
