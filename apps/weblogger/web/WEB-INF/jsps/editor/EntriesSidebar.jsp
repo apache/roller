@@ -83,7 +83,7 @@
                         </script>
                         <s:textfield name="bean.startDateString" size="12" />
                         <a href="#" id="anchorCalStart" name="anchorCalStart"
-                           onclick="calStart.select($('entries_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
+                           onclick="calStart.select(document.getElementById('entries_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
                         <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
                     </div>
                     
@@ -101,7 +101,7 @@
                         </script>
                         <s:textfield name="bean.endDateString" size="12" />
                         <a href="#" id="anchorCalEnd" name="anchorCalEnd"
-                           onclick="calEnd.select($('entries_bean_endDateString'),'anchorCalEnd','MM/dd/yy'); return false">
+                           onclick="calEnd.select(document.getElementById('entries_bean_endDateString'),'anchorCalEnd','MM/dd/yy'); return false">
                         <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
                     </div>
                     <br />
