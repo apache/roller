@@ -306,7 +306,14 @@ Path: /
         <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
         <img border="0" src='<s:property value="%{mediaFileURL}" />' <s:if test="#mediaFile.imageFile"> width="120px" height="100px" </s:if> <s:else>style="padding:40px 50px;"</s:else>/>
         </div>
-        <div style="clear:left;width:130px;margin-left:5px;font-size:11px;"><label><s:property value="#mediaFile.name" /></label>
+        <div style="clear:left;width:130px;margin-left:5px;font-size:11px;">
+
+        <label>
+           <str:truncateNicely upper="50">
+               <s:property value="#mediaFile.name" />
+           </str:truncateNicely>
+        </label>
+
         <div style="padding-top:5px;">   <!--  one -->
         <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property value="#mediaFile.id"/>"/>
         <INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
