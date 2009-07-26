@@ -50,6 +50,6 @@
 <%-- this forces focus to the userName field --%>
 <script type="text/javascript">
 <!--
-    $('userName').focus();
+    document.getElementById('userName').focus();
 // -->
 </script>

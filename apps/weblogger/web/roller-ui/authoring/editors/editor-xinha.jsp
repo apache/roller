@@ -16,11 +16,12 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
 
 <script type="text/javascript">
 function editorCleanup() {
-    $('xe_content').value = xinha_editors.xe_content.getHTML().trim();
-    $('xe_summary').value = xinha_editors.xe_summary.getHTML().trim();
+    document.getElementById('xe_content').value = xinha_editors.xe_content.getHTML().trim();
+    document.getElementById('xe_summary').value = xinha_editors.xe_summary.getHTML().trim();
 }
 
 // (preferably absolute) URL (including trailing slash) where Xinha is installed

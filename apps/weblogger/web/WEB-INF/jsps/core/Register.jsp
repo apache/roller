@@ -160,8 +160,11 @@ function onChange() {
     var passwordText    = document.register['bean.passwordText'].value;
     var passwordConfirm = document.register['bean.passwordConfirm'].value;
     var userName        = document.register['bean.userName'].value;
-    var emailAddress     = document.register['bean.emailAddress'].value;
-    var openIdUrl       = document.register['bean.openIdUrl'].value;
+    var emailAddress    = document.register['bean.emailAddress'].value;
+    var openIdUrl       = "";
+    if (openIdConfig != 'disabled') {
+        openIdUrl = document.register['bean.openIdUrl'].value;
+    }
     
     if (ssoEnabled) {
         if (emailAddress) disabled = false;
@@ -175,17 +178,18 @@ function onChange() {
     } else if (openIdConfig == 'hybrid') {
         if (emailAddress && ((passwordText && passwordConfirm) || (openIdUrl)) ) disabled = false;
     }
+
     if ((passwordText || passwordConfirm) && !(passwordText == passwordConfirm)) {
-        $('readytip').innerHTML = '<s:text name="userRegister.error.mismatchedPasswords" />';
+        document.getElementById('readytip').innerHTML = '<s:text name="userRegister.error.mismatchedPasswords" />';
         disabled = true;
     } else if (disabled) {
-        $('readytip').innerHTML = '<s:text name="userRegister.tip.ready" />'
+        document.getElementById('readytip').innerHTML = '<s:text name="userRegister.tip.ready" />'
     } else {
-        $('readytip').innerHTML = '<s:text name="userRegister.success.ready" />'
+        document.getElementById('readytip').innerHTML = '<s:text name="userRegister.success.ready" />'
     }
-    //$('submit').disabled = disabled;
+    document.getElementById('submit').disabled = disabled;
 }
-//$('submit').disabled = true;
+document.getElementById('submit').disabled = true;
 </script>
 
 

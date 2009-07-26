@@ -106,7 +106,7 @@ if (cmaEnabled) {
                 <td width="80%">
                     <input type="submit" name="login" id="login" value="<s:text name="loginPage.login" />" />
                     <input type="reset" name="reset" id="reset" value="<s:text name="loginPage.reset" />" 
-                        onclick="$('j_username').focus()" />
+                        onclick="document.getElementById('j_username').focus()" />
                 </td>
             </tr>        
 
@@ -121,11 +121,11 @@ if (cmaEnabled) {
 if (document.getElementById) {
     if (getCookie("username") != null) {
         if (document.getElementById) {
-            $("j_username").value = getCookie("username");
-            $("j_password").focus();
+            document.getElementById("j_username").value = getCookie("username");
+            document.getElementById("j_password").focus();
         }
     } else {
-        $("j_username").focus();
+        document.getElementById("j_username").focus();
     }
 }
 
