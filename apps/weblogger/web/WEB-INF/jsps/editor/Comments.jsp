@@ -21,7 +21,7 @@
 <script type="text/javascript">
     <!--
     function setChecked(val, name) {
-        form = $('comments');
+        form = document.getElementById('comments');
         len = form.elements.length;
         var i=0;
         for( i=0 ; i<len ; i++) {
@@ -63,9 +63,9 @@
     function handleCommentResponse() {
         if (http.readyState == 4) {
             comment = eval("(" + http.responseText + ")");
-            commentDiv = $("comment-" + comment.id);
+            commentDiv = document.getElementById("comment-" + comment.id);
             commentDiv.textContent = comment.content;
-            linkDiv = $("link-" + comment.id);
+            linkDiv = document.getElementById("link-" + comment.id);
             linkDiv.parentNode.removeChild(linkDiv);
         }
         isBusy = false;
