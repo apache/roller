@@ -285,46 +285,47 @@ Path: /
   <ul id = "myMenu">
 
     <s:iterator id="directory" value="childDirectories">
-        <li class="align-images" >
+    <li class="align-images" >
         <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
-        <img  border="0" src='<s:url value="/images/folder.png"/>' class="dir-image" alt="mediaFolder.png" onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
+            <img  border="0" src='<s:url value="/images/folder.png"/>' class="dir-image" alt="mediaFolder.png" onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
         </div>
         <div style="clear:left;width:130px;margin-left:10px;font-size:11px;"><label><s:property value="#directory.name" /></label>
         </div>
-        </li>
+    </li>
     </s:iterator>
 
 
     <s:iterator id="mediaFile" value="childFiles">
-        <li class="align-images" >
+    <li class="align-images" >
         <s:if test="#mediaFile.imageFile">
-        <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{#mediaFile.id}"></s:url>
+            <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{#mediaFile.id}"></s:url>
         </s:if>
         <s:else>
-        <s:url id="mediaFileURL" value="/images/page.png"></s:url>
+            <s:url id="mediaFileURL" value="/images/page.png"></s:url>
         </s:else>
         <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
-        <img border="0" src='<s:property value="%{mediaFileURL}" />' <s:if test="#mediaFile.imageFile"> width="120px" height="100px" </s:if> <s:else>style="padding:40px 50px;"</s:else>/>
+            <img border="0" src='<s:property value="%{mediaFileURL}" />' <s:if test="#mediaFile.imageFile"> width="120px" height="100px" </s:if> <s:else>style="padding:40px 50px;"</s:else>/>
         </div>
         <div style="clear:left;width:130px;margin-left:5px;font-size:11px;">
 
-        <label>
-           <str:truncateNicely upper="50">
-               <s:property value="#mediaFile.name" />
-           </str:truncateNicely>
-        </label>
+            <label>
+               <str:truncateNicely upper="50">
+                   <s:property value="#mediaFile.name" />
+               </str:truncateNicely>
+            </label>
 
-        <div style="padding-top:5px;">   <!--  one -->
-        <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property value="#mediaFile.id"/>"/>
-        <INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
+            <div style="padding-top:5px;">   <!--  one -->
+                <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property value="#mediaFile.id"/>"/>
+                <INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
 
-        <div style="float:right;">
-        <a  href="#" id="<s:property value='#mediaFile.id'/>" onclick="onClickEdit(this.id)">Edit</a>
-        <a  class="contextMenu" href="#">More...</a>
+                <div style="float:right;">
+                    <a  href="#" id="<s:property value='#mediaFile.id'/>" onclick="onClickEdit(this.id)">Edit</a>
+                    <a  class="contextMenu" href="#">More...</a>
+                </div>
+            </div>  <!-- one -->
+            
         </div>
-        </div>  <!-- one -->
-        </div>
-        </li>
+    </li>
     </s:iterator>
 
   </ul>

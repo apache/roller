@@ -146,20 +146,26 @@ public class MediaFileView extends MediaFileBase {
             this.childFiles = new ArrayList<MediaFile>();
             this.childFiles.addAll(directory.getMediaFiles());
 
-            if (!StringUtils.isEmpty(this.sortBy)) {
-                if ("name".equals(sortBy)) {
-                    Collections.sort(this.childDirectories, new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
-                    Collections.sort(this.childFiles, new MediaFileComparator(MediaFileComparatorType.NAME));
-                } else if ("type".equals(sortBy)) {
-                    Collections.sort(this.childFiles, new MediaFileComparator(MediaFileComparatorType.TYPE));
-                } else if ("date_uploaded".equals(sortBy)) {
-                    Collections.sort(this.childFiles, new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
-                }
+            if ("type".equals(sortBy)) {
+                Collections.sort(this.childFiles,
+                        new MediaFileComparator(MediaFileComparatorType.TYPE));
+                
+            } else if ("date_uploaded".equals(sortBy)) {
+                Collections.sort(this.childFiles,
+                        new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
+
+            } else { // default to sort by name
+                sortBy = "name";
+                Collections.sort(this.childDirectories,
+                        new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
+                Collections.sort(this.childFiles,
+                        new MediaFileComparator(MediaFileComparatorType.NAME));
             }
 
             this.currentDirectory = directory;
 
             return SUCCESS;
+
         } catch (FileIOException ex) {
             log.error("Error viewing media file directory ", ex);
             addError("MediaFile.error.view");
