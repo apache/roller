@@ -26,7 +26,7 @@
         </style>
     </head>
     
-    <body>
+    <body class=" yui-skin-sam">
         
         
         

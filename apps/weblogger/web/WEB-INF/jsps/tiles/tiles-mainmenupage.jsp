@@ -27,7 +27,7 @@
             <tiles:insertAttribute name="styles" />
         </style>
     </head>
-    <body>
+    <body class=" yui-skin-sam">
         
         <div id="banner">
             <tiles:insertAttribute name="bannerStatus" />

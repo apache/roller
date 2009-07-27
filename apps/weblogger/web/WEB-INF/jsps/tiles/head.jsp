@@ -13,4 +13,4 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <script type="text/javascript" src="<s:url value="/theme/scripts/roller.js" />"></script>
 
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
+

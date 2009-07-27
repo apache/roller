@@ -117,21 +117,16 @@ public class TagDataServlet extends HttpServlet {
         if ("json".equals(format)) {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter pw = response.getWriter();
-            pw.println("{");
-            pw.print("  prefix : \"");
-            pw.print(prefix == null ? "" : prefix);
-            pw.println("\",");
-            pw.print("  weblog : \"");
-            pw.print(!siteWide ? handle : "");
-            pw.println("\",");
-            pw.println("  tagcounts : [");
+            pw.println("{ \"prefix\": \"" + (prefix == null ? "" : prefix) + "\",");
+            pw.println("  \"weblog\": \"" + (!siteWide ? handle : "") + "\",");
+            pw.println("  \"tagcounts\": [" );
             int count = 0;
             for (Iterator it = tags.iterator(); it.hasNext();) {
                 TagStat stat = (TagStat) it.next();
-                pw.print("    { tag : \"");
+                pw.print("    { \"tag\" : \"");
                 pw.print(stat.getName());
                 pw.print("\", ");
-                pw.print("count : ");
+                pw.print("\"count\" : ");
                 pw.print(stat.getCount());
                 pw.print(" }");
                 if (it.hasNext()) {

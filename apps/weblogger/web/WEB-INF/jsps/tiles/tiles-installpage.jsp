@@ -23,7 +23,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <tiles:insertAttribute name="head" />
     </head>
-    <body>
+    <body class=" yui-skin-sam">
         
         <div id="banner">
             <tiles:insertAttribute name="banner" />

@@ -16,7 +16,6 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/scriptaculous/prototype.js"/>" ></script>
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
 

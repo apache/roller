@@ -17,6 +17,32 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/fonts-min.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/autocomplete.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
+
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/connection-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/animation-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/datasource-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/autocomplete-min.js'/>"></script>
+
+<style>
+body {
+    margin:0;
+    padding:0;
+    text-align:left;
+}
+h1 {
+    font-size:20px;
+    font-weight:bold;
+}
+#tagAutoCompleteWrapper {
+    width:25em; /* set width here or else widget will expand to fit its container */
+    padding-bottom:2em;
+}
+</style>
+
 <script type="text/javascript">
 <!--
 function fullPreviewMode() {
@@ -117,13 +143,8 @@ function fullPreviewMode() {
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield id="entryEditTags" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
-                <div id="entryEditTagsChoices" style="display:none" class="autocomplete"></div>
-                <br/>
-                <script type="text/javascript">
-                <!--
-		new RollerTagsAutoCompleter("entryEditTags", "entryEditTagsChoices", "<s:property value="jsonAutocompleteUrl" />", { tokens : [' ',','], minChars: 2 });
-                // --></script>
+                <s:textfield id="tagAutoComplete" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
+                <div id="tagAutoCompleteContainer"></div>
             </td>
         </tr> 
         
@@ -202,7 +223,7 @@ function fullPreviewMode() {
             </script>
             <s:textfield name="bean.dateString" size="12" />
             <a href="#" id="anchorCal" name="anchorCal"
-               onclick="cal.select($('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
+               onclick="cal.select(document.getElementById('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
             <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
             <s:property value="actionWeblog.timeZone" />
         </div>   
@@ -238,13 +259,13 @@ function fullPreviewMode() {
     
     <br>
     <div class="control">
-        <s:submit key="weblogEdit.save" onclick="$('entry_bean_status').value='DRAFT';" />
+        <s:submit key="weblogEdit.save" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
 
         <s:if test="userAnAuthor">
-            <s:submit key="weblogEdit.post" onclick="$('entry_bean_status').value='PUBLISHED';"/>
+            <s:submit key="weblogEdit.post" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
         </s:if>
         <s:else>
-            <s:submit key="weblogEdit.submitForReview" onclick="$('entry_bean_status').value='PENDING';"/>
+            <s:submit key="weblogEdit.submitForReview" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
         </s:else>        
         
         <s:url id="removeUrl" action="entryRemove">
@@ -272,3 +293,35 @@ function fullPreviewMode() {
     </s:if>
     
 </s:form>
+
+
+<script type="text/javascript">
+YAHOO.example.RemoteCustomRequest = function() {
+    // Use an XHRDataSource
+    var oDS = new YAHOO.util.XHRDataSource("<s:property value="jsonAutocompleteUrl" />");
+    // Set the responseType
+    oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
+    // Define the schema of the JSON results
+    oDS.responseSchema = {
+        resultsList : "tagcounts",
+        fields : ["tag"]
+    };
+
+    // Instantiate the AutoComplete
+    var oAC = new YAHOO.widget.AutoComplete("tagAutoComplete", "tagAutoCompleteContainer", oDS);
+    // Delimiter character, allow multiple tags to be chosen
+    oAC.delimChar = [","," "];
+    // Throttle requests sent
+    oAC.queryDelay = .5;
+    // The webservice needs additional parameters
+    oAC.generateRequest = function(sQuery) {
+        return "?format=json&prefix=" + sQuery ;
+    };
+
+    return {
+        oDS: oDS,
+        oAC: oAC
+    };
+}();
+</script>
+    

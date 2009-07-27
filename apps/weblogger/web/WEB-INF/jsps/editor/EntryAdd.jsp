@@ -17,6 +17,32 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/fonts-min.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/autocomplete.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
+
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/connection-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/animation-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/datasource-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/autocomplete-min.js'/>"></script>
+
+<style>
+body {
+    margin:0;
+    padding:0;
+    text-align:left;
+}
+h1 {
+    font-size:20px;
+    font-weight:bold;
+}
+#tagAutoCompleteWrapper {
+    width:25em; /* set width here or else widget will expand to fit its container */
+    padding-bottom:2em;
+}
+</style>
+
 <p class="subtitle">
     <s:text name="weblogEdit.subtitle.newEntry" >
         <s:param value="actionWeblog.handle" />
@@ -25,12 +51,12 @@
 
 <s:form id="entry" action="entryAdd!save" onsubmit="editorCleanup()">
     <s:hidden name="weblog" />
-    
+
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
-    
-    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">   
-        
+
+    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="title"><s:text name="weblogEdit.title" /></label>
@@ -39,7 +65,7 @@
                 <s:textfield name="bean.title" size="70" maxlength="255" tabindex="1" />
             </td>
         </tr>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="status"><s:text name="weblogEdit.status" /></label>
@@ -49,7 +75,7 @@
                 <s:hidden name="bean.status" value="" />
             </td>
         </tr>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="categoryId"><s:text name="weblogEdit.category" /></label>
@@ -58,22 +84,22 @@
                 <s:select name="bean.categoryId" list="categories" listKey="id" listValue="name" size="1" />
             </td>
         </tr>
-        
+
         <tr>
             <td class="entryEditFormLabel">
                 <label for="title"><s:text name="weblogEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield id="entryEditTags" cssClass="entryEditTags" name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
-                <div id="entryEditTagsChoices" style="display:none" class="autocomplete"></div>
-                <br/>
-                <script type="text/javascript">
-                <!--
-		new RollerTagsAutoCompleter("entryEditTags", "entryEditTagsChoices", "<s:property value="jsonAutocompleteUrl" />", { tokens : [' ',','], minChars: 2 });
-                // --></script>
+
+                <div id="tagAutoCompleteWrapper">
+                    <s:textfield id="tagAutoComplete" cssClass="entryEditTags"
+                        name="bean.tagsAsString" size="70" maxlength="255" tabindex="3" />
+                    <div id="tagAutoCompleteContainer"></div>
+                </div>
+
             </td>
-        </tr> 
-        
+        </tr>
+
         <s:if test="actionWeblog.enableMultiLang">
             <tr>
                 <td class="entryEditFormLabel">
@@ -87,26 +113,25 @@
         <s:else>
             <s:hidden name="bean.locale"/>
         </s:else>
-        
+
     </table>
-    
-    
+
     <%-- ================================================================== --%>
     <%-- Weblog edit or preview --%>
-    
+
     <div style="width: 100%;"> <%-- need this div to control text-area size in IE 6 --%>
         <%-- include edit page --%>
         <div>
             <s:include value="%{editor.jspPage}" />
         </div>
     </div>
-    
+
     <br />
-    
-    
+
+
     <%-- ================================================================== --%>
     <%-- plugin chooser --%>
-    
+
     <s:if test="!entryPlugins.isEmpty">
         <div id="pluginControlToggle" class="controlToggle">
             <span id="ipluginControl">+</span>
@@ -118,17 +143,17 @@
         </div>
     </s:if>
 
-    
+
     <%-- ================================================================== --%>
     <%-- advanced settings  --%>
-    
+
     <div id="miscControlToggle" class="controlToggle">
         <span id="imiscControl">+</span>
         <a class="controlToggle" onclick="javascript:toggleControl('miscControlToggle','miscControl')">
         <s:text name="weblogEdit.miscSettings" /></a>
     </div>
     <div id="miscControl" class="miscControl" style="display:none">
-        
+
         <label for="link"><s:text name="weblogEdit.pubTime" /></label>
         <div>
             <s:select name="bean.hours" list="hoursList" />
@@ -149,45 +174,81 @@
             </script>
             <s:textfield name="bean.dateString" size="12" />
             <a href="#" id="anchorCal" name="anchorCal"
-               onclick="cal.select($('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
+               onclick="cal.select(document.getElementById('entry_bean_dateString'),'anchorCal','MM/dd/yy'); return false">
             <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
             <s:property value="actionWeblog.timeZone" />
-        </div>   
+        </div>
         <br />
-        
+
         <s:checkbox name="bean.allowComments" onchange="onAllowCommentsChange()" />
         <s:text name="weblogEdit.allowComments" />
         <s:text name="weblogEdit.commentDays" />
         <s:select name="bean.commentDays" list="commentDaysList" size="1" listKey="key" listValue="value" />
         <br />
-        
+
         <s:checkbox name="bean.rightToLeft" />
         <s:text name="weblogEdit.rightToLeft" />
         <br />
-        
+
         <s:if test="authenticatedUser.hasGlobalPermission('admin')">
             <s:checkbox name="bean.pinnedToMain" />
             <s:text name="weblogEdit.pinnedToMain" />
             <br />
         </s:if>
         <br />
-        
+
         <s:text name="weblogEdit.enclosureURL" />: <s:textfield name="bean.enclosureURL" size="40" maxlength="255" />
     </div>
-    
-    
+
+
     <%-- ================================================================== --%>
     <%-- the button box --%>
-    
+
     <br>
     <div class="control">
-        <s:submit key="weblogEdit.save" onclick="$('entry_bean_status').value='DRAFT';" />
+        <s:submit key="weblogEdit.save" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
         <s:if test="userAnAuthor">
-            <s:submit key="weblogEdit.post" onclick="$('entry_bean_status').value='PUBLISHED';"/>
+            <s:submit key="weblogEdit.post" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
         </s:if>
         <s:else>
-            <s:submit key="weblogEdit.submitForReview" onclick="$('entry_bean_status').value='PENDING';"/>
+            <s:submit key="weblogEdit.submitForReview" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
         </s:else>
     </div>
-    
+
 </s:form>
+
+<script type="text/javascript">
+
+var tags = ["java","jammy","cool","booger","smell"];
+
+YAHOO.example.RemoteCustomRequest = function() {
+    //var oDS = new YAHOO.util.LocalDataSource(tags);
+    //oDS.responseSchema = {fields:["tag"]};
+
+    // Use an XHRDataSource
+    var oDS = new YAHOO.util.XHRDataSource('<s:property value="jsonAutocompleteUrl" />');
+    // Set the responseType
+    oDS.responseType = YAHOO.util.DataSourceBase.TYPE_JSON;
+    // Define the schema of the JSON results
+    oDS.responseSchema = {
+        resultsList : "tagcounts",
+        fields : ["tag"]
+    };
+
+    // Instantiate the AutoComplete
+    var oAC = new YAHOO.widget.AutoComplete("tagAutoComplete", "tagAutoCompleteContainer", oDS);
+    // Delimiter character, allow multiple tags to be chosen
+    oAC.delimChar = [","," "];
+    // Throttle requests sent
+    oAC.queryDelay = .5;
+    // The webservice needs additional parameters
+    oAC.generateRequest = function(sQuery) {
+        return "?format=json&prefix=" + sQuery ;
+    };
+
+    return {
+        oDS: oDS,
+        oAC: oAC
+    };
+}();
+</script>

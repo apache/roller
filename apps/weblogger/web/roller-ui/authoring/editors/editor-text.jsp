@@ -74,7 +74,7 @@ function onClose(textForInsertion)
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('overlay_img').style.visibility = 'hidden';
         if (textForInsertion && textForInsertion.length > 0) {
-            insertAtCursor(document.getElementById('EntryText'), textForInsertion);
+            insertAtCursor(document.getElementById('entry_bean_text'), textForInsertion);
         }
 }
 
@@ -217,7 +217,7 @@ function changeSize1(e, num) {
     </span>
 </p>
 
-<s:textarea id="EntryText" name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
+<s:textarea name="bean.text" cols="75" rows="25" cssStyle="width: 100%" tabindex="5"/>
 <script type="text/javascript">
     <!--
     if (getCookie("editorSize1") != null) {
