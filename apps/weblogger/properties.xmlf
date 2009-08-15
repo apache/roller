@@ -56,7 +56,7 @@
 <property name="build.jspc"               value="${ro.build}/jspc"/>
 
 <!-- various libraries used by Roller -->
-<property name="tools.struts2"       value="${ro.tools}/struts-2.0.9" />
+<property name="tools.struts2"       value="${ro.tools}/struts-2.1.6" />
 <property name="tools.jpa"           value="${ro.tools}/openjpa-1.2.1" />
 <property name="tools.spring"        value="${ro.tools}/spring-2.5" />
 <property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
