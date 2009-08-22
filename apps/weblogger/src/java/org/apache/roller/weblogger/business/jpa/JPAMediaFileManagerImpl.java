@@ -530,6 +530,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
 
         // loop through files and directories
+        int dirCount = 0;
+        int fileCount = 0;
         File[] files = oldDir.listFiles();
         for (int i=0; i<files.length; i++) {
 
@@ -549,6 +551,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                         roller.getMediaFileManager().createMediaFileDirectory(subDir);
                         roller.flush();
 
+                        dirCount++;
+
                     } catch (WebloggerException ex) {
                         log.error("ERROR creating directory: "
                             + newDir.getPath() + "/" + files[i].getName());
@@ -558,38 +562,52 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             } else { // a file: create a database record for it
 
-                log.debug("    Upgrade file: " + files[i].getAbsolutePath());
-                MediaFile mf = new MediaFile();
-                try {
-                    mf.setName(files[i].getName());
-                    mf.setDescription(files[i].getName());
+                // check to make sure that file does not already exist
+                if (newDir.hasMediaFile(files[i].getName())) {
+                    log.debug("    Skipping file that already exists: "
+                        + files[i].getName());
+                
+                } else {
 
-                    mf.setDateUploaded(new Timestamp(files[i].lastModified()));
-                    mf.setLastUpdated(new Timestamp(files[i].lastModified()));
+                    log.debug("    Upgrade file: " + files[i].getAbsolutePath());
+                    MediaFile mf = new MediaFile();
+                    try {
+                        mf.setName(files[i].getName());
+                        mf.setDescription(files[i].getName());
 
-                    mf.setDirectory(newDir);
-                    mf.setCreatorUserName(user.getUserName());
-                    mf.setSharedForGallery(Boolean.FALSE);
+                        mf.setDateUploaded(new Timestamp(files[i].lastModified()));
+                        mf.setLastUpdated(new Timestamp(files[i].lastModified()));
 
-                    mf.setLength(files[i].length());
-                    mf.setInputStream(new FileInputStream(files[i]));
-                    mf.setContentType(Utilities.getContentTypeFromFileName(files[i].getName()));
+                        mf.setDirectory(newDir);
+                        mf.setCreatorUserName(user.getUserName());
+                        mf.setSharedForGallery(Boolean.FALSE);
 
-                    this.roller.getMediaFileManager().createMediaFile(weblog, mf);
+                        mf.setLength(files[i].length());
+                        mf.setInputStream(new FileInputStream(files[i]));
+                        mf.setContentType(Utilities.getContentTypeFromFileName(files[i].getName()));
 
-                } catch (WebloggerException ex) {
-                    log.error("ERROR writing file to new storage system: "
-                            + files[i].getAbsolutePath(), ex);
-                    
-                } catch (java.io.FileNotFoundException ex) {
-                    log.error("ERROR reading file from old storage system: "
-                            + files[i].getAbsolutePath(), ex);
+                        this.roller.getMediaFileManager().createMediaFile(weblog, mf);
+
+                        fileCount++;
+
+                    } catch (WebloggerException ex) {
+                        log.error("ERROR writing file to new storage system: "
+                                + files[i].getAbsolutePath(), ex);
+
+                    } catch (java.io.FileNotFoundException ex) {
+                        log.error("ERROR reading file from old storage system: "
+                                + files[i].getAbsolutePath(), ex);
+                    }
                 }
             }
         }
 
         try { // flush changes to this directory
             roller.flush();
+
+            log.debug("Count of dirs  created: " + dirCount);
+            log.debug("Count of files created: " + fileCount);
+
         } catch (WebloggerException ex) {
             log.error("ERROR flushing changes to dir: " + newDir.getPath(), ex);
         }
