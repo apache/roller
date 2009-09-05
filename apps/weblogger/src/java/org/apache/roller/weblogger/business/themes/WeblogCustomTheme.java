@@ -21,11 +21,9 @@ package org.apache.roller.weblogger.business.themes;
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.FileNotFoundException;
-import org.apache.roller.weblogger.business.FilePathException;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -140,8 +138,11 @@ public class WeblogCustomTheme extends WeblogTheme {
         ThemeResource resource = null;
         
         try {
-            FileManager fileMgr = WebloggerFactory.getWeblogger().getFileManager();
-            resource = fileMgr.getFile(this.weblog, path);
+            MediaFileManager mmgr =
+                WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFile mf = mmgr.getMediaFileByOriginalPath(
+                this.weblog, path);
+
         } catch (WebloggerException ex) {
             // ignored, resource considered not found
         }

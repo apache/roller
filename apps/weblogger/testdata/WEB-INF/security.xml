@@ -60,4 +60,5 @@
     <beans:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
         <beans:property name="rolePrefix" value=""/>
     </beans:bean>
-</beans>
+    
+</beans:beans>

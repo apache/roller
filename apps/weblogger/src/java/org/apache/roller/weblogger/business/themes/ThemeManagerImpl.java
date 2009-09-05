@@ -32,18 +32,19 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.MediaFile;
 
 
 /**
@@ -264,23 +265,52 @@ public class ThemeManagerImpl implements ThemeManager {
             
             
             // now lets import all the theme resources
-            FileManager fileMgr = roller.getFileManager();
+            MediaFileManager fileMgr = roller.getMediaFileManager();
             
             List resources = theme.getResources();
             Iterator iterat = resources.iterator();
             ThemeResource resource = null;
+            MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
             while ( iterat.hasNext() ) {
                 resource = (ThemeResource) iterat.next();
                 
                 log.debug("Importing resource to "+resource.getPath());
-                
+
+                String justPath = resource.getPath()
+                    .substring(resource.getPath().lastIndexOf("/"));
+
+                String justName = resource.getPath()
+                    .substring(0, resource.getPath().lastIndexOf("/"));
+
                 try {
-                    if(resource.isDirectory()) {
-                        fileMgr.createDirectory(website, resource.getPath());
+                    if (resource.isDirectory()) {
+
+                        MediaFileDirectory mdir =
+                            fileMgr.getMediaFileDirectoryByPath(website, resource.getPath());
+                        if (mdir == null) {
+                            mdir = fileMgr.createMediaFileDirectory(root, resource.getPath());
+                            roller.flush();
+                        }
+
                     } else {
+
+                        MediaFileDirectory mdir =
+                            fileMgr.getMediaFileDirectoryByPath(website, justPath);
+                        if (mdir == null) {
+                            mdir = fileMgr.createMediaFileDirectory(root, justPath);
+                        }
+
                         // save file without file-type, quota checks, etc.
-                        fileMgr.saveFile(website, resource.getPath(), "text/plain", 
-                                resource.getLength(), resource.getInputStream(), false);
+                        MediaFile mf = new MediaFile();
+                        mf.setDirectory(mdir);
+                        mf.setName(justName);
+                        mf.setOriginalPath(justPath);
+                        mf.setContentType("text/plain");
+                        mf.setInputStream(resource.getInputStream());
+                        mf.setLength(resource.getLength());
+
+                        fileMgr.createMediaFile(website, mf);
+                        roller.flush();
                     }
                 } catch (Exception ex) {
                     log.info(ex);

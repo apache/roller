@@ -235,6 +235,9 @@ in the "base.path" definition.
     <!-- all jars used for testing -->
     <path refid="tests.path"/>
 
+    <!-- include root of test webapp dir in classpath -->
+    <pathelement location="${build.tests}"/>
+
     <!-- plus our compiled test classes -->
     <pathelement location="${build.compile.tests}"/>
 

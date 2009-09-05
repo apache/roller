@@ -20,15 +20,6 @@ package org.apache.roller.weblogger.webservices;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.roller.weblogger.webservices.adminapi.AappTest;
-import org.apache.roller.weblogger.webservices.adminapi.HandlerBaseTest;
-import org.apache.roller.weblogger.webservices.adminapi.MemberHandlerTest;
-import org.apache.roller.weblogger.webservices.adminapi.UserHandlerTest;
-import org.apache.roller.weblogger.webservices.adminapi.WeblogHandlerTest;
-import org.apache.roller.weblogger.webservices.adminapi.sdk.MemberEntryTest;
-import org.apache.roller.weblogger.webservices.adminapi.sdk.UserEntryTest;
-import org.apache.roller.weblogger.webservices.adminapi.sdk.WeblogEntryTest;
-import org.apache.roller.weblogger.webservices.xmlrpc.RollerXmlRpcServerTest;
 
 
 /**
@@ -37,21 +28,9 @@ import org.apache.roller.weblogger.webservices.xmlrpc.RollerXmlRpcServerTest;
 public class WebServicesTestSuite {
     
     public static Test suite() {
-
         TestSuite suite = new TestSuite();
-	
         suite.addTestSuite(RollerXmlRpcServerTest.class);
-        
-        suite.addTestSuite(AappTest.class);
-        suite.addTestSuite(HandlerBaseTest.class);
-        suite.addTestSuite(MemberHandlerTest.class);
-        suite.addTestSuite(UserHandlerTest.class);
-        suite.addTestSuite(WeblogHandlerTest.class);
-        
-        suite.addTestSuite(MemberEntryTest.class);
-        suite.addTestSuite(UserEntryTest.class);
-        suite.addTestSuite(WeblogEntryTest.class);
-        
+        suite.addTestSuite(RollerAtomPubServerTest.class);
         return suite;
     }
     

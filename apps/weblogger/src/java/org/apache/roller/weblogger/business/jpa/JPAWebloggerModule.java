@@ -25,8 +25,6 @@ import net.oauth.SimpleOAuthValidator;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.FileContentManagerImpl;
-import org.apache.roller.weblogger.business.FileManager;
-import org.apache.roller.weblogger.business.FileManagerImpl;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.MultiWeblogURLStrategy;
 import org.apache.roller.weblogger.business.OAuthManager;
@@ -77,8 +75,7 @@ public class JPAWebloggerModule implements Module {
 
         binder.bind(OAuthValidator.class).to(      SimpleOAuthValidator.class);
                 
-        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class); 
-        binder.bind(FileManager.class).to(         FileManagerImpl.class);   
+        binder.bind(ReferrerQueueManager.class).to(ReferrerQueueManagerImpl.class);  
         binder.bind(MediaFileManager.class).to(    JPAMediaFileManagerImpl.class);
         binder.bind(FileContentManager.class).to(  FileContentManagerImpl.class);
         binder.bind(IndexManager.class).to(        IndexManagerImpl.class);

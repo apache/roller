@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.business;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
+import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
@@ -52,6 +54,12 @@ public interface MediaFileManager {
      */
     public void updateMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException;
+
+    /**
+     * Update metadata for a media file and content.
+     */
+    public void updateMediaFile(Weblog website,
+            MediaFile mf, InputStream fis) throws WebloggerException;
 
     /**
      * Get media file metadata by file id
@@ -114,6 +122,20 @@ public interface MediaFileManager {
             Weblog weblog, String path) throws WebloggerException;
 
     /**
+     * Get media file by path.
+     */
+    public MediaFile getMediaFileByPath(Weblog weblog, String path)
+            throws WebloggerException;
+
+    /**
+     * Get media file by the original path by which it was stored.
+     * Required for support of old upload file URLs and for theme resources.
+     * {@inheritDoc}
+     */
+    public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
+            throws WebloggerException;
+
+    /**
      * Get the list of media file directories for the given weblog.
      */
     public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)
@@ -144,4 +166,11 @@ public interface MediaFileManager {
      */
     public List<MediaFile> fetchRecentPublicMediaFiles(int length)
             throws WebloggerException;
+    
+    /**
+     * Remove all media files associated with a weblog.
+     * @param website
+     */
+    public void removeAllFiles(Weblog website) throws WebloggerException;
+
 }

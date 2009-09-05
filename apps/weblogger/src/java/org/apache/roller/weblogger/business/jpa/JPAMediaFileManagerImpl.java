@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import org.apache.roller.weblogger.business.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 import java.util.Properties;
+import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -46,6 +48,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
+
 
 @com.google.inject.Singleton
 public class JPAMediaFileManagerImpl implements MediaFileManager {
@@ -227,6 +230,23 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    public void updateMediaFile(Weblog weblog, MediaFile mediaFile, InputStream is) throws WebloggerException {
+        mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+        persistenceStrategy.store(mediaFile);
+        // update weblog last modified date.  date updated by saveWeblog()
+        roller.getWeblogManager().saveWeblog(weblog);
+
+        FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
+        RollerMessages msgs = new RollerMessages();
+        if (!cmgr.canSave(weblog, mediaFile.getName(), mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
+            throw new FileIOException(msgs.toString());
+        }
+        cmgr.saveFileContent(weblog, mediaFile.getId(), mediaFile.getInputStream());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public MediaFile getMediaFile(String id) throws WebloggerException {
         return getMediaFile(id, false);
     }
@@ -249,11 +269,42 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      */
     public MediaFileDirectory getMediaFileDirectoryByPath(Weblog weblog, String path)
             throws WebloggerException {
-        Query q = this.persistenceStrategy.getNamedQuery("MediaFileDirectory.getByWeblogAndPath");
+        Query q = this.persistenceStrategy.getNamedQuery(
+                "MediaFileDirectory.getByWeblogAndPath");
         q.setParameter(1, weblog);
         q.setParameter(2, path);
         try {
             return (MediaFileDirectory) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public MediaFile getMediaFileByPath(Weblog weblog, String path)
+            throws WebloggerException {
+
+        // get directory
+        MediaFileDirectory mdir = getMediaFileDirectoryByPath(
+            weblog, path.substring(0, path.lastIndexOf("/")));
+        if (mdir == null) return null; // no such path found
+
+        return mdir.getMediaFile(path.substring(path.lastIndexOf("/")));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath) 
+            throws WebloggerException {
+        Query q = this.persistenceStrategy.getNamedQuery(
+                "MediaFile.getByWeblogAndOrigpath");
+        q.setParameter(1, weblog);
+        q.setParameter(2, origpath);
+        try {
+            return (MediaFile) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -569,11 +620,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 
                 } else {
 
-                    log.debug("    Upgrade file: " + files[i].getAbsolutePath());
+                    String originalPath = 
+                        ("/".equals(newDir.getPath()) ? "" : newDir.getPath()) + files[i].getName();
+                    log.debug("    Upgrade file with original path: " + originalPath);
                     MediaFile mf = new MediaFile();
                     try {
                         mf.setName(files[i].getName());
                         mf.setDescription(files[i].getName());
+                        mf.setOriginalPath(originalPath);
 
                         mf.setDateUploaded(new Timestamp(files[i].lastModified()));
                         mf.setLastUpdated(new Timestamp(files[i].lastModified()));
@@ -613,4 +667,23 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
+    public void removeAllFiles(Weblog website) throws WebloggerException {
+        removeMediaFileDirectory(getMediaFileRootDirectory(website));
+    }
+
+    private void removeMediaFileDirectory(MediaFileDirectory dir) 
+            throws WebloggerException {
+
+        if (dir == null) return;
+        
+        Set<MediaFile> files = dir.getMediaFiles();
+        for (MediaFile mf : files) {
+            this.removeMediaFile(dir.getWeblog(), mf);
+        }
+        Set<MediaFileDirectory> dirs = dir.getChildDirectories();
+        for (MediaFileDirectory md : dirs) {
+            removeMediaFileDirectory(md);
+        }
+        this.persistenceStrategy.remove(dir);
+    }
 }

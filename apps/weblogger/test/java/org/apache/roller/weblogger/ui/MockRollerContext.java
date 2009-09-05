@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.core.CmaRollerContext;
 
 /**
  * @author lance.lavandowska
  */
-public class MockRollerContext extends RollerContext {
+public class MockRollerContext extends CmaRollerContext {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(MockRollerContext.class);
     
@@ -49,25 +49,37 @@ public class MockRollerContext extends RollerContext {
     }
     
     //-----------------------------------------------------------------------
-    /** Because I cannot set the super's values, I have to
-     * overide the methods as well */
+
+    /**
+     * override to return mock appropriate value.
+     */
+
+
+    //-----------------------------------------------------------------------
+
+    /**
+     * override to return mock appropriate value.
+     */
     public static ServletContext getServletContext() {
         return mContext;
     }
-        
+
     //-----------------------------------------------------------------------
-    /** Because I cannot set the super's values, I have to
-     * overide the methods as well */
+
+    /**
+     * override to return mock appropriate value.
+     */
     public String getAbsoluteContextUrl() {
         return "";
     }
     
     //-----------------------------------------------------------------------
-    /** Because I cannot set the super's values, I have to
-     * overide the methods as well */
+
+    /**
+     * override to return mock appropriate value.
+     */
     public String getAbsoluteContextUrl(HttpServletRequest request) {
         return "http://localhost:8080/roller";
-    }
-    
+    }    
 }
 

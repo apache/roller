@@ -16,44 +16,35 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger.webservices.adminapi;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.roller.weblogger.business.jpa.JPAOAuthManagerTest;
+import org.apache.roller.weblogger.webservices.adminapi.sdk.MemberEntryTest;
+import org.apache.roller.weblogger.webservices.adminapi.sdk.UserEntryTest;
+import org.apache.roller.weblogger.webservices.adminapi.sdk.WeblogEntryTest;
 
 
 /**
- * Test supplemental weblog services.
- *
- * This test suite should test all of the supplemental functions of a weblog. 
- * These are the things that aren't quite as much of a core component as some
- * of the other services.  The main point of this is to break up the testing
- * into reasonable groupings though.
+ * Test Roller Admin Protocol, requires that provide test version of Roller
+ * running on http://localhost:8080/roller
  */
-public class SupplementalWeblogServicesTestSuite {
+public class RapTestSuite {
     
     public static Test suite() {
 
         TestSuite suite = new TestSuite();
-
-        // hit counts
-        suite.addTestSuite(HitCountTest.class);
         
-        // pings
-        suite.addTestSuite(PingsTest.class);
+        suite.addTestSuite(AappTest.class);
+        suite.addTestSuite(HandlerBaseTest.class);
+        suite.addTestSuite(MemberHandlerTest.class);
+        suite.addTestSuite(UserHandlerTest.class);
+        suite.addTestSuite(WeblogHandlerTest.class);
         
-        // folders and bookmarks
-        suite.addTestSuite(FolderCRUDTest.class);
-        suite.addTestSuite(FolderFunctionalityTest.class);
-        suite.addTestSuite(FolderParentDeletesTest.class);
-        suite.addTestSuite(BookmarkTest.class);
+        suite.addTestSuite(MemberEntryTest.class);
+        suite.addTestSuite(UserEntryTest.class);
+        suite.addTestSuite(WeblogEntryTest.class);
         
-        // referrers
-        suite.addTestSuite(RefererTest.class);
-
-        suite.addTestSuite(JPAOAuthManagerTest.class);
-
         return suite;
     }
     

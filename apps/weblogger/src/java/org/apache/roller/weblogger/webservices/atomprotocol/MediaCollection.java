@@ -40,23 +40,24 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.UUID;
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
-import org.apache.roller.weblogger.business.FileManager;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -100,7 +101,7 @@ public class MediaCollection {
             // authenticated client posted a weblog entry
             File tempFile = null;
             String handle = pathInfo[0];
-            FileManager fmgr = roller.getFileManager();
+            MediaFileManager fileMgr = roller.getMediaFileManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
             if (!RollerAtomHandler.canEdit(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
@@ -117,16 +118,33 @@ public class MediaCollection {
                                         
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
-                    
+                    String justPath = path.substring(path.lastIndexOf("/"));
+                    String justName = path.substring(0, path.lastIndexOf("/"));
+                    MediaFileDirectory mdir =
+                        fileMgr.getMediaFileDirectoryByPath(website, justPath);
+
+                    if (mdir.hasMediaFile(fileName)) {
+                        throw new AtomException("Duplicate file name");
+                    }
+
                     if (path.length() > 0) path = path + File.separator;
-                    FileInputStream fis = new FileInputStream(tempFile);  
-                    fmgr.saveFile(website, path + fileName, contentType, tempFile.length(), fis);
+                    FileInputStream fis = new FileInputStream(tempFile);
+
+                    MediaFile mf = new MediaFile();
+                    mf.setDirectory(mdir);
+                    mf.setName(fileName);
+                    mf.setOriginalPath(justPath);
+                    mf.setContentType(contentType);
+                    mf.setInputStream(fis);
+                    mf.setLength(tempFile.length());
+
+                    fileMgr.createMediaFile(website, mf);
+                    roller.flush();
+                    
                     fis.close();
-                    
-                    ThemeResource resource = fmgr.getFile(website, path + fileName);
-                    
-                    
-                    Entry mediaEntry = createAtomResourceEntry(website, resource);
+                                      
+                    MediaFile stored = fileMgr.getMediaFile(mf.getId());
+                    Entry mediaEntry = createAtomResourceEntry(website, stored);
                     for (Iterator it = mediaEntry.getOtherLinks().iterator(); it.hasNext();) {
                         Link link = (Link)it.next();
                         if ("edit".equals(link.getRel())) {
@@ -139,9 +157,6 @@ public class MediaCollection {
                 } catch (FileIOException fie) {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
-                } catch (Exception e) {
-                    throw new AtomException(
-                        "Unexpected error during file upload", e);
                 } finally {
                     if (tempFile != null) tempFile.delete();
                 }
@@ -164,11 +179,13 @@ public class MediaCollection {
             filePath = filePath.substring(0, filePath.length() - ".media-link".length());
             String handle = pathInfo[0];
             Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
-            ThemeResource resource = roller.getFileManager().getFile(website, filePath);
+
+            MediaFileManager fileMgr = roller.getMediaFileManager();
+            MediaFile mf = fileMgr.getMediaFileByPath(website, filePath);
 
             log.debug("Exiting");
-            if (resource != null) {
-                return createAtomResourceEntry(website, resource);
+            if (mf != null) {
+                return createAtomResourceEntry(website, mf);
             }
             
         } catch (WebloggerException ex) {
@@ -185,7 +202,7 @@ public class MediaCollection {
             // authenticated client posted a weblog entry
             File tempFile = null;
             String handle = pathInfo[0];
-            FileManager fmgr = roller.getFileManager();
+            MediaFileManager fmgr = roller.getMediaFileManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
             if (!RollerAtomHandler.canEdit(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
@@ -194,12 +211,12 @@ public class MediaCollection {
                 try {                                        
                     // Parse pathinfo to determine file path
                     String filePath = filePathFromPathInfo(pathInfo);
-                    ThemeResource resource = fmgr.getFile(website, filePath);                    
+                    MediaFile mf = fmgr.getMediaFileByOriginalPath(website, filePath);
                     return new AtomMediaResource(
-                            resource.getName(), 
-                            resource.getLength(),
-                            new Date(resource.getLastModified()),
-                            resource.getInputStream());
+                            mf.getName(),
+                            mf.getLength(),
+                            new Date(mf.getLastModified()),
+                            mf.getInputStream());
                 } catch (Exception e) {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
@@ -241,7 +258,7 @@ public class MediaCollection {
             if (!RollerAtomHandler.canView(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website");
             }
-                        
+
             Feed feed = new Feed();
             feed.setId(atomURL
                 +"/"+website.getHandle() + "/resources/" + path + start);                
@@ -253,26 +270,34 @@ public class MediaCollection {
             link.setType("text/html");
             feed.setAlternateLinks(Collections.singletonList(link));
 
-            FileManager fmgr = roller.getFileManager();
-            ThemeResource[] files = fmgr.getFiles(website, path);
+            MediaFileManager fmgr = roller.getMediaFileManager();
+            MediaFileDirectory dir = null;
+            if (StringUtils.isNotEmpty(path)) {
+                log.debug("Fetching resource collection from weblog " + handle + " at path: " + path);
+                dir = fmgr.getMediaFileDirectoryByPath(website, path);
+            } else {
+                log.debug("Fetching root resource collection from weblog " + handle);
+                dir = fmgr.getMediaFileRootDirectory(website);
+            }
+            Set<MediaFile> files = dir.getMediaFiles();
 
             SortedSet sortedSet = new TreeSet(new Comparator() {
                 public int compare(Object o1, Object o2) {
-                    ThemeResource f1 = (ThemeResource)o1;
-                    ThemeResource f2 = (ThemeResource)o2;
+                    MediaFile f1 = (MediaFile)o1;
+                    MediaFile f2 = (MediaFile)o2;
                     if (f1.getLastModified() < f2.getLastModified()) return 1;
                     else if (f1.getLastModified() == f2.getLastModified()) return 0;
                     else return -1;
                 }
             });
                                     
-            if (files != null && start < files.length) {  
-                for (int j=0; j<files.length; j++) {
-                    sortedSet.add(files[j]);
+            if (files != null && start < files.size()) {
+                for (MediaFile mf : files) {
+                    sortedSet.add(mf);
                 }
                 int count = 0;
-                ThemeResource[] sortedResources = 
-                   (ThemeResource[])sortedSet.toArray(new ThemeResource[sortedSet.size()]);
+                MediaFile[] sortedResources =
+                   (MediaFile[])sortedSet.toArray(new MediaFile[sortedSet.size()]);
                 List atomEntries = new ArrayList();
                 for (int i=start; i<(start + max) && i<(sortedResources.length); i++) {
                     Entry entry = createAtomResourceEntry(website, sortedResources[i]);
@@ -285,7 +310,7 @@ public class MediaCollection {
                 }
 
                 List otherLinks = new ArrayList();
-                if (start + count < files.length) { // add next link
+                if (start + count < files.size()) { // add next link
                     int nextOffset = start + max;
                     String url = atomURL
                         +"/"+ website.getHandle() + "/resources/" + path + nextOffset;
@@ -305,13 +330,19 @@ public class MediaCollection {
                 }
                 feed.setOtherLinks(otherLinks);
                 feed.setEntries(atomEntries);
+
+                log.debug("Collection contains: " + count);
+
+            } else {
+                log.debug("Returning empty collection");
             }
             
-            log.debug("Existing");
+
+            log.debug("Exiting");
             return feed;
        
         } catch (WebloggerException re) {
-            throw new AtomException("Getting resource collection");
+            throw new AtomException("Getting resource collection", re);
         }
     }
     
@@ -325,7 +356,7 @@ public class MediaCollection {
             // authenticated client posted a weblog entry
             File tempFile = null;
             String handle = pathInfo[0];
-            FileManager fmgr = roller.getFileManager();
+            MediaFileManager fmgr = roller.getMediaFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
             Weblog website = wmgr.getWeblogByHandle(handle);
             if (!RollerAtomHandler.canEdit(user, website)) {
@@ -339,14 +370,21 @@ public class MediaCollection {
                     Utilities.copyInputToOutput(is, fos);
                     fos.close();
                                         
+                    FileInputStream fis = new FileInputStream(tempFile);
+
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
                     
                     // Attempt to load file, to ensure it exists
-                    ThemeResource resource = fmgr.getFile(website, path);                    
-                    
-                    FileInputStream fis = new FileInputStream(tempFile);  
-                    fmgr.saveFile(website, path, contentType, tempFile.length(), fis);
+                    MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    mf.setContentType(contentType);
+                    mf.setInputStream(fis);
+                    mf.setLength(tempFile.length());
+
+                    fmgr.updateMediaFile(website, mf, fis);
+
+                    roller.flush();
+
                     fis.close();
                     
                     log.debug("Exiting");
@@ -384,8 +422,9 @@ public class MediaCollection {
                 try {
                     String path = filePathFromPathInfo(pathInfo);
                     String fileName = path.substring(0, path.length() - ".media-link".length());
-                    FileManager fmgr = roller.getFileManager();
-                    fmgr.deleteFile(website, fileName);
+                    MediaFileManager fmgr = roller.getMediaFileManager();
+                    MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    fmgr.removeMediaFile(website, mf);
                     log.debug("Deleted media entry: " + fileName);
                     return;
                     
@@ -420,7 +459,7 @@ public class MediaCollection {
         return path;
     }
     
-    private Entry createAtomResourceEntry(Weblog website, ThemeResource file) {
+    private Entry createAtomResourceEntry(Weblog website, MediaFile file) {
         String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
         String filePath = 
             file.getPath().startsWith("/") ? file.getPath().substring(1) : file.getPath();

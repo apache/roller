@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.FileContentManager;
-import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -64,7 +63,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         JPAPersistenceStrategy strategy,
         AutoPingManager      autoPingManager,
         BookmarkManager      bookmarkManager,
-        FileManager          fileManager,
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
@@ -85,7 +83,6 @@ public class JPAWebloggerImpl extends WebloggerImpl {
         super(
             autoPingManager,
             bookmarkManager,
-            fileManager,
             indexManager,
             mediaFileManager,
             fileContentManager,

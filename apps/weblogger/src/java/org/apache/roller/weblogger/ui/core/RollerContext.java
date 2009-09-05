@@ -36,7 +36,6 @@ import org.springframework.security.providers.rememberme.RememberMeAuthenticatio
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.roller.planet.business.GuicePlanetProvider;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BootstrapException;
@@ -47,7 +46,6 @@ import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetProvider;
 import org.apache.roller.planet.business.startup.PlanetStartup;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;

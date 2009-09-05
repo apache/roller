@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.util.RollerMessages;
  * 
  * This base implementation writes resources to a filesystem.
  */
-public class FileManagerImpl implements FileManager {
+public class FileManagerImpl { // implements FileManager {
     
     private static Log log = LogFactory.getLog(FileManagerImpl.class);
     
@@ -104,7 +104,7 @@ public class FileManagerImpl implements FileManager {
         // everything looks good, list contents
         ThemeResource dir = new WeblogResourceFile(weblog, path, dirFile);
         
-        return dir.getChildren();
+        return null; // dir.getChildren();
     }
     
     

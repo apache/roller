@@ -752,7 +752,10 @@ ro.buildUser=${user.name}
                     
                     <!-- UI tests, some require mock web container -->
                     <include name="org/apache/roller/weblogger/ui/UITestSuite.class"/>
-                    
+
+                    <!-- WS tests, some require mock web container -->
+                    <include name="org/apache/roller/weblogger/webservices/WebServicesTestSuite.class"/>
+
                 </fileset>
             </batchtest>
         </junit>

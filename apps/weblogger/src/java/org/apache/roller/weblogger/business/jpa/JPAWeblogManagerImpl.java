@@ -37,7 +37,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.FileManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -247,8 +246,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         this.strategy.flush();
         
         // remove uploaded files
-        FileManager fmgr = WebloggerFactory.getWeblogger().getFileManager();
-        fmgr.deleteAllFiles(website);
+        MediaFileManager mfmgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        mfmgr.removeAllFiles(website);
     }
     
     protected void updateTagAggregates(List tags) throws WebloggerException {
@@ -358,10 +357,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         }
         
         // add any auto enabled ping targets
-        PingTargetManager pingTargetMgr = roller
-        .getPingTargetManager();
-        AutoPingManager autoPingMgr = roller
-        .getAutopingManager();
+        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
+        AutoPingManager autoPingMgr = roller.getAutopingManager();
         
         Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
         PingTarget pingTarget = null;
@@ -374,6 +371,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 autoPingMgr.saveAutoPing(autoPing);
             }
         }
+
+        roller.getMediaFileManager().createRootMediaFileDirectory(newWeblog);
+
     }
     
     public Weblog getWeblog(String id) throws WebloggerException {

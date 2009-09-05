@@ -32,11 +32,11 @@ import java.util.Properties;
 import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.FilePathException;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -119,16 +119,19 @@ public class RollerAtomService extends AtomService {
                 workspace.addCollection(uploadCol);
 
                 // And add one media collection for each of weblog's upload sub-directories
-                ThemeResource[] dirs;
                 try {
-                    dirs = roller.getFileManager().getDirectories(weblog);
-                    for (int i = 0; i < dirs.length; i++) {
-                        Collection uploadSubCol = new Collection("Media Files: " + dirs[i].getPath(), "text", atomURL + "/" + weblog.getHandle() + "/resources/" + dirs[i].getPath());
-                        uploadSubCol.setAccepts(uploadAccepts); 
+                    MediaFileManager mgr = roller.getMediaFileManager();
+                    List<MediaFileDirectory> dirs = mgr.getMediaFileDirectories(weblog);
+                    for (MediaFileDirectory dir : dirs) {
+                        Collection uploadSubCol = new Collection(
+                            "Media Files: " + dir.getPath(), "text",
+                            atomURL + "/" + weblog.getHandle() + "/resources/" + dir.getPath());
+                        uploadSubCol.setAccepts(uploadAccepts);
                         workspace.addCollection(uploadSubCol);
                     }
-                } catch (FilePathException fpe) {
-                    throw new AtomException("Creating weblog entry collection for service doc", fpe);
+
+                } catch (Exception e) {
+                    throw new AtomException("Creating weblog entry collection for service doc", e);
                 }
             }
         }

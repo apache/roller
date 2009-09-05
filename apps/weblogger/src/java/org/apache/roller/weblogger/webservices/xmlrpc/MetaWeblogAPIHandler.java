@@ -28,12 +28,13 @@ import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.business.FileManager;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -361,20 +362,28 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             
             byte[] bits = (byte[]) struct.get("bits");
             
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            FileManager fmgr = roller.getFileManager();
             RollerMessages msgs = new RollerMessages();
-            
+
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            MediaFileManager fmgr = roller.getMediaFileManager();
+            MediaFileDirectory root = fmgr.getMediaFileRootDirectory(website);
+ 
             // Try to save file
-            fmgr.saveFile(website, name, type, bits.length, new ByteArrayInputStream(bits));
+            MediaFile mf = new MediaFile();
+            mf.setDirectory(root);
+            mf.setName(name);
+            mf.setContentType(type);
+            mf.setInputStream(new ByteArrayInputStream(bits));
+            mf.setLength(bits.length);
             
-            String fileLink = WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogResourceURL(website, name, true);
+            String fileLink = WebloggerFactory.getWeblogger().getUrlStrategy()
+                    .getWeblogResourceURL(website, name, true);
             
             Hashtable returnStruct = new Hashtable(1);
             returnStruct.put("url", fileLink);
             return returnStruct;
             
-        } catch (WebloggerException e) {
+        } catch (Exception e) {
             String msg = "ERROR in MetaWeblogAPIHandler.newMediaObject";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);

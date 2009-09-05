@@ -106,14 +106,7 @@ public interface Weblogger {
      * 
      * Get PropertiesManager associated with this Weblogger instance.
      */
-    public PropertiesManager getPropertiesManager();
-    
-    
-    /**
-     * 
-     * Get FileManager associated with this Weblogger instance.
-     */
-    public FileManager getFileManager();
+    public PropertiesManager getPropertiesManager();   
     
     
     /**

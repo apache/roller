@@ -15,7 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.pojos;
 
 import java.io.InputStream;
@@ -32,212 +31,218 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  *
  */
 public class MediaFile {
+
     private static Log log =
-        LogFactory.getFactory().getInstance(MediaFile.class);
+            LogFactory.getFactory().getInstance(MediaFile.class);
 
-	final String id;
-	// TODO: anchor to be populated
-	String anchor;
-    String name;
-    String description;
-    String copyrightText;
-    Boolean isSharedForGallery;
-    long length;
-    Timestamp dateUploaded;
-    Timestamp lastUpdated;
-    MediaFileDirectory directory;
-    Set<MediaFileTag> tags;
-    String contentType;
-    InputStream is;
-    FileContent content;
-    String creatorUserName;
+    final String id;
+
+    private String      name;
+    private String      description;
+    private String      copyrightText;
+    private Boolean     isSharedForGallery;
+    long                length;
+    private String      contentType;
+    private String      originalPath;
+    private InputStream is;
+    private FileContent content;
+    private Timestamp   dateUploaded;
+    private Timestamp   lastUpdated;
+    private String      creatorUserName;
+    private MediaFileDirectory directory;
+    private Set<MediaFileTag>  tags;
     
+    // TODO: anchor to be populated
+    private String      anchor;
+
+
     public MediaFile() {
-    	this.id = UUIDGenerator.generateUUID();
+        this.id = UUIDGenerator.generateUUID();
     }
-    
-	/**
-	 * Name for the media file
-	 * 
-	 */
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Name for the media file
+     *
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Description for media file
-	 * 
-	 */
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Description for media file
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Copyright text for media file
-	 * 
-	 */
-	public String getCopyrightText() {
-		return copyrightText;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCopyrightText(String copyrightText) {
-		this.copyrightText = copyrightText;
-	}
+    /**
+     * Copyright text for media file
+     *
+     */
+    public String getCopyrightText() {
+        return copyrightText;
+    }
 
-	/**
-	 * Is media file shared for gallery
-	 * 
-	 */
-	public Boolean isSharedForGallery() {
-		return isSharedForGallery;
-	}
+    public void setCopyrightText(String copyrightText) {
+        this.copyrightText = copyrightText;
+    }
 
-	public void setSharedForGallery(Boolean isSharedForGallery) {
-		this.isSharedForGallery = isSharedForGallery;
-	}
+    /**
+     * Is media file shared for gallery
+     *
+     */
+    public Boolean isSharedForGallery() {
+        return isSharedForGallery;
+    }
 
-	/**
-	 * Size of the media file
-	 * 
-	 */
-	public long getLength() {
-		return length;
-	}
+    public void setSharedForGallery(Boolean isSharedForGallery) {
+        this.isSharedForGallery = isSharedForGallery;
+    }
 
-	public void setLength(long length) {
-		this.length = length;
-	}
+    /**
+     * Size of the media file
+     *
+     */
+    public long getLength() {
+        return length;
+    }
+
+    public void setLength(long length) {
+        this.length = length;
+    }
 
     /**
      * Date uploaded
      * 
      */
-	public Timestamp getDateUploaded() {
-		return dateUploaded;
-	}
+    public Timestamp getDateUploaded() {
+        return dateUploaded;
+    }
 
-	public void setDateUploaded(Timestamp dateUploaded) {
-		this.dateUploaded = dateUploaded;
-	}
+    public void setDateUploaded(Timestamp dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
 
-	public long getLastModified() {
-		return lastUpdated.getTime();
-	}
+    public long getLastModified() {
+        return lastUpdated.getTime();
+    }
 
-	/**
-	 * Last updated timestamp
-	 * 
+    /**
+     * Last updated timestamp
+     *
      */
-	public Timestamp getLastUpdated() {
-		return lastUpdated;
-	}
+    public Timestamp getLastUpdated() {
+        return lastUpdated;
+    }
 
-	public void setLastUpdated(Timestamp time) {
-		this.lastUpdated = time;
-	}
+    public void setLastUpdated(Timestamp time) {
+        this.lastUpdated = time;
+    }
 
-	public MediaFileDirectory getDirectory() {
-		return directory;
-	}
+    public MediaFileDirectory getDirectory() {
+        return directory;
+    }
 
-	public void setDirectory(MediaFileDirectory dir) {
-		this.directory = dir;
-	}
+    public void setDirectory(MediaFileDirectory dir) {
+        this.directory = dir;
+    }
 
-	/**
-	 * Set of tags for this media file
-	 * 
-	 */
-	public Set<MediaFileTag> getTags() {
-		return tags;
-	}
+    /**
+     * Set of tags for this media file
+     *
+     */
+    public Set<MediaFileTag> getTags() {
+        return tags;
+    }
 
-	public void setTags(Set<MediaFileTag> tags) {
-		this.tags = tags;
-	}
+    public void setTags(Set<MediaFileTag> tags) {
+        this.tags = tags;
+    }
 
-	/**
-	 * Content type of the media file
-	 * 
-	 */
-	public String getContentType() {
-		return contentType;
-	}
+    /**
+     * Content type of the media file
+     *
+     */
+    public String getContentType() {
+        return contentType;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
     /**
      * Database surrogate key.
      *
      * @roller.wrapPojoMethod type="simple"
      */
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getPath() {
-		return directory.getPath();
-	}
+    public String getPath() {
+        return directory.getPath();
+    }
 
-	/**
-	 * Returns input stream for the underlying file in the file system.
-	 * @return
-	 */
-	public InputStream getInputStream() {
-		if (is != null) {
-			return is;
-		}
-		else if (content != null ){
-			return content.getInputStream();
-		}
-		return null;
-	}
+    /**
+     * Returns input stream for the underlying file in the file system.
+     * @return
+     */
+    public InputStream getInputStream() {
+        if (is != null) {
+            return is;
+        } else if (content != null) {
+            return content.getInputStream();
+        }
+        return null;
+    }
 
-	public void setInputStream(InputStream is) {
-		this.is = is;
-	}
+    public void setInputStream(InputStream is) {
+        this.is = is;
+    }
 
-	public void setContent(FileContent content) {
-		this.content = content;
-	}
-	
-	/**
-	 * Indicates whether this is an image file.
-	 * 
-	 */
-	public boolean isImageFile() {
-		if (this.contentType == null) return false;
-		return (this.contentType.toLowerCase().startsWith(
-				MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
-	}
+    public void setContent(FileContent content) {
+        this.content = content;
+    }
 
-	/**
-	 * Returns permalink URL for this media file resource.
-	 * 
-	 */
-	public String getPermalink() {
+    /**
+     * Indicates whether this is an image file.
+     *
+     */
+    public boolean isImageFile() {
+        if (this.contentType == null) {
+            return false;
+        }
+        return (this.contentType.toLowerCase().startsWith(
+                MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
+    }
+
+    /**
+     * Returns permalink URL for this media file resource.
+     *
+     */
+    public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(
-        		this.id, true);
-	}
+                this.id, true);
+    }
 
-	public String getCreatorUserName() {
-		return creatorUserName;
-	}
+    public String getCreatorUserName() {
+        return creatorUserName;
+    }
 
-	public void setCreatorUserName(String creatorUserName) {
-		this.creatorUserName = creatorUserName;
-	}
-	
+    public void setCreatorUserName(String creatorUserName) {
+        this.creatorUserName = creatorUserName;
+    }
+
     public User getCreator() {
         try {
             return WebloggerFactory.getWeblogger().getUserManager().getUserByUserName(getCreatorUserName());
@@ -245,7 +250,21 @@ public class MediaFile {
             log.error("ERROR fetching user object for username: " + getCreatorUserName(), e);
         }
         return null;
-    }   
-    
+    }
 
+    /**
+     * For old migrated files and theme resource files, orignal path of file can never change.
+     * @return the originalPath
+     */
+    public String getOriginalPath() {
+        return originalPath;
+    }
+
+    /**
+     * For old migrated files and theme resource files, orignal path of file can never change.
+     * @param originalPath the originalPath to set
+     */
+    public void setOriginalPath(String originalPath) {
+        this.originalPath = originalPath;
+    }
 }

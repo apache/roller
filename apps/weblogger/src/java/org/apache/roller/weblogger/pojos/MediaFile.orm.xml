@@ -12,12 +12,18 @@
     <entity metadata-complete="true" name="MediaFile"
             class="org.apache.roller.weblogger.pojos.MediaFile">
         <table name="roller_mediafile"/>
+        <named-query name="MediaFile.getByWeblogAndOrigpath">
+            <query>SELECT f FROM MediaFile f WHERE f.weblog = ?1 AND f.originalPath = ?2</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>
             </id>
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false" nullable="false"/>
+            </basic>
+            <basic name="originalPath">
+                <column name="origpath" insertable="true" updatable="false" unique="false" nullable="true"/>
             </basic>
             <basic name="description">
                 <column name="description" insertable="true" updatable="true" unique="false" nullable="true"/>

@@ -49,7 +49,6 @@ public abstract class WebloggerImpl implements Weblogger {
     // managers
     private final AutoPingManager      autoPingManager;
     private final BookmarkManager      bookmarkManager;
-    private final FileManager          fileManager;
     private final IndexManager         indexManager;
     private final MediaFileManager     mediaFileManager;
     private final FileContentManager   fileContentManager;
@@ -79,7 +78,6 @@ public abstract class WebloggerImpl implements Weblogger {
     protected WebloggerImpl(
         AutoPingManager      autoPingManager,
         BookmarkManager      bookmarkManager,
-        FileManager          fileManager,
         IndexManager         indexManager,
         MediaFileManager     mediaFileManager,
         FileContentManager   fileContentManager,
@@ -99,7 +97,6 @@ public abstract class WebloggerImpl implements Weblogger {
                 
         this.autoPingManager     = autoPingManager;
         this.bookmarkManager     = bookmarkManager;
-        this.fileManager         = fileManager;
         this.indexManager        = indexManager;
         this.mediaFileManager    = mediaFileManager;
         this.fileContentManager  = fileContentManager;
@@ -128,16 +125,6 @@ public abstract class WebloggerImpl implements Weblogger {
         revision = props.getProperty("ro.revision", "UNKNOWN");
         buildTime = props.getProperty("ro.buildTime", "UNKNOWN");
         buildUser = props.getProperty("ro.buildUser", "UNKNOWN");
-    }
-    
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getFileManager()
-     */
-    public FileManager getFileManager() {
-        return fileManager;
     }
     
     
@@ -324,7 +311,6 @@ public abstract class WebloggerImpl implements Weblogger {
         try {
             autoPingManager.release();
             bookmarkManager.release();
-            fileManager.release();
             mediaFileManager.release();
             fileContentManager.release();
             pingTargetManager.release();

@@ -973,9 +973,11 @@ public class MediaFileTest extends TestCase {
 
             MediaFileDirectory root1 = mgr.getMediaFileRootDirectory(testWeblog1);
             assertNotNull("testblog1's mediafile dir exists", root1);
-            assertNotNull(root1.getMediaFile("hawk.jpg"));
-            assertNotNull(root1.getMediaFile("nasa.jpg"));
-            assertNotNull(root1.getMediaFile("roller50-prop.png"));
+            assertNotNull(mgr.getMediaFileByPath(testWeblog1, "/sub1/hawk.jpg"));
+            assertNotNull(mgr.getMediaFileByPath(testWeblog1, "/sub2/sub2/nasa.jpg"));
+            assertNotNull(mgr.getMediaFileByPath(testWeblog1, "/roller50-prop.png"));
+
+            assertNotNull(mgr.getMediaFileByOriginalPath(testWeblog2, "/sub1/hawk.jpg"));
 
             MediaFileDirectory root2 = mgr.getMediaFileRootDirectory(testWeblog2);
             assertNotNull("testblog2's mediafile dir exists", root2);
