@@ -15,7 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.File;
@@ -39,17 +38,14 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  */
 @SuppressWarnings("serial")
 public class MediaFileAdd extends MediaFileBase {
+
     private static Log log = LogFactory.getLog(MediaFileAdd.class);
-    
-    private MediaFileBean bean =  new MediaFileBean();
-    
+    private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
     // file uploaded by the user
     private File uploadedFile = null;
-    
     // content type for upload file
     private String uploadedFileContentType = null;
-    
     // filename for uploaded file
     private String uploadedFileFileName = null;
 
@@ -58,19 +54,18 @@ public class MediaFileAdd extends MediaFileBase {
         this.desiredMenu = "editor";
         this.pageTitle = "mediaFile.add.title";
     }
-    
+
     /**
      * Prepares action class
      */
     public void myPrepare() {
         System.out.println("Into myprepare");
-    	refreshAllDirectories();
-    	try {
+        refreshAllDirectories();
+        try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-            if(!StringUtils.isEmpty(bean.getDirectoryId())) {
+            if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
-            }
-            else {
+            } else {
                 setDirectory(mgr.createRootMediaFileDirectory(getActionWeblog()));
             }
         } catch (WebloggerException ex) {
@@ -85,42 +80,42 @@ public class MediaFileAdd extends MediaFileBase {
      */
     @SkipValidation
     public String execute() {
-		return INPUT;
+        return INPUT;
     }
-    
+
     /**
      * Save a media file.
      * 
      * @return String The result of the action.
      */
     public String save() {
-    	myValidate();
-    	if (!hasActionErrors()) {
-    		MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-    		try {
-    			MediaFile mediaFile = new MediaFile();
-    			bean.copyTo(mediaFile);
-    			mediaFile.setDirectory(getDirectory());
-                        mediaFile.setWeblog(getActionWeblog());
-    			mediaFile.setLength(this.uploadedFile.length());
-    			mediaFile.setInputStream(new FileInputStream(this.uploadedFile));
-    			mediaFile.setContentType(this.uploadedFileContentType);
-				manager.createMediaFile(getActionWeblog(), mediaFile);
-	            WebloggerFactory.getWeblogger().flush();
-	            bean.setId(mediaFile.getId());
-	    		return SUCCESS;
+        myValidate();
+        if (!hasActionErrors()) {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            try {
+                MediaFile mediaFile = new MediaFile();
+                bean.copyTo(mediaFile);
+                mediaFile.setDirectory(getDirectory());
+                mediaFile.setWeblog(getActionWeblog());
+                mediaFile.setLength(this.uploadedFile.length());
+                mediaFile.setInputStream(new FileInputStream(this.uploadedFile));
+                mediaFile.setContentType(this.uploadedFileContentType);
+                manager.createMediaFile(getActionWeblog(), mediaFile);
+                WebloggerFactory.getWeblogger().flush();
+                bean.setId(mediaFile.getId());
+                return SUCCESS;
             } catch (FileIOException ex) {
                 addError("uploadFiles.error.upload", bean.getName());
-			} catch (Exception e) {
-	            log.error("Error saving new entry", e);
+            } catch (Exception e) {
+                log.error("Error saving new entry", e);
                 // TODO: i18n
                 addError("Error reading uploaded file - " + bean.getName());
-			}
-			
-    	}
-		return INPUT;
+            }
+
+        }
+        return INPUT;
     }
-    
+
     /**
      * Validates media file to be added.
      */
@@ -129,31 +124,31 @@ public class MediaFileAdd extends MediaFileBase {
             addError("MediaFile.error.duplicateName", getBean().getName());
         }
         // make sure uploads are enabled
-        if(!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+        if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
             addError("error.upload.disabled");
         }
-        
+
         if (StringUtils.isEmpty(this.uploadedFileFileName)) {
-        	addError("error.upload.file");
+            addError("error.upload.file");
         }
     }
-    
-    public MediaFileBean getBean() {
-    	return bean;
-    }
-    
-    public void setBean(MediaFileBean b) {
-    	this.bean = b;
-    }
-    
-	public MediaFileDirectory getDirectory() {
-		return directory;
-	}
 
-	public void setDirectory(MediaFileDirectory directory) {
-		this.directory = directory;
-	}
-	
+    public MediaFileBean getBean() {
+        return bean;
+    }
+
+    public void setBean(MediaFileBean b) {
+        this.bean = b;
+    }
+
+    public MediaFileDirectory getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(MediaFileDirectory directory) {
+        this.directory = directory;
+    }
+
     public File getUploadedFile() {
         return uploadedFile;
     }
@@ -177,10 +172,12 @@ public class MediaFileAdd extends MediaFileBase {
     public void setUploadedFileFileName(String uploadedFileFileName) {
         this.uploadedFileFileName = uploadedFileFileName;
     }
-    
+
     public boolean isContentTypeImage() {
-		if (this.uploadedFileContentType == null) return false;
-		return (this.uploadedFileContentType.toLowerCase().startsWith(
-				MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
+        if (this.uploadedFileContentType == null) {
+            return false;
+        }
+        return (this.uploadedFileContentType.toLowerCase().startsWith(
+                MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
     }
 }
