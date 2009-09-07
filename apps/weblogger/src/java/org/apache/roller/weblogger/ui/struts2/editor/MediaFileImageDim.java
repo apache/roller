@@ -15,7 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
@@ -31,14 +30,14 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  */
 @SuppressWarnings("serial")
 public class MediaFileImageDim extends MediaFileBase {
+
     private static Log log = LogFactory.getLog(MediaFileImageDim.class);
-    
-    private MediaFileBean bean =  new MediaFileBean();
-    
+    private MediaFileBean bean = new MediaFileBean();
+
     public MediaFileImageDim() {
         this.actionName = "mediaFileImageDim";
     }
-    
+
     /**
      * Show form for choosing image dimension.
      * 
@@ -46,22 +45,21 @@ public class MediaFileImageDim extends MediaFileBase {
      */
     @SkipValidation
     public String execute() {
-    	try {
+        try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             MediaFile mediaFile = mgr.getMediaFile(getMediaFileId());
             bean.copyFrom(mediaFile);
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
         }
-		return SUCCESS;
+        return SUCCESS;
     }
 
-	public MediaFileBean getBean() {
-		return bean;
-	}
+    public MediaFileBean getBean() {
+        return bean;
+    }
 
-	public void setBean(MediaFileBean bean) {
-		this.bean = bean;
-	}
-    
+    public void setBean(MediaFileBean bean) {
+        this.bean = bean;
+    }
 }

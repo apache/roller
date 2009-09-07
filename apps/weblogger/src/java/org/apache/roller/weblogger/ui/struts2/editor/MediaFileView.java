@@ -59,8 +59,8 @@ public class MediaFileView extends MediaFileBase {
     private String directoryPath;
     private String sortBy;
     private String newDirectoryName;
-    private List<MediaFile>          childFiles;
-    private MediaFileDirectory       currentDirectory;
+    private List<MediaFile> childFiles;
+    private MediaFileDirectory currentDirectory;
     private List<MediaFileDirectory> childDirectories;
 
     public MediaFileView() {
@@ -149,7 +149,7 @@ public class MediaFileView extends MediaFileBase {
             if ("type".equals(sortBy)) {
                 Collections.sort(this.childFiles,
                         new MediaFileComparator(MediaFileComparatorType.TYPE));
-                
+
             } else if ("date_uploaded".equals(sortBy)) {
                 Collections.sort(this.childFiles,
                         new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
