@@ -30,10 +30,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogMediaResourceRequest;
 
 
 /**
@@ -65,31 +68,37 @@ public class MediaResourceServlet extends HttpServlet {
         
         MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
 
-        String fileId = request.getPathInfo();
-        
-        log.debug("parsing file id -  " + fileId);
-        
-        // first, cleanup extra slashes and extract the weblog weblogHandle
-        if(fileId != null && fileId.trim().length() > 1) {
-            
-            // strip off the leading slash
-        	fileId = fileId.substring(1);
-            
-            // strip off trailing slash if needed
-            if(fileId.endsWith("/")) {
-            	fileId = fileId.substring(0, fileId.length() - 1);
-            }
-        }
+        Weblog weblog = null;
+        String ctx = request.getContextPath();
+        String servlet = request.getServletPath();
+        String reqURI = request.getRequestURI();
 
-        log.debug("File requested [" + fileId + "]");
+        WeblogMediaResourceRequest resourceRequest = null;
+        try {
+            // parse the incoming request and extract the relevant data
+            resourceRequest = new WeblogMediaResourceRequest(request);
+
+            weblog = resourceRequest.getWeblog();
+            if(weblog == null) {
+                throw new WebloggerException("unable to lookup weblog: "+
+                        resourceRequest.getWeblogHandle());
+            }
+
+        } catch(Exception e) {
+            // invalid resource request or weblog doesn't exist
+            log.debug("error creating weblog resource request", e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
     
         long resourceLastMod = 0;
         InputStream resourceStream = null;
         MediaFile mediaFile = null;
         
         try {
-            mediaFile = mfMgr.getMediaFile(fileId, true);
+            mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(), true);
             resourceLastMod = mediaFile.getLastModified();
+            
         } catch (Exception ex) {
             // still not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);

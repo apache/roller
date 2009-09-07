@@ -51,6 +51,7 @@ public class WeblogRequestMapper implements RequestMapper {
     private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
     private static final String RESOURCE_SERVLET = "/roller-ui/rendering/resources";
+    private static final String MEDIA_SERVLET = "/roller-ui/rendering/media-resources";
     private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
     private static final String RSD_SERVLET = "/roller-ui/rendering/rsd";
     
@@ -345,7 +346,7 @@ public class WeblogRequestMapper implements RequestMapper {
                 
                 // requests handled by ResourceServlet
             } else if(context.equals("resource")) {
-                
+
                 forwardUrl.append(RESOURCE_SERVLET);
                 forwardUrl.append("/");
                 forwardUrl.append(handle);
@@ -353,7 +354,18 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append("/");
                     forwardUrl.append(data);
                 }
-                
+
+                // requests handled by MediaResourceServlet
+            } else if(context.equals("mediaresource")) {
+
+                forwardUrl.append(MEDIA_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                if(data != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(data);
+                }
+
                 // requests handled by SearchServlet
             } else if(context.equals("search")) {
                 

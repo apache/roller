@@ -99,6 +99,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
      * Get url for a single weblog media file on a given weblog.
      */
     public String getMediaFileURL(
+            Weblog weblog,
             String fileAnchor,
             boolean absolute) {
         
@@ -114,7 +115,10 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/rendering/media-resources/").append(URLUtilities.encode(fileAnchor));
+        url.append("/mediaresource/");
+        url.append(weblog.getHandle());
+        url.append("/");
+        url.append(URLUtilities.encode(fileAnchor));
         
         return url.toString();
     }

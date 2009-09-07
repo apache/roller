@@ -234,7 +234,7 @@ public class MediaFile {
      */
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(
-                this.id, true);
+                this.weblog, this.id, true);
     }
 
     public String getCreatorUserName() {

@@ -152,7 +152,7 @@ public interface URLStrategy {
     /**
      * Get url for a single mediafile on a given weblog.
      */
-    public String getMediaFileURL(String entryAnchor,
+    public String getMediaFileURL(Weblog weblog, String fileAnchor,
                                                  boolean absolute);
 
     /**
