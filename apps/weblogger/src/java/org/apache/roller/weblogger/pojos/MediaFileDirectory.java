@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.pojos;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -24,18 +25,17 @@ import org.apache.roller.util.UUIDGenerator;
 
 /**
  * Represents a Media file directory.
- * 
  */
 public class MediaFileDirectory {
 
     String id;
     String name;
     String description;
-    MediaFileDirectory parent;
     Weblog weblog;
     String path;
-    Set<MediaFileDirectory> childDirectories;
-    Set<MediaFile> mediaFiles;
+    MediaFileDirectory      parent;
+    Set<MediaFileDirectory> childDirectories = new HashSet<MediaFileDirectory>();
+    Set<MediaFile>          mediaFiles = new HashSet<MediaFile>();
 
     public MediaFileDirectory() {
     }

@@ -101,6 +101,7 @@ public class MediaFileAdd extends MediaFileBase {
     			MediaFile mediaFile = new MediaFile();
     			bean.copyTo(mediaFile);
     			mediaFile.setDirectory(getDirectory());
+                        mediaFile.setWeblog(getActionWeblog());
     			mediaFile.setLength(this.uploadedFile.length());
     			mediaFile.setInputStream(new FileInputStream(this.uploadedFile));
     			mediaFile.setContentType(this.uploadedFileContentType);

@@ -132,6 +132,7 @@ public class MediaCollection {
 
                     MediaFile mf = new MediaFile();
                     mf.setDirectory(mdir);
+                    mf.setWeblog(website);
                     mf.setName(fileName);
                     mf.setOriginalPath(justPath);
                     mf.setContentType(contentType);

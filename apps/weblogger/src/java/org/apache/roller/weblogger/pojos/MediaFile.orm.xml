@@ -50,7 +50,10 @@
                 <column name="creator" insertable="true" updatable="true" unique="false" />
             </basic>
             <many-to-one name="directory" target-entity="org.apache.roller.weblogger.pojos.MediaFileDirectory">
-                <join-column name="directory_id" insertable="true" updatable="true" nullable="false"/>
+                <join-column name="directoryid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="weblogid" insertable="true" updatable="true" nullable="false"/>
             </many-to-one>
             <one-to-many name="tags" mapped-by="mediaFile" target-entity="org.apache.roller.weblogger.pojos.MediaFileTag">
                 <cascade>

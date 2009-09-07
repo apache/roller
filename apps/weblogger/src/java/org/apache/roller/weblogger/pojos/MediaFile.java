@@ -51,6 +51,8 @@ public class MediaFile {
     private String      creatorUserName;
     private MediaFileDirectory directory;
     private Set<MediaFileTag>  tags;
+    private Weblog      weblog;
+
     
     // TODO: anchor to be populated
     private String      anchor;
@@ -266,5 +268,19 @@ public class MediaFile {
      */
     public void setOriginalPath(String originalPath) {
         this.originalPath = originalPath;
+    }
+
+    /**
+     * @return the weblog
+     */
+    public Weblog getWeblog() {
+        return weblog;
+    }
+
+    /**
+     * @param weblog the weblog to set
+     */
+    public void setWeblog(Weblog weblog) {
+        this.weblog = weblog;
     }
 }

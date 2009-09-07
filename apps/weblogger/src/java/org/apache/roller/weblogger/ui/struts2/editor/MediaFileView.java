@@ -57,11 +57,11 @@ public class MediaFileView extends MediaFileBase {
     }
     private String directoryId;
     private String directoryPath;
-    private MediaFileDirectory currentDirectory;
     private String sortBy;
-    private List<MediaFileDirectory> childDirectories;
-    private List<MediaFile> childFiles;
     private String newDirectoryName;
+    private List<MediaFile>          childFiles;
+    private MediaFileDirectory       currentDirectory;
+    private List<MediaFileDirectory> childDirectories;
 
     public MediaFileView() {
         this.actionName = "mediaFileView";

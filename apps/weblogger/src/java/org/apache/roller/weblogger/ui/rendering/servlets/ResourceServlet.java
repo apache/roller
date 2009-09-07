@@ -41,11 +41,8 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogResourceRequest;
 
 
 /**
- * Serves files uploaded by users as well as static resources in shared themes.
- *
- * Since we keep resources in a location outside of the webapp
- * context we need a way to serve them up.  This servlet assumes that
- * resources are stored on a filesystem in the "uploads.dir" directory.
+ * Serves fixed-path files such as old-style uploads and theme resources,
+ * which must exist at a fixed-path even if moved in media file folders.
  *
  * @web.servlet name="ResourcesServlet" load-on-startup="5"
  * @web.servlet-mapping url-pattern="/roller-ui/rendering/resources/*"

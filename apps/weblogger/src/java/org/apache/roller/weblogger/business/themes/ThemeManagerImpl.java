@@ -303,6 +303,7 @@ public class ThemeManagerImpl implements ThemeManager {
                         // save file without file-type, quota checks, etc.
                         MediaFile mf = new MediaFile();
                         mf.setDirectory(mdir);
+                        mf.setWeblog(website);
                         mf.setName(justName);
                         mf.setOriginalPath(justPath);
                         mf.setContentType("text/plain");

@@ -261,6 +261,7 @@ public class RollerAtomPubServerTest extends TestCase {
         mediaFile.setDescription(desc);
         mediaFile.setSharedForGallery(false);
         mediaFile.setDirectory(parent);
+        mediaFile.setWeblog(weblog);
         mediaFile.setContentType(contentType);
         mediaFile.setInputStream(is);
         WebloggerFactory.getWeblogger().getMediaFileManager().createMediaFile(weblog, mediaFile);

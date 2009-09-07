@@ -108,7 +108,8 @@ create table roller_mediafile (
     origpath        varchar(255),
     content_type    varchar(50)  not null,
     copyright_text  varchar(1023),
-    directory_id    varchar(48),
+    directoryid     varchar(48) not null,
+    weblogid        varchar(48) not null,
     size_in_bytes   integer,
     date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
     last_updated    $db.TIMESTAMP_SQL_TYPE,
@@ -134,7 +135,7 @@ create table roller_mediafiledir (
 
 -- media files
 alter table roller_mediafile add constraint roller_mediafiledir_id_fk
-    foreign key (directory_id) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
+    foreign key (directoryid) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
 
 alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
     foreign key (mediafile_id) references roller_mediafile(id) $!db.ADDL_FK_PARAMS ;

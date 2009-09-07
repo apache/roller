@@ -371,6 +371,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // Try to save file
             MediaFile mf = new MediaFile();
             mf.setDirectory(root);
+            mf.setWeblog(website);
             mf.setName(name);
             mf.setContentType(type);
             mf.setInputStream(new ByteArrayInputStream(bits));
