@@ -306,7 +306,7 @@ function highlight(flag) {
             <li class="align-images" onmouseover="" onmouseout="">
 
                 <s:if test="#mediaFile.imageFile">
-                    <s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{#mediaFile.id}"></s:url>
+                    <s:url id="mediaFileURL" value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}"></s:url>
                 </s:if>
                 <s:else>
                     <s:url id="mediaFileURL" value="/images/page.png"></s:url>
