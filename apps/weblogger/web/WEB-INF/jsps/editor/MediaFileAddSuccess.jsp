@@ -30,7 +30,7 @@
 </ul>
 </div>
 
-<s:url id="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}">
+<s:url id="mediaFileURL" value="/%{actionWeblog.handle}/mediaresource/%{bean.id}">
 </s:url>
 
 <s:if test="contentTypeImage">

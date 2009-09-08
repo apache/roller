@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
@@ -41,17 +42,25 @@ public class MediaFile {
     private String      description;
     private String      copyrightText;
     private Boolean     isSharedForGallery;
-    long                length;
+    private long        length;
+    private int         width = -1;
+    private int         height = -1;
+    private int         thumbnailHeight = -1;
+    private int         thumbnailWidth = -1;
     private String      contentType;
     private String      originalPath;
-    private InputStream is;
-    private FileContent content;
     private Timestamp   dateUploaded;
     private Timestamp   lastUpdated;
     private String      creatorUserName;
+    private Weblog      weblog;
+
+    private InputStream is;
+
     private MediaFileDirectory directory;
     private Set<MediaFileTag>  tags;
-    private Weblog      weblog;
+
+    private FileContent content;
+    private FileContent thumbnail;
 
     
     // TODO: anchor to be populated
@@ -282,5 +291,89 @@ public class MediaFile {
      */
     public void setWeblog(Weblog weblog) {
         this.weblog = weblog;
+    }
+
+    /**
+     * @return the width
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * @param width the width to set
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
+     * @return the height
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * @param height the height to set
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    /**
+     * Returns input stream for the underlying thumbnail file in the file system.
+     * @return
+     */
+    public InputStream getThumbnailInputStream() {
+        if (thumbnail != null) {
+            return thumbnail.getInputStream();
+        }
+        return null;
+    }
+
+    public void setThumbnailContent(FileContent thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    /**
+     * @return the thumbnailHeight
+     */
+    public int getThumbnailHeight() {
+        if (isImageFile() && (thumbnailWidth == -1 || thumbnailHeight == -1)) {
+            figureThumbnailSize();
+        }
+        return thumbnailHeight;
+    }
+
+    /**
+     * @return the thumbnailWidth
+     */
+    public int getThumbnailWidth() {
+        if (isImageFile() && (thumbnailWidth == -1 || thumbnailHeight == -1)) {
+            figureThumbnailSize();
+        }
+        return thumbnailWidth;
+    }
+
+    private void figureThumbnailSize() {
+        // image determine thumbnail size
+        int newWidth = getWidth();
+        int newHeight = getHeight();
+
+        if (getWidth() > getHeight()) {
+            if (getWidth() > MediaFileManager.MAX_WIDTH) {
+                newHeight = (int)((float)getHeight() * ((float)MediaFileManager.MAX_WIDTH / (float)getWidth()));
+                newWidth = MediaFileManager.MAX_WIDTH;
+            }
+
+        } else {
+            if (getHeight() > MediaFileManager.MAX_HEIGHT) {
+                newWidth = (int)((float)getWidth() * ((float)MediaFileManager.MAX_HEIGHT / (float)getHeight()));
+                newHeight = MediaFileManager.MAX_HEIGHT;
+            }
+        }
+        thumbnailHeight = newHeight;
+        thumbnailWidth = newWidth;
     }
 }

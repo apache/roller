@@ -111,6 +111,8 @@ create table roller_mediafile (
     directoryid     varchar(48) not null,
     weblogid        varchar(48) not null,
     size_in_bytes   integer,
+    width           integer,
+    height          integer,
     date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
     last_updated    $db.TIMESTAMP_SQL_TYPE,
     anchor          varchar(255),

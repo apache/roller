@@ -25,13 +25,15 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
-import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * Interface to media file management.
  */
 public interface MediaFileManager {
+
+    public int MAX_WIDTH = 120;
+    public int MAX_HEIGHT = 120;
 
     /**
      * Initialization; deal with upgrade migrations, etc.

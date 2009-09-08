@@ -22,6 +22,12 @@
             <basic name="name">
                 <column name="name" insertable="true" updatable="true" unique="false" nullable="false"/>
             </basic>
+            <basic name="width">
+                <column name="width" insertable="true" updatable="true" unique="false" nullable="true"/>
+            </basic>
+            <basic name="height">
+                <column name="height" insertable="true" updatable="true" unique="false" nullable="true"/>
+            </basic>
             <basic name="originalPath">
                 <column name="origpath" insertable="true" updatable="false" unique="false" nullable="true"/>
             </basic>
@@ -60,6 +66,8 @@
                     <cascade-all />
                 </cascade>
             </one-to-many>
+            <transient name="thumbnailHeight"/>
+            <transient name="thumbnailWidth"/>
         </attributes>
     </entity>
 </entity-mappings>

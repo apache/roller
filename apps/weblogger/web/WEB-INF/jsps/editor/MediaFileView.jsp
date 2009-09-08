@@ -305,15 +305,23 @@ function highlight(flag) {
 
             <li class="align-images" onmouseover="" onmouseout="">
 
-                <s:if test="#mediaFile.imageFile">
-                    <s:url id="mediaFileURL" value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}"></s:url>
-                </s:if>
-                <s:else>
-                    <s:url id="mediaFileURL" value="/images/page.png"></s:url>
-                </s:else>
                 <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
-                    <img border="0" src='<s:property value="%{mediaFileURL}" />' <s:if test="#mediaFile.imageFile"> width="120px" height="100px" </s:if> <s:else>style="padding:40px 50px;"</s:else>/>
+                    <s:if test="#mediaFile.imageFile">
+                        <s:url id="mediaFileURL"
+                            value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}?t=true"></s:url>
+
+                        <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                             width='<s:property value="#mediaFile.thumbnailWidth"/>'
+                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
+                    </s:if>
+
+                    <s:else>
+                        <s:url id="mediaFileURL" value="/images/page.png"></s:url>
+                        <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                             style="padding:40px 50px;" />
+                    </s:else>
                 </div>
+
                 <div style="clear:left;width:130px;margin-left:5px;font-size:11px;">
 
                     <label>

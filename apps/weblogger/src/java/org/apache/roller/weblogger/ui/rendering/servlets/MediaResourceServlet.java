@@ -116,9 +116,24 @@ public class MediaResourceServlet extends HttpServlet {
         
 
         // set the content type based on whatever is in our web.xml mime defs
-        response.setContentType(mediaFile.getContentType());
-        resourceStream = mediaFile.getInputStream();
-        
+        if (resourceRequest.isThumbnail()) {
+            response.setContentType("image/png");
+            try {
+                resourceStream = mediaFile.getThumbnailInputStream();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ERROR loading thumbnail for " + mediaFile.getId(), e);
+                } else {
+                    log.warn("ERROR loading thumbnail for " + mediaFile.getId());
+                }
+            }
+        }
+
+        if (resourceStream == null) {
+            response.setContentType(mediaFile.getContentType());
+            resourceStream = mediaFile.getInputStream();
+        }
+
         OutputStream out = null;
         try {
             // ok, lets serve up the file
@@ -132,7 +147,8 @@ public class MediaResourceServlet extends HttpServlet {
             // close output stream
             out.close();
             
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
+            log.error("ERROR",ex);
             if(!response.isCommitted()) {
                 response.reset();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -34,6 +34,8 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         
     // lightweight attributes
     private String resourceId = null;
+
+    private boolean thumbnail = false;
     
     
     public WeblogMediaResourceRequest() {}
@@ -72,6 +74,10 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
             throw new InvalidRequestException("invalid resource path info, "+
                     request.getRequestURL());
         }
+
+        if (request.getParameter("t") != null && "true".equals(request.getParameter("t"))) {
+            thumbnail = true;
+        }
         
         if(log.isDebugEnabled()) {
             log.debug("resourceId = "+this.resourceId);
@@ -90,5 +96,19 @@ public class WeblogMediaResourceRequest extends WeblogRequest {
         // We don't support locales in the resource Servlet so we've got to 
         // keep parent from treating upload sub-directory name as a locale.
         return false;
+    }
+
+    /**
+     * @return the thumbnail
+     */
+    public boolean isThumbnail() {
+        return thumbnail;
+    }
+
+    /**
+     * @param thumbnail the thumbnail to set
+     */
+    public void setThumbnail(boolean thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

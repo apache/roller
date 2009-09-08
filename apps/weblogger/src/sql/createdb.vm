@@ -540,6 +540,8 @@ create table roller_mediafile (
     copyright_text  varchar(1023),
     directoryid     varchar(48) not null,
     weblogid        varchar(48) not null,
+    width           integer,
+    height          integer,
     size_in_bytes   integer,
     date_uploaded   $db.TIMESTAMP_SQL_TYPE not null,
     last_updated    $db.TIMESTAMP_SQL_TYPE,
