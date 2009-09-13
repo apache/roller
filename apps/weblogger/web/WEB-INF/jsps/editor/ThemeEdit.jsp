@@ -16,40 +16,38 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
 
 <script type="text/javascript">
 <!--
-function previewImage(element, theme) {
-    element.src="<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme="+theme;
+function previewImage(q, theme) {
+    q.attr('src','<s:property value="siteURL" />/roller-ui/authoring/previewtheme?theme=' + theme);
 }
-
 function fullPreview(selector) {
-    selected=selector.selectedIndex;
+    selected = selector.selectedIndex;
     window.open('<s:url value="/roller-ui/authoring/preview/%{actionWeblog.handle}"/>?theme='+selector.options[selected].value, '_preview', '');
 }
-
 function updateThemeChooser(selected) {
-    if(selected.value == 'shared') {
-        document.getElementById('sharedChooser').style.backgroundColor="#CCFFCC";
-        document.getElementById('sharedChooser').style.border="1px solid #008000";
-        document.getElementById('sharedOptioner').show();
-        
-        document.getElementById('customChooser').style.backgroundColor="#eee";
-        document.getElementById('customChooser').style.border="1px solid gray";
-        document.getElementById('customOptioner').hide();
+    if (selected[0].value == 'shared') {
+        $('#sharedChooser').css('background','#CCFFCC'); 
+        $('#sharedChooser').css('border','1px solid #008000'); 
+        $('#sharedOptioner').show();
+
+        $('#customChooser').css('background','#eee'); 
+        $('#customChooser').css('border','1px solid #gray'); 
+        $('#customOptioner').hide();
     } else {
-        document.getElementById('customChooser').style.backgroundColor="#CCFFCC";
-        document.getElementById('customChooser').style.border="1px solid #008000";
-        document.getElementById('customOptioner').show();
-        
-        document.getElementById('sharedChooser').style.backgroundColor="#eee";
-        document.getElementById('sharedChooser').style.border="1px solid gray";
-        document.getElementById('sharedOptioner').hide();
+        $('#customChooser').css('background','#CCFFCC'); 
+        $('#customChooser').css('border','1px solid #008000'); 
+        $('#customOptioner').show();
+
+        $('#sharedChooser').css('background','#eee'); 
+        $('#sharedChooser').css('border','1px solid #gray'); 
+        $('#sharedOptioner').hide();
     }
 }
-
 function toggleImportThemeDisplay() {
-    document.getElementById('themeImport').toggle();
+    $('themeImport').toggle();
 }
 -->
 </script>
@@ -62,54 +60,64 @@ function toggleImportThemeDisplay() {
 
 <s:form action="themeEdit!save">
     <s:hidden name="weblog" />
-    
+
     <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
-            <td width="50%">
-                <div id="sharedChooser" class="chooser">
-                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared" <s:if test="!customTheme">checked="true"</s:if> onclick="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.sharedTheme" /></h2>
+            <td width="50%" valign="top">
+                <div id="sharedChooser" class="chooser" style="height: 8em">
+                    <h2><input id="sharedRadio" type="radio" name="themeType" value="shared"
+                               <s:if test="!customTheme">checked="true"</s:if>
+                               onclick="updateThemeChooser($(this))" />&nbsp;
+                    <s:text name="themeEditor.sharedTheme" /></h2>
                     <s:text name="themeEditor.sharedThemeDescription" />
                 </div>
             </td>
-            <td width="50%">
-                <div id="customChooser" class="chooser">
-                    <h2><input id="customRadio" type="radio" name="themeType" value="custom" <s:if test="customTheme">checked="true"</s:if> onclick="updateThemeChooser(this)" />&nbsp;<s:text name="themeEditor.customTheme" /></h2>
+            <td width="50%" valign="top">
+                <div id="customChooser" class="chooser" style="height: 8em">
+                    <h2><input id="customRadio" type="radio" name="themeType" value="custom"
+                               <s:if test="customTheme">checked="true"</s:if>
+                               onclick="updateThemeChooser($(this))" />&nbsp;
+                    <s:text name="themeEditor.customTheme" /></h2>
                     <s:text name="themeEditor.customThemeDescription" />
                 </div>
             </td>
         </tr>
     </table>
-    
+
     <div id="sharedOptioner" class="optioner" style="display:none;">
         <p>
             <s:if test="!customTheme">
-                <s:text name="themeEditor.yourCurrentTheme" />: <b><s:property value="actionWeblog.theme.name"/></b>
+                <s:text name="themeEditor.yourCurrentTheme" />:
+                <b><s:property value="actionWeblog.theme.name"/></b>
             </s:if>
             <s:else>
                 <s:text name="themeEditor.selectTheme" />
             </s:else>
         </p>
-        
+
         <p>
-            <s:select id="sharedSelector" name="themeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('sharedPreviewImg'), this[selectedIndex].value)"/>
+            <s:select id="sharedSelector" name="themeId" list="themes"
+                      listKey="id" listValue="name" size="1"
+                      onchange="previewImage($('#sharedPreviewImg'), this[selectedIndex].value)"/>
         </p>
         <p>
             <img id="sharedPreviewImg" src="" />
             <!-- initialize preview image at page load -->
             <script type="text/javascript">
                 <s:if test="customTheme">
-                    previewImage(document.getElementById('sharedPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage($('#sharedPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage(document.getElementById('sharedPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage($('#sharedPreviewImg'), '<s:property value="themeId"/>');
                 </s:else>
             </script>
         </p>
         <p>
-            &raquo; <a href="#" onclick="fullPreview(document.getElementById('sharedSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+            &raquo; <a href="#" onclick="fullPreview($('#sharedSelector').get(0))">
+            <s:text name="themeEditor.previewLink" /></a><br/>
             <s:text name="themeEditor.previewDescription" />
         </p>
-        
+
         <s:if test="!customTheme && actionWeblog.theme.customStylesheet != null">
             <p>
                 <s:url action="stylesheetEdit" id="stylesheetEdit" >
@@ -121,9 +129,9 @@ function toggleImportThemeDisplay() {
         </s:if>
         <p><s:submit key="themeEditor.save" /></p>
     </div>
-    
+
     <div id="customOptioner" class="optioner" style="display:none;">
-        
+
         <s:if test="firstCustomization">
             <p>
                 <s:hidden name="importTheme" value="true" />
@@ -140,55 +148,59 @@ function toggleImportThemeDisplay() {
                     <s:text name="themeEditor.templatesDescription" />
                 </p>
             </s:if>
-            
+
             <p>
-                <s:checkbox name="importTheme" onclick="document.getElementById('themeImport').toggle();" /><s:text name="themeEditor.import" />
+                <s:checkbox name="importTheme" onclick="$('themeImport').toggle();" />
+                <s:text name="themeEditor.import" />
             </p>
         </s:else>
-        
+
         <div id="themeImport" style="display:none;">
             <s:if test="customTheme">
                 <p>
                     <span class="warning"><s:text name="themeEditor.importWarning" /></span>
                 </p>
             </s:if>
-            
+
             <p>
-                <s:select id="customSelector" name="importThemeId" list="themes" listKey="id" listValue="name" size="1" onchange="previewImage(document.getElementById('customPreviewImg'), this[selectedIndex].value)"/>
+                <s:select id="customSelector" name="importThemeId" list="themes"
+                          listKey="id" listValue="name" size="1"
+                          onchange="previewImage($('#customPreviewImg'), this[selectedIndex].value)"/>
             </p>
             <p>
                 <img id="customPreviewImg" src="" />
                 <!-- initialize preview image at page load -->
                 <script type="text/javascript">
                 <s:if test="customTheme">
-                    previewImage(document.getElementById('customPreviewImg'), '<s:property value="themes[0].id"/>');
+                    previewImage($('#customPreviewImg'), '<s:property value="themes[0].id"/>');
                 </s:if>
                 <s:else>
-                    previewImage(document.getElementById('customPreviewImg'), '<s:property value="themeId"/>');
+                    previewImage($('#customPreviewImg'), '<s:property value="themeId"/>');
                 </s:else>
                 </script>
             </p>
             <p>
-                &raquo; <a href="#" onclick="fullPreview(document.getElementById('customSelector'))"><s:text name="themeEditor.previewLink" /></a><br/>
+                &raquo; <a href="#" onclick="fullPreview($('#customSelector').get(0))">
+                <s:text name="themeEditor.previewLink" /></a><br/>
                 <s:text name="themeEditor.previewDescription" />
             </p>
         </div>
-        
+
         <p><s:submit key="themeEditor.save" /></p>
     </div>
-    
+
 </s:form>
 
 <%-- initializes the chooser/optioner/themeImport display at page load time --%>
 <script type="text/javascript">
     <s:if test="customTheme">
-        updateThemeChooser(document.getElementById('customRadio'));
+        updateThemeChooser($('#customRadio'));
     </s:if>
     <s:else>
-        updateThemeChooser(document.getElementById('sharedRadio'));
+        updateThemeChooser($('#sharedRadio'));
     </s:else>
-    
+
     <s:if test="firstCustomization">
-        document.getElementById('themeImport').show();
+        $('#themeImport').show();
     </s:if>
 </script>
