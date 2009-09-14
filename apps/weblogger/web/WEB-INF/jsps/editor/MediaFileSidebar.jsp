@@ -21,25 +21,43 @@
     <div class="menu-tr">
         <div class="menu-tl">
             <div class="sidebarInner">
-                <b>Actions:</b>
-                    <s:url id="mediaFileAddURL" action="mediaFileAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <s:url id="mediaFileSearchURL" action="mediaFileSearch">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <s:url id="mediaFileViewURL" action="mediaFileView">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <hr size="1" noshade="noshade" />
-                    <a href="<s:property value="%{mediaFileAddURL}" />" <s:if test="actionName.equals('mediaFileAdd')">style="font-weight:bold;"</s:if>>Add Media file<a>
-                    <hr size="1" noshade="noshade" />
-                    <a href="<s:property value="%{mediaFileViewURL}" />" <s:if test="actionName.equals('mediaFileView')">style="font-weight:bold;"</s:if>>View Uploaded files<a>
-                    <hr size="1" noshade="noshade" />
-                    <a href="<s:property value="%{mediaFileSearchURL}" />" <s:if test="actionName.equals('mediaFileSearch')">style="font-weight:bold;"</s:if>>Search uploaded files<a>
-                    <hr size="1" noshade="noshade" />
+
+                <b><s:text name="mediaFileSidebar.actions" /></b>
+                
+                <s:url id="mediaFileAddURL" action="mediaFileAdd">
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+
+                <s:url id="mediaFileSearchURL" action="mediaFileSearch">
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+
+                <s:url id="mediaFileViewURL" action="mediaFileView">
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+
+                <hr size="1" noshade="noshade" />
+
+                <a href='<s:property value="%{mediaFileViewURL}" />'
+                    <s:if test="actionName.equals('mediaFileView')">style='font-weight:bold;'</s:if> >
+                    <s:text name="mediaFileSidebar.view" /></a>
+
+                <hr size="1" noshade="noshade" />
+
+                <a href='<s:property value="%{mediaFileAddURL}" />'
+                    <s:if test="actionName.equals('mediaFileAdd')">style='font-weight:bold;'</s:if> >
+                    <s:text name="mediaFileSidebar.add" /></a>
+
+                <hr size="1" noshade="noshade" />
+                
+                <a href='<s:property value="%{mediaFileSearchURL}" />'
+                    <s:if test="actionName.equals('mediaFileSearch')">style='font-weight:bold;'</s:if> >
+                    <s:text name="mediaFileSidebar.search" /></a>
+
+                <hr size="1" noshade="noshade" />
                 <br />
                 <br />
+
             </div>
         </div>
     </div>

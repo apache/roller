@@ -18,62 +18,47 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle">
-   Add Media Files
+    <s:text name="mediaFileSuccess.add" />
 </p>
 
 <s:form id="entry" action="addMedia!submit" onsubmit="editorCleanup()">
-<s:hidden name="weblog" />
+    <s:hidden name="weblog" />
 
-<div style="border:1px solid; width=80px;background-color: #cfc;margin-bottom:5px;">
-<ul>
-<li> <s:property value="bean.name" /> uploaded successfully</li>
-</ul>
-</div>
+    <div style="border:1px solid; width=80px;background-color: #cfc;margin-bottom:5px;">
+        <ul>
+            <li> <s:property value="bean.name" /> <s:text name="mediaFileSuccess.uploaded" /></li>
+        </ul>
+    </div>
 
-<s:url id="mediaFileURL" value="/%{actionWeblog.handle}/mediaresource/%{bean.id}">
-</s:url>
+    <s:url id="mediaFileURL" value="/%{actionWeblog.handle}/mediaresource/%{bean.id}">
+    </s:url>
 
-<s:if test="contentTypeImage">
-<div style="margin-bottom:10px;"><img border="0" src='<s:property value="%{mediaFileURL}" />' width="150px" alt="image"/></div>
-</s:if>
-
-
-<a style="font-size:11px;color:#000000;text-decoration:underline;" href="<s:property value='%{mediaFileURL}'/>"><s:property value="%{mediaFileURL}" />
-<a>
+    <s:if test="contentTypeImage">
+        <div style="margin-bottom:10px;">
+        <img border="0" src='<s:property value="%{mediaFileURL}" />' width="150px" alt="image"/></div>
+    </s:if>
 
 
-<div style="margin-top:20px;text-decoration:underline">
-
-<s:url id="createBlogPostURL" action="entryAddWithMediaFile">
-    <s:param name="weblog" value="actionWeblog.handle" />
-    <s:param name="mediaFileId" value="%{bean.id}" />
-</s:url>
-
-<s:a href="%{createBlogPostURL}">Create a blog post out of <s:property value="bean.name" /></s:a>
-<br/>
-
-<s:url id="mediaFileAddURL" action="mediaFileAdd">
-    <s:param name="weblog" value="%{actionWeblog.handle}" />
-</s:url>
-
-<s:a href="%{mediaFileAddURL}">Add another media file</s:a>
-</div>
+    <a style="font-size:11px;color:#000000;text-decoration:underline;"
+       href="<s:property value='%{mediaFileURL}'/>"><s:property value="%{mediaFileURL}" />
+        <a>
 
 
-    <%-- ================================================================== --%>
-    <%-- Weblog edit or preview --%>
+    <div style="margin-top:20px;text-decoration:underline">
 
+        <s:url id="createBlogPostURL" action="entryAddWithMediaFile">
+            <s:param name="weblog" value="actionWeblog.handle" />
+            <s:param name="mediaFileId" value="%{bean.id}" />
+        </s:url>
 
-    <%-- ================================================================== --%>
-    <%-- plugin chooser --%>
+        <s:a href="%{createBlogPostURL}"><s:text name="mediaFileSuccess.createPost" /></s:a>
+        <br/>
 
+        <s:url id="mediaFileAddURL" action="mediaFileAdd">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
 
-    <%-- ================================================================== --%>
-    <%-- advanced settings  --%>
+        <s:a href="%{mediaFileAddURL}"><s:text name="mediaFileSuccess.addAnother" /></s:a>
+    </div>
 
-
-    <%-- ================================================================== --%>
-    <%-- the button box --%>
-
-
-   </s:form>
+</s:form>

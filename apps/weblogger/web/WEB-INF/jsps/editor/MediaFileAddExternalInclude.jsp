@@ -30,7 +30,6 @@ function submitPage(frm) {
 
 <s:form id="entry" action=" " onsubmit="editorCleanup()" method="POST">
 
-
     <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
 
         <tr>
@@ -51,9 +50,7 @@ function submitPage(frm) {
             </td>
        </tr>
 
-
     </table>
-
 
     <br>
     <div class="control">

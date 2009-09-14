@@ -37,7 +37,7 @@ function getFileName(fullName) {
 </script>
 
 <p class="subtitle">
-    <s:text name="mediaFile.add.title"  />
+    <s:text name="mediaFileAdd.title"  />
 
 </p>
 
@@ -51,7 +51,7 @@ function getFileName(fullName) {
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="title">File Location</label>
+                <label for="title"><s:text name="mediaFileAdd.fileLocation" /></label>
             </td>
             <td>
                  <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=getFileName(this.value)" /><br />
@@ -60,7 +60,7 @@ function getFileName(fullName) {
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Name</label>
+                <label for="status"><s:text name="mediaFileAdd.name" /></label>
             </td>
             <td>
                 <s:textfield name="bean.name" size="50" maxlength="255" />
@@ -69,7 +69,7 @@ function getFileName(fullName) {
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">A short Description of file</label>
+                <label for="status"><s:text name="mediaFileAdd.description" /></label>
             </td>
             <td>
                 <s:textarea name="bean.description" cols="50" rows="5" />
@@ -78,7 +78,7 @@ function getFileName(fullName) {
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Copyright Statement (optional)</label>
+                <label for="status"><s:text name="mediaFileAdd.copyright" /></label>
             </td>
             <td>
                 <s:textarea name="bean.copyrightText" cols="50" rows="3" />
@@ -87,7 +87,7 @@ function getFileName(fullName) {
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Tags (separated by spaces)</label>
+                <label for="status"><s:text name="mediaFileAdd.tags" /></label>
             </td>
             <td>
                 <s:textfield name="bean.tags" size="50" maxlength="255" />
@@ -96,7 +96,7 @@ function getFileName(fullName) {
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Place file under</label>
+                <label for="status"><s:text name="mediaFileAdd.directory" /></label>
             </td>
             <td>
                 <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="path" />
@@ -105,45 +105,18 @@ function getFileName(fullName) {
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Include in Gallery?</label>
+                <label for="status"><s:text name="mediaFileAdd.includeGallery" /></label>
             </td>
             <td>
                 <s:checkbox name="bean.sharedForGallery" />
             </td>
        </tr>
 
-
-
-
-
-
     </table>
-
-
-    <%-- ================================================================== --%>
-    <%-- Weblog edit or preview --%>
-
-
-
-
-
-
-    <%-- ================================================================== --%>
-    <%-- plugin chooser --%>
-
-
-
-
-    <%-- ================================================================== --%>
-    <%-- advanced settings  --%>
-
-
-    <%-- ================================================================== --%>
-    <%-- the button box --%>
 
     <br>
     <div class="control">
-       <input type="submit" value="Upload" name="upload" />
+       <input type="submit" value='<s:text name="mediaFileAdd.upload" />' name="upload" />
     </div>
 
 </s:form>

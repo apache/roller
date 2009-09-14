@@ -15,59 +15,25 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/* ======================================================================
+
+/*
 roller.css: Base CSS styles for Roller web UI
 
 CUSTOMIZABLE color and background image setttings have been separated out
 and placed in separate colors.css files for different color schemes.
-====================================================================== */
-
+*/
 
 body {
     background: white;
     margin: 0px;
     padding: 0px;
-    font: small Verdana,Arial,Sans-serif;
-    font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
-    line-height: 1.2em;
+    text-align: left;
 }
-p.subtitle {
-    margin: 5px 0px 15px;
-    font-size: 1em;
-    font-weight: bold;
-    font-size: 120%;
+
+th, td {
+    border: none;
 }
-p.pagetip {
-    margin: 0px 0px 15px 0px;
-}
-h1 {
-    background: transparent;
-    font-size: 20px;
-    font-weight: bold;
-}
-h2 {
-    background: transparent;
-    font-size: large;
-    font-weight: bold;
-    letter-spacing: 0.2em;
-}
-h3 {
-	letter-spacing: normal;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	text-decoration: none;
-	margin: 0px;
-}
-img {
-    border: 0px;
-    overflow: auto;
-}
-img.w3c {
-    border: 0px;
-    height: 31px;
-    width: 88px;
-    margin-right: 5px;
-}
+
 a {
     text-decoration: none;
 }
@@ -84,9 +50,33 @@ a:active {
     text-decoration: underline;
 }
 
+p.subtitle {
+    margin: 5px 0px 15px;
+    font-size: 1em;
+    font-weight: bold;
+    font-size: 120%;
+}
+p.pagetip {
+    margin: 0px 0px 15px 0px;
+}
+img {
+    border: 0px;
+    overflow: auto;
+}
+img.w3c {
+    border: 0px;
+    height: 31px;
+    width: 88px;
+    margin-right: 5px;
+}
+
 /* ----------------------------------------------------------------------
 Page element styles: boxes and borders, etc.
 ---------------------------------------------------------------------- */
+
+div.bannerStatusBox {
+    height: 2em;
+}
 
 .bannerStatusBox a, .bannerStatusBox a {
     font-weight: bold;
@@ -103,61 +93,61 @@ Page element styles: boxes and borders, etc.
     background: #f00;
 }
 .sidebarBodyHead h3, .searchSidebarBody h3 {
-   padding: 5px;
+    padding: 5px;
 }
 .sidebarInner {
-   padding: 5px;
+    padding: 5px;
 }
 .sidebarBody ul {
-   margin: 0px;
-   padding-left: 5px; 
+    margin: 0px;
+    padding-left: 5px;
 }
 .sidebarBody li {
-   list-style-position: inside;
-   list-style-image: url(../images/dash.gif);
-   margin-left: 0em;
-   padding-left: 0.5em;  
-   padding-top: 3px;
+    list-style-position: inside;
+    list-style-image: url(../images/dash.gif);
+    margin-left: 0em;
+    padding-left: 0.5em;
+    padding-top: 3px;
 }
 div.entriesBoxInner {
-   padding: 5px;
+    padding: 5px;
 }
 div.entryTitleBox {
-   padding: 4px;
-   margin: 4px 0px 4px 0px;
-   font-size: medium;
+    padding: 4px;
+    margin: 4px 0px 4px 0px;
+    font-size: medium;
 }
 div.entryBox, div.entryBoxPinned {
-   font-family: Arial, Helvetica, sans-serif;
-   border-bottom-width: thin;
-   border-bottom-style: solid;
-   padding: 3px 0px 3px 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+    padding: 3px 0px 3px 0px;
 }
 div.entryBoxPinned {
 }
 .entryTitle {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
     font-weight: bold;
-	text-decoration: none;
+    text-decoration: none;
 }
 .entryDetails {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
 }
 .entryDescription {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
 }
 span.hotBlogs, a.hotBlogs, a:active.hotBlogs, a:visited.hotBlogs, ul.hotBlogs {
-   font-size: small;
-   padding-left: 0px;
-   list-style-type: none
+    font-size: small;
+    padding-left: 0px;
+    list-style-type: none
 }
 input.searchButton {
-    cursor: hand;
+    cursor: pointer;
     font-family: lucida,arial,sans-serif;
     height: 1.4em;
     font-weight: bold;
@@ -179,29 +169,29 @@ input, select, option {
     font-size: 100%;
 }
 textarea {
-   margin: 3px 0px 0px 0px;
+    margin: 3px 0px 0px 0px;
 }
 div.buttonBox {
-   width: 98%; 
-   border: 1px solid black;
-   background-color: #f3f3f3;
-   padding: 3px;
-   margin-top: 5em;
-   clear: both;
+    width: 98%;
+    border: 1px solid black;
+    background-color: #f3f3f3;
+    padding: 3px;
+    margin-top: 5em;
+    clear: both;
 }
 .left {
-   font-size: small;
-   width: 136px;
+    font-size: small;
+    width: 136px;
 }
 .leftTitle {
-   font-size: small;
-   font-weight: bold;
+    font-size: small;
+    font-weight: bold;
 }
 
-.formtable, .formtableNoDesc { 
-    width: 100%; 
-    border-collapse: collapse; 
-} 
+.formtable, .formtableNoDesc {
+    width: 100%;
+    border-collapse: collapse;
+}
 .formtable td.label, .formtable td.field, .formtable td.description,
 .formtableNoDesc td.label, .formtableNoDesc td.field, .formtableNoDesc  {
     vertical-align: top;
@@ -210,76 +200,76 @@ div.buttonBox {
     border-color: #e3e3e3;
     padding: 4px 10px 4px 10px;
 }
-.formtable td.label { 
+.formtable td.label {
     text-align: right;
-    width: 20%; 
+    width: 20%;
 }
-.formtable td.field { 
-    width: 30%; 
+.formtable td.field {
+    width: 30%;
 }
-.formtable td.description { 
+.formtable td.description {
     width: 50%;
     line-height: 140%;
 }
-.formtableNoDesc td.label { 
+.formtableNoDesc td.label {
     text-align: right;
-    width: 40%; 
+    width: 40%;
 }
-.formtableNoDesc td.field { 
-    width: 40%; 
+.formtableNoDesc td.field {
+    width: 40%;
 }
-.formtableNoDesc td.description { 
-    width: 0%; 
+.formtableNoDesc td.description {
+    width: 0%;
 }
 
-div.row { 
-   padding: 2px; 
+div.row {
+    padding: 2px;
 }
 div.formrow {
-   float: left;
-   width: 80%;
+    float: left;
+    width: 80%;
 }
 label.formrow {
-   float: left;
-   text-align: right;
-   width: 20%;
-   padding-right: 1em;
+    float: left;
+    text-align: right;
+    width: 20%;
+    padding-right: 1em;
 }
 div.sideformrow {
-   float: left;
-   width: 100%;
+    float: left;
+    width: 100%;
 }
 label.sideformrow {
-   float: left;
-   text-align: left;
-   width: 30%;
-   padding-right: 1em;
-   font-size: smaller;
+    float: left;
+    text-align: left;
+    width: 30%;
+    padding-right: 1em;
+    font-size: smaller;
 }
 
 div.yourWeblogBox {
-   padding: 8px 0px 10px 0px;
+    padding: 8px 0px 10px 0px;
 }
 
 input#f_openid_identifier {
-   background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
-   padding-left:18px;
+    background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
+    padding-left:18px;
 }
 
 input.f_openid_identifier {
-   background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
-   padding-left:18px;
+    background: url(../../images/openid-logo-small.gif) no-repeat scroll 0 50%;
+    padding-left:18px;
 }
 
 /* ----------------------------------------------------------------------
-Table styles 
+Table styles
 ---------------------------------------------------------------------- */
 
 div.tablenav {
-   font-size: 110%
+    font-size: 110%
 }
 table.rollertable {
-    border-collapse: collapse; 
+    border-collapse: collapse;
     width: 100%;
 }
 table.rollertable th {
@@ -300,9 +290,9 @@ table.rollertable td.center {
     text-align: center;
 }
 td.field span.fixedAttr {
-  font-style: italic;
-  font-weight: bold;
-  color: red;
+    font-style: italic;
+    font-weight: bold;
+    color: red;
 }
 .rollertable_even td {
     border: 1px solid #ccc;
@@ -347,15 +337,15 @@ td.pendingcomment {
 }
 .approvedCommentBox {
     background: #ffffff;
-    border: 1px grey solid;
+    border: 1px gray solid;
 }
 .pendingCommentBox {
     background: #ffffcc;
-    border: 1px grey solid;
+    border: 1px gray solid;
 }
 .spamCommentBox {
     background: #ffcccc;
-    border: 1px grey solid;
+    border: 1px gray solid;
 }
 td.pendingentry, tr.pendingentry {
     background: #ffcccc;
@@ -365,11 +355,11 @@ td.draftentry, tr.draftentry {
 }
 .draftEntryBox {
     background: #ffffcc;
-    border: 1px grey solid;
+    border: 1px gray solid;
 }
 .pendingEntryBox {
     background: #ffcccc;
-    border: 1px grey solid;
+    border: 1px gray solid;
 }
 
 /* ----------------------------------------------------------------------
@@ -377,47 +367,47 @@ Calendar styles
 ---------------------------------------------------------------------- */
 
 div.archiveCalendar {
-    position: absolute; 
-    top: 80px; 
+    position: absolute;
+    top: 80px;
     right: 20px;
     font-size: 11px;
 }
 .hCalendarDay {
-	border-width: thin;
-	font-size: .9em;
-	text-align: center;
+    border-width: thin;
+    font-size: .9em;
+    text-align: center;
 }
 .hCalendarDayCurrent {
-	border-style: dotted;
-	border-width: thin;
-	font-size: .9em;
-	font-weight: bolder;
-	text-align: center;
+    border-style: dotted;
+    border-width: thin;
+    font-size: .9em;
+    font-weight: bolder;
+    text-align: center;
 }
 .hCalendarDayLinked {
-	border-width: thin;
-	font-size: .9em;
-	font-weight: bolder;
-	text-align: center;
+    border-width: thin;
+    font-size: .9em;
+    font-weight: bolder;
+    text-align: center;
 }
 .hCalendarDayNameRow {
-	font-size: .9em;
-	background-color: #eee;
+    font-size: .9em;
+    background-color: #eee;
     border-bottom: 1px solid #ccc;
-	text-align: center;
+    text-align: center;
 }
 .hCalendarDayNotInMonth {
-	background: transparent;
-	color: #AAAAAA;
-	font-size: .9em;
-	text-align: center;
+    background: transparent;
+    color: #AAAAAA;
+    font-size: .9em;
+    text-align: center;
 }
 .hCalendarNextPrev {
-	text-align: center;
+    text-align: center;
 }
 .hCalendarMonthYearRow {
-	font-weight: bold;
-	text-align: center;
+    font-weight: bold;
+    text-align: center;
 }
 
 /* ----------------------------------------------------------------------
@@ -447,12 +437,12 @@ Error and status message styles
     margin: 10px 0px 10px 0px;
 }
 .errors {
-   background-color: #fcc;
-   border: 1px solid red;
+    background-color: #fcc;
+    border: 1px solid red;
 }
 .messages {
-   background-color: #cfc;
-   border: 1px solid green;
+    background-color: #cfc;
+    border: 1px solid green;
 }
 .warnings {
     background-color: #ffffce;
@@ -491,24 +481,24 @@ div.output {
 }
 
 /* ----------------------------------------------------------------------
-weblog editor styles 
+weblog editor styles
 ---------------------------------------------------------------------- */
 
 div.previewEntrySummary {
-   border: 1px solid gray;
-   clear: both;
-   height: 12em;
-   width: 98%;
-   padding: 10px;
-   overflow: auto;
+    border: 1px solid gray;
+    clear: both;
+    height: 12em;
+    width: 98%;
+    padding: 10px;
+    overflow: auto;
 }
 div.previewEntryContent {
-   border: 1px solid gray;
-   clear: both;
-   height: 22em;
-   width: 98%;
-   padding: 10px;
-   overflow: auto;
+    border: 1px solid gray;
+    clear: both;
+    height: 22em;
+    width: 98%;
+    padding: 10px;
+    overflow: auto;
 }
 div.centerTitle {
     border: 1px solid #ccc;
@@ -518,38 +508,38 @@ div.centerTitle {
     text-align: center;
 }
 div.control {
-    width: 100%; 
+    width: 100%;
 }
 div.controlToggle {
-    width: 100%; 
+    width: 100%;
     height: 25px;
 }
-.control input { 
-    margin: 5px; 
+.control input {
+    margin: 5px;
 }
 a.controlToggle {
-    margin: 5px; 
+    margin: 5px;
     padding: 5px;
     color: black;
     background: transparent;
     text-decoration: none;
 }
-a.controlToggle:link { 
-    margin: 5px; 
+a.controlToggle:link {
+    margin: 5px;
     padding: 5px;
     color: black;
     background: transparent;
     text-decoration: none;
 }
 a.controlToggle:visited {
-    margin: 5px; 
+    margin: 5px;
     padding: 5px;
     color: black;
     background: transparent;
     text-decoration: none;
 }
 a.controlToggle:hover {
-    margin: 5px; 
+    margin: 5px;
     padding: 5px;
     color: black;
     background: transparent;
@@ -558,7 +548,7 @@ a.controlToggle:hover {
 }
 
 /* ----------------------------------------------------------------------
-Misc styles 
+Misc styles
 ---------------------------------------------------------------------- */
 
 div.NN4 {
@@ -602,30 +592,29 @@ div.rNavigationBar {
     border-left: 1px gray solid;
     border-right: 1px gray solid;
     font-family: verdana;
-    font-style: bold;
     padding: 5px;
     margin: 2px;
 }
 
 p.websiteDescription {
-   text-style: italics;
-   font-size: 11px;
+    font-style: italic;
+    font-size: 11px;
 }
 .version {
-   font-size: small;
-   color: grey;
-   text-align: center;
+    font-size: small;
+    color: gray;
+    text-align: center;
 }
 .details {
-   font-size: small;
-   color: grey;
+    font-size: small;
+    color: gray;
 }
 div.helptext {
-   background: #f0f0f0;
-   border: 1px #c0c0c0 solid;
-   padding: 2px;
-   margin: 30px 10px 10px 0px;
-   width: 75%; 
+    background: #f0f0f0;
+    border: 1px #c0c0c0 solid;
+    padding: 2px;
+    margin: 30px 10px 10px 0px;
+    width: 75%;
 }
 .padleft {
     padding-left: 8px;
@@ -640,7 +629,7 @@ div.helptext {
     width: 165px;
     height: 50px;
     _background: transparent !important;
-    background-image: url(../images/logo-shadow.png); 
+    background-image: url(../images/logo-shadow.png);
 }
 #logobackground {
     width: 159px;
@@ -674,8 +663,8 @@ td.mm_subtable_label {
 
 /* media file pages */
 .mediaFileSearchResult {
-   float: left;
-   margin: 10px 10px 10px 10px;
+    float: left;
+    margin: 10px 10px 10px 10px;
 }
 
 /* weblog entry form page */
@@ -693,14 +682,13 @@ td.entryEditFormLabel {
 }
 
 pre {
-    padding: 5px 5px 5px 7px; 
-    background: #f5f5f5; 
+    padding: 5px 5px 5px 7px;
+    background: #f5f5f5;
     color: #000;
     border: 1px dotted #ccc;
     margin-left: 5px;
     margin-right: 5px;
     overflow: auto;
-    overflow-x: auto;
 }
 
 .toplabel {
@@ -714,117 +702,118 @@ pre {
 /* tag autocomplete */
 
 div.autocomplete {
-  position:absolute;
-  width:250px;
-  background-color:white;
-  border:1px solid #888;
-  margin:0px;
-  padding:0px;
+    position:absolute;
+    width:250px;
+    background-color:white;
+    border:1px solid #888;
+    margin:0px;
+    padding:0px;
 }
 div.autocomplete ul {
-  list-style-type:none;
-  margin:0px;
-  padding:0px;
+    list-style-type:none;
+    margin:0px;
+    padding:0px;
 }
 div.autocomplete ul li.selected { background-color: #ffb;}
 
 div.autocomplete ul li {
-  list-style-type:none;
-  display:block;
-  margin:0;
-  padding:2px;
-  cursor:pointer;
+    list-style-type:none;
+    display:block;
+    margin:0;
+    padding:2px;
+    cursor:pointer;
 }
 
 
 .chooser {
-  margin: 10px;
-  padding: 10px 20px 20px 20px;
+    margin: 10px;
+    padding: 10px 20px 20px 20px;
 }
 
 .chooser h2 {
-  letter-spacing: 0.0em;
+    letter-spacing: 0.0em;
 }
 
 .optioner {
-  margin: 0px 30px 30px 30px;
+    margin: 0px 30px 30px 30px;
 }
 
 #themeImport {
-  width: 85%;
-  margin-left: auto;
-  margin-right: auto;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* ----------------------------------------------------------------------
-Media File styles 
----------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+/* Media File styles */
+
 /*** for overlay ***/
 .yui-overlay span, #close {
-		float: left;
-	}
-	
-	#close { float: right; }
-	
-	#overlay {
-		position: fixed;
-		z-index:100;
-		top: 0px;
-		left: 0px;
-		height:100%;
-		width:100%;
-		display: none;
-		background-color:#000;
-		filter:alpha(opacity=25);
-		-moz-opacity: 0.25;
-		opacity: 0.25;	
-	}
-	
-	.container-close {
-		position:absolute;
-		top:2px;
-		right:4px;
-		z-index:6;
-		height:12px;
-		width:12px;
-		margin:0px;
-		padding:0px;
-		background:url('http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif') no-repeat;
-		cursor:pointer	
-	}
+    float: left;
+}
 
-	.align-images {
-		display:inline;
-		float:left;
-		margin:5px;
-		list-style-type:none;
-		width:140px;
-                height:150px;
-	}
+#close { float: right; }
 
-	.dir-image {
-    	cursor:pointer;
-		width:25px;
-		height:25px;
-		padding:40px 45px;
-	}
+#overlay {
+    position: fixed;
+    z-index:100;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    display: none;
+    background-color:#000;
+    filter:alpha(opacity=25);
+    -moz-opacity: 0.25;
+    opacity: 0.25;
+}
 
-	/*** For context menu ***/
+.container-close {
+    position:absolute;
+    top:2px;
+    right:4px;
+    z-index:6;
+    height:12px;
+    width:12px;
+    margin:0px;
+    padding:0px;
+    background:url('http://yui.yahooapis.com/2.6.0/build/container/assets/close12_1.gif') no-repeat;
+    cursor:pointer
+}
 
-	#menu h1 {
-		line-height:120%;
-		margin:15px 0px;
-	}
-	#ewecontextmenu {
-		background-color:#CECECE;
-		border:1px solid #808080;
-		line-height:1.5;
-	}
+.align-images {
+    display:inline;
+    float:left;
+    margin:5px;
+    list-style-type:none;
+    width:140px;
+    height:140px;
+    border: 1px solid #ccc;
+}
 
-	#ewecontextmenu li a {
-		text-decoration:none;
-		color: #000000;
-	}
+.dir-image {
+    cursor:pointer;
+    width:25px;
+    height:25px;
+    padding:40px 45px;
+}
 
-	#ewecontextmenu .yuimenuitem-selected{background-color:#36404C;}
-	#ewecontextmenu .yuimenuitem-selected a {color:#ffffff;}
+/*** For context menu ***/
+
+#menu h1 {
+    line-height:120%;
+    margin:15px 0px;
+}
+#ewecontextmenu {
+    background-color:#CECECE;
+    border:1px solid #808080;
+    line-height:1.5;
+}
+
+#ewecontextmenu li a {
+    text-decoration:none;
+    color: #000000;
+}
+
+#ewecontextmenu .yuimenuitem-selected{background-color:#36404C;}
+#ewecontextmenu .yuimenuitem-selected a {color:#ffffff;}

@@ -18,39 +18,35 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
- <head>
+    <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <tiles:insertAttribute name="head" />    
         <style type="text/css">
             <tiles:insertAttribute name="styles" />
         </style>
     </head>
-    
+
     <body class=" yui-skin-sam">
-        
-        
-        
+
         <div id="wrapper"> 
             <div id="leftcontent_wrap">
                 <div id="leftcontent"> 
                 </div>
             </div>
-            
+
             <div id="centercontent_wrap">
                 <div id="centercontent">
                     <tiles:insertAttribute name="messages" />
                     <tiles:insertAttribute name="content" />    
                 </div>
             </div>
-            
+
             <div id="rightcontent_wrap">
                 <div id="rightcontent"> 
                 </div>
             </div>
         </div>
-        
-       
-        
-       
+
     </body>
+
 </html>

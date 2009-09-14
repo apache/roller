@@ -32,7 +32,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Name</label>
+                <label for="status"><s:text name="mediaFileEdit.name" /></label>
             </td>
             <td>
                 <s:textfield name="bean.name" size="50" maxlength="255" tabindex="1" />
@@ -41,7 +41,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="status">A short Description of file</label>
+                <label for="status"><s:text name="mediaFileEdit.description" /></label>
             </td>
             <td>
                 <s:textarea name="bean.description" cols="50" rows="5" tabindex="3"/>
@@ -50,7 +50,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Copyright Statement (optional)</label>
+                <label for="copyright"><s:text name="mediaFileEdit.copyright" /></label>
             </td>
             <td>
                 <s:textarea name="bean.copyrightText" cols="50" rows="3" tabindex="4"/>
@@ -59,7 +59,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Tags (separated by spaces)</label>
+                <label for="tags"><s:text name="mediaFileEdit.tags" /></label>
             </td>
             <td>
                 <s:textfield name="bean.tags" size="50" maxlength="255" tabindex="5" />
@@ -68,7 +68,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Place file under</label>
+                <label for="directoryId"><s:text name="mediaFileEdit.directory" /></label>
             </td>
             <td>
                 <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="path" />
@@ -77,7 +77,7 @@
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="status">Include in Gallery?</label>
+                <label for="status"><s:text name="mediaFileEdit.includeGallery" /></label>
             </td>
             <td>
                 <s:checkbox name="bean.sharedForGallery" />
@@ -91,32 +91,10 @@
 
     </table>
 
-
-    <%-- ================================================================== --%>
-    <%-- Weblog edit or preview --%>
-
-
-
-
-
-
-    <%-- ================================================================== --%>
-    <%-- plugin chooser --%>
-
-
-
-
-    <%-- ================================================================== --%>
-    <%-- advanced settings  --%>
-
-
-    <%-- ================================================================== --%>
-    <%-- the button box --%>
-
     <br>
     <div class="control">
-       <input type="submit" value="Submit" name="submit" />
-       <input type="button" value="Cancel" onClick="javascript:window.parent.onClose();" />
+       <input type="submit" value="<s:text name="mediaFileEdit.save" />" name="submit" />
+       <input type="button" value="<s:text name="mediaFileEdit.cancel" />" onClick="javascript:window.parent.onClose();" />
     </div>
 
 </s:form>

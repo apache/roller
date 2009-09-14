@@ -17,14 +17,12 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/reset-fonts-grids.css'/>" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/menu.css'/>" />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/container_core-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/menu-min.js'/>"></script>
-
 
 
 <style>
@@ -47,8 +45,22 @@
         top: 50%;
         left: 50%;
     }
-
+    .mediaObject {
+         width:120px;
+         height:120px;
+    }
+    .mediaObjectInfo {
+        clear:left;
+        width:130px;
+        margin-left:5px;
+        font-size:11px;
+    }
+    .highlight {
+        border: 1px solid #aaa;
+    }
 </style>
+
+
 <script type="text/javascript">
     YAHOO.util.Event.onContentReady("myMenu", function () {
         var oClones = this;
@@ -87,13 +99,6 @@
 
         function onEweContextMenuClick(p_sType, p_aArgs) {
 
-            /*
-         The second item in the arguments array (p_aArgs)
-         passed back to the "click" event handler is the
-         MenuItem instance that was the target of the
-         "click" event.
-             */
-
             var oItem = p_aArgs[1], // The MenuItem that was clicked
             oTarget = this.contextEventTarget,
             oLI;
@@ -118,50 +123,41 @@
             }
         }
 
-
         /*
          Array of text labels for the MenuItem instances to be
          added to the ContextMenu instanc.
          */
-
-        var aMenuItems = ["Delete", "Create Post", "Include in Gallery" ];
+        var aMenuItems = [
+            '<s:text name="mediaFileView.delete" />',
+            '<s:text name="mediaFileView.createPost" />',
+            '<s:text name="mediaFileView.includeInGallery" />' ];
 
         /*
          Instantiate a ContextMenu:  The first argument passed to the constructor
          is the id for the Menu element to be created, the second is an
          object literal of configuration properties.
          */
-
-        var oEweContextMenu = new YAHOO.widget.ContextMenu(
-        "ewecontextmenu",
-        {
+        var oEweContextMenu = new YAHOO.widget.ContextMenu("ewecontextmenu", {
             trigger: oClones.getElementsByClassName("contextMenu"),
             itemdata: aMenuItems,
             lazyload: true
-        }
-    );
+        });
 
+        oEweContextMenu.configTrigger = configTrigger;
+
+        oEweContextMenu.trigger = oClones.getElementsByClassName("contextMenu");
 
         // "render" event handler for the ewe context menu
-
         function onContextMenuRender(p_sType, p_aArgs) {
-
             //  Add a "click" event handler to the ewe context menu
-
             this.subscribe("click", onEweContextMenuClick);
-
         }
 
-
         // Add a "render" event handler to the ewe context menu
-
         oEweContextMenu.subscribe("render", onContextMenuRender);
-
-
     });
 
     YAHOO.example = function() {
-
 
         var $D = YAHOO.util.Dom;
         var $E = YAHOO.util.Event;
@@ -188,43 +184,58 @@
 
     YAHOO.util.Event.addListener(window, "load", YAHOO.example.init);
 
+    function configTrigger(p_sType, p_aArgs, p_oMenu) {
+        window.alert("HI");
+        var oTrigger = p_aArgs[0];
+        if (oTrigger) {
+            if (this._oTrigger) {
+                this._removeEventHandlers();
+            }
+            this._oTrigger = oTrigger;
+            Event.on(oTrigger, EVENT_TYPES.CONTEXT_MENU, this._onTriggerContextMenu, this, true);
+            Event.on(oTrigger, EVENT_TYPES.CLICK, this._onTriggerClick, this, true);
+        }
+        else {
+            this._removeEventHandlers();
+        }
+    }
+
+
 </script>
+
+
 <script type="text/javascript">
     <!--
 
     function onSelectDirectory(id) {
-        document.mediaFileViewForm.directoryId.value = id;
-        document.mediaFileViewForm.submit();
+        window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
     }
 
-    function onCreateDirectory()
-    {
+    function onCreateDirectory() {
         document.mediaFileViewForm.action='<s:url action="mediaFileView!createNewDirectory" />';
         document.mediaFileViewForm.submit();
     }
 
-    function onDeleteSelected()
-    {
+    function onDeleteSelected() {
         if ( confirm("<s:text name='mediaFile.delete.confirm' />") ) {
             document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
             document.mediaFileViewForm.submit();
         }
     }
 
-    function onMoveSelected()
-    {
+    function onMoveSelected() {
         if ( confirm("<s:text name='mediaFile.move.confirm' />") ) {
             document.mediaFileViewForm.action='<s:url action="mediaFileView!moveSelected" />';
             document.mediaFileViewForm.submit();
         }
     }
-    function onClose()
-    {
+
+    function onClose() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('overlay_img').style.visibility = 'hidden';
     }
-    function onClickEdit(mediaFileId)
-    {
+
+    function onClickEdit(mediaFileId) {
         var browser=navigator.appName;
         document.getElementById("overlay_img").style.visibility = "visible";
         document.getElementById('overlay').style.display = 'block';
@@ -245,32 +256,59 @@
         document.getElementById("overlay_img").appendChild(frame);
 
     }
+
     -->
 </script>
 
-<p class="subtitle">
-    View Uploaded Files
-</p>
-<p class="subtitle">
-    Path: /
-    <s:iterator id="directory" value="currentDirectoryHierarchy">
-        <s:url id="getDirectoryByPathUrl" action="mediaFileView">
-            <s:param name="directoryPath" value="#directory.key" />
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value"
-                                                         /></s:a> /
-    </s:iterator>
-</p>
+<%-- ********************************************************************* --%>
+
+<%-- Subtitle and folder path --%>
+
+<s:if test='currentDirectory.path.equals("/")'>
+
+    <%-- show title and page help tip for Root level --%>
+    <p class="subtitle">
+        <s:text name="mediaFileView.subtitle" >
+            <s:param value="weblog" />
+        </s:text>
+    </p>
+    </p>
+    <p class="pagetip">
+        <s:text name="mediaFileView.rootPageTip" />
+    </p>
+
+</s:if>
+<s:else>
+
+    <%-- show title and page help tip for sub-directory levels --%>
+    <p class="subtitle">
+        Path: /
+        <s:iterator id="directory" value="currentDirectoryHierarchy">
+            <s:url id="getDirectoryByPathUrl" action="mediaFileView">
+                <s:param name="directoryPath" value="#directory.key" />
+                <s:param name="weblog" value="%{actionWeblog.handle}" />
+            </s:url>
+            <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
+        </s:iterator>
+    </p>
+    <p class="pagetip">
+        <s:text name="mediaFileView.dirPageTip" />
+    </p>
+
+</s:else>
+
 
 <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView" onsubmit="editorCleanup()">
     <s:url id="mediaFileHierarchicalViewURL" action="mediaFileHierarchicalView">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
     </s:url>
-    <p><span style="font-weight:bold">Tabular</span> | <s:a href="%{mediaFileHierarchicalViewURL}">Hierarchical</s:a></p>
+    <p><span style="font-weight:bold"><s:text name="mediaFileView.tabular" /></span> |
+        <s:a href="%{mediaFileHierarchicalViewURL}"><s:text name="mediaFileView.hierarchy" /></s:a></p>
     <div class="control">
-        <span style="padding-left:20px">Sort by:</span>
-        <s:select name="sortBy" list="sortOptions" listKey="key" listValue="value" onchange="document.mediaFileViewForm.submit();" />
+        <span style="padding-left:20px"><s:text name="mediaFileView.sortby" /></span>
+        <s:select name="sortBy" list="sortOptions" listKey="key"
+                  listValue="value"
+                  onchange="document.mediaFileViewForm.submit();" />
     </span>
 </div>
 
@@ -278,41 +316,62 @@
 <s:hidden name="directoryId" />
 <input type="hidden" name="mediaFileId" value="" />
 
-<%-- ================================================================== --%>
-<%-- Title, category, dates and other metadata --%>
+
+
+<%-- ********************************************************************* --%>
+
+<%-- Media file folder contents --%>
 
 <script type="text/javascript">
-function highlight(flag) {
-
+function highlight(el, flag) {
+    if (flag) {
+        YAHOO.util.Dom.addClass(el, "highlight");
+    } else {
+        YAHOO.util.Dom.removeClass(el, "highlight");
+    }
 }
 </script>
 
 <div  width="720px" height="500px">
     <ul id = "myMenu">
 
+        <%-- ------------------------------------------------------------- --%>
+
+        <%-- List media directories first --%>
+
         <s:iterator id="directory" value="childDirectories">
-            <li class="align-images" >
-                <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
-                    <img  border="0" src='<s:url value="/images/folder.png"/>' class="dir-image" alt="mediaFolder.png" onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
+            <li class="align-images"
+                    onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
+                <div class="mediaObject">
+                    <img  border="0" src='<s:url value="/images/folder.png"/>'
+                          class="dir-image" alt="mediaFolder.png"
+                          onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
                 </div>
-                <div style="clear:left;width:130px;margin-left:10px;font-size:11px;"><label><s:property value="#directory.name" /></label>
+                <div class="mediaObjectInfo">
+                    <label><s:property value="#directory.name" /></label>
                 </div>
             </li>
         </s:iterator>
 
 
+        <%-- ------------------------------------------------------------- --%>
+
+        <%-- List media files next --%>
+
         <s:iterator id="mediaFile" value="childFiles">
 
-            <li class="align-images" onmouseover="" onmouseout="">
+            <li class="align-images"
+                    onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                <div style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
+                <div class="mediaObject"
+                     onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" >
+
                     <s:if test="#mediaFile.imageFile">
                         <s:url id="mediaFileURL"
                             value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}?t=true"></s:url>
-
                         <img border="0" src='<s:property value="%{mediaFileURL}" />'
                              width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
+                             height='<s:property value="#mediaFile.thumbnailHeight"/>' />
                     </s:if>
 
                     <s:else>
@@ -320,25 +379,26 @@ function highlight(flag) {
                         <img border="0" src='<s:property value="%{mediaFileURL}" />'
                              style="padding:40px 50px;" />
                     </s:else>
+
                 </div>
 
-                <div style="clear:left;width:130px;margin-left:5px;font-size:11px;">
+                <div class="mediaObjectInfo">
 
                     <label>
+                        <a class="contextMenu" href="#">
+                            <img  border="0"
+                                src='<s:url value="/images/control_play.png"/>' alt="[v]" />
+                        </a>
                         <str:truncateNicely upper="50">
                             <s:property value="#mediaFile.name" />
                         </str:truncateNicely>
+                        <input type="checkbox" style="float:right"
+                               name="selectedMediaFiles"
+                               value="<s:property value="#mediaFile.id"/>"/>
+                        <inut type="hidden" id="mediafileidentity"
+                               value="<s:property value='#mediaFile.id'/>">
                     </label>
 
-                    <div style="padding-top:5px;">   <!--  one -->
-                        <input style="float:left;" type="checkbox" name="selectedMediaFiles" value="<s:property value="#mediaFile.id"/>"/>
-                        <INPUT TYPE="hidden" id="mediafileidentity" value="<s:property value='#mediaFile.id'/>">
-
-                        <div style="float:right;">
-                            <a  href="#" id="<s:property value='#mediaFile.id'/>" onclick="onClickEdit(this.id)">Edit</a>
-                            <a  class="contextMenu" href="#">More...</a>
-                        </div>
-                    </div>  <!-- one -->
 
                 </div>
 
@@ -348,19 +408,31 @@ function highlight(flag) {
     </ul>
 </div>
 
+
+<%-- ********************************************************************* --%>
+
+<%-- Create new folder --%>
+
 <div style="margin-left:320px;clear:left;">
     New Directory Name:
     <input style="margin-top:5px;margin-bottom:5px;" type="text"
            name="newDirectoryName" size="30" />
-    <input type="button" value="Create" onclick="onCreateDirectory()" />
+    <input type="button" value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
 </div>
 <div id="overlay_img" style="visibility:hidden">
 </div>
 
+
+<%-- ********************************************************************* --%>
+
+<%-- Create new folder --%>
+
 <br/>
 <div class="control">
-    <input type="button" style="padding-left:20px" value="Delete Selected" onclick="onDeleteSelected()" />
-    <input type="button" style="padding-left:20px" value="Move Selected" onclick="onMoveSelected()" />
+    <input type="button" style="padding-left:20px" 
+       value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+    <input type="button" style="padding-left:20px" 
+       value=<s:text name="mediaFileView.moveSelected" /> onclick="onMoveSelected()" />
     <span style="padding-left:20px">
         <s:select name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
     </span>
@@ -368,4 +440,14 @@ function highlight(flag) {
 
 </s:form>
 
+
+<%--
+<div id="mediafile_edit_lightbox" style="visibility:hidden">
+    <div class="hd">Media File Editor</div>
+    <div class="bd">
+        <iframe src="http://sun.com" style="visibility:inherit" height="0" width="0"></iframe>
+    </div>
+    <div class="ft"></div>
+</div>
+--%>
 

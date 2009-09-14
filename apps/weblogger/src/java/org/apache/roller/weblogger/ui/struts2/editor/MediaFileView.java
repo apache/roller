@@ -66,7 +66,7 @@ public class MediaFileView extends MediaFileBase {
     public MediaFileView() {
         this.actionName = "mediaFileView";
         this.desiredMenu = "editor";
-        this.pageTitle = "mediaFile.view.title";
+        this.pageTitle = "mediaFileView.title";
     }
 
     /**

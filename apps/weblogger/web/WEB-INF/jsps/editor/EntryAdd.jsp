@@ -28,15 +28,6 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/autocomplete-min.js'/>"></script>
 
 <style>
-body {
-    margin:0;
-    padding:0;
-    text-align:left;
-}
-h1 {
-    font-size:20px;
-    font-weight:bold;
-}
 #tagAutoCompleteWrapper {
     width:25em; /* set width here or else widget will expand to fit its container */
     padding-bottom:2em;
