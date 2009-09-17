@@ -25,8 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import org.apache.roller.weblogger.business.*;
 import java.sql.Timestamp;
@@ -66,10 +64,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     private static Log log =
         LogFactory.getFactory().getInstance(JPAMediaFileManagerImpl.class);
 
-    public static final String
-        MIGRATIION_STATUS_FILENAME = "migration-status.properties";
-
-
+    private static final String
+            MIGRATION_STATUS_FILENAME = "migration-status.properties";
 
 
     /**
@@ -588,18 +584,21 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     /**
      * Does mediafile storage require any upgrading;
-     * checks for existance of migration status file.
+     * checks for existence of migration status file.
      */
     public boolean isFileStorageUpgradeRequired() {
+        // TODO: Bad exception and return value convention here.  This should return void and throw exceptions on error.
         String uploadsDirName = WebloggerConfig.getProperty("uploads.dir");
         if (uploadsDirName != null) {
             File uploadsDir = new File(uploadsDirName);
             if (uploadsDir.exists() && uploadsDir.isDirectory()) {
                 Properties props = new Properties();
                 try {
-                    props.load(new FileReader(uploadsDirName
-                        + File.separator + MIGRATIION_STATUS_FILENAME));
-                } catch (Exception ignored) {}
+                    props.load(new FileInputStream(uploadsDirName
+                        + File.separator + MIGRATION_STATUS_FILENAME));
+                } catch (Exception ex) {
+                    return false;
+                }
                 if (props.getProperty("complete") != null) {
                     return false;
                 }
@@ -666,7 +665,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 Properties props = new Properties();
                 props.setProperty("complete", "true");
                 props.store(new FileOutputStream(oldDirName
-                    + File.separator + MIGRATIION_STATUS_FILENAME),
+                    + File.separator + MIGRATION_STATUS_FILENAME),
                     "Migration is complete!");
 
             } catch (Exception ioex) {}
