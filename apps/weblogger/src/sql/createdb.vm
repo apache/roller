@@ -612,10 +612,10 @@ alter table bookmark add constraint bm_folderid_fk
 
 -- media file foreign key constraints
 
-alter table roller_mediafile add constraint media_file_directoryid_fk
+alter table roller_mediafile add constraint roller_mediafiledir_id_fk
     foreign key (directoryid) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
 
-alter table roller_mediafiletag add constraint media_file_id_tag_fk
+alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
     foreign key (mediafile_id) references roller_mediafile(id) $!db.ADDL_FK_PARAMS ;
 
 alter table roller_mediafiledir add constraint mf_websiteid_fk
