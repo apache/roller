@@ -655,7 +655,7 @@ public class MailUtil {
 
                 try {
                     // Send to the list of remaining addresses, ignoring the addresses attached to the message
-                    transport.send(message, remainingAddresses);
+                    transport.sendMessage(message, remainingAddresses);
                 } catch(SendFailedException ex) {
                     bFailedToSome=true;
                     sendex.setNextException(ex);
