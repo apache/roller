@@ -610,18 +610,19 @@ alter table folder add constraint fo_websiteid_fk
 alter table bookmark add constraint bm_folderid_fk
     foreign key ( folderid ) references folder( id ) $!db.ADDL_FK_PARAMS ;
 
--- media files
-alter table media_file add constraint media_file_directoryid_fk
-    foreign key (directoryid) references media_file_directory(id) $!db.ADDL_FK_PARAMS ;
+-- media file foreign key constraints
 
-alter table media_file_tag add constraint media_file_id_tag_fk
-    foreign key (media_file_id) references media_file(id) $!db.ADDL_FK_PARAMS ;
+alter table roller_mediafile add constraint media_file_directoryid_fk
+    foreign key (directoryid) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
 
-alter table media_file_directory add constraint mf_websiteid_fk
+alter table roller_mediafiletag add constraint media_file_id_tag_fk
+    foreign key (mediafile_id) references roller_mediafile(id) $!db.ADDL_FK_PARAMS ;
+
+alter table roller_mediafiledir add constraint mf_websiteid_fk
     foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
 
-alter table media_file_directory add constraint mf_parentid_fk
-    foreign key ( parentid ) references media_file_directory( id )  $!db.ADDL_FK_PARAMS ;
+alter table roller_mediafiledir add constraint mf_parentid_fk
+    foreign key ( parentid ) references roller_mediafiledir( id )  $!db.ADDL_FK_PARAMS ;
 
 -- newsfeed
 
@@ -650,21 +651,6 @@ alter table pingcategory add constraint pc_categoryid_fk
 -- alter table website add constraint website_defaultpageid_fk foreign key ( defaultpageid ) references webpage ( id );
 -- alter table website add constraint website_weblogdayid_fk foreign key ( weblogdayid ) references webpage ( id );
 -- alter table webpage add constraint webpage_websiteid_fk foreign key ( websiteid ) references website( id );
-
-
--- media blogging indexes
-
-alter table roller_mediafile add constraint roller_mediafiledir_id_fk
-    foreign key (directory_id) references roller_mediafiledir(id) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_mediafiletag add constraint roller_mediafile_id_tag_fk
-    foreign key (mediafile_id) references roller_mediafile(id) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_mediafiledir add constraint mf_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $!db.ADDL_FK_PARAMS ;
-
-alter table roller_mediafiledir add constraint mf_parentid_fk
-    foreign key ( parentid ) references roller_mediafiledir( id )  $!db.ADDL_FK_PARAMS ;
 
 
 -- oauth indexes
