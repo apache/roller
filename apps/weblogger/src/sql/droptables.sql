@@ -40,9 +40,9 @@ drop table bookmark;
 drop table folder;
 drop table folderassoc;
 drop table roller_userattribute;
-drop table media_file_tag;
-drop table media_file;
-drop table media_file_directory;
+drop table roller_mediafiletag;
+drop table roller_mediafile;
+drop table roller_mediafiledir;
 
 
 -- core services tables
