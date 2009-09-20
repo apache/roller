@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ResourceBundle;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.MediaFileType;
@@ -30,22 +31,32 @@ import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
  * Bean for holding media file search criteria.
  */
 public class MediaFileSearchBean {
+    private transient ResourceBundle bundle =
+            ResourceBundle.getBundle("ApplicationResources");
 
     public static int PAGE_SIZE = 10;
+
     // Media file name as search criteria
     String name;
+
     // Media file type as search criteria
     String type;
+
     // Type of size filter as search criteria
-    int sizeFilterType;
+    String sizeFilterType;
+
     // Size of file as search criteria
     long size;
+
     // Size unit
-    int sizeUnit;
+    String sizeUnit;
+
     // Tags as search criteria
     String tags;
+
     // Page number of results
     int pageNum = 0;
+    
     // Sort option for search results
     int sortOption;
 
@@ -61,16 +72,24 @@ public class MediaFileSearchBean {
         return type;
     }
 
+    public String getTypeLabel() {
+        return this.bundle.getString(type);
+    }
+
     public void setType(String type) {
         this.type = type;
     }
 
-    public int getSizeFilterType() {
+    public String getSizeFilterType() {
         return sizeFilterType;
     }
 
-    public void setSizeFilterType(int sizeFilterType) {
+    public void setSizeFilterType(String sizeFilterType) {
         this.sizeFilterType = sizeFilterType;
+    }
+
+    public String getSizeFilterTypeLabel() {
+        return this.bundle.getString(sizeFilterType);
     }
 
     public long getSize() {
@@ -81,11 +100,15 @@ public class MediaFileSearchBean {
         this.size = size;
     }
 
-    public int getSizeUnit() {
+    public String getSizeUnit() {
         return sizeUnit;
     }
 
-    public void setSizeUnit(int sizeUnit) {
+    public String getSizeUnitLabel() {
+        return this.bundle.getString(sizeUnit);
+    }
+
+    public void setSizeUnit(String sizeUnit) {
         this.sizeUnit = sizeUnit;
     }
 
@@ -122,52 +145,39 @@ public class MediaFileSearchBean {
 
         if (!StringUtils.isEmpty(this.type)) {
             MediaFileType filterType = null;
-            if ("Audio".equals(this.type)) {
+            if ("mediaFileView.audio".equals(this.type)) {
                 filterType = MediaFileType.AUDIO;
-            } else if ("Video".equals(this.type)) {
+            } else if ("mediaFileView.video".equals(this.type)) {
                 filterType = MediaFileType.VIDEO;
-            } else if ("Image".equals(this.type)) {
+            } else if ("mediaFileView.image".equals(this.type)) {
                 filterType = MediaFileType.IMAGE;
-            } else if ("Others".equals(this.type)) {
+            } else if ("mediaFileView.others".equals(this.type)) {
                 filterType = MediaFileType.OTHERS;
-            }
+            } 
 
             dataHolder.setType(filterType);
         }
 
         if (this.size > 0) {
-            SizeFilterType type;
-            switch (this.sizeFilterType) {
-                case 0:
-                    type = SizeFilterType.GT;
-                    break;
-                case 1:
-                    type = SizeFilterType.GTE;
-                    break;
-                case 2:
-                    type = SizeFilterType.EQ;
-                    break;
-                case 3:
-                    type = SizeFilterType.LTE;
-                    break;
-                case 4:
-                    type = SizeFilterType.LT;
-                    break;
-                default:
-                    type = null;
+            SizeFilterType sftype = SizeFilterType.EQ;
+            if ("mediaFileView.gt".equals(this.sizeFilterType)) {
+                sftype = SizeFilterType.GT;
+            } else if ("mediaFileView.ge".equals(this.sizeFilterType)) {
+                sftype = SizeFilterType.GTE;
+            } else if ("mediaFileView.eq".equals(this.sizeFilterType)) {
+                sftype = SizeFilterType.EQ;
+            } else if ("mediaFileView.le".equals(this.sizeFilterType)) {
+                sftype = SizeFilterType.LTE;
+            } else if ("mediaFileView.lt".equals(this.sizeFilterType)) {
+                sftype = SizeFilterType.LT;
             }
-            dataHolder.setSizeFilterType(type);
+            dataHolder.setSizeFilterType(sftype);
 
-            long filterSize;
-            switch (this.sizeUnit) {
-                case 1:
-                    filterSize = this.size * 1024;
-                    break;
-                case 2:
+            long filterSize = this.size ;
+            if ("mediaFileView.kb".equals(this.sizeUnit)) {
+                filterSize = this.size * 1024;
+            } else if ("mediaFileView.mb".equals(this.sizeUnit)) {
                     filterSize = this.size * 1024 * 1024;
-                    break;
-                default:
-                    filterSize = this.size;
             }
             dataHolder.setSize(filterSize);
         }
@@ -181,10 +191,9 @@ public class MediaFileSearchBean {
         }
 
         dataHolder.setStartIndex(pageNum * PAGE_SIZE);
-        /**
-         * Set length to fetch to one more than what is required.
-         * This would help us determine whether there are more pages
-         */
+
+        // set length to fetch to one more than what is required.
+        // this would help us determine whether there are more pages
         dataHolder.setLength(PAGE_SIZE + 1);
 
         MediaFileOrder order;

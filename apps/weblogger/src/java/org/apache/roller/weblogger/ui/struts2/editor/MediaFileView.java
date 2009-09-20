@@ -35,6 +35,8 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparatorType;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
+import org.apache.roller.weblogger.pojos.MediaFileFilter;
+import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -45,28 +47,69 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class MediaFileView extends MediaFileBase {
 
     private static Log log = LogFactory.getLog(MediaFileView.class);
-    // Drop-down values for sorting media files.
-    private static final List<KeyValueObject> SORT_OPTIONS;
 
-    static {
-        SORT_OPTIONS = Arrays.asList(
-                new KeyValueObject("", ""),
-                new KeyValueObject("name", "Name"),
-                new KeyValueObject("date_uploaded", "Date Uploaded"),
-                new KeyValueObject("type", "Type"));
-    }
     private String directoryId;
     private String directoryPath;
     private String sortBy;
     private String newDirectoryName;
-    private List<MediaFile> childFiles;
-    private MediaFileDirectory currentDirectory;
+    
+    private List<MediaFile>          childFiles;
+    private MediaFileDirectory       currentDirectory;
     private List<MediaFileDirectory> childDirectories;
+    
+
+    // Search criteria - drop-down for file type
+    private static List<KeyValueObject> FILE_TYPES = null;
+
+    // Search criteria - drop-down for size filter
+    private static List<KeyValueObject> SIZE_FILTER_TYPES = null;
+
+    // Search criteria - drop-down for size unit
+    private static List<KeyValueObject> SIZE_UNITS = null;
+
+    // Sort options for search results.
+    private static List<KeyValueObject> SORT_OPTIONS = null;
+
+    // Pager for displaying search results.
+    private MediaFilePager pager;
+
+    // Path of new directory to be created.
+    private String newDirectoryPath;
+
+    private MediaFileSearchBean bean = new MediaFileSearchBean();
+
 
     public MediaFileView() {
         this.actionName = "mediaFileView";
         this.desiredMenu = "editor";
         this.pageTitle = "mediaFileView.title";
+
+        if (SIZE_FILTER_TYPES == null) {
+
+            SIZE_FILTER_TYPES = Arrays.asList(
+                new KeyValueObject("mediaFileView.gt", getText("mediaFileView.gt")),
+                new KeyValueObject("mediaFileView.ge", getText("mediaFileView.ge")),
+                new KeyValueObject("mediaFileView.eq", getText("mediaFileView.eq")),
+                new KeyValueObject("mediaFileView.le", getText("mediaFileView.le")),
+                new KeyValueObject("mediaFileView.lt", getText("mediaFileView.lt")));
+
+            FILE_TYPES = Arrays.asList(
+                new KeyValueObject("mediaFileView.any",   getText("mediaFileView.any")),
+                new KeyValueObject("mediaFileView.others",   getText("mediaFileView.others")),
+                new KeyValueObject("mediaFileView.image", getText("mediaFileView.image")),
+                new KeyValueObject("mediaFileView.video", getText("mediaFileView.video")),
+                new KeyValueObject("mediaFileView.audio", getText("mediaFileView.audio")));
+
+            SIZE_UNITS = Arrays.asList(
+                new KeyValueObject("mediaFileView.bytes", getText("mediaFileView.bytes")),
+                new KeyValueObject("mediaFileView.kb",    getText("mediaFileView.kb")),
+                new KeyValueObject("mediaFileView.mb",    getText("mediaFileView.mb")));
+
+            SORT_OPTIONS = Arrays.asList(
+                new KeyValueObject("mediaFileView.name", getText("mediaFileView.name")),
+                new KeyValueObject("mediaFileView.date", getText("mediaFileView.date")),
+                new KeyValueObject("mediaFileView.type", getText("mediaFileView.type")));
+        }
     }
 
     /**
@@ -177,6 +220,42 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
+     * Save a media file.
+     *
+     * @return String The result of the action.
+     */
+    public String search() {
+
+        boolean valSuccess = myValidate();
+
+        if (valSuccess) {
+            MediaFileFilter filter = new MediaFileFilter();
+            bean.copyTo(filter);
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            try {
+                List<MediaFile> rawResults = manager.searchMediaFiles(getActionWeblog(), filter);
+                boolean hasMore = false;
+                List<MediaFile> results = new ArrayList<MediaFile>();
+                results.addAll(rawResults);
+                if (results.size() > MediaFileSearchBean.PAGE_SIZE) {
+                    results.remove(results.size() - 1);
+                    hasMore = true;
+                }
+
+                this.pager = new MediaFilePager(bean.getPageNum(), results, hasMore);
+                
+            } catch (Exception e) {
+                log.error("Error applying search criteria", e);
+                // TODO: i18n
+                addError("Error applying search criteria");
+            }
+
+        }
+        
+        return SUCCESS;
+    }
+
+    /**
      * Returns the hierarchy of the current directory. This is useful in
      * displaying path information as breadcrumb.
      */
@@ -230,9 +309,6 @@ public class MediaFileView extends MediaFileBase {
     public String moveSelected() {
         doMoveSelected();
         return execute();
-    }
-
-    public void myValidate() {
     }
 
     public String getDirectoryId() {
@@ -291,7 +367,54 @@ public class MediaFileView extends MediaFileBase {
         this.sortBy = sortBy;
     }
 
+    /**
+     * Validates search input
+     */
+    public boolean myValidate() {
+        if (StringUtils.isEmpty(bean.getName()) && StringUtils.isEmpty(bean.getTags()) && StringUtils.isEmpty(bean.getType()) && bean.getSize() == 0) {
+            addError("MediaFile.error.search.empty");
+            return false;
+        }
+        return true;
+    }
+
+    public MediaFileSearchBean getBean() {
+        return bean;
+    }
+
+    public void setBean(MediaFileSearchBean b) {
+        this.bean = b;
+    }
+
+    public List<KeyValueObject> getFileTypes() {
+        return FILE_TYPES;
+    }
+
+    public List<KeyValueObject> getSizeFilterTypes() {
+        return SIZE_FILTER_TYPES;
+    }
+
+    public List<KeyValueObject> getSizeUnits() {
+        return SIZE_UNITS;
+    }
+
     public List<KeyValueObject> getSortOptions() {
         return SORT_OPTIONS;
+    }
+
+    public MediaFilePager getPager() {
+        return pager;
+    }
+
+    public void setPager(MediaFilePager pager) {
+        this.pager = pager;
+    }
+
+    public String getNewDirectoryPath() {
+        return newDirectoryPath;
+    }
+
+    public void setNewDirectoryPath(String newDirectoryPath) {
+        this.newDirectoryPath = newDirectoryPath;
     }
 }

@@ -23,42 +23,122 @@
             <div class="sidebarInner">
 
                 <b><s:text name="mediaFileSidebar.actions" /></b>
-                
+                <br />
+                <br />
+
                 <s:url id="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                 </s:url>
-
-                <s:url id="mediaFileSearchURL" action="mediaFileSearch">
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
-                </s:url>
-
-                <s:url id="mediaFileViewURL" action="mediaFileView">
-                    <s:param name="weblog" value="%{actionWeblog.handle}" />
-                </s:url>
-
-                <hr size="1" noshade="noshade" />
-
-                <a href='<s:property value="%{mediaFileViewURL}" />'
-                    <s:if test="actionName.equals('mediaFileView')">style='font-weight:bold;'</s:if> >
-                    <s:text name="mediaFileSidebar.view" /></a>
-
-                <hr size="1" noshade="noshade" />
-
                 <a href='<s:property value="%{mediaFileAddURL}" />'
                     <s:if test="actionName.equals('mediaFileAdd')">style='font-weight:bold;'</s:if> >
                     <s:text name="mediaFileSidebar.add" /></a>
 
                 <hr size="1" noshade="noshade" />
-                
-                <a href='<s:property value="%{mediaFileSearchURL}" />'
-                    <s:if test="actionName.equals('mediaFileSearch')">style='font-weight:bold;'</s:if> >
-                    <s:text name="mediaFileSidebar.search" /></a>
+                <br />
+                <br />
 
-                <hr size="1" noshade="noshade" />
-                <br />
-                <br />
+
+                <s:form id="mediaFileSearchForm" name="mediaFileSearchForm"
+                        action="mediaFileView!search" onsubmit="editorCleanup()">
+                    <s:hidden name="weblog" />
+
+                    <input type="hidden" name="mediaFileId" value="" />
+                    <table class="mediaFileSearchTable" cellpadding="0" cellspacing="3" width="100%">
+
+                        <tr>
+                            <td>
+                                <label for="name"><s:text name="mediaFileView.name" /></label>
+                            </td>
+                            <td>
+                                <s:textfield id="beanName" name="bean.name" size="20" maxlength="255" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="type"><s:text name="mediaFileView.type" /></label>
+                            </td>
+                            <td>
+                                <s:select id="beanType" name="bean.type"
+                                    list="fileTypes" listKey="key" listValue="value" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="size"><s:text name="mediaFileView.size" /></label>
+                            </td>
+                            <td width="80%">
+                                <s:select name="bean.sizeFilterType"
+                                    list="sizeFilterTypes" listKey="key" listValue="value" />
+                                <s:textfield id="beanSize" name="bean.size"
+                                    size="3" maxlength="10" />
+                                <s:select name="bean.sizeUnit"
+                                    list="sizeUnits" listKey="key" listValue="value" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td width="10%">
+                                <label for="tags"><s:text name="mediaFileView.tags" /></label>
+                            </td>
+                            <td>
+                                <s:textfield id="beanTags" name="bean.tags"
+                                    size="20" maxlength="50" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input id="searchButton" style="margin:5px 0px;" type="submit"
+                                       name="search" value='<s:text name="mediaFileView.search" />' />
+                            </td>
+                            <td>
+                                <s:if test="pager">
+                                    <input id="resetButton" style="margin:5px 0px;" type="button"
+                                           name="reset" value='<s:text name="mediaFileView.reset" />' />
+                                </s:if>
+                                &nbsp;
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </table>
+
+                </s:form>
 
             </div>
         </div>
     </div>
 </div>
+
+
+
+<script type="text/javascript">
+
+function maintainSearchButtonState(e) {
+    if ( jQuery.trim($("#beanName").get(0).value).length == 0
+     &&  jQuery.trim($("#beanTags").get(0).value).length == 0
+     && (jQuery.trim($("#beanSize").get(0).value).length == 0 || $("#beanSize").get(0).value == 0)
+     && ($("#beanType").get(0).value.length == 0 || $("#beanType").get(0).value == "mediaFileView.any")) {
+        $("#searchButton").attr("disabled", true);
+    } else {
+        $("#searchButton").attr("disabled", false);
+    }
+}
+
+$("#searchButton").ready(function () {
+
+    maintainSearchButtonState();
+    $("input").bind("keyup", maintainSearchButtonState);
+    $("select").bind("change", maintainSearchButtonState);
+
+    $("#resetButton").bind("click", function() {
+        <s:url id="mediaFileViewURL" action="mediaFileView">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        window.location = "<s:property value="%{mediaFileViewURL}" />";
+    });
+});
+
+</script>
