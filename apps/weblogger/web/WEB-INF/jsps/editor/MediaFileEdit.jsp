@@ -21,7 +21,7 @@
     <s:text name="mediaFile.edit.title"  />
 </p>
 
-<s:form id="entry" action="mediaFileEdit!save" onsubmit="editorCleanup()" method="POST">
+<s:form id="entry" action="mediaFileEdit!save" method="POST">
     <s:hidden name="weblog" />
     <s:hidden name="mediaFileId" />
 
@@ -83,11 +83,6 @@
                 <s:checkbox name="bean.sharedForGallery" />
             </td>
        </tr>
-
-
-
-
-
 
     </table>
 

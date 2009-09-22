@@ -162,7 +162,7 @@ public class MediaFileBase extends UIAction {
      * Constructs the external URL for a given media file
      */
     protected String getMediaFileURL(MediaFile mediaFile) {
-        return getSiteURL() + "/roller-ui/rendering/media-resources/" + mediaFile.getId();
+        return mediaFile.getWeblog().getAbsoluteURL() + "/mediaresource/" + mediaFile.getId();
     }
 
     public String[] getSelectedMediaFiles() {

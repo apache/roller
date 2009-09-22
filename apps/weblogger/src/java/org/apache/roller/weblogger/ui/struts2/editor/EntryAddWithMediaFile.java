@@ -15,7 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
@@ -30,52 +29,49 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  */
 @SuppressWarnings("serial")
 public class EntryAddWithMediaFile extends MediaFileBase {
+
     private static Log log = LogFactory.getLog(EntryAddWithMediaFile.class);
-    
+
     // bean for managing form data
     private EntryBean bean = new EntryBean();
 
     public EntryAddWithMediaFile() {
     }
-    
+
     /**
      * Prepare bean for creating a new weblog entry with a link to a media file.
-     * 
      * @return String The result of the action.
      */
     @SkipValidation
     public String execute() {
-    	MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-		try {
-			MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
-			String link;
-			if (mediaFile.isImageFile()) {
-				link = "<img src='<url>' alt='<name>' width='<width>' height='<height>' />";
-				link = link
-				.replace("<url>", getMediaFileURL(mediaFile))
-				.replace("<name>", mediaFile.getName())
-				.replace("<width>", "")
-				.replace("<height>", "");
-			}
-			else {
-				link = "<a href='<url>'><name></a>";
-				link = link
-				.replace("<url>", getMediaFileURL(mediaFile))
-				.replace("<name>", mediaFile.getName());
-			}
-			bean.setText(link);
-		} catch (Exception e) {
+        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+        try {
+            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+            String link;
+            if (mediaFile.isImageFile()) {
+                link = "<img src='<url>' alt='<name>' width='<width>' height='<height>' />";
+                link = link.replace("<url>", getMediaFileURL(mediaFile))
+                           .replace("<name>", mediaFile.getName())
+                           .replace("<width>", "")
+                           .replace("<height>", "");
+            } else {
+                link = "<a href='<url>'><name></a>";
+                link = link.replace("<url>", getMediaFileURL(mediaFile))
+                           .replace("<name>", mediaFile.getName());
+            }
+            bean.setText(link);
+
+        } catch (Exception e) {
             log.error("Error while constructing media file link for new entry", e);
-		}
-		return SUCCESS;
+        }
+        return SUCCESS;
     }
 
-	public EntryBean getBean() {
-		return bean;
-	}
+    public EntryBean getBean() {
+        return bean;
+    }
 
-	public void setBean(EntryBean bean) {
-		this.bean = bean;
-	}
-    
+    public void setBean(EntryBean bean) {
+        this.bean = bean;
+    }
 }

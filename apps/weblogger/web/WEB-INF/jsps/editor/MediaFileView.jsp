@@ -19,34 +19,18 @@
 
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/menu.css'/>" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/container_core-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/menu-min.js'/>"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
 
 
 <style>
-    body   {
-        margin:0;
-        padding:0;
-        text-align:left;
-    }
-    h1     {
-        font-size:20px;
-        font-weight:bold;
-    }
-    .yui-overlay {
-        position:fixed;
-        background: #ffffff;
-        z-index: 112;
-        color:#000000;
-        border: 4px solid #525252;
-        text-align:left;
-        top: 50%;
-        left: 50%;
-    }
     .mediaObject {
          width:120px;
          height:120px;
@@ -148,8 +132,6 @@
             lazyload: true
         });
 
-        oEweContextMenu.configTrigger = configTrigger;
-
         oEweContextMenu.trigger = oClones.getElementsByClassName("contextMenu");
 
         // "render" event handler for the ewe context menu
@@ -161,50 +143,6 @@
         // Add a "render" event handler to the ewe context menu
         oEweContextMenu.subscribe("render", onContextMenuRender);
     });
-
-    YAHOO.example = function() {
-
-        var $D = YAHOO.util.Dom;
-        var $E = YAHOO.util.Event;
-        return {
-            init : function() {
-                var overlay_img = new YAHOO.widget.Overlay("overlay_img", { fixedcenter:true,
-                    visible:false,
-                    width:"569px",height:"550px"
-                });
-
-                overlay_img.render();
-                var overlay = document.createElement('div');
-                overlay.id = 'overlay';
-                // Assign 100% height and width
-                overlay.style.width = '100%';
-                overlay.style.height = '100%';
-
-                document.getElementsByTagName('body')[0].appendChild(overlay);
-                overlay.style.display = 'none';
-            }
-        };
-
-    }();
-
-    YAHOO.util.Event.addListener(window, "load", YAHOO.example.init);
-
-    function configTrigger(p_sType, p_aArgs, p_oMenu) {
-        window.alert("HI");
-        var oTrigger = p_aArgs[0];
-        if (oTrigger) {
-            if (this._oTrigger) {
-                this._removeEventHandlers();
-            }
-            this._oTrigger = oTrigger;
-            Event.on(oTrigger, EVENT_TYPES.CONTEXT_MENU, this._onTriggerContextMenu, this, true);
-            Event.on(oTrigger, EVENT_TYPES.CLICK, this._onTriggerClick, this, true);
-        }
-        else {
-            this._removeEventHandlers();
-        }
-    }
-
 
 </script>
 
@@ -234,36 +172,9 @@
             document.mediaFileViewForm.submit();
         }
     }
-
-    function onClose() {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('overlay_img').style.visibility = 'hidden';
-    }
-
-    function onClickEdit(mediaFileId) {
-        var browser=navigator.appName;
-        document.getElementById("overlay_img").style.visibility = "visible";
-        document.getElementById('overlay').style.display = 'block';
-
-        var frame = document.createElement('iframe');
-        frame.setAttribute("id","myframe");
-        frame.setAttribute("frameborder","no");
-        frame.setAttribute("scrolling","auto");
-        frame.setAttribute('src','<s:url action="mediaFileEdit"><s:param name="weblog" value="%{actionWeblog.handle}" /></s:url>&mediaFileId='+mediaFileId );
-        frame.style.width="100%";
-        frame.style.height="100%";
-        if (browser=="Microsoft Internet Explorer")
-        {
-            document.getElementById("overlay_img").style.top= "40px";
-            document.getElementById("overlay_img").style.left= "170px";
-        }
-        document.getElementById("overlay_img").innerHTML = '<div ><a href="#" class="container-close" onclick="onClose()"></a></div>';
-        document.getElementById("overlay_img").appendChild(frame);
-
-    }
-
-    -->
+-->
 </script>
+
 
 <%-- ********************************************************************* --%>
 
@@ -299,7 +210,7 @@
         </s:if>
         <s:else>
             <s:text name="mediaFileView.noResults" />
-        </s:else>       
+        </s:else>
         <s:text name="mediaFileView.searchInfo" />
 
         <ul>
@@ -361,7 +272,7 @@
 
 <s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
 
-<s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView" onsubmit="editorCleanup()">
+<s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
 
     <%--
     <s:url id="mediaFileHierarchicalViewURL" action="mediaFileHierarchicalView">
@@ -426,7 +337,7 @@
                         </div>
                     </li>
                 </s:iterator>
-                    
+
                 <%-- --------------------------------------------------------- --%>
 
                 <%-- List media files next --%>
@@ -580,13 +491,52 @@
 
 </s:if>
 
-<%--
+
+
+<script type="text/javascript">
+<!--
+    function onClickEdit(mediaFileId) {
+        <s:url id="mediaFileEditURL" action="mediaFileEdit">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        $("#mediaFileEditor").attr('src',
+            '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+        YAHOO.mediaFileEditor.lightbox.show();
+    }
+
+    function onClose() {
+        $("#mediaFileEditor").attr('src','about:blank');
+        YAHOO.mediaFileEditor.lightbox.hide();
+    }
+
+    YAHOO.namespace("mediaFileEditor");
+    function init() {
+        YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
+            "mediafile_edit_lightbox", {
+                modal:    true,
+                width:   "600px",
+                height:  "600px",
+                visible: false,
+                fixedcenter: true,
+                constraintoviewport: true
+            }
+        );
+        YAHOO.mediaFileEditor.lightbox.render(document.body);
+    }
+    YAHOO.util.Event.addListener(window, "load", init);
+-->
+</script>
+
 <div id="mediafile_edit_lightbox" style="visibility:hidden">
     <div class="hd">Media File Editor</div>
     <div class="bd">
-        <iframe src="http://sun.com" style="visibility:inherit" height="0" width="0"></iframe>
+        <iframe id="mediaFileEditor"
+                style="visibility:inherit"
+                height="100%"
+                width="100%"
+                frameborder="no"
+                scrolling="auto">
+        </iframe>
     </div>
     <div class="ft"></div>
 </div>
---%>
-

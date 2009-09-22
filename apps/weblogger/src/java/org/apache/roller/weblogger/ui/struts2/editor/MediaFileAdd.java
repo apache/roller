@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
+
 /**
  * Adds a new media file.
  */
@@ -42,24 +43,27 @@ public class MediaFileAdd extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileAdd.class);
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
+
     // file uploaded by the user
     private File uploadedFile = null;
+
     // content type for upload file
     private String uploadedFileContentType = null;
+    
     // filename for uploaded file
     private String uploadedFileFileName = null;
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
         this.desiredMenu = "editor";
-        this.pageTitle = "mediaFile.add.title";
+        this.pageTitle = "mediaFileAdd.title";
     }
 
     /**
      * Prepares action class
      */
     public void myPrepare() {
-        System.out.println("Into myprepare");
+        log.debug("Into myprepare");
         refreshAllDirectories();
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
@@ -95,6 +99,7 @@ public class MediaFileAdd extends MediaFileBase {
             try {
                 MediaFile mediaFile = new MediaFile();
                 bean.copyTo(mediaFile);
+                
                 mediaFile.setDirectory(getDirectory());
                 mediaFile.setWeblog(getActionWeblog());
                 mediaFile.setLength(this.uploadedFile.length());
@@ -104,6 +109,7 @@ public class MediaFileAdd extends MediaFileBase {
                 WebloggerFactory.getWeblogger().flush();
                 bean.setId(mediaFile.getId());
                 return SUCCESS;
+
             } catch (FileIOException ex) {
                 addError("uploadFiles.error.upload", bean.getName());
             } catch (Exception e) {

@@ -38,7 +38,9 @@ function getFileName(fullName) {
 
 <p class="subtitle">
     <s:text name="mediaFileAdd.title"  />
-
+</p>
+<p class="pagetip">
+    <s:text name="mediaFileAdd.pageTip"  />
 </p>
 
 <s:form id="entry" action="mediaFileAdd!save" onsubmit="editorCleanup()" method="POST" enctype="multipart/form-data">
@@ -54,7 +56,10 @@ function getFileName(fullName) {
                 <label for="title"><s:text name="mediaFileAdd.fileLocation" /></label>
             </td>
             <td>
-                 <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=getFileName(this.value)" /><br />
+                 <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=getFileName(this.value)" />
+                 <br />
+                 <br />
+                 <br />
             </td>
         </tr>
 
@@ -114,7 +119,7 @@ function getFileName(fullName) {
 
     </table>
 
-    <br>
+    <br />
     <div class="control">
        <input type="submit" value='<s:text name="mediaFileAdd.upload" />' name="upload" />
     </div>
