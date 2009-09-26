@@ -85,7 +85,7 @@ public class CustomUserRegistry {
 
         if(authentication == null) {
             // Try to get SSO data from HttpServletRequest
-            userName = getRequestAttribute(request, WebloggerConfig.getProperty(UID_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
+            userName = getRequestAttribute(request, WebloggerConfig.getProperty(UID_LDAP_PROPERTY, DEFAULT_UID_LDAP_ATTRIBUTE));
 
             screenName = getRequestAttribute(request, WebloggerConfig.getProperty(SNAME_LDAP_PROPERTY, DEFAULT_SNAME_LDAP_ATTRIBUTE));
 
