@@ -17,22 +17,20 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import java.util.Iterator;
-import java.util.List;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.security.ldap.LdapDataAccessException;
-import org.springframework.security.ldap.LdapAuthoritiesPopulator;
-import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.security.userdetails.ldap.LdapUserDetails;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.UserRole;
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.ldap.LdapAuthoritiesPopulator;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 
 /**
@@ -47,32 +45,33 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
     /* (non-Javadoc)
      * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
-    public GrantedAuthority[] getGrantedAuthorities(DirContextOperations userData, String username) throws LdapDataAccessException {
+    public GrantedAuthority[] getGrantedAuthorities(DirContextOperations userData, String username) {
+
+        // This check is probably unnecessary.
+        if (userData == null) {
+            throw new IllegalArgumentException("The userData argument should not be null at this point.");
+        }
 
         User user = null;
-        List roles = null;
+        List<String> roles = null;
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             user = umgr.getUserByUserName(username, Boolean.TRUE);
             roles = umgr.getRoles(user);
-            
         } catch (WebloggerException ex) {
-            throw new LdapDataAccessException("ERROR in user lookup", ex);
+            throw new DataRetrievalFailureException("ERROR in user lookup", ex);
         }
 
-        if (userData == null) {
-            throw new LdapDataAccessException("ERROR no user: " + username);
+        if (user == null) {
+            throw new UsernameNotFoundException("ERROR user: " + username + " not found while granting authorities");
         }
 
-        
-        int roleCount = roles.size();
-        if (defaultRole != null) roleCount++;
+        int roleCount = roles.size() + (defaultRole != null ? 1 : 0);
         GrantedAuthority[] authorities = new GrantedAuthorityImpl[roleCount];
         int i = 0;
-        for (Iterator it = roles.iterator(); it.hasNext();) {
-            UserRole role = (UserRole) it.next();
-            authorities[i++] = new GrantedAuthorityImpl(role.getRole());
+        for(String role : roles) {
+            authorities[i++] = new GrantedAuthorityImpl(role);
         }
         
         if (defaultRole != null) {
@@ -80,7 +79,8 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         }
 
         if (authorities.length == 0) {
-            throw new UsernameNotFoundException("User has no GrantedAuthority");
+            // TODO: This doesn't seem like the right type of exception to throw here, but retained it, fixed the message
+            throw new UsernameNotFoundException("User " + username + " has no roles granted and there is no default role set.");
         }
 
         return authorities;
