@@ -115,8 +115,9 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/mediaresource/");
+        url.append("/");
         url.append(weblog.getHandle());
+        url.append("/mediaresource/");
         url.append("/");
         url.append(URLUtilities.encode(fileAnchor));
         

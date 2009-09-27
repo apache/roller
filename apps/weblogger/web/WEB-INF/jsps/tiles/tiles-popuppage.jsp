@@ -21,9 +21,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <tiles:insertAttribute name="head" />    
-        <style type="text/css">
-            <tiles:insertAttribute name="styles" />
-        </style>
     </head>
 
     <body class=" yui-skin-sam">

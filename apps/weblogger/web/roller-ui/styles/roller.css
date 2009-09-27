@@ -32,6 +32,7 @@ body {
 
 th, td {
     border: none;
+    vertical-align: top;
 }
 
 a {

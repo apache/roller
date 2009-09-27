@@ -17,15 +17,19 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/fonts-min.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/autocomplete.css'/>" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/menu.css'/>" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/connection-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/animation-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/container_core-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/menu-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/datasource-min.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/autocomplete-min.js'/>"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
+
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
 
 <style>
 #tagAutoCompleteWrapper {
@@ -209,8 +213,6 @@
 </s:form>
 
 <script type="text/javascript">
-
-var tags = ["java","jammy","cool","booger","smell"];
 
 YAHOO.example.RemoteCustomRequest = function() {
     //var oDS = new YAHOO.util.LocalDataSource(tags);

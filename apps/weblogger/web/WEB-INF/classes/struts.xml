@@ -233,7 +233,6 @@
             <result name="success" type="chain">entryAdd</result>
         </action>
         
-
         <action name="mediaFileAdd!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
             <result name="input" type="tiles">.MediaFileAdd</result>
@@ -476,12 +475,12 @@
             <result name="error" type="tiles">.MediaFileAddInclude</result>
         </action>
 
-	<action name="mediaFileSearch!*" method="{1}"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
+	<action name="mediaFileImageChooser!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
             <param name="overlayMode">true</param>
-            <result name="input" type="tiles">.MediaFileSearchInclude</result>
-            <result name="error" type="tiles">.MediaFileSearchInclude</result>
-            <result name="success" type="tiles">.MediaFileSearchInclude</result>
+            <result name="input" type="tiles">.MediaFileImageChooser</result>
+            <result name="error" type="tiles">.MediaFileImageChooser</result>
+            <result name="success" type="tiles">.MediaFileImageChooser</result>
         </action>
 
     </package>
