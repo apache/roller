@@ -16,14 +16,28 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />'></script>
+
+<s:if test="bean.isImage">
+    <img align="right" alt="thumbnail"
+         src='<s:property value="bean.thumbnailURL" />' />
+</s:if>
 
 <p class="subtitle">
-    <s:text name="mediaFile.edit.title"  />
+    <s:text name="mediaFileEdit.subtitle">
+        <s:param value="bean.name" />
+    </s:text>
+</p>
+
+<p class="pagetip">
+    <s:text name="mediaFileEdit.pagetip"  />
 </p>
 
 <s:form id="entry" action="mediaFileEdit!save" method="POST">
     <s:hidden name="weblog" />
-    <s:hidden name="mediaFileId" />
+    <s:hidden name="mediaFileId" id="mediaFileId" />
+    <s:hidden name="bean.permalink" />
+
 
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
@@ -35,25 +49,34 @@
                 <label for="status"><s:text name="mediaFileEdit.name" /></label>
             </td>
             <td>
-                <s:textfield name="bean.name" size="50" maxlength="255" tabindex="1" />
-            </td>
-       </tr>
-
-        <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.description" /></label>
-            </td>
-            <td>
-                <s:textarea name="bean.description" cols="50" rows="5" tabindex="3"/>
+                <s:textfield name="bean.name" size="30" maxlength="100" tabindex="1" />
             </td>
        </tr>
 
        <tr>
             <td class="entryEditFormLabel">
-                <label for="copyright"><s:text name="mediaFileEdit.copyright" /></label>
+                <label for="fileInfo"><s:text name="mediaFileEdit.fileInfo" /></label>
             </td>
             <td>
-                <s:textarea name="bean.copyrightText" cols="50" rows="3" tabindex="4"/>
+                <s:text name="mediaFileEdit.fileTypeSize">
+                    <s:param value="bean.contentType" />
+                    <s:param value="bean.length" />
+                </s:text>
+                <s:if test="bean.isImage">
+                    <s:text name="mediaFileEdit.fileDimensions">
+                        <s:param value="bean.width" />
+                        <s:param value="bean.height" />
+                    </s:text>
+                </s:if>
+            </td>
+       </tr>
+
+       <tr>
+            <td class="entryEditFormLabel">
+                <label for="status"><s:text name="mediaFileEdit.description" /></label>
+            </td>
+            <td>
+                <s:textarea name="bean.description" cols="50" rows="2" tabindex="2"/>
             </td>
        </tr>
 
@@ -62,7 +85,16 @@
                 <label for="tags"><s:text name="mediaFileEdit.tags" /></label>
             </td>
             <td>
-                <s:textfield name="bean.tags" size="50" maxlength="255" tabindex="5" />
+                <s:textfield name="bean.tags" size="30" maxlength="100" tabindex="3" />
+            </td>
+       </tr>
+
+       <tr>
+            <td class="entryEditFormLabel">
+                <label for="copyright"><s:text name="mediaFileEdit.copyright" /></label>
+            </td>
+            <td>
+                <s:textfield name="bean.copyrightText" size="30" maxlength="100" tabindex="4"/>
             </td>
        </tr>
 
@@ -71,7 +103,8 @@
                 <label for="directoryId"><s:text name="mediaFileEdit.directory" /></label>
             </td>
             <td>
-                <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="path" />
+                <s:select name="bean.directoryId" list="allDirectories"
+                    listKey="id" listValue="path" tabindex="5" />
             </td>
        </tr>
 
@@ -80,16 +113,37 @@
                 <label for="status"><s:text name="mediaFileEdit.includeGallery" /></label>
             </td>
             <td>
-                <s:checkbox name="bean.sharedForGallery" />
+                <s:checkbox name="bean.sharedForGallery" tabindex="6" />
+                <s:text name="mediaFileEdit.includeGalleryHelp" />
             </td>
        </tr>
 
     </table>
 
-    <br>
     <div class="control">
-       <input type="submit" value="<s:text name="mediaFileEdit.save" />" name="submit" />
-       <input type="button" value="<s:text name="mediaFileEdit.cancel" />" onClick="javascript:window.parent.onClose();" />
+       <input type="submit" tabindex="7"
+              value="<s:text name="mediaFileEdit.save" />" name="submit" />
+       <input type="button" tabindex="8"
+              value="<s:text name="mediaFileEdit.cancel" />" onClick="javascript:window.parent.onClose();" />
     </div>
 
 </s:form>
+
+
+<%-- Create Weblog Entry and Create Podcast Entry links --%>
+<br />
+
+<p>
+<a href='#' onclick='javascript:window.parent.onCreateWeblogPost($("#mediaFileId").get(0).value)'>
+    <s:text name="mediaFileEdit.createWeblogPost" />
+</a><br />
+<s:text name="mediaFileEdit.createWeblogPostTip" />
+</p>
+
+<p>
+<a href='#' onclick='javascript:window.parent.onCreatePodcastPost($("#entry_bean_permalink").get(0).value)'>
+    <s:text name="mediaFileEdit.createPodcastPost" />
+</a><br />
+<s:text name="mediaFileEdit.createWeblogPostTip" /><br />
+</p>
+

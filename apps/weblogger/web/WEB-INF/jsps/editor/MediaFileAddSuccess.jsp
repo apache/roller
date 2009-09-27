@@ -101,7 +101,7 @@
                     <s:property value="%{#newImage.permalink}" /><br />
 
                     <span class="label"><s:text name="mediaFileSuccess.size" /></span>
-                    <s:property value="%{#newImage.length}" /> <s:text name="mediaFileSuccess.bytes" />, 
+                    <s:property value="%{#newImage.length}" /> <s:text name="mediaFileSuccess.bytes" />,
                     <s:property value="%{#newImage.width}" /> x
                     <s:property value="%{#newImage.height}" /> <s:text name="mediaFileSuccess.pixels" />
 
@@ -151,13 +151,26 @@
         <br/>
         <br/>
 
-        <%-- Link: Upload more files --%>
-        <s:url id="mediaFileAddURL" action="mediaFileAdd">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        <s:a href="%{mediaFileAddURL}">
-            <s:text name="mediaFileSuccess.addAnother" />
-        </s:a>
+        <s:text name="mediaFileSuccess.noThanks" />
+        <ul>
+            <li>
+                <s:url id="mediaFileAddURL" action="mediaFileAdd">
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+                <s:a href="%{mediaFileAddURL}">
+                    <s:text name="mediaFileSuccess.addAnother" />
+                </s:a>
+            </li>
+
+            <li>
+                <s:url id="mediaFileViewURL" action="mediaFileView">
+                    <s:param name="weblog" value="%{actionWeblog.handle}" />
+                </s:url>
+                <s:a href="%{mediaFileViewURL}">
+                    <s:text name="mediaFileSuccess.mediaFileView" />
+                </s:a>
+            </li>
+        </ul>
 
     </div>
 

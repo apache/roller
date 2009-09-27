@@ -39,6 +39,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     private String weblog = null;
     private String enclosureUrl = null;
     private String[] selectedImages = null;
+    private String selectedImage = null;
     
 
     public EntryAddWithMediaFile() {
@@ -57,7 +58,15 @@ public class EntryAddWithMediaFile extends MediaFileBase {
              WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
 
+            if (StringUtils.isNotEmpty(selectedImage) && selectedImages == null) {
+                selectedImages = new String[1];
+                selectedImages[0] = selectedImage;
+            }
+
+            StringBuilder sb = new StringBuilder();
+
             if (selectedImages != null) {
+
                 for (int i=0; i<selectedImages.length; i++) {
                     MediaFile mediaFile = manager.getMediaFile(selectedImages[i]);
                     String link = "";
@@ -70,17 +79,27 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                                    .replace("<width>", ""+mediaFile.getThumbnailWidth())
                                    .replace("<height>", ""+mediaFile.getThumbnailHeight());
                     } else {
-                        link = "<a href='<url>'><name></a>";
+                        link = "<a href='<url>'><name></a> (<size> bytes, <type>)";
                         link = link.replace("<url>", getMediaFileURL(mediaFile))
-                                   .replace("<name>", mediaFile.getName());
+                                   .replace("<name>", mediaFile.getName())
+                                   .replace("<size>",""+mediaFile.getLength())
+                                   .replace("<type>",mediaFile.getContentType());
                     }
-                    bean.setText(link);
+                    sb.append(link);
                 }
             }
 
             if (StringUtils.isNotEmpty(enclosureUrl)) {
+                sb.append("<p>")
+                  .append(getText("mediaFileEdit.includesEnclosure"))
+                  .append("<br />")
+                  .append("<a href=''>")
+                  .append(enclosureUrl)
+                  .append("</a></p>");
                 bean.setEnclosureURL(enclosureUrl);
             }
+
+            bean.setText(sb.toString());
 
         } catch (Exception e) {
             log.error("Error while constructing media file link for new entry", e);
@@ -136,6 +155,20 @@ public class EntryAddWithMediaFile extends MediaFileBase {
      */
     public void setWeblog(String weblog) {
         this.weblog = weblog;
+    }
+
+    /**
+     * @return the selectedImage
+     */
+    public String getSelectedImage() {
+        return selectedImage;
+    }
+
+    /**
+     * @param selectedImage the selectedImage to set
+     */
+    public void setSelectedImage(String selectedImage) {
+        this.selectedImage = selectedImage;
     }
 
 }

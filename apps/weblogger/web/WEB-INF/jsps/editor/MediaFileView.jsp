@@ -27,7 +27,7 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
 
-<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
+<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />'></script>
 
 
 <style>
@@ -51,104 +51,6 @@
 
 
 <script type="text/javascript">
-    YAHOO.util.Event.onContentReady("myMenu", function () {
-        var oClones = this;
-
-        function findMediaFileIdForLineItem(lineItemNode) {
-            var findMediaFileIdNode = function(node) {
-                return (node.id == 'mediafileidentity');
-            }
-            var temp_elements = YAHOO.util.Dom.getElementsBy(findMediaFileIdNode,"input",lineItemNode);
-            return temp_elements[0].value;
-        }
-
-        function deleteMedia(p_oLI) {
-            var lineItemNode = YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-            var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-            document.mediaFileViewForm.mediaFileId.value=hidden_mediaFileId_value;
-            document.mediaFileViewForm.action='<s:url action="mediaFileView!delete" />';
-            document.mediaFileViewForm.submit();
-        }
-
-        function createPost(p_oLI) {
-            var lineItemNode = YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-            var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-            document.mediaFileViewForm.mediaFileId.value = hidden_mediaFileId_value;
-            document.mediaFileViewForm.action = '<s:url action="entryAddWithMediaFile"></s:url>';
-            document.mediaFileViewForm.submit();
-        }
-
-        function includeMedia(p_oLI) {
-            var lineItemNode = YAHOO.util.Dom.getAncestorByTagName(p_oLI, "LI");
-            var hidden_mediaFileId_value = findMediaFileIdForLineItem(lineItemNode);
-            document.mediaFileViewForm.mediaFileId.value = hidden_mediaFileId_value;
-            document.mediaFileViewForm.action = '<s:url action="mediaFileView!includeInGallery" />';
-            document.mediaFileViewForm.submit();
-        }
-
-        function onEweContextMenuClick(p_sType, p_aArgs) {
-
-            var oItem = p_aArgs[1], // The MenuItem that was clicked
-            oTarget = this.contextEventTarget,
-            oLI;
-
-            if (oItem) {
-
-                oLI = oTarget.className == "contextMenu" ?
-                    oTarget : YAHOO.util.Dom.getAncestorByClassName(oTarget, "contextMenu");
-
-                switch (oItem.index) {
-
-                    case 0:     // delete
-                        deleteMedia(oLI);
-                        break;
-                    case 1:     // create post
-                        createPost(oLI);
-                        break;
-                    case 2:     // include in gallery
-                        includeMedia(oLI);
-                        break;
-                }
-            }
-        }
-
-        /*
-         Array of text labels for the MenuItem instances to be
-         added to the ContextMenu instanc.
-         */
-        var aMenuItems = [
-            '<s:text name="mediaFileView.delete" />',
-            '<s:text name="mediaFileView.createPost" />',
-            '<s:text name="mediaFileView.includeInGallery" />' ];
-
-        /*
-         Instantiate a ContextMenu:  The first argument passed to the constructor
-         is the id for the Menu element to be created, the second is an
-         object literal of configuration properties.
-         */
-        var oEweContextMenu = new YAHOO.widget.ContextMenu("ewecontextmenu", {
-            trigger: oClones.getElementsByClassName("contextMenu"),
-            itemdata: aMenuItems,
-            lazyload: true
-        });
-
-        oEweContextMenu.trigger = oClones.getElementsByClassName("contextMenu");
-
-        // "render" event handler for the ewe context menu
-        function onContextMenuRender(p_sType, p_aArgs) {
-            //  Add a "click" event handler to the ewe context menu
-            this.subscribe("click", onEweContextMenuClick);
-        }
-
-        // Add a "render" event handler to the ewe context menu
-        oEweContextMenu.subscribe("render", onContextMenuRender);
-    });
-
-</script>
-
-
-<script type="text/javascript">
-    <!--
 
     function onSelectDirectory(id) {
         window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
@@ -172,7 +74,7 @@
             document.mediaFileViewForm.submit();
         }
     }
--->
+
 </script>
 
 
@@ -272,7 +174,7 @@
 
 <s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
 
-<s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
+  <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
 
     <%--
     <s:url id="mediaFileHierarchicalViewURL" action="mediaFileHierarchicalView">
@@ -314,13 +216,13 @@
 
             <s:if test="!pager">
 
+                <%-- ----------------------------------------------------- --%>
+
                 <%-- NOT SEARCH RESULTS --%>
 
                 <s:if test="childDirectories.size() == 0 && childFiles.size() ==0">
                     <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
                 </s:if>
-
-                <%-- --------------------------------------------------------- --%>
 
                 <%-- List media directories first --%>
 
@@ -337,8 +239,6 @@
                         </div>
                     </li>
                 </s:iterator>
-
-                <%-- --------------------------------------------------------- --%>
 
                 <%-- List media files next --%>
 
@@ -368,12 +268,8 @@
 
                         <div class="mediaObjectInfo">
 
-                            <label>
-                                <a class="contextMenu" href="#">
-                                    <img  border="0"
-                                        src='<s:url value="/images/control_play.png"/>' alt="[v]" />
-                                </a>
-                                <str:truncateNicely upper="50">
+                            <label class="mediaFile">
+                                <str:truncateNicely lower="40" upper="50">
                                     <s:property value="#mediaFile.name" />
                                 </str:truncateNicely>
                                 <input type="checkbox" style="float:right"
@@ -383,17 +279,17 @@
                                        value="<s:property value='#mediaFile.id'/>">
                             </label>
 
-
                         </div>
 
                     </li>
 
                 </s:iterator>
 
-
             </s:if>
 
             <s:else>
+
+                <%-- ----------------------------------------------------- --%>
 
                 <%-- SEARCH RESULTS --%>
 
@@ -424,11 +320,7 @@
                         <div class="mediaObjectInfo">
 
                             <label>
-                                <a class="contextMenu" href="#">
-                                    <img  border="0"
-                                        src='<s:url value="/images/control_play.png"/>' alt="[v]" />
-                                </a>
-                                <str:truncateNicely upper="50">
+                                <str:truncateNicely lower="40" upper="50">
                                     <s:property value="#mediaFile.name" />
                                 </str:truncateNicely>
                                 <input type="checkbox" style="float:right"
@@ -450,13 +342,7 @@
         </ul>
     </div>
 
-
-    <%-- ***************************************************************** --%>
-
     <div style="clear:left;"></div>
-
-    <div id="overlay_img" style="visibility:hidden">
-    </div>
 
 
     <%-- ***************************************************************** --%>
@@ -474,13 +360,14 @@
         </span>
     </div>
 
-</s:form>
+  </s:form>
 
+  <s:if test="!pager">
     <br/>
     <br/>
     <br/>
 
-    <%-- Create new direcrtory --%>
+    <%-- Only show Create New Directory control when NOT showing search results --%>
 
     <div>
         <s:text name="mediaFileView.newDirName" />
@@ -488,13 +375,42 @@
                name="newDirectoryName" size="30" />
         <input type="button" value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
     </div>
+  </s:if>
 
 </s:if>
 
 
+<%-- ***************************************************************** --%>
+
+<%-- code to create new weblog post when Media File Edit lightbox requests it --%>
 
 <script type="text/javascript">
-<!--
+
+    function onCreateWeblogPost(mediaFileId) {
+        $("#selectedImage").get(0).value = mediaFileId;
+        $("#createPostForm").get(0).submit();
+    }
+
+    function onCreatePodcastPost(enclosureURL) {
+        $("#enclosureUrl").get(0).value = enclosureURL;
+        $("#createPostForm").get(0).submit();
+    }
+
+</script>
+
+<s:form id="createPostForm" action='entryAddWithMediaFile'>
+    <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
+    <input type="hidden" name="selectedImage" id="selectedImage" />
+    <input type="hidden" name="enclosureUrl" id="enclosureUrl" />
+</s:form>
+
+
+<%-- ***************************************************************** --%>
+
+<%-- code to launch Media File Edit lightbox when user clicks a media file --%>
+
+<script type="text/javascript">
+
     function onClickEdit(mediaFileId) {
         <s:url id="mediaFileEditURL" action="mediaFileEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
@@ -524,7 +440,7 @@
         YAHOO.mediaFileEditor.lightbox.render(document.body);
     }
     YAHOO.util.Event.addListener(window, "load", init);
--->
+
 </script>
 
 <div id="mediafile_edit_lightbox" style="visibility:hidden">

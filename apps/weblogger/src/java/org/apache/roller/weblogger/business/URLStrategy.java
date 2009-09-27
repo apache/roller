@@ -156,6 +156,13 @@ public interface URLStrategy {
                                                  boolean absolute);
 
     /**
+     * Get url for a single mediafile thumbnail on a given weblog.
+     */
+    public String getMediaFileThumbnailURL(Weblog weblog,
+                                                String fileAnchor,
+                                                boolean absolute);
+
+    /**
      * Get url for a collection of entries on a given weblog.
      */
     public String getWeblogCollectionURL(Weblog weblog,

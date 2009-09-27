@@ -38,6 +38,7 @@ public class MediaFileEdit extends MediaFileBase {
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
 
+
     public MediaFileEdit() {
         this.actionName = "mediaFileEdit";
         this.desiredMenu = "editor";
@@ -81,8 +82,10 @@ public class MediaFileEdit extends MediaFileBase {
         try {
             MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
             this.bean.copyFrom(mediaFile);
+
         } catch (FileIOException ex) {
             addError("uploadFiles.error.upload", bean.getName());
+
         } catch (Exception e) {
             log.error("Error saving new entry", e);
             // TODO: i18n
@@ -108,8 +111,10 @@ public class MediaFileEdit extends MediaFileBase {
                 WebloggerFactory.getWeblogger().flush();
                 addMessage("mediaFile.update.success");
                 return SUCCESS;
+
             } catch (FileIOException ex) {
                 addError("uploadFiles.error.upload", bean.getName());
+
             } catch (Exception e) {
                 log.error("Error saving new entry", e);
                 // TODO: i18n

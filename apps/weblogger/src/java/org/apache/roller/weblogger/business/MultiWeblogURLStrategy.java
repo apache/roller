@@ -124,7 +124,17 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         return url.toString();
     }
 
-    
+
+    /**
+     * Get url for a single weblog media file on a given weblog.
+     */
+    public String getMediaFileThumbnailURL(Weblog weblog,
+            String fileAnchor,
+            boolean absolute) {
+            
+        return getMediaFileURL(weblog, fileAnchor, absolute) + "?t=true";
+    }
+
     
     /**
      * Get url for a single weblog entry comments on a given weblog.

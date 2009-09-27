@@ -245,6 +245,15 @@ public class MediaFile {
                 this.weblog, this.id, true);
     }
 
+    /**
+     * Returns thumbnail URL for this media file resource.
+     * Resulting URL will be a 404 if media file is not an image.
+     */
+    public String getThumbnailURL() {
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileThumbnailURL(
+                this.weblog, this.id, true);
+    }
+
     public String getCreatorUserName() {
         return creatorUserName;
     }

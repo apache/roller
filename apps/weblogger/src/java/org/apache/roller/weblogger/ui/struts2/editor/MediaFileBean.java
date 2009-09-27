@@ -29,13 +29,20 @@ import org.apache.roller.weblogger.pojos.MediaFileTag;
  */
 public class MediaFileBean {
 
-    String id;
-    String name;
-    String description;
-    String copyrightText;
-    String tags;
-    String directoryId;
-    boolean isSharedForGallery;
+    private String  id;
+    private String  name;
+    private String  description;
+    private String  contentType;
+    private String  copyrightText;
+    private String  tags;
+    private String  directoryId;
+    private boolean isSharedForGallery;
+    private String  permalink;
+    private String  thumbnailURL;
+    private boolean isImage;
+    private int     width;
+    private int     height;
+    private long    length;
 
     public String getName() {
         return name;
@@ -134,5 +141,110 @@ public class MediaFileBean {
 
         this.setSharedForGallery(dataHolder.isSharedForGallery());
         this.setDirectoryId(dataHolder.getDirectory().getId());
+        this.setPermalink(dataHolder.getPermalink());
+        this.setThumbnailURL(dataHolder.getThumbnailURL());
+        this.setIsImage(dataHolder.isImageFile());
+        this.setWidth(dataHolder.getWidth());
+        this.setHeight(dataHolder.getHeight());
+        this.setLength(dataHolder.getLength());
+        this.setContentType(dataHolder.getContentType());
+    }
+
+    /**
+     * @return the permalink
+     */
+    public String getPermalink() {
+        return permalink;
+    }
+
+    /**
+     * @param permalink the permalink to set
+     */
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
+    }
+
+    /**
+     * @return the isImage
+     */
+    public boolean isIsImage() {
+        return isImage;
+    }
+
+    /**
+     * @param isImage the isImage to set
+     */
+    public void setIsImage(boolean isImage) {
+        this.isImage = isImage;
+    }
+
+    /**
+     * @return the thumbnailURL
+     */
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    /**
+     * @param thumbnailURL the thumbnailURL to set
+     */
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
+    }
+
+    /**
+     * @return the width
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * @param width the width to set
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
+     * @return the height
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * @param height the height to set
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    /**
+     * @return the length
+     */
+    public long getLength() {
+        return length;
+    }
+
+    /**
+     * @param length the length to set
+     */
+    public void setLength(long length) {
+        this.length = length;
+    }
+
+    /**
+     * @return the contentType
+     */
+    public String getContentType() {
+        return contentType;
+    }
+
+    /**
+     * @param contentType the contentType to set
+     */
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }
