@@ -20,6 +20,10 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +34,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileType;
+import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -44,14 +49,19 @@ public class MediaFileAdd extends MediaFileBase {
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
 
-    // file uploaded by the user
-    private File uploadedFile = null;
+    // an array of files uploaded by the user, if applicable
+    private File[] uploadedFiles = null;
 
-    // content type for upload file
-    private String uploadedFileContentType = null;
+    // an array of content types for upload files
+    private String[] uploadedFilesContentType = null;
+
+    // an array of filenames for uploaded files
+    private String[] uploadedFilesFileName = null;
+
+    private List<MediaFile> newImages = new ArrayList<MediaFile>();
+
+    private List<MediaFile> newFiles = new ArrayList<MediaFile>();
     
-    // filename for uploaded file
-    private String uploadedFileFileName = null;
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
@@ -93,31 +103,88 @@ public class MediaFileAdd extends MediaFileBase {
      * @return String The result of the action.
      */
     public String save() {
+
         myValidate();
+
         if (!hasActionErrors()) {
+            
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-            try {
-                MediaFile mediaFile = new MediaFile();
-                bean.copyTo(mediaFile);
-                
-                mediaFile.setDirectory(getDirectory());
-                mediaFile.setWeblog(getActionWeblog());
-                mediaFile.setLength(this.uploadedFile.length());
-                mediaFile.setInputStream(new FileInputStream(this.uploadedFile));
-                mediaFile.setContentType(this.uploadedFileContentType);
-                manager.createMediaFile(getActionWeblog(), mediaFile);
-                WebloggerFactory.getWeblogger().flush();
-                bean.setId(mediaFile.getId());
+
+            RollerMessages errors = new RollerMessages();
+            List<String> uploaded = new ArrayList();
+            File[] uploads = getUploadedFiles();
+
+            if (uploads != null && uploads.length > 0) {
+
+                // loop over uploaded files and try saving them
+                for (int i = 0; i < uploads.length; i++) {
+
+                    // skip null files
+                    if (uploads[i] == null || !uploads[i].exists()) {
+                        continue;
+                    }
+
+                    try {
+                        MediaFile mediaFile = new MediaFile();
+                        bean.copyTo(mediaFile);
+
+                        String fileName = getUploadedFilesFileName()[i];
+                        int terminated = fileName.indexOf("\000");
+                        if (terminated != -1) {
+                            // disallow sneaky null terminated strings
+                            fileName = fileName.substring(0, terminated).trim();
+                        }
+
+                        // make sure fileName is valid
+                        if (fileName.indexOf("/") != -1 ||
+                                fileName.indexOf("\\") != -1 ||
+                                fileName.indexOf("..") != -1) {
+                            addError("uploadFiles.error.badPath", fileName);
+                            continue;
+                        }
+
+                        mediaFile.setName(       fileName);
+                        mediaFile.setDirectory(  getDirectory());
+                        mediaFile.setWeblog(     getActionWeblog());
+                        mediaFile.setLength(     this.uploadedFiles[i].length());
+                        mediaFile.setInputStream(new FileInputStream(this.uploadedFiles[i]));
+                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
+
+                        manager.createMediaFile(getActionWeblog(), mediaFile);
+                        WebloggerFactory.getWeblogger().flush();
+
+                        if (mediaFile.isImageFile()) {
+                            newImages.add(mediaFile);
+                        } else {
+                            newFiles.add(mediaFile);
+                        }
+
+                    } catch (FileIOException ex) {
+                        addError("uploadFiles.error.upload", bean.getName());
+                    } catch (Exception e) {
+                        log.error("Error saving new entry", e);
+                        // TODO: i18n
+                        addError("Error reading uploaded file - " + bean.getName());
+                    }
+                }
+
+                for (Iterator it = errors.getErrors(); it.hasNext();) {
+                    RollerMessage msg = (RollerMessage) it.next();
+                    addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+                }
+
+                if (uploaded.size() > 0) {
+                    addMessage("uploadFiles.uploadedFiles");
+
+                    for (String upload : uploaded) {
+                        addMessage("uploadFiles.uploadedFile",
+                            WebloggerFactory.getWeblogger().getUrlStrategy()
+                                .getWeblogResourceURL(getActionWeblog(), upload, true));
+                    }
+                }
+                this.pageTitle = "mediaFileAddSuccess.title";
                 return SUCCESS;
-
-            } catch (FileIOException ex) {
-                addError("uploadFiles.error.upload", bean.getName());
-            } catch (Exception e) {
-                log.error("Error saving new entry", e);
-                // TODO: i18n
-                addError("Error reading uploaded file - " + bean.getName());
             }
-
         }
         return INPUT;
     }
@@ -126,16 +193,14 @@ public class MediaFileAdd extends MediaFileBase {
      * Validates media file to be added.
      */
     public void myValidate() {
-        if (getDirectory().hasMediaFile(getBean().getName())) {
-            addError("MediaFile.error.duplicateName", getBean().getName());
-        }
+
+        //
+        // TODO: don't allow upload if user is over quota
+        //
+
         // make sure uploads are enabled
         if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
             addError("error.upload.disabled");
-        }
-
-        if (StringUtils.isEmpty(this.uploadedFileFileName)) {
-            addError("error.upload.file");
         }
     }
 
@@ -155,35 +220,55 @@ public class MediaFileAdd extends MediaFileBase {
         this.directory = directory;
     }
 
-    public File getUploadedFile() {
-        return uploadedFile;
+    public File[] getUploadedFiles() {
+        return uploadedFiles;
     }
 
-    public void setUploadedFile(File uploadedFile) {
-        this.uploadedFile = uploadedFile;
+    public void setUploadedFiles(File[] uploadedFiles) {
+        this.uploadedFiles = uploadedFiles;
     }
 
-    public String getUploadedFileContentType() {
-        return uploadedFileContentType;
+    public String[] getUploadedFilesContentType() {
+        return uploadedFilesContentType;
     }
 
-    public void setUploadedFileContentType(String uploadedFileContentType) {
-        this.uploadedFileContentType = uploadedFileContentType;
+    public void setUploadedFilesContentType(String[] uploadedFilesContentType) {
+        this.uploadedFilesContentType = uploadedFilesContentType;
     }
 
-    public String getUploadedFileFileName() {
-        return uploadedFileFileName;
+    public String[] getUploadedFilesFileName() {
+        return uploadedFilesFileName;
     }
 
-    public void setUploadedFileFileName(String uploadedFileFileName) {
-        this.uploadedFileFileName = uploadedFileFileName;
+    public void setUploadedFilesFileName(String[] uploadedFilesFileName) {
+        this.uploadedFilesFileName = uploadedFilesFileName;
     }
 
-    public boolean isContentTypeImage() {
-        if (this.uploadedFileContentType == null) {
-            return false;
-        }
-        return (this.uploadedFileContentType.toLowerCase().startsWith(
-                MediaFileType.IMAGE.getContentTypePrefix().toLowerCase()));
+    /**
+     * @return the newImages
+     */
+    public List<MediaFile> getNewImages() {
+        return newImages;
+    }
+
+    /**
+     * @param newImages the newImages to set
+     */
+    public void setNewImages(List<MediaFile> newImages) {
+        this.newImages = newImages;
+    }
+
+    /**
+     * @return the newFiles
+     */
+    public List<MediaFile> getNewFiles() {
+        return newFiles;
+    }
+
+    /**
+     * @param newFiles the newFiles to set
+     */
+    public void setNewFiles(List<MediaFile> newFiles) {
+        this.newFiles = newFiles;
     }
 }

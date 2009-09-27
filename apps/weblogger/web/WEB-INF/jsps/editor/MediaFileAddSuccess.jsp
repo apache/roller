@@ -16,49 +16,149 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
+
+<style type="text/css">
+    table.mediaFileTable {
+        margin-left: 2em;
+        width: 90%;
+    }
+    img.mediaFileImage {
+        margin-right: 1em;
+    }
+    span.label {
+        font-weight: bold;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("#submit").attr("disabled", true);
+
+        $("input[type='checkbox']").change(function() {
+            $("#submit").attr("disabled", true);
+            var boxes = $("input[type='checkbox']");
+            for (var i=0; i<boxes.length; i++) {
+                if (boxes.get(i).checked) {
+                    $("#submit").attr("disabled", false);
+                    break;
+                }
+            }
+            if ($("#enclosureUrl").get(0).getAttribute("value") != '') {
+            }
+        });
+    });
+
+    function setEnclosure(url) {
+        $("#enclosureUrl").get(0).value = url;
+        if (url != '') {
+            $("#submit").attr("disabled", false);
+        } else {
+            $("#submit").attr("disabled", true);
+        }
+    }
+</script>
+
 
 <p class="subtitle">
-    <s:text name="mediaFileSuccess.add" />
+    <s:text name="mediaFileSuccess.subtitle" />
+</p>
+<p class="pagetip">
+    <s:text name="mediaFileSuccess.pageTip" />
 </p>
 
-<s:form id="entry" action="addMedia!submit" onsubmit="editorCleanup()">
+<s:form id="entry" action="entryAddWithMediaFile">
     <s:hidden name="weblog" />
+    <s:hidden name="enclosureUrl" id="enclosureUrl" />
 
-    <div style="border:1px solid; width=80px;background-color: #cfc;margin-bottom:5px;">
-        <ul>
-            <li> <s:property value="bean.name" /> <s:text name="mediaFileSuccess.uploaded" /></li>
-        </ul>
-    </div>
 
-    <s:url id="mediaFileURL" value="/%{actionWeblog.handle}/mediaresource/%{bean.id}">
-    </s:url>
+    <s:if test="newImages.size() > 0">
+        <p><s:text name="mediaFileSuccess.selectImages" /></p>
 
-    <s:if test="contentTypeImage">
-        <div style="margin-bottom:10px;">
-        <img border="0" src='<s:property value="%{mediaFileURL}" />' width="150px" alt="image"/></div>
+        <%-- checkboxed list of images uploaded --%>
+        <table class="mediaFileTable">
+            <s:iterator value="newImages" id="newImage">
+            <tr>
+                <td>
+                    <%-- checkbox for file --%>
+                    <input type="checkbox"
+                           name="selectedImages"
+                           value="<s:property value="#newImage.id"/>"/>
+                </td>
+                <td>
+                    <%-- description of file --%>
+                    <img align="left" class="mediaFileImage"
+                         src='<s:property value="%{#newImage.permalink}" />?t=true' alt="thumbnail" />
+
+                    <span class="label"><s:text name="mediaFileSuccess.name" /></span>
+                    <s:property value="%{#newImage.name}" /><br />
+
+                    <span class="label"><s:text name="mediaFileSuccess.type" /></span>
+                    <s:property value="%{#newImage.contentType}" /><br />
+
+                    <span class="label"><s:text name="mediaFileSuccess.link" /></span>
+                    <s:property value="%{#newImage.permalink}" /><br />
+
+                    <span class="label"><s:text name="mediaFileSuccess.size" /></span>
+                    <s:property value="%{#newImage.length}" /> <s:text name="mediaFileSuccess.bytes" />, 
+                    <s:property value="%{#newImage.width}" /> x
+                    <s:property value="%{#newImage.height}" /> <s:text name="mediaFileSuccess.pixels" />
+
+                </td>
+            </tr>
+            </s:iterator>
+        </table>
+
+    </s:if>
+
+    <s:if test="newFiles.size() > 0">
+        <p><s:text name="mediaFileSuccess.selectEnclosure" /></p>
+
+        <%-- checkboxed list of other files uploaded uploaded --%>
+        <table class="mediaFileTable">
+            <s:iterator value="newFiles" id="newFile">
+            <tr>
+                <td>
+                    <%-- radio button for file --%>
+                    <input type="radio" name="enclosure"
+                       onchange="setEnclosure('<s:property value="%{#newFile.permalink}" />')" />
+                </td>
+                <td>
+                    <%-- description of file --%>
+                    <s:property value="%{#newFile.name}" />
+                </td>
+            </tr>
+            </s:iterator>
+            <tr>
+                <td>
+                    <input type="radio" name="enclosure" onchange="setEnclosure('')" />
+                </td>
+                <td>
+                    <s:text name="mediaFileSuccess.noEnclosure" />
+                </td>
+            </tr>
+        </table>
+
     </s:if>
 
 
-    <a style="font-size:11px;color:#000000;text-decoration:underline;"
-       href="<s:property value='%{mediaFileURL}'/>"><s:property value="%{mediaFileURL}" />
-        <a>
+    <div style="margin-top:20px"">
 
-
-    <div style="margin-top:20px;text-decoration:underline">
-
-        <s:url id="createBlogPostURL" action="entryAddWithMediaFile">
-            <s:param name="weblog" value="actionWeblog.handle" />
-            <s:param name="mediaFileId" value="%{bean.id}" />
-        </s:url>
-
-        <s:a href="%{createBlogPostURL}"><s:text name="mediaFileSuccess.createPost" /></s:a>
+        <p><s:text name="mediaFileSuccess.createPostPrompt" /></p>
+        <input type="submit" id="submit" value='<s:text name="mediaFileSuccess.createPost" />' />
+        <br/>
+        <br/>
         <br/>
 
+        <%-- Link: Upload more files --%>
         <s:url id="mediaFileAddURL" action="mediaFileAdd">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
+        <s:a href="%{mediaFileAddURL}">
+            <s:text name="mediaFileSuccess.addAnother" />
+        </s:a>
 
-        <s:a href="%{mediaFileAddURL}"><s:text name="mediaFileSuccess.addAnother" /></s:a>
     </div>
 
 </s:form>

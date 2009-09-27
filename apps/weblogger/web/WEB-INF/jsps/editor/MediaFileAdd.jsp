@@ -16,24 +16,48 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
+
 
 <script type="text/javascript">
-<!--
-function getFileName(fullName) {
-   var backslashIndex = fullName.lastIndexOf('/');
-   var fwdslashIndex = fullName.lastIndexOf('\\');
-   var fileName;
-   if (backslashIndex >= 0) {
-       fileName = fullName.substring(backslashIndex + 1);
-   } else if (fwdslashIndex >= 0) {
-       fileName = fullName.substring(fwdslashIndex + 1);
-   }
-   else {
-       fileName = fullName;
-   }
-   return fileName;
-}
--->
+    $(document).ready(function() {
+        $("input[type='file']").change(function() {
+            var name = '';
+            var count = 0;
+            var fileControls = $("input[type='file']");
+            for (var i=0; i<fileControls.size(); i++) {
+                if (jQuery.trim(fileControls.get(i).value).length > 0) {
+                    count++;
+                    name = fileControls.get(i).value;
+                }
+            }
+            if (count == 1) {
+                $("#entry_bean_name").get(0).disabled = false;
+                $("#entry_bean_name").get(0).value = name;
+            } else if (count > 1) {
+                $("#entry_bean_name").css("font-style","italic");
+                $("#entry_bean_name").css("color","grey");
+                $("#entry_bean_name").get(0).value = "<s:text name="mediaFileAdd.multipleNames"  />";
+                $("#entry_bean_name").get(0).disabled = true;
+            }
+        });
+    });
+
+    function getFileName(fullName) {
+       var backslashIndex = fullName.lastIndexOf('/');
+       var fwdslashIndex = fullName.lastIndexOf('\\');
+       var fileName;
+       if (backslashIndex >= 0) {
+           fileName = fullName.substring(backslashIndex + 1);
+       } else if (fwdslashIndex >= 0) {
+           fileName = fullName.substring(fwdslashIndex + 1);
+       }
+       else {
+           fileName = fullName;
+       }
+       return fileName;
+    }
+
 </script>
 
 <p class="subtitle">
@@ -43,25 +67,13 @@ function getFileName(fullName) {
     <s:text name="mediaFileAdd.pageTip"  />
 </p>
 
-<s:form id="entry" action="mediaFileAdd!save" onsubmit="editorCleanup()" method="POST" enctype="multipart/form-data">
+<s:form id="entry" action="mediaFileAdd!save" method="POST" enctype="multipart/form-data">
     <s:hidden name="weblog" />
 
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
 
     <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
-
-        <tr>
-            <td class="entryEditFormLabel">
-                <label for="title"><s:text name="mediaFileAdd.fileLocation" /></label>
-            </td>
-            <td>
-                 <s:file name="uploadedFile" size="30" onchange="this.form['bean.name'].value=getFileName(this.value)" />
-                 <br />
-                 <br />
-                 <br />
-            </td>
-        </tr>
 
         <tr>
             <td class="entryEditFormLabel">
@@ -116,6 +128,48 @@ function getFileName(fullName) {
                 <s:checkbox name="bean.sharedForGallery" />
             </td>
        </tr>
+
+       <tr>
+           <td>
+                <br />
+                <br />
+                <br />
+           </td>
+           <td>
+           </td>
+       </tr>
+
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="title"><s:text name="mediaFileAdd.fileLocation" /></label>
+            </td>
+            <td>
+                <div id="fileControl0div" class="miscControl">
+                    <s:file id="fileControl0" name="uploadedFiles" size="30" />
+                    <br />
+                </div>
+
+                <div id="fileControl1div" class="miscControl">
+                    <s:file id="fileControl1" name="uploadedFiles" size="30" />
+                    <br />
+                </div>
+
+                <div id="fileControl2div" class="miscControl">
+                    <s:file id="fileControl2" name="uploadedFiles" size="30" />
+                    <br />
+                </div>
+
+                <div id="fileControl3div" class="miscControl">
+                    <s:file id="fileControl3" name="uploadedFiles" size="30" />
+                    <br />
+                </div>
+
+                <div id="fileControl4div" class="miscControl">
+                    <s:file id="fileControl4" name="uploadedFiles" size="30" />
+                    <br />
+                </div>
+            </td>
+        </tr>
 
     </table>
 

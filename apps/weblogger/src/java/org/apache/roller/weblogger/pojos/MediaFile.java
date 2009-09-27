@@ -239,7 +239,6 @@ public class MediaFile {
 
     /**
      * Returns permalink URL for this media file resource.
-     *
      */
     public String getPermalink() {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getMediaFileURL(

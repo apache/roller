@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -35,7 +36,15 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     // bean for managing form data
     private EntryBean bean = new EntryBean();
 
+    private String weblog = null;
+    private String enclosureUrl = null;
+    private String[] selectedImages = null;
+    
+
     public EntryAddWithMediaFile() {
+        this.actionName = "entryAdd";
+        this.desiredMenu = "editor";
+        this.pageTitle = "weblogEdit.title.newEntry";
     }
 
     /**
@@ -44,22 +53,34 @@ public class EntryAddWithMediaFile extends MediaFileBase {
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFileManager manager =
+             WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
-            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
-            String link;
-            if (mediaFile.isImageFile()) {
-                link = "<img src='<url>' alt='<name>' width='<width>' height='<height>' />";
-                link = link.replace("<url>", getMediaFileURL(mediaFile))
-                           .replace("<name>", mediaFile.getName())
-                           .replace("<width>", "")
-                           .replace("<height>", "");
-            } else {
-                link = "<a href='<url>'><name></a>";
-                link = link.replace("<url>", getMediaFileURL(mediaFile))
-                           .replace("<name>", mediaFile.getName());
+
+            if (selectedImages != null) {
+                for (int i=0; i<selectedImages.length; i++) {
+                    MediaFile mediaFile = manager.getMediaFile(selectedImages[i]);
+                    String link = "";
+
+                    if (mediaFile.isImageFile()) {
+                        link = "<p>" + mediaFile.getName() + "</p>";
+                        link += "<a href='<url>'><img src='<url>?t=true' alt='<name>' width='<width>' height='<height>'></img></a>";
+                        link = link.replace("<url>", getMediaFileURL(mediaFile))
+                                   .replace("<name>", mediaFile.getName())
+                                   .replace("<width>", ""+mediaFile.getThumbnailWidth())
+                                   .replace("<height>", ""+mediaFile.getThumbnailHeight());
+                    } else {
+                        link = "<a href='<url>'><name></a>";
+                        link = link.replace("<url>", getMediaFileURL(mediaFile))
+                                   .replace("<name>", mediaFile.getName());
+                    }
+                    bean.setText(link);
+                }
             }
-            bean.setText(link);
+
+            if (StringUtils.isNotEmpty(enclosureUrl)) {
+                bean.setEnclosureURL(enclosureUrl);
+            }
 
         } catch (Exception e) {
             log.error("Error while constructing media file link for new entry", e);
@@ -74,4 +95,47 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     public void setBean(EntryBean bean) {
         this.bean = bean;
     }
+
+    /**
+     * @return the selectedImages
+     */
+    public String[] getSelectedImages() {
+        return selectedImages;
+    }
+
+    /**
+     * @param selectedImages the selectedImages to set
+     */
+    public void setSelectedImages(String[] selectedImages) {
+        this.selectedImages = selectedImages;
+    }
+
+    /**
+     * @return the enclosureUrl
+     */
+    public String getEnclosureUrl() {
+        return enclosureUrl;
+    }
+
+    /**
+     * @param enclosureUrl the enclosureUrl to set
+     */
+    public void setEnclosureUrl(String enclosureUrl) {
+        this.enclosureUrl = enclosureUrl;
+    }
+
+    /**
+     * @return the weblog
+     */
+    public String getWeblog() {
+        return weblog;
+    }
+
+    /**
+     * @param weblog the weblog to set
+     */
+    public void setWeblog(String weblog) {
+        this.weblog = weblog;
+    }
+
 }
