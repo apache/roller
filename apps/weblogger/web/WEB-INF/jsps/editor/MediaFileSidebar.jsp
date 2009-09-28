@@ -69,7 +69,7 @@
                                 <label for="size"><s:text name="mediaFileView.size" /></label>
                             </td>
                             <td width="80%">
-                                <s:select name="bean.sizeFilterType"
+                                <s:select name="bean.sizeFilterType" id="sizeFilterTypeCombo"
                                     list="sizeFilterTypes" listKey="key" listValue="value" />
                                 <s:textfield id="beanSize" name="bean.size"
                                     size="3" maxlength="10" />
@@ -137,7 +137,7 @@ $("#searchButton").ready(function () {
         <s:url id="mediaFileViewURL" action="mediaFileView">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        window.location = "<s:property value="%{mediaFileViewURL}" />";
+        window.location = '<s:property value="%{mediaFileViewURL}" />';
     });
 });
 

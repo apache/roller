@@ -17,15 +17,14 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/menu.css'/>" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/menu.css'/>" />
 
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/container_core-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/menu-min.js'/>"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container_core-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/dragdrop/dragdrop-min.js' />"></script>
 
 <script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />"></script>
 

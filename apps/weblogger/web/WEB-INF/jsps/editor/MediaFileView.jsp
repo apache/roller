@@ -17,15 +17,15 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/container.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/styles/yui/menu.css'/>" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/skins/sam/menu.css'/>" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/button/assets/skins/sam/button.css'/>" />
 
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/container_core-min.js'/>"></script>
-<script type="text/javascript" src="<s:url value='/roller-ui/scripts/yui/menu-min.js'/>"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/menu/menu-min.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/roller-ui/yui/button/button-min.js' />"></script>
 
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />'></script>
 
@@ -360,7 +360,6 @@
         </span>
     </div>
 
-  </s:form>
 
   <s:if test="!pager">
     <br/>
@@ -371,13 +370,15 @@
 
     <div>
         <s:text name="mediaFileView.newDirName" />
-        <input style="margin-top:5px;margin-bottom:5px;" type="text"
-               name="newDirectoryName" size="30" />
+        <input type="text" id="newDirectoryName" name="newDirectoryName" size="30" />
         <input type="button" value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
     </div>
   </s:if>
 
+</s:form>
+
 </s:if>
+
 
 
 <%-- ***************************************************************** --%>
