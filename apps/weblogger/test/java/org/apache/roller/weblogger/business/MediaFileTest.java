@@ -1025,7 +1025,8 @@ public class MediaFileTest extends TestCase {
 
         } finally {
 
-            File statusFile = new File(WebloggerConfig.getProperty("uploads.dir") + File.separator + JPAMediaFileManagerImpl.MIGRATIION_STATUS_FILENAME);
+            File statusFile = new File(WebloggerConfig.getProperty("uploads.dir") 
+                + File.separator + JPAMediaFileManagerImpl.MIGRATION_STATUS_FILENAME);
             statusFile.delete();
 
             // reset dir max to old value
