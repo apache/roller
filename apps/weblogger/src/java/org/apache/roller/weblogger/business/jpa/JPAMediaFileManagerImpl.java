@@ -64,7 +64,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     private static Log log =
         LogFactory.getFactory().getInstance(JPAMediaFileManagerImpl.class);
 
-    private static final String
+    public static final String
             MIGRATION_STATUS_FILENAME = "migration-status.properties";
 
 
