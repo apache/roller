@@ -59,14 +59,22 @@ limitations under the License.
 
 <section><title>Project Status</title>
 <p>
-    Roller is a stable and production-ready blog 
-    server in it's third major revision. It powers internal and external 
+    Roller is a stable and production-ready blog
+    server in it's third major revision. It powers internal and external
     employee blogs at Sun, IBM and other companies as well as the JRoller.com
     Java blogging community. Roller graduated from the Apache Incubator in March
     2007 and is now an official Apache project.
-</p>        
+</p>
+</section>
 
-    
+<section><title>Thanks to our sponsors</title>
+<p>
+    The Apache Software Foundation could not exist without the continued
+    generous support from the community. We would like to take this opportunity
+    to <a href="http://www.apache.org/foundation/thanks.html">thank our Sponsors</a>
+    If you are interested in sponsoring the ASF, please
+    read our <a href="http://www.apache.org/foundation/sponsorship.html">sponsorship page</a>.
+</p>
 </section>
 
 </body>

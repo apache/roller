@@ -38,8 +38,7 @@ limitations under the License.
 </projects>
 
 <menu><title>Related Sites</title>
-  <li><a href="http://rollerweblogger.org/project">Roller project announcements blog</a></li>
-  <li><a href="http://roller.dev.java.net">Java.Net Roller Support project</a></li>
+  <li><a href="http://rollerweblogger.org/project">Roller project blog</a></li>
 </menu>
 
 <menu><title href="http://projects.apache.org/">Related Projects</title>
