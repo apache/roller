@@ -87,6 +87,7 @@
         <action name="setup"
                 class="org.apache.roller.weblogger.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
+            <result name="home" type="redirectAction">home</result>
         </action>
                         
         <action name="login"
@@ -154,7 +155,7 @@
                 class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
         </action>
-        
+               
         <action name="userAdmin"
                 class="org.apache.roller.weblogger.ui.struts2.admin.UserAdmin">
             <result name="success" type="tiles">.UserAdmin</result>

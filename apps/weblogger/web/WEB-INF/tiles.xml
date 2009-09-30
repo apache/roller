@@ -160,6 +160,10 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
     </definition>
     
+    <definition name=".FrontpageConfig" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/FrontpageConfig.jsp" />
+    </definition>
+    
     <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>

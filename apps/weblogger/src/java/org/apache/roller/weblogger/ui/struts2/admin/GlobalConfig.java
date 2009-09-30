@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
@@ -37,6 +39,7 @@ import org.apache.roller.weblogger.config.runtime.ConfigDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -68,7 +71,10 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
     private String httpMethod = "GET";
 
+    // weblogs for frontpage blog chooser
+    private Collection<Weblog> weblogs;
 
+    
     public GlobalConfig() {
         this.actionName = "globalConfig";
         this.desiredMenu = "admin";
@@ -102,6 +108,14 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             addError("Unexpected error accessing Roller properties");
         }
         
+        try {
+            WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
+            setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
+        } catch (WebloggerException ex) {
+            log.error("Error getting weblogs", ex);
+            addError("frontpageConfig.weblogs.error");
+        }
+
         // set config def used to draw the view
         RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
         List<ConfigDef> configDefs = defs.getConfigDefs();
@@ -260,4 +274,11 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         httpMethod = req.getMethod();
     }
     
+    public Collection<Weblog> getWeblogs() {
+        return weblogs;
+    }
+
+    public void setWeblogs(Collection<Weblog> weblogs) {
+        this.weblogs = weblogs;
+    }
 }

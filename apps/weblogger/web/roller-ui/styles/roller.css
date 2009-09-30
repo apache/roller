@@ -33,6 +33,7 @@ body {
 th, td {
     border: none;
     vertical-align: top;
+    padding: 2px;
 }
 
 a {

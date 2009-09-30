@@ -37,34 +37,58 @@
                 
                   <%-- special condition for comment plugins --%>
                   <s:if test="#pd.name == 'users.comments.plugins'">
-                      <td class="field"><s:checkboxlist theme="roller" list="pluginsList" name="commentPlugins" listKey="id" listValue="name" /></td>
+                      <td class="field"><s:checkboxlist theme="roller" list="pluginsList"
+                        name="commentPlugins" listKey="id" listValue="name" /></td>
                   </s:if>
-                  
+
+                  <%-- special condition for front page blog --%>
+                  <s:elseif test="#pd.name == 'site.frontpage.weblog.handle'">
+                      <td class="field">
+                          <select name='<s:property value="#pd.name"/>'>
+                                <option value=''>
+                                    <s:text name="configForm.none" />
+                                </option>                              <s:iterator id="weblog" value="weblogs">
+                                <option value='<s:property value="#weblog.handle"/>'
+                                    <s:if test='properties[#pd.name].value == #weblog.handle'>selected='true'</s:if> >
+                                    <s:property value="#weblog.name"/>
+                                </option>
+                              </s:iterator>
+                          </select>
+                      </td>
+                  </s:elseif>
+
                   <%-- "string" type means use a simple textbox --%>
                   <s:elseif test="#pd.type == 'string'">
-                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>' value='<s:property value="properties[#pd.name].value"/>' size="35" /></td>
+                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>'
+                        value='<s:property value="properties[#pd.name].value"/>' size="35" /></td>
                   </s:elseif>
                   
                   <%-- "text" type means use a full textarea --%>
                   <s:elseif test="#pd.type == 'text'">
                     <td class="field">
-                      <textarea name='<s:property value="#pd.name"/>' rows="<s:property value="#pd.rows"/>" cols="<s:property value="#pd.cols"/>"><s:property value="properties[#pd.name].value"/></textarea>
+                      <textarea name='<s:property value="#pd.name"/>'
+                                rows="<s:property value="#pd.rows"/>"
+                                cols="<s:property value="#pd.cols"/>"><s:property value="properties[#pd.name].value"/>
+                      </textarea>
                     </td>
                   </s:elseif>
                   
                   <%-- "boolean" type means use a checkbox --%>
                   <s:elseif test="#pd.type == 'boolean'">
                       <s:if test="properties[#pd.name].value == 'true'">
-                          <td class="field"><input type="checkbox" name='<s:property value="#pd.name"/>' CHECKED></td>
+                          <td class="field"><input type="checkbox" 
+                            name='<s:property value="#pd.name"/>' CHECKED></td>
                       </s:if>
                       <s:else>
-                          <td class="field"><input type="checkbox" name='<s:property value="#pd.name"/>'></td>
+                          <td class="field"><input type="checkbox"
+                            name='<s:property value="#pd.name"/>'></td>
                       </s:else>
                   </s:elseif>
                   
                   <%-- if it's something we don't understand then use textbox --%>
                   <s:else>
-                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>' size="50" /></td>
+                    <td class="field"><input type="text"
+                        name='<s:property value="#pd.name"/>' size="50" /></td>
                   </s:else>
                 
                 <td class="description"><%-- <s:text name="" /> --%></td>
