@@ -148,3 +148,10 @@ alter table roller_mediafiledir add constraint mf_websiteid_fk
 alter table roller_mediafiledir add constraint mf_parentid_fk
     foreign key ( parentid ) references roller_mediafiledir( id )  $!db.ADDL_FK_PARAMS ;
 
+
+-- Fix for https://issues.apache.org/jira/browse/ROL-1760
+
+#if ($db.DBTYPE == "POSTGRESQL" || $db.DBTYPE == "ORACLE")
+alter table roller_tasklock alter timeacquired type timestamp(2) with time zone;
+alter table roller_tasklock alter lastrun type timestamp(2) with time zone;
+#end
