@@ -173,17 +173,16 @@ public class MediaFileView extends MediaFileBase {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
             MediaFileDirectory directory;
-            if (this.directoryId != null) {
+            if (StringUtils.isNotEmpty(this.directoryId)) {
                 directory = manager.getMediaFileDirectory(this.directoryId);
 
-            } else if (this.directoryPath != null) {
+            } else if (StringUtils.isNotEmpty(this.directoryPath)) {
                 directory = manager.getMediaFileDirectoryByPath(getActionWeblog(), this.directoryPath);
-                this.directoryId = directory.getId();
 
             } else {
                 directory = manager.getMediaFileRootDirectory(getActionWeblog());
-                this.directoryId = directory.getId();
             }
+            this.directoryId = directory.getId();
             this.directoryPath = directory.getPath();
 
             this.childDirectories = new ArrayList<MediaFileDirectory>();
@@ -194,18 +193,18 @@ public class MediaFileView extends MediaFileBase {
 
             if ("type".equals(sortBy)) {
                 Collections.sort(this.childFiles,
-                        new MediaFileComparator(MediaFileComparatorType.TYPE));
+                    new MediaFileComparator(MediaFileComparatorType.TYPE));
 
             } else if ("date_uploaded".equals(sortBy)) {
                 Collections.sort(this.childFiles,
-                        new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
+                    new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
 
             } else { // default to sort by name
                 sortBy = "name";
                 Collections.sort(this.childDirectories,
-                        new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
+                    new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
                 Collections.sort(this.childFiles,
-                        new MediaFileComparator(MediaFileComparatorType.NAME));
+                    new MediaFileComparator(MediaFileComparatorType.NAME));
             }
 
             this.currentDirectory = directory;
@@ -269,7 +268,6 @@ public class MediaFileView extends MediaFileBase {
         String fullPath = this.currentDirectory.getPath();
         if (fullPath.length() > 1) {
             String[] directoryNames = fullPath.substring(1).split("/");
-            String directoryPath = "";
             for (String directoryName : directoryNames) {
                 directoryPath = directoryPath + "/" + directoryName;
                 directoryHierarchy.add(new KeyValueObject(directoryPath, directoryName));

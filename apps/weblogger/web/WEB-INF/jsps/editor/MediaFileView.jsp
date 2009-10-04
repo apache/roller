@@ -158,11 +158,13 @@
     <p class="subtitle">
         <s:text name="mediaFileView.path"/> /
         <s:iterator id="directory" value="currentDirectoryHierarchy">
+
             <s:url id="getDirectoryByPathUrl" action="mediaFileView">
                 <s:param name="directoryPath" value="#directory.key" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
             <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
+            
         </s:iterator>
     </p>
     <p class="pagetip">
@@ -179,35 +181,26 @@
     <s:hidden name="directoryId" />
     <input type="hidden" name="mediaFileId" value="" />
 
-    <%--
-    <s:url id="mediaFileHierarchicalViewURL" action="mediaFileHierarchicalView">
-        <s:param name="weblog" value="%{actionWeblog.handle}" />
-    </s:url>
-    <p><span style="font-weight:bold"><s:text name="mediaFileView.tabular" /></span> |
-        <s:a href="%{mediaFileHierarchicalViewURL}"><s:text name="mediaFileView.hierarchy" /></s:a></p>
-    --%>
-
     <div class="control">
 
         <span style="padding-left:20px">
             <s:text name="mediaFileView.sortby" />
-            <s:select name="sortBy" list="sortOptions" listKey="key"
+            <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key"
                   listValue="value"
                   onchange="document.mediaFileViewForm.submit();" />
         </span>
 
         <span style="float:right">
-            <input type="button" style="padding-right:20px"
+            <input id="deleteButton" type="button" style="padding-right:20px"
                value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
 
-            <input type="button" style="padding-left:20px"
+            <input id="moveButton" type="button" style="padding-left:20px"
                value=<s:text name="mediaFileView.moveSelected" /> onclick="onMoveSelected()" />
 
-            <s:select name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
+            <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
         </span>
 
     </div>
-
 
 
     <%-- ***************************************************************** --%>
@@ -410,6 +403,35 @@
 
 <%-- ***************************************************************** --%>
 
+<%-- code to toggle buttons on/off as media file/directory selections change --%>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#deleteButton").attr('disabled',true)
+        $("#moveButton").attr('disabled',true)
+        $("#moveTargetMenu").attr('disabled',true)
+
+        $("input[type=checkbox]").change(function() {
+            var count = 0;
+            $("input[type=checkbox]").each(function(index, element) {
+                if (element.checked) count++;
+            });
+            if (count == 0) {
+                $("#deleteButton").attr('disabled',true)
+                $("#moveButton").attr('disabled',true)
+                $("#moveTargetMenu").attr('disabled',true)
+            } else {
+                $("#deleteButton").attr('disabled',false)
+                $("#moveButton").attr('disabled',false)
+                $("#moveTargetMenu").attr('disabled',false)
+            }
+        });
+    });
+</script>
+
+
+<%-- ***************************************************************** --%>
+
 <%-- code to launch Media File Edit lightbox when user clicks a media file --%>
 
 <script type="text/javascript">
@@ -429,7 +451,7 @@
     }
 
     YAHOO.namespace("mediaFileEditor");
-    function init() {
+    $(document).ready(function() {
         YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
             "mediafile_edit_lightbox", {
                 modal:    true,
@@ -441,8 +463,7 @@
             }
         );
         YAHOO.mediaFileEditor.lightbox.render(document.body);
-    }
-    YAHOO.util.Event.addListener(window, "load", init);
+    });
 
 </script>
 
