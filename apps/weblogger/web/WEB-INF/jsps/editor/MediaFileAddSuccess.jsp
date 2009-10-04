@@ -156,6 +156,7 @@
             <li>
                 <s:url id="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    <s:param name="directoryPath" value="%{directoryPath}" />
                 </s:url>
                 <s:a href="%{mediaFileAddURL}">
                     <s:text name="mediaFileSuccess.addAnother" />
@@ -165,6 +166,7 @@
             <li>
                 <s:url id="mediaFileViewURL" action="mediaFileView">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    <s:param name="directoryId" value="%{bean.directoryId}" />
                 </s:url>
                 <s:a href="%{mediaFileViewURL}">
                     <s:text name="mediaFileSuccess.mediaFileView" />

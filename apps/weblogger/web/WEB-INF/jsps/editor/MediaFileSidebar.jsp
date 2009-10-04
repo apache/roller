@@ -28,10 +28,12 @@
 
                 <s:url id="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
+                    <s:param name="directoryPath" value="%{directoryPath}" />
                 </s:url>
-                <a href='<s:property value="%{mediaFileAddURL}" />'
+                <a href='<s:property escape="false" value="%{mediaFileAddURL}" />'
                     <s:if test="actionName.equals('mediaFileAdd')">style='font-weight:bold;'</s:if> >
-                    <s:text name="mediaFileSidebar.add" /></a>
+                    <s:text name="mediaFileSidebar.add" />
+                </a>
 
                 <hr size="1" noshade="noshade" />
                 <br />

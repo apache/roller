@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,6 +62,8 @@ public class MediaFileAdd extends MediaFileBase {
     private List<MediaFile> newImages = new ArrayList<MediaFile>();
 
     private List<MediaFile> newFiles = new ArrayList<MediaFile>();
+
+    private String directoryPath =  null;
     
 
     public MediaFileAdd() {
@@ -79,9 +82,16 @@ public class MediaFileAdd extends MediaFileBase {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
+
+            } else if (StringUtils.isNotEmpty(directoryPath)) {
+                setDirectory(mgr.getMediaFileDirectoryByPath(getActionWeblog(), directoryPath));
+
             } else {
                 setDirectory(mgr.createRootMediaFileDirectory(getActionWeblog()));
             }
+            directoryPath = getDirectory().getPath();
+            bean.setDirectoryId(getDirectory().getId());
+
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
         }
@@ -270,5 +280,19 @@ public class MediaFileAdd extends MediaFileBase {
      */
     public void setNewFiles(List<MediaFile> newFiles) {
         this.newFiles = newFiles;
+    }
+
+    /**
+     * @return the directoryPath
+     */
+    public String getDirectoryPath() {
+        return directoryPath;
+    }
+
+    /**
+     * @param directoryPath the directoryPath to set
+     */
+    public void setDirectoryPath(String directoryPath) {
+        this.directoryPath = directoryPath;
     }
 }

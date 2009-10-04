@@ -175,13 +175,16 @@ public class MediaFileView extends MediaFileBase {
             MediaFileDirectory directory;
             if (this.directoryId != null) {
                 directory = manager.getMediaFileDirectory(this.directoryId);
+
             } else if (this.directoryPath != null) {
                 directory = manager.getMediaFileDirectoryByPath(getActionWeblog(), this.directoryPath);
                 this.directoryId = directory.getId();
+
             } else {
                 directory = manager.getMediaFileRootDirectory(getActionWeblog());
                 this.directoryId = directory.getId();
             }
+            this.directoryPath = directory.getPath();
 
             this.childDirectories = new ArrayList<MediaFileDirectory>();
             this.childDirectories.addAll(directory.getChildDirectories());
