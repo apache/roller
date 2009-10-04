@@ -175,6 +175,9 @@
 <s:if test="childFiles || childDirectories || (pager && pager.items.size() > 0)">
 
   <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
+    <s:hidden name="weblog" />
+    <s:hidden name="directoryId" />
+    <input type="hidden" name="mediaFileId" value="" />
 
     <%--
     <s:url id="mediaFileHierarchicalViewURL" action="mediaFileHierarchicalView">
@@ -185,16 +188,26 @@
     --%>
 
     <div class="control">
-        <span style="padding-left:20px"><s:text name="mediaFileView.sortby" /></span>
-        <s:select name="sortBy" list="sortOptions" listKey="key"
+
+        <span style="padding-left:20px">
+            <s:text name="mediaFileView.sortby" />
+            <s:select name="sortBy" list="sortOptions" listKey="key"
                   listValue="value"
                   onchange="document.mediaFileViewForm.submit();" />
         </span>
+
+        <span style="float:right">
+            <input type="button" style="padding-right:20px"
+               value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
+
+            <input type="button" style="padding-left:20px"
+               value=<s:text name="mediaFileView.moveSelected" /> onclick="onMoveSelected()" />
+
+            <s:select name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
+        </span>
+
     </div>
 
-    <s:hidden name="weblog" />
-    <s:hidden name="directoryId" />
-    <input type="hidden" name="mediaFileId" value="" />
 
 
     <%-- ***************************************************************** --%>
@@ -236,6 +249,11 @@
                         </div>
                         <div class="mediaObjectInfo">
                             <label><s:property value="#directory.name" /></label>
+                                <input type="checkbox" style="float:right"
+                                       name="selectedMediaFileDirectories"
+                                       value="<s:property value="#directory.id"/>"/>
+                                <inut type="hidden" id="mediadiridentity"
+                                       value="<s:property value='#directory.id'/>">
                         </div>
                     </li>
                 </s:iterator>
@@ -343,22 +361,6 @@
     </div>
 
     <div style="clear:left;"></div>
-
-
-    <%-- ***************************************************************** --%>
-
-    <%-- Delete and move controls --%>
-
-    <br/>
-    <div class="control">
-        <input type="button" style="padding-left:20px"
-           value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()" />
-        <input type="button" style="padding-left:20px"
-           value=<s:text name="mediaFileView.moveSelected" /> onclick="onMoveSelected()" />
-        <span style="padding-left:20px">
-            <s:select name="selectedDirectory" list="allDirectories" listKey="id" listValue="path" />
-        </span>
-    </div>
 
 
   <s:if test="!pager">

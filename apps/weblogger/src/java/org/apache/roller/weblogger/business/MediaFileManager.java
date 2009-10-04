@@ -164,6 +164,20 @@ public interface MediaFileManager {
             throws WebloggerException;
 
     /**
+     * Move a set of media files to a new directory.
+     */
+    public void moveMediaFileDirectories(
+            Collection<MediaFileDirectory> mediaFilesDir, MediaFileDirectory directory)
+            throws WebloggerException;
+
+    /**
+     * Move one media file to a new directory.
+     */
+    public void moveMediaFileDirectory(
+            MediaFileDirectory mediaFileDir, MediaFileDirectory directory)
+            throws WebloggerException;
+
+    /**
      * Return recently added media files that are public.
      */
     public List<MediaFile> fetchRecentPublicMediaFiles(int length)
@@ -174,5 +188,13 @@ public interface MediaFileManager {
      * @param website
      */
     public void removeAllFiles(Weblog website) throws WebloggerException;
+
+    /**
+     * Remove media file directory
+     * @param weblog
+     * @param mediaFileDir
+     */
+    public void removeMediaFileDirectory(MediaFileDirectory mediaFileDir)
+            throws WebloggerException;
 
 }

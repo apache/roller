@@ -96,8 +96,23 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    public void moveMediaFileDirectories(Collection<MediaFileDirectory> mediaFileDirs, MediaFileDirectory targetDir)
+            throws WebloggerException {
+
+        for (MediaFileDirectory mediaFileDir : mediaFileDirs) {
+            mediaFileDir.setParent(targetDir);
+            this.strategy.store(mediaFileDir);
+        }
+        // update weblog last modified date.  date updated by saveWebsite()
+        roller.getWeblogManager().saveWeblog(targetDir.getWeblog());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaFileDirectory targetDirectory)
             throws WebloggerException {
+
         for (MediaFile mediaFile : mediaFiles) {
             mediaFile.setDirectory(targetDirectory);
             this.strategy.store(mediaFile);
@@ -112,6 +127,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void moveMediaFile(MediaFile mediaFile, MediaFileDirectory targetDirectory)
             throws WebloggerException {
         moveMediaFiles(Arrays.asList(mediaFile), targetDirectory);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void moveMediaFileDirectory(MediaFileDirectory mediaFileDir, MediaFileDirectory targetDirectory)
+            throws WebloggerException {
+        moveMediaFileDirectories(Arrays.asList(mediaFileDir), targetDirectory);
     }
 
     /**
@@ -758,7 +781,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
         }
 
-        try { // flush changes to this directory
+        try { // flush changes to this directory 
             roller.flush();
 
             log.debug("Count of dirs  created: " + dirCount);
@@ -773,7 +796,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         removeMediaFileDirectory(getMediaFileRootDirectory(website));
     }
 
-    private void removeMediaFileDirectory(MediaFileDirectory dir) 
+    public void removeMediaFileDirectory(MediaFileDirectory dir) 
             throws WebloggerException {
 
         if (dir == null) return;
@@ -788,4 +811,5 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
         this.strategy.remove(dir);
     }
+
 }

@@ -63,6 +63,10 @@ public class MediaFileDirectory {
         }
     }
 
+    public boolean isEmpty() {
+        return getChildDirectories().isEmpty() && getMediaFiles().isEmpty();
+    }
+
     /**
      * Database surrogate key.
      *

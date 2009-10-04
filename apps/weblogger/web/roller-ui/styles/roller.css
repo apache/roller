@@ -511,13 +511,17 @@ div.centerTitle {
 }
 div.control {
     width: 100%;
+    height: 2.5em;
 }
 div.controlToggle {
     width: 100%;
     height: 25px;
 }
 .control input {
-    margin: 5px;
+    margin: 0.5em;
+}
+.control select {
+    margin: 0.5em;
 }
 a.controlToggle {
     margin: 5px;
