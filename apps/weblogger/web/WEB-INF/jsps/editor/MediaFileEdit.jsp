@@ -19,8 +19,9 @@
 <script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />'></script>
 
 <s:if test="bean.isImage">
-    <img align="right" alt="thumbnail"
-         src='<s:property value="bean.thumbnailURL" />' />
+    <div class="mediaFileThumbnail">
+        <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />' />
+    </div>
 </s:if>
 
 <p class="subtitle">

@@ -667,11 +667,22 @@ td.mm_subtable_label {
     font-weight: bold;
 }
 
+
 /* media file pages */
+
 .mediaFileSearchResult {
     float: left;
     margin: 10px 10px 10px 10px;
 }
+
+div.mediaFileThumbnail {
+   float:right;
+   width:120px;
+   height:120px;
+   border:1px solid grey;
+   margin: 10px
+}
+
 
 /* weblog entry form page */
 
