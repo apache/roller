@@ -95,9 +95,6 @@ Menu item table (the bar below the tabs)
     padding: 0px 1px 0px 1px; /* TRBL */
 }
 
-
-
-
-
-
-
+.menuItemTable td {
+    vertical-align: middle;
+}
