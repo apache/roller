@@ -21,6 +21,8 @@ package org.apache.roller.weblogger.business.search;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -41,11 +43,7 @@ import org.apache.roller.weblogger.business.search.operations.RemoveWebsiteIndex
 import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperation;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-
-import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
-import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -80,7 +78,7 @@ public class IndexManagerImpl implements IndexManager {
     
     private boolean inconsistentAtStartup = false;
     
-    private ReadWriteLock rwl = new WriterPreferenceReadWriteLock();
+    private ReadWriteLock rwl = new ReentrantReadWriteLock();
     
     //~ Constructors
     // ===========================================================

@@ -27,7 +27,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
@@ -88,7 +87,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
                         IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, handle);
                 
                 if (tHandle != null) {
-                    reader.delete(tHandle);
+                    reader.deleteDocuments(tHandle);
                 }
             }
         } catch (IOException e) {

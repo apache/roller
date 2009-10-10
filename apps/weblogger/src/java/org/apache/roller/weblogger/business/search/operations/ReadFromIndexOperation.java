@@ -34,12 +34,13 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
     
     public final void run() {
         try {
-            manager.getReadWriteLock().readLock().acquire();
+            manager.getReadWriteLock().readLock().lock();
             doRun();
-        } catch (InterruptedException e) {
+
+        } catch (Exception e) {
             mLogger.info("Error acquiring read lock on index", e);
         } finally {
-            manager.getReadWriteLock().readLock().release();
+            manager.getReadWriteLock().readLock().unlock();
         }
     }
     

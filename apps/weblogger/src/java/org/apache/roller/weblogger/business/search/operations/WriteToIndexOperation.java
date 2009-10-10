@@ -37,14 +37,16 @@ public abstract class WriteToIndexOperation extends IndexOperation {
     
     public void run() {
         try {
-            manager.getReadWriteLock().writeLock().acquire();
+            manager.getReadWriteLock().writeLock().lock();
             mLogger.debug("Starting search index operation");
             doRun();
             mLogger.debug("Search index operation complete");
-        } catch (InterruptedException e) {
+
+        } catch (Exception e) {
             mLogger.error("Error acquiring write lock on index", e);
+            
         } finally {
-            manager.getReadWriteLock().writeLock().release();
+            manager.getReadWriteLock().writeLock().unlock();
         }
         manager.resetSharedReader();
     }

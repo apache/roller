@@ -78,7 +78,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation {
         try {
             if (reader != null) {
                 Term term = new Term(FieldConstants.ID, data.getId());
-                reader.delete(term);
+                reader.deleteDocuments(term);
             }
         } catch (IOException e) {
             mLogger.error("Error deleting doc from index", e);

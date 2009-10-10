@@ -96,12 +96,12 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                             FieldConstants.WEBSITE_HANDLE, website.getHandle());
                 }
                 if (tWebsite != null) {
-                    reader.delete(tWebsite);
+                    reader.deleteDocuments(tWebsite);
                 } else {
                     Term all =
                             IndexUtil.getTerm(FieldConstants.CONSTANT,
                             FieldConstants.CONSTANT_V);
-                    reader.delete(all);
+                    reader.deleteDocuments(all);
                 }
             }
         } catch (IOException e) {

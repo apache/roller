@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import org.apache.roller.weblogger.business.*;
 import java.sql.Timestamp;
@@ -37,9 +38,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
+
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -610,7 +611,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      * checks for existence of migration status file.
      */
     public boolean isFileStorageUpgradeRequired() {
-        // TODO: Bad exception and return value convention here.  This should return void and throw exceptions on error.
         String uploadsDirName = WebloggerConfig.getProperty("uploads.dir");
         if (uploadsDirName != null) {
             File uploadsDir = new File(uploadsDirName);
@@ -619,8 +619,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 try {
                     props.load(new FileInputStream(uploadsDirName
                         + File.separator + MIGRATION_STATUS_FILENAME));
-                } catch (Exception ex) {
-                    return false;
+                    
+                } catch (IOException ex) {
+                    return true;
                 }
                 if (props.getProperty("complete") != null) {
                     return false;

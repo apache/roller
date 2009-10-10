@@ -27,6 +27,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
@@ -34,6 +35,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.util.Version;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexUtil;
@@ -45,6 +47,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public class SearchOperation extends ReadFromIndexOperation {
+
     //~ Static fields/initializers =============================================
     
     private static Log mLogger =
@@ -93,34 +96,40 @@ public class SearchOperation extends ReadFromIndexOperation {
         try {
             IndexReader reader = manager.getSharedIndexReader();
             searcher = new IndexSearcher(reader);
-            
-            Query query =
-                    MultiFieldQueryParser.parse(
-                    term, SEARCH_FIELDS, new StandardAnalyzer());
+
+            String[] terms = new String[1];
+            terms[0] = term;
+
+            BooleanClause.Occur[] flags = new BooleanClause.Occur[1];
+            flags[1] = BooleanClause.Occur.MUST;
+            Query query = MultiFieldQueryParser.parse(terms,
+                SEARCH_FIELDS, flags, new StandardAnalyzer(Version.LUCENE_CURRENT));
             
             Term tUsername =
-                    IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
+                IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
             
             if (tUsername != null) {
                 BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, true, false);
-                bQuery.add(new TermQuery(tUsername), true, false);
+                bQuery.add(query, BooleanClause.Occur.MUST);
+                bQuery.add(new TermQuery(tUsername), BooleanClause.Occur.MUST);
                 query = bQuery;
             }
             
             Term tCategory =
-                    IndexUtil.getTerm(FieldConstants.CATEGORY, category);
+                IndexUtil.getTerm(FieldConstants.CATEGORY, category);
             
             if (tCategory != null) {
                 BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, true, false);
-                bQuery.add(new TermQuery(tCategory), true, false);
+                bQuery.add(query, BooleanClause.Occur.MUST);
+                bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);
                 query = bQuery;
             }
             searchresults = searcher.search(query, null/*Filter*/, SORTER);
+
         } catch (IOException e) {
             mLogger.error("Error searching index", e);
             parseError = e.getMessage();
+
         } catch (ParseException e) {
             // who cares?
             parseError = e.getMessage();
