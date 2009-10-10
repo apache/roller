@@ -145,6 +145,6 @@
 <a href='#' onclick='javascript:window.parent.onCreatePodcastPost($("#entry_bean_permalink").get(0).value)'>
     <s:text name="mediaFileEdit.createPodcastPost" />
 </a><br />
-<s:text name="mediaFileEdit.createWeblogPostTip" /><br />
+<s:text name="mediaFileEdit.createPodcastPostTip" /><br />
 </p>
 
