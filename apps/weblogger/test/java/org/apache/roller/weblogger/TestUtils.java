@@ -580,5 +580,12 @@ public final class TestUtils {
     public static WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) throws WebloggerException {
         return WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogEntry(weblogEntry.getId());
     }
-    
+
+    /**
+     * Convenience method that returns managed copy of given WeblogEntry.
+     */
+    public static WeblogCategory getManagedWeblogCategory(WeblogCategory cat) throws WebloggerException {
+        return WebloggerFactory.getWeblogger().getWeblogEntryManager().getWeblogCategory(cat.getId());
+    }
+
 }

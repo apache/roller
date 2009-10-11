@@ -21,15 +21,15 @@ import java.sql.Timestamp;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 
 
 /**
@@ -46,41 +46,53 @@ public class IndexManagerTest extends TestCase {
     }
         
     public void testSearch() throws Exception {
+
         IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
 
-        Weblog website = new Weblog();
-        website.setHandle("trekker");
-
-        User user = new User();
-        user.setUserName("nimoy");
+        User user = TestUtils.setupUser("nimoy");
+        Weblog website = TestUtils.setupWeblog("trekker", user);
+        WeblogCategory cat = TestUtils.setupWeblogCategory(website, "test", null);
+        TestUtils.endSession(true);
 
         WeblogEntry wd1 = new WeblogEntry();            
         wd1.setId("dummy1");
         wd1.setAnchor("dummy1");
+        wd1.setCategory(TestUtils.getManagedWeblogCategory(cat));
         wd1.setCreatorUserName(user.getUserName());
         wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd1.setTitle("The Tholian Web");
-        wd1.setWebsite(website);
+        wd1.setWebsite(TestUtils.getManagedWebsite(website));
         wd1.setText(
          "When the Enterprise attempts to ascertain the fate of the  "
         +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
         +"begin to lose power, and Spock reports strange sensor readings.");
+
+        WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(wd1);
+        TestUtils.endSession(true);
+        wd1 = TestUtils.getManagedWeblogEntry(wd1);
+
         imgr.executeIndexOperationNow(
             new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setId("dummy2");
         wd2.setAnchor("dummy2");
+        wd2.setCategory(TestUtils.getManagedWeblogCategory(cat));
         wd2.setCreatorUserName(user.getUserName());
         wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
         wd2.setTitle("A Piece of the Action");
-        wd2.setWebsite(website);
+        wd2.setWebsite(TestUtils.getManagedWebsite(website));
         wd2.setText(
           "The crew of the Enterprise attempts to make contact with "
           +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
           +"in communication with Boss Oxmyx.");
+
+        WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(wd2);
+        TestUtils.endSession(true);
+        wd2 = TestUtils.getManagedWeblogEntry(wd2);
+
          imgr.executeIndexOperationNow(
              new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd2));
 

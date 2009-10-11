@@ -49,6 +49,9 @@ public class CoreWeblogServicesTestSuite {
         // test comments
         suite.addTestSuite(CommentTest.class);
 
+        // test search
+        suite.addTestSuite(IndexManagerTest.class);
+
         return suite;
     }
     

@@ -53,11 +53,20 @@ public class SearchOperation extends ReadFromIndexOperation {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(SearchOperation.class);
     
-    private static String[] SEARCH_FIELDS = new String[]{
-        FieldConstants.CONTENT, FieldConstants.TITLE,
-        FieldConstants.C_CONTENT, FieldConstants.CATEGORY
+    private static String[] SEARCH_FIELDS = new String[] {
+        FieldConstants.CONTENT,
+        FieldConstants.TITLE,
+        FieldConstants.C_CONTENT,
+        FieldConstants.CATEGORY
     };
-    
+
+    private static BooleanClause.Occur[] SEARCH_FLAGS = new BooleanClause.Occur[] {
+        BooleanClause.Occur.SHOULD,
+        BooleanClause.Occur.SHOULD,
+        BooleanClause.Occur.SHOULD, 
+        BooleanClause.Occur.SHOULD
+    };
+
     private static Sort SORTER = new Sort( new SortField(
             FieldConstants.PUBLISHED, SortField.STRING, true) );
     
@@ -97,13 +106,9 @@ public class SearchOperation extends ReadFromIndexOperation {
             IndexReader reader = manager.getSharedIndexReader();
             searcher = new IndexSearcher(reader);
 
-            String[] terms = new String[1];
-            terms[0] = term;
-
-            BooleanClause.Occur[] flags = new BooleanClause.Occur[1];
-            flags[1] = BooleanClause.Occur.MUST;
-            Query query = MultiFieldQueryParser.parse(terms,
-                SEARCH_FIELDS, flags, new StandardAnalyzer(Version.LUCENE_CURRENT));
+            Query query = MultiFieldQueryParser.parse(term,
+                SEARCH_FIELDS, SEARCH_FLAGS,
+                new StandardAnalyzer(Version.LUCENE_CURRENT));
             
             Term tUsername =
                 IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
