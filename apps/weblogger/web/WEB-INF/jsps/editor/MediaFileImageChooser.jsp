@@ -153,10 +153,10 @@
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
                         <s:url id="mediaFileURL" includeContext="false"
-                            value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}"></s:url>
+                            value="/%{#mediaFile.permalink"></s:url>
 
                         <s:url id="mediaFileThumbnailURL"
-                            value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}?t=true"></s:url>
+                            value="/%{#mediaFile.thumbnailURL"></s:url>
 
                     <div class="mediaObject"
                          onclick="onSelectImage('<s:property value="#mediaFile.name"/>','<s:property value="%{mediaFileURL}" />')" >

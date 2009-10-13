@@ -262,9 +262,7 @@
                              onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" >
 
                             <s:if test="#mediaFile.imageFile">
-                                <s:url id="mediaFileURL"
-                                    value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}?t=true"></s:url>
-                                <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                                <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
                                      width='<s:property value="#mediaFile.thumbnailWidth"/>'
                                      height='<s:property value="#mediaFile.thumbnailHeight"/>' />
                             </s:if>
@@ -313,9 +311,7 @@
                              onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" >
 
                             <s:if test="#mediaFile.imageFile">
-                                <s:url id="mediaFileURL"
-                                    value="/%{#mediaFile.weblog.handle}/mediaresource/%{#mediaFile.id}?t=true"></s:url>
-                                <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                                <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
                                      width='<s:property value="#mediaFile.thumbnailWidth"/>'
                                      height='<s:property value="#mediaFile.thumbnailHeight"/>' />
                             </s:if>
@@ -479,4 +475,4 @@
         </iframe>
     </div>
     <div class="ft"></div>
-</div>
+</div> 

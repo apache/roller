@@ -89,7 +89,7 @@
                 <td>
                     <%-- description of file --%>
                     <img align="left" class="mediaFileImage"
-                         src='<s:property value="%{#newImage.permalink}" />?t=true' alt="thumbnail" />
+                         src='<s:property value="%{#newImage.thumbnailURL}" />' alt="thumbnail" />
 
                     <span class="label"><s:text name="mediaFileSuccess.name" /></span>
                     <s:property value="%{#newImage.name}" /><br />

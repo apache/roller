@@ -91,8 +91,8 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("entry/").append(URLUtilities.encode(entryAnchor));
         
-        return url.toString();
-    }
+    return url.toString();
+}
     
     
     /**
@@ -108,16 +108,8 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         }
         
         StringBuffer url = new StringBuffer();
-        
-        if(absolute) {
-            url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
-        } else {
-            url.append(WebloggerRuntimeConfig.getRelativeContextURL());
-        }
-        
-        url.append("/");
-        url.append(weblog.getHandle());
-        url.append("/mediaresource/");
+        url.append(getWeblogURL(weblog, null, absolute));
+        url.append("mediaresource");
         url.append("/");
         url.append(URLUtilities.encode(fileAnchor));
         

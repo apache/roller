@@ -846,11 +846,9 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getURL() {
-        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
-        String relPath = WebloggerRuntimeConfig.getRelativeContextURL();
-        return relPath + "/" + getHandle();
-        //return URLUtilities.getWeblogURL(this, null, false);
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, false);
     }
+
     public void setURL(String url) {
         // noop
     }
@@ -860,14 +858,7 @@ public class Weblog implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getAbsoluteURL() {
-        String weblogAbsoluteURL =
-            WebloggerConfig.getProperty("weblog.absoluteurl." + getHandle());
-        if (weblogAbsoluteURL != null) {
-            return weblogAbsoluteURL + "/" + getHandle();
-        } else {
-            String relPath = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            return relPath + "/" + getHandle();
-        }
+        return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(this, null, true);
     }
     
     
