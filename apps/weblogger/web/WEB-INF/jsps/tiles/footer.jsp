@@ -18,18 +18,14 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 
-<% request.setAttribute("version", 
-      org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getVersion()); %> 
+<% request.setAttribute("version",
+      org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getVersion()); %>
+<% request.setAttribute("revision",
+      org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getRevision()); %>
 
-<s:text name="footer.productName">
+<img src='<c:url value="/images/tinyfeather.png"/>' alt="ASF logo" style="vertical-align:middle" />
+<s:text name="footer.productName" >
     <s:param value="#request.version" />
-</s:text> |
-
-<a href="http://opensource2.atlassian.com/projects/roller/">
-    <s:text name="footer.reportIssue" /></a> | 
-
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">
-    <s:text name="footer.userGuide" /></a> | 
-
-<a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">
-    <s:text name="footer.mailingLists" /></a>
+    <s:param value="#request.revision" />
+</s:text>
+      

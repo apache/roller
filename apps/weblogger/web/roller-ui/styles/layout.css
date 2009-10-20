@@ -75,9 +75,9 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
 }
 #footer {
     clear: both;
-    padding: 15px 0px 15px 0px;
+    padding: 15px 0px 15px 1em;
     font-size: smaller;
-    text-align: center;
+    text-align: left;
 }
 .prop {
     height: 300px;
