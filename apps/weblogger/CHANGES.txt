@@ -1,29 +1,75 @@
 ROLLER CHANGE LOG
 -----------------
 
-Roller 4.1 - NOT YET RELEASED!!!
+Roller 5.0 - NOT YET RELEASED!!!
 
-New fetures
+New Features
 
-   * [ROL-1534] - Externalize User & Permissions Management		
-   * [ROL-1544] - OpenSearch support		
-   * [ROL-1545] - Tag Data API		
-   * [ROL-1535] - Use Propono directly for Atompub		
+[ROL-896] - Need a picture gallery
+[ROL-1123] - Include photo album
+[ROL-1544] - OpenSearch support
+[ROL-1545] - Tag Data API
+[ROL-1733] - Implement OpenID for Roller
+[ROL-1775] - photos with enlargement automatic resizing
+[ROL-1798] - Support for OAuth authentication for AtomPub and other resources
+[ROL-1815] - Media Blogging: migrate old resources to new system
+[ROL-1822] - Weblog Export to Moveable Type
 
 Improvements
 
-   * [ROL-1661] - Danish translation for Roller 4.0		
-   * [ROL-1648] - Slovenian translation of Roller 4.0 properties file		
+[ROL-1840] - Upgrade all Java deps to latest stable versions
+[ROL-1834] - Upgrade Xinha editor to latest version
+[ROL-1841] - Remove user guide and "Report an Issue" links from footer
+[ROL-1304] - Set frontpage blog in Roller install page
+[ROL-1534] - Externalize User & Permissions Management
+[ROL-1535] - Use Propono directly for Atompub
+[ROL-1641] - Refine "remember me" note
+[ROL-1695] - Use dashes rather than underscore to form multi-word tags
+[ROL-1797] - Option to allow access to usernames
+[ROL-1816] - Media Blogging: remove dependence on FileManager
+[ROL-1830] - Media Blogging: combine media file view and media file search pages
+[ROL-1833] - Media Blogging: allow multi-file upload
+[ROL-1835] - Media Blogging: fix Weblog entry image choosers
+[ROL-1837] - Media Blogging: allow move and delete of directories
+[ROL-1838] - Media Blogging: allow update of file contents
 
-Bug Fixes
+Bugs fixed
 
-   * [ROL-1675] - Cannot delete custom planet groups		
-   * [ROL-1666] - Cannot dis-allow custom themes		
-   * [ROL-1644] - Planet Group feeds do not work properly		
-   * [ROL-1654] - line 161 of dbmigration scripts for mysql + postgresql typo		
-   * [ROL-1655] - Enclosure URLs should be escaped		
-   * [ROL-1665] - Site Model methods should accept WeblogWrapper args		
-   * [ROL-1658] - Some templates still reference rollerweblogger.org	
+[ROL-1611] - CustomUserRegistry using wrong LDAP value for username
+[ROL-1627] - Roller 4.0 doesn't work with Postgres
+[ROL-1644] - Planet Group feeds do not work properly
+[ROL-1654] - line 161 of dbmigration scripts for mysql + postgresql typo
+[ROL-1655] - Enclosure URLs should be escaped
+[ROL-1656] - Problem with special characters in category names
+[ROL-1658] - Some templates still reference rollerweblogger.org
+[ROL-1664] - Problems with Planet configuation and associated Install docs
+[ROL-1665] - Site Model methods should accept WeblogWrapper args
+[ROL-1666] - Cannot dis-allow custom themes
+[ROL-1675] - Cannot delete custom planet groups
+[ROL-1679] - Bug in Xinha editor
+[ROL-1688] - Error pages throw errors
+[ROL-1693] - Banner still shows Register links when user registration is turned off
+[ROL-1694] - Email notification for comments in Glassfish does not work, but could be a general issue
+[ROL-1700] - Error deleting planet subscriptions with apostrophes in title
+[ROL-1701] - Security problem in Roller Admin Protocol (RAP)
+[ROL-1706] - Romoving an entry doesn't clear the WEbsite cache
+[ROL-1722] - frontpage theme has the name 'Roller Homepage'
+[ROL-1724] - Bug in trunk AuthoritiesPopulator.java
+[ROL-1726] - NPE when deleting a subscription with a URL that contains mulitiple param in query string
+[ROL-1753] - Defect in Roller logo image in front-page theme
+[ROL-1760] - Scheduled tasks do not run on Oracle (or other DBs with high precision timestamps)
+[ROL-1761] - tasks will not run more often than leaseTime minutes
+[ROL-1776] - feed servlet may not call correct template
+[ROL-1781] - Site-wide and weblog-specific blacklists not combined properly
+[ROL-1782] - Rich Text Editor (Xinha) always set URL to relative path.
+[ROL-1802] - null pointer exception uploading files
+[ROL-1803] - Comments.jsp
+[ROL-1808] - Mention getRequestParamter() limitation in Template Guide
+[ROL-1810] - Incorrect Javadoc statements
+[ROL-1813] - #showWeblogEntryCalendar() ignores category argument
+[ROL-1826] - Compilation broken on Roller trunk for JDK 1.5
+[ROL-1832] - Encountered typos in Postgresql Create Db script that caused creation of roller db to fail.
+[ROL-1836] - Media Blogging: replace YUI context menu with simple links
 
 
 -------------------------------------------------------------------------------
