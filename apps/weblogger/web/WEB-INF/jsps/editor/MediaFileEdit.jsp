@@ -131,20 +131,3 @@
 </s:form>
 
 
-<%-- Create Weblog Entry and Create Podcast Entry links --%>
-<br />
-
-<p>
-<a href='#' onclick='javascript:window.parent.onCreateWeblogPost($("#mediaFileId").get(0).value)'>
-    <s:text name="mediaFileEdit.createWeblogPost" />
-</a><br />
-<s:text name="mediaFileEdit.createWeblogPostTip" />
-</p>
-
-<p>
-<a href='#' onclick='javascript:window.parent.onCreatePodcastPost($("#entry_bean_permalink").get(0).value)'>
-    <s:text name="mediaFileEdit.createPodcastPost" />
-</a><br />
-<s:text name="mediaFileEdit.createPodcastPostTip" /><br />
-</p>
-

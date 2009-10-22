@@ -185,13 +185,6 @@ public class MediaFileBase extends UIAction {
         }
     }
 
-    /**
-     * Constructs the external URL for a given media file
-     */
-    protected String getMediaFileURL(MediaFile mediaFile) {
-        return mediaFile.getWeblog().getAbsoluteURL() + "/mediaresource/" + mediaFile.getId();
-    }
-
     public String[] getSelectedMediaFiles() {
         return selectedMediaFiles;
     }

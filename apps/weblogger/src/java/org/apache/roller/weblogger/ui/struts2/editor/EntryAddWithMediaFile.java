@@ -36,10 +36,10 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     // bean for managing form data
     private EntryBean bean = new EntryBean();
 
-    private String weblog = null;
-    private String enclosureUrl = null;
+    private String   weblog = null;
+    private String   type = null;
     private String[] selectedImages = null;
-    private String selectedImage = null;
+    private String   selectedImage = null;
     
 
     public EntryAddWithMediaFile() {
@@ -65,7 +65,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
             StringBuilder sb = new StringBuilder();
 
-            if (selectedImages != null) {
+            if ("weblog".equals(type) && selectedImages != null) {
 
                 for (int i=0; i<selectedImages.length; i++) {
                     MediaFile mediaFile = manager.getMediaFile(selectedImages[i]);
@@ -73,14 +73,14 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
                     if (mediaFile.isImageFile()) {
                         link = "<p>" + mediaFile.getName() + "</p>";
-                        link += "<a href='<url>'><img src='<url>?t=true' alt='<name>' width='<width>' height='<height>'></img></a>";
-                        link = link.replace("<url>", getMediaFileURL(mediaFile))
+                        link += "<a href='<url>'><img src='<url>' alt='<name>' width='<width>' height='<height>'></img></a>";
+                        link = link.replace("<url>", mediaFile.getThumbnailURL())
                                    .replace("<name>", mediaFile.getName())
                                    .replace("<width>", ""+mediaFile.getThumbnailWidth())
                                    .replace("<height>", ""+mediaFile.getThumbnailHeight());
                     } else {
                         link = "<a href='<url>'><name></a> (<size> bytes, <type>)";
-                        link = link.replace("<url>", getMediaFileURL(mediaFile))
+                        link = link.replace("<url>", mediaFile.getPermalink())
                                    .replace("<name>", mediaFile.getName())
                                    .replace("<size>",""+mediaFile.getLength())
                                    .replace("<type>",mediaFile.getContentType());
@@ -89,14 +89,15 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                 }
             }
 
-            if (StringUtils.isNotEmpty(enclosureUrl)) {
+            else if ("podcast".equals(type) && StringUtils.isNotEmpty(selectedImage)) {
+                MediaFile podcastFile = manager.getMediaFile(selectedImage);
                 sb.append("<p>")
                   .append(getText("mediaFileEdit.includesEnclosure"))
                   .append("<br />")
                   .append("<a href=''>")
-                  .append(enclosureUrl)
+                  .append(podcastFile.getPermalink())
                   .append("</a></p>");
-                bean.setEnclosureURL(enclosureUrl);
+                bean.setEnclosureURL(podcastFile.getPermalink());
             }
 
             bean.setText(sb.toString());
@@ -130,17 +131,17 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     }
 
     /**
-     * @return the enclosureUrl
+     * @return the type
      */
-    public String getEnclosureUrl() {
-        return enclosureUrl;
+    public String getType() {
+        return type;
     }
 
     /**
-     * @param enclosureUrl the enclosureUrl to set
+     * @param type the enclosureUrl to set
      */
-    public void setEnclosureUrl(String enclosureUrl) {
-        this.enclosureUrl = enclosureUrl;
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**

@@ -19,7 +19,6 @@
 
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/assets/skins/sam/container.css'/>" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/menu/assets/skins/sam/menu.css'/>" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/roller-ui/yui/button/assets/skins/sam/button.css'/>" />
 
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/container/container-min.js'/>"></script>
@@ -46,6 +45,23 @@
     }
     #myMenu {
         margin-left: 0;
+    }
+    span.button {
+        height:15px;
+        width:15px;
+        float:right;
+    }
+    .yui-button button {
+        border-style: none;
+        background-color:transparent;
+        *overflow:visible;
+        cursor:pointer;
+    }
+    .yui-menu-button button {
+        width:15px; height: 15px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: url(<s:url value="/images/add.png"/>);
     }
 </style>
 
@@ -75,7 +91,40 @@
         }
     }
 
+    var menuButtons = {};
+
+    function setupMenuButton(id) {
+        if (!menuButtons[id]) {
+            var mediaFileMenu = [
+                { text: "<s:text name='mediaFile.createWeblogPost' />", value: 1, onclick: { fn: onCreateWeblogPost, obj:id } },
+                { text: "<s:text name='mediaFile.createPodcastPost' />", value: 2, onclick: { fn: onCreatePodcastPost, obj:id } }
+            ];
+            menuButtons[id] = new YAHOO.widget.Button({
+                type: "menu", label: "", name: id,
+                menu: mediaFileMenu, container: 'addbutton-' + id });
+            $('#addbutton-img' + id).hide();
+        }
+    }
+
+    function onCreateWeblogPost(p_sType, p_aArgs, id) {
+        $("#selectedImage").get(0).value = id;
+        $("#type").get(0).value = 'weblog';
+        $("#createPostForm").get(0).submit();
+    }
+
+    function onCreatePodcastPost(p_sType, p_aArgs, id) {
+        $("#selectedImage").get(0).value = id;
+        $("#type").get(0).value = 'podcast';
+        $("#createPostForm").get(0).submit();
+    }
+
 </script>
+
+<s:form id="createPostForm" action='entryAddWithMediaFile'>
+    <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
+    <input type="hidden" name="selectedImage" id="selectedImage" />
+    <input type="hidden" name="type" id="type" />
+</s:form>
 
 
 <%-- ********************************************************************* --%>
@@ -164,7 +213,7 @@
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
             </s:url>
             <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
-            
+
         </s:iterator>
     </p>
     <p class="pagetip">
@@ -241,12 +290,12 @@
                                   onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
                         </div>
                         <div class="mediaObjectInfo">
-                            <label><s:property value="#directory.name" /></label>
-                                <input type="checkbox" style="float:right"
-                                       name="selectedMediaFileDirectories"
-                                       value="<s:property value="#directory.id"/>"/>
-                                <inut type="hidden" id="mediadiridentity"
-                                       value="<s:property value='#directory.id'/>">
+                            <input type="checkbox"
+                                   name="selectedMediaFileDirectories"
+                                   value="<s:property value="#directory.id"/>"/>
+                            <inut type="hidden" id="mediadiridentity"
+                                   value="<s:property value='#directory.id'/>">
+                            <s:property value="#directory.name" />
                         </div>
                     </li>
                 </s:iterator>
@@ -275,20 +324,25 @@
 
                         </div>
 
-                        <div class="mediaObjectInfo">
+                        <div class="mediaObjectInfo"
+                             onmouseover='setupMenuButton("<s:property value='#mediaFile.id' />")'>
 
-                            <label class="mediaFile">
-                                <str:truncateNicely lower="40" upper="50">
-                                    <s:property value="#mediaFile.name" />
-                                </str:truncateNicely>
-                                <input type="checkbox" style="float:right"
-                                       name="selectedMediaFiles"
-                                       value="<s:property value="#mediaFile.id"/>"/>
-                                <inut type="hidden" id="mediafileidentity"
-                                       value="<s:property value='#mediaFile.id'/>">
-                            </label>
+                            <input type="checkbox"
+                                   name="selectedMediaFiles"
+                                   value="<s:property value="#mediaFile.id"/>" />
+                            <input type="hidden" id="mediafileidentity"
+                                   value="<s:property value='#mediaFile.id'/>" />
 
-                        </div>
+                            <str:truncateNicely lower="40" upper="50">
+                                <s:property value="#mediaFile.name" />
+                            </str:truncateNicely>
+
+                            <span class="button" id="addbutton-<s:property value='#mediaFile.id' />">
+                                <img id="addbutton-img<s:property value='#mediaFile.id' />"
+                                     src="<s:url value="/images/add.png"/>" />
+                            </span>
+
+                       </div>
 
                     </li>
 
@@ -324,19 +378,23 @@
 
                         </div>
 
-                        <div class="mediaObjectInfo">
+                        <div class="mediaObjectInfo"
+                             onmouseover='setupMenuButton("<s:property value='#mediaFile.id' />")'>
 
-                            <label>
-                                <str:truncateNicely lower="40" upper="50">
-                                    <s:property value="#mediaFile.name" />
-                                </str:truncateNicely>
-                                <input type="checkbox" style="float:right"
+                                <input type="checkbox"
                                        name="selectedMediaFiles"
                                        value="<s:property value="#mediaFile.id"/>"/>
                                 <inut type="hidden" id="mediafileidentity"
                                        value="<s:property value='#mediaFile.id'/>">
-                            </label>
 
+                                <str:truncateNicely lower="40" upper="50">
+                                    <s:property value="#mediaFile.name" />
+                                </str:truncateNicely>
+
+                                <span class="button" id="addbutton-<s:property value='#mediaFile.id' />">
+                                    <img id="addbutton-img<s:property value='#mediaFile.id' />"
+                                         src="<s:url value="/images/add.png"/>" />
+                                </span>
 
                         </div>
 
@@ -369,32 +427,6 @@
 </s:form>
 
 </s:if>
-
-
-
-<%-- ***************************************************************** --%>
-
-<%-- code to create new weblog post when Media File Edit lightbox requests it --%>
-
-<script type="text/javascript">
-
-    function onCreateWeblogPost(mediaFileId) {
-        $("#selectedImage").get(0).value = mediaFileId;
-        $("#createPostForm").get(0).submit();
-    }
-
-    function onCreatePodcastPost(enclosureURL) {
-        $("#enclosureUrl").get(0).value = enclosureURL;
-        $("#createPostForm").get(0).submit();
-    }
-
-</script>
-
-<s:form id="createPostForm" action='entryAddWithMediaFile'>
-    <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
-    <input type="hidden" name="selectedImage" id="selectedImage" />
-    <input type="hidden" name="enclosureUrl" id="enclosureUrl" />
-</s:form>
 
 
 <%-- ***************************************************************** --%>
@@ -475,4 +507,4 @@
         </iframe>
     </div>
     <div class="ft"></div>
-</div> 
+</div>
