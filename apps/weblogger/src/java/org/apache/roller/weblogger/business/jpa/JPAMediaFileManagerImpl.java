@@ -273,37 +273,43 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         cmgr.saveFileContent(weblog, mediaFile.getId(), mediaFile.getInputStream());
 
         if (mediaFile.isImageFile()) {
-            FileContent fc = cmgr.getFileContent(weblog, mediaFile.getId());
+            updateThumbnail(mediaFile);
+        }
+    }
+
+    private void updateThumbnail(MediaFile mediaFile) {
+        try {
+            FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
+            FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(), mediaFile.getId());
             BufferedImage img = null;
-            try {
-                img = ImageIO.read(fc.getInputStream());
+            
+            img = ImageIO.read(fc.getInputStream());
 
-                // determine and save width and height
-                mediaFile.setWidth(img.getWidth());
-                mediaFile.setHeight(img.getHeight());
-                strategy.store(mediaFile);
+            // determine and save width and height
+            mediaFile.setWidth(img.getWidth());
+            mediaFile.setHeight(img.getHeight());
+            strategy.store(mediaFile);
 
-                int newWidth = mediaFile.getThumbnailWidth();
-                int newHeight = mediaFile.getThumbnailHeight();
-                
-                // create thumbnail image
-                Image newImage = img.getScaledInstance(
-                        newWidth, newHeight, Image.SCALE_SMOOTH);
-                BufferedImage tmp = new BufferedImage(
-                        newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2 = tmp.createGraphics();
-                g2.drawImage(newImage, 0, 0, newWidth, newHeight, null);
-                g2.dispose();
+            int newWidth = mediaFile.getThumbnailWidth();
+            int newHeight = mediaFile.getThumbnailHeight();
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(tmp, "png", baos);
+            // create thumbnail image
+            Image newImage = img.getScaledInstance(
+                    newWidth, newHeight, Image.SCALE_SMOOTH);
+            BufferedImage tmp = new BufferedImage(
+                    newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = tmp.createGraphics();
+            g2.drawImage(newImage, 0, 0, newWidth, newHeight, null);
+            g2.dispose();
 
-                cmgr.saveFileContent(weblog, mediaFile.getId() + "_sm",
-                    new ByteArrayInputStream(baos.toByteArray()));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(tmp, "png", baos);
 
-            } catch (Exception e) {
-                log.debug("ERROR creating thumbnail", e);
-            }
+            cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId() + "_sm",
+                new ByteArrayInputStream(baos.toByteArray()));
+
+        } catch (Exception e) {
+            log.debug("ERROR creating thumbnail", e);
         }
     }
 
@@ -332,7 +338,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         if (!cmgr.canSave(weblog, mediaFile.getName(), mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
             throw new FileIOException(msgs.toString());
         }
-        cmgr.saveFileContent(weblog, mediaFile.getId(), mediaFile.getInputStream());
+        cmgr.saveFileContent(weblog, mediaFile.getId(), is);
+
+        if (mediaFile.isImageFile()) {
+            updateThumbnail(mediaFile);
+        }
     }
 
     /**

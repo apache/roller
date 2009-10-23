@@ -17,6 +17,8 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.io.File;
+import java.io.FileInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +39,15 @@ public class MediaFileEdit extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
+
+    // file uploaded by the user, if applicable
+    private File uploadedFile = null;
+
+    // content types for upload file
+    private String uploadedFileContentType = null;
+
+    // filename for uploaded file 
+    private String uploadedFileName = null;
 
 
     public MediaFileEdit() {
@@ -107,8 +118,18 @@ public class MediaFileEdit extends MediaFileBase {
             try {
                 MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
                 bean.copyTo(mediaFile);
-                manager.updateMediaFile(getActionWeblog(), mediaFile);
+
+                if (uploadedFile != null) {
+                    mediaFile.setLength(this.uploadedFile.length());
+                    mediaFile.setContentType(this.uploadedFileContentType);
+                    manager.updateMediaFile(getActionWeblog(),
+                        mediaFile, new FileInputStream(this.uploadedFile));
+                } else {
+                   manager.updateMediaFile(getActionWeblog(), mediaFile);
+                }
+
                 WebloggerFactory.getWeblogger().flush();
+
                 addMessage("mediaFile.update.success");
                 return SUCCESS;
 
@@ -139,5 +160,47 @@ public class MediaFileEdit extends MediaFileBase {
 
     public void setDirectory(MediaFileDirectory directory) {
         this.directory = directory;
+    }
+
+    /**
+     * @return the uploadedFile
+     */
+    public File getUploadedFile() {
+        return uploadedFile;
+    }
+
+    /**
+     * @param uploadedFile the uploadedFile to set
+     */
+    public void setUploadedFile(File uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
+    /**
+     * @return the uploadedFileContentType
+     */
+    public String getUploadedFileContentType() {
+        return uploadedFileContentType;
+    }
+
+    /**
+     * @param uploadedFileContentType the uploadedFileContentType to set
+     */
+    public void setUploadedFileContentType(String uploadedFileContentType) {
+        this.uploadedFileContentType = uploadedFileContentType;
+    }
+
+    /**
+     * @return the uploadedFileName
+     */
+    public String getUploadedFileName() {
+        return uploadedFileName;
+    }
+
+    /**
+     * @param uploadedFileName the uploadedFileName to set
+     */
+    public void setUploadedFileName(String uploadedFileName) {
+        this.uploadedFileName = uploadedFileName;
     }
 }

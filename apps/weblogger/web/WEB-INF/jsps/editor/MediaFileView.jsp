@@ -91,6 +91,8 @@
         }
     }
 
+    <%-- menu button for each image, launched from the plus sign image --%>
+
     var menuButtons = {};
 
     function setupMenuButton(id) {
@@ -118,7 +120,46 @@
         $("#createPostForm").get(0).submit();
     }
 
+
+    <%-- launch modal "lightbox" Media File Edit page --%>
+
+    function onClickEdit(mediaFileId) {
+        <s:url id="mediaFileEditURL" action="mediaFileEdit">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        $("#mediaFileEditor").attr('src',
+            '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+        YAHOO.mediaFileEditor.lightbox.show();
+    }
+
+    function onEditSuccess() {
+        $("#mediaFileEditor").attr('src','about:blank');
+        YAHOO.mediaFileEditor.lightbox.hide();
+        window.location.reload();
+    }
+
+    function onEditCancelled() {
+        $("#mediaFileEditor").attr('src','about:blank');
+        YAHOO.mediaFileEditor.lightbox.hide();
+    }
+
+    YAHOO.namespace("mediaFileEditor");
+    $(document).ready(function() {
+        YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
+            "mediafile_edit_lightbox", {
+                modal:    true,
+                width:   "600px",
+                height:  "600px",
+                visible: false,
+                fixedcenter: true,
+                constraintoviewport: true
+            }
+        );
+        YAHOO.mediaFileEditor.lightbox.render(document.body);
+    });
+
 </script>
+
 
 <s:form id="createPostForm" action='entryAddWithMediaFile'>
     <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
@@ -457,43 +498,6 @@
     });
 </script>
 
-
-<%-- ***************************************************************** --%>
-
-<%-- code to launch Media File Edit lightbox when user clicks a media file --%>
-
-<script type="text/javascript">
-
-    function onClickEdit(mediaFileId) {
-        <s:url id="mediaFileEditURL" action="mediaFileEdit">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        $("#mediaFileEditor").attr('src',
-            '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        YAHOO.mediaFileEditor.lightbox.show();
-    }
-
-    function onClose() {
-        $("#mediaFileEditor").attr('src','about:blank');
-        YAHOO.mediaFileEditor.lightbox.hide();
-    }
-
-    YAHOO.namespace("mediaFileEditor");
-    $(document).ready(function() {
-        YAHOO.mediaFileEditor.lightbox = new YAHOO.widget.Panel(
-            "mediafile_edit_lightbox", {
-                modal:    true,
-                width:   "600px",
-                height:  "600px",
-                visible: false,
-                fixedcenter: true,
-                constraintoviewport: true
-            }
-        );
-        YAHOO.mediaFileEditor.lightbox.render(document.body);
-    });
-
-</script>
 
 <div id="mediafile_edit_lightbox" style="visibility:hidden">
     <div class="hd">Media File Editor</div>

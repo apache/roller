@@ -18,5 +18,5 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <script type="text/javascript">
-parent.onClose();
+parent.onEditSuccess();
 </script>

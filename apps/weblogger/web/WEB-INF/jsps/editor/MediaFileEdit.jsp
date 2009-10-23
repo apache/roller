@@ -34,7 +34,7 @@
     <s:text name="mediaFileEdit.pagetip"  />
 </p>
 
-<s:form id="entry" action="mediaFileEdit!save" method="POST">
+<s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data">
     <s:hidden name="weblog" />
     <s:hidden name="mediaFileId" id="mediaFileId" />
     <s:hidden name="bean.permalink" />
@@ -119,13 +119,25 @@
             </td>
        </tr>
 
+        <tr>
+            <td class="entryEditFormLabel">
+                <label for="title"><s:text name="mediaFileEdit.updateFileContents" /></label>
+            </td>
+            <td>
+                <div id="fileControldiv" class="miscControl">
+                    <s:file id="fileControl" name="uploadedFile" size="30" />
+                    <br />
+                </div>
+            </td>
+        </tr>
+
     </table>
 
     <div class="control">
        <input type="submit" tabindex="7"
               value="<s:text name="mediaFileEdit.save" />" name="submit" />
        <input type="button" tabindex="8"
-              value="<s:text name="mediaFileEdit.cancel" />" onClick="javascript:window.parent.onClose();" />
+              value="<s:text name="mediaFileEdit.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
     </div>
 
 </s:form>
