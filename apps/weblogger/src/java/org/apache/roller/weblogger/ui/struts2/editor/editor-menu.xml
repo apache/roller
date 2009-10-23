@@ -59,7 +59,13 @@ Each menu or menu item is governed by four attrbibutes:
                    perms="post"
                    subactions="mediaFileAdd,mediaFileHierarchicalView,mediaFileSearch" />
 
-        <menu-item action="referrers"     
+        <menu-item action="weblogExport"
+                   name="tabbedmenu.weblog.export"
+                   roles="editor"
+                   perms="author"
+                   subactions="exportEntries,exportResources"/>
+
+         <menu-item action="referrers"
                    name="tabbedmenu.weblog.referers" 
                    globalPerms="login"
                    weblogPerms="post" 

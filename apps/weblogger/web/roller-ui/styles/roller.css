@@ -820,6 +820,7 @@ div.autocomplete ul li {
 #menu h1 {
     line-height:120%;
     margin:15px 0px;
+    padding-left: 0.5em;
 }
 #ewecontextmenu {
     background-color:#CECECE;

@@ -65,6 +65,7 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
 }
 #centercontent {
     margin: 10px;
+    padding-left: 0.5em;
 }
 #rightcontent_wrap {
     float: right;

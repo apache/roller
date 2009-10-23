@@ -364,6 +364,12 @@
                 class="org.apache.roller.weblogger.ui.struts2.editor.Resources">
             <result name="list" type="tiles">.Resources</result>
         </action>
+
+        <action name="weblogExport!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogExport">
+            <result name="input" type="tiles">.WeblogExport</result>
+            <!--<result name="success" type="chain">weblogExport</result>-->
+        </action>
         
         <action name="referrers!*" method="{1}"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Referrers">
