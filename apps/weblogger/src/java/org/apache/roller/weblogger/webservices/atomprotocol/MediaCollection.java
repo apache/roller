@@ -60,6 +60,7 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -138,7 +139,12 @@ public class MediaCollection {
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
-                    fileMgr.createMediaFile(website, mf);
+                    RollerMessages errors = new RollerMessages();
+                    fileMgr.createMediaFile(website, mf, errors);
+                    if (errors.getErrorCount() > 0) {
+                        throw new AtomException(errors.toString());
+                    }
+
                     roller.flush();
                     
                     fis.close();

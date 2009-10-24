@@ -71,6 +71,9 @@ img.w3c {
     width: 88px;
     margin-right: 5px;
 }
+label {
+   line-height: 1.5em;
+}
 
 /* ----------------------------------------------------------------------
 Page element styles: boxes and borders, etc.
@@ -98,7 +101,7 @@ div.bannerStatusBox {
     padding: 5px;
 }
 .sidebarInner {
-    padding: 5px;
+    padding: 0.5em 0.5em 0.5em 1em;
 }
 .sidebarBody ul {
     margin: 0px;
@@ -246,6 +249,7 @@ label.sideformrow {
     text-align: left;
     width: 30%;
     padding-right: 1em;
+    padding-top: 1em;
     font-size: smaller;
 }
 

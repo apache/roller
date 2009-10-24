@@ -33,11 +33,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -109,7 +111,12 @@ public final class WeblogExport extends UIAction
      * Simply triggers the display of the export options UI.
      */
     @Override
-    public String execute() {
+    public String execute() throws WebloggerException {
+
+        if (!WebloggerConfig.getBooleanProperty("weblog.export.enabled")) {
+            throw new WebloggerException("ERROR: export is disabled");
+        }
+
         // We need to gather some more info before we can attempt an export
         return INPUT;
     }
@@ -120,7 +127,12 @@ public final class WeblogExport extends UIAction
      *
      * Currently the only file format supported is mtimport.
      */
-    public void exportEntries() {
+    public void exportEntries() throws WebloggerException {
+
+        if (!WebloggerConfig.getBooleanProperty("weblog.export.enabled")) {
+            throw new WebloggerException("ERROR: export is disabled");
+        }
+        
         try {
             WeblogEntryManager wmgr =
                     WebloggerFactory.getWeblogger().getWeblogEntryManager();

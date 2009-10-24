@@ -3,11 +3,6 @@
 
 
 
-
-
-
-
-
 Installation Guide
 
 
@@ -32,9 +27,10 @@ Installation Guide
 
 
 
+
 Apache Roller Weblogger
-Version 4.1
-April 2008
+Version 5.0
+October 2009 
 
 Table of Contents
 1   Overview	3
@@ -63,14 +59,12 @@ Table of Contents
 8.2   Register a user and create a weblog	13
 9   Configuration tips and tricks	14
 9.1   Setting up Roller's Planet feed aggregator	14
-9.2   Changing keys in security.xml	15
-9.3   Using Server-provided database and mail resources	16
-9.4   Manual table creation and upgrade	17
+9.2   Using Server-provided database and mail resources	16
+9.3   Manual table creation and upgrade	17
 10   Upgrading Roller	18
-10.1   For those upgrading from Roller 2.x to Roller 4.0	18
-10.2   Backup your old Roller 	19
-10.3   Install and startup the new Roller 	20
-11   roller.properties	21
+10.1   Backup your old Roller 	18
+10.2   Install and startup the new Roller 	19
+11   roller.properties	20
 
 1Overview
 This document describes how to install the Apache Roller Weblogger software. It explains what you need to install first, how to download Roller, how to configure Roller and how to install it to your existing Java application server and relational database. If also offers a 5-minute install option   for more advanced folks.
@@ -90,6 +84,8 @@ The general format of this document was based on the documentation template used
 1.4Modifications and Updates
 Date
 Description of Change
+October 2009
+Updated for Roller 5.0, note about upgrading file uploads to new media blogging system in Section 10.
 July 2007
 Rewritten for simplified Roller 4.0 installation process
 
@@ -294,14 +290,8 @@ Main Planet feed
 http://localhost:8080/roller/planetrss
 Per group feed
 http://localhost:8080/roller/planetrss?group=<group-name>
-9.2Changing keys in security.xml
-Starting with version 2.1, Roller uses the Acegi security infrastructure. Several of the security features rely on keys that are intended to be site-specific. These keys are used to compute HMAC (hash-based message authentication code) values for Remember Me cookies. Knowledge of these keys could allow an attacker to forge invalid cookies, and thereby gain unauthorized access to your Roller installation (at the application level). 
-Roller ships with default values, and these should assumed to be widely known. You should change your keys to be secret values specific to your own site (the reason you should change the anonymous provider key is that a granted authorities list is embedded within the anonymous authentication token). Here is how to change the keys. 
-1.Find your WEB-INF/security.xml file and open it in a text editor.
-2.For the beans with ids "anonymousAuthenticationProvider" and "anonymousProcessingFilter" change the value field of the property with name="key" to be different from the default value of "anonymous". You can use any string value of your choosing. It should be a secret specific to your site. Use the same key value in these two beans; they must match.
-3.For the beans with ids "rememberMeServices" and "rememberMeAuthenticationProvider" change the value field of the property with name="key" to be different from the default value of "rollerlovesacegi". You can use any string value of your choosing. It should be a secret specific to your site. Use the same key value in these two beans; they must match 
 
-9.3Using Server-provided database and mail resources
+9.2Using Server-provided database and mail resources
 It's easiest to setup the database connection using the 'jdbc' approach and the mail connection using 'properties' but in some cases you might want to use the datasource and mail session resources provided by your application server instead. You might do this for a couple of reasons, for example you might want to take advantage of the database connection pool management that is built into your server. Or, your boss might want everything to be managed via your server's Admin Console. No matter the reason, it's easy to do in Roller.
 Instead of setting up your database and mail connections in roller-custom.properties like this:
    installation.type=auto
@@ -331,7 +321,7 @@ Setting up database and mail resources on Tomcat
 There are a couple of different ways to setup database and mail resources on Tomcat. One way is to provide a Context Configuration file. Here's how to do that on Tomcat 5.5 and 6.0. 
 Before you deploy Roller to Tomcat, create a new Context Configuration file in the installation directory  webapp/roller/META-INF. You'll find an example configuration file there, shown below. Rename it from context.xml-example to context.xml and substitute the correct values for your system where you see the bold text. 
     <Context path="/roller" 
-        docBase="/usr/local/apache-roller-4.0/webapp/roller" debug="0">
+        docBase="/usr/local/apache-roller-5.0/webapp/roller" debug="0">
 
         <Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource"
             driverClassName="com.mysql.jdbc.Driver"
@@ -345,7 +335,7 @@ Before you deploy Roller to Tomcat, create a new Context Configuration file in t
     </Context>
 
 Once your context.xml file is in place, deploy Roller to Tomcat as described in Section 7.
-9.4Manual table creation and upgrade
+9.3Manual table creation and upgrade
 If you would rather create your database tables yourself instead of letting Roller do it automatically, you can. Instead of enabling automatic installation you should disable it by putting this in your roller-custom.properties file:
     installation.type=manual
 
@@ -353,32 +343,7 @@ Now you've got to run the database creation script. You can find the database cr
 And if you are upgrading Roller, you'll have to run the migration scripts. You'll find those under the dbscripts directory too.
 10Upgrading Roller
 This section describes how to upgrade an existing Roller installation to the latest release of Roller by shutting down, backing up and then following the installation instructions with a couple of key exceptions. But first, there is some required reading for those upgrading from ancient versions of Roller.
-10.1For those upgrading from Roller 2.x to Roller 4.0
-Roller 3.0 and Roller 4.0 were major releases and made some big changes to the way that Roller works. If you're upgrading from the 2.x series you need to be aware of them and especially the new URL structure and the new template system.
-New URL structure
-The most significant change is the new URL structure – we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are forwarded to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
-	http://<hostname>/roller/page/<weblog-handle>
-To use the new format, which is:
-	http://<hostname>/roller/<weblog-handle>
-Unfortunately, some custom templates that use relative URLs will have problem with this new URL structure. So, before you go live you should set-up a test server and allow your users to take a look at their weblogs.
-New template system
-We've developed a completely new and greatly improved template system for Roller, which includes new models and new macros. We want to encourage people to start using this new system for all new template and theme development, so we have made it the default. And, by default, we've turned off the old system. 
-So, if you are upgrading and you want your weblogs to work, you must override this Roller property to enable the old “legacy” template system to work:
-	rendering.legacyModels.enabled=true
-See Section 11 for information on overriding Roller startup properties.
-New task management system
-In Roller 3.1 we changed the scheduled task properties, so if you were overriding  the tasks.daily or tasks.hourly properties you need to change your roller-custom.properties file. Refer to the notes in Section 11   roller.properties in the Scheduled Tasks Configuration area.
-New package names
-In Roller 3.0 or package names went from from org.roller to org.apache.roller. In Roller 4.0 they've changed again to org.apache.roller.weblogger. So check your configuration files for references to the old package names. And if you created any plugins, you'll have to recompile them against the new code base.
-Encrypted passwords now the default
-Roller now defaults to storing passwords in the database in an emcrypted format. So, if you are upgrading an older version of Roller and you went with the default setting for encrypted passwords, which was off by default, then you'll need to set this propery in your roller-custom.properties file:
-	passwds.encryption.enabled=false
-Non-core themes removed
-The Roller project is establishing a community site for sharing and maintaining of themes and plugins. 
-From now only, Roller will ship with only a core set of four themes (Basic, BrushedMetal, Sotto and a new Frontpage themes, which is just for site-wide front-page weblogs) . All other themes have been removed from Roller and moved to the Roller Support project at Java.net (http://roller.dev.java.net). If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
-Non-core plugins removed
-The same applies to plugins. The JSPWiki, Textile and Read More plugins have also been moved to the Roller Support project at Java.net (http://roller.dev.java.net) to become part of a community maintained repository. If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
-10.2Backup your old Roller 
+10.1Backup your old Roller 
 Before you get started with your upgrade, shutdown your existing Roller install and make a backup of your Roller data. 
 Backup your database to somewhere safe on your system or to a remote file-system. Here are a couple of examples: of how to do that on various databases:
 On MySQL you create a dump file
@@ -386,17 +351,41 @@ mysqldump -u scott -p rollerdb > /somewhere/safe/roller.dmp
 With PostgreSQL you can do the same thing
 pg_dump -h 127.0.0.1 -W -U scott rollerdb > /somewhere/safe/roller.db
 And backup any other data. Make a copy of your Roller data directory, i.e. the one with your Roller resources and search-index files. If you added or modified any files within your old Roller web application directory, then you'll want to backup that whole directory. 
-Don't store files inside of Roller
-If you do, you'll have to move them around on every Roller upgrade. Put your uploads and themes in a separate directory and point to them via the upoads.dir and themes.dir properties.
-If you're upgrading from an older version of Roller you may have been storing uploaded files inside the Roller web application, in a /resources subdirectory. In Roller 4.0 the default is to store those files your home directory under roller_data/uploads, so you'll have to copy your uploads there. If you want to change the location of the uploads directory, overload the property upoads.dir.
-10.3Install and startup the new Roller 
+Migrating your old file uploads to the new Media Blogging system
+When you first start Roller 5.0 it will migrate your old file uploads to the new Media Blogging system. If this is to work properly you MUST ensure that the two properties below are set correctly before you start Roller 5.0 for the first time.
+
+	# The directory in which Roller will upload files
+	mediafiles.storage.dir=${user.home}/roller_data/mediafiles
+
+	# The directory in which Roller will upload files
+	uploads.dir=${user.home}/roller_data/uploads
+
+The mediafiles.storage.dir property should be set to the location where you would like to store uploaded files.
+The uploads.dir property should be set to the location where you stored uploaded files in Roller 4.0.
+10.2Install and startup the new Roller 
 Follow the normal installation instructions for the new version of Roller, but...
-When creating your roller-custom.properites, copy of your old one. Carefully review each property and compare it to the property settings in the Roller 4.0 property file in Section 11. 
+When creating your roller-custom.properites, copy of your old one. Carefully review each property and compare it to the property settings in the Roller property file in Section 11. 
 Don't create a new database for Roller. Instead point Roller to your existing Roller database. This is completely safe because you created a backup of your database (right?).
 When you deploy and startup, Roller will detect that your database needs to be upgraded and it will offer to run each of the migrations scripts necessary to upgrade you from your old version to the new version of Roller.
 NOTE: if you would rather run the database migration scripts yourself, you can. See Section 9.4.
 NOTE: On Tomcat, before startup you should delete the contents of the Tomcat work directory
 11roller.properties
+# Licensed to the Apache Software Foundation (ASF) under one or more
+#  contributor license agreements.  The ASF licenses this file to You
+# under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.  For additional information regarding
+# copyright in this work, please see the NOTICE file in the top level
+# directory of this distribution.
+
 # roller.properties
 #
 # This file is for meant for Roller deployment properties
@@ -433,7 +422,7 @@ NOTE: On Tomcat, before startup you should delete the contents of the Tomcat wor
 # -- Feature specific settings
 # -- Scheduled tasks configuration
 # -- Cache configuratation
-# -- Security settings
+# -- User management and security settings
 # -- Rendering system
 # -- Weblog ping system
 # -- Pluggable backend, page and editor plugins
@@ -490,10 +479,19 @@ mail.hostname=
 #-----------------------------------------------------------------------------
 
 # The directory in which Roller will upload files
+mediafiles.storage.dir=${user.home}/roller_data/mediafiles
+
+# The context path under which resoures will be made available
+mediafile.resource.url=/resources
+
+# The directory in which Roller will upload files
 uploads.dir=${user.home}/roller_data/uploads
 
-# The context path under which resoures will be made available 
+# The context path under which resoures will be made available
 uploads.url=/resources
+
+# Migrate old file resoures to Roller 5.0 Mediafile Storage automatically
+uploads.migrate.auto=true
 
 # Directory in which search index is to be created 
 # (delete this directory to force Roller to recreate the entire search index)
@@ -501,10 +499,6 @@ search.index.dir=${user.home}/roller_data/search-index
 
 # The directory in which Roller will look for themes
 themes.dir=${webapp.context}
-
-# If you enable Planet (see below), then you must specify the path to a cache
-# directory that exists and is writable by the Roller process 
-planet.aggregator.cache.dir=${user.home}/roller_data/planetcache
 
 
 
@@ -554,8 +548,8 @@ comment.validator.excessSize.threshold=1000
 
 # pluggable comment formatters
 comment.formatter.classnames=\
-org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,\
 org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin,\
+org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,\
 org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin
 
 # enables site full blacklist check on comment posts (default: true)
@@ -573,7 +567,6 @@ site.blacklist.enable.referrers=true
 trackback.allowedURLs=
 
 
-
 #----------------------------------
 # Planet Aggregator settings
 
@@ -584,9 +577,6 @@ planet.aggregator.enabled=false
 # Planet backend guice module, customized for use with Weblogger
 planet.aggregator.guice.module=\
 org.apache.roller.weblogger.planet.business.jpa.RollerPlanetModule
-
-# Number of queries allowed per day
-planet.aggregator.technorati.limit=500
 
 
 #----------------------------------
@@ -718,13 +708,39 @@ cache.planet.size=10
 cache.planet.timeout=1800
 
 
-
 #-----------------------------------------------------------------------------
 # Security settings
 #-----------------------------------------------------------------------------
 
 # Enables HTTPS for login page only
 securelogin.enabled=false
+
+# Enable container managed authentication
+authentication.cma.enabled=false
+
+# Enable/disable OpenID (requires Spring Security, will not work with CMA)
+# This can be set to one of three values:
+# - disabled: no OpenID support, no evidence of OpenID in the Web UI
+# - hybrid:   allow users to use either password and/or OpenID
+# - only:     users must use OpenID only, no password allowed
+authentication.openid=disabled
+
+# Password security settings
+passwds.encryption.enabled=true
+passwds.encryption.algorithm=SHA
+
+# Role name to global permission action mappings
+role.names=editor,admin
+role.action.editor=login,comment,weblog
+role.action.admin=login,comment,weblog,admin
+
+# True to give the first user that is registered admin privileges
+users.firstUserAdmin=true
+
+# Normally, for security purposes Roller keeps usernames private and the user
+# getUserName() method in templates actually returns the user's sceenname.
+# If you want templates to have access to real usernames, set this to false.
+user.privateUserNames=true
 
 # Enable scheme enforcement?
 # Scheme enforcement ensures that specific URLs are viewed only via HTTPS
@@ -740,10 +756,6 @@ schemeenforcement.https.urls=/roller_j_security_check,\
 /roller-ui/admin/createUser.rol,/roller-ui/admin/createUser!save.rol,\
 /roller-ui/authoring/userdata,\
 /roller-ui/authoring/membersInvite.rol,/roller-ui/authoring/membersInvite!save.rol
-
-# Password security settings
-passwds.encryption.enabled=true
-passwds.encryption.algorithm=SHA
 
 #----------------------------------
 # Single-Sign-On
@@ -846,7 +858,9 @@ org.apache.roller.weblogger.ui.rendering.model.MenuModel
 
 # Set of page models specifically for site-wide rendering
 rendering.siteModels=\
-org.apache.roller.weblogger.ui.rendering.model.SiteModel
+org.apache.roller.weblogger.ui.rendering.model.SiteModel,\
+org.apache.roller.weblogger.ui.rendering.model.PlanetModel
+
 
 # Velocity settings
 velocity.properties=/WEB-INF/velocity.properties
@@ -925,7 +939,6 @@ pings.disablePingUsage=false
 pings.logOnly=false
 
 
-
 #-----------------------------------------------------------------------------
 # Pluggable backend, page and editor plugins
 #-----------------------------------------------------------------------------
@@ -985,32 +998,33 @@ log4j.appender.roller.File=${catalina.base}/logs/roller.log
 log4j.appender.roller.layout=org.apache.log4j.PatternLayout
 log4j.appender.roller.layout.ConversionPattern=%-5p %d{yyyy-MM-dd HH:mm:ss,SSS} %C{1}:%M - %m%n
 
-# Options are: DEBUG, INFO, WARN, ERROR, FATAL
-# Roller code
+# Roller code. Options are: DEBUG, INFO, WARN, ERROR, FATAL
 log4j.category.org.apache.roller=INFO
 log4j.category.net.java.roller=INFO
 
 # Roller dependent libraries
-log4j.category.org.hibernate=INFO
-log4j.category.org.apache.struts2=INFO
-# the struts2 file upload stuff has some overly verbose messaging
-log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=WARN
+log4j.category.org.apache.struts2=WARN
+log4j.category.org.apache.tiles=WARN
+log4j.category.com.opensymphony.xwork2=WARN
 log4j.category.org.springframework=WARN
 log4j.category.org.springframework.security=ERROR
-# Velocity talks a lot, so by default it is set to STFU mode
+log4j.category.org.hibernate=WARN
+
+# the struts2 file upload stuff has some overly verbose messaging
+log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=ERROR
+
+# Velocity talks *way* too much, so set it to log only FATAL problems
 log4j.category.org.apache.velocity=FATAL
 
 # Roller extras
 log4j.category.com.ecyrd.jspwiki=ERROR
-log4j.category.org.tuckey.web.filters.urlrewrite=DEBUG
 log4j.category.com.opensymphony.oscache=ERROR
 log4j.category.com.danga.MemCached=WARN
 
 # Ask OpenJPA to log to Log4J via Apache Commons Logging
 openjpa.Log=commons
-
-log4j.category.openjpa.Tool=INFO
-log4j.category.openjpa.Runtime=INFO
+log4j.category.openjpa.Tool=WARN
+log4j.category.openjpa.Runtime=WARN
 log4j.category.openjpa.Remote=WARN
 log4j.category.openjpa.DataCache=WARN
 log4j.category.openjpa.MetaData=WARN
@@ -1056,7 +1070,6 @@ newuser.blogroll=\
 Dave Johnson|http://rollerweblogger.org/roller,\
 Matt Raible|http://raibledesigns.com/page/rd,\
 Lance Lavandowska|http://rollerweblogger.org/lance,\
-Henri Yandell|http://blog.generationjava.com/,\
 Elias Torres|http://torrez.us/,\
 Jeff Blattman|http://blogs.sun.com/jtb,\
 blogs.sun.com|http://blogs.sun.com,\
@@ -1066,10 +1079,13 @@ jroller.com|http://jroller.com
 newuser.categories=General,Status,Java,Music,Politics
 
 
-
 #-----------------------------------------------------------------------------
 # Experimental, deprecated and "undocumented" settings
 #-----------------------------------------------------------------------------
+
+# Enable an Export page that allows users to export entries and media files
+# for a format that is compatible with Movable Type and Wordpress.
+weblog.export.enabled=false
 
 # Atom Publishing Protocol (APP) - this is an incomplete and untested 
 # implementation of an unfinished IETF specification. 
@@ -1084,6 +1100,4 @@ webservices.atomprotocol.oneSecondThrottle=true
 # Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!
 webservices.adminprotocol.enabled=false
 
-# If you are using the Hibernate backend (deprecated as of Roller 4.0), 
-# you MUST override this to use a database other than MySQL4
-hibernate.dialect=org.hibernate.dialect.MySQLDialect
+

@@ -120,7 +120,7 @@ public class MediaFileAdd extends MediaFileBase {
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
             RollerMessages errors = new RollerMessages();
-            List<String> uploaded = new ArrayList();
+            List<MediaFile> uploaded = new ArrayList();
             File[] uploads = getUploadedFiles();
 
             if (uploads != null && uploads.length > 0) {
@@ -158,8 +158,8 @@ public class MediaFileAdd extends MediaFileBase {
                         mediaFile.setLength(     this.uploadedFiles[i].length());
                         mediaFile.setInputStream(new FileInputStream(this.uploadedFiles[i]));
                         mediaFile.setContentType(this.uploadedFilesContentType[i]);
-
-                        manager.createMediaFile(getActionWeblog(), mediaFile);
+                        
+                        manager.createMediaFile(getActionWeblog(), mediaFile, errors);
                         WebloggerFactory.getWeblogger().flush();
 
                         if (mediaFile.isImageFile()) {
@@ -168,8 +168,8 @@ public class MediaFileAdd extends MediaFileBase {
                             newFiles.add(mediaFile);
                         }
 
-                    } catch (FileIOException ex) {
-                        addError("uploadFiles.error.upload", bean.getName());
+                        uploaded.add(mediaFile);
+
                     } catch (Exception e) {
                         log.error("Error saving new entry", e);
                         // TODO: i18n
@@ -182,15 +182,16 @@ public class MediaFileAdd extends MediaFileBase {
                     addError(msg.getKey(), Arrays.asList(msg.getArgs()));
                 }
 
-                if (uploaded.size() > 0) {
+                if (uploaded.size() > 0 && !this.errorsExist()) {
                     addMessage("uploadFiles.uploadedFiles");
-
-                    for (String upload : uploaded) {
-                        addMessage("uploadFiles.uploadedFile",
-                            WebloggerFactory.getWeblogger().getUrlStrategy()
-                                .getWeblogResourceURL(getActionWeblog(), upload, true));
+                    for (MediaFile upload : uploaded) {
+                        addMessage("uploadFiles.uploadedFile", upload.getPermalink());
                     }
+
+                } else {
+                    return INPUT;
                 }
+
                 this.pageTitle = "mediaFileAddSuccess.title";
                 return SUCCESS;
             }

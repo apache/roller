@@ -183,7 +183,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * weblog, java.lang.String, java.lang.String, long, messages)
      */
     public boolean canSave(Weblog weblog,
-    		               String fileName,
+    		           String fileName,
                            String contentType,
                            long size, 
                            RollerMessages messages) {
@@ -201,7 +201,8 @@ public class FileContentManagerImpl implements FileContentManager {
         log.debug("max allowed file size = "+maxFileBytes);
         log.debug("attempted save file size = "+size);
         if (size > maxFileBytes) {
-            messages.addError("error.upload.filemax", maxFileMB.toString());
+            String[] args = {fileName, maxFileMB.toString()};
+            messages.addError("error.upload.filemax", args);
             return false;
         }
         
@@ -228,7 +229,8 @@ public class FileContentManagerImpl implements FileContentManager {
         String[] allowFiles = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         String[] forbidFiles = StringUtils.split(StringUtils.deleteWhitespace(forbids), ",");
         if (!checkFileType(allowFiles, forbidFiles, fileName, contentType)) {
-            messages.addError("error.upload.forbiddenFile", allows);
+            String[] args = {fileName, contentType};
+            messages.addError("error.upload.forbiddenFile", args);
             return false;
         }
         

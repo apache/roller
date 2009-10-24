@@ -60,6 +60,7 @@ Each menu or menu item is governed by four attrbibutes:
                    subactions="mediaFileAdd,mediaFileHierarchicalView,mediaFileSearch" />
 
         <menu-item action="weblogExport"
+                   enabledProperty="weblog.export.enabled"
                    name="tabbedmenu.weblog.export"
                    roles="editor"
                    perms="author"

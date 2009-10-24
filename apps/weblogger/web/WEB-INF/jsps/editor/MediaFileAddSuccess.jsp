@@ -80,17 +80,20 @@
         <table class="mediaFileTable">
             <s:iterator value="newImages" id="newImage">
             <tr>
-                <td>
+                <td width="5%">
                     <%-- checkbox for file --%>
                     <input type="checkbox"
                            name="selectedImages"
                            value="<s:property value="#newImage.id"/>"/>
                 </td>
-                <td>
-                    <%-- description of file --%>
-                    <img align="left" class="mediaFileImage"
-                         src='<s:property value="%{#newImage.thumbnailURL}" />' alt="thumbnail" />
 
+                <td width="15%">
+                    <img align="center" class="mediaFileImage"
+                         src='<s:property value="%{#newImage.thumbnailURL}" />' alt="thumbnail" />
+                </td>
+
+                <td width="80%">
+                    <%-- description of file --%>
                     <span class="label"><s:text name="mediaFileSuccess.name" /></span>
                     <s:property value="%{#newImage.name}" /><br />
 
@@ -119,12 +122,12 @@
         <table class="mediaFileTable">
             <s:iterator value="newFiles" id="newFile">
             <tr>
-                <td>
+                <td width="20%">
                     <%-- radio button for file --%>
                     <input type="radio" name="enclosure"
                        onchange="setEnclosure('<s:property value="%{#newFile.permalink}" />')" />
                 </td>
-                <td>
+                <td width="80%">
                     <%-- description of file --%>
                     <s:property value="%{#newFile.name}" />
                 </td>

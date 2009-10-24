@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.util.RollerMessages;
 
 
 /**
@@ -183,144 +184,138 @@ public class ThemeManagerImpl implements ThemeManager {
         
         log.debug("Importing theme ["+theme.getName()+"] to weblog ["+website.getName()+"]");
         
-        try {
-            WeblogManager wmgr = roller.getWeblogManager();
-            
-            Set importedActionTemplates = new HashSet();
-            ThemeTemplate themeTemplate = null;
-            ThemeTemplate stylesheetTemplate = theme.getStylesheet();
-            Iterator iter = theme.getTemplates().iterator();
-            while ( iter.hasNext() ) {
-                themeTemplate = (ThemeTemplate) iter.next();
-                
-                WeblogTemplate template = null;
-                
-                // if template is an action, lookup by action
-                if(themeTemplate.getAction() != null &&
-                        !themeTemplate.getAction().equals(WeblogTemplate.ACTION_CUSTOM)) {
-                    template = wmgr.getPageByAction(website, themeTemplate.getAction());
-                    if(template != null) {
-                        importedActionTemplates.add(themeTemplate.getAction());
-                    }
-                    
-                // otherwise, lookup by name
-                } else {
-                    template = wmgr.getPageByName(website, themeTemplate.getName());
-                }
-                
-                // Weblog does not have this template, so create it.
-                boolean newTmpl = false;
-                if (template == null) {
-                    template = new WeblogTemplate();
-                    template.setWebsite(website);
-                    newTmpl = true;
+        WeblogManager wmgr = roller.getWeblogManager();
+
+        Set importedActionTemplates = new HashSet();
+        ThemeTemplate themeTemplate = null;
+        ThemeTemplate stylesheetTemplate = theme.getStylesheet();
+        Iterator iter = theme.getTemplates().iterator();
+        while ( iter.hasNext() ) {
+            themeTemplate = (ThemeTemplate) iter.next();
+
+            WeblogTemplate template = null;
+
+            // if template is an action, lookup by action
+            if(themeTemplate.getAction() != null &&
+                    !themeTemplate.getAction().equals(WeblogTemplate.ACTION_CUSTOM)) {
+                template = wmgr.getPageByAction(website, themeTemplate.getAction());
+                if(template != null) {
+                    importedActionTemplates.add(themeTemplate.getAction());
                 }
 
-                // TODO: fix conflict situation
-                // it's possible that someone has defined a theme template which
-                // matches 2 existing templates, 1 by action, the other by name
-                
-                // update template attributes
-                // NOTE: we don't want to copy the template data for an existing stylesheet
-                if(newTmpl || !themeTemplate.equals(stylesheetTemplate)) {
-                    template.setAction(themeTemplate.getAction());
-                    template.setName(themeTemplate.getName());
-                    template.setDescription(themeTemplate.getDescription());
-                    template.setLink(themeTemplate.getLink());
-                    template.setContents(themeTemplate.getContents());
-                    template.setHidden(themeTemplate.isHidden());
-                    template.setNavbar(themeTemplate.isNavbar());
-                    template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
-                    // NOTE: decorators are deprecated starting in 4.0
-                    template.setDecoratorName(null);
-                    template.setLastModified(new Date());
-                    
-                    // save it
-                    wmgr.savePage( template );
+            // otherwise, lookup by name
+            } else {
+                template = wmgr.getPageByName(website, themeTemplate.getName());
+            }
+
+            // Weblog does not have this template, so create it.
+            boolean newTmpl = false;
+            if (template == null) {
+                template = new WeblogTemplate();
+                template.setWebsite(website);
+                newTmpl = true;
+            }
+
+            // TODO: fix conflict situation
+            // it's possible that someone has defined a theme template which
+            // matches 2 existing templates, 1 by action, the other by name
+
+            // update template attributes
+            // NOTE: we don't want to copy the template data for an existing stylesheet
+            if(newTmpl || !themeTemplate.equals(stylesheetTemplate)) {
+                template.setAction(themeTemplate.getAction());
+                template.setName(themeTemplate.getName());
+                template.setDescription(themeTemplate.getDescription());
+                template.setLink(themeTemplate.getLink());
+                template.setContents(themeTemplate.getContents());
+                template.setHidden(themeTemplate.isHidden());
+                template.setNavbar(themeTemplate.isNavbar());
+                template.setTemplateLanguage(themeTemplate.getTemplateLanguage());
+                // NOTE: decorators are deprecated starting in 4.0
+                template.setDecoratorName(null);
+                template.setLastModified(new Date());
+
+                // save it
+                wmgr.savePage( template );
+            }
+        }
+
+        // now, see if the weblog has left over action templates that
+        // need to be deleted because they aren't in their new theme
+        for(int i=0; i < WeblogTemplate.ACTIONS.length; i++) {
+            String action = WeblogTemplate.ACTIONS[i];
+
+            // if we didn't import this action then see if it should be deleted
+            if(!importedActionTemplates.contains(action)) {
+                WeblogTemplate toDelete = wmgr.getPageByAction(website, action);
+                if(toDelete != null) {
+                    log.debug("Removing stale action template "+toDelete.getId());
+                    wmgr.removePage(toDelete);
                 }
             }
-            
-            // now, see if the weblog has left over action templates that
-            // need to be deleted because they aren't in their new theme
-            for(int i=0; i < WeblogTemplate.ACTIONS.length; i++) {
-                String action = WeblogTemplate.ACTIONS[i];
-                
-                // if we didn't import this action then see if it should be deleted
-                if(!importedActionTemplates.contains(action)) {
-                    WeblogTemplate toDelete = wmgr.getPageByAction(website, action);
-                    if(toDelete != null) {
-                        log.debug("Removing stale action template "+toDelete.getId());
-                        wmgr.removePage(toDelete);
-                    }
+        }
+
+
+        // always update this weblog's theme and customStylesheet, then save
+        website.setEditorTheme(WeblogTheme.CUSTOM);
+        if(theme.getStylesheet() != null) {
+            website.setCustomStylesheetPath(theme.getStylesheet().getLink());
+        }
+        wmgr.saveWeblog(website);
+
+
+        // now lets import all the theme resources
+        MediaFileManager fileMgr = roller.getMediaFileManager();
+
+        List resources = theme.getResources();
+        Iterator iterat = resources.iterator();
+        ThemeResource resource = null;
+        MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
+        while ( iterat.hasNext() ) {
+            resource = (ThemeResource) iterat.next();
+
+            log.debug("Importing resource to "+resource.getPath());
+
+            String justPath = resource.getPath()
+                .substring(resource.getPath().lastIndexOf("/"));
+
+            String justName = resource.getPath()
+                .substring(0, resource.getPath().lastIndexOf("/"));
+
+            if (resource.isDirectory()) {
+
+                MediaFileDirectory mdir =
+                    fileMgr.getMediaFileDirectoryByPath(website, resource.getPath());
+                if (mdir == null) {
+                    mdir = fileMgr.createMediaFileDirectory(root, resource.getPath());
+                    roller.flush();
                 }
-            }
-            
-            
-            // always update this weblog's theme and customStylesheet, then save
-            website.setEditorTheme(WeblogTheme.CUSTOM);
-            if(theme.getStylesheet() != null) {
-                website.setCustomStylesheetPath(theme.getStylesheet().getLink());
-            }
-            wmgr.saveWeblog(website);
-            
-            
-            // now lets import all the theme resources
-            MediaFileManager fileMgr = roller.getMediaFileManager();
-            
-            List resources = theme.getResources();
-            Iterator iterat = resources.iterator();
-            ThemeResource resource = null;
-            MediaFileDirectory root = fileMgr.getMediaFileRootDirectory(website);
-            while ( iterat.hasNext() ) {
-                resource = (ThemeResource) iterat.next();
-                
-                log.debug("Importing resource to "+resource.getPath());
 
-                String justPath = resource.getPath()
-                    .substring(resource.getPath().lastIndexOf("/"));
+            } else {
 
-                String justName = resource.getPath()
-                    .substring(0, resource.getPath().lastIndexOf("/"));
-
-                try {
-                    if (resource.isDirectory()) {
-
-                        MediaFileDirectory mdir =
-                            fileMgr.getMediaFileDirectoryByPath(website, resource.getPath());
-                        if (mdir == null) {
-                            mdir = fileMgr.createMediaFileDirectory(root, resource.getPath());
-                            roller.flush();
-                        }
-
-                    } else {
-
-                        MediaFileDirectory mdir =
-                            fileMgr.getMediaFileDirectoryByPath(website, justPath);
-                        if (mdir == null) {
-                            mdir = fileMgr.createMediaFileDirectory(root, justPath);
-                        }
-
-                        // save file without file-type, quota checks, etc.
-                        MediaFile mf = new MediaFile();
-                        mf.setDirectory(mdir);
-                        mf.setWeblog(website);
-                        mf.setName(justName);
-                        mf.setOriginalPath(justPath);
-                        mf.setContentType("text/plain");
-                        mf.setInputStream(resource.getInputStream());
-                        mf.setLength(resource.getLength());
-
-                        fileMgr.createMediaFile(website, mf);
-                        roller.flush();
-                    }
-                } catch (Exception ex) {
-                    log.info(ex);
+                MediaFileDirectory mdir =
+                    fileMgr.getMediaFileDirectoryByPath(website, justPath);
+                if (mdir == null) {
+                    mdir = fileMgr.createMediaFileDirectory(root, justPath);
                 }
+
+                // save file without file-type, quota checks, etc.
+                MediaFile mf = new MediaFile();
+                mf.setDirectory(mdir);
+                mf.setWeblog(website);
+                mf.setName(justName);
+                mf.setOriginalPath(justPath);
+                mf.setContentType("text/plain");
+                mf.setInputStream(resource.getInputStream());
+                mf.setLength(resource.getLength());
+
+                RollerMessages errors = new RollerMessages();
+                fileMgr.createMediaFile(website, mf, errors);
+                if (errors.getErrorCount() > 0) {
+                    throw new WebloggerException(errors.toString());
+                }
+                roller.flush();
             }
-            
-        } catch (Exception e) {
-            log.error("ERROR importing theme", e);
-            throw new WebloggerException( e );
         }
     }
     

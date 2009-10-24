@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
  * Interface to media file management.
@@ -48,7 +49,7 @@ public interface MediaFileManager {
     /**
      * Create a media file
      */
-    public void createMediaFile(Weblog weblog, MediaFile mediaFile)
+    public void createMediaFile(Weblog weblog, MediaFile mediaFile, RollerMessages errors)
             throws WebloggerException;
 
     /**

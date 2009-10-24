@@ -266,11 +266,12 @@ public class MediaFileView extends MediaFileBase {
 
         directoryHierarchy.add(new KeyValueObject("/", "root"));
         String fullPath = this.currentDirectory.getPath();
+        String dpath = "";
         if (fullPath.length() > 1) {
             String[] directoryNames = fullPath.substring(1).split("/");
             for (String directoryName : directoryNames) {
-                directoryPath = directoryPath + "/" + directoryName;
-                directoryHierarchy.add(new KeyValueObject(directoryPath, directoryName));
+                dpath = dpath + "/" + directoryName;
+                directoryHierarchy.add(new KeyValueObject(dpath, directoryName));
             }
         }
         return directoryHierarchy;

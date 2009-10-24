@@ -20,7 +20,10 @@
 
 <s:if test="bean.isImage">
     <div class="mediaFileThumbnail">
-        <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />' />
+        <a href='<s:property value="bean.permalink" />' target="_blank">
+            <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
+                 title='<s:text name="mediaFileEdit.clickToView" />' />
+        </a>
     </div>
 </s:if>
 

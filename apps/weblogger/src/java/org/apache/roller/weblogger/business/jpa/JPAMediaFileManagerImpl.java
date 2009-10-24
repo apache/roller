@@ -255,12 +255,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
-    public void createMediaFile(Weblog weblog, MediaFile mediaFile) throws WebloggerException {
+    public void createMediaFile(Weblog weblog, MediaFile mediaFile, RollerMessages errors) throws WebloggerException {
 
         FileContentManager cmgr = WebloggerFactory.getWeblogger().getFileContentManager();
-        RollerMessages msgs = new RollerMessages();
-        if (!cmgr.canSave(weblog, mediaFile.getName(), mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
-            throw new FileIOException(msgs.toString());
+        if (!cmgr.canSave(weblog, mediaFile.getName(), mediaFile.getContentType(), mediaFile.getLength(), errors)) {
+            return;
         }
 
         mediaFile.setDateUploaded(new Timestamp(System.currentTimeMillis()));
@@ -709,6 +708,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     private void upgradeUploadsDir(Weblog weblog, User user, File oldDir, MediaFileDirectory newDir) {
+        RollerMessages messages = new RollerMessages();
+
         log.debug("Upgrading dir: " + oldDir.getAbsolutePath());
         if (newDir == null) {
             log.error("newDir cannot be null");
@@ -776,7 +777,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                         mf.setInputStream(new FileInputStream(files[i]));
                         mf.setContentType(Utilities.getContentTypeFromFileName(files[i].getName()));
 
-                        this.roller.getMediaFileManager().createMediaFile(weblog, mf);
+
+                        this.roller.getMediaFileManager().createMediaFile(weblog, mf, messages);
+                        log.info(messages.toString());
 
                         fileCount++;
 

@@ -20,7 +20,7 @@
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">
     <div id="messages" class="messages">
-        <s:actionmessage />
+        <s:actionmessage escape="false" />
     </div>
 </s:if>
 
@@ -29,11 +29,11 @@
     <div id="errors" class="errors">
         <ul>
             <s:iterator id="actionError" value="actionErrors">
-                <li><s:property value="#actionError" /></li>
+                <li><s:property value="#actionError" escape="false" /></li>
             </s:iterator>
             <s:iterator id="fieldErrorName" value="fieldErrors.keySet()">
                 <s:iterator id="fieldErrorValue" value="fieldErrors[#fieldErrorName]">
-                    <li><s:property value="#fieldErrorValue" /></li>
+                    <li><s:property value="#fieldErrorValue" escape="false" /></li>
                 </s:iterator>
             </s:iterator>
         </ul>

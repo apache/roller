@@ -20,55 +20,55 @@
 <div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
-            
+
             <div class="sidebarInner">
-                
+
                 <h3><s:text name="weblogEntryQuery.sidebarTitle" /></h3>
                 <hr size="1" noshade="noshade" />
-                
+
                 <p><s:text name="weblogEntryQuery.sidebarDescription" /></p>
-                
+
                 <s:form action="entries">
                     <s:hidden name="weblog" />
                     <s:hidden name="bean.count" />
                     <s:hidden name="bean.offset" />
-                    
+
                     <%-- ========================================================= --%>
                     <%-- filter by category --%>
-  
+
                     <div class="sideformrow">
                         <label for="categoryId" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.category" /></label>          
+                        <s:text name="weblogEntryQuery.label.category" /></label>
                         <s:select name="bean.categoryPath" list="categories" listKey="path" listValue="name" size="1" />
                     </div>
                     <br />
                     <br />
-                    
+
                     <%-- ========================================================= --%>
                     <%-- filter by tag --%>
-  
+
                     <div class="sideformrow">
                         <label for="tags" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.tags" /></label>          
+                        <s:text name="weblogEntryQuery.label.tags" /></label>
                         <s:textfield name="bean.tagsAsString" size="14" />
                     </div>
                     <br />
-                    <br />    
-                    
+                    <br />
+
                     <%-- ========================================================= --%>
                     <%-- filter by text --%>
-  
+
                     <div class="sideformrow">
                         <label for="text" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.text" /></label>          
+                        <s:text name="weblogEntryQuery.label.text" /></label>
                         <s:textfield name="bean.text" size="14" />
                     </div>
                     <br />
-                    <br />    
-                    
+                    <br />
+
                     <%-- ========================================================= --%>
                     <%-- filter by date --%>
-                    
+
                     <div class="sideformrow">
                         <label for="startDateString" class="sideformrow"><s:text name="weblogEntryQuery.label.startDate" />:</label>
                         <script type="text/javascript" >
@@ -86,7 +86,7 @@
                            onclick="calStart.select(document.getElementById('entries_bean_startDateString'),'anchorCalStart','MM/dd/yy'); return false">
                         <img src='<s:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /></a>
                     </div>
-                    
+
                     <div class="sideformrow">
                         <label for="endDateString" class="sideformrow"><s:text name="weblogEntryQuery.label.endDate" />:</label>
                         <script type="text/javascript" >
@@ -106,7 +106,7 @@
                     </div>
                     <br />
                     <br />
-                    
+
                     <%-- ========================================================= --%>
                     <%-- filter by status --%>
 
@@ -119,12 +119,12 @@
                             <br />
                             <br />
                             <br />
-                        </label> 
+                        </label>
                         <div>
                             <s:radio theme="roller" name="bean.status" list="statusOptions" listKey="key" listValue="value" />
                         </div>
                     </div>
-                    
+
                     <%-- ========================================================= --%>
                     <%-- sort by --%>
 
@@ -133,21 +133,21 @@
                             <s:text name="weblogEntryQuery.label.sortby" />:
                             <br />
                             <br />
-                        </label> 
+                        </label>
                         <div>
                             <s:radio theme="roller" name="bean.sortBy" list="sortByOptions" listKey="key" listValue="value" />
                         </div>
                     </div>
-                    
+
                     <%-- ========================================================= --%>
                     <%-- search button --%>
-  
+
                     <br />
-                    
+
                     <s:submit key="weblogEntryQuery.button.query" />
-                    
+
                 </s:form>
-                
+
                 <br />
                 <br />
             </div> <!-- sidebarInner -->

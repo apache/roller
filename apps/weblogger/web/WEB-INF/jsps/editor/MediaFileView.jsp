@@ -38,6 +38,7 @@
         clear:left;
         width:130px;
         margin-left:5px;
+        margin-top:3px;
         font-size:11px;
     }
     .highlight {
@@ -69,12 +70,7 @@
 <script type="text/javascript">
 
     function onSelectDirectory(id) {
-        window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
-    }
-
-    function onCreateDirectory() {
-        document.mediaFileViewForm.action='<s:url action="mediaFileView!createNewDirectory" />';
-        document.mediaFileViewForm.submit();
+        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
     }
 
     function onDeleteSelected() {
@@ -158,6 +154,29 @@
         YAHOO.mediaFileEditor.lightbox.render(document.body);
     });
 
+    <%-- code to toggle buttons on/off as media file/directory selections change --%>
+
+    $(document).ready(function() {
+        $("#deleteButton").attr('disabled',true)
+        $("#moveButton").attr('disabled',true)
+        $("#moveTargetMenu").attr('disabled',true)
+
+        $("input[type=checkbox]").change(function() {
+            var count = 0;
+            $("input[type=checkbox]").each(function(index, element) {
+                if (element.checked) count++;
+            });
+            if (count == 0) {
+                $("#deleteButton").attr('disabled',true)
+                $("#moveButton").attr('disabled',true)
+                $("#moveTargetMenu").attr('disabled',true)
+            } else {
+                $("#deleteButton").attr('disabled',false)
+                $("#moveButton").attr('disabled',false)
+                $("#moveTargetMenu").attr('disabled',false)
+            }
+        });
+    });
 </script>
 
 
@@ -269,6 +288,7 @@
   <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView">
     <s:hidden name="weblog" />
     <s:hidden name="directoryId" />
+    <s:hidden name="newDirectoryName" />
     <input type="hidden" name="mediaFileId" value="" />
 
     <div class="control">
@@ -354,13 +374,14 @@
                             <s:if test="#mediaFile.imageFile">
                                 <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
                                      width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                     height='<s:property value="#mediaFile.thumbnailHeight"/>' />
+                                     height='<s:property value="#mediaFile.thumbnailHeight"/>'
+                                     title='<s:property value="#mediaFile.name" />' />
                             </s:if>
 
                             <s:else>
                                 <s:url id="mediaFileURL" value="/images/page.png"></s:url>
                                 <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                     style="padding:40px 50px;" />
+                                     style="padding:40px 50px;" alt="logo" />
                             </s:else>
 
                         </div>
@@ -374,13 +395,13 @@
                             <input type="hidden" id="mediafileidentity"
                                    value="<s:property value='#mediaFile.id'/>" />
 
-                            <str:truncateNicely lower="40" upper="50">
+                            <str:truncateNicely lower="47" upper="47">
                                 <s:property value="#mediaFile.name" />
                             </str:truncateNicely>
 
                             <span class="button" id="addbutton-<s:property value='#mediaFile.id' />">
                                 <img id="addbutton-img<s:property value='#mediaFile.id' />"
-                                     src="<s:url value="/images/add.png"/>" />
+                                     src="<s:url value="/images/add.png"/>"  alt="logo" />
                             </span>
 
                        </div>
@@ -408,7 +429,8 @@
                             <s:if test="#mediaFile.imageFile">
                                 <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
                                      width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                     height='<s:property value="#mediaFile.thumbnailHeight"/>' />
+                                     height='<s:property value="#mediaFile.thumbnailHeight"/>'
+                                     title='<s:property value="#mediaFile.name" />' />
                             </s:if>
 
                             <s:else>
@@ -450,54 +472,12 @@
 
     <div style="clear:left;"></div>
 
-
-  <s:if test="!pager">
-    <br/>
-    <br/>
-    <br/>
-
-    <%-- Only show Create New Directory control when NOT showing search results --%>
-
-    <div>
-        <s:text name="mediaFileView.newDirName" />
-        <input type="text" id="newDirectoryName" name="newDirectoryName" size="30" />
-        <input type="button" value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
-    </div>
-  </s:if>
-
 </s:form>
 
 </s:if>
 
 
 <%-- ***************************************************************** --%>
-
-<%-- code to toggle buttons on/off as media file/directory selections change --%>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#deleteButton").attr('disabled',true)
-        $("#moveButton").attr('disabled',true)
-        $("#moveTargetMenu").attr('disabled',true)
-
-        $("input[type=checkbox]").change(function() {
-            var count = 0;
-            $("input[type=checkbox]").each(function(index, element) {
-                if (element.checked) count++;
-            });
-            if (count == 0) {
-                $("#deleteButton").attr('disabled',true)
-                $("#moveButton").attr('disabled',true)
-                $("#moveTargetMenu").attr('disabled',true)
-            } else {
-                $("#deleteButton").attr('disabled',false)
-                $("#moveButton").attr('disabled',false)
-                $("#moveTargetMenu").attr('disabled',false)
-            }
-        });
-    });
-</script>
-
 
 <div id="mediafile_edit_lightbox" style="visibility:hidden">
     <div class="hd">Media File Editor</div>
@@ -512,3 +492,7 @@
     </div>
     <div class="ft"></div>
 </div>
+
+<br/>
+<br/>
+<br/>

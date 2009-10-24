@@ -3,10 +3,14 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="NeoOffice 2.2  (Unix)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.1  (Unix)">
 	<META NAME="CREATED" CONTENT="20070706;11182000">
-	<META NAME="CHANGED" CONTENT="20080405;12340500">
+	<META NAME="CHANGED" CONTENT="20091023;23021800">
 	<META NAME="KEYWORDS" CONTENT="OpenDS Directory Server Administration Framework">
+	<META NAME="Info 1" CONTENT="">
+	<META NAME="Info 2" CONTENT="">
+	<META NAME="Info 3" CONTENT="">
+	<META NAME="Info 4" CONTENT="">
 	<STYLE TYPE="text/css">
 	<!--
 		P { margin-bottom: 0.08in; widows: 2; orphans: 2 }
@@ -34,28 +38,14 @@
 		TH P.cjk { font-style: italic }
 		TH P.ctl { font-style: italic }
 		PRE { font-family: "Cumberland", monospace; widows: 2; orphans: 2 }
+		A:visited { so-language: en-US }
 		TT { font-family: "Cumberland", monospace }
 	-->
 	</STYLE>
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
 <P CLASS="western" ALIGN=RIGHT STYLE="margin-bottom: 0in; background: transparent">
-</P>
-<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<BR>
-</P>
-<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<BR>
-</P>
-<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<BR>
-</P>
-<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<BR>
-</P>
-<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<BR>
-</P>
+<IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_490f4977.png" NAME="graphics1" WIDTH=252 HEIGHT=102 BORDER=0></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -140,13 +130,17 @@
 <BR>
 </P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
+<BR>
+</P>
+<P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Apache
 Roller Weblogger</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Version
-4.1</B></FONT></FONT></P>
+5.0</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
-<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">April 2008</SDFIELD></P>
+<SDFIELD TYPE=DOCINFO SUBTYPE=CHANGE FORMAT=DATE SDNUM="1033;1033;MMMM YYYY">October 2009</SDFIELD>
+</P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
 </P>
@@ -203,27 +197,23 @@ Roller Weblogger</B></FONT></FONT></P>
 	and tricks	14</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.1   Setting up
 	Roller's Planet feed aggregator	14</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.2   Changing
-	keys in security.xml	15</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.3   Using
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.2   Using
 	Server-provided database and mail resources	16</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.4   Manual table
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">9.3   Manual table
 	creation and upgrade	17</P>
 	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>10   Upgrading
 	Roller	18</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.1   For those
-	upgrading from Roller 2.x to Roller 4.0	18</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.2   Backup your
-	old Roller 	19</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.3   Install and
-	startup the new Roller 	20</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.1   Backup your
+	old Roller 	18</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">10.2   Install and
+	startup the new Roller 	19</P>
 	<P STYLE="margin-bottom: 0in"><FONT SIZE=3><B>11  
-	roller.properties	21</B></FONT></P>
+	roller.properties	20</B></FONT></P>
 </DIV>
 <P CLASS="western"><BR><BR>
 </P>
 <H1 CLASS="western" STYLE="page-break-before: always">1Overview</H1>
-<P CLASS="western" ALIGN=LEFT STYLE="background: transparent; font-weight: medium">
+<P CLASS="western" ALIGN=LEFT STYLE="background: transparent; font-weight: normal">
 This document describes how to install the Apache Roller Weblogger
 software. It explains what you need to install first, how to download
 Roller, how to configure Roller and how to install it to your
@@ -259,7 +249,7 @@ project of the Apache Software Foundation.</P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 The general format of this document was based on the documentation
 template used by the OpenDS project which in turn was based on the
-templates used by the <A HREF="http://www.OpenOffice.org/"></A><A HREF="http://www.OpenOffice.org/"></A><A HREF="http://www.OpenOffice.org/">OpenOffice.org</A><A HREF="http://www.OpenOffice.org/"></A><A HREF="http://www.OpenOffice.org/"></A>
+templates used by the <A HREF="http://www.OpenOffice.org/">OpenOffice.org</A>
 project.</P>
 <P CLASS="western" ALIGN=LEFT STYLE="margin-bottom: 0in; background: transparent">
 <BR>
@@ -279,6 +269,16 @@ project.</P>
 		</TR>
 	</THEAD>
 	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=23%>
+				<P CLASS="western" ALIGN=LEFT>October 2009</P>
+			</TD>
+			<TD WIDTH=77%>
+				<P CLASS="western" ALIGN=LEFT>Updated for Roller 5.0, note about
+				upgrading file uploads to new media blogging system in Section
+				10.</P>
+			</TD>
+		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=23%>
 				<P CLASS="western" ALIGN=LEFT>July 2007</P>
@@ -329,23 +329,23 @@ mail connection parameters for those in bold.</P>
         <FONT SIZE=2 STYLE="font-size: 11pt">database.jdbc.password=<I><B>tiger</B></I></FONT>
         <FONT SIZE=2 STYLE="font-size: 11pt">mail.configurationType=properties</FONT>
         <FONT SIZE=2 STYLE="font-size: 11pt">mail.hostName=</FONT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>smtp-server.example.com</B></I></FONT></FONT></TT>
-<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.username=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>scott</B></I></FONT></FONT></TT>
-<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.password=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>tiger</B></I></FONT></FONT></TT>
+<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.username=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>scott</B></I></FONT></FONT></TT>
+<TT>        <FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.password=</SPAN></SPAN></FONT></FONT></TT><TT><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 11pt"><I><B>tiger</B></I></FONT></FONT></TT>
 </PRE><P CLASS="western">
 <B>STEP 4: Check your Servlet container's JDBC and JavaMail setup.
-</B><SPAN STYLE="font-weight: medium">Make sure you've got the JDBC
+</B><SPAN STYLE="font-weight: normal">Make sure you've got the JDBC
 driver for your database in your Servlet container's classpath, e.g.
-on Tomcat place the driver JAR in </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">common/lib</SPAN></FONT><SPAN STYLE="font-weight: medium">.
+on Tomcat place the driver JAR in </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: normal">common/lib</SPAN></FONT><SPAN STYLE="font-weight: normal">.
 And on Tomcat, if you want to be able to send mail you'll need to add
-the JavaMail and Activation jars (</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">mail.jar</SPAN></FONT><SPAN STYLE="font-weight: medium">
-and </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">activation.jar</SPAN></FONT><SPAN STYLE="font-weight: medium">)
+the JavaMail and Activation jars (</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: normal">mail.jar</SPAN></FONT><SPAN STYLE="font-weight: normal">
+and </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: normal">activation.jar</SPAN></FONT><SPAN STYLE="font-weight: normal">)
 there too.</SPAN></P>
 <P CLASS="western"><B>STEP 5: Deploy Roller to your Servlet container</B>
 using your container's Admin Console deploy Roller as a directory.
 The Roller WAR directory is in the installation directory under
 <FONT FACE="Courier New, monospace">webapp/roller</FONT>.</P>
 <P CLASS="western"><B>STEP 6: Browse to Roller and get Rollin'</B>
-(probably at <A HREF="http://localhost:8080/roller"></A><A HREF="http://localhost:8080/roller"></A><A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A><A HREF="http://localhost:8080/roller"></A><A HREF="http://localhost:8080/roller"></A>).
+(probably at <A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>).
 If Roller is up and running, then proceed to Section 8 Getting
 started with Roller. If Roller isn't up and running and you can 't
 figure out why, then try the normal installation procedure starting
@@ -388,7 +388,7 @@ does not include the Java Mail and Activation jars that Roller needs
 for email notification, So, if you like to use Roller's e-mail
 notification features, you'll need to download those jars and place
 them in Tomcat's classpath. Download them from Sun
-(</FONT></FONT><A HREF="http://java.sun.com/products/javamail"></A><A HREF="http://java.sun.com/products/javamail"></A><A HREF="http://java.sun.com/products/javamail"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>http://java.sun.com/products/javamail</FONT></FONT></A><A HREF="http://java.sun.com/products/javamail"></A><A HREF="http://java.sun.com/products/javamail"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=3>)
+(</FONT></FONT><A HREF="http://java.sun.com/products/javamail"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>http://java.sun.com/products/javamail</FONT></FONT></A><FONT FACE="Times New Roman, serif"><FONT SIZE=3>)
 and place them in Tomcat's </FONT></FONT><FONT FACE="Courier New, monospace"><FONT SIZE=3>common/lib</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=3>
 directory.</FONT></FONT></P>
 <H2 CLASS="western">3.2Tomcat: URI encoding needed for I118N</H2>
@@ -414,8 +414,8 @@ connector you need to add the <TT>URIEncoding=&quot;UTF-8&quot;</TT>
 attribute to those connectors as well.</FONT></FONT></P>
 <H1 CLASS="western">4Download and un-package Roller</H1>
 <P CLASS="western">Download the Apache Roller release file from
-<A HREF="http://roller.apache.org/"></A><A HREF="http://roller.apache.org/"></A><A HREF="http://roller.apache.org/">http://roller.apache.org</A><A HREF="http://roller.apache.org/"></A><A HREF="http://roller.apache.org/"></A>.
-If you're a Windows user download the .zip file and use your favorite
+<A HREF="http://roller.apache.org/">http://roller.apache.org</A>. If
+you're a Windows user download the .zip file and use your favorite
 ZIP program to unzip the release into a directory on your computer's
 disk. Unix users can download the .tar.gz file and use GNU tar to
 un-package. 
@@ -423,7 +423,7 @@ un-package.
 <H2 CLASS="western">4.1Installation directory layout</H2>
 <P CLASS="western">Once you've unpackaged the files you'll find a
 directory structure like this:</P>
-<P CLASS="western"><IMG SRC="" NAME="graphics2" ALIGN=LEFT WIDTH=257 HEIGHT=379 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><BR><BR>
 </P>
 <P CLASS="western">The <FONT FACE="Courier New, monospace">LICENCE.txt</FONT>
 and <FONT FACE="Courier New, monospace">NOTICE.txt</FONT> files
@@ -502,7 +502,7 @@ the following recommendations:</P>
 	drivers instead of the newer 3.1.X series.</P>
 	<LI><P CLASS="western">Make sure you enable MySQL's UTF-8 support.
 	See this page for
-	details:<BR><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL"></A><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL"></A><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL">http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL</A><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL"></A><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL"></A>
+	details:<BR><A HREF="http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL">http://rollerweblogger.org/wiki/Wiki.jsp?page=SetupUTF8onMySQL</A>
 		</P>
 	<LI><P CLASS="western">For Oracle users, use the 10g (10.1.0.2
 	higher) drivers which should be packaged as ojdbc14.jar, even if
@@ -561,8 +561,8 @@ username/password settings for the mail connection.</P>
    database.jdbc.password=<I><B>tiger</B></I>
    mail.configurationType=properties
    mail.hostname=<TT><FONT FACE="Courier New"><I><B>smtp-server.example.com</B></I></FONT></TT>
-<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.username=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>scott</B></I></FONT></TT>
-<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: medium">mail.password=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>tiger</B></I></FONT></TT>
+<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.username=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>scott</B></I></FONT></TT>
+<TT>   <FONT FACE="Courier New"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">mail.password=</SPAN></SPAN></FONT></TT><TT><FONT FACE="Courier New"><I><B>tiger</B></I></FONT></TT>
 </PRE><P CLASS="western">
 Next, we'll deploy Roller.</P>
 <H1 CLASS="western" STYLE="page-break-before: always">7Deploy Roller</H1>
@@ -607,15 +607,15 @@ Apache Tomcat 6.0</H4>
 <P CLASS="western">You can deploy to Tomcat as either a directory or
 a WAR file. The screens-hot below shows directory-based deployment
 options.</P>
-<P CLASS="western"><IMG SRC="" NAME="graphics3" ALIGN=LEFT WIDTH=594 HEIGHT=588 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><BR><BR>
 </P>
 <P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
 is deployed, you'll see that it's listed among the other
 applications. There's a <B>/roller</B> link to Roller itself and
 there are options to start, stop, reload and undeploy.</SPAN></P>
-<P CLASS="western"><IMG SRC="" NAME="graphics4" ALIGN=LEFT WIDTH=596 HEIGHT=77 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
-Roller doesn't start-up, look for the problem in the logs. You can
-find them in Tomcat's </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">logs</SPAN></FONT><SPAN STYLE="background: transparent">
+<P CLASS="western"><SPAN STYLE="background: transparent">If Roller
+doesn't start-up, look for the problem in the logs. You can find them
+in Tomcat's </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">logs</SPAN></FONT><SPAN STYLE="background: transparent">
 directory. The Tomcat log file is </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">catalina.out</SPAN></FONT><SPAN STYLE="background: transparent">
 and the Roller log  is </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">roller.log</SPAN></FONT><SPAN STYLE="background: transparent">.</SPAN></P>
 <H4 CLASS="western" STYLE="page-break-before: always">Deploying to
@@ -623,13 +623,13 @@ Glassfish v2.0</H4>
 <P CLASS="western">You can also deploy to Glassfish as either a
 directory or a WAR file. The screenshot below shows directory-based
 deployment options.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_56e2b432.png" NAME="graphics5" ALIGN=LEFT WIDTH=594 HEIGHT=548 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_148117bd.png" NAME="graphics5" ALIGN=LEFT WIDTH=712 HEIGHT=656 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western"><SPAN STYLE="background: transparent">Once Roller
 is deployed, you'll see that it's listed among the other
 applications. There's a <B>Launch</B> link to Roller itself and there
 are buttons to enable, display and redeploy.</SPAN></P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_1aff87fc.png" NAME="graphics6" ALIGN=LEFT WIDTH=591 HEIGHT=106 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
+<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_m11d68315.png" NAME="graphics6" ALIGN=LEFT WIDTH=708 HEIGHT=127 BORDER=0><BR CLEAR=LEFT><SPAN STYLE="background: transparent">If
 Roller doesn't start-up, look for the problem in the logs. You can
 find them in your Glassfish domain's  <FONT FACE="Courier New, monospace">logs</FONT>
 directory. The Glassfish log file is <FONT FACE="Courier New, monospace">server.log</FONT>
@@ -644,7 +644,7 @@ We'll also discuss briefly what happens when there is an error.
 </H2>
 <P CLASS="western">Navigate to Roller, if you are using a default
 Tomcat or Glassfish installation then then URL of Roller is probably
-<A HREF="http://localhost:8080/roller"></A><A HREF="http://localhost:8080/roller"></A><A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A><A HREF="http://localhost:8080/roller"></A><A HREF="http://localhost:8080/roller"></A>.
+<A HREF="http://localhost:8080/roller">http://localhost:8080/roller</A>.
 You will see either a web page of error messages, a web page offering
 to create database tables for you or web page asking you to complete
 the installation by registering an admin user and creating a
@@ -656,10 +656,10 @@ you diagnose the problem. It's possible that you entered the wrong
 JDBC driver class name, connection URL, username or password. Or
 perhaps your database is not running. Use the information provided to
 determine what is wrong, fix it and then redeploy Roller.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_37b6f681.png" NAME="graphics7" ALIGN=LEFT WIDTH=485 HEIGHT=276 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_79ee0277.png" NAME="graphics7" ALIGN=LEFT WIDTH=581 HEIGHT=331 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <H4 CLASS="western">Automatic tables creation</H4>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_m40d84ba8.png" NAME="graphics8" ALIGN=LEFT WIDTH=466 HEIGHT=106 BORDER=0><BR CLEAR=LEFT>If
+<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_2bf00c9b.png" NAME="graphics8" ALIGN=LEFT WIDTH=558 HEIGHT=127 BORDER=0><BR CLEAR=LEFT>If
 your database configuration is good but Roller cannot find its
 database tables, then Roller will offer to create those pages
 automatically for you. If you give the go-ahead, Roller will run the
@@ -671,7 +671,7 @@ first user account and weblog.</P>
 front-page weblog then it will display the Completing Your
 Installation below that explains how to register your first user,
 create your first weblog and setup your site's front page.</P>
-<P CLASS="western"><IMG SRC="roller-install-guide_html_m3584ba77.png" NAME="graphics9" ALIGN=LEFT WIDTH=440 HEIGHT=326 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P CLASS="western"><IMG SRC="file:///Users/dave/Source/roller_trunk/apps/weblogger/docs/installguide/generated/html/roller-install-guide_html_m8d76424.png" NAME="graphics9" ALIGN=LEFT WIDTH=527 HEIGHT=390 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P CLASS="western">You have to decide what you want as the front-page
 of your Roller site. If you are using Roller to run your personal
@@ -702,7 +702,7 @@ system and your weblog. For information on customizing your weblog,
 refer to the Roller Template Guide. If you can't find what you want
 in the documentation then subscribe to the Roller user mailing list
 and ask your questions there:
-<A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists"></A><A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists"></A><A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A><A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists"></A><A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists"></A><BR>
+<A HREF="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists</A><BR>
   
 </P>
 <H1 CLASS="western">9Configuration tips and tricks</H1>
@@ -712,7 +712,7 @@ aggregator, Acegi setup and how to setup Roller to use
 server-provided resources.</P>
 <H2 CLASS="western">9.1Setting up Roller's Planet feed aggregator</H2>
 <P CLASS="western">Roller includes a RSS/Atom feed aggregator that
-makes it possible to run a site like <A HREF="http://blogs.sun.com/"></A><A HREF="http://blogs.sun.com/"></A><A HREF="http://blogs.sun.com/">http://blogs.sun.com</A><A HREF="http://blogs.sun.com/"></A><A HREF="http://blogs.sun.com/"></A>
+makes it possible to run a site like <A HREF="http://blogs.sun.com/">http://blogs.sun.com</A>
 which provides weblogs for thousands of writers and an aggregated
 front-page that displays the most recent posts form those plus dozens
 of Sun bloggers from other sites such as blogger.com, typepad.com and
@@ -797,50 +797,13 @@ look like this:<BR></SPAN><BR><BR>
 will be display your Planet entries. You can find your Planet feeds
 at the following URLs:</SPAN></P>
 <UL>
-	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Main
-	Planet feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss</SPAN></FONT></FONT></A><A HREF="http://localhost:8080/roller/planetrss"></A><A HREF="http://localhost:8080/roller/planetrss"></A></SPAN></P>
-	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Per
-	group feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</SPAN></FONT></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"></A><A HREF="http://localhost:8080/roller/rollerrss"></A></SPAN></P>
+	<LI><P CLASS="western"><SPAN STYLE="background: #ffff00"><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Main
+	Planet feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/planetrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss</SPAN></FONT></FONT></A></SPAN></P>
+	<LI><P CLASS="western"><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">Per
+	group feed<BR></SPAN></FONT></A><A HREF="http://localhost:8080/roller/rollerrss"><FONT COLOR="#000000"><FONT FACE="Courier New, monospace"><SPAN STYLE="background: #ffffff">http://localhost:8080/roller/planetrss?group=&lt;group-name&gt;</SPAN></FONT></FONT></A></P>
 </UL>
-<H2 CLASS="western">9.2Changing keys in security.xml</SPAN></H2>
-<P CLASS="western">Starting with version 2.1, Roller uses the Acegi
-security infrastructure. Several of the security features rely on
-keys that are intended to be site-specific. These keys are used to
-compute HMAC (hash-based message authentication code) values for
-<I>Remember Me</I> cookies. Knowledge of these keys could allow an
-attacker to forge invalid cookies, and thereby gain unauthorized
-access to your Roller installation (at the application level). 
-</P>
-<P CLASS="western">Roller ships with default values, and these should
-assumed to be widely known. You should change your keys to be secret
-values specific to your own site (the reason you should change the
-anonymous provider key is that a granted authorities list is embedded
-within the anonymous authentication token). Here is how to change the
-keys. 
-</P>
-<OL>
-	<LI><P CLASS="western" STYLE="margin-bottom: 0in">Find your
-	<TT><FONT FACE="Courier New">WEB-INF/security.xml</FONT></TT> file
-	and open it in a text editor.</P>
-	<LI><P CLASS="western" STYLE="margin-bottom: 0in">For the beans with
-	ids &quot;anonymousAuthenticationProvider&quot; and
-	&quot;anonymousProcessingFilter&quot; change the <TT>value</TT>
-	field of the property with <TT>name=&quot;key&quot;</TT> to be
-	different from the default value of &quot;anonymous&quot;. You can
-	use any string value of your choosing. It should be a secret
-	specific to your site. Use the same key value in these two beans;
-	they must match.</P>
-	<LI><P CLASS="western">For the beans with ids &quot;rememberMeServices&quot;
-	and &quot;rememberMeAuthenticationProvider&quot; change the <TT>value</TT>
-	field of the property with <TT>name=&quot;key&quot;</TT> to be
-	different from the default value of &quot;rollerlovesacegi&quot;.
-	You can use any string value of your choosing. It should be a secret
-	specific to your site. Use the same key value in these two beans;
-	they must match 
-	</P>
-</OL>
 <H2 CLASS="western"></H2>
-<H2 CLASS="western" STYLE="page-break-before: always">9.3Using
+<H2 CLASS="western" STYLE="page-break-before: always">9.2Using
 Server-provided database and mail resources</H2>
 <P CLASS="western">It's easiest to setup the database connection
 using the 'jdbc' approach and the mail connection using 'properties'
@@ -907,7 +870,7 @@ text.
 <P CLASS="western">    <FONT FACE="Courier New, monospace"><FONT SIZE=2>&lt;Context
 path=&quot;/roller&quot; </FONT></FONT>
 </P>
-<PRE>        <FONT FACE="Courier New, monospace"><FONT SIZE=2>docBase=&quot;<B>/usr/local/apache-roller-4.0/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
+<PRE>        <FONT FACE="Courier New, monospace"><FONT SIZE=2>docBase=&quot;<B>/usr/local/apache-roller-5.0/webapp/roller</B>&quot; debug=&quot;0&quot;&gt;</FONT></FONT>
 
         <FONT FACE="Courier New, monospace"><FONT SIZE=2>&lt;Resource name=&quot;jdbc/rollerdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot;</FONT></FONT>
             <FONT FACE="Courier New, monospace"><FONT SIZE=2>driverClassName=&quot;<B>com.mysql.jdbc.Driver</B>&quot;</FONT></FONT>
@@ -923,7 +886,7 @@ path=&quot;/roller&quot; </FONT></FONT>
 </P>
 <P CLASS="western">Once your context.xml file is in place, deploy
 Roller to Tomcat as described in <B>Section 7</B>.</P>
-<H2 CLASS="western">9.4Manual table creation and upgrade</H2>
+<H2 CLASS="western">9.3Manual table creation and upgrade</H2>
 <P CLASS="western">If you would rather create your database tables
 yourself instead of letting Roller do it automatically, you can.
 Instead of enabling automatic installation you should disable it by
@@ -945,92 +908,7 @@ Roller installation to the latest release of Roller by shutting down,
 backing up and then following the installation instructions with a
 couple of key exceptions. But first, there is some required reading
 for those upgrading from ancient versions of Roller.</P>
-<H2 CLASS="western">10.1For those upgrading from Roller 2.x to Roller
-4.0</H2>
-<P CLASS="western"><SPAN STYLE="background: transparent">Roller 3.0
-and Roller 4.0 were <I>major</I> releases and made some big changes
-to the way that Roller works. If you're upgrading from the 2.x series
-you need to be aware of them and especially the new URL structure and
-the new template system.</SPAN></P>
-<H4 CLASS="western">New URL structure</H4>
-<P CLASS="western"><SPAN STYLE="background: transparent">The most
-significant change is the new URL structure – we've completely
-change all of the Roller weblog URLs. We continue to support old
-Roller URLs, but they are forwarded to the new system. That ensures
-that nobody will get a 404 when accessing your weblog using an old
-URL, but you'll still want to encourage people to change links that
-point to your weblog's old URL, which was of the format:</SPAN></P>
-<P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	http://&lt;hostname&gt;/roller/page/&lt;weblog-handle&gt;</SPAN></FONT></P>
-<P CLASS="western"><SPAN STYLE="background: transparent">To use the
-new format, which is:</SPAN></P>
-<P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	http://&lt;hostname&gt;/roller/&lt;weblog-handle&gt;</SPAN></FONT></P>
-<P CLASS="western"><SPAN STYLE="background: transparent">Unfortunately,
-some custom templates that use relative URLs will have problem with
-this new URL structure. So, before you go live you should set-up a
-test server and allow your users to take a look at their weblogs.</SPAN></P>
-<H4 CLASS="western">New template system</H4>
-<P CLASS="western"><SPAN STYLE="background: transparent">We've
-developed a completely new and greatly improved template system for
-Roller, which includes new models and new macros. We want to
-encourage people to start using this new system for all new template
-and theme development, so we have made it the default. And, by
-default, we've turned off the old system. </SPAN>
-</P>
-<P CLASS="western"><SPAN STYLE="background: transparent">So, if you
-are upgrading and you want your weblogs to work, you <I>must</I>
-override this Roller property to enable the old “legacy” template
-system to work:</SPAN></P>
-<P CLASS="western"><A NAME="DDE_LINK"></A><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	rendering.legacyModels.enabled=true</SPAN></FONT></P>
-<P CLASS="western"><SPAN STYLE="background: transparent">See <B>Section
-11</B> for information on overriding Roller startup properties.</SPAN></P>
-<H4 CLASS="western">New task management system</H4>
-<P CLASS="western" STYLE="margin-bottom: 0in"><SPAN STYLE="background: transparent"><SPAN STYLE="font-weight: medium">In
-Roller 3.1 we changed the scheduled task properties, so if you were
-overriding  the</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">
-tasks.daily</SPAN></FONT><SPAN STYLE="font-weight: medium"> or
-</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">tasks.hourly</SPAN></FONT><SPAN STYLE="font-weight: medium">
-properties you need to change your </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">roller-custom.properties</SPAN></FONT><SPAN STYLE="font-weight: medium">
-file. Refer to the notes in </SPAN><B>Section 11</B><SPAN STYLE="font-weight: medium">
-  </SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="font-weight: medium">roller.properties</SPAN></FONT><SPAN STYLE="font-weight: medium">
-in the Scheduled Tasks Configuration area.</SPAN></SPAN></P>
-<H4 CLASS="western">New package names</H4>
-<P CLASS="western"><SPAN STYLE="background: transparent">In Roller
-3.0 or package names went from from org.roller to org.apache.roller.
-In Roller 4.0 they've changed again to org.apache.roller.weblogger.
-So check your configuration files for references to the old package
-names. And if you created any plugins, you'll have to recompile them
-against the new code base.</SPAN></P>
-<H4 CLASS="western">Encrypted passwords now the default</H4>
-<P CLASS="western"><SPAN STYLE="background: transparent">Roller now
-defaults to storing passwords in the database in an emcrypted format.
-So, if you are upgrading an older version of Roller and you went with
-the default setting for encrypted passwords, which was off by
-default, then you'll need to set this propery in your
-</SPAN><FONT FACE="Courier New, monospace"><SPAN STYLE="background: transparent">roller-custom.properties</SPAN></FONT><SPAN STYLE="background: transparent">
-file:</SPAN></P>
-<P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	passwds.encryption.enabled=false</SPAN></FONT></P>
-<H4 CLASS="western">Non-core themes removed</H4>
-<P CLASS="western"><SPAN STYLE="background: transparent">The Roller
-project is establishing a community site for sharing and maintaining
-of themes and plugins. </SPAN>
-</P>
-<P CLASS="western"><SPAN STYLE="background: transparent">From now
-only, Roller will ship with only a core set of four themes (Basic,
-BrushedMetal, Sotto and a new Frontpage themes, which is just for
-site-wide front-page weblogs) . All other themes have been removed
-from Roller and moved to the Roller Support project at Java.net
-(<A HREF="http://roller.dev.java.net/"></A><A HREF="http://roller.dev.java.net/"></A><A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A><A HREF="http://roller.dev.java.net/"></A><A HREF="http://roller.dev.java.net/"></A>).
-If you or your users use any other themes, then you'll need to
-download and install them according to the instructions on that site.</SPAN></P>
-<H4 CLASS="western">Non-core plugins removed</H4>
-<P CLASS="western"><SPAN STYLE="background: transparent">The same
-applies to plugins. The JSPWiki, Textile and Read More plugins have
-also been moved to the Roller Support project at Java.net
-(<A HREF="http://roller.dev.java.net/"></A><A HREF="http://roller.dev.java.net/"></A><A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A><A HREF="http://roller.dev.java.net/"></A><A HREF="http://roller.dev.java.net/"></A>)
-to become part of a community maintained repository. If you or your
-users use any other themes, then you'll need to download and install
-them according to the instructions on that site.</SPAN></P>
-<H2 CLASS="western"><A NAME="ref-UpgradeGuide_2.1-1"></A>10.2Backup
+<H2 CLASS="western"><A NAME="ref-UpgradeGuide_2.1-1"></A>10.1Backup
 your old Roller 
 </H2>
 <P CLASS="western">Before you get started with your upgrade, shutdown
@@ -1052,27 +930,37 @@ search-index files. If you added or modified any files within your
 old Roller web application directory, then you'll want to backup that
 whole directory. 
 </P>
-<H4 CLASS="western">Don't store files inside of Roller</H4>
-<P CLASS="western">If you do, you'll have to move them around on
-every Roller upgrade. Put your uploads and themes in a separate
-directory and point to them via the <FONT FACE="Courier New, monospace">upoads.dir</FONT>
-and <FONT FACE="Courier New, monospace">themes.dir </FONT>properties.</P>
-<P CLASS="western">If you're upgrading from an older version of
-Roller you may have been storing uploaded files inside the Roller web
-application, in a <FONT FACE="Courier New, monospace">/resources</FONT>
-subdirectory. In Roller 4.0 the default is to store those files your
-home directory under <FONT FACE="Courier New, monospace">roller_data/uploads</FONT>,
-so you'll have to copy your uploads there. If you want to change the
-location of the uploads directory, overload the property <FONT FACE="Courier New, monospace">upoads.dir</FONT>.</P>
+<H4 CLASS="western">Migrating your old file uploads to the new Media
+Blogging system</H4>
+<P CLASS="western">When you first start Roller 5.0 it will migrate
+your old file uploads to the new Media Blogging system. If this is to
+work properly you MUST ensure that the two properties below are set
+correctly before you start Roller 5.0 for the first time.</P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	#
+The directory in which Roller will upload files</FONT></FONT></P>
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	mediafiles.storage.dir=${user.home}/roller_data/mediafiles</FONT></FONT></P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	#
+The directory in which Roller will upload files</FONT></FONT></P>
+<P CLASS="western"><FONT FACE="Courier New, monospace"><FONT SIZE=2 STYLE="font-size: 11pt">	uploads.dir=${user.home}/roller_data/uploads</FONT></FONT></P>
+<P CLASS="western"><BR><BR>
+</P>
+<P CLASS="western">The mediafiles.storage.dir property should be set
+to the location where you would like to store uploaded files.</P>
+<P CLASS="western">The uploads.dir property should be set to the
+location where you stored uploaded files in Roller 4.0.</P>
 <H2 CLASS="western" STYLE="page-break-before: always"><A NAME="ref-UpgradeGuide_2.1-2"></A>
-10.3Install and startup the new Roller 
+10.2Install and startup the new Roller 
 </H2>
 <P CLASS="western">Follow the normal installation instructions for
 the new version of Roller, but...</P>
 <UL>
 	<LI><P CLASS="western">When creating your <FONT FACE="Courier New, monospace">roller-custom.properites</FONT>,
 	copy of your old one. Carefully review each property and compare it
-	to the property settings in the Roller 4.0 property file in <B>Section
+	to the property settings in the Roller property file in <B>Section
 	11</B>. 
 	</P>
 	<LI><P CLASS="western">Don't create a new database for Roller.
@@ -1089,7 +977,23 @@ migration scripts yourself, you can. See <B>Section 9.4</B>.</P>
 <P CLASS="western"><B>NOTE</B>: On Tomcat, before startup you should
 delete the contents of the Tomcat work directory</P>
 <H1 CLASS="western">11roller.properties</H1>
-<PRE><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># roller.properties</FONT></FONT>
+<PRE><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Licensed to the Apache Software Foundation (ASF) under one or more</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#  contributor license agreements.  The ASF licenses this file to You</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># use this file except in compliance with the License.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># You may obtain a copy of the License at</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#     http://www.apache.org/licenses/LICENSE-2.0</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Unless required by applicable law or agreed to in writing, software</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># See the License for the specific language governing permissions and</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># limitations under the License.  For additional information regarding</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># copyright in this work, please see the NOTICE file in the top level</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># directory of this distribution.</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># roller.properties</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This file is for meant for Roller deployment properties</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Any properties that don't change at runtime are defined here</FONT></FONT>
@@ -1125,7 +1029,7 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Feature specific settings</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Scheduled tasks configuration</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Cache configuratation</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Security settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- User management and security settings</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Rendering system</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Weblog ping system</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># -- Pluggable backend, page and editor plugins</FONT></FONT>
@@ -1182,10 +1086,19 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The directory in which Roller will upload files</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">mediafiles.storage.dir=${user.home}/roller_data/mediafiles</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The context path under which resoures will be made available</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">mediafile.resource.url=/resources</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The directory in which Roller will upload files</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">uploads.dir=${user.home}/roller_data/uploads</FONT></FONT>
 
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The context path under which resoures will be made available </FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The context path under which resoures will be made available</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">uploads.url=/resources</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Migrate old file resoures to Roller 5.0 Mediafile Storage automatically</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">uploads.migrate.auto=true</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Directory in which search index is to be created </FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># (delete this directory to force Roller to recreate the entire search index)</FONT></FONT>
@@ -1193,10 +1106,6 @@ delete the contents of the Tomcat work directory</P>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># The directory in which Roller will look for themes</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">themes.dir=${webapp.context}</FONT></FONT>
-
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If you enable Planet (see below), then you must specify the path to a cache</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># directory that exists and is writable by the Roller process </FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.cache.dir=${user.home}/roller_data/planetcache</FONT></FONT>
 
 
 
@@ -1246,8 +1155,8 @@ delete the contents of the Tomcat work directory</P>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># pluggable comment formatters</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">comment.formatter.classnames=\</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># enables site full blacklist check on comment posts (default: true)</FONT></FONT>
@@ -1265,7 +1174,6 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">trackback.allowedURLs=</FONT></FONT>
 
 
-
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Planet Aggregator settings</FONT></FONT>
 
@@ -1276,9 +1184,6 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Planet backend guice module, customized for use with Weblogger</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.guice.module=\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.planet.business.jpa.RollerPlanetModule</FONT></FONT>
-
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Number of queries allowed per day</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">planet.aggregator.technorati.limit=500</FONT></FONT>
 
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
@@ -1410,13 +1315,39 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">cache.planet.timeout=1800</FONT></FONT>
 
 
-
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Security settings</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enables HTTPS for login page only</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">securelogin.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enable container managed authentication</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">authentication.cma.enabled=false</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enable/disable OpenID (requires Spring Security, will not work with CMA)</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># This can be set to one of three values:</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># - disabled: no OpenID support, no evidence of OpenID in the Web UI</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># - hybrid:   allow users to use either password and/or OpenID</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># - only:     users must use OpenID only, no password allowed</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">authentication.openid=disabled</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Password security settings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">passwds.encryption.enabled=true</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">passwds.encryption.algorithm=SHA</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Role name to global permission action mappings</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">role.names=editor,admin</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">role.action.editor=login,comment,weblog</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">role.action.admin=login,comment,weblog,admin</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># True to give the first user that is registered admin privileges</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">users.firstUserAdmin=true</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Normally, for security purposes Roller keeps usernames private and the user</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># getUserName() method in templates actually returns the user's sceenname.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If you want templates to have access to real usernames, set this to false.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">user.privateUserNames=true</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enable scheme enforcement?</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Scheme enforcement ensures that specific URLs are viewed only via HTTPS</FONT></FONT>
@@ -1432,10 +1363,6 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/admin/createUser.rol,/roller-ui/admin/createUser!save.rol,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/authoring/userdata,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">/roller-ui/authoring/membersInvite.rol,/roller-ui/authoring/membersInvite!save.rol</FONT></FONT>
-
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Password security settings</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">passwds.encryption.enabled=true</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">passwds.encryption.algorithm=SHA</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#----------------------------------</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Single-Sign-On</FONT></FONT>
@@ -1538,7 +1465,9 @@ delete the contents of the Tomcat work directory</P>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Set of page models specifically for site-wide rendering</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">rendering.siteModels=\</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.SiteModel</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.SiteModel,\</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">org.apache.roller.weblogger.ui.rendering.model.PlanetModel</FONT></FONT>
+
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Velocity settings</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">velocity.properties=/WEB-INF/velocity.properties</FONT></FONT>
@@ -1617,7 +1546,6 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">pings.logOnly=false</FONT></FONT>
 
 
-
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Pluggable backend, page and editor plugins</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
@@ -1677,32 +1605,33 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.appender.roller.layout=org.apache.log4j.PatternLayout</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.appender.roller.layout.ConversionPattern=%-5p %d{yyyy-MM-dd HH:mm:ss,SSS} %C{1}:%M - %m%n</FONT></FONT>
 
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Options are: DEBUG, INFO, WARN, ERROR, FATAL</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller code</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller code. Options are: DEBUG, INFO, WARN, ERROR, FATAL</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.roller=INFO</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.net.java.roller=INFO</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller dependent libraries</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.hibernate=INFO</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.struts2=INFO</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># the struts2 file upload stuff has some overly verbose messaging</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.struts2=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.tiles=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.opensymphony.xwork2=WARN</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.springframework=WARN</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.springframework.security=ERROR</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Velocity talks a lot, so by default it is set to STFU mode</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.hibernate=WARN</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># the struts2 file upload stuff has some overly verbose messaging</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.struts2.interceptor.FileUploadInterceptor=ERROR</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Velocity talks *way* too much, so set it to log only FATAL problems</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.apache.velocity=FATAL</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Roller extras</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.ecyrd.jspwiki=ERROR</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.org.tuckey.web.filters.urlrewrite=DEBUG</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.opensymphony.oscache=ERROR</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.com.danga.MemCached=WARN</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Ask OpenJPA to log to Log4J via Apache Commons Logging</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">openjpa.Log=commons</FONT></FONT>
-
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Tool=INFO</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Runtime=INFO</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Tool=WARN</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Runtime=WARN</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.Remote=WARN</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.DataCache=WARN</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">log4j.category.openjpa.MetaData=WARN</FONT></FONT>
@@ -1748,7 +1677,6 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Dave Johnson|http://rollerweblogger.org/roller,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Matt Raible|http://raibledesigns.com/page/rd,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Lance Lavandowska|http://rollerweblogger.org/lance,\</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Henri Yandell|http://blog.generationjava.com/,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Elias Torres|http://torrez.us/,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">Jeff Blattman|http://blogs.sun.com/jtb,\</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">blogs.sun.com|http://blogs.sun.com,\</FONT></FONT>
@@ -1758,10 +1686,13 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">newuser.categories=General,Status,Java,Music,Politics</FONT></FONT>
 
 
-
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Experimental, deprecated and &quot;undocumented&quot; settings</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">#-----------------------------------------------------------------------------</FONT></FONT>
+
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Enable an Export page that allows users to export entries and media files</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># for a format that is compatible with Movable Type and Wordpress.</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">weblog.export.enabled=false</FONT></FONT>
 
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Atom Publishing Protocol (APP) - this is an incomplete and untested </FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># implementation of an unfinished IETF specification. </FONT></FONT>
@@ -1776,8 +1707,6 @@ delete the contents of the Tomcat work directory</P>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># Intended only for interoperability testing. DO NOT ENABLE IN PRODUCTION!</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">webservices.adminprotocol.enabled=false</FONT></FONT>
 
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># If you are using the Hibernate backend (deprecated as of Roller 4.0), </FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"># you MUST override this to use a database other than MySQL4</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt">hibernate.dialect=org.hibernate.dialect.MySQLDialect</FONT></FONT></PRE>
+</PRE>
 </BODY>
 </HTML>

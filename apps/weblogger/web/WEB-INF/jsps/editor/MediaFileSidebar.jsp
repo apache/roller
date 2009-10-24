@@ -22,10 +22,12 @@
         <div class="menu-tl">
             <div class="sidebarInner">
 
+                <br />
                 <b><s:text name="mediaFileSidebar.actions" /></b>
                 <br />
                 <br />
 
+                <img src='<s:url value="/images/image_add.png"/>' border="0"alt="icon" />
                 <s:url id="mediaFileAddURL" action="mediaFileAdd">
                     <s:param name="weblog" value="%{actionWeblog.handle}" />
                     <s:param name="directoryPath" value="%{directoryPath}" />
@@ -35,10 +37,29 @@
                     <s:text name="mediaFileSidebar.add" />
                 </a>
 
+              <s:if test="!pager">
+
+                <%-- Only show Create New Directory control when NOT showing search results --%>
+                <br /><br />
+                <div>
+                    <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
+                    <s:text name="mediaFileView.addDirectory" /><br />
+                    <div style="padding-left:2em; padding-top:1em">
+                        <s:text name="mediaFileView.directoryName" />
+                        <input type="text" id="newDirectoryName" name="newDirectoryName" size="10" maxlength="25" />
+                        <input type="button" id="newDirectoryButton"
+                            value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()" />
+                    </div>
+                </div>
+              </s:if>
+
+                <br />
                 <hr size="1" noshade="noshade" />
                 <br />
-                <br />
 
+                <b><s:text name="mediaFileView.search" /></b>
+                <br />
+                <br />
 
                 <s:form id="mediaFileSearchForm" name="mediaFileSearchForm"
                         action="mediaFileView!search" onsubmit="editorCleanup()">
@@ -118,14 +139,22 @@
 
 <script type="text/javascript">
 
-function maintainSearchButtonState(e) {
-    if ( jQuery.trim($("#beanName").get(0).value).length == 0
-     &&  jQuery.trim($("#beanTags").get(0).value).length == 0
-     && (jQuery.trim($("#beanSize").get(0).value).length == 0 || $("#beanSize").get(0).value == 0)
-     && ($("#beanType").get(0).value.length == 0 || $("#beanType").get(0).value == "mediaFileView.any")) {
-        $("#searchButton").attr("disabled", true);
+function onCreateDirectory() {
+    document.mediaFileViewForm.newDirectoryName.value = $("#newDirectoryName").get(0).value;
+    document.mediaFileViewForm.action='<s:url action="mediaFileView!createNewDirectory" />';
+    document.mediaFileViewForm.submit();
+}
+
+$("#newDirectoryButton").ready(function () {
+    $("#newDirectoryName").bind("keyup", maintainDirectoryButtonState);
+    $("#newDirectoryButton").attr("disabled", true);
+});
+
+function maintainDirectoryButtonState(e) {
+    if ( jQuery.trim($("#newDirectoryName").get(0).value).length == 0) {
+        $("#newDirectoryButton").attr("disabled", true);
     } else {
-        $("#searchButton").attr("disabled", false);
+        $("#newDirectoryButton").attr("disabled", false);
     }
 }
 
@@ -142,5 +171,16 @@ $("#searchButton").ready(function () {
         window.location = '<s:property value="%{mediaFileViewURL}" />';
     });
 });
+
+function maintainSearchButtonState(e) {
+    if ( jQuery.trim($("#beanName").get(0).value).length == 0
+     &&  jQuery.trim($("#beanTags").get(0).value).length == 0
+     && (jQuery.trim($("#beanSize").get(0).value).length == 0 || $("#beanSize").get(0).value == 0)
+     && ($("#beanType").get(0).value.length == 0 || $("#beanType").get(0).value == "mediaFileView.any")) {
+        $("#searchButton").attr("disabled", true);
+    } else {
+        $("#searchButton").attr("disabled", false);
+    }
+}
 
 </script>
