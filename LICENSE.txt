@@ -1,6 +1,6 @@
 LICENSE.txt - Roller licensing terms
 
-Roller is licensed under the Apache Licence Version 2.0, see below.
+Roller is licensed under the Apache License Version 2.0, see below.
 
 Roller also uses the JDOM XML parser library, licensed under the 
 terms of the JDOM license (a BSD-like license listed at end of this file).
