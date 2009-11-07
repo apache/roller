@@ -440,15 +440,15 @@ Show weblog's categories in specified parent category.
     #if ($expanding) #_showCommonJavascript() #end
     #if(!$expanding && !$subcats)
         <ul class="rCategory">
-        #if ($model.weblogCategory)
-           <li><a href="$url.category($categoryObject.path)">$text.get("macro.weblog.allcategories")</a></li>
+        #if ($model.weblogCategory || $model.permalink)
+            <li><a href="$url.category($categoryObject.path)">$text.get("macro.weblog.allcategories")</a></li>
         #else
-           <li class="selected">$text.get("macro.weblog.allcategories")</li>
+            <li class="selected"><a href="$url.category($categoryObject.path)">$text.get("macro.weblog.allcategories")</a></li>
         #end
         #set($cats = $categoryObject.getWeblogCategories())
         #foreach($cat in $cats)
-            #if($model.weblogCategory && $model.weblogCategory.path == $cat.path)
-                <li class="selected">$cat.name</li>
+            #if ($model.weblogCategory && $model.weblogCategory.path == $cat.path || ($model.permalink && $model.weblogEntry.category.path == $cat.path))
+                <li class="selected"><a href="$url.category($cat.path)">$cat.name</a></li>
             #else
                 <li><a href="$url.category($cat.path)">$cat.name</a></li>
             #end
@@ -709,7 +709,7 @@ Show search form for a weblog.
     <form id="searchForm" method="get" action="$url.search"
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
-          <input type="text" id="q" name="q" size="10"
+          <input type="text" id="q" name="q" size="10" class="text small"
               maxlength="255" value="#if($model.term)$model.term#end" />
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
@@ -720,7 +720,7 @@ Show search form for a weblog.
             #end
             </select>
           #end
-          <input type="submit" class="button" value="$text.get( "macro.weblog.searchbutton" )" />
+          <input type="submit" class="button" value="$text.get( "macro.weblog.searchbutton" )" id="searchbutton" />
         </p>
     </form>
     <script type="text/javascript">
@@ -744,19 +744,19 @@ Show search again form for a weblog.
         $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
         $text.get( "macro.weblog.searchhits", [$model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
-            <input type="text" id="q" name="q" size="10"
+            <input type="text" id="q" name="q" class="text medium"
                 maxlength="255" value="$model.term"
-                style="padding-left: 1px" /><br />
+                style="padding-left: 1px" />
 
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
-            <select name="cat">
+            <select name="cat" class="select">
             <option value="">$text.get( "macro.searchresults.incategory" )</option>
             #foreach( $cat in $cats )
               <option #if($cat.name == $model.weblogCategory.name)selected="selected"#end>$cat.name</option>
             #end
             </select>
 
-            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
+            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" class="button" />
         </form>
 
         $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${website.handle}] )
