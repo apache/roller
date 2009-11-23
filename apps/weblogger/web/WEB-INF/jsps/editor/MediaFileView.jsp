@@ -461,7 +461,7 @@
 
                         </div>
 
-                    </li
+                    </li>
 
                 </s:iterator>
 
