@@ -1,0 +1,44 @@
+<project> 
+    <modelVersion>4.0.0</modelVersion> 
+    
+    <parent>
+        <groupId>org.apache.roller</groupId>
+        <artifactId>roller-project</artifactId>
+        <version>5.0-BETA2-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>Apache Roller Test Utilities</name>
+    <groupId>org.apache.roller</groupId> 
+    <artifactId>test-utils</artifactId> 
+    <version>5.0-BETA2-SNAPSHOT</version>
+    
+    <dependencies>
+    
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <scope>compile</scope>
+        </dependency>
+            
+    </dependencies>
+    
+</project>
