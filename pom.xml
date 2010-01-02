@@ -27,6 +27,7 @@
         <module>planet-business</module>
         <module>weblogger-business</module>
         <module>weblogger-web</module>
+        <module>weblogger-assembly</module>
     </modules>
     
     <build>
