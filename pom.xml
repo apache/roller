@@ -1,26 +1,26 @@
 <project> 
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-project</artifactId>
-    
+
     <version>5.0-BETA2-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+
     <name>Apache Roller Project</name>
     <description>
-       Roller is an open source blog server built with open source Java 
-       libraries primarily Apache OpenJPA, Struts2, Velocity and Commons.
+        Roller is an open source blog server built with open source Java
+        libraries primarily Apache OpenJPA, Struts2, Velocity and Commons.
     </description>
     <url>http://roller.apache.org</url>
     <inceptionYear>2002</inceptionYear>
-   
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/roller/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/roller/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/roller/trunk</url>
-  </scm>
- 
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/roller/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/roller/trunk</developerConnection>
+        <url>http://svn.apache.org/viewvc/roller/trunk</url>
+    </scm>
+
     <modules>
         <module>roller-core</module>
         <module>test-utils</module>
@@ -28,10 +28,10 @@
         <module>weblogger-business</module>
         <module>weblogger-web</module>
     </modules>
-    
+
     <build>
         <defaultGoal>install</defaultGoal>
-        
+
         <pluginManagement>
             <plugins>
 
@@ -46,36 +46,36 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.4.3</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.2</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>sql-maven-plugin</artifactId>
                     <version>1.3</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
 
-            </plugins>   
-            
-        </pluginManagement>        
+            </plugins>
+
+        </pluginManagement>
     </build>
-    
+
     <repositories>
         <repository>
             <id>central</id>
@@ -87,8 +87,8 @@
             </snapshots>
         </repository>
         <repository>
-           <id>ibiblio</id>
-           <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+            <id>ibiblio</id>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
         </repository>
         <repository>
             <id>oauth</id>
@@ -105,18 +105,18 @@
         </repository>
         <repository>
             <id>snoopdave</id>
-            <name>Temporary archive for ROME Propono 1.0rc1, 
-                TODO: replace with official ASAP</name>
+            <name>Temporary archive for ROME Propono 1.0rc1,
+            TODO: replace with official ASAP</name>
             <url>http://people.apache.org/~snoopdave/repo/</url>
         </repository>
 
     </repositories>
-  
+
     <dependencyManagement>
         <dependencies>
-        
+
             <!-- core deps -->
-            
+
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
@@ -124,7 +124,7 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
@@ -132,23 +132,23 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.4</version>
                 <type>jar</type>
                 <scope>compile</scope>
-            </dependency>           
-                
+            </dependency>
+
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
-            </dependency>           
-                
+            </dependency>
+
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
@@ -156,15 +156,15 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-        
+
             <dependency>
                 <groupId>com.google.code.guice</groupId>
                 <artifactId>guice</artifactId>
                 <version>2.0</version>
             </dependency>
-      
+
             <!-- business deps -->
-            
+
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
@@ -173,7 +173,7 @@
                 <scope>compile</scope>
             </dependency>
 
-           <dependency>
+            <dependency>
                 <groupId>rome</groupId>
                 <artifactId>rome</artifactId>
                 <version>1.0</version>
@@ -190,36 +190,36 @@
                 <artifactId>rome-propono</artifactId>
                 <version>1.0rc1</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>jdom</groupId>
                 <artifactId>jdom</artifactId>
                 <version>1.1</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>net.oauth.core</groupId>
                 <artifactId>oauth</artifactId>
                 <version>20090531</version>
                 <scope>compile</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>net.oauth.core</groupId>
                 <artifactId>oauth-provider</artifactId>
                 <version>20090531</version>
                 <scope>compile</scope>
             </dependency>
-    
+
             <!-- web deps -->
-            
-		
-			<dependency>
-				<groupId>taglibs</groupId>
-				<artifactId>string</artifactId>
-				<version>1.1.0</version>
-			</dependency>
-			
+
+
+            <dependency>
+                <groupId>taglibs</groupId>
+                <artifactId>string</artifactId>
+                <version>1.1.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
@@ -236,7 +236,7 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-tiles-plugin</artifactId>
@@ -245,12 +245,12 @@
                 <scope>compile</scope>
             </dependency>
 
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.1.6</version>
-        </dependency>
-                   
+            <dependency>
+                <groupId>org.apache.struts</groupId>
+                <artifactId>struts2-spring-plugin</artifactId>
+                <version>2.1.6</version>
+            </dependency>
+
             <!-- <dependency>
                 <groupId>com.google.inject.integration</groupId>
                 <artifactId>guice-struts2-plugin</artifactId>
@@ -268,24 +268,24 @@
                     </exclusion>
                 </exclusions>
             </dependency> -->
- 
-			<dependency>
-			   <groupId>org.apache.tiles</groupId>
-			   <artifactId>tiles-core</artifactId>
-			   <version>2.1.2</version>
-			</dependency>
 
-    	   <dependency>
-			   <groupId>org.apache.tiles</groupId>
-			   <artifactId>tiles-api</artifactId>
-			   <version>2.1.2</version>
-			</dependency>
-			
-			<dependency>
-			   <groupId>org.apache.tiles</groupId>
-			   <artifactId>tiles-jsp</artifactId>
-			   <version>2.1.2</version>
-			</dependency>
+            <dependency>
+                <groupId>org.apache.tiles</groupId>
+                <artifactId>tiles-core</artifactId>
+                <version>2.1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tiles</groupId>
+                <artifactId>tiles-api</artifactId>
+                <version>2.1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tiles</groupId>
+                <artifactId>tiles-jsp</artifactId>
+                <version>2.1.2</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.velocity</groupId>
@@ -300,36 +300,36 @@
                 <scope>provided</scope>
             </dependency>
 
-           <dependency>
+            <dependency>
                 <groupId>org.apache.xmlrpc</groupId>
                 <artifactId>xmlrpc-common</artifactId>
                 <version>3.1.2</version>
                 <type>jar</type>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.xmlrpc</groupId>
                 <artifactId>xmlrpc-client</artifactId>
                 <version>3.1.2</version>
                 <type>jar</type>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.xmlrpc</groupId>
                 <artifactId>xmlrpc-server</artifactId>
                 <version>3.1.2</version>
                 <type>jar</type>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.ws.commons.util</groupId>
                 <artifactId>ws-commons-util</artifactId>
                 <version>1.0.2</version>
                 <type>jar</type>
             </dependency>
-  
-         <!-- Java EE deps -->
-          
+
+            <!-- Java EE deps -->
+
             <dependency>
                 <groupId>org.apache.openjpa</groupId>
                 <artifactId>openjpa</artifactId>
@@ -346,21 +346,21 @@
                 <scope>compile</scope>
             </dependency>
 
-               <dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.4</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
-            
-			   <dependency>
-   				<groupId>javax.servlet</groupId>
-   				<artifactId>jstl</artifactId>
-   				<version>1.2</version>
-			   </dependency>
 
-	          <!-- test deps -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>1.2</version>
+            </dependency>
+
+            <!-- test deps -->
 
             <dependency>
                 <groupId>junit</groupId>
@@ -400,7 +400,7 @@
                 <version>1.7.1</version>
                 <type>jar</type>
             </dependency>
-            
-         </dependencies>
+
+        </dependencies>
     </dependencyManagement>
 </project>

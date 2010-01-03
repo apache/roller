@@ -1,25 +1,25 @@
 <project> 
-    <modelVersion>4.0.0</modelVersion> 
-    
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
         <version>5.0-BETA2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    
+
     <name>Apache Roller Weblogger Business Module</name>
     <description>
-       Business logic and persistence for Roller Weblogger.
+        Business logic and persistence for Roller Weblogger.
     </description>
-    <groupId>org.apache.roller</groupId> 
-    <artifactId>roller-weblogger-business</artifactId> 
+    <groupId>org.apache.roller</groupId>
+    <artifactId>roller-weblogger-business</artifactId>
     <version>5.0-BETA2-SNAPSHOT</version>
 
     <properties>
-       <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
+        <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
     </properties>
-  
+
     <dependencies>
 
         <dependency>
@@ -37,6 +37,16 @@
         <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-pool</groupId>
+                    <artifactId>commons-pool</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -109,26 +119,26 @@
             <artifactId>texen</artifactId>
         </dependency>
 
-       <dependency>
+        <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-common</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-client</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-server</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.ws.commons.util</groupId>
             <artifactId>ws-commons-util</artifactId>
         </dependency>
-            
+
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth</artifactId>
@@ -161,18 +171,18 @@
             <scope>test</scope>
         </dependency>
 
-     </dependencies>
+    </dependencies>
 
     <build>
         <plugins>
-    
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
             </plugin>
-    
+
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -185,10 +195,10 @@
                             <name>context.realpath</name>
                             <value>${project.basedir}/src/main/webapp</value>
                         </property>
-						<property>
-							<name>project.build.directory</name>
-							<value>${project.build.directory}</value>
-						</property>
+                        <property>
+                            <name>project.build.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
                     </systemProperties>
                     <excludes>
                         <exclude>**/TestUtils.java</exclude>
@@ -197,11 +207,11 @@
                     <!--
                     <includes>
                         <include>**/PlanetManagerLocalTest.java</include>
-                    </includes> 
+                    </includes>
                     -->
-               </configuration>
+                </configuration>
             </plugin>
-    
+
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <dependencies>
@@ -217,9 +227,9 @@
                         <scope>test</scope>
                     </dependency>
                 </dependencies>
-    
+
                 <executions>
-                    
+
                     <execution>
                         <id>gen-db-scripts</id>
                         <phase>process-classes</phase>
@@ -230,17 +240,17 @@
                             <tasks>
                                 <taskdef name="texen"
                                          classname="org.apache.velocity.texen.ant.TexenTask"
-                                         classpathref="maven.compile.classpath"/>    
+                                         classpathref="maven.compile.classpath"/>
                                 <texen
-                                        controlTemplate  ="control.vm"
-                                        contextProperties="${project.build.outputDirectory}/sql/dbscripts.properties"
-                                        templatePath     ="${project.build.outputDirectory}/sql"
-                                        outputDirectory  ="${project.build.outputDirectory}/sql"
-                                        outputFile="README.txt"/>    
+                                    controlTemplate  ="control.vm"
+                                    contextProperties="${project.build.outputDirectory}/sql/dbscripts.properties"
+                                    templatePath     ="${project.build.outputDirectory}/sql"
+                                    outputDirectory  ="${project.build.outputDirectory}/sql"
+                                    outputFile="README.txt"/>
                             </tasks>
                         </configuration>
                     </execution>
-    
+
                     <execution>
                         <id>startdb</id>
                         <phase>process-test-resources</phase>
@@ -256,7 +266,7 @@
                             </tasks>
                         </configuration>
                     </execution>
-    
+
                     <execution>
                         <id>stopdb</id>
                         <phase>package</phase>
@@ -273,10 +283,10 @@
                             </tasks>
                         </configuration>
                     </execution>
-                    
+
                 </executions>
             </plugin>
-        
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>sql-maven-plugin</artifactId>
@@ -284,16 +294,16 @@
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
-                        <version>10.4.2.0</version>
+                        <version>10.5.3.0_1</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
-                        <version>10.4.2.0</version>
+                        <version>10.5.3.0_1</version>
                     </dependency>
                 </dependencies>
                 <executions>
-                
+
                     <execution>
                         <id>initdb</id>
                         <phase>process-test-resources</phase>
@@ -308,31 +318,31 @@
                             <autocommit>true</autocommit>
                             <onError>continue</onError>
                             <srcFiles>
-                               <srcFile>${project.build.outputDirectory}/sql/droptables.sql</srcFile>
-                               <srcFile>${project.build.outputDirectory}/sql/derby/createdb.sql</srcFile>
+                                <srcFile>${project.build.outputDirectory}/sql/droptables.sql</srcFile>
+                                <srcFile>${project.build.outputDirectory}/sql/derby/createdb.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>
-                    
+
                 </executions>
             </plugin>
 
-              <plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
                 <version>1.0-beta-3</version>
                 <executions>
-                  <execution>
-                    <phase>validate</phase>
-                    <goals>
-                      <goal>create</goal>
-                    </goals>
-                  </execution>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
-                  <doUpdate>false</doUpdate>
+                    <doUpdate>false</doUpdate>
                 </configuration>
-              </plugin>
+            </plugin>
 
         </plugins>
 
@@ -357,11 +367,11 @@
                 <includes>
                     <include>**/**</include>
                 </includes>
-            </resource>                        
+            </resource>
         </resources>
-        
+
     </build>
-    
+
     <profiles>
         <profile>
             <id>openjpa</id>
@@ -372,6 +382,7 @@
                 <dependency>
                     <groupId>org.apache.openjpa</groupId>
                     <artifactId>openjpa</artifactId>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
             <properties>
@@ -420,5 +431,5 @@
             </properties>
         </profile>
     </profiles>
-    
+
 </project>
