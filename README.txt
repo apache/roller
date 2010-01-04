@@ -2,12 +2,28 @@ README.txt
 
 This file exists at the top-level of the Roller source tree.
 
-There are two applicatons here and one component:
+Roller is made up of the following Maven projects:
 
-    apps/weblogger   - The Apache Roller Weblogger (blog server)
-    apps/planet      - The Roller Planet server (experimental)
-    compoenents/core - core component, used by both Weblogger and Planet
+  roller-project:     Top level project
+  roller-core:        Core Roller component
+  planet-business:    Planet POJOs and business logic
+  planet-web:         Planet webapp (under construction as before)
+  weblogger-business: Weblogger POJOs and business logic
+  weblogger-web:      The Roller Weblogger webapp, rendering system, Struts2 UI
+  weblogger-assembly: Assembly that builds Roller distro
+  test-utils:         Test utils (e.g. start/stop Derby task)
 
-If you want to build and deploy Roller from source follow these instructions:
+To build and run all unit tests, you do this:
 
-    http://cwiki.apache.org/confluence/display/ROLLER/Build+Guide
+  svn co https://svn.apache.org/repos/asf/roller/branches/roller_mavenized
+  cd roller_mavenized
+  mvn install
+
+You'll find the Roller webapp in weblogger-web/target/roller. To build
+a Roller distribution, you do this:
+
+  cd weblogger-assembly
+  mvn assembly:single
+
+And you will find Roller distribution files in weblogger-assembly/target
+
