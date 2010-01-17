@@ -1,9 +1,12 @@
-<project> 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-project</artifactId>
-
+    
     <version>5.0-BETA2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -20,6 +23,10 @@
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/roller/trunk</developerConnection>
         <url>http://svn.apache.org/viewvc/roller/trunk</url>
     </scm>
+
+    <properties>
+       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <modules>
         <module>roller-core</module>
@@ -121,7 +128,6 @@
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.12</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -129,7 +135,6 @@
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>3.2.1</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -137,7 +142,6 @@
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.4</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -145,7 +149,6 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -153,7 +156,6 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.4</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -169,7 +171,6 @@
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
                 <version>2.9.0</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -224,7 +225,6 @@
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
                 <version>1.1</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -233,7 +233,6 @@
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-core</artifactId>
                 <version>2.1.6</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -241,7 +240,6 @@
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-tiles-plugin</artifactId>
                 <version>2.1.6</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -304,28 +302,24 @@
                 <groupId>org.apache.xmlrpc</groupId>
                 <artifactId>xmlrpc-common</artifactId>
                 <version>3.1.2</version>
-                <type>jar</type>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.xmlrpc</groupId>
                 <artifactId>xmlrpc-client</artifactId>
                 <version>3.1.2</version>
-                <type>jar</type>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.xmlrpc</groupId>
                 <artifactId>xmlrpc-server</artifactId>
                 <version>3.1.2</version>
-                <type>jar</type>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.ws.commons.util</groupId>
                 <artifactId>ws-commons-util</artifactId>
                 <version>1.0.2</version>
-                <type>jar</type>
             </dependency>
 
             <!-- Java EE deps -->
@@ -334,7 +328,6 @@
                 <groupId>org.apache.openjpa</groupId>
                 <artifactId>openjpa</artifactId>
                 <version>1.2.1</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -342,7 +335,6 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>1.4</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -350,7 +342,6 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.4</version>
-                <type>jar</type>
                 <scope>provided</scope>
             </dependency>
 
@@ -366,7 +357,6 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.1</version>
-                <type>jar</type>
             </dependency>
 
             <dependency>
@@ -391,14 +381,12 @@
                 <groupId>simple-jndi</groupId>
                 <artifactId>simple-jndi</artifactId>
                 <version>0.11.4</version>
-                <type>jar</type>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
                 <version>1.7.1</version>
-                <type>jar</type>
             </dependency>
 
         </dependencies>

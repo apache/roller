@@ -1,4 +1,6 @@
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -97,12 +99,12 @@
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
-             <exclusions>
+             <!-- <exclusions>
                  <exclusion>
                     <groupId>org.apache.tiles</groupId>
                     <artifactId>tiles-servlet</artifactId>
                 </exclusion>
-             </exclusions>
+             </exclusions> -->
         </dependency>
 
         <dependency>
@@ -225,6 +227,12 @@
 
         <dependency>
             <groupId>org.openid4java</groupId>
+            <artifactId>openid4java-consumer</artifactId>
+            <version>0.9.5</version>
+        </dependency>
+
+        <!-- <dependency>
+            <groupId>org.openid4java</groupId>
             <artifactId>openid4java</artifactId>
             <version>0.9.5</version>
             <exclusions>
@@ -249,7 +257,7 @@
                     <artifactId>openid4java-server-JdbcServerAssociationStore</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>net.sf.ehcache</groupId>
