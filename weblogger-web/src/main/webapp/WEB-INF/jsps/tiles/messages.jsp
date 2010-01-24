@@ -20,7 +20,7 @@
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">
     <div id="messages" class="messages">
-        <s:actionmessage escape="false" />
+        <s:actionmessage />
     </div>
 </s:if>
 
