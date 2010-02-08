@@ -27,8 +27,8 @@ import java.io.InputStream;
 public class ClasspathDatabaseScriptProvider implements DatabaseScriptProvider {
     
     public InputStream getDatabaseScript(String path) {
-        return ClasspathDatabaseScriptProvider.class.getResourceAsStream(
-                "/dbscripts/" + path);
+        String resourcePath = "/sql/" + path;
+        return this.getClass().getResourceAsStream(resourcePath);
     }
     
 }
