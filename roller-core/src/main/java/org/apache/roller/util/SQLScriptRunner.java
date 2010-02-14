@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.startup;
+package org.apache.roller.util;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -30,8 +30,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -40,8 +38,6 @@ import org.apache.commons.logging.LogFactory;
  * Assumes that anything on an input line after "--" or ";" can be ignored.
  */
 public class SQLScriptRunner {
-    
-    private static Log   log = LogFactory.getLog(SQLScriptRunner.class);
     
     private List<String> commands = new ArrayList<String>();
     private List<String> messages = new ArrayList<String>();
@@ -52,14 +48,11 @@ public class SQLScriptRunner {
     /** Creates a new instance of SQLScriptRunner */
     public SQLScriptRunner(InputStream is) throws IOException {
         
-        log.debug("instantiated");
-        
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         String command = ""; 
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            log.debug(line);
             
             if (!line.startsWith("--")) { // ignore lines starting with "--"    
                 

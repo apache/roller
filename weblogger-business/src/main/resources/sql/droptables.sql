@@ -62,3 +62,6 @@ drop table website;
 drop table userrole;
 drop table rolleruser;
 
+-- oauth tables
+drop table roller_oauthconsumer;
+drop table roller_oauthaccessor;

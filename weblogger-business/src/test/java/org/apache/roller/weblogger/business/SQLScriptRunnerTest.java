@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import junit.framework.TestCase;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
+import org.apache.roller.util.SQLScriptRunner;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

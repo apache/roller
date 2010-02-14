@@ -40,7 +40,9 @@ public class DerbyLifeCycle implements LifeCycle {
     private String port = null;
 
     public void start() throws Exception {
+        log.info("**************");
         log.info("Starting Derby");
+        log.info("**************");
         try {
             System.setProperty("derby.system.home", database);
             System.setProperty("derby.drda.portNumber", port);
@@ -61,7 +63,9 @@ public class DerbyLifeCycle implements LifeCycle {
     }
 
     public void stop() throws Exception {
-        log.info("Starting Derby");
+        log.info("**************");
+        log.info("Stopping Derby");
+        log.info("**************");
         stopping = true;
         try {
             System.out.println("Stopping Derby");

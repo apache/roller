@@ -1,25 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
         <version>5.0-BETA2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    
+
     <name>Apache Roller Planet Business Module</name>
     <description>
-       Business logic and persistence for Roller Planet RSS/Atom aggregator, 
-       also used in Roller Weblogger.
+        Business logic and persistence for Roller Planet RSS/Atom aggregator,
+        also used in Roller Weblogger.
     </description>
-    <groupId>org.apache.roller</groupId> 
-    <artifactId>roller-planet-business</artifactId> 
+    <groupId>org.apache.roller</groupId>
+    <artifactId>roller-planet-business</artifactId>
     <version>5.0-BETA2-SNAPSHOT</version>
-    
+
     <dependencies>
 
         <dependency>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>org.apache.texen</groupId>
             <artifactId>texen</artifactId>
-         </dependency>
+        </dependency>
 
         <!-- test deps -->
 
@@ -125,19 +125,35 @@
             <artifactId>derbyclient</artifactId>
             <scope>test</scope>
         </dependency>
-            
-        </dependencies>
+
+    </dependencies>
 
     <build>
         <plugins>
-    
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <includeEmptyDirs>true</includeEmptyDirs>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <outputDirectory>${project.build.directory}/dbscripts</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources/sql</directory>
+                                    <filtering>false</filtering>                                    
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-    
+
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -150,17 +166,17 @@
                             <name>context.realpath</name>
                             <value>${project.basedir}/src/main/webapp</value>
                         </property>
-						<property>
-							<name>project.build.directory</name>
-							<value>${project.build.directory}</value>
-						</property>
+                        <property>
+                            <name>project.build.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
                     </systemProperties>
                     <excludes>
                         <exclude>**/TestUtils.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
-    
+
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <dependencies>
@@ -173,15 +189,38 @@
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
                         <version>5.0-BETA2-SNAPSHOT</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
+                        <version>10.5.3.0_1</version>
+                        <scope>test</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbynet</artifactId>
+                        <version>10.5.3.0_1</version>
+                        <scope>test</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbyclient</artifactId>
+                        <version>10.5.3.0_1</version>
+                        <scope>test</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbytools</artifactId>
+                        <version>10.5.3.0_1</version>
                         <scope>test</scope>
                     </dependency>
                 </dependencies>
-    
+
                 <executions>
-                    
+
                     <execution>
                         <id>gen-db-scripts</id>
-                        <phase>process-classes</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -189,17 +228,17 @@
                             <tasks>
                                 <taskdef name="texen"
                                          classname="org.apache.velocity.texen.ant.TexenTask"
-                                         classpathref="maven.compile.classpath"/>    
+                                         classpathref="maven.compile.classpath"/>
                                 <texen
-                                        controlTemplate  ="control.vm"
-                                        contextProperties="${project.build.outputDirectory}/sql/dbscripts.properties"
-                                        templatePath     ="${project.build.outputDirectory}/sql"
-                                        outputDirectory  ="${project.build.outputDirectory}/sql"
-                                        outputFile="README.txt"/>    
+                                    controlTemplate  ="control.vm"
+                                    contextProperties="${project.build.directory}/dbscripts/dbscripts.properties"
+                                    templatePath     ="${project.build.directory}/dbscripts"
+                                    outputDirectory  ="${project.build.directory}/dbscripts"
+                                    outputFile="README.txt"/>
                             </tasks>
                         </configuration>
                     </execution>
-    
+
                     <execution>
                         <id>startdb</id>
                         <phase>process-test-resources</phase>
@@ -208,14 +247,18 @@
                         </goals>
                         <configuration>
                             <tasks>
+                                <!-- Derby only for unit testing: skip when maven.text.skip is set -->
+                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
                                 <taskdef name="startdb" classname="org.apache.roller.weblogger.ant.StartDerbyTask"
-                                         classpathref="maven.compile.classpath"/>
-                                <startdb database="${project.build.testOutputDirectory}/derby-system/planet_business"
-                                         port="3219"></startdb>
+                                         classpathref="maven.test.classpath"/>
+                                <startdb databaseDir="${project.build.directory}/derby-system"
+                                         port="3221"
+                                         databaseScriptsDir="${project.build.directory}/dbscripts"
+                                         skip="${maven.test.skip}" ></startdb>
                             </tasks>
                         </configuration>
                     </execution>
-    
+
                     <execution>
                         <id>stopdb</id>
                         <phase>package</phase>
@@ -224,57 +267,21 @@
                         </goals>
                         <configuration>
                             <tasks>
+                                <!-- Derby only for unit testing: skip when maven.text.skip is set -->
                                 <taskdef name="stopdb" classname="org.apache.roller.weblogger.ant.StopDerbyTask"
-                                         classpathref="maven.compile.classpath"/>
-                                <stopdb port="3219"></stopdb>
-                                <delete dir="${project.build.testOutputDirectory}/derby-system"/>
+                                         classpathref="maven.test.classpath"/>
+                                <stopdb databaseDir="${project.build.directory}/derby-system"
+                                        port="3221"
+                                        databaseScriptsDir="${project.build.directory}/dbscripts"
+                                        skip="${maven.test.skip}" ></stopdb>
+                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
                             </tasks>
                         </configuration>
                     </execution>
-                    
+
                 </executions>
             </plugin>
-        
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sql-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.derby</groupId>
-                        <artifactId>derby</artifactId>
-                        <version>10.5.3.0_1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.derby</groupId>
-                        <artifactId>derbyclient</artifactId>
-                        <version>10.5.3.0_1</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                
-                    <execution>
-                        <id>initdb</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <driver>${jdbcDriverClass}</driver>
-                            <url>jdbc:derby://localhost:3219/planet;create=true</url>
-                            <username>app</username>
-                            <password>app</password>
-                            <autocommit>true</autocommit>
-                            <onError>continue</onError>
-                            <srcFiles>
-                               <srcFile>${project.build.outputDirectory}/sql/droptables.sql</srcFile>
-                               <srcFile>${project.build.outputDirectory}/sql/derby/createdb.sql</srcFile>
-                            </srcFiles>
-                        </configuration>
-                    </execution>
-                    
-                </executions>
-            </plugin>
-    
+
         </plugins>
 
         <testResources>
@@ -291,11 +298,14 @@
                 <includes>
                     <include>**/**</include>
                 </includes>
+                <excludes>
+                    <exclude>**/sql/**</exclude>
+                </excludes>
             </resource>
         </resources>
-        
+
     </build>
-    
+
     <profiles>
         <profile>
             <id>openjpa</id>
@@ -338,21 +348,7 @@
             </build>
         </profile>
 
-        <profile>
-            <id>derby-db</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.derby</groupId>
-                    <artifactId>derby</artifactId>
-                </dependency>
-            </dependencies>
-            <properties>
-                <jdbcDriverClass>org.apache.derby.jdbc.ClientDriver</jdbcDriverClass>
-            </properties>
-        </profile>
     </profiles>
-    
+
 </project>
+

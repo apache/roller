@@ -19,6 +19,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.apache.roller</groupId>
+            <artifactId>roller-core</artifactId>
+            <version>5.0-BETA2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>compile</scope>
