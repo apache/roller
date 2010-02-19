@@ -701,7 +701,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                     + File.separator + MIGRATION_STATUS_FILENAME),
                     "Migration is complete!");
 
-            } catch (Exception ioex) {}
+            } catch (Exception ioex) {
+		    log.error("ERROR upgrading", ioex);
+	    }
         }
         msgs.add("Migration complete!");
         return msgs;

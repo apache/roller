@@ -20,6 +20,11 @@
     <artifactId>roller-planet-business</artifactId>
     <version>5.0-BETA2-SNAPSHOT</version>
 
+    <properties>
+        <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
+	<cacheDir>${project.build.testOutputDirectory}${file.separator}planetcache</cacheDir>
+    </properties>
+
     <dependencies>
 
         <dependency>

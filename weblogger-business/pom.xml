@@ -21,6 +21,10 @@
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
+	<testMediaDir>  ${project.build.testOutputDirectory}${file.separator}mediafiles</testMediaDir>
+	<testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
+	<testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
+	<testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
     </properties>
 
     <dependencies>
@@ -200,7 +204,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+	    </plugin>
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -221,13 +225,8 @@
                     </systemProperties>
                     <excludes>
                         <exclude>**/TestUtils.java</exclude>
-                        <exclude>**/TestTask.java</exclude>
+			<exclude>**/TestTask.java</exclude>
                     </excludes>
-                    <!--
-                    <includes>
-                        <include>**/PlanetManagerLocalTest.java</include>
-                    </includes>
-                    -->
                 </configuration>
             </plugin>
 
@@ -297,7 +296,7 @@
                         <configuration>
                             <tasks>
                                 <!-- Derby only for unit testing: skip when maven.text.skip is set -->
-                                <delete dir="${project.build.directory}/derby-system1" verbose="true" failonerror="false" />
+                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
                                 <taskdef name="startdb" classname="org.apache.roller.weblogger.ant.StartDerbyTask"
                                          classpathref="maven.test.classpath"/>
                                 <startdb databaseDir="${project.build.directory}/derby-system"
@@ -323,7 +322,7 @@
                                         port="3219"
                                         databaseScriptsDir="${project.build.directory}/dbscripts"
                                         skip="${maven.test.skip}" ></stopdb>
-                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
+				<delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" /> 
                             </tasks>
                         </configuration>
                     </execution>
@@ -352,14 +351,17 @@
 
         <testResources>
             <testResource>
-                <directory>${project.basedir}/src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-            <testResource>
                 <directory>${project.basedir}/../weblogger-web/src/main/webapp/</directory>
                 <filtering>false</filtering>
                 <includes>
                     <include>themes/**</include>
+                </includes>
+            </testResource>
+            <testResource>
+		<directory>${project.basedir}/src/test/resources</directory>
+		<filtering>true</filtering>
+                <includes>
+                    <include>**/**</include>
                 </includes>
             </testResource>
         </testResources>
