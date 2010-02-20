@@ -49,12 +49,9 @@ public class JPARollerPlanetPersistenceStrategy extends JPAPersistenceStrategy {
     protected JPARollerPlanetPersistenceStrategy() throws PlanetException { 
 
         DatabaseProvider dbProvider = WebloggerStartup.getDatabaseProvider();
-        
-        // Pull in any properties defined in JMAEMF.properties config file
-        Properties emfProps = loadPropertiesFromResourceName(
-           "JPAEMF.properties", getContextClassLoader());
-                
+                        
         // Add all OpenJPA and Toplinks properties found in WebloggerConfig
+        Properties emfProps = new Properties();
         Enumeration keys = WebloggerConfig.keys();
         while (keys.hasMoreElements()) {
             String key = (String)keys.nextElement();

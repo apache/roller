@@ -82,11 +82,8 @@ public class JPAPersistenceStrategy {
         } else {
             DatabaseProvider dbProvider = PlanetStartup.getDatabaseProvider();
 
-            // Pull in any properties defined in JMAEMF.properties config file
-            Properties emfProps = loadPropertiesFromResourceName(
-                    "JPAEMF.properties", getContextClassLoader());
-
             // Add all OpenJPA and Toplinks properties found in RollerConfig
+            Properties emfProps = new Properties();
             Enumeration keys = PlanetConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();

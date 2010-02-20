@@ -79,15 +79,12 @@ public class JPAPersistenceStrategy {
             }
         } else {
 
-            // Pull in any properties defined in JMAEMF.properties config file
-            Properties emfProps = loadPropertiesFromResourceName(
-                    "JPAEMF.properties", getContextClassLoader());
-
             // Add all OpenJPA and Toplinks properties found in WebloggerConfig
+            Properties emfProps = new Properties();
             Enumeration keys = WebloggerConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
-                if (key.startsWith("openjpa.") || key.startsWith("toplink.")) {
+                if (key.startsWith("openjpa.")) {
                     String value = WebloggerConfig.getProperty(key);
                     logger.info(key + ": " + value);
                     emfProps.setProperty(key, value);
