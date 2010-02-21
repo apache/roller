@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -65,9 +66,12 @@ public class SQLScriptRunner {
                 command += line.trim();
                 if (command.endsWith(";")) { 
                     // ";" is end of command, so add completed command to list
-                    commands.add(command.substring(0, command.length() - 1));   
+                    String cmd = command.substring(0, command.length() - 1);
+                    String[] cmdArray = StringUtils.split(cmd);
+                    cmd = StringUtils.join(cmdArray, " ");
+                    commands.add(cmd);
                     command = "";
-                } else {
+                } else if (StringUtils.isNotEmpty(command)) {
                     command += " "; // still more command coming so add space
                 }
             } 
