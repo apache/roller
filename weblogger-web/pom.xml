@@ -337,6 +337,7 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
                 <configuration>
+                    <contextPath>roller</contextPath>
                     <jettyConfig>${project.build.directory}/jetty.xml</jettyConfig>
                     <systemProperties>
 
