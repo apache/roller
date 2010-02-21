@@ -33,6 +33,7 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
@@ -63,6 +64,8 @@ public class PlanetModel implements Model {
     }
     
     public void init(Map initData) throws WebloggerException {
+
+        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) return;
         
         // we expect the init data to contain a weblogRequest object
         this.weblogRequest = (WeblogRequest) initData.get("parsedRequest");
