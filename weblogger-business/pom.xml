@@ -25,6 +25,7 @@
 	<testUploadsDir>${project.build.testOutputDirectory}${file.separator}uploadsdir</testUploadsDir>
 	<testThemesDir> ${project.build.testOutputDirectory}${file.separator}themes</testThemesDir>
 	<testIndexDir>  ${project.build.testOutputDirectory}${file.separator}index</testIndexDir>
+	<testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
     <dependencies>

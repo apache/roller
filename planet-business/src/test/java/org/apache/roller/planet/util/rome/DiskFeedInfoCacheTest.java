@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
 import com.sun.syndication.fetcher.impl.DiskFeedInfoCache;
+import org.apache.roller.planet.config.PlanetConfig;
 
 
 /**
@@ -39,20 +40,15 @@ public class DiskFeedInfoCacheTest extends TestCase {
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
         
-        String buildDir = System.getProperty("project.build.directory");
-        assertNotNull("project.build.directory not null", buildDir);
-        assertTrue("project.build.directory not zero length", buildDir.trim().length() > 0);
-        if (!buildDir.startsWith("/")) buildDir = "..";
-        File file = new File(buildDir);
+        String testPlanetCache = PlanetConfig.getProperty("cache.dir");
+        assertNotNull("testPlanetCache not null", testPlanetCache);
+        assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
         
-        assertTrue("buildDir exists", file.exists());
-        assertTrue("buildDir is directory", file.isDirectory());
-        
-        File cacheDir = new File(buildDir + File.separator + "planet-cache");
+        File cacheDir = new File(testPlanetCache);
         if (!cacheDir.exists()) cacheDir.mkdirs();
         
         DiskFeedInfoCache cache =
-                new DiskFeedInfoCache(cacheDir.getAbsolutePath());
+                new DiskFeedInfoCache(PlanetConfig.getProperty("cache.dir"));
         cache.setFeedInfo(info.getUrl(), info);
         
         SyndFeedInfo info2 = cache.getFeedInfo(url);

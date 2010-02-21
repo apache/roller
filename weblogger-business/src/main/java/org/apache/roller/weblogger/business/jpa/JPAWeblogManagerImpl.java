@@ -29,7 +29,6 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Hashtable;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import javax.persistence.Query;
 import org.apache.commons.logging.Log;

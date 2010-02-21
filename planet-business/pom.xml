@@ -22,7 +22,7 @@
 
     <properties>
         <testOutputDirectory>${project.build.testOutputDirectory}</testOutputDirectory>
-	<cacheDir>${project.build.testOutputDirectory}${file.separator}planetcache</cacheDir>
+	<testPlanetCache>${project.build.testOutputDirectory}${file.separator}planetcache</testPlanetCache>
     </properties>
 
     <dependencies>
@@ -172,8 +172,8 @@
                             <value>${project.basedir}/src/main/webapp</value>
                         </property>
                         <property>
-                            <name>project.build.directory</name>
-                            <value>${project.build.directory}</value>
+                            <name>testPlanetCache</name>
+                            <value>${project.build.testOutputDirectory}${file.separator}planetcache</value>
                         </property>
                     </systemProperties>
                     <excludes>

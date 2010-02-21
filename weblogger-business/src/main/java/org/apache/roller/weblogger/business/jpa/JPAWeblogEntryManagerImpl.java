@@ -37,11 +37,9 @@ import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.WeblogReferrer;

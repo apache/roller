@@ -16,14 +16,11 @@
 
 package org.apache.roller.planet.business;
 
-import java.io.File;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.TestUtils;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
-import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 
 

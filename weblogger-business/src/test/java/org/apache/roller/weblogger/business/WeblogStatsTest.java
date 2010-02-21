@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
@@ -52,6 +49,8 @@ public class WeblogStatsTest extends TestCase {
                 "anchor21", website2.getDefaultCategory(), website2, user1);
         comment21 = TestUtils.setupComment("Comment21", entry21);
         TestUtils.endSession(true);
+
+        Thread.sleep(1000);
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();     

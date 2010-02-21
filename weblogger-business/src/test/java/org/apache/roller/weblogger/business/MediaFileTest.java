@@ -334,7 +334,11 @@ public class MediaFileTest extends TestCase {
         assertNotNull(mediaFile1.getTags());
         assertEquals(2, mediaFile1.getTags().size());
 
-        mfMgr.removeMediaFile(testWeblog, mediaFile1);
+        try {
+            mfMgr.removeMediaFile(testWeblog, mediaFile1);
+        } catch (Exception ignorable) {
+            log.debug("ERROR removing media file", ignorable);
+        }
         TestUtils.endSession(true);
 
         MediaFile mediaFile2 = mfMgr.getMediaFile(id);
@@ -344,6 +348,10 @@ public class MediaFileTest extends TestCase {
         TestUtils.endSession(true);
         TestUtils.teardownWeblog(testWeblog.getId());
         TestUtils.teardownUser(testUser.getUserName());
+
+        String uploadsDirName = WebloggerConfig.getProperty("uploads.dir");
+        File flag = new File(uploadsDirName + File.separator + "migration-status.properties");
+        flag.delete();
     }
 
     /**
