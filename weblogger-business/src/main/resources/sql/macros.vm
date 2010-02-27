@@ -75,7 +75,7 @@ Special macro to drop NOT NULL requirement from a column.
 Define non-null column with default value
 **#
 #macro(columnNotNullWithDefault $columnName $columnType $defaultValue)
-#if($db.DBTYPE == "ORACLE")
+#if($db.DBTYPE == "ORACLE" || $db.DBTYPE == "HSQLDB")
    $columnName      $columnType default '$defaultValue' not null
 #else 
    $columnName      $columnType not null default '$defaultValue'
