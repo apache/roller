@@ -153,10 +153,10 @@
                         onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
                         <s:url id="mediaFileURL" includeContext="false"
-                            value="/%{#mediaFile.permalink"></s:url>
+                            value="%{#mediaFile.permalink}"></s:url>
 
                         <s:url id="mediaFileThumbnailURL"
-                            value="/%{#mediaFile.thumbnailURL"></s:url>
+                            value="%{#mediaFile.thumbnailURL}"></s:url>
 
                     <div class="mediaObject"
                          onclick="onSelectImage('<s:property value="#mediaFile.name"/>','<s:property value="%{mediaFileURL}" />')" >
@@ -197,7 +197,7 @@
 <script type="text/javascript">
 <!--
     function onSelectImage(name, url) {
-        window.parent.onSelectImage(name, '<s:property value="absoluteSiteURL" />' + url);
+        window.parent.onSelectImage(name, url);
     }
 -->
 </script>
