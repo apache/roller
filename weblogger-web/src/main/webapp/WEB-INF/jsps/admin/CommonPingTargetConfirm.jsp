@@ -34,10 +34,10 @@
 <div class="control">
     <s:form action="commonPingTargets!delete">
         <s:hidden name="pingTargetId" />
-        <s:submit key="pingTarget.removeOK" />
+        <s:submit value="%{getText('pingTarget.removeOK')}" />
     </s:form>
     &nbsp;
     <s:form action="commonPingTargets">
-        <s:submit key="pingTarget.cancel" />
+        <s:submit value="%{getText('pingTarget.cancel')}" />
     </s:form>
 </div>

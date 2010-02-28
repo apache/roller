@@ -135,7 +135,7 @@
     <table style="width:100%">
         <tr>
             <td>
-                <s:submit key="pageForm.save" />
+                <s:submit value="%{getText('pageForm.save')}" />
                 <input type="button" value="<s:text name="application.done"/>" onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'" />
             </td>
             <td align="right">

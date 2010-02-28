@@ -355,7 +355,7 @@
 <%-- Save changes and  cancel buttons --%>
 <%-- ========================================================= --%>
 
-        <s:submit key="commentManagement.update" />
+        <s:submit value="%{getText('commentManagement.update')}" />
 
     </s:form>
 

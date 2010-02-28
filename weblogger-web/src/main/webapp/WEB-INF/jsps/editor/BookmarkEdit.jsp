@@ -70,8 +70,8 @@
     </table>
     
     <p>
-        <s:submit key="bookmarkForm.save" />
-        <s:submit key="bookmarkForm.cancel" action="bookmarks" />
+        <s:submit value="%{getText('bookmarkForm.save')}" />
+        <s:submit value="%{getText('bookmarkForm.cancel')}" action="bookmarks" />
     </p>
     
 </s:form>

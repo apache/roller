@@ -33,7 +33,7 @@
         <s:iterator id="pd" value="#dg.propertyDefs">
             
             <tr>
-                <td class="label"><s:text name="%{#pd.key}" /></td>
+                <td class="label"><s:text name="pd.key" /></td>
                 
                   <%-- special condition for comment plugins --%>
                   <s:if test="#pd.name == 'users.comments.plugins'">

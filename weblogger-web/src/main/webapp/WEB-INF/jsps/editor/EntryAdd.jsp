@@ -198,12 +198,12 @@
 
     <br>
     <div class="control">
-        <s:submit key="weblogEdit.save" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
+        <s:submit value="%{getText('weblogEdit.save')}" onclick="document.getElementById('entry_bean_status').value='DRAFT';" />
         <s:if test="userAnAuthor">
-            <s:submit key="weblogEdit.post" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
+            <s:submit value="%{getText('weblogEdit.post')}" onclick="document.getElementById('entry_bean_status').value='PUBLISHED';"/>
         </s:if>
         <s:else>
-            <s:submit key="weblogEdit.submitForReview" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
+            <s:submit value="%{getText('weblogEdit.submitForReview')}" onclick="document.getElementById('entry_bean_status').value='PENDING';"/>
         </s:else>
     </div>
 

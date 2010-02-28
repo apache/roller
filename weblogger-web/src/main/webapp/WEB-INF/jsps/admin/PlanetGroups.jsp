@@ -47,7 +47,7 @@
     
     <div class="formrow">
         <label class="formrow" />&nbsp;</label>
-        <s:submit key="planetGroups.button.save" />
+        <s:submit value="%{getText('planetGroups.button.save')}" />
         &nbsp;
         <input type="button" 
                value='<s:text name="planetGroups.button.cancel" />' 

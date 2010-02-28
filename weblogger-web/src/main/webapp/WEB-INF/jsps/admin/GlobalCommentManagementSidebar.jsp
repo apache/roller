@@ -104,7 +104,7 @@
     </div>
     <br />
     
-    <s:submit key="commentManagement.query" />
+    <s:submit value="%{getText('commentManagement.query')}" />
             
 </s:form>
 

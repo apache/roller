@@ -255,7 +255,7 @@
 
 <br />
 <div class="control">
-    <s:submit key="websiteSettings.button.update" />
+    <s:submit value="%{getText('websiteSettings.button.update')}" />
 </div>
         
 <br />
@@ -278,7 +278,7 @@
     
     <br />
     
-    <s:submit key="websiteSettings.button.remove" />
+    <s:submit value="%{getText('websiteSettings.button.remove')}" />
     
     <br />
     <br />    

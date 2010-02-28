@@ -53,7 +53,7 @@
     </table>
     
     <br />
-    <s:submit key="referers.deleteSelected" />
+    <s:submit value="%{getText('referers.deleteSelected')}" />
     
 </s:form>
 
@@ -64,5 +64,5 @@
 <p><s:text name="referers.hits" />: <s:property value="dayHits"/></p>
 <s:form action="referrers!reset">
     <s:hidden name="weblog" />
-    <s:submit key="referers.reset" />
+    <s:submit value="%{getText('referers.reset')}" />
 </s:form>

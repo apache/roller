@@ -144,7 +144,7 @@
 
                     <br />
 
-                    <s:submit key="weblogEntryQuery.button.query" />
+                    <s:submit value="%{getText('weblogEntryQuery.button.query')}" />
 
                 </s:form>
 

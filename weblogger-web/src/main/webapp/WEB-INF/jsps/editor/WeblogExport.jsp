@@ -35,7 +35,7 @@
         <s:textfield name="baseUrl" size="30" />
     </p>
     <p>
-        <s:submit key="weblogExport.exportEntries" />
+        <s:submit value="%{getText('weblogExport.exportEntries')}" />
         <s:hidden name="weblog" />
     </p>
 </s:form>
@@ -44,7 +44,7 @@
 <p class="pagetip" style="width:50%"><s:text name="weblogExport.resources.tip" /></p>
 <p>
     <s:form name="resourcesExport" action="weblogExport!exportResources" method="POST">
-        <s:submit key="weblogExport.exportResources" />
+        <s:submit value="%{getText('weblogExport.exportResources')}" />
         <s:hidden name="weblog" />
     </s:form>
 </p>

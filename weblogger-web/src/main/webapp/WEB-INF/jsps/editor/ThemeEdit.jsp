@@ -127,7 +127,7 @@ function toggleImportThemeDisplay() {
                 <s:text name="themeEditor.customStylesheetDescription" />
             </p>
         </s:if>
-        <p><s:submit key="themeEditor.save" /></p>
+        <p><s:submit value="%{getText('themeEditor.save')}" /></p>
     </div>
 
     <div id="customOptioner" class="optioner" style="display:none;">
@@ -186,7 +186,7 @@ function toggleImportThemeDisplay() {
             </p>
         </div>
 
-        <p><s:submit key="themeEditor.save" /></p>
+        <p><s:submit value="%{getText('themeEditor.save')}" /></p>
     </div>
 
 </s:form>

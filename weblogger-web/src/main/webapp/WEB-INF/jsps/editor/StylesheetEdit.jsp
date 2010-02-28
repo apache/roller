@@ -55,9 +55,9 @@
     <table style="width:100%">
         <tr>
             <td>
-                <s:submit key="stylesheetEdit.save" />&nbsp;&nbsp;
+                <s:submit value="%{getText('stylesheetEdit.save')}" />&nbsp;&nbsp;
                 <s:if test="!customTheme">
-                    <s:submit key="stylesheetEdit.revert" action="stylesheetEdit!revert" />
+                    <s:submit value="%{getText('stylesheetEdit.revert')}" action="stylesheetEdit!revert" />
                 </s:if>
             </td>
             <td align="right">

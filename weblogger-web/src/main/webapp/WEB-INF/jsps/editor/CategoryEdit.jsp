@@ -52,8 +52,8 @@
     </table>
     
     <p>
-        <s:submit key="categoryForm.save" />
-        <s:submit key="categoryForm.cancel" action="categories" />
+        <s:submit value="%{getText('categoryForm.save')}" />
+        <s:submit value="%{getText('categoryForm.cancel')}" action="categories" />
     </p>
     
 </s:form>

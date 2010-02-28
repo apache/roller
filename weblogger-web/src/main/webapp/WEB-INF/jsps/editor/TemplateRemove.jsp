@@ -40,8 +40,8 @@
                 <s:hidden name="removeId" />
                 <s:hidden name="weblog" value="%{actionWeblog.handle}" />
                 
-                <s:submit key="application.yes" />&nbsp;
-                <s:submit key="application.no" action="templates" />
+                <s:submit value="%{getText('application.yes')}" />&nbsp;
+                <s:submit value="%{getText('application.no')}" action="templates" />
             </s:form>
         </td>
     </tr>

@@ -99,7 +99,7 @@ boolean openidEnabled = WebloggerConfig.getBooleanProperty("authentication.openi
     
     <br />
     
-    <s:submit key="userSettings.button.save" />
+    <s:submit value="%{getText('userSettings.button.save')}" />
     <input type="button" value="<s:text name="userSettings.button.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
-    
+
 </s:form>

@@ -38,7 +38,7 @@
                 <td colspan="2">
                     <s:form action="cacheInfo!clear">
                         <s:hidden name="cache" value="%{#cache.key}" />
-                        <s:submit key="cacheInfo.clear" />
+                        <s:submit value="%{getText('cacheInfo.clear')}" />
                     </s:form>
                 </td>
             </tr>

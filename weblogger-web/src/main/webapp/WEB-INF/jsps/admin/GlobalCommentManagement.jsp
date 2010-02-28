@@ -327,9 +327,9 @@ function handleCommentResponse() {
 <%-- Save changes and  cancel buttons --%>
 <%-- ========================================================= --%>
             
-<s:submit key="commentManagement.update" />
+<s:submit value="%{getText('commentManagement.update')}" />
 &nbsp;
-<s:submit key="application.cancel" action="globalCommentManagement" />
+<s:submit value="%{getText('application.cancel')}" action="globalCommentManagement" />
 
 </s:form>
 

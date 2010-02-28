@@ -40,8 +40,8 @@
     <p/>
     <div class="formrow">
        <label for="" class="formrow">&nbsp;</label>
-       <s:submit key="pingTarget.save" />
-       <s:submit key="pingTarget.cancel" action="customPingTargets" />
+       <s:submit value="%{getText('pingTarget.save')}" />
+       <s:submit value="%{getText('pingTarget.cancel')}" action="customPingTargets" />
     </div>
 
 </s:form>

@@ -57,8 +57,8 @@
     </div>  
          
     <br />      
-    <s:submit key="inviteMember.button.save" />
-    <s:submit key="application.cancel" action="members" />
+    <s:submit value="%{getText('inviteMember.button.save')}" />
+    <s:submit value="%{getText('application.cancel')}" action="members" />
 
 </s:form>
 

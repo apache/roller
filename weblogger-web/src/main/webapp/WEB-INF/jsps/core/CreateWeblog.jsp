@@ -112,7 +112,7 @@ function handlePreview(handle) {
 
 <br />
    
-<s:submit key="createWebsite.button.save" />
+<s:submit value="%{getText('createWebsite.button.save')}" />
 <input type="button" value="<s:text name="createWebsite.button.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
     
 </s:form>

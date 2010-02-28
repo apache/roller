@@ -67,7 +67,7 @@ function fullPreview() {
             </p>
         </s:if>
         
-        <p><s:submit key="themeEditor.save" /></p>
+        <p><s:submit value="%{getText('themeEditor.save')}" /></p>
     </div>
     
 </s:form>

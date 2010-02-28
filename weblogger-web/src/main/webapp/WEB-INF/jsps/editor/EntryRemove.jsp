@@ -33,14 +33,14 @@
     <s:form action="entryRemove!remove">
         <s:hidden name="weblog" />
         <s:hidden name="removeId" />
-        <s:submit key="weblogEntryRemove.yes" />
+        <s:submit value="%{getText('weblogEntryRemove.yes')}" />
     </s:form>
 </td>
 <td>
     <s:form action="entryEdit">
         <s:hidden name="weblog" />
         <s:hidden name="bean.id" value="%{removeId}" />
-        <s:submit key="weblogEntryRemove.no" />
+        <s:submit value="%{getText('weblogEntryRemove.no')}" />
     </s:form>
 </td>
 </tr>

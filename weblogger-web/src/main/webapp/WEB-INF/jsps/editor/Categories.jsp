@@ -80,7 +80,7 @@ function onMove()
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     
     <%-- Move-selected button --%>
-    <s:submit key="categoriesForm.move" onclick="onMove()" />
+    <s:submit value="%{getText('categoriesForm.move')}" onclick="onMove()" />
     
     <%-- Move-to combo-box --%>
     <s:select name="targetCategoryId" list="allCategories" listKey="id" listValue="path" />

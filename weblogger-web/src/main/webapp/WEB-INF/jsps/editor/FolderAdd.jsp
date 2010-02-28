@@ -40,8 +40,8 @@
     </table>
     
     <p>
-        <s:submit key="folderForm.save" />
-        <s:submit key="folderForm.cancel" action="bookmarks" />
+        <s:submit value="%{getText('folderForm.save')}" />
+        <s:submit value="%{getText('folderForm.cancel')}" action="bookmarks" />
     </p>
     
 </s:form>

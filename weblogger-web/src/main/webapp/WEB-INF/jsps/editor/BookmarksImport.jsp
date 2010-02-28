@@ -32,5 +32,5 @@
     <s:file name="opmlFile" />
     <br />
     <br />
-    <s:submit key="bookmarksImport.import" />
+    <s:submit value="%{getText('bookmarksImport.import')}" />
 </s:form>

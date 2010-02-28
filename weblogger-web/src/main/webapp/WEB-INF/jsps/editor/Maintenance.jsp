@@ -23,12 +23,12 @@
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
     <s:text name="maintenance.prompt.flush" /><br /><br />
-    <s:submit key="maintenance.button.flush" action="maintenance!flushCache" />
+    <s:submit value="%{getText('maintenance.button.flush')}" action="maintenance!flushCache" />
 
     <s:if test="getProp('search.enabled')">
         <br /><br />
         <s:text name="maintenance.prompt.index" /><br /><br />
-        <s:submit key="maintenance.button.index" action="maintenance!index" />	
+        <s:submit value="%{getText('maintenance.button.index')}" action="maintenance!index" />	
     </s:if>
 
 </s:form>

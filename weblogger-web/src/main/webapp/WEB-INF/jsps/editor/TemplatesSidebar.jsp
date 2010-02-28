@@ -45,7 +45,7 @@
                         
                         <tr>
                             <td></td>
-                            <td><s:submit key="pagesForm.add" /></td>
+                            <td><s:submit value="%{getText('pagesForm.add')}" /></td>
                         </tr>
                     </table>
                     

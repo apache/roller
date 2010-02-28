@@ -46,7 +46,7 @@ function confirmSubDelete(subUrl) {
     <div class="formrow">
         <label for="feedURL" class="formrow" /><s:text name="planetSubscription.feedUrl" /></label>
         <s:textfield name="subUrl" size="40" maxlength="255" />
-        &nbsp;<s:submit key="planetSubscriptions.button.save" />
+        &nbsp;<s:submit value="%{getText('planetSubscriptions.button.save')}" />
     </div>
 </s:form>
 
