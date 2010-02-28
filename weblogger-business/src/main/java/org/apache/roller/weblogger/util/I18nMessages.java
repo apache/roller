@@ -18,6 +18,9 @@
 
 package org.apache.roller.weblogger.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A utility class for handling i18n messaging.
  */
-public final class I18nMessages {
+public class I18nMessages {
     
     private static final Log log = LogFactory.getLog(I18nMessages.class);
     
@@ -157,4 +160,74 @@ public final class I18nMessages {
         }
     }
     
+	/**
+	 * Reload bundle.
+	 * 
+	 * @param key
+	 *            the key
+	 */
+	public static final void reloadBundle(Locale key) {
+
+		try {
+
+			Class type = ResourceBundle.class;
+			Field cacheList = type.getDeclaredField("cacheList");
+
+			synchronized (cacheList) {
+				cacheList.setAccessible(true);
+				((Map) cacheList.get(ResourceBundle.class)).clear();
+			}
+
+			clearTomcatCache();
+
+			// Remove cached bundle
+			messagesMap.remove(key);
+
+		} catch (Exception e) {
+			log.error("Error clearing message resource bundles", e);
+		}
+
+	}
+
+	/**
+	 * Clear tomcat cache.
+	 * 
+	 * @see com.opensymphony.xwork2.util.LocalizedTextUtil
+	 */
+	private static void clearTomcatCache() {
+
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		// no need for compilation here.
+		Class cl = loader.getClass();
+
+		try {
+			if ("org.apache.catalina.loader.WebappClassLoader".equals(cl
+					.getName())) {
+				clearMap(cl, loader, "resourceEntries");
+			} else {
+				if (log.isDebugEnabled()) {
+					log.debug("class loader " + cl.getName()
+							+ " is not tomcat loader.");
+				}
+			}
+		} catch (Exception e) {
+			log.warn("couldn't clear tomcat cache", e);
+		}
+	}
+
+	private static void clearMap(Class cl, Object obj, String name)
+			throws NoSuchFieldException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException {
+		Field field = cl.getDeclaredField(name);
+		field.setAccessible(true);
+
+		Object cache = field.get(obj);
+
+		synchronized (cache) {
+			Class ccl = cache.getClass();
+			Method clearMethod = ccl.getMethod("clear");
+			clearMethod.invoke(cache);
+		}
+
+	}
 }

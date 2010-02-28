@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
 import org.apache.roller.weblogger.business.referrers.IncomingReferrer;
 import org.apache.roller.weblogger.business.referrers.ReferrerQueueManager;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -57,7 +58,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.weblogger.util.BlacklistChecker;
-
+import org.apache.roller.weblogger.util.I18nMessages;
 
 /**
  * Provides access to weblog pages.
@@ -72,6 +73,9 @@ public class PageServlet extends HttpServlet {
     private boolean excludeOwnerPages = false;
     private WeblogPageCache weblogPageCache = null;
     private SiteWideCache siteWideCache = null;
+    
+    // Development theme reloading
+	Boolean themeReload = false;
 
     /**
      * Init method for this servlet
@@ -106,6 +110,9 @@ public class PageServlet extends HttpServlet {
                 log.error("Error parsing referrer.robotCheck.userAgentPattern value '" + robotPatternStr + "'.  Robots will not be filtered. ", e);
             }
         }
+        
+        // Development theme reloading
+		themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
     }
 
     /**
@@ -181,6 +188,25 @@ public class PageServlet extends HttpServlet {
         } else {
             cacheKey = weblogPageCache.generateKey(pageRequest);
         }
+        
+        // Development only. Reload if theme has been modified
+		if (themeReload) {
+			try {
+				ThemeManager manager = WebloggerFactory.getWeblogger().getThemeManager();
+				boolean reloaded = manager.reLoadThemeFromDisk(weblog.getEditorTheme());
+				if (reloaded) {
+					if (isSiteWide) {
+						siteWideCache.clear();
+					} else {
+						weblogPageCache.clear();
+					}
+					I18nMessages.reloadBundle(weblog.getLocaleInstance()); 
+				}
+
+			} catch (Exception ex) {
+				log.error("ERROR - reloading theme " + ex);
+			}
+		}
 
         // cached content checking
         if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) && request.getAttribute("skipCache") == null) {

@@ -207,7 +207,7 @@ public class SharedThemeFromDir extends SharedTheme {
         setName(themeMetadata.getName());
         setDescription(themeMetadata.getName());
         setAuthor(themeMetadata.getAuthor());
-        setLastModified(new Date());
+        setLastModified(null);
         setEnabled(true);
         
         // load resource representing preview image
@@ -254,6 +254,10 @@ public class SharedThemeFromDir extends SharedTheme {
                 // add it to templates list
                 addTemplate(theme_template);
             }
+            
+         // Set Last Modified
+			setLastModified(new Date(templateFile.lastModified()));
+			
         }
         
         // go through static resources and add them to the theme
@@ -273,6 +277,14 @@ public class SharedThemeFromDir extends SharedTheme {
             
             // add it to the theme
             setResource(resourcePath, new SharedThemeResourceFromDir(resourcePath, resourceFile));
+        
+            // Set Last Modified
+			Date lstModified = new Date(resourceFile.lastModified());
+			if (getLastModified() == null
+					|| lstModified.after(getLastModified())) {
+				setLastModified(lstModified);
+			}
+        
         }
         
         // go through templates and read in contents to a ThemeTemplate
@@ -308,6 +320,13 @@ public class SharedThemeFromDir extends SharedTheme {
 
             // add it to the theme
             addTemplate(theme_template);
+            
+            // Set Last Modified
+			Date lstModified = new Date(templateFile.lastModified());
+			if (getLastModified() == null
+					|| lstModified.after(getLastModified())) {
+				setLastModified(lstModified);
+			}
         }
     }
     

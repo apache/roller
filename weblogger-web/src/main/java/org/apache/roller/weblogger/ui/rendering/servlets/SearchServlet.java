@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
@@ -43,16 +44,20 @@ import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
+import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
 
 /**
  * Handles search queries for weblogs.
  */
-public class SearchServlet extends HttpServlet {
-    
+public class SearchServlet extends HttpServlet {    
     private static Log log = LogFactory.getLog(SearchServlet.class);
     
+    // Development theme reloading
+	Boolean themeReload = false;
     
     /**
      * Init method for this servlet
@@ -174,7 +179,25 @@ public class SearchServlet extends HttpServlet {
             return;
         }
 
-        
+        // Development only. Reload if theme has been modified
+		if (themeReload) {
+			try {
+				ThemeManager manager = WebloggerFactory.getWeblogger().getThemeManager();
+				boolean reloaded = manager.reLoadThemeFromDisk(weblog.getEditorTheme());
+				if (reloaded) {
+					if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
+						SiteWideCache.getInstance().clear();
+					} else {
+						WeblogPageCache.getInstance().clear();
+					}
+					I18nMessages.reloadBundle(weblog.getLocaleInstance()); 
+				}
+
+			} catch (Exception ex) {
+				log.error("ERROR - reloading theme " + ex);
+			}
+		}
+		
         // lookup Renderer we are going to use
         Renderer renderer = null;
         try {
