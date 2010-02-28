@@ -468,25 +468,21 @@
                         <groupId>org.apache.roller</groupId>
                         <artifactId>test-utils</artifactId>
                         <version>5.0-BETA2-SNAPSHOT</version>
-                        <scope>test</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
                         <version>${derby.version}</version>
-                        <scope>test</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbynet</artifactId>
                         <version>${derby.version}</version>
-                        <scope>test</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
                         <version>${derby.version}</version>
-                        <scope>test</scope>
                     </dependency>
                 </dependencies>
 
