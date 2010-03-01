@@ -73,7 +73,7 @@ public class ModifyUser extends UIAction {
     public void myPrepare() {
         
         // load the user object we are modifying
-        if(getUserName() != null) {
+        if (getUserName() != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 
@@ -83,12 +83,12 @@ public class ModifyUser extends UIAction {
             } catch(Exception e) {
                 log.error("Error looking up user - "+getUserName(), e);
             }
-        } else if(getBean().getId() != null) {
+        } else if (getBean().getId() != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                setUser(mgr.getUserByUserName(getBean().getUserName()));
-            } catch(Exception e) {
-                log.error("Error looking up user - "+getBean().getId(), e);
+                setUser(mgr.getUserByUserName(getBean().getUserName(), null));
+            } catch (Exception e) {
+                log.error("Error looking up user - " + getBean().getId(), e);
             }
         }
     }

@@ -51,6 +51,7 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -341,10 +342,14 @@ public class RollerContext extends ContextLoaderListener
     public static void flushAuthenticationUserCache(String userName) {                                
         ApplicationContext ctx = 
             WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-        UserCache userCache = (UserCache)ctx.getBean("userCache");
-        if (userCache != null) {
-            userCache.removeUserFromCache(userName);
-        }
+		try {
+			UserCache userCache = (UserCache) ctx.getBean("userCache");
+			if (userCache != null) {
+				userCache.removeUserFromCache(userName);
+			}
+		} catch (NoSuchBeanDefinitionException exc) {
+			log.debug("No userCache bean in context", exc);
+		}
     }
  
     
