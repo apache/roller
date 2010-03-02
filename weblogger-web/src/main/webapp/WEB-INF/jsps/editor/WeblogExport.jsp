@@ -30,21 +30,33 @@
 <h2><s:text name="weblogExport.entries" /></h2>
 <p class="pagetip" style="width:50%"><s:text name="weblogExport.entries.tip" /></p>
 <s:form name="entriesExport" action="weblogExport!exportEntries" method="POST">
-    <p>
-        <s:text name="weblogExport.baseUrl"/>
-        <s:textfield name="baseUrl" size="30" />
-    </p>
-    <p>
-        <s:submit value="%{getText('weblogExport.exportEntries')}" />
-        <s:hidden name="weblog" />
-    </p>
+    <table cellpadding="0" cellspacing="5" border="0">
+        <tr>
+            <td valign="baseline" align="right"><s:text name="weblogExport.baseUrl"/></td>
+            <td valign="baseline"><s:textfield name="baseUrl" size="30" /></td>
+        </tr>
+        <tr>
+            <td valign="baseline" align="right"><s:text name="weblogExport.format" /></td>
+            <td valign="baseline"><s:radio theme="roller" name="format" list="formatOptions" value="format"/></td>
+        </tr>
+        <tr>
+            <td valign="baseline" colspan="2">
+                <s:submit key="weblogExport.exportEntries" />
+                <s:hidden name="weblog" />
+            </td>
+        </tr>
+    </table>
 </s:form>
 
 <h2><s:text name="weblogExport.resources" /></h2>
 <p class="pagetip" style="width:50%"><s:text name="weblogExport.resources.tip" /></p>
-<p>
-    <s:form name="resourcesExport" action="weblogExport!exportResources" method="POST">
-        <s:submit value="%{getText('weblogExport.exportResources')}" />
-        <s:hidden name="weblog" />
-    </s:form>
-</p>
+<s:form name="resourcesExport" action="weblogExport!exportResources" method="POST">
+    <table cellpadding="0" cellspacing="5" border="0">
+        <tr>
+            <td valign="baseline">
+                <s:submit key="weblogExport.exportResources" />
+                <s:hidden name="weblog" />
+            </td>
+        </tr>
+    </table>
+</s:form>
