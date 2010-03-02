@@ -289,10 +289,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private void addWeblogContents(Weblog newWeblog)
     throws WebloggerException {
         
-        // grant weblog creator ADMIN permissions
+        // grant weblog creator ADMIN permission
         List<String> actions = new ArrayList<String>();
         actions.add(WeblogPermission.ADMIN);
-        actions.add(WeblogPermission.POST);
         roller.getUserManager().grantWeblogPermission(
                 newWeblog, newWeblog.getCreator(), actions);
         

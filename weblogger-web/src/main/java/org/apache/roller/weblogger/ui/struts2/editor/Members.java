@@ -90,7 +90,7 @@ public class Members extends UIAction implements ParameterAware {
         
             for (WeblogPermission perms : permsList) {
                 
-                String sval = getParameter("perm-" + perms.getUser().getUserName());
+                String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
                     boolean error = false;
                     User user = getAuthenticatedUser();

@@ -35,7 +35,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @author Dave Johnson
  */
 public class WeblogPermission extends ObjectPermission implements Serializable {
-    public static final String EDIT_DRAFT = "editdraft";
+    public static final String EDIT_DRAFT = "edit_draft";
     public static final String POST = "post";
     public static final String ADMIN = "admin";
     public static final List<String> ALL_ACTIONS = new ArrayList<String>();
