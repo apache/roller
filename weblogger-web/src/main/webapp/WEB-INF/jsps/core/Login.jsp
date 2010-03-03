@@ -93,7 +93,7 @@ if (cmaEnabled) {
             <tr>
                 <td width="20%"></td>
                 <td width="80%">
-                    <input type="checkbox" name="rememberMe" id="rememberMe" />
+                    <input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me" />
                     <label for="rememberMe">
                         <s:text name="loginPage.rememberMe" />
                     </label>
