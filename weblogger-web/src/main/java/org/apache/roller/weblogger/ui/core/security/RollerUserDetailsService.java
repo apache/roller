@@ -1,6 +1,8 @@
 package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.userdetails.UserDetails;
@@ -20,11 +22,20 @@ import org.springframework.dao.DataRetrievalFailureException;
  * Spring Security UserDetailsService implemented using Weblogger API.
  */
 public class RollerUserDetailsService implements UserDetailsService {
-      
+    private static Log log = LogFactory.getLog(RollerUserDetailsService.class);
+    
     public UserDetails loadUserByUsername(String userName) 
             throws UsernameNotFoundException, DataAccessException {
+        Weblogger roller = null;
         try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
+            roller = WebloggerFactory.getWeblogger();
+        } catch (Exception e) {
+            // Should only happen in case of 1st time startup, setup required
+            log.debug("Ignorabale error getting Roller instance", e);
+            // Thowing a "soft" exception here allows setup to procede
+            throw new UsernameNotFoundException("User info not available yet.");
+        }
+        try {
             UserManager umgr = roller.getUserManager();
             User userData = null;  
             if (userName.startsWith("http://")) {
