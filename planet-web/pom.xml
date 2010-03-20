@@ -26,6 +26,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.roller</groupId>
+            <artifactId>planet-business</artifactId>
+            <version>5.0-BETA2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
         </dependency>
