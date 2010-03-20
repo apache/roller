@@ -1,0 +1,49 @@
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN"
+       "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+<validators>
+    
+    <!-- validate the planet handle field -->
+    <field name="planet.handle">
+        
+        <!-- handle is required -->
+        <field-validator type="requiredstring">
+            <param name="trim">true</param>
+            <message key="PlanetForm.error.handleNull">handle is required</message>
+        </field-validator>
+        
+        <!-- handle has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">32</param>
+            <param name="trim">true</param>
+            <message key="PlanetForm.error.handleSize">handle must be less than 32 characters</message>
+        </field-validator>
+    </field>
+    
+    <!-- validate the planet title field -->
+    <field name="planet.title">
+        
+        <!-- title is required -->
+        <field-validator type="requiredstring">
+            <param name="trim">true</param>
+            <message key="PlanetForm.error.titleNull">title is required</message>
+        </field-validator>
+        
+        <!-- title has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <param name="trim">true</param>
+            <message key="PlanetForm.error.titleSize">title must be less than 255 characters</message>
+        </field-validator>
+    </field>
+    
+    <!-- validate the planet description field -->
+    <field name="planet.description">
+        
+        <!-- description has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <param name="trim">true</param>
+            <message key="PlanetForm.error.descriptionSize">description must be less than 255 characters</message>
+        </field-validator>
+    </field>
+</validators>

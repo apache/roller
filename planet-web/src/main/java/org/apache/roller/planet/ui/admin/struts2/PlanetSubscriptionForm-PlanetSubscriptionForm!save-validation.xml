@@ -1,0 +1,62 @@
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN"
+       "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+<validators>
+    
+    <!-- validate subscription title -->
+    <field name="subscription.title">
+        
+        <!-- title is required -->
+        <field-validator type="requiredstring">
+            <param name="trim">true</param>
+            <message key="PlanetSubscriptionForm.error.titleNull">title is required</message>
+        </field-validator>
+        
+        <!-- title has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <param name="trim">true</param>
+            <message key="PlanetSubscriptionForm.error.titleSize">title must be less than 255 characters</message>
+        </field-validator>
+    </field>
+    
+    <!-- validate subscription feedURL -->
+    <field name="subscription.feedURL">
+        
+        <!-- feedURL is required -->
+        <field-validator type="requiredstring">
+            <param name="trim">true</param>
+            <message key="PlanetSubscriptionForm.error.feedURLNull">feedURL is required</message>
+        </field-validator>
+        
+        <!-- feedURL must be a valid url -->
+        <field-validator type="url">
+            <message key="PlanetSubscriptionForm.error.feedURLValid">feedURL must be a valid url</message>
+        </field-validator>
+        
+        <!-- feedURL has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <param name="trim">true</param>
+            <message key="PlanetSubscriptionForm.error.feedURLSize">feedURL must be less than 255 characters</message>
+        </field-validator>
+    </field>
+    
+    <!-- validate subscription siteURL -->
+    <field name="subscription.siteURL">
+        
+        <!-- siteURL must be a valid url -->
+        <field-validator type="url">
+            <message key="PlanetSubscriptionForm.error.siteURLValid">siteURL must be a valid url</message>
+        </field-validator>
+        
+        <!-- siteURL has a max size -->
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <param name="trim">true</param>
+            <message key="PlanetSubscriptionForm.error.siteURLSize">siteURL must be less than 255 characters</message>
+        </field-validator>
+    </field>
+    
+    
+    
+</validators>

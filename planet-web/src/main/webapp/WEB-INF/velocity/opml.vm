@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding='utf-8'?>
+<opml version="1.1">
+<head>
+   <title>Subscriptions list for $utils.escapeXML($model.group.title)</title>
+   <dateCreated>$utils.formatRfc822Date($utils.now)</dateCreated>
+   <dateModified>$utils.formatRfc822Date($utils.now)</dateModified>
+   <ownerName>$model.planet.handle</ownerName>
+   <ownerEmail>$model.planet.handle</ownerEmail>
+
+</head>
+<body>
+<outline>
+   #foreach($sub in $model.group.subscriptions)
+   <outline text="$utils.escapeXML($sub.title)" 
+          xmlUrl="$utils.escapeXML($sub.feedURL)" 
+         htmlUrl="$utils.escapeXML($sub.siteURL)" />
+   #end
+</outline>
+</body>
+</opml>

@@ -1,0 +1,54 @@
+#**
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+
+*#<html>
+#set($group = $model.group)
+#set($entries = $model.pager.items)
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+<title>$group.title</title>
+</head>
+<body>
+<table>
+   <tr>
+      <td width="80%" valign="top">
+         <h1>$group.title</h1>
+         <p><i>$group.description<i/></p>
+         <p>Last updated: $utils.formatRfc822Date($utils.now)</p>
+         #foreach($entry in $entries)
+            <h2>$entry.title</h2>
+            Blog: $entry.subscription.title <br/>
+            Date: $entry.published<br/>
+            <a href="$entry.permalink">Permalink</a><br/>
+            <p>$entry.content</p>
+         #end
+      </td>
+      <td width="20%" valign="top">
+         <h3>Other formats</h3>
+         <a href="$url.feed.atom($group.handle)">Atom 1.0 Feed</a><br/>
+         <a href="$url.opml($group.handle)">OPML Subscriptions</a>
+         <h3>Subscriptions</h3>
+         #foreach ($sub in $group.subscriptions)
+         <a href="$sub.siteURL">$sub.title</a> <a href="$sub.feedURL">(feed)</a>
+         <br/>
+         #end
+      </td>
+</tr>
+</table>
+
+</body>
+</html>
