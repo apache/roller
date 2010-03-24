@@ -41,7 +41,7 @@ public class MediaFile {
     private String      name;
     private String      description;
     private String      copyrightText;
-    private Boolean     isSharedForGallery;
+    private Boolean     isSharedForGallery = Boolean.FALSE;
     private long        length;
     private int         width = -1;
     private int         height = -1;

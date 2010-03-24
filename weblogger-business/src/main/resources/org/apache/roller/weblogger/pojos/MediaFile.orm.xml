@@ -50,7 +50,7 @@
                 <column name="last_updated" insertable="true" updatable="true" unique="false"/>
             </basic>
             <basic name="sharedForGallery">
-                <column name="is_public" insertable="true" updatable="true" unique="false"/>
+                <column name="is_public" insertable="true" updatable="true" unique="false" nullable="false" />
             </basic>
             <basic name="creatorUserName">
                 <column name="creator" insertable="true" updatable="true" unique="false" />
