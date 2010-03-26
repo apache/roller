@@ -6,7 +6,7 @@ See comments in editor-menu.xml for info about attributes.
 -->
 <menu-bar>
     
-    <menu name="tabbedmenu.admin" roles="admin">
+    <menu name="tabbedmenu.admin" globalPerms="admin">
         
         <menu-item action="globalConfig"       
                    name="tabbedmenu.admin.config" 
@@ -31,7 +31,7 @@ See comments in editor-menu.xml for info about attributes.
                    globalPerms="admin" />
     </menu>
     
-    <menu name="tabbedmenu.planet" roles="admin" enabledProperty="planet.aggregator.enabled">
+    <menu name="tabbedmenu.planet" globalPerms="admin" enabledProperty="planet.aggregator.enabled">
         
         <menu-item action="planetConfig"       
                    name="tabbedmenu.admin.planetConfig" 

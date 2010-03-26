@@ -266,8 +266,8 @@ public class MenuHelper {
         Document doc = builder.build(instream);
         
         Element root = doc.getRootElement();
-        List menus = root.getChildren("menu");
-        Iterator iter = menus.iterator();
+        List parsedMenus = root.getChildren("menu");
+        Iterator iter = parsedMenus.iterator();
         while (iter.hasNext()) {
             Element e = (Element) iter.next();
             config.addTab(elementToParsedTab(e));

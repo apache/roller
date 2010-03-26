@@ -23,7 +23,7 @@ Each menu or menu item is governed by four attrbibutes:
 -->
 <menu-bar>
     
-    <menu name="tabbedmenu.weblog" perms="limited" roles="editor">
+    <menu name="tabbedmenu.weblog" globalPerms="limited" weblogPerms="editor">
         
         <menu-item action="entryAdd" 
                    name="tabbedmenu.weblog.newEntry" 
@@ -74,7 +74,7 @@ Each menu or menu item is governed by four attrbibutes:
     </menu>
     
     
-    <menu name="tabbedmenu.design" perms="admin" roles="editor" enabledProperty="themes.customtheme.allowed">
+    <menu name="tabbedmenu.design" globalPerms="admin" weblogPerms="editor" enabledProperty="themes.customtheme.allowed">
         
         <menu-item action="themeEdit"         
                    name="tabbedmenu.website.themes" 
@@ -95,7 +95,7 @@ Each menu or menu item is governed by four attrbibutes:
     </menu>
     
     
-    <menu name="tabbedmenu.website" perms="admin" roles="editor">
+    <menu name="tabbedmenu.website" globalPerms="admin" weblogPerms="editor">
         
         <menu-item action="weblogConfig"       
                    name="tabbedmenu.website.settings" 
@@ -106,7 +106,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item action="members" 
                    name="tabbedmenu.website.members" 
                    globalPerms="login"
-                   perms="admin" 
+                   weblogPerms="admin"
                    subactions="invite" 
                    enabledProperty="groupblogging.enabled"/>
         
