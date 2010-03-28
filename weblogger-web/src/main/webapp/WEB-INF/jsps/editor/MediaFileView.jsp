@@ -26,7 +26,7 @@
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/element/element-min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/roller-ui/yui/button/button-min.js' />"></script>
 
-<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.3.1.min.js" />'></script>
+<script type="text/javascript" src='<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />'></script>
 
 
 <style>

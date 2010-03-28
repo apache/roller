@@ -17,58 +17,19 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<script type="text/javascript" src="<s:url value="/roller-ui/scripts/jquery-1.4.2.min.js" />"></script>
 
 <script type="text/javascript">
     <!--
     function setChecked(val, name) {
-        form = document.getElementById('comments');
-        len = form.elements.length;
-        var i=0;
-        for( i=0 ; i<len ; i++) {
-            if (form.elements[i].name == name) {
-                form.elements[i].checked=val;
-            }
-        }
+        $("input[name=" + name + "]").attr('checked', val);
     }
+
     function bulkDelete() {
         if (window.confirm('<s:text name="commentManagement.confirmBulkDelete"><s:param value="bulkDeleteCount" /></s:text>')) {
             document.commentQueryForm.method.value = "bulkDelete";
             document.commentQueryForm.submit();
         }
-    }
-
-    function createRequestObject() {
-        var ro;
-        var browser = navigator.appName;
-        if (browser == "Microsoft Internet Explorer") {
-            ro = new ActiveXObject("Microsoft.XMLHTTP");
-        } else {
-            ro = new XMLHttpRequest();
-        }
-        return ro;
-    }
-    var http = createRequestObject();
-    var init = false;
-    var isBusy = false;
-
-    function readMoreComment(id) {
-        url = "<%= request.getContextPath()%>/roller-ui/authoring/commentdata?id=" + id;
-        if (isBusy) return;
-        isBusy = true;
-        http.open('get', url);
-        http.onreadystatechange = handleCommentResponse;
-        http.send(null);
-    }
-
-    function handleCommentResponse() {
-        if (http.readyState == 4) {
-            comment = eval("(" + http.responseText + ")");
-            commentDiv = document.getElementById("comment-" + comment.id);
-            commentDiv.textContent = comment.content;
-            linkDiv = document.getElementById("link-" + comment.id);
-            linkDiv.parentNode.removeChild(linkDiv);
-        }
-        isBusy = false;
     }
     -->
 </script>
@@ -332,7 +293,7 @@
                         <span class="details">
 
                             <s:if test="#comment.content.length() > 1000">
-                                <pre><div id="comment-<s:property value="#comment.id"/>"><str:wordWrap width="72"><str:truncateNicely upper="1000" appendToEnd="..."><s:property value="#comment.content" escape="true" /></str:truncateNicely></str:wordWrap></div></pre>
+                                <span id="comment-<s:property value="#comment.id"/>"><str:truncateNicely upper="1000" appendToEnd="..."><s:property value="#comment.content" escape="true" /></str:truncateNicely></span>
                                 <div id="link-<s:property value="#comment.id"/>">
                                     <a onclick='readMoreComment("<s:property value="#comment.id"/>")'>
                                         <s:text name="commentManagement.readmore" />
@@ -340,8 +301,28 @@
                                 </div>
                             </s:if>
                             <s:else>
-                                <pre><str:wordWrap><s:property value="#comment.content" escape="true" /></str:wordWrap></pre>
+                                <span width="200px" id="comment-<s:property value="#comment.id"/>"><s:property value="#comment.content" escape="true" /></span>
                             </s:else>
+
+                        <br />
+                        <br />
+                            <div>
+                                <a id="editlink-<s:property value="#comment.id"/>" onclick='editComment("<s:property value="#comment.id"/>")'>
+                                    <s:text name="commentManagement.editComment" />
+                                </a>
+                            </div>
+
+                            <span id="savelink-<s:property value="#comment.id"/>" style="display: none">
+                                <a onclick='saveComment("<s:property value="#comment.id"/>")'>
+                                    <s:text name="commentManagement.saveComment" />
+                                </a>
+                            </span>
+                            &nbsp;|&nbsp;
+                            <span id="cancellink-<s:property value="#comment.id"/>" style="display: none">
+                                <a onclick='editCommentCancel("<s:property value="#comment.id"/>")'>
+                                    <s:text name="commentManagement.cancelComment" />
+                                </a>
+                            </span>
 
                         </span>
 
@@ -350,6 +331,75 @@
             </s:iterator>
         </table>
         <br />
+
+
+    <script type="text/javascript">
+    <!--
+    var comments = {};
+
+    function editComment(id) {
+        // make sure we have the full comment
+        if ($("#link-" + id).size() > 0) readMoreComment(id, editComment);
+
+        // save the original comment value
+        comments[id] = $("#comment-" + id).html();
+
+        $("#editlink-" + id).hide();
+        $("#savelink-" + id).show();
+        $("#cancellink-" + id).show();
+
+        // put comment in a textarea for editing
+        $("#comment-" + id).html("<textarea style='width:100%' rows='10'>" + comments[id] + "</textarea>");
+    }
+
+    function saveComment(id) {
+        var content = $("#comment-" + id).children()[0].value;
+        $.ajax({
+            type: "POST",
+            url: '<%= request.getContextPath()%>/roller-ui/authoring/commentdata?id=' + id,
+            data: content,
+            dataType: "text",
+            processData: "false",
+            contentType: "text/plain",
+            success: function (rdata) {
+                if (status != "success") {
+                    var cdata = eval("(" + rdata + ")");
+                    $("#editlink-" + id).show();
+                    $("#savelink-" + id).hide();
+                    $("#cancellink-" + id).hide();
+                    $("#comment-" + id).html(cdata.content);
+                } else {
+                    alert('<s:text name="commentManagement.saveError" />');
+                }
+            }
+        });
+    }
+
+    function editCommentCancel(id) {
+        $("#editlink-" + id).show();
+        $("#savelink-" + id).hide();
+        $("#cancellink-" + id).hide();
+        if (comments[id]) {
+            $("#comment-" + id).html(comments[id]);
+            comments[id] = null;
+        }
+    }
+
+    function readMoreComment(id, callback) {
+        $.ajax({
+            type: "GET",
+            url: '<%= request.getContextPath()%>/roller-ui/authoring/commentdata?id=' + id,
+            success: function(data) {
+                var cdata = eval("(" + data + ")");
+                $("#comment-" + cdata.id).html(cdata.content);
+                $("#link-" + id).detach();
+                if (callback) callback(id);
+            }
+        });
+    }
+    -->
+</script>
+
 
         <%-- ========================================================= --%>
 <%-- Save changes and  cancel buttons --%>

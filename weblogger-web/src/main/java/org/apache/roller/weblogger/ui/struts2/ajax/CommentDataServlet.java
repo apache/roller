@@ -28,17 +28,27 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
- * Return comment id and content in JavaScript Object Notation (JSON) format.
- * For example comment with id "3454545346" and content "hi there" will be
- * represented as: {id : "3454545346", content : "hi there"}
+ * Supports GET of comment data in JSON format and PUT of raw comment content.
  */
 public class CommentDataServlet extends HttpServlet {
-    
+
+    public void checkAuth(HttpServletRequest request, Weblog weblog) {
+    }
+
+    /**
+     * Accepts request with comment 'id' parameter and returns comment id and
+     * content in JSON format. For example comment with id "3454545346" and
+     * content "hi there" will be represented as:
+     *    {id : "3454545346", content : "hi there"}
+     */
     public void doGet(HttpServletRequest request, 
                       HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,18 +57,83 @@ public class CommentDataServlet extends HttpServlet {
         try {
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             WeblogEntryComment c = wmgr.getComment(request.getParameter("id"));
-            String content = Utilities.escapeHTML(c.getContent());
-            content = WordUtils.wrap(content, 72);
-            content = StringEscapeUtils.escapeJavaScript(content);
-            String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
-            response.setContentType("text/html; charset=utf-8");
-            response.getWriter().print(json);
-            response.flushBuffer();
-            response.getWriter().flush();
-            response.getWriter().close();
+            if (c == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                // need post permission to view comments
+                RollerSession rses = RollerSession.getRollerSession(request);
+                Weblog weblog = c.getWeblogEntry().getWebsite();
+                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                    String content = Utilities.escapeHTML(c.getContent());
+                    content = WordUtils.wrap(content, 72);
+                    content = StringEscapeUtils.escapeJavaScript(content);
+                    String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("text/html; charset=utf-8");
+                    response.getWriter().print(json);
+                    response.flushBuffer();
+                    response.getWriter().flush();
+                    response.getWriter().close();
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            }
+
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
-    
+
+    /**
+     * Accepts request with comment 'id' parameter and replaces specified
+     * comment's content with the content in the request.
+     */
+    public void doPut(HttpServletRequest request,
+                      HttpServletResponse response)
+            throws ServletException, IOException {
+
+        Weblogger roller = WebloggerFactory.getWeblogger();
+        try {
+            WeblogEntryManager wmgr = roller.getWeblogEntryManager();
+            WeblogEntryComment c = wmgr.getComment(request.getParameter("id"));
+            if (c == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                // need post permission to edit comments
+                RollerSession rses = RollerSession.getRollerSession(request);
+                Weblog weblog = c.getWeblogEntry().getWebsite();
+                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                    String content = Utilities.streamToString(request.getInputStream());
+                    c.setContent(content);
+                    wmgr.saveComment(c);
+                    roller.flush();
+
+                    c = wmgr.getComment(request.getParameter("id"));
+                    content = Utilities.escapeHTML(c.getContent());
+                    content = WordUtils.wrap(content, 72);
+                    content = StringEscapeUtils.escapeJavaScript(content);
+                    String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("text/html; charset=utf-8");
+                    response.getWriter().print(json);
+                    response.flushBuffer();
+                    response.getWriter().flush();
+                    response.getWriter().close();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    public void doPost(HttpServletRequest request,
+                      HttpServletResponse response)
+            throws ServletException, IOException {
+        // not all browsers support PUT
+        doPut(request, response);
+    }
 }

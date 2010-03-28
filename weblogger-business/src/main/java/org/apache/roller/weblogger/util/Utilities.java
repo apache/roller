@@ -2,11 +2,13 @@ package org.apache.roller.weblogger.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -392,6 +394,20 @@ public class Utilities {
         copyInputToOutput(in, out, from.length());
     }
     
+    /**
+     * Reads an inputstream into a string
+     */
+    public static String streamToString(InputStream is) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        BufferedReader in = new BufferedReader(new InputStreamReader(is));
+        String line;
+        while ((line = in.readLine()) != null) {
+            sb.append(line);
+            sb.append(System.getProperty("line.separator"));
+        }
+        return sb.toString();
+    }
+
     //------------------------------------------------------------------------
     /**
      * Utility method to copy an input stream to an output stream.
