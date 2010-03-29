@@ -74,7 +74,7 @@ Each menu or menu item is governed by four attrbibutes:
     </menu>
     
     
-    <menu name="tabbedmenu.design" globalPerms="admin" weblogPerms="editor" enabledProperty="themes.customtheme.allowed">
+    <menu name="tabbedmenu.design" weblogPerms="editor" enabledProperty="themes.customtheme.allowed">
         
         <menu-item action="themeEdit"         
                    name="tabbedmenu.website.themes" 
@@ -95,7 +95,7 @@ Each menu or menu item is governed by four attrbibutes:
     </menu>
     
     
-    <menu name="tabbedmenu.website" globalPerms="admin" weblogPerms="editor">
+    <menu name="tabbedmenu.website" weblogPerms="editor">
         
         <menu-item action="weblogConfig"       
                    name="tabbedmenu.website.settings" 
